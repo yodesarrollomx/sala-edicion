@@ -9,22 +9,22 @@
  ],
  "propuestas": [
   {
-   "id": "apodo-g2-47cdf9",
-   "titulo": "El Apodo del Terreno · con dirección al frente (1–2 = el plan · 3–9 = la tira)",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/apodo-g2/L1.png",
-    "laminas/apodo-g2/L2.png",
-    "laminas/apodo-g2/L3.png",
-    "laminas/apodo-g2/L4.png",
-    "laminas/apodo-g2/L5.png",
-    "laminas/apodo-g2/L6.png",
-    "laminas/apodo-g2/L7.png",
-    "laminas/apodo-g2/L8.png",
-    "laminas/apodo-g2/L9.png"
-   ],
-   "video": null,
-   "origen": "rehecha-de apodo-g1-c5fa4c con tus notas del 26-ago — sigue esperando tu palabra"
+   "id": "publicar-servilleta",
+   "tipo": "eje",
+   "titulo": "La Servilleta · ¿sale hoy?",
+   "laminas": [],
+   "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/REEL_9x16.mp4",
+   "origen": "aprobada 7/7 el 12-ago · el video y las ligas medibles llevan esperando tu palabra",
+   "opciones": [
+    {
+     "titulo": "Publícala hoy",
+     "texto": "Sale a FB e IG como el cuento: reel 9:16, copy con la voz del guion («la servilleta se quedó de recuerdo»), la puerta del co-desarrollo insinuada, y liga medible propia. Yo publico y pongo el primer comentario con la liga."
+    },
+    {
+     "titulo": "Todavía no",
+     "texto": "Se queda lista y vuelve a preguntarte mañana. Dime en la nota qué le falta y lo cambio antes de que salga."
+    }
+   ]
   }
  ],
  "parrilla": [
@@ -90,12 +90,12 @@
   "nota": "El cuento ya está en la cancha (publicado 4-ago). La primera pieza que traiga un lead con liga etiquetada se corona control."
  },
  "retro": {
-  "fecha": "2026-08-26",
-  "aprobadas": 4,
-  "tiradas": 3,
-  "producidas": 5,
-  "rehechas": 3,
-  "nota": "Tus 3 notas del 26-ago se volvieron ley: narrador hablándole al público, mensaje más rápido, y el cómo dentro de la lámina. Además estrenamos lo que pediste: la tira ahora abre con las hojas de dirección."
+  "fecha": "2026-08-27",
+  "aprobadas": 9,
+  "tiradas": 0,
+  "producidas": 9,
+  "rehechas": 0,
+  "nota": "9 de 9: aprobaste el plan de la película Y la tira completa. El Apodo pasa a video. Hoy la única decisión que queda es la que llevaba 15 días sin pantalla: publicar La Servilleta."
  },
  "produccion": [
   {
@@ -345,49 +345,9 @@
  },
  "sugerencias": [
   [
-   "El plan va — que se anime así",
-   "Cambiar el orden de las escenas",
-   "Más corto: bajar a 5 escenas"
-  ],
-  [
-   "El giro está bien donde está",
-   "Adelantar el giro a la escena 3",
-   "Otro cierre"
-  ],
-  [
-   "Que el terreno vacío se vea más",
-   "Vecinos de más edad",
-   "Más dorado"
-  ],
-  [
-   "Quitar un sombrero",
-   "El lote visible atrás",
-   "Gesto más de desacuerdo"
-  ],
-  [
-   "La foto del terreno más protagonista",
-   "Menos platos, más sobremesa",
-   "Una carcajada franca"
-  ],
-  [
-   "Más notas alrededor de la foto",
-   "Otra hora del día",
-   "Gesto más escéptico"
-  ],
-  [
-   "Acercar más el lote",
-   "Que la gente se vea más borrosa",
-   "Amanecer en vez de tarde"
-  ],
-  [
-   "Acercar el tripié",
-   "Terreno más claramente baldío",
-   "Amanecer más intenso"
-  ],
-  [
-   "Que la guía diga «manda un WhatsApp»",
-   "Pareja un poco mayor",
-   "Skyline más presente"
+   "Publícala hoy",
+   "Cambia el copy antes de salir",
+   "Espérate al lunes"
   ]
  ]
 }
