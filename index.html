@@ -246,6 +246,10 @@ function ficha(pid){
 const prop=pid=>(D.propuestas||[]).find(x=>x.id===pid);
 const items=p=>p.laminas&&p.laminas.length?p.laminas:(p.opciones||[]);
 const estado=(pid,i)=>ficha(pid).laminas[i]||null;
+async function leerJSON(r){
+  // sólo cuenta como respuesta del Sheet lo que de verdad es JSON del GAS
+  try{ const t=await r.text(); return JSON.parse(t) }catch(e){ return null }
+}
 function leerLS(k,def){
   // lectura blindada: JSON roto o tipo equivocado regresan el default (no truena la sala)
   try{ const v=JSON.parse(localStorage.getItem(k)||'null');
@@ -294,7 +298,7 @@ function marcar(pid,i,v,silencio){
 function hojaTache(pid,i){
   const pr=prop(pid), f=ficha(pid);
   f.notas ||= []; f.mejoras ||= [];
-  const sug=(pr.sugerencias&&pr.sugerencias[i])||[];
+  const sug=(pr.sugerencias&&pr.sugerencias[i])||(D.sugerencias&&D.sugerencias[i])||[];
   const eleg=new Set(f.mejoras[i]||[]);
   const velo=document.createElement('div'); velo.className='velo';
   const h=document.createElement('div'); h.className='hoja';
@@ -508,14 +512,18 @@ function pintarPaso(){
   if(vm && x.tipo!=='firma') vm.onclick=()=>mapaTira(x.pid);
 }
 function gestos(el,x){
-  if(!el) return; let x0=null;
-  el.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
+  if(!el) return; let x0=null,y0=null,t0=0;
+  el.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now()},{passive:true});
   el.addEventListener('touchend',e=>{
-    if(x0===null) return; const dx=e.changedTouches[0].clientX-x0; x0=null;
-    if(dx>64) marcar(x.pid,x.i,'si');
-    else if(dx<-64) marcar(x.pid,x.i,'no');
+    if(x0===null) return;
+    const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+    x0=null;
+    if(Date.now()-t0>600) return;
+    if(Math.abs(dx)<64 || Math.abs(dy)>Math.abs(dx)*0.5) return;
+    marcar(x.pid,x.i, dx>0?'si':'no');
   },{passive:true});
 }
+
 function mapaTira(pid){
   const p=prop(pid); if(!p||!p.laminas||!p.laminas.length) return;
   const m=document.createElement('div'); m.className='mapa';
@@ -553,9 +561,15 @@ function intentarEnviar(){
   }
   enviar();
 }
+let _enviando=false;
 async function enviar(){
+  if(_enviando) return; _enviando=true;
+  const _btn=$('#enviarT'); if(_btn) _btn.disabled=true;
+  try{ await _enviar() } finally { _enviando=false; if(_btn) _btn.disabled=false }
+}
+async function _enviar(){
   // el consolidado: TODO el estado del día, pendientes explícitos, autoría y envio_id
-  const envio={accion:'decidir',clave:CLAVE(),fecha,envio_id:uuid(),ts:Date.now(),quien:ROL(),
+  const envio={accion:'decidir',clave:CLAVE(),fecha:(D.hoy_real||fecha),envio_id:uuid(),ts:Date.now(),quien:ROL(),
     nota_general:dec.nota_general||'',nota_estrategia:dec.nota_estrategia||'',propuestas:{}};
   for(const p of D.propuestas||[]){
     const f=ficha(p.id);
@@ -566,16 +580,24 @@ async function enviar(){
       notas:items(p).map((_,i)=>{const n=(f.notas&&f.notas[i])||'';
         const c=p.candidatas&&p.candidatas[i];
         return c?((n?n+' ':'')+'[toma elegida: '+String.fromCharCode(65+((f.elegidas&&f.elegidas[i])||0))+']'):n}),
-      mejoras:items(p).map((_,i)=>(f.mejoras&&f.mejoras[i])||[])};
+      mejoras:items(p).map((_,i)=>{
+        const src=(p.sugerencias&&p.sugerencias[i])||(D.sugerencias&&D.sugerencias[i])||[];
+        return ((f.mejoras&&f.mejoras[i])||[]).map(j=>src[j]||('#'+j));
+      })};
   }
   dec.guardado=new Date().toISOString(); guardarLocal();
-  if(!GAS()){ registrarHist(true); mostrarCierre('guardada aquí — falta conectar el Sheet'); return }
+  if(!GAS()){ encolar(envio); registrarHist(false);
+    mostrarCierre('guardada aquí — sube sola al conectar el Sheet',true); return }
   const aviso=$('#avisoT'); if(aviso) aviso.textContent='guardando…';
   try{
     const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
       body:JSON.stringify(envio)});
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok||j.error) throw new Error(j.error||('el Sheet contestó '+r.status));
+    // El /exec puede contestar 200 con la PÁGINA DE LOGIN de Google (deploy
+    // republicado, permiso revocado, cuota). Antes eso se leía como éxito y la
+    // revisión se daba por enviada — y se purgaba la cola. Ahora se exige el
+    // contrato explícito del GAS: {ok:true}.
+    const j=await leerJSON(r);
+    if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||('el Sheet no contestó en JSON ('+r.status+')'));
     // un envio directo que SI llego deja obsoletos los encolados de esa fecha:
     // sin esta purga, la cola vieja podia pisar despues la revision mas nueva
     localStorage.setItem('sala_cola',JSON.stringify(leerLS('sala_cola',[]).filter(x=>x.fecha!==fecha)));
@@ -603,8 +625,8 @@ async function subirCola(){
     try{
       const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
         body:JSON.stringify(envio)});
-      const j=await r.json().catch(()=>({}));
-      if(!r.ok||j.error){
+      const j=await leerJSON(r);
+      if(!r.ok||!j||j.ok!==true){
         // «no encontré ese día» = el envío ya no aplica: se descarta, no se reintenta eternamente
         if(j&&/no encontr/i.test(String(j.error||''))) continue;
         throw 0;
@@ -807,21 +829,23 @@ function andon(diaP,pieza){
 
 /* ═══ carga ═══ */
 async function traer(f){
+  // El respaldo del repo era inalcanzable con GAS puesto: si el Sheet fallaba,
+  // la excepción mataba la pantalla. Ahora un Sheet caído degrada, no tumba.
   if(GAS()){
-    const u=GAS()+'?recurso=dia&clave='+encodeURIComponent(CLAVE())+(f?'&f='+encodeURIComponent(f):'');
-    const r=await fetch(u);
-    if(!r.ok) throw new Error('el Sheet contestó '+r.status);
-    const j=await r.json(); if(j.error) throw new Error(j.error);
-    return j;
+    try{
+      const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(CLAVE())+(f?'&f='+encodeURIComponent(f):''));
+      if(!r.ok) throw new Error('el Sheet contestó '+r.status);
+      const j=await leerJSON(r);
+      if(!j) throw new Error('el Sheet no contestó en JSON');
+      if(j.error) throw new Error(j.error);
+      return j;
+    }catch(e){ console.warn('[sala] Sheet no disponible, uso el respaldo:',e.message) }
   }
   const r=await fetch('datos/manifiesto.json?v='+Date.now());
-  if(!r.ok) throw new Error('no encontré el manifiesto del repo');
-  const j=await r.json();
-  // Viene del respaldo del repo, no del Sheet: se marca para poder avisarlo en pantalla.
-  j._respaldo = true;
-  if(f && j.fecha!==f && (j.historial||{})[f]) return {...j,...(j.historial[f]),fecha:f,_respaldo:true};
-  return j;
+  if(!r.ok) throw new Error('tampoco pude leer el respaldo');
+  const j=await r.json(); j._respaldo=true; return j;
 }
+
 // Avisa cuando lo que está en pantalla NO es la edición de hoy: sin esto, la sala
 // dice "Revisar hoy" y "Ayer: …" sobre una edición vieja y nadie lo nota.
 function pintarAvisoEdicion(){
@@ -881,21 +905,17 @@ async function conArrastre(f){
   }
   return d;
 }
-async function cargar(f){
+async function cargar(f,silencioso){
   try{ D=await conArrastre(f) }
   catch(e){
+    if(silencioso){ console.warn('[sala] refresco en fondo falló, dejo la pantalla como está'); return }
     $('#umbral').innerHTML=`<div class="vacio"><p>No pude abrir la sala.</p>
       <p style="font-size:14px">${esc(e.message)} — vuelve a cargar; si sigue, dímelo y lo reviso.</p></div>`;
     return;
   }
   fecha=D.fecha;
   pintarAvisoEdicion();
-  if(D.arrastre_de){
-    const a=document.createElement('div'); a.className='aviso-edicion'; a.id='avArrastre'; a.hidden=false;
-    a.textContent='Esto quedó pendiente del '+dia(D.arrastre_de)+' — sigue esperando tu palabra.';
-    const v=$('#avArrastre'); if(v) v.remove();
-    $('#umbral').prepend(a);
-  }
+
   const srv=D.decisiones&&Object.keys(D.decisiones).length?D.decisiones:null;
   let loc=null; try{ loc=JSON.parse(localStorage.getItem('sala-'+fecha)||'null') }catch(e){}
   const tSrv=srv&&srv.guardado?Date.parse(srv.guardado):0;
@@ -906,7 +926,13 @@ async function cargar(f){
   for(const k of Object.keys(dec.propuestas)) if(!vig.has(k)) delete dec.propuestas[k];
   $('#sel').innerHTML=(D.dias||[fecha]).slice().reverse()
     .map(d=>`<option value="${d}" ${d===fecha?'selected':''}>${dia(d)}</option>`).join('');
-  pintarUmbral(); pintarMesa(); pintarCola();
+  pintarUmbral();
+  if(D.arrastre_de){   // el aviso va DESPUÉS de pintar: antes lo borraba el repintado
+    const a=document.createElement('div'); a.className='aviso-edicion'; a.id='avArrastre'; a.hidden=false;
+    a.textContent='Esto quedó pendiente del '+dia(D.arrastre_de)+' — sigue esperando tu palabra.';
+    $('#umbral').prepend(a);
+  }
+  pintarMesa(); pintarCola();
 }
 $('#sel').onchange=e=>cargar(e.target.value);
 /* el board se actualiza SOLO: al volver a la pestaña y cada 4 minutos.
@@ -917,7 +943,7 @@ async function refrescar(){
   if(document.querySelector('.hoja,.cierre')) return;
   if(Date.now()-_ultRef<30000) return;
   _ultRef=Date.now();
-  try{ await cargar(fecha) }catch(e){}
+  try{ await cargar(D.arrastre_de?null:fecha,true) }catch(e){}
 }
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) refrescar() });
 window.addEventListener('focus',refrescar);
