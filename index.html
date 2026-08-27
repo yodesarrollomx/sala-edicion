@@ -857,8 +857,32 @@ function normalizarDia(j){
   j.propuestas=Object.values(porId).filter(p=>!retiradas.has(p.id));
   return j;
 }
+/* ARRASTRE: lo pendiente NO se pierde al cambiar el día.
+   Si el día pedido llega vacío, se busca hacia atrás el último día con propuestas
+   que aún no estén decididas por completo y ÉSE se sirve, avisando de dónde viene.
+   (26-ago: Alejandro abrió el 27 y su tira del 26 había desaparecido de la vista.) */
+async function conArrastre(f){
+  let d=normalizarDia(await traer(f));
+  if((d.propuestas||[]).length) return d;
+  const dias=(d.dias||[]).filter(x=>x<(d.fecha||f||'9999')).sort().reverse().slice(0,10);
+  for(const dd of dias){
+    try{
+      const p=normalizarDia(await traer(dd));
+      if(!(p.propuestas||[]).length) continue;
+      const marcas=p.decisiones&&p.decisiones.propuestas||{};
+      const faltan=(p.propuestas||[]).some(pr=>{
+        const f2=marcas[pr.id]; const n=items(pr).length;
+        if(!f2||!f2.laminas) return true;
+        let hechas=0; for(let i=0;i<n;i++){const m=f2.laminas[i]; if(m==='si'||m==='no') hechas++}
+        return hechas<n;
+      });
+      if(faltan){ p.arrastre_de=dd; p.dias=d.dias; return p }
+    }catch(e){}
+  }
+  return d;
+}
 async function cargar(f){
-  try{ D=normalizarDia(await traer(f)) }
+  try{ D=await conArrastre(f) }
   catch(e){
     $('#umbral').innerHTML=`<div class="vacio"><p>No pude abrir la sala.</p>
       <p style="font-size:14px">${esc(e.message)} — vuelve a cargar; si sigue, dímelo y lo reviso.</p></div>`;
@@ -866,6 +890,12 @@ async function cargar(f){
   }
   fecha=D.fecha;
   pintarAvisoEdicion();
+  if(D.arrastre_de){
+    const a=document.createElement('div'); a.className='aviso-edicion'; a.id='avArrastre'; a.hidden=false;
+    a.textContent='Esto quedó pendiente del '+dia(D.arrastre_de)+' — sigue esperando tu palabra.';
+    const v=$('#avArrastre'); if(v) v.remove();
+    $('#umbral').prepend(a);
+  }
   const srv=D.decisiones&&Object.keys(D.decisiones).length?D.decisiones:null;
   let loc=null; try{ loc=JSON.parse(localStorage.getItem('sala-'+fecha)||'null') }catch(e){}
   const tSrv=srv&&srv.guardado?Date.parse(srv.guardado):0;
