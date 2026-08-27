@@ -595,13 +595,20 @@ function encolar(envio){
 async function subirCola(){
   const q=leerLS('sala_cola',[]);
   if(!q.length||!GAS()) return;
+  // un envío encolado ANTES de conectar quedó sin clave y no subía nunca:
+  // se le pone la clave viva de esta sesión al momento de reintentar
+  q.forEach(e=>{ if(!e.clave) e.clave=CLAVE() });
   const resto=[];
   for(const envio of q){
     try{
       const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
         body:JSON.stringify(envio)});
       const j=await r.json().catch(()=>({}));
-      if(!r.ok||j.error) throw 0;
+      if(!r.ok||j.error){
+        // «no encontré ese día» = el envío ya no aplica: se descarta, no se reintenta eternamente
+        if(j&&/no encontr/i.test(String(j.error||''))) continue;
+        throw 0;
+      }
     }catch(e){ resto.push(envio) }
   }
   localStorage.setItem('sala_cola',JSON.stringify(resto)); pintarCola();
