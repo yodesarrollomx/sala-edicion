@@ -8,20 +8,22 @@
  ],
  "propuestas": [
   {
-   "id": "apodo-g1-c5fa4c",
-   "titulo": "El Apodo del Terreno · las 7 láminas (tu guion A)",
+   "id": "apodo-g2-47cdf9",
+   "titulo": "El Apodo del Terreno · con dirección al frente (1–2 = el plan · 3–9 = la tira)",
    "tipo": "laminas",
    "laminas": [
-    "laminas/apodo-g1/L1.png",
-    "laminas/apodo-g1/L2.png",
-    "laminas/apodo-g1/L3.png",
-    "laminas/apodo-g1/L4.png",
-    "laminas/apodo-g1/L5.png",
-    "laminas/apodo-g1/L6.png",
-    "laminas/apodo-g1/L7.png"
+    "laminas/apodo-g2/L1.png",
+    "laminas/apodo-g2/L2.png",
+    "laminas/apodo-g2/L3.png",
+    "laminas/apodo-g2/L4.png",
+    "laminas/apodo-g2/L5.png",
+    "laminas/apodo-g2/L6.png",
+    "laminas/apodo-g2/L7.png",
+    "laminas/apodo-g2/L8.png",
+    "laminas/apodo-g2/L9.png"
    ],
    "video": null,
-   "origen": "tu guion A del 13-ago — llevan esperando tu pasada"
+   "origen": "rehecha-de apodo-g1-c5fa4c con tus notas del 26-ago: narrador al público, mensaje más rápido, el cómo dentro de la lámina"
   }
  ],
  "parrilla": [
@@ -87,12 +89,12 @@
   "nota": "El cuento ya está en la cancha (publicado 4-ago). La primera pieza que traiga un lead con liga etiquetada se corona control."
  },
  "retro": {
-  "fecha": "2026-08-13",
-  "aprobadas": 7,
-  "tiradas": 0,
-  "producidas": 7,
-  "rehechas": 0,
-  "nota": "La Servilleta cerró 7/7 y su video está armado esperando tu palabra para publicar. El Apodo del Terreno lleva esperando tu pasada."
+  "fecha": "2026-08-26",
+  "aprobadas": 4,
+  "tiradas": 3,
+  "producidas": 5,
+  "rehechas": 3,
+  "nota": "Tus 3 notas del 26-ago se volvieron ley: narrador hablándole al público, mensaje más rápido, y el cómo dentro de la lámina. Además estrenamos lo que pediste: la tira ahora abre con las hojas de dirección."
  },
  "produccion": [
   {
@@ -318,6 +320,21 @@
    "pedido": "el membrete de Aurum no va en publicidad de Yodesarrollo",
    "estado": "cumplida",
    "evidencia": "12-ago: crédito retirado del compositor (queda opcional) y las 7 láminas recompuestas idénticas (diff 0.0 bajo el membrete)"
+  },
+  {
+   "pedido": "Toda tira debe abrir con LÁMINA(S) DE DIRECCIÓN: antes de las 7, una o dos láminas donde el agente relate — como director de cine — qué pasa en cada escena, qué se quiere decir, qué debe entender el cliente y por qué, y cómo se liga con la siguiente. La lámina es el primer paso; luego se anima el video.",
+   "estado": "cumplida",
+   "evidencia": "26-ago: D1/D2 abren la tira · L5–L7 rehechas en segunda persona · L7 trae «Escríbenos · el primer paso es una videollamada»"
+  },
+  {
+   "pedido": "Sintaxis de NARRADOR hablándole al público en todas las láminas (segunda persona, mensaje rápido: si no entienden pronto, se van)",
+   "estado": "cumplida",
+   "evidencia": "26-ago: D1/D2 abren la tira · L5–L7 rehechas en segunda persona · L7 trae «Escríbenos · el primer paso es una videollamada»"
+  },
+  {
+   "pedido": "La última lámina debe traer la GUÍA del cómo ahí mismo — que no tengan que ir al copy a descubrir el siguiente paso",
+   "estado": "cumplida",
+   "evidencia": "26-ago: D1/D2 abren la tira · L5–L7 rehechas en segunda persona · L7 trae «Escríbenos · el primer paso es una videollamada»"
   }
  ],
  "conexion": {
@@ -327,39 +344,49 @@
  },
  "sugerencias": [
   [
-   "Que el terreno vacío se vea claramente en la esquina",
-   "Vecinos más grandes de edad",
+   "El plan va — que se anime así",
+   "Cambiar el orden de las escenas",
+   "Más corto: bajar a 5 escenas"
+  ],
+  [
+   "El giro está bien donde está",
+   "Adelantar el giro a la escena 3",
+   "Otro cierre"
+  ],
+  [
+   "Que el terreno vacío se vea más",
+   "Vecinos de más edad",
    "Más dorado"
   ],
   [
-   "Quitar un sombrero (que no parezcan gemelos)",
-   "El lote del pleito visible atrás",
+   "Quitar un sombrero",
+   "El lote visible atrás",
    "Gesto más de desacuerdo"
   ],
   [
-   "La foto del terreno más protagonista en la mesa",
+   "La foto del terreno más protagonista",
    "Menos platos, más sobremesa",
    "Una carcajada franca"
   ],
   [
-   "Más notas pegadas alrededor de la foto",
+   "Más notas alrededor de la foto",
    "Otra hora del día",
    "Gesto más escéptico"
   ],
   [
-   "Acercar la hoja del dato",
-   "Menos sombra",
-   "Quitar la pluma"
+   "Acercar más el lote",
+   "Que la gente se vea más borrosa",
+   "Amanecer en vez de tarde"
   ],
   [
-   "El tripié más cerca",
+   "Acercar el tripié",
    "Terreno más claramente baldío",
    "Amanecer más intenso"
   ],
   [
-   "Pareja un poco mayor (55+)",
-   "Skyline más presente",
-   "Titular alterno: «Pídele su Plan de Potencial»"
+   "Que la guía diga «manda un WhatsApp»",
+   "Pareja un poco mayor",
+   "Skyline más presente"
   ]
  ]
 }
