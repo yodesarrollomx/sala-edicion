@@ -616,7 +616,8 @@ function encolar(envio){
 }
 async function subirCola(){
   const q=leerLS('sala_cola',[]);
-  if(!q.length||!GAS()) return;
+  if(!q.length) return;
+  if(!GAS()){ toast('Primero conecta el Sheet',null); const d=$('#dlg'); if(d&&d.showModal) d.showModal(); return }
   // un envío encolado ANTES de conectar quedó sin clave y no subía nunca:
   // se le pone la clave viva de esta sesión al momento de reintentar
   q.forEach(e=>{ if(!e.clave) e.clave=CLAVE() });
@@ -841,9 +842,16 @@ async function traer(f){
       return j;
     }catch(e){ console.warn('[sala] Sheet no disponible, uso el respaldo:',e.message) }
   }
-  const r=await fetch('datos/manifiesto.json?v='+Date.now());
+  const r=await fetch('datos/manifiesto.json?v='+(window.__mv||(window.__mv=Date.now())));
   if(!r.ok) throw new Error('tampoco pude leer el respaldo');
-  const j=await r.json(); j._respaldo=true; return j;
+  const j=await r.json(); j._respaldo=true;
+  // el archivo de dias vive en j.historial: sin esto, elegir un dia viejo
+  // recargaba HOY y el selector rebotaba sin avisar
+  if(f && j.fecha!==f && (j.historial||{})[f]){
+    const h=j.historial[f];
+    return {...j, ...h, fecha:f, dias:j.dias, _respaldo:true, _archivo:true};
+  }
+  return j;
 }
 
 // Avisa cuando lo que está en pantalla NO es la edición de hoy: sin esto, la sala
@@ -909,8 +917,14 @@ async function cargar(f,silencioso){
   try{ D=await conArrastre(f) }
   catch(e){
     if(silencioso){ console.warn('[sala] refresco en fondo falló, dejo la pantalla como está'); return }
-    $('#umbral').innerHTML=`<div class="vacio"><p>No pude abrir la sala.</p>
-      <p style="font-size:14px">${esc(e.message)} — vuelve a cargar; si sigue, dímelo y lo reviso.</p></div>`;
+    $('#umbral').innerHTML=`<div class="vacio"><p>No pude alcanzar la sala.</p>
+      <p style="font-size:14px">Puede ser la red. Tu trabajo de hoy sigue guardado aquí.</p>
+      <div class="fila" style="justify-content:center;margin-top:14px">
+        <button class="dorado" id="reintentar">Reintentar</button>
+        <button class="menor" id="rescate">Copiar mi revisión para el chat</button>
+      </div></div>`;
+    const rb=$('#reintentar'); if(rb) rb.onclick=()=>cargar(f);
+    const rc=$('#rescate'); if(rc) rc.onclick=copiarParaChat;
     return;
   }
   fecha=D.fecha;
@@ -924,7 +938,9 @@ async function cargar(f,silencioso){
   dec.propuestas ||= {};
   const vig=new Set((D.propuestas||[]).map(p=>p.id));
   for(const k of Object.keys(dec.propuestas)) if(!vig.has(k)) delete dec.propuestas[k];
-  $('#sel').innerHTML=(D.dias||[fecha]).slice().reverse()
+  const _dias=(D.dias||[]).slice();
+  if(!_dias.includes(fecha)) _dias.push(fecha);   // hoy SIEMPRE en la lista
+  $('#sel').innerHTML=_dias.sort().reverse()
     .map(d=>`<option value="${d}" ${d===fecha?'selected':''}>${dia(d)}</option>`).join('');
   pintarUmbral();
   if(D.arrastre_de){   // el aviso va DESPUÉS de pintar: antes lo borraba el repintado
