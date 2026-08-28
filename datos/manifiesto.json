@@ -69,6 +69,22 @@
      "texto": "«Vender o construir. Llevas años en esa pregunta.» El Plan no responde por él: le pone enfrente lo que su suelo aguanta."
     }
    ]
+  },
+  {
+   "id": "apodo-g4-1eb441",
+   "titulo": "El Apodo del Terreno · L4 «el baldío», L5 «inventan», L9 «Personalizado»",
+   "laminas": [
+    "laminas/apodo-g4/L1.png",
+    "laminas/apodo-g4/L2.png",
+    "laminas/apodo-g4/L3.png",
+    "laminas/apodo-g4/L4.png",
+    "laminas/apodo-g4/L5.png",
+    "laminas/apodo-g4/L6.png",
+    "laminas/apodo-g4/L7.png",
+    "laminas/apodo-g4/L8.png",
+    "laminas/apodo-g4/L9.png"
+   ],
+   "video": null
   }
  ],
  "parrilla": [
@@ -174,6 +190,10 @@
   {
    "hora": "17:13",
    "evento": "El cuento de Pub 1 sigue en la cancha (FB+IG): primer día de medición orgánica"
+  },
+  {
+   "hora": "10:37",
+   "evento": "Propuesta montada: El Apodo del Terreno · L4 «el baldío», L5 «inventan», L9 «Personalizado» (9 láminas)"
   }
  ],
  "decisiones": {},
