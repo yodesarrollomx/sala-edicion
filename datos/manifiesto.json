@@ -9,22 +9,33 @@
  ],
  "propuestas": [
   {
-   "id": "publicar-servilleta",
+   "id": "gancho-servilleta",
    "tipo": "eje",
-   "titulo": "La Servilleta · ¿sale hoy?",
    "laminas": [],
-   "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/REEL_9x16.mp4",
-   "origen": "aprobada 7/7 el 12-ago · el video y las ligas medibles llevan esperando tu palabra",
+   "video": null,
+   "titulo": "El gancho de los primeros 3 segundos · elige",
+   "origen": "Hormozi: «el gancho actual es un chiste, no un anzuelo — pierdes al 60% ahí»",
    "opciones": [
     {
-     "titulo": "Publícala hoy",
-     "texto": "Sale a FB e IG como el cuento: reel 9:16, copy con la voz del guion («la servilleta se quedó de recuerdo»), la puerta del co-desarrollo insinuada, y liga medible propia. Yo publico y pongo el primer comentario con la liga."
+     "titulo": "A · Le habla al dueño",
+     "texto": "EN PANTALLA: «Tu terreno lleva años oyendo opiniones.» · VOZ (él, cansado): «Todos opinan de tu terreno. Menos el terreno.» — Gana en frío: nombra al dueño de terreno en el primer segundo."
     },
     {
-     "titulo": "Todavía no",
-     "texto": "Se queda lista y vuelve a preguntarte mañana. Dime en la nota qué le falta y lo cambio antes de que salga."
+     "titulo": "B · El conflicto vivo",
+     "texto": "EN PANTALLA: «—Ahí van locales, dice mi compadre.» · VOZ (ella, seca): «¿Y tu compadre qué ha construido?» — Gana en retención si la cuenta ya tiene audiencia."
     }
    ]
+  },
+  {
+   "id": "plan-hormozi",
+   "tipo": "laminas",
+   "titulo": "El corte Hormozi · las tarjetas de las 6 escenas (texto + voz + movimiento)",
+   "laminas": [
+    "laminas/servilleta-hormozi/L1.png",
+    "laminas/servilleta-hormozi/L2.png"
+   ],
+   "video": null,
+   "origen": "tu encargo del 27-ago: las tarjetas como MUST, homologando texto, audio y video en una sola declaración"
   }
  ],
  "parrilla": [
@@ -91,11 +102,11 @@
  },
  "retro": {
   "fecha": "2026-08-27",
-  "aprobadas": 9,
-  "tiradas": 0,
-  "producidas": 9,
+  "aprobadas": 0,
+  "tiradas": 2,
+  "producidas": 2,
   "rehechas": 0,
-  "nota": "9 de 9: aprobaste el plan de la película Y la tira completa. El Apodo pasa a video. Hoy la única decisión que queda es la que llevaba 15 días sin pantalla: publicar La Servilleta."
+  "nota": "Tenías razón: la escena 1 y la 7 tenían el texto y la voz desalineados (error mío al escribir el guion sobre láminas viejas). Ya hay un candado que lo caza antes de producir."
  },
  "produccion": [
   {
@@ -345,9 +356,14 @@
  },
  "sugerencias": [
   [
-   "Publícala hoy",
-   "Cambia el copy antes de salir",
-   "Espérate al lunes"
+   "Va el gancho A",
+   "Va el B",
+   "Ninguno — dame otros"
+  ],
+  [
+   "El corte va así",
+   "No quites la escena 4",
+   "El pivote más tarde"
   ]
  ]
 }
