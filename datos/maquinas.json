@@ -1,0 +1,105 @@
+{
+ "actualizado": "2026-08-28 11:45",
+ "maquinas": [
+  {
+   "id": "com.yod.pintarron.server",
+   "nombre": "Pintarrón",
+   "hace": "Sirve el tablero de todas las sesiones de Claude en localhost:8643.",
+   "evita": "perder de vista qué sesiones hay abiertas",
+   "cuando": "siempre encendida",
+   "corrio": null,
+   "dijo": "",
+   "salud": "bien",
+   "porque": "es un servidor: está encendido ahora mismo"
+  },
+  {
+   "id": "mx.yodesarrollo.cierre",
+   "nombre": "Voces pendientes",
+   "hace": "Cuando la cuota gratis de voz se agota a media grabación, ésta espera a que reabra, graba las líneas que faltaron y rearma el video sola.",
+   "evita": "que una línea se quede sin voz y el video salga incompleto",
+   "cuando": "cada 30 minutos",
+   "corrio": "hace 11 min",
+   "dijo": "H6_0: cuota cerrada (HTTP Error 429: Too Many Requests)",
+   "salud": "bien",
+   "porque": "corriendo en su horario"
+  },
+  {
+   "id": "mx.yodesarrollo.corte",
+   "nombre": "Armado del corte",
+   "hace": "Rehace el corte completo (voces, escenas, mezcla, reel vertical) cuando algo cambió.",
+   "evita": "tener que rearmar el video a mano cada vez que se corrige una pieza",
+   "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
+   "corrio": "hace 5 horas",
+   "dijo": "voces completas; el corte se re-armó",
+   "salud": "bien",
+   "porque": "corriendo en su horario"
+  },
+  {
+   "id": "mx.yodesarrollo.cuento",
+   "nombre": "El cuento",
+   "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
+   "evita": "lo mismo que el de arriba, pero para esa pieza",
+   "cuando": "a las 5:30, 6:45",
+   "corrio": "hace 5 horas",
+   "dijo": "  el cuento ya esta hecho; nada que hacer",
+   "salud": "bien",
+   "porque": "corriendo en su horario"
+  },
+  {
+   "id": "mx.yodesarrollo.relevo",
+   "nombre": "Relevo del día",
+   "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
+   "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
+   "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
+   "corrio": null,
+   "dijo": "",
+   "salud": "duda",
+   "porque": "nunca ha escrito: o no le ha tocado su hora, o falla en silencio"
+  },
+  {
+   "id": "mx.yodesarrollo.sala",
+   "nombre": "Sala local",
+   "hace": "Levanta la copia de la Sala en esta Mac, para trabajar sin internet.",
+   "evita": "quedarte sin Sala si se cae GitHub",
+   "cuando": "siempre encendida",
+   "corrio": "hace 27 días",
+   "dijo": "  Sala de Edición · http://localhost:8711  (2026-08-01T11:09:55-07:00)",
+   "salud": "bien",
+   "porque": "es un servidor: está encendido ahora mismo"
+  },
+  {
+   "id": "mx.yodesarrollo.servilleta",
+   "nombre": "Escenas del video",
+   "hace": "Anima las escenas que faltan en cuanto reabre la cuota de GPU. Cuando ya están las siete, se apaga sola.",
+   "evita": "quedarte a media animación porque se acabó la cuota gratis del día",
+   "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
+   "corrio": "hace 12 días",
+   "dijo": "  hechos: 2  ·  pendientes: 0",
+   "salud": "duda",
+   "porque": "lleva 12 días sin correr — puede que ya terminó su trabajo"
+  },
+  {
+   "id": "mx.yodesarrollo.vigilante",
+   "nombre": "El vigilante",
+   "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
+   "evita": "enterarte por un tercero de que un tablero estaba abierto",
+   "cuando": "a las 6:45",
+   "corrio": "hace 5 horas",
+   "dijo": "==============================================================================",
+   "salud": "bien",
+   "porque": "corriendo en su horario"
+  }
+ ],
+ "faltan": [
+  {
+   "que": "Cierre diciendo «Plan de Potencial Personalizado»",
+   "quien": "mx.yodesarrollo.cierre",
+   "espera": "la cuota de voz de Gemini"
+  }
+ ],
+ "resumen": {
+  "bien": 6,
+  "duda": 2,
+  "mal": 0
+ }
+}
