@@ -131,6 +131,16 @@
      "texto": "Pídele a tu terreno su Plan de Potencial Personalizado. / Escríbenos · el primer paso es una videollamada"
     }
    ]
+  },
+  {
+   "id": "pivote-e4-0430e7",
+   "titulo": "Escena 4 · el pivote rehecho · ¿toma A, B o C? (recomiendo la B)",
+   "laminas": [
+    "laminas/pivote-e4/L1.png",
+    "laminas/pivote-e4/L2.png",
+    "laminas/pivote-e4/L3.png"
+   ],
+   "video": null
   }
  ],
  "parrilla": [
@@ -244,6 +254,10 @@
   {
    "hora": "10:38",
    "evento": "Guion montado: ¿Vendo o construyo? (9 láminas, texto para tu visto bueno)"
+  },
+  {
+   "hora": "10:50",
+   "evento": "Propuesta montada: Escena 4 · el pivote rehecho · ¿toma A, B o C? (recomiendo la B) (3 láminas)"
   }
  ],
  "decisiones": {},
