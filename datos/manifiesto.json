@@ -9,33 +9,48 @@
  ],
  "propuestas": [
   {
-   "id": "gancho-servilleta",
+   "id": "apodo-g3",
+   "tipo": "laminas",
+   "titulo": "El Apodo del Terreno · L4 y L9 con tus notas",
+   "laminas": [
+    "laminas/apodo-g3/L1.png",
+    "laminas/apodo-g3/L2.png",
+    "laminas/apodo-g3/L3.png",
+    "laminas/apodo-g3/L4.png",
+    "laminas/apodo-g3/L5.png",
+    "laminas/apodo-g3/L6.png",
+    "laminas/apodo-g3/L7.png",
+    "laminas/apodo-g3/L8.png",
+    "laminas/apodo-g3/L9.png"
+   ],
+   "video": null,
+   "origen": "rehecha-de apodo-g2-47cdf9 · fuera «pleito», entorno urbano, y tu texto de cierre"
+  },
+  {
+   "id": "ganchos-casos",
    "tipo": "eje",
    "laminas": [],
    "video": null,
-   "titulo": "El gancho de los primeros 3 segundos · elige",
-   "origen": "Hormozi: «el gancho actual es un chiste, no un anzuelo — pierdes al 60% ahí»",
+   "titulo": "La magnitud del Plan de Potencial · ¿qué caso abrimos?",
+   "origen": "tu nota: «estamos repitiendo conceptos y no viendo la magnitud de ejemplos»",
    "opciones": [
     {
-     "titulo": "A · Le habla al dueño",
-     "texto": "EN PANTALLA: «Tu terreno lleva años oyendo opiniones.» · VOZ (él, cansado): «Todos opinan de tu terreno. Menos el terreno.» — Gana en frío: nombra al dueño de terreno en el primer segundo."
+     "titulo": "1 · La herencia que nadie mueve",
+     "texto": "Tres hermanos, un terreno, cero acuerdos — porque nadie sabe qué vale la pena hacer. GANCHO: «Se heredaron un terreno. Y una discusión de quince años.» El Plan de Potencial les da el dato que ninguno tiene, y la discusión se acaba."
     },
     {
-     "titulo": "B · El conflicto vivo",
-     "texto": "EN PANTALLA: «—Ahí van locales, dice mi compadre.» · VOZ (ella, seca): «¿Y tu compadre qué ha construido?» — Gana en retención si la cuenta ya tiene audiencia."
+     "titulo": "2 · El predial que no duerme",
+     "texto": "Lleva años pagando por algo que no produce nada. GANCHO: «Tu terreno cobra cada año. ¿Y qué te ha dado a cambio?» El Plan le dice si puede empezar a devolver algo — o si conviene soltarlo."
+    },
+    {
+     "titulo": "3 · La oferta que llegó de la nada",
+     "texto": "Alguien tocó la puerta con una oferta. Y no sabe si es buena. GANCHO: «El que te quiere comprar ya hizo su análisis. ¿Y tú?» Nadie decide con menos información que el comprador."
+    },
+    {
+     "titulo": "4 · ¿Vendo o construyo?",
+     "texto": "La pregunta que lo tiene parado. GANCHO: «Vender o construir. Llevas años en esa pregunta.» El Plan no responde por él: le pone enfrente lo que su suelo aguanta, y él decide."
     }
    ]
-  },
-  {
-   "id": "plan-hormozi",
-   "tipo": "laminas",
-   "titulo": "El corte Hormozi · las tarjetas de las 6 escenas (texto + voz + movimiento)",
-   "laminas": [
-    "laminas/servilleta-hormozi/L1.png",
-    "laminas/servilleta-hormozi/L2.png"
-   ],
-   "video": null,
-   "origen": "tu encargo del 27-ago: las tarjetas como MUST, homologando texto, audio y video en una sola declaración"
   }
  ],
  "parrilla": [
@@ -102,11 +117,11 @@
  },
  "retro": {
   "fecha": "2026-08-27",
-  "aprobadas": 0,
+  "aprobadas": 7,
   "tiradas": 2,
   "producidas": 2,
-  "rehechas": 0,
-  "nota": "Tenías razón: la escena 1 y la 7 tenían el texto y la voz desalineados (error mío al escribir el guion sobre láminas viejas). Ya hay un candado que lo caza antes de producir."
+  "rehechas": 2,
+  "nota": "Aplicadas tus dos notas: fuera «pleito» y la escena se mudó a avenida urbana; el cierre dice tu frase. Y los ganchos ahora abren CUATRO situaciones distintas, no el mismo dolor cuatro veces."
  },
  "produccion": [
   {
@@ -356,14 +371,49 @@
  },
  "sugerencias": [
   [
-   "Va el gancho A",
-   "Va el B",
-   "Ninguno — dame otros"
+   "Otra hora del día",
+   "Más gente en la banqueta",
+   "Edificios más altos"
   ],
   [
-   "El corte va así",
-   "No quites la escena 4",
-   "El pivote más tarde"
+   "Otra hora del día",
+   "Más gente en la banqueta",
+   "Edificios más altos"
+  ],
+  [
+   "Otra hora del día",
+   "Más gente en la banqueta",
+   "Edificios más altos"
+  ],
+  [
+   "Otra hora del día",
+   "Más gente en la banqueta",
+   "Edificios más altos"
+  ],
+  [
+   "Otra hora del día",
+   "Más gente en la banqueta",
+   "Edificios más altos"
+  ],
+  [
+   "Otra hora del día",
+   "Más gente en la banqueta",
+   "Edificios más altos"
+  ],
+  [
+   "Otra hora del día",
+   "Más gente en la banqueta",
+   "Edificios más altos"
+  ],
+  [
+   "Otra hora del día",
+   "Más gente en la banqueta",
+   "Edificios más altos"
+  ],
+  [
+   "Otra hora del día",
+   "Más gente en la banqueta",
+   "Edificios más altos"
   ]
  ]
 }
