@@ -46,6 +46,17 @@
    "porque": "corriendo en su horario"
   },
   {
+   "id": "mx.yodesarrollo.maquinas",
+   "nombre": "Este reporte",
+   "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
+   "evita": "no tener manera de saber si algo corre de verdad",
+   "cuando": "cada 30 minutos",
+   "corrio": null,
+   "dijo": "",
+   "salud": "duda",
+   "porque": "nunca ha escrito: o no le ha tocado su hora, o falla en silencio"
+  },
+  {
    "id": "mx.yodesarrollo.relevo",
    "nombre": "Relevo del día",
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
@@ -99,7 +110,7 @@
  ],
  "resumen": {
   "bien": 6,
-  "duda": 2,
+  "duda": 3,
   "mal": 0
  }
 }
