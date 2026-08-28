@@ -176,6 +176,29 @@ dialog input{width:100%;background:var(--tinta);color:var(--crema);border:1px so
   background:rgba(120,110,90,.10);color:#5a5346;border:1px solid rgba(120,110,90,.22);}
 .aviso-edicion[data-viejo="1"]{background:rgba(160,90,30,.10);color:#8a5f18;
   border-color:rgba(160,90,30,.34);font-weight:600;}
+
+/* Las máquinas: qué corre solo, qué falta y desde dónde mandarme retro */
+.maqs{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.maq{background:var(--papel);border:1px solid var(--linea);border-radius:12px;padding:15px 16px}
+.maq.mal{border-color:var(--no)}
+.maq.duda{border-color:var(--oro)}
+.maq h4{margin:0 0 2px;font-size:16px;font-weight:500}
+.maq .sem{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.maq .sem.bien{background:var(--si-cl)} .maq .sem.duda{background:var(--oro)} .maq .sem.mal{background:var(--no)}
+.maq .hace{color:var(--gris);font-size:13.5px;line-height:1.5;margin:8px 0 0}
+.maq .evita{color:var(--guia);font-size:12.5px;font-style:italic;margin:7px 0 0}
+.maq .pie{margin-top:11px;padding-top:10px;border-top:1px solid var(--linea);
+  display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--guia)}
+.maq .pie b{color:var(--crema);font-weight:500}
+.maq .dijo{margin-top:7px;font-size:11.5px;color:var(--guia);font-family:ui-monospace,Menlo,monospace;
+  word-break:break-word;opacity:.85}
+.faltan{margin:0 0 16px;padding:13px 16px;border:1px solid var(--oro);border-radius:12px;
+  background:rgba(194,160,107,.07)}
+.faltan p{margin:0 0 6px;font-size:13.5px}
+.faltan li{font-size:13.5px;color:var(--gris);margin:4px 0}
+.maqAcc{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0 0;align-items:center}
+.maqAcc textarea{flex:1;min-width:240px;background:var(--papel);color:var(--crema);
+  border:1px solid var(--linea2);border-radius:9px;padding:10px 12px;font:inherit;font-size:14px;resize:vertical}
 </style>
 
 <header>
@@ -744,6 +767,71 @@ function mostrarCierre(sello,enCola){
 /* ═══ LA MESA ═══ */
 const CAMINO=['idea','guion','láminas','video','publicada'];
 const PASO_DE={g0:1,g1:2,g2:3,g3:4,pub:5,med:5,rehacer:3};
+
+// ---- Las máquinas: lo que corre solo. Se lee de datos/maquinas.json, que
+//      una tarea local reescribe cada media hora leyendo launchd de verdad.
+let MAQ=null;
+async function traerMaquinas(){
+  try{
+    const r=await fetch('datos/maquinas.json?v='+Date.now());
+    if(!r.ok) return null;
+    return await r.json();
+  }catch(e){ return null }
+}
+function pintarMaquinas(){
+  const cont=$('#franjaMaq'); if(!cont) return;
+  if(!MAQ){ cont.innerHTML=''; return }
+  const r=MAQ.resumen||{}; const ms=MAQ.maquinas||[]; const fs=MAQ.faltan||[];
+  const orden={mal:0,duda:1,bien:2};
+  const lista=[...ms].sort((a,b)=>(orden[a.salud]-orden[b.salud]));
+  let h=`<div class="ftit"><span class="kick">Las máquinas</span>
+    <h2 class="serif">Lo que corre solo mientras tú no estás</h2>
+    <span class="mini">${r.bien||0} bien · ${r.duda||0} en duda · ${r.mal||0} mal · al ${esc(MAQ.actualizado||'')}</span></div>`;
+  if(fs.length){
+    h+=`<div class="faltan"><p><b>Lo que falta ahorita:</b></p><ul>`+
+      fs.map(f=>`<li>${esc(f.que)} — esperando ${esc(f.espera||'')}</li>`).join('')+`</ul></div>`;
+  }
+  h+='<div class="maqs">'+lista.map(m=>`<div class="maq ${esc(m.salud)}">
+      <h4><span class="sem ${esc(m.salud)}"></span>${esc(m.nombre)}</h4>
+      <p class="hace">${esc(m.hace)}</p>
+      ${m.evita?`<p class="evita">Te evita ${esc(m.evita)}.</p>`:''}
+      <div class="pie"><span>Corre <b>${esc(m.cuando||'nunca')}</b></span>
+        <span>Última vez: <b>${esc(m.corrio||'nunca')}</b></span></div>
+      <div class="pie" style="border:0;padding-top:2px">${esc(m.porque)}</div>
+      ${m.dijo?`<div class="dijo">${esc(m.dijo)}</div>`:''}
+    </div>`).join('')+'</div>';
+  h+=`<div class="maqAcc">
+      <textarea id="maqRetro" rows="2" placeholder="Retro sobre las máquinas o encargo para el próximo /sala — se guarda en el Sheet"></textarea>
+      <button class="dorado" id="maqEnviar">Mandar</button>
+      <button id="maqSala">Pedir /sala</button>
+    </div>
+    <div class="conexion" id="maqAviso" style="margin-top:8px"></div>`;
+  cont.innerHTML=h;
+  $('#maqEnviar').onclick=()=>mandarEncargo($('#maqRetro').value.trim(),'retro');
+  $('#maqSala').onclick=()=>mandarEncargo($('#maqRetro').value.trim()||'Corre la sala.','sala');
+}
+// Se manda como fila de PRODUCCIÓN (acción que el GAS ya acepta hoy) para no
+// tener que republicar el Apps Script — republicarlo a mano rompe la liga.
+async function mandarEncargo(texto,tipo){
+  const av=$('#maqAviso');
+  if(!texto){ if(av) av.textContent='escribe algo primero'; return }
+  const envio={accion:'produccion',clave:CLAVE(),fecha:D.fecha||new Date().toLocaleDateString('sv-SE'),
+    pieza: tipo==='sala' ? 'ENCARGO · corre la sala' : 'ENCARGO · retro',
+    estado:'pendiente', detalle:texto, enlace:''};
+  if(!GAS()){ encolar(envio); if(av) av.textContent='guardado aquí — sube solo al conectar el Sheet'; return }
+  if(av) av.textContent='mandando…';
+  try{
+    const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(envio)});
+    const j=await leerJSON(r);
+    if(!r.ok||!j||j.ok!==true) throw new Error('el Sheet no contestó');
+    $('#maqRetro').value='';
+    if(av) av.textContent = tipo==='sala'
+      ? 'anotado en el Sheet — lo tomo en el próximo /sala'
+      : 'retro guardada en el Sheet '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+    traer(D.fecha).then(()=>{});
+  }catch(e){ encolar(envio); if(av) av.textContent='sin señal — quedó en cola y sube sola' }
+}
+
 function pintarMesa(){
   const m=$('#mesa'); let h='';
   const c=D.control||{};
@@ -808,6 +896,8 @@ function pintarMesa(){
       </div>`).join('')}</div></section>`;
   }
 
+  h+=`<section class="franja" id="franjaMaq"></section>`;
+
   const bt=D.bitacora||[];
   h+=`<section class="franja"><div class="ftit"><span class="kick">Bitácora</span>
     <h2 class="serif">El registro del día</h2></div>
@@ -816,6 +906,8 @@ function pintarMesa(){
   </section>`;
   m.innerHTML=h;
 
+  pintarMaquinas();
+  if(!MAQ) traerMaquinas().then(x=>{ if(x){ MAQ=x; pintarMaquinas() } });
   m.querySelectorAll('.celda.parada').forEach(cel=>cel.onclick=()=>andon(cel.dataset.dia,cel.dataset.pieza));
   $('#con').onclick=()=>{ $('#gasUrl').value=GAS(); $('#gasClave').value=CLAVE(); $('#dlg').showModal() };
 }
