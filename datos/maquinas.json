@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-28 11:45",
+ "actualizado": "2026-08-28 11:48",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "Cuando la cuota gratis de voz se agota a media grabación, ésta espera a que reabra, graba las líneas que faltaron y rearma el video sola.",
    "evita": "que una línea se quede sin voz y el video salga incompleto",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 11 min",
+   "corrio": "hace 14 min",
    "dijo": "H6_0: cuota cerrada (HTTP Error 429: Too Many Requests)",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -51,10 +51,10 @@
    "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
-   "corrio": null,
-   "dijo": "",
-   "salud": "duda",
-   "porque": "nunca ha escrito: o no le ha tocado su hora, o falla en silencio"
+   "corrio": "hace 2 min",
+   "dijo": "máquinas: publicado",
+   "salud": "bien",
+   "porque": "corriendo en su horario"
   },
   {
    "id": "mx.yodesarrollo.relevo",
@@ -109,8 +109,8 @@
   }
  ],
  "resumen": {
-  "bien": 6,
-  "duda": 3,
+  "bien": 7,
+  "duda": 2,
   "mal": 0
  }
 }
