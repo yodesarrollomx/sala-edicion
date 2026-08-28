@@ -85,6 +85,52 @@
     "laminas/apodo-g4/L9.png"
    ],
    "video": null
+  },
+  {
+   "id": "vendo-construyo-guion",
+   "tipo": "eje",
+   "laminas": [],
+   "video": null,
+   "titulo": "¿Vendo o construyo? · el guion, antes de las láminas",
+   "origen": "elegiste el caso 4 en «La magnitud del Plan de Potencial»",
+   "opciones": [
+    {
+     "titulo": "L1 · Portada",
+     "texto": "«Vender o construir.» / «Llevas años en esa pregunta.»"
+    },
+    {
+     "titulo": "L2 · El espejo",
+     "texto": "No es que no te decidas. Es que nadie te ha dicho qué aguanta tu suelo."
+    },
+    {
+     "titulo": "L3 · El costo de no decidir",
+     "texto": "Cada año que pasa, el terreno cobra predial. Y no ha dado un solo argumento a favor de ninguna de las dos."
+    },
+    {
+     "titulo": "L4 · Por qué no se decide",
+     "texto": "Vender se siente seguro porque es lo único que trae número. Construir se siente grande porque nadie lo ha medido."
+    },
+    {
+     "titulo": "L5 · El error",
+     "texto": "Comparas una opción con precio contra una opción con neblina. Así siempre gana la primera."
+    },
+    {
+     "titulo": "L6 · El giro",
+     "texto": "El Plan de Potencial no te dice cuál escoger. Le pone número a la que hoy no lo tiene."
+    },
+    {
+     "titulo": "L7 · Qué sale",
+     "texto": "Cuántos m² permite tu suelo, qué giros caben, qué le exige la norma y qué tendrías que resolver de agua, drenaje, vialidad y estacionamiento."
+    },
+    {
+     "titulo": "L8 · La comparación justa",
+     "texto": "Con eso ya no comparas una oferta contra una duda. Comparas dos escenarios con la misma cara."
+    },
+    {
+     "titulo": "L9 · Cierre",
+     "texto": "Pídele a tu terreno su Plan de Potencial Personalizado. / Escríbenos · el primer paso es una videollamada"
+    }
+   ]
   }
  ],
  "parrilla": [
@@ -194,6 +240,10 @@
   {
    "hora": "10:37",
    "evento": "Propuesta montada: El Apodo del Terreno · L4 «el baldío», L5 «inventan», L9 «Personalizado» (9 láminas)"
+  },
+  {
+   "hora": "10:38",
+   "evento": "Guion montado: ¿Vendo o construyo? (9 láminas, texto para tu visto bueno)"
   }
  ],
  "decisiones": {},
