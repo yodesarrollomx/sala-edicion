@@ -99,6 +99,12 @@ main{max-width:900px;margin:0 auto;padding:6px 22px 90px}
 .turno .salir{margin-left:auto}
 .turno .escena{flex:1;display:flex;flex-direction:column;align-items:center;
   justify-content:center;padding:0 18px;min-height:0;overflow-y:auto}
+.turno .escena video{max-width:min(92vw,420px);max-height:70vh;border-radius:8px;border:1px solid var(--linea);background:#000}
+.audioCaja{display:flex;flex-direction:column;gap:8px;align-items:center;padding:22px;border:1px solid var(--linea);border-radius:11px;background:var(--papel);min-width:min(90vw,420px)}
+.audioCaja audio{width:100%}
+.medioBoleta{display:flex;justify-content:center;margin-bottom:16px}
+.medioBoleta video{max-width:min(88vw,300px);max-height:46vh;border-radius:10px;border:1px solid var(--linea);background:#000}
+.mapa video{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:5px;border:2px solid var(--linea)}
 .turno .escena img{max-width:min(92vw,480px);max-height:100%;object-fit:contain;
   border-radius:8px;border:1px solid var(--linea)}
 .turno .titProp{font-size:13px;color:var(--guia);margin:8px 0 0;text-align:center}
@@ -208,6 +214,14 @@ dialog input{width:100%;background:var(--tinta);color:var(--crema);border:1px so
    - todo lo visible sale de datos; todo gesto produce un dato que el agente lee */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function medio(src,extra){
+  const u=String(src||''), b=u.split('?')[0].toLowerCase();
+  if(/\.(mp4|mov|webm|m4v)$/.test(b))
+    return '<video src="'+esc(u)+'" controls playsinline preload="metadata" '+(extra||'')+'></video>';
+  if(/\.(wav|mp3|m4a|aac|ogg)$/.test(b))
+    return '<div class="audioCaja"><span class="kick">escúchalo</span><audio src="'+esc(u)+'" controls preload="metadata"></audio></div>';
+  return '<img src="'+esc(u)+'" alt="" '+(extra||'')+'>';
+}
 const uuid=()=>(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));
 let D={propuestas:[]}, dec={propuestas:{}}, fecha=null, deshacer=null;
 
@@ -418,7 +432,7 @@ function pintarPaso(){
     const src=cand?cand[Math.min(el,cand.length-1)]:p.laminas[x.i];
     turnoVivo.innerHTML=`${arriba}
       <div class="escena" id="esc">
-        <img src="${esc(src)}" alt="Lámina ${x.i+1}">
+        ${medio(src,'alt="pieza '+(x.i+1)+'"')}
         ${cand?`<div class="pasarela" style="display:flex;gap:10px;justify-content:center;margin:10px 0 2px">
           ${cand.map((_,k)=>`<button data-k="${k}" style="width:44px;height:44px;border-radius:50%;font-family:inherit;font-size:15px;cursor:pointer;border:1.5px solid ${k===el?'var(--oro-cl,#deb47e)':'rgba(255,255,255,.28)'};background:${k===el?'var(--oro-cl,#deb47e)':'transparent'};color:${k===el?'#141414':'rgba(255,255,255,.75)'}">${String.fromCharCode(65+k)}</button>`).join('')}
         </div><p class="titProp" style="margin-top:2px">toma ${String.fromCharCode(65+el)} en pantalla — aprueba la que se queda</p>`:''}
@@ -457,7 +471,8 @@ function pintarPaso(){
   if(x.tipo==='boleta'){
     const p=prop(x.pid);
     turnoVivo.innerHTML=`${arriba}
-      <div class="escena"><div class="boleta">
+      <div class="escena">${p.video?('<div class="medioBoleta">'+medio(p.video)+'</div>'):''}
+      <div class="boleta">
         <span class="kick" style="text-align:center">${esc(p.titulo)}</span>
         <p class="intro">Escoge la idea de la semana — todo lo demás nace de aquí.</p>
         ${p.opciones.map((o,i)=>{const e=estado(x.pid,i);
@@ -530,7 +545,7 @@ function mapaTira(pid){
   m.innerHTML=`<div style="text-align:center;margin-bottom:14px">
       <span class="kick">${esc(p.titulo)} — la historia completa</span></div>
     <div class="grid">${p.laminas.map((l,i)=>{const e=estado(pid,i);
-      return `<div class="${e?'m-'+e:''}" data-i="${i}"><img src="${esc(l)}" alt="${i+1}"></div>`}).join('')}
+      return `<div class="${e?'m-'+e:''}" data-i="${i}">${medio(l)}</div>`}).join('')}
     </div>
     <div style="text-align:center;margin-top:16px"><button class="menor">Volver a decidir</button></div>`;
   m.onclick=ev=>{
@@ -886,7 +901,15 @@ function normalizarDia(j){
   Object.values(porId).forEach(p=>{
     const m=/rehecha-de (\S+)/.exec(p.origen||''); if(m) retiradas.add(m[1]);
   });
-  j.propuestas=Object.values(porId).filter(p=>!retiradas.has(p.id));
+  const marcas=(j.decisiones&&j.decisiones.propuestas)||{};
+  j.propuestas=Object.values(porId).filter(p=>{
+    if(retiradas.has(p.id)) return false;
+    const f=marcas[p.id]; if(!f||!f.laminas) return true;
+    const n=(p.tipo==='eje'?(p.opciones||[]).length:(p.laminas||[]).length)||0;
+    if(!n) return true;
+    let hechas=0; for(let i=0;i<n;i++){const m=f.laminas[i]; if(m==='si'||m==='no') hechas++}
+    return hechas<n;   // ya decidida por completo: fuera de la mesa de hoy
+  });
   return j;
 }
 /* ARRASTRE: lo pendiente NO se pierde al cambiar el día.
