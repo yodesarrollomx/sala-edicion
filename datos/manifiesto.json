@@ -1,6 +1,6 @@
 {
  "_que_es": "Manifiesto de respaldo: el portal lo lee cuando el Sheet aún no está conectado. Cuando el GAS ya está en línea, esta copia queda de plan B.",
- "fecha": "2026-08-27",
+ "fecha": "2026-08-28",
  "dias": [
   "2026-08-01",
   "2026-08-04",
@@ -9,8 +9,27 @@
  ],
  "propuestas": [
   {
+   "id": "corte-hormozi",
+   "tipo": "eje",
+   "laminas": [],
+   "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/CORTE_HORMOZI.mp4",
+   "titulo": "La Servilleta · el corte Hormozi (32 s) — ¿va así?",
+   "origen": "aprobaste el plan 2/2 · las 7 voces alineadas con lo que se lee · el llamado ya es el titular",
+   "opciones": [
+    {
+     "titulo": "Va así — publícalo",
+     "texto": "Sale a FB e IG con el copy y la liga medible ya listos. Yo publico y pongo el primer comentario."
+    },
+    {
+     "titulo": "Rehaz la escena 4 primero",
+     "texto": "El pivote: que ella APARTE la servilleta y ponga el plano del predio — el gesto de cambiar de método, no el resultado. Hoy la imagen ya muestra papeles y por eso el giro no se siente giro."
+    }
+   ]
+  },
+  {
    "id": "apodo-g3",
    "tipo": "laminas",
+   "video": null,
    "titulo": "El Apodo del Terreno · L4 y L9 con tus notas",
    "laminas": [
     "laminas/apodo-g3/L1.png",
@@ -23,8 +42,7 @@
     "laminas/apodo-g3/L8.png",
     "laminas/apodo-g3/L9.png"
    ],
-   "video": null,
-   "origen": "rehecha-de apodo-g2-47cdf9 · fuera «pleito», entorno urbano, y tu texto de cierre"
+   "origen": "rehecha-de apodo-g2-47cdf9 · fuera «pleito», avenida urbana, y tu texto de cierre"
   },
   {
    "id": "ganchos-casos",
@@ -36,19 +54,19 @@
    "opciones": [
     {
      "titulo": "1 · La herencia que nadie mueve",
-     "texto": "Tres hermanos, un terreno, cero acuerdos — porque nadie sabe qué vale la pena hacer. GANCHO: «Se heredaron un terreno. Y una discusión de quince años.» El Plan de Potencial les da el dato que ninguno tiene, y la discusión se acaba."
+     "texto": "«Se heredaron un terreno. Y una discusión de quince años.» Tres hermanos, cero acuerdos — porque nadie tiene el dato."
     },
     {
      "titulo": "2 · El predial que no duerme",
-     "texto": "Lleva años pagando por algo que no produce nada. GANCHO: «Tu terreno cobra cada año. ¿Y qué te ha dado a cambio?» El Plan le dice si puede empezar a devolver algo — o si conviene soltarlo."
+     "texto": "«Tu terreno cobra cada año. ¿Y qué te ha dado a cambio?» Lleva años pagando por algo que no produce."
     },
     {
      "titulo": "3 · La oferta que llegó de la nada",
-     "texto": "Alguien tocó la puerta con una oferta. Y no sabe si es buena. GANCHO: «El que te quiere comprar ya hizo su análisis. ¿Y tú?» Nadie decide con menos información que el comprador."
+     "texto": "«El que te quiere comprar ya hizo su análisis. ¿Y tú?» Nadie decide con menos información que el comprador."
     },
     {
      "titulo": "4 · ¿Vendo o construyo?",
-     "texto": "La pregunta que lo tiene parado. GANCHO: «Vender o construir. Llevas años en esa pregunta.» El Plan no responde por él: le pone enfrente lo que su suelo aguanta, y él decide."
+     "texto": "«Vender o construir. Llevas años en esa pregunta.» El Plan no responde por él: le pone enfrente lo que su suelo aguanta."
     }
    ]
   }
@@ -118,10 +136,10 @@
  "retro": {
   "fecha": "2026-08-27",
   "aprobadas": 7,
-  "tiradas": 2,
-  "producidas": 2,
-  "rehechas": 2,
-  "nota": "Aplicadas tus dos notas: fuera «pleito» y la escena se mudó a avenida urbana; el cierre dice tu frase. Y los ganchos ahora abren CUATRO situaciones distintas, no el mismo dolor cuatro veces."
+  "tiradas": 4,
+  "producidas": 11,
+  "rehechas": 4,
+  "nota": "El corte Hormozi ya está completo y revisado: 32 s, 6 escenas, las 7 voces alineadas con lo que se lee, y el llamado convertido en titular."
  },
  "produccion": [
   {
