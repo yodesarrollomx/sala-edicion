@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-28 12:46",
+ "actualizado": "2026-08-28 13:16",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -19,7 +19,7 @@
    "evita": "que una línea se quede sin voz y el video salga incompleto",
    "cuando": "cada 30 minutos",
    "corrio": "hace 11 min",
-   "dijo": "  H6_0: cuota cerrada (HTTP Error 429: Too Many Requests)",
+   "dijo": "corte rearmado con: H6_0",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -29,7 +29,7 @@
    "hace": "Rehace el corte completo (voces, escenas, mezcla, reel vertical) cuando algo cambió.",
    "evita": "tener que rearmar el video a mano cada vez que se corrige una pieza",
    "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
-   "corrio": "hace 6 horas",
+   "corrio": "hace 7 horas",
    "dijo": "voces completas; el corte se re-armó",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -40,7 +40,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 6 horas",
+   "corrio": "hace 7 horas",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -62,7 +62,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 45 min",
+   "corrio": "hace 1 horas",
    "dijo": "2026-08-28: ya tiene 5 pendiente(s) — no toco nada",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -101,13 +101,7 @@
    "porque": "corriendo en su horario"
   }
  ],
- "faltan": [
-  {
-   "que": "Cierre diciendo «Plan de Potencial Personalizado»",
-   "quien": "mx.yodesarrollo.cierre",
-   "espera": "la cuota de voz de Gemini"
-  }
- ],
+ "faltan": [],
  "resumen": {
   "bien": 8,
   "duda": 1,
