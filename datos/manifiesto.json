@@ -15,90 +15,6 @@
  ],
  "propuestas": [
   {
-   "id": "vendo-construyo-guion",
-   "titulo": "¿Vendo o construyo? · el guion, antes de las láminas",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "L1 · Portada",
-     "texto": "«Vender o construir.» / «Llevas años en esa pregunta.»"
-    },
-    {
-     "titulo": "L2 · El espejo",
-     "texto": "No es que no te decidas. Es que nadie te ha dicho qué aguanta tu suelo."
-    },
-    {
-     "titulo": "L3 · El costo de no decidir",
-     "texto": "Cada año que pasa, el terreno cobra predial. Y no ha dado un solo argumento a favor de ninguna de las dos."
-    },
-    {
-     "titulo": "L4 · Por qué no se decide",
-     "texto": "Vender se siente seguro porque es lo único que trae número. Construir se siente grande porque nadie lo ha medido."
-    },
-    {
-     "titulo": "L5 · El error",
-     "texto": "Comparas una opción con precio contra una opción con neblina. Así siempre gana la primera."
-    },
-    {
-     "titulo": "L6 · El giro",
-     "texto": "El Plan de Potencial no te dice cuál escoger. Le pone número a la que hoy no lo tiene."
-    },
-    {
-     "titulo": "L7 · Qué sale",
-     "texto": "Cuántos m² permite tu suelo, qué giros caben, qué le exige la norma y qué tendrías que resolver de agua, drenaje, vialidad y estacionamiento."
-    },
-    {
-     "titulo": "L8 · La comparación justa",
-     "texto": "Con eso ya no comparas una oferta contra una duda. Comparas dos escenarios con la misma cara."
-    },
-    {
-     "titulo": "L9 · Cierre",
-     "texto": "Pídele a tu terreno su Plan de Potencial Personalizado. / Escríbenos · el primer paso es una videollamada"
-    }
-   ],
-   "video": null,
-   "origen": "elegiste el caso 4 en «La magnitud del Plan de Potencial»"
-  },
-  {
-   "id": "faciles-de-explicar",
-   "titulo": "Publicaciones fáciles de explicar · elige cuáles entran a la parrilla",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "1 · El baldío te cobra",
-     "texto": "Se explica en una frase: hay municipios que en su ley de ingresos cobran MÁS predial por un terreno sin construir, y lo nombran «baldío». Dato verificable, nadie lo discute, y duele. Cierra en: ¿cuánto lleva el tuyo pagando por no hacer nada?"
-    },
-    {
-     "titulo": "2 · El que te quiere comprar ya hizo el análisis",
-     "texto": "Una sola idea: el comprador llega con números y tú con corazonadas. No hay que enseñar nada técnico — todo el mundo ha estado del lado flaco de una negociación. Cierra en: pídele a tu terreno su Plan de Potencial antes de contestar la oferta."
-    },
-    {
-     "titulo": "3 · Tu terreno tiene un número y no lo conoces",
-     "texto": "Los m² que la norma permite construir ahí. Es UN número, se dice en cinco segundos y se entiende sin explicar urbanismo. Cierra en: ese número cambia si vendes o si construyes."
-    },
-    {
-     "titulo": "4 · Nadie hereda un terreno, se hereda una discusión",
-     "texto": "Tres hermanos, quince años, cero acuerdos. Se explica solo porque todo el mundo conoce el caso. Cierra en: no se ponen de acuerdo porque nadie tiene el dato, no porque se lleven mal."
-    },
-    {
-     "titulo": "5 · Lo que el suelo aguanta no se opina",
-     "texto": "Se mide. La idea completa cabe en una frase y separa a YOD de todos los que dan opiniones. Cierra en: el suelo ya contestó; falta que alguien le pregunte."
-    },
-    {
-     "titulo": "6 · La lista de las cinco preguntas",
-     "texto": "Agua, drenaje, vialidad, estacionamiento, energía. Cinco palabras que cualquiera entiende y que son exactamente lo que la autoridad te va a preguntar. Cierra en: si no tienes las cinco respuestas, todavía no tienes proyecto."
-    },
-    {
-     "titulo": "7 · El plano contra la servilleta",
-     "texto": "Imagen de una idea: dos papeles en la misma mesa. Es el pivote del video que ya está armado — se reusa el material y se explica sin decir una palabra técnica."
-    }
-   ],
-   "video": null,
-   "origen": "tu pedido del 28-ago: una lista donde sea fácil de explicar"
-  },
-  {
    "id": "vendo-construyo-g2-f1a3a7",
    "titulo": "¿Vendo o construyo? · tira v2 — revisión Hormozi aplicada a tus 4 notas",
    "tipo": "laminas",
@@ -118,6 +34,24 @@
    "opciones": [],
    "video": null,
    "origen": null
+  },
+  {
+   "id": "publicar-servilleta-v2",
+   "titulo": "La Servilleta · copy HORMOZI — ¿sale con éste?",
+   "tipo": "eje",
+   "laminas": [],
+   "opciones": [
+    {
+     "titulo": "Publícala con el copy Hormozi",
+     "texto": "EL COPY COMPLETO: «Todos opinan de tu terreno. Menos el terreno. / El cuñado lo resolvió en una servilleta: «puro departamento» — aunque ayer dijo bodegas. Y mientras la mesa opina, el que te quiere comprar ya hizo su análisis. / Hay una pregunta que cambia la conversación: ¿cuántos m² aguanta de verdad tu suelo? / Eso responde el Plan de Potencial Personalizado: los m² que la norma permite, qué giros caben (vivienda, bodegas, comercio…) y qué habría que resolver de agua, drenaje, vialidad y estacionamiento. / Con esa hoja enfrente, vender, construir o desarrollar dejan de ser corazonadas: son tres escenarios con la misma cara, y tú escoges. / Tú solo traes la ubicación. El primer paso es una videollamada. Pídele a tu terreno su Plan de Potencial Personalizado 👇» · Liga medible en el texto (FB) y en el primer comentario (IG, listo para pegar)."
+    },
+    {
+     "titulo": "Todavía le falta",
+     "texto": "Dime qué frase y la afino antes de que salga."
+    }
+   ],
+   "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/REEL_9x16.mp4",
+   "origen": "rehecha-de publicar-servilleta · tu nota: «un copy que usaría Hormozi para convertir en el Plan de Potencial»"
   }
  ],
  "parrilla": [
