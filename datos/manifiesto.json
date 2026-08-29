@@ -16,21 +16,21 @@
  "propuestas": [
   {
    "id": "publicar-servilleta",
-   "titulo": "La Servilleta · ¿sale ya?",
+   "titulo": "La Servilleta · ¿sale ya? (copy y ligas LISTOS abajo)",
    "tipo": "eje",
    "laminas": [],
    "opciones": [
     {
-     "titulo": "Publícala",
-     "texto": "Sale a FB e IG el reel 9:16 con TODO lo de esta semana: pivote nuevo, voz de ella corregida, narración en la escena 2, música y cierre «Personalizado». Copy con liga medible; yo publico y pongo el primer comentario."
+     "titulo": "Publícala con este copy",
+     "texto": "EL COPY (léelo, es lo que saldrá): «Todos opinan de tu terreno. Menos el terreno. / El cuñado lo resolvió en una servilleta: puro departamento —aunque ayer dijo bodegas—. Hasta que alguien preguntó: ¿y si calculamos de verdad qué aguanta? / El terreno contestó: en m². La servilleta se quedó de recuerdo. / Pídele a tu terreno su Plan de Potencial Personalizado. El primer paso es una videollamada.» · La liga medible va en el texto en FB y en el primer comentario en IG (ya generadas con la convención utm_campaign=fb/ig-2026-08-29). Yo publico el reel; el comentario de IG te lo dejo listo para pegar — el token no comenta, y eso ya está dicho sin rodeos."
     },
     {
-     "titulo": "Todavía no",
-     "texto": "Se queda lista. Dime en la nota qué le falta y lo cambio antes de que salga."
+     "titulo": "Cambia el copy primero",
+     "texto": "Dime en la nota qué frase cambio y te lo vuelvo a presentar antes de publicar."
     }
    ],
    "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/REEL_9x16.mp4",
-   "origen": "pendiente desde el 12-ago · el reel ya trae todas tus correcciones de esta semana"
+   "origen": "pendiente desde el 12-ago · ya no hay promesas: copy, ligas y reel final están escritos y a la vista"
   },
   {
    "id": "vendo-construyo-g1-41098b",
@@ -52,6 +52,24 @@
    "opciones": [],
    "video": null,
    "origen": null
+  },
+  {
+   "id": "vendo-construyo-g2-f1a3a7",
+   "titulo": "¿Vendo o construyo? · tira v2 — revisión Hormozi aplicada a tus 4 notas",
+   "laminas": [
+    "laminas/vendo-construyo-g2/L1.png",
+    "laminas/vendo-construyo-g2/L2.png",
+    "laminas/vendo-construyo-g2/L3.png",
+    "laminas/vendo-construyo-g2/L4.png",
+    "laminas/vendo-construyo-g2/L5.png",
+    "laminas/vendo-construyo-g2/L6.png",
+    "laminas/vendo-construyo-g2/L7.png",
+    "laminas/vendo-construyo-g2/L8.png",
+    "laminas/vendo-construyo-g2/L9.png",
+    "laminas/vendo-construyo-g2/L10.png",
+    "laminas/vendo-construyo-g2/L11.png"
+   ],
+   "video": null
   }
  ],
  "parrilla": [
@@ -209,6 +227,10 @@
   {
    "hora": "13:14",
    "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (dirección + 9 láminas del guion que aprobaste) (11 láminas)"
+  },
+  {
+   "hora": "14:35",
+   "evento": "Propuesta montada: ¿Vendo o construyo? · tira v2 — revisión Hormozi aplicada a tus 4 notas (11 láminas)"
   }
  ],
  "decisiones": {
