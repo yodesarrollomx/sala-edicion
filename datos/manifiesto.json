@@ -31,6 +31,24 @@
    ],
    "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/REEL_9x16.mp4",
    "origen": "pendiente desde el 12-ago · el reel ya trae todas tus correcciones de esta semana"
+  },
+  {
+   "id": "vendo-construyo-g1-fad7a8",
+   "titulo": "¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste)",
+   "laminas": [
+    "laminas/vendo-construyo-g1/L1.png",
+    "laminas/vendo-construyo-g1/L2.png",
+    "laminas/vendo-construyo-g1/L3.png",
+    "laminas/vendo-construyo-g1/L4.png",
+    "laminas/vendo-construyo-g1/L5.png",
+    "laminas/vendo-construyo-g1/L6.png",
+    "laminas/vendo-construyo-g1/L7.png",
+    "laminas/vendo-construyo-g1/L8.png",
+    "laminas/vendo-construyo-g1/L9.png",
+    "laminas/vendo-construyo-g1/L10.png",
+    "laminas/vendo-construyo-g1/L11.png"
+   ],
+   "video": null
   }
  ],
  "parrilla": [
@@ -179,6 +197,10 @@
   },
   {
    "hora": "12:17",
+   "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste) (11 láminas)"
+  },
+  {
+   "hora": "13:13",
    "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste) (11 láminas)"
   }
  ],
