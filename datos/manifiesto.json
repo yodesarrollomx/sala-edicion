@@ -13,110 +13,7 @@
   "2026-08-28",
   "2026-08-29"
  ],
- "propuestas": [
-  {
-   "id": "vendo-construyo-guion",
-   "titulo": "¿Vendo o construyo? · el guion, antes de las láminas",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "L1 · Portada",
-     "texto": "«Vender o construir.» / «Llevas años en esa pregunta.»"
-    },
-    {
-     "titulo": "L2 · El espejo",
-     "texto": "No es que no te decidas. Es que nadie te ha dicho qué aguanta tu suelo."
-    },
-    {
-     "titulo": "L3 · El costo de no decidir",
-     "texto": "Cada año que pasa, el terreno cobra predial. Y no ha dado un solo argumento a favor de ninguna de las dos."
-    },
-    {
-     "titulo": "L4 · Por qué no se decide",
-     "texto": "Vender se siente seguro porque es lo único que trae número. Construir se siente grande porque nadie lo ha medido."
-    },
-    {
-     "titulo": "L5 · El error",
-     "texto": "Comparas una opción con precio contra una opción con neblina. Así siempre gana la primera."
-    },
-    {
-     "titulo": "L6 · El giro",
-     "texto": "El Plan de Potencial no te dice cuál escoger. Le pone número a la que hoy no lo tiene."
-    },
-    {
-     "titulo": "L7 · Qué sale",
-     "texto": "Cuántos m² permite tu suelo, qué giros caben, qué le exige la norma y qué tendrías que resolver de agua, drenaje, vialidad y estacionamiento."
-    },
-    {
-     "titulo": "L8 · La comparación justa",
-     "texto": "Con eso ya no comparas una oferta contra una duda. Comparas dos escenarios con la misma cara."
-    },
-    {
-     "titulo": "L9 · Cierre",
-     "texto": "Pídele a tu terreno su Plan de Potencial Personalizado. / Escríbenos · el primer paso es una videollamada"
-    }
-   ],
-   "video": null,
-   "origen": "elegiste el caso 4 en «La magnitud del Plan de Potencial»"
-  },
-  {
-   "id": "faciles-de-explicar",
-   "titulo": "Publicaciones fáciles de explicar · elige cuáles entran a la parrilla",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "1 · El baldío te cobra",
-     "texto": "Se explica en una frase: hay municipios que en su ley de ingresos cobran MÁS predial por un terreno sin construir, y lo nombran «baldío». Dato verificable, nadie lo discute, y duele. Cierra en: ¿cuánto lleva el tuyo pagando por no hacer nada?"
-    },
-    {
-     "titulo": "2 · El que te quiere comprar ya hizo el análisis",
-     "texto": "Una sola idea: el comprador llega con números y tú con corazonadas. No hay que enseñar nada técnico — todo el mundo ha estado del lado flaco de una negociación. Cierra en: pídele a tu terreno su Plan de Potencial antes de contestar la oferta."
-    },
-    {
-     "titulo": "3 · Tu terreno tiene un número y no lo conoces",
-     "texto": "Los m² que la norma permite construir ahí. Es UN número, se dice en cinco segundos y se entiende sin explicar urbanismo. Cierra en: ese número cambia si vendes o si construyes."
-    },
-    {
-     "titulo": "4 · Nadie hereda un terreno, se hereda una discusión",
-     "texto": "Tres hermanos, quince años, cero acuerdos. Se explica solo porque todo el mundo conoce el caso. Cierra en: no se ponen de acuerdo porque nadie tiene el dato, no porque se lleven mal."
-    },
-    {
-     "titulo": "5 · Lo que el suelo aguanta no se opina",
-     "texto": "Se mide. La idea completa cabe en una frase y separa a YOD de todos los que dan opiniones. Cierra en: el suelo ya contestó; falta que alguien le pregunte."
-    },
-    {
-     "titulo": "6 · La lista de las cinco preguntas",
-     "texto": "Agua, drenaje, vialidad, estacionamiento, energía. Cinco palabras que cualquiera entiende y que son exactamente lo que la autoridad te va a preguntar. Cierra en: si no tienes las cinco respuestas, todavía no tienes proyecto."
-    },
-    {
-     "titulo": "7 · El plano contra la servilleta",
-     "texto": "Imagen de una idea: dos papeles en la misma mesa. Es el pivote del video que ya está armado — se reusa el material y se explica sin decir una palabra técnica."
-    }
-   ],
-   "video": null,
-   "origen": "tu pedido del 28-ago: una lista donde sea fácil de explicar"
-  },
-  {
-   "id": "vendo-construyo-g1-fad7a8",
-   "titulo": "¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste)",
-   "laminas": [
-    "laminas/vendo-construyo-g1/L1.png",
-    "laminas/vendo-construyo-g1/L2.png",
-    "laminas/vendo-construyo-g1/L3.png",
-    "laminas/vendo-construyo-g1/L4.png",
-    "laminas/vendo-construyo-g1/L5.png",
-    "laminas/vendo-construyo-g1/L6.png",
-    "laminas/vendo-construyo-g1/L7.png",
-    "laminas/vendo-construyo-g1/L8.png",
-    "laminas/vendo-construyo-g1/L9.png",
-    "laminas/vendo-construyo-g1/L10.png",
-    "laminas/vendo-construyo-g1/L11.png"
-   ],
-   "video": null
-  }
- ],
+ "propuestas": [],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -281,6 +178,32 @@
      null,
      null,
      "si"
+    ],
+    "nota": ""
+   },
+   "vendo-construyo-guion": {
+    "laminas": [
+     "si",
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "nota": ""
+   },
+   "faciles-de-explicar": {
+    "laminas": [
+     null,
+     "si",
+     null,
+     null,
+     null,
+     null,
+     null
     ],
     "nota": ""
    }
