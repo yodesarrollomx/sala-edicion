@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-28 21:53",
+ "actualizado": "2026-08-28 22:23",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -29,7 +29,7 @@
    "hace": "Rehace el corte completo (voces, escenas, mezcla, reel vertical) cuando algo cambió.",
    "evita": "tener que rearmar el video a mano cada vez que se corrige una pieza",
    "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
-   "corrio": "hace 15 horas",
+   "corrio": "hace 16 horas",
    "dijo": "voces completas; el corte se re-armó",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -40,7 +40,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 15 horas",
+   "corrio": "hace 16 horas",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -95,7 +95,7 @@
    "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
    "evita": "enterarte por un tercero de que un tablero estaba abierto",
    "cuando": "a las 6:45",
-   "corrio": "hace 15 horas",
+   "corrio": "hace 16 horas",
    "dijo": "==============================================================================",
    "salud": "bien",
    "porque": "corriendo en su horario"
