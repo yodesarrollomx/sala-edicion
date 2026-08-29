@@ -1012,6 +1012,9 @@ function normalizarDia(j){
   const retiradas=new Set();
   Object.values(porId).forEach(p=>{
     const m=/rehecha-de (\S+)/.exec(p.origen||''); if(m) retiradas.add(m[1]);
+    // «retirada — …» en el origen = ya se decidió en el chat o la ejecutó el
+    // agente por orden directa: NUNCA se le vuelve a preguntar (29-ago).
+    if(/^retirada/i.test(p.origen||'')) retiradas.add(p.id);
   });
   const marcas=(j.decisiones&&j.decisiones.propuestas)||{};
   j.propuestas=Object.values(porId).filter(p=>{
