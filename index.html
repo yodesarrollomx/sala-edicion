@@ -1029,8 +1029,31 @@ function normalizarDia(j){
    Si el día pedido llega vacío, se busca hacia atrás el último día con propuestas
    que aún no estén decididas por completo y ÉSE se sirve, avisando de dónde viene.
    (26-ago: Alejandro abrió el 27 y su tira del 26 había desaparecido de la vista.) */
+/* Las DECISIONES también viajan.
+   El Sheet guarda las marcas por día. El relevo pasa al día vivo lo que quedó
+   pendiente, pero las marcas se quedan en el día en que las hiciste — y por eso
+   una propuesta ya decidida podía volver a la mesa a la mañana siguiente.
+   Aquí se leen los días anteriores (solo lectura: decidir sigue siendo suyo) y
+   se completan las marcas que faltan, por id de propuesta. */
+async function conMarcasDeAntes(d,f){
+  const hoyMarcas=(d.decisiones&&d.decisiones.propuestas)||{};
+  const sinMarca=(d.propuestas||[]).map(p=>p.id).filter(id=>!hoyMarcas[id]);
+  if(!sinMarca.length) return d;
+  const dias=(d.dias||[]).filter(x=>x<(d.fecha||f||'9999')).sort().reverse().slice(0,5);
+  const faltan=new Set(sinMarca);
+  for(const dd of dias){
+    if(!faltan.size) break;
+    try{
+      const v=await traer(dd);
+      const m=(v.decisiones&&v.decisiones.propuestas)||{};
+      for(const id of [...faltan]) if(m[id]){ hoyMarcas[id]=m[id]; faltan.delete(id) }
+    }catch(e){}
+  }
+  d.decisiones=d.decisiones||{}; d.decisiones.propuestas=hoyMarcas;
+  return d;
+}
 async function conArrastre(f){
-  let d=normalizarDia(await traer(f));
+  let d=normalizarDia(await conMarcasDeAntes(await traer(f),f));
   if((d.propuestas||[]).length) return d;
   const dias=(d.dias||[]).filter(x=>x<(d.fecha||f||'9999')).sort().reverse().slice(0,10);
   for(const dd of dias){
