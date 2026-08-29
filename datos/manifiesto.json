@@ -288,6 +288,10 @@
   {
    "hora": "10:48",
    "evento": "Cerrado el ciclo: las decisiones ya viajan al día vivo; el relevo no vuelve a montar lo decidido"
+  },
+  {
+   "hora": "11:12",
+   "evento": "Motor afinado: respaldo espejo + reintentos + unión de marcas; el peor camino ya sirve la mesa correcta"
   }
  ],
  "decisiones": {
@@ -828,6 +832,11 @@
    "pedido": "Un script no puede dar por bueno un envío que el GAS rechazó",
    "estado": "cumplida",
    "evidencia": "El relevo mandaba decisiones sin envio_id, el GAS contestaba error y el script reportaba éxito. Ahora truena. De paso quedó claro que decidir NO es mío: el GAS me contesta «tu rol solo lee», y así se queda."
+  },
+  {
+   "pedido": "Puros fallos repetidos: me mandas a revisión los mismos y lo corregido no llega — pulir el sistema para que corra como motor",
+   "estado": "cumplida",
+   "evidencia": "Causa raíz encontrada: el RESPALDO local (al que la página cae cuando el Sheet tarda) seguía sirviendo las 8 tarjetas viejas — tu captura decía «respaldo local, el Sheet no respondió». Tres cierres, verificados en línea: (1) la página ya reintenta 3 veces con tope de 12 s antes de caer al respaldo; (2) RESPALDO ESPEJO: el relevo reescribe el respaldo en cada corrida — solo lo pendiente, con tus marcas horneadas; (3) el relevo une las marcas de los últimos 10 días por id (tus marcas del 26 ya cuentan para lo montado el 28/29). Prueba final por el peor camino (sin Sheet, puro respaldo): la mesa sirve exactamente las 5 pendientes y ninguna decidida."
   }
  ],
  "conexion": {
