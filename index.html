@@ -98,7 +98,13 @@ main{max-width:900px;margin:0 auto;padding:6px 22px 90px}
   cursor:pointer;padding:6px 4px}
 .turno .salir{margin-left:auto}
 .turno .escena{flex:1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;padding:0 18px;min-height:0;overflow-y:auto}
+  padding:0 18px;min-height:0;overflow-y:auto}
+/* Centrado SEGURO (29-ago): justify-content:center con contenido más alto que la
+   pantalla empuja la parte de arriba fuera del scroll y NO se puede subir a verla
+   («se corta la pantalla hasta arriba»). Con márgenes auto: corto = centrado,
+   largo = arranca arriba y se puede recorrer completo. */
+.turno .escena>:first-child{margin-top:auto}
+.turno .escena>:last-child{margin-bottom:auto}
 .turno .escena video{max-width:min(92vw,420px);max-height:70vh;border-radius:8px;border:1px solid var(--linea);background:#000}
 .audioCaja{display:flex;flex-direction:column;gap:8px;align-items:center;padding:22px;border:1px solid var(--linea);border-radius:11px;background:var(--papel);min-width:min(90vw,420px)}
 .audioCaja audio{width:100%}
@@ -451,6 +457,8 @@ function saltarAPendiente(){
   if(j>=0){ pasoIdx=j; pintarPaso() }
 }
 function pintarPaso(){
+  // cada paso arranca arriba: sin esto, el scroll del paso anterior corta el nuevo
+  requestAnimationFrame(()=>{const e=turnoVivo&&turnoVivo.querySelector('.escena'); if(e) e.scrollTop=0});
   const x=pasos[pasoIdx], laminasTot=pasos.filter(p=>['lamina','boleta','texto'].includes(p.tipo)).length;
   const idxDec=pasos.slice(0,pasoIdx+1).filter(p=>['lamina','boleta','texto'].includes(p.tipo)).length;
   const arriba=`<div class="arriba">
