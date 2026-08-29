@@ -199,8 +199,17 @@ dialog input{width:100%;background:var(--tinta);color:var(--crema);border:1px so
 .maqAcc{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0 0;align-items:center}
 .maqAcc textarea{flex:1;min-width:240px;background:var(--papel);color:var(--crema);
   border:1px solid var(--linea2);border-radius:9px;padding:10px 12px;font:inherit;font-size:14px;resize:vertical}
+
+/* Dentro del OS (?embed=1) la máscara ya pone el título y el marco: aquí se
+   quita el titular repetido y se aprieta el arranque, porque la cabeza doble
+   se comía la primera parte de la revisión. */
+html.embed header{padding:12px 22px 4px}
+html.embed header h1{display:none}
+html.embed .umbral{padding:6px 22px 16px}
+html.embed main{padding-top:2px}
 </style>
 
+<script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
 <header>
   <div class="linea1">
     <h1 class="serif">Sala de <em>Edición</em></h1>
