@@ -13,7 +13,26 @@
   "2026-08-28",
   "2026-08-29"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "publicar-servilleta",
+   "titulo": "La Servilleta · ¿sale ya?",
+   "tipo": "eje",
+   "laminas": [],
+   "opciones": [
+    {
+     "titulo": "Publícala",
+     "texto": "Sale a FB e IG el reel 9:16 con TODO lo de esta semana: pivote nuevo, voz de ella corregida, narración en la escena 2, música y cierre «Personalizado». Copy con liga medible; yo publico y pongo el primer comentario."
+    },
+    {
+     "titulo": "Todavía no",
+     "texto": "Se queda lista. Dime en la nota qué le falta y lo cambio antes de que salga."
+    }
+   ],
+   "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/REEL_9x16.mp4",
+   "origen": "pendiente desde el 12-ago · el reel ya trae todas tus correcciones de esta semana"
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
