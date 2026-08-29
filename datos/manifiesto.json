@@ -300,6 +300,10 @@
   {
    "hora": "19:27",
    "evento": "Montada la lista «Publicaciones fáciles de explicar» (7 ideas) + el corte con el cierre corregido"
+  },
+  {
+   "hora": "21:47",
+   "evento": "Registro de peticiones al día: 16 en total, 1 en curso (la Sala cortada)"
   }
  ],
  "decisiones": {},
@@ -506,6 +510,41 @@
    "pedido": "La última lámina debe traer la GUÍA del cómo ahí mismo — que no tengan que ir al copy a descubrir el siguiente paso",
    "estado": "cumplida",
    "evidencia": "26-ago: D1/D2 abren la tira · L5–L7 rehechas en segunda persona · L7 trae «Escríbenos · el primer paso es una videollamada»"
+  },
+  {
+   "pedido": "El video tiene que verse y oírse como anuncio profesional: le falta música, la escena 2 se siente rara y la voz de ella suena a portugués",
+   "estado": "cumplida",
+   "evidencia": "Voz regrabada con Aoede y dirección de acento sonorense; cama musical, ambiente de casa y de campo, compresión y reverberación en las voces, encadenados entre escenas y aterrizaje. Corte de 33.4 s, voz 8 dB sobre la cama, pico −0.9 dBFS."
+  },
+  {
+   "pedido": "Velocidad 1.15×",
+   "estado": "cumplida",
+   "evidencia": "Aplicado sobre la mezcla ya cerrada (atempo, sin cambiar el tono). El corte pasó de 36.4 s a 33.4 s."
+  },
+  {
+   "pedido": "El rayoneo de la escena 2 está muy fuerte; mejor que el narrador diga el texto de la lámina",
+   "estado": "cumplida",
+   "evidencia": "Fuera el plumón (la escena bajó de −13.7 a −22.2 dB) y grabada la voz de él diciendo la placa palabra por palabra: «El cuñado lo resolvió en una servilleta.»"
+  },
+  {
+   "pedido": "Quiero un explicador de los centinelas dentro de la misma Sala, ver dónde falta, y desde ahí mandar retro o pedir /sala",
+   "estado": "cumplida",
+   "evidencia": "Franja «Las máquinas» publicada: 9 tarjetas con semáforo y explicación en llano, bloque «Lo que falta ahorita», y botones Mandar / Pedir /sala probados de punta a punta contra el Sheet (contestó ok y la fila se leyó de vuelta). Se refresca sola cada 30 min."
+  },
+  {
+   "pedido": "¿Cómo sé que de verdad estás checando? Nunca corre nada",
+   "estado": "cumplida",
+   "evidencia": "Tenía razón: el centinela nunca había corrido (plist sin disparo, OnDemand=true). Reescrito y comprobado con su log. Auditoría de los 9 centinelas disponible con `python3 ~/yod_audit/estado_yod.py`."
+  },
+  {
+   "pedido": "Una lista de publicaciones donde sea fácil de explicar",
+   "estado": "cumplida",
+   "evidencia": "Montadas 7 ideas en la Sala («Publicaciones fáciles de explicar»), cada una con el porqué se explica fácil. Falta que elijas cuáles entran a la parrilla."
+  },
+  {
+   "pedido": "La Sala se ve cortada hasta arriba, no veo la primera parte",
+   "estado": "en curso",
+   "evidencia": "Dos causas encontradas y corregidas: cabeza doble dentro del OS (la Sala ya no repite su titular en modo embed; el contenido arranca 33 px antes) y el panel de la máscara sin tope contra lo visible (ya acotado, con desplazamiento si no cabe). NO CERRAR sin que Alejandro confirme que ya se ve completa."
   }
  ],
  "conexion": {
