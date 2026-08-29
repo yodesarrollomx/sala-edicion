@@ -1,78 +1,23 @@
 {
  "_que_es": "Manifiesto de respaldo: el portal lo lee cuando el Sheet aún no está conectado. Cuando el GAS ya está en línea, esta copia queda de plan B.",
- "fecha": "2026-08-28",
+ "fecha": "2026-08-29",
  "dias": [
   "2026-08-01",
   "2026-08-04",
   "2026-08-05",
-  "2026-08-27"
+  "2026-08-27",
+  "2026-08-06",
+  "2026-08-12",
+  "2026-08-13",
+  "2026-08-26",
+  "2026-08-28",
+  "2026-08-29"
  ],
  "propuestas": [
   {
-   "id": "corte-hormozi",
-   "tipo": "eje",
-   "laminas": [],
-   "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/CORTE_HORMOZI.mp4",
-   "titulo": "La Servilleta · el corte Hormozi (32 s) — ¿va así?",
-   "origen": "aprobaste el plan 2/2 · las 7 voces alineadas con lo que se lee · el llamado ya es el titular",
-   "opciones": [
-    {
-     "titulo": "Va así — publícalo",
-     "texto": "Sale a FB e IG con el copy y la liga medible ya listos. Yo publico y pongo el primer comentario."
-    },
-    {
-     "titulo": "Rehaz la escena 4 primero",
-     "texto": "El pivote: que ella APARTE la servilleta y ponga el plano del predio — el gesto de cambiar de método, no el resultado. Hoy la imagen ya muestra papeles y por eso el giro no se siente giro."
-    }
-   ]
-  },
-  {
-   "id": "apodo-g3",
-   "tipo": "laminas",
-   "video": null,
-   "titulo": "El Apodo del Terreno · L4 y L9 con tus notas",
-   "laminas": [
-    "laminas/apodo-g3/L1.png",
-    "laminas/apodo-g3/L2.png",
-    "laminas/apodo-g3/L3.png",
-    "laminas/apodo-g3/L4.png",
-    "laminas/apodo-g3/L5.png",
-    "laminas/apodo-g3/L6.png",
-    "laminas/apodo-g3/L7.png",
-    "laminas/apodo-g3/L8.png",
-    "laminas/apodo-g3/L9.png"
-   ],
-   "origen": "rehecha-de apodo-g2-47cdf9 · fuera «pleito», avenida urbana, y tu texto de cierre"
-  },
-  {
-   "id": "ganchos-casos",
-   "tipo": "eje",
-   "laminas": [],
-   "video": null,
-   "titulo": "La magnitud del Plan de Potencial · ¿qué caso abrimos?",
-   "origen": "tu nota: «estamos repitiendo conceptos y no viendo la magnitud de ejemplos»",
-   "opciones": [
-    {
-     "titulo": "1 · La herencia que nadie mueve",
-     "texto": "«Se heredaron un terreno. Y una discusión de quince años.» Tres hermanos, cero acuerdos — porque nadie tiene el dato."
-    },
-    {
-     "titulo": "2 · El predial que no duerme",
-     "texto": "«Tu terreno cobra cada año. ¿Y qué te ha dado a cambio?» Lleva años pagando por algo que no produce."
-    },
-    {
-     "titulo": "3 · La oferta que llegó de la nada",
-     "texto": "«El que te quiere comprar ya hizo su análisis. ¿Y tú?» Nadie decide con menos información que el comprador."
-    },
-    {
-     "titulo": "4 · ¿Vendo o construyo?",
-     "texto": "«Vender o construir. Llevas años en esa pregunta.» El Plan no responde por él: le pone enfrente lo que su suelo aguanta."
-    }
-   ]
-  },
-  {
    "id": "apodo-g4-1eb441",
    "titulo": "El Apodo del Terreno · L4 «el baldío», L5 «inventan», L9 «Personalizado»",
+   "tipo": "laminas",
    "laminas": [
     "laminas/apodo-g4/L1.png",
     "laminas/apodo-g4/L2.png",
@@ -84,15 +29,15 @@
     "laminas/apodo-g4/L8.png",
     "laminas/apodo-g4/L9.png"
    ],
-   "video": null
+   "opciones": [],
+   "video": null,
+   "origen": null
   },
   {
    "id": "vendo-construyo-guion",
+   "titulo": "¿Vendo o construyo? · el guion, antes de las láminas",
    "tipo": "eje",
    "laminas": [],
-   "video": null,
-   "titulo": "¿Vendo o construyo? · el guion, antes de las láminas",
-   "origen": "elegiste el caso 4 en «La magnitud del Plan de Potencial»",
    "opciones": [
     {
      "titulo": "L1 · Portada",
@@ -130,25 +75,28 @@
      "titulo": "L9 · Cierre",
      "texto": "Pídele a tu terreno su Plan de Potencial Personalizado. / Escríbenos · el primer paso es una videollamada"
     }
-   ]
+   ],
+   "video": null,
+   "origen": "elegiste el caso 4 en «La magnitud del Plan de Potencial»"
   },
   {
    "id": "pivote-e4-0430e7",
    "titulo": "Escena 4 · el pivote rehecho · ¿toma A, B o C? (recomiendo la B)",
+   "tipo": "laminas",
    "laminas": [
     "laminas/pivote-e4/L1.png",
     "laminas/pivote-e4/L2.png",
     "laminas/pivote-e4/L3.png"
    ],
-   "video": null
+   "opciones": [],
+   "video": null,
+   "origen": null
   },
   {
    "id": "faciles-de-explicar",
+   "titulo": "Publicaciones fáciles de explicar · elige cuáles entran a la parrilla",
    "tipo": "eje",
    "laminas": [],
-   "video": null,
-   "titulo": "Publicaciones fáciles de explicar · elige cuáles entran a la parrilla",
-   "origen": "tu pedido del 28-ago: una lista donde sea fácil de explicar",
    "opciones": [
     {
      "titulo": "1 · El baldío te cobra",
@@ -178,15 +126,15 @@
      "titulo": "7 · El plano contra la servilleta",
      "texto": "Imagen de una idea: dos papeles en la misma mesa. Es el pivote del video que ya está armado — se reusa el material y se explica sin decir una palabra técnica."
     }
-   ]
+   ],
+   "video": null,
+   "origen": "tu pedido del 28-ago: una lista donde sea fácil de explicar"
   },
   {
    "id": "voz-vs-placa",
+   "titulo": "La regla de la voz · ¿lee la placa o la complementa?",
    "tipo": "eje",
    "laminas": [],
-   "video": null,
-   "titulo": "La regla de la voz · ¿lee la placa o la complementa?",
-   "origen": "quedó abierta el 28-ago al pedir que el narrador dijera el texto de la lámina 2",
    "opciones": [
     {
      "titulo": "A · La voz LEE la placa, palabra por palabra",
@@ -200,7 +148,9 @@
      "titulo": "C · Mixto, con la regla escrita",
      "texto": "La voz complementa en el cuerpo, pero en la PRIMERA y la ÚLTIMA lámina lee la placa palabra por palabra — que son las dos que deciden si te quedas y si te mueves. El candado bloquea cualquier otra diferencia no declarada."
     }
-   ]
+   ],
+   "video": null,
+   "origen": "quedó abierta el 28-ago al pedir que el narrador dijera el texto de la lámina 2"
   }
  ],
  "parrilla": [
@@ -340,7 +290,26 @@
    "evento": "Cerrado el ciclo: las decisiones ya viajan al día vivo; el relevo no vuelve a montar lo decidido"
   }
  ],
- "decisiones": {},
+ "decisiones": {
+  "propuestas": {
+   "corte-hormozi": {
+    "laminas": [
+     null,
+     "si"
+    ],
+    "nota": "el audio se escucha mal como que habla en portugues la señora no son la entonaciones correctas ... tmb la escena dos no tiene voz... y se siente rara... tmb creo que no tiene musica de fondo y eso la hace sentirse menos profesinal ... analiza que estamos omitiendo que no se haga ver como un anuncio profesional\n"
+   },
+   "ganchos-casos": {
+    "laminas": [
+     null,
+     null,
+     null,
+     "si"
+    ],
+    "nota": ""
+   }
+  }
+ },
  "historial": {
   "2026-08-01": {
    "propuestas": [
@@ -492,6 +461,271 @@
     {
      "hora": "16:03",
      "evento": "EL CUENTO PUBLICADO: FB video + IG reel por API, comentario con liga incluido. El retador está en la cancha — a medir."
+    }
+   ]
+  },
+  "2026-08-28": {
+   "propuestas": [
+    {
+     "id": "corte-hormozi",
+     "tipo": "eje",
+     "laminas": [],
+     "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/CORTE_HORMOZI.mp4",
+     "titulo": "La Servilleta · el corte Hormozi (32 s) — ¿va así?",
+     "origen": "aprobaste el plan 2/2 · las 7 voces alineadas con lo que se lee · el llamado ya es el titular",
+     "opciones": [
+      {
+       "titulo": "Va así — publícalo",
+       "texto": "Sale a FB e IG con el copy y la liga medible ya listos. Yo publico y pongo el primer comentario."
+      },
+      {
+       "titulo": "Rehaz la escena 4 primero",
+       "texto": "El pivote: que ella APARTE la servilleta y ponga el plano del predio — el gesto de cambiar de método, no el resultado. Hoy la imagen ya muestra papeles y por eso el giro no se siente giro."
+      }
+     ]
+    },
+    {
+     "id": "apodo-g3",
+     "tipo": "laminas",
+     "video": null,
+     "titulo": "El Apodo del Terreno · L4 y L9 con tus notas",
+     "laminas": [
+      "laminas/apodo-g3/L1.png",
+      "laminas/apodo-g3/L2.png",
+      "laminas/apodo-g3/L3.png",
+      "laminas/apodo-g3/L4.png",
+      "laminas/apodo-g3/L5.png",
+      "laminas/apodo-g3/L6.png",
+      "laminas/apodo-g3/L7.png",
+      "laminas/apodo-g3/L8.png",
+      "laminas/apodo-g3/L9.png"
+     ],
+     "origen": "rehecha-de apodo-g2-47cdf9 · fuera «pleito», avenida urbana, y tu texto de cierre"
+    },
+    {
+     "id": "ganchos-casos",
+     "tipo": "eje",
+     "laminas": [],
+     "video": null,
+     "titulo": "La magnitud del Plan de Potencial · ¿qué caso abrimos?",
+     "origen": "tu nota: «estamos repitiendo conceptos y no viendo la magnitud de ejemplos»",
+     "opciones": [
+      {
+       "titulo": "1 · La herencia que nadie mueve",
+       "texto": "«Se heredaron un terreno. Y una discusión de quince años.» Tres hermanos, cero acuerdos — porque nadie tiene el dato."
+      },
+      {
+       "titulo": "2 · El predial que no duerme",
+       "texto": "«Tu terreno cobra cada año. ¿Y qué te ha dado a cambio?» Lleva años pagando por algo que no produce."
+      },
+      {
+       "titulo": "3 · La oferta que llegó de la nada",
+       "texto": "«El que te quiere comprar ya hizo su análisis. ¿Y tú?» Nadie decide con menos información que el comprador."
+      },
+      {
+       "titulo": "4 · ¿Vendo o construyo?",
+       "texto": "«Vender o construir. Llevas años en esa pregunta.» El Plan no responde por él: le pone enfrente lo que su suelo aguanta."
+      }
+     ]
+    },
+    {
+     "id": "apodo-g4-1eb441",
+     "titulo": "El Apodo del Terreno · L4 «el baldío», L5 «inventan», L9 «Personalizado»",
+     "laminas": [
+      "laminas/apodo-g4/L1.png",
+      "laminas/apodo-g4/L2.png",
+      "laminas/apodo-g4/L3.png",
+      "laminas/apodo-g4/L4.png",
+      "laminas/apodo-g4/L5.png",
+      "laminas/apodo-g4/L6.png",
+      "laminas/apodo-g4/L7.png",
+      "laminas/apodo-g4/L8.png",
+      "laminas/apodo-g4/L9.png"
+     ],
+     "video": null
+    },
+    {
+     "id": "vendo-construyo-guion",
+     "tipo": "eje",
+     "laminas": [],
+     "video": null,
+     "titulo": "¿Vendo o construyo? · el guion, antes de las láminas",
+     "origen": "elegiste el caso 4 en «La magnitud del Plan de Potencial»",
+     "opciones": [
+      {
+       "titulo": "L1 · Portada",
+       "texto": "«Vender o construir.» / «Llevas años en esa pregunta.»"
+      },
+      {
+       "titulo": "L2 · El espejo",
+       "texto": "No es que no te decidas. Es que nadie te ha dicho qué aguanta tu suelo."
+      },
+      {
+       "titulo": "L3 · El costo de no decidir",
+       "texto": "Cada año que pasa, el terreno cobra predial. Y no ha dado un solo argumento a favor de ninguna de las dos."
+      },
+      {
+       "titulo": "L4 · Por qué no se decide",
+       "texto": "Vender se siente seguro porque es lo único que trae número. Construir se siente grande porque nadie lo ha medido."
+      },
+      {
+       "titulo": "L5 · El error",
+       "texto": "Comparas una opción con precio contra una opción con neblina. Así siempre gana la primera."
+      },
+      {
+       "titulo": "L6 · El giro",
+       "texto": "El Plan de Potencial no te dice cuál escoger. Le pone número a la que hoy no lo tiene."
+      },
+      {
+       "titulo": "L7 · Qué sale",
+       "texto": "Cuántos m² permite tu suelo, qué giros caben, qué le exige la norma y qué tendrías que resolver de agua, drenaje, vialidad y estacionamiento."
+      },
+      {
+       "titulo": "L8 · La comparación justa",
+       "texto": "Con eso ya no comparas una oferta contra una duda. Comparas dos escenarios con la misma cara."
+      },
+      {
+       "titulo": "L9 · Cierre",
+       "texto": "Pídele a tu terreno su Plan de Potencial Personalizado. / Escríbenos · el primer paso es una videollamada"
+      }
+     ]
+    },
+    {
+     "id": "pivote-e4-0430e7",
+     "titulo": "Escena 4 · el pivote rehecho · ¿toma A, B o C? (recomiendo la B)",
+     "laminas": [
+      "laminas/pivote-e4/L1.png",
+      "laminas/pivote-e4/L2.png",
+      "laminas/pivote-e4/L3.png"
+     ],
+     "video": null
+    },
+    {
+     "id": "faciles-de-explicar",
+     "tipo": "eje",
+     "laminas": [],
+     "video": null,
+     "titulo": "Publicaciones fáciles de explicar · elige cuáles entran a la parrilla",
+     "origen": "tu pedido del 28-ago: una lista donde sea fácil de explicar",
+     "opciones": [
+      {
+       "titulo": "1 · El baldío te cobra",
+       "texto": "Se explica en una frase: hay municipios que en su ley de ingresos cobran MÁS predial por un terreno sin construir, y lo nombran «baldío». Dato verificable, nadie lo discute, y duele. Cierra en: ¿cuánto lleva el tuyo pagando por no hacer nada?"
+      },
+      {
+       "titulo": "2 · El que te quiere comprar ya hizo el análisis",
+       "texto": "Una sola idea: el comprador llega con números y tú con corazonadas. No hay que enseñar nada técnico — todo el mundo ha estado del lado flaco de una negociación. Cierra en: pídele a tu terreno su Plan de Potencial antes de contestar la oferta."
+      },
+      {
+       "titulo": "3 · Tu terreno tiene un número y no lo conoces",
+       "texto": "Los m² que la norma permite construir ahí. Es UN número, se dice en cinco segundos y se entiende sin explicar urbanismo. Cierra en: ese número cambia si vendes o si construyes."
+      },
+      {
+       "titulo": "4 · Nadie hereda un terreno, se hereda una discusión",
+       "texto": "Tres hermanos, quince años, cero acuerdos. Se explica solo porque todo el mundo conoce el caso. Cierra en: no se ponen de acuerdo porque nadie tiene el dato, no porque se lleven mal."
+      },
+      {
+       "titulo": "5 · Lo que el suelo aguanta no se opina",
+       "texto": "Se mide. La idea completa cabe en una frase y separa a YOD de todos los que dan opiniones. Cierra en: el suelo ya contestó; falta que alguien le pregunte."
+      },
+      {
+       "titulo": "6 · La lista de las cinco preguntas",
+       "texto": "Agua, drenaje, vialidad, estacionamiento, energía. Cinco palabras que cualquiera entiende y que son exactamente lo que la autoridad te va a preguntar. Cierra en: si no tienes las cinco respuestas, todavía no tienes proyecto."
+      },
+      {
+       "titulo": "7 · El plano contra la servilleta",
+       "texto": "Imagen de una idea: dos papeles en la misma mesa. Es el pivote del video que ya está armado — se reusa el material y se explica sin decir una palabra técnica."
+      }
+     ]
+    },
+    {
+     "id": "voz-vs-placa",
+     "tipo": "eje",
+     "laminas": [],
+     "video": null,
+     "titulo": "La regla de la voz · ¿lee la placa o la complementa?",
+     "origen": "quedó abierta el 28-ago al pedir que el narrador dijera el texto de la lámina 2",
+     "opciones": [
+      {
+       "titulo": "A · La voz LEE la placa, palabra por palabra",
+       "texto": "Lo que se ve y lo que se oye son idénticos. Máxima congruencia y nunca vuelve a haber un desfase como el de «Personalizado». Cuesta: la escena 1 cambia (hoy la placa dice «Tu terreno lleva años oyendo opiniones» y las voces dicen «Todos opinan de tu terreno. Menos el terreno»)."
+      },
+      {
+       "titulo": "B · La voz COMPLEMENTA a la placa",
+       "texto": "La placa nombra, la voz dramatiza — como está hoy en casi todas. Cuesta: hay que declarar escena por escena que el desfase es a propósito, y ahí es donde se han colado los errores."
+      },
+      {
+       "titulo": "C · Mixto, con la regla escrita",
+       "texto": "La voz complementa en el cuerpo, pero en la PRIMERA y la ÚLTIMA lámina lee la placa palabra por palabra — que son las dos que deciden si te quedas y si te mueves. El candado bloquea cualquier otra diferencia no declarada."
+      }
+     ]
+    }
+   ],
+   "produccion": [
+    {
+     "pieza": "El terreno que dijo que sí · el cuento (47 s)",
+     "estado": "publicada",
+     "detalle": "FB + IG (reel) · copy «los dos bandos» · liga única fb/ig-2026-08-04 · primer comentario puesto",
+     "fecha": "2026-08-04",
+     "enlace": "https://www.instagram.com/reel/DboskQogVy1/"
+    },
+    {
+     "pieza": "El terreno que dijo que sí · carrusel",
+     "estado": "publicada",
+     "detalle": "FB + IG · liga medible activa · 4 interacciones IG al 30-jul",
+     "fecha": "2026-07-27"
+    },
+    {
+     "pieza": "La Servilleta · láminas",
+     "estado": "rehacer",
+     "detalle": "quitar «EDICIÓN POR AURUM ARQUITECTOS»",
+     "fecha": "2026-07-29"
+    }
+   ],
+   "bitacora": [
+    {
+     "hora": "17:13",
+     "evento": "Tu revisión de anoche recogida: L3 y L4 tachadas — rehechas con más gente y líneas cortas (tu nota del texto)"
+    },
+    {
+     "hora": "17:13",
+     "evento": "L1, L2, L5, L6, L7 sin marcar: vuelven HOY una única vez; lo que no se marque hoy, muere"
+    },
+    {
+     "hora": "17:13",
+     "evento": "El cuento de Pub 1 sigue en la cancha (FB+IG): primer día de medición orgánica"
+    },
+    {
+     "hora": "10:37",
+     "evento": "Propuesta montada: El Apodo del Terreno · L4 «el baldío», L5 «inventan», L9 «Personalizado» (9 láminas)"
+    },
+    {
+     "hora": "10:38",
+     "evento": "Guion montado: ¿Vendo o construyo? (9 láminas, texto para tu visto bueno)"
+    },
+    {
+     "hora": "10:50",
+     "evento": "Propuesta montada: Escena 4 · el pivote rehecho · ¿toma A, B o C? (recomiendo la B) (3 láminas)"
+    },
+    {
+     "hora": "19:27",
+     "evento": "Montada la lista «Publicaciones fáciles de explicar» (7 ideas) + el corte con el cierre corregido"
+    },
+    {
+     "hora": "21:47",
+     "evento": "Registro de peticiones al día: 16 en total, 1 en curso (la Sala cortada)"
+    },
+    {
+     "hora": "21:48",
+     "evento": "Montada la regla de la voz (¿lee la placa o la complementa?) para cerrarla en la Sala"
+    },
+    {
+     "hora": "22:39",
+     "evento": "Corregido: lo ya decidido deja de volver a la mesa (un eje se cierra con un sí)"
+    },
+    {
+     "hora": "10:48",
+     "evento": "Cerrado el ciclo: las decisiones ya viajan al día vivo; el relevo no vuelve a montar lo decidido"
     }
    ]
   }
