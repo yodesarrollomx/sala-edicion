@@ -945,14 +945,15 @@ function andon(diaP,pieza){
 }
 
 /* ═══ carga ═══ */
-async function traer(f){
+async function traer(f,intentos){
   // El respaldo del repo era inalcanzable con GAS puesto: si el Sheet fallaba,
   // la excepción mataba la pantalla. Ahora un Sheet caído degrada, no tumba.
   if(GAS()){
     // El Sheet tarda seguido (los scripts de la Mac reintentan 4 veces); la página
     // intentaba UNA y caía al respaldo — que si está viejo, sirve tarjetas ya
     // decididas. Ahora: 3 intentos con espera, 12 s de tope por intento.
-    for(let i=0;i<3;i++){
+    const N=intentos||3;
+    for(let i=0;i<N;i++){
       try{
         const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),12000);
         const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(CLAVE())+(f?'&f='+encodeURIComponent(f):''),{signal:ctl.signal});
@@ -963,8 +964,8 @@ async function traer(f){
         if(j.error) throw new Error(j.error);
         return j;
       }catch(e){
-        console.warn('[sala] Sheet intento '+(i+1)+'/3:',e.message);
-        if(i<2) await new Promise(res=>setTimeout(res,700*(i+1)));
+        console.warn('[sala] Sheet intento '+(i+1)+'/'+N+':',e.message);
+        if(i<N-1) await new Promise(res=>setTimeout(res,700*(i+1)));
       }
     }
   }
@@ -1046,6 +1047,7 @@ function normalizarDia(j){
    Aquí se leen los días anteriores (solo lectura: decidir sigue siendo suyo) y
    se completan las marcas que faltan, por id de propuesta. */
 async function conMarcasDeAntes(d,f){
+  if(d._respaldo) return d;   // el espejo ya trae las marcas horneadas
   const hoyMarcas=(d.decisiones&&d.decisiones.propuestas)||{};
   const sinMarca=(d.propuestas||[]).map(p=>p.id).filter(id=>!hoyMarcas[id]);
   if(!sinMarca.length) return d;
@@ -1054,7 +1056,7 @@ async function conMarcasDeAntes(d,f){
   for(const dd of dias){
     if(!faltan.size) break;
     try{
-      const v=await traer(dd);
+      const v=await traer(dd,1);
       const m=(v.decisiones&&v.decisiones.propuestas)||{};
       for(const id of [...faltan]) if(m[id]){ hoyMarcas[id]=m[id]; faltan.delete(id) }
     }catch(e){}
@@ -1083,8 +1085,27 @@ async function conArrastre(f){
   return d;
 }
 async function cargar(f,silencioso){
-  try{ D=await conArrastre(f) }
+  // El 29-ago la pantalla se quedó NEGRA («0 de 0»): los reintentos al Sheet
+  // (hasta 3×12 s, más los días de marcas) bloqueaban el primer pintado.
+  // Ahora: a los 2.5 s sin Sheet se pinta el RESPALDO ya, y cuando el Sheet
+  // por fin contesta, repinta encima. Ver negro nunca es aceptable.
+  let _pintado=false;
+  const _rapido=silencioso?null:setTimeout(async()=>{
+    try{
+      const r=await fetch('datos/manifiesto.json?v='+Date.now());
+      if(!r.ok) return;
+      const j=await r.json(); j._respaldo=true;
+      if(_pintado) return;
+      D=normalizarDia(j); _pintado=true;
+      _pintarDia(D.fecha);
+      const av=$('#avisoEdicion');
+      if(av){ av.hidden=false; av.textContent='Mostrando el respaldo — buscando el Sheet…' }
+    }catch(e){}
+  },2500);
+  try{ const _d=await conArrastre(f); D=_d; if(_rapido) clearTimeout(_rapido) }
   catch(e){
+    if(_rapido) clearTimeout(_rapido);
+    if(_pintado) return;
     if(silencioso){ console.warn('[sala] refresco en fondo falló, dejo la pantalla como está'); return }
     $('#umbral').innerHTML=`<div class="vacio"><p>No pude alcanzar la sala.</p>
       <p style="font-size:14px">Puede ser la red. Tu trabajo de hoy sigue guardado aquí.</p>
@@ -1096,6 +1117,11 @@ async function cargar(f,silencioso){
     const rc=$('#rescate'); if(rc) rc.onclick=copiarParaChat;
     return;
   }
+  _pintado=true;
+  _pintarDia(f);
+  return;
+}
+function _pintarDia(f){
   fecha=D.fecha;
   pintarAvisoEdicion();
 
