@@ -1006,7 +1006,19 @@ function normalizarDia(j){
   j.propuestas=Object.values(porId).filter(p=>{
     if(retiradas.has(p.id)) return false;
     const f=marcas[p.id]; if(!f||!f.laminas) return true;
-    const n=(p.tipo==='eje'?(p.opciones||[]).length:(p.laminas||[]).length)||0;
+    // Un EJE es «elige una»: se cierra en cuanto hay UN sí. Antes se exigía marca
+    // en TODAS las opciones, y como el editor solo palomea la que escoge, el eje
+    // volvía a la mesa para siempre. (28-ago: le reapareció el corte Hormozi que
+    // ya había decidido el 26, y con razón dijo «no corrió mis selecciones».)
+    if(p.tipo==='eje'){
+      const n=(p.opciones||[]).length||0;
+      if(!n) return true;
+      const marcadas=f.laminas.slice(0,n);
+      if(marcadas.some(m=>m==='si')) return false;                     // ya escogió
+      if(marcadas.filter(m=>m==='no').length>=n) return false;         // las rechazó todas
+      return true;
+    }
+    const n=(p.laminas||[]).length||0;
     if(!n) return true;
     let hechas=0; for(let i=0;i<n;i++){const m=f.laminas[i]; if(m==='si'||m==='no') hechas++}
     return hechas<n;   // ya decidida por completo: fuera de la mesa de hoy
