@@ -334,6 +334,10 @@
   {
    "hora": "22:39",
    "evento": "Corregido: lo ya decidido deja de volver a la mesa (un eje se cierra con un sí)"
+  },
+  {
+   "hora": "10:48",
+   "evento": "Cerrado el ciclo: las decisiones ya viajan al día vivo; el relevo no vuelve a montar lo decidido"
   }
  ],
  "decisiones": {},
@@ -580,6 +584,16 @@
    "pedido": "Me vuelve a aparecer lo que ya decidí — «no corrió mis selecciones pasadas»",
    "estado": "cumplida",
    "evidencia": "Bug de lógica encontrado y corregido: la Sala exigía marca en TODAS las opciones de un eje para retirarlo, pero un eje es «elige una» y tú solo palomeas la que escoges — por eso el corte Hormozi (decidido el 26) y los ganchos volvían a la mesa para siempre. Ahora un eje se cierra con UN sí (o con todas rechazadas). Probado contra tus marcas reales: la mesa pasó de 7 tarjetas a 5."
+  },
+  {
+   "pedido": "Lo ya decidido vuelve a la mesa al día siguiente",
+   "estado": "cumplida",
+   "evidencia": "Tres causas, las tres cerradas: (1) la Sala exigía marca en TODAS las opciones de un eje, cuando un eje se cierra con UN sí; (2) el relevo diario cargaba esa misma regla y volvía a montar lo decidido cada mañana; (3) el Sheet guarda las marcas POR DÍA, así que al pasar una propuesta al día vivo sus marcas se quedaban atrás — ahora la Sala lee los días anteriores por id de propuesta. Probado con tus marcas reales: la mesa del 29 pasa de 4 a 2 tarjetas en el caso de prueba, y de 7 a 5 en el día real."
+  },
+  {
+   "pedido": "Un script no puede dar por bueno un envío que el GAS rechazó",
+   "estado": "cumplida",
+   "evidencia": "El relevo mandaba decisiones sin envio_id, el GAS contestaba error y el script reportaba éxito. Ahora truena. De paso quedó claro que decidir NO es mío: el GAS me contesta «tu rol solo lee», y así se queda."
   }
  ],
  "conexion": {
