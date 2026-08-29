@@ -179,6 +179,28 @@
      "texto": "Imagen de una idea: dos papeles en la misma mesa. Es el pivote del video que ya está armado — se reusa el material y se explica sin decir una palabra técnica."
     }
    ]
+  },
+  {
+   "id": "voz-vs-placa",
+   "tipo": "eje",
+   "laminas": [],
+   "video": null,
+   "titulo": "La regla de la voz · ¿lee la placa o la complementa?",
+   "origen": "quedó abierta el 28-ago al pedir que el narrador dijera el texto de la lámina 2",
+   "opciones": [
+    {
+     "titulo": "A · La voz LEE la placa, palabra por palabra",
+     "texto": "Lo que se ve y lo que se oye son idénticos. Máxima congruencia y nunca vuelve a haber un desfase como el de «Personalizado». Cuesta: la escena 1 cambia (hoy la placa dice «Tu terreno lleva años oyendo opiniones» y las voces dicen «Todos opinan de tu terreno. Menos el terreno»)."
+    },
+    {
+     "titulo": "B · La voz COMPLEMENTA a la placa",
+     "texto": "La placa nombra, la voz dramatiza — como está hoy en casi todas. Cuesta: hay que declarar escena por escena que el desfase es a propósito, y ahí es donde se han colado los errores."
+    },
+    {
+     "titulo": "C · Mixto, con la regla escrita",
+     "texto": "La voz complementa en el cuerpo, pero en la PRIMERA y la ÚLTIMA lámina lee la placa palabra por palabra — que son las dos que deciden si te quedas y si te mueves. El candado bloquea cualquier otra diferencia no declarada."
+    }
+   ]
   }
  ],
  "parrilla": [
@@ -304,6 +326,10 @@
   {
    "hora": "21:47",
    "evento": "Registro de peticiones al día: 16 en total, 1 en curso (la Sala cortada)"
+  },
+  {
+   "hora": "21:48",
+   "evento": "Montada la regla de la voz (¿lee la placa o la complementa?) para cerrarla en la Sala"
   }
  ],
  "decisiones": {},
