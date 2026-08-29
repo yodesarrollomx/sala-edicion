@@ -330,6 +330,10 @@
   {
    "hora": "21:48",
    "evento": "Montada la regla de la voz (¿lee la placa o la complementa?) para cerrarla en la Sala"
+  },
+  {
+   "hora": "22:39",
+   "evento": "Corregido: lo ya decidido deja de volver a la mesa (un eje se cierra con un sí)"
   }
  ],
  "decisiones": {},
@@ -571,6 +575,11 @@
    "pedido": "La Sala se ve cortada hasta arriba, no veo la primera parte",
    "estado": "en curso",
    "evidencia": "Dos causas encontradas y corregidas: cabeza doble dentro del OS (la Sala ya no repite su titular en modo embed; el contenido arranca 33 px antes) y el panel de la máscara sin tope contra lo visible (ya acotado, con desplazamiento si no cabe). NO CERRAR sin que Alejandro confirme que ya se ve completa."
+  },
+  {
+   "pedido": "Me vuelve a aparecer lo que ya decidí — «no corrió mis selecciones pasadas»",
+   "estado": "cumplida",
+   "evidencia": "Bug de lógica encontrado y corregido: la Sala exigía marca en TODAS las opciones de un eje para retirarlo, pero un eje es «elige una» y tú solo palomeas la que escoges — por eso el corte Hormozi (decidido el 26) y los ganchos volvían a la mesa para siempre. Ahora un eje se cierra con UN sí (o con todas rechazadas). Probado contra tus marcas reales: la mesa pasó de 7 tarjetas a 5."
   }
  ],
  "conexion": {
