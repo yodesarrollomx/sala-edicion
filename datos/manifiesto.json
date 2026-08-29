@@ -52,6 +52,17 @@
    ],
    "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/REEL_9x16.mp4",
    "origen": "rehecha-de publicar-servilleta · tu nota: «un copy que usaría Hormozi para convertir en el Plan de Potencial»"
+  },
+  {
+   "id": "vendo-4rehechas-30f901",
+   "titulo": "Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado)",
+   "laminas": [
+    "laminas/vendo-4rehechas/L1.png",
+    "laminas/vendo-4rehechas/L2.png",
+    "laminas/vendo-4rehechas/L3.png",
+    "laminas/vendo-4rehechas/L4.png"
+   ],
+   "video": null
   }
  ],
  "parrilla": [
@@ -213,6 +224,10 @@
   {
    "hora": "14:35",
    "evento": "Propuesta montada: ¿Vendo o construyo? · tira v2 — revisión Hormozi aplicada a tus 4 notas (11 láminas)"
+  },
+  {
+   "hora": "15:05",
+   "evento": "Propuesta montada: Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado) (4 láminas)"
   }
  ],
  "decisiones": {
