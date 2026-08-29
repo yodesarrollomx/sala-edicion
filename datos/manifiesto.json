@@ -238,6 +238,10 @@
   {
    "hora": "11:12",
    "evento": "Motor afinado: respaldo espejo + reintentos + unión de marcas; el peor camino ya sirve la mesa correcta"
+  },
+  {
+   "hora": "11:54",
+   "evento": "Mesa reducida a 2 (solo lo nunca decidido) + corte de pantalla resuelto (centrado seguro) + iframe fresco"
   }
  ],
  "decisiones": {
@@ -761,8 +765,8 @@
   },
   {
    "pedido": "La Sala se ve cortada hasta arriba, no veo la primera parte",
-   "estado": "en curso",
-   "evidencia": "Dos causas encontradas y corregidas: cabeza doble dentro del OS (la Sala ya no repite su titular en modo embed; el contenido arranca 33 px antes) y el panel de la máscara sin tope contra lo visible (ya acotado, con desplazamiento si no cabe). NO CERRAR sin que Alejandro confirme que ya se ve completa."
+   "estado": "cumplida",
+   "evidencia": "CAUSA REAL encontrada en la pasarela: justify-content:center con tarjeta más alta que la pantalla empuja el tope fuera del scroll y es INALCANZABLE. Corregido con centrado seguro (márgenes auto) + scroll al inicio en cada paso. Reproducido y verificado con pantalla abierta: tarjeta de 2049px en ventana de 545px arranca ARRIBA, título visible, recorrible completa (captura en el chat del 29-ago)."
   },
   {
    "pedido": "Me vuelve a aparecer lo que ya decidí — «no corrió mis selecciones pasadas»",
@@ -783,6 +787,11 @@
    "pedido": "Puros fallos repetidos: me mandas a revisión los mismos y lo corregido no llega — pulir el sistema para que corra como motor",
    "estado": "cumplida",
    "evidencia": "Causa raíz encontrada: el RESPALDO local (al que la página cae cuando el Sheet tarda) seguía sirviendo las 8 tarjetas viejas — tu captura decía «respaldo local, el Sheet no respondió». Tres cierres, verificados en línea: (1) la página ya reintenta 3 veces con tope de 12 s antes de caer al respaldo; (2) RESPALDO ESPEJO: el relevo reescribe el respaldo en cada corrida — solo lo pendiente, con tus marcas horneadas; (3) el relevo une las marcas de los últimos 10 días por id (tus marcas del 26 ya cuentan para lo montado el 28/29). Prueba final por el peor camino (sin Sheet, puro respaldo): la mesa sirve exactamente las 5 pendientes y ninguna decidida."
+  },
+  {
+   "pedido": "ME SIGUES MOSTRANDO COSAS QUE YA REVISÉ (29-ago)",
+   "estado": "cumplida",
+   "evidencia": "Tres tarjetas que ya habías decidido EN EL CHAT salieron de la mesa para siempre (pivote→toma A, regla de la voz→narra lo escrito, apodo→tus notas eran órdenes). Mecanismo nuevo: origen «retirada» las bloquea en cliente, relevo y espejo. Además el Sheet acumula filas y el relevo no deduplicaba por id (corregido), y el iframe de la máscara del OS cacheaba versiones VIEJAS de la Sala aunque recargaras — ahora pide versión fresca en cada apertura. La mesa quedó en 2: el guion «¿Vendo o construyo?» y las 7 publicaciones."
   }
  ],
  "conexion": {
