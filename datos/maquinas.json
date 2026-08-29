@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-29 11:36",
+ "actualizado": "2026-08-29 12:06",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -62,8 +62,8 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 3 horas",
-   "dijo": "2026-08-29: ya tiene 7 pendiente(s) — no toco nada",
+   "corrio": "hace 5 min",
+   "dijo": "2026-08-29: ya tiene 2 pendiente(s) — no toco nada",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
