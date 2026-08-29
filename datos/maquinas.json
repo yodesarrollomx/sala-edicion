@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-29 00:24",
+ "actualizado": "2026-08-29 00:54",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "Cuando la cuota gratis de voz se agota a media grabación, ésta espera a que reabra, graba las líneas que faltaron y rearma el video sola.",
    "evita": "que una línea se quede sin voz y el video salga incompleto",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 11 horas",
+   "corrio": "hace 12 horas",
    "dijo": "corte rearmado con: H6_0",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -51,7 +51,7 @@
    "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 1 horas",
+   "corrio": "hace 30 min",
    "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -62,7 +62,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 6 horas",
+   "corrio": "hace 7 horas",
    "dijo": "2026-08-28: ya tiene 5 pendiente(s) — no toco nada",
    "salud": "bien",
    "porque": "corriendo en su horario"
