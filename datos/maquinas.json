@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-29 22:37",
+ "actualizado": "2026-08-29 23:07",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -52,7 +52,7 @@
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
    "corrio": "hace 30 min",
-   "dijo": "máquinas: sin cambios de fondo",
+   "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
