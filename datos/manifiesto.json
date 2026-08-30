@@ -15,24 +15,6 @@
  ],
  "propuestas": [
   {
-   "id": "publicar-servilleta-v2",
-   "titulo": "La Servilleta · copy HORMOZI — ¿sale con éste?",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "Publícala con el copy Hormozi",
-     "texto": "EL COPY COMPLETO: «Todos opinan de tu terreno. Menos el terreno. / El cuñado lo resolvió en una servilleta: «puro departamento» — aunque ayer dijo bodegas. Y mientras la mesa opina, el que te quiere comprar ya hizo su análisis. / Hay una pregunta que cambia la conversación: ¿cuántos m² aguanta de verdad tu suelo? / Eso responde el Plan de Potencial Personalizado: los m² que la norma permite, qué giros caben (vivienda, bodegas, comercio…) y qué habría que resolver de agua, drenaje, vialidad y estacionamiento. / Con esa hoja enfrente, vender, construir o desarrollar dejan de ser corazonadas: son tres escenarios con la misma cara, y tú escoges. / Tú solo traes la ubicación. El primer paso es una videollamada. Pídele a tu terreno su Plan de Potencial Personalizado 👇» · Liga medible en el texto (FB) y en el primer comentario (IG, listo para pegar)."
-    },
-    {
-     "titulo": "Todavía le falta",
-     "texto": "Dime qué frase y la afino antes de que salga."
-    }
-   ],
-   "video": "https://alexpueblag.github.io/sala-edicion/video/pub2/REEL_9x16.mp4",
-   "origen": "rehecha-de publicar-servilleta · tu nota: «un copy que usaría Hormozi para convertir en el Plan de Potencial»"
-  },
-  {
    "id": "vendo-4rehechas-30f901",
    "titulo": "Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado)",
    "tipo": "laminas",
@@ -45,24 +27,6 @@
    "opciones": [],
    "video": null,
    "origen": null
-  },
-  {
-   "id": "tablero-2-0",
-   "titulo": "Tablero 2.0 · ¿lo construyo así? (manual con pantallas dummy)",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "Va — constrúyelo así",
-     "texto": "Apruebas las 5 pantallas del manual: tu día con solo lo pendiente, la pieza con candados 🔒, la revisión de solo-lo-nuevo, el libro de decisiones (chat + Sala) y la biblia de estilo. Manual: claude.ai/code/artifact/d2a84d70-703b-4ef6-9394-3fbcfaa62e2c"
-    },
-    {
-     "titulo": "Cambia algo primero",
-     "texto": "Dime en la nota el número de pantalla (1–5) y qué cambiarías. El manual se corrige antes de construir, nunca después."
-    }
-   ],
-   "video": null,
-   "origen": "tu pedido del 29-ago: «un manual de usuario con imágenes dummy para aprobarlo antes de que lo hagas»"
   }
  ],
  "parrilla": [
