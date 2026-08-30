@@ -11,9 +11,25 @@
   "2026-08-13",
   "2026-08-26",
   "2026-08-28",
-  "2026-08-29"
+  "2026-08-29",
+  "2026-08-30"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "vendo-4rehechas-30f901",
+   "titulo": "Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado)",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/vendo-4rehechas/L1.png",
+    "laminas/vendo-4rehechas/L2.png",
+    "laminas/vendo-4rehechas/L3.png",
+    "laminas/vendo-4rehechas/L4.png"
+   ],
+   "opciones": [],
+   "video": null,
+   "origen": null
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -180,7 +196,24 @@
   }
  ],
  "decisiones": {
-  "propuestas": {}
+  "propuestas": {
+   "corte-hormozi": {
+    "laminas": [
+     null,
+     "si"
+    ],
+    "nota": "el audio se escucha mal como que habla en portugues la señora no son la entonaciones correctas ... tmb la escena dos no tiene voz... y se siente rara... tmb creo que no tiene musica de fondo y eso la hace sentirse menos profesinal ... analiza que estamos omitiendo que no se haga ver como un anuncio profesional\n"
+   },
+   "ganchos-casos": {
+    "laminas": [
+     null,
+     null,
+     null,
+     "si"
+    ],
+    "nota": ""
+   }
+  }
  },
  "historial": {
   "2026-08-01": {
