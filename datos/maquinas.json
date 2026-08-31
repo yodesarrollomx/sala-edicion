@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-30 22:57",
+ "actualizado": "2026-08-30 23:27",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -73,7 +73,7 @@
    "hace": "Levanta la copia de la Sala en esta Mac, para trabajar sin internet.",
    "evita": "quedarte sin Sala si se cae GitHub",
    "cuando": "siempre encendida",
-   "corrio": "hace 29 días",
+   "corrio": "hace 30 días",
    "dijo": "  Sala de Edición · http://localhost:8711  (2026-08-01T11:09:55-07:00)",
    "salud": "bien",
    "porque": "es un servidor: está encendido ahora mismo"
@@ -95,7 +95,7 @@
    "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
    "evita": "enterarte por un tercero de que un tablero estaba abierto",
    "cuando": "a las 6:45",
-   "corrio": "hace 12 horas",
+   "corrio": "hace 13 horas",
    "dijo": "==============================================================================",
    "salud": "bien",
    "porque": "corriendo en su horario"
