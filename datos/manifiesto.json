@@ -12,9 +12,25 @@
   "2026-08-26",
   "2026-08-28",
   "2026-08-29",
-  "2026-08-30"
+  "2026-08-30",
+  "2026-08-31"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "vendo-4rehechas-30f901",
+   "titulo": "Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado)",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/vendo-4rehechas/L1.png",
+    "laminas/vendo-4rehechas/L2.png",
+    "laminas/vendo-4rehechas/L3.png",
+    "laminas/vendo-4rehechas/L4.png"
+   ],
+   "opciones": [],
+   "video": null,
+   "origen": null
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
