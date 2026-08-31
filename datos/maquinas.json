@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-31 00:59",
+ "actualizado": "2026-08-31 01:29",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "Cuando la cuota gratis de voz se agota a media grabación, ésta espera a que reabra, graba las líneas que faltaron y rearma el video sola.",
    "evita": "que una línea se quede sin voz y el video salga incompleto",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 2 días",
+   "corrio": "hace 3 días",
    "dijo": "corte rearmado con: H6_0",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -40,7 +40,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 18 horas",
+   "corrio": "hace 19 horas",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -51,7 +51,7 @@
    "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 1 horas",
+   "corrio": "hace 30 min",
    "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -95,7 +95,7 @@
    "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
    "evita": "enterarte por un tercero de que un tablero estaba abierto",
    "cuando": "a las 6:45",
-   "corrio": "hace 14 horas",
+   "corrio": "hace 15 horas",
    "dijo": "==============================================================================",
    "salud": "bien",
    "porque": "corriendo en su horario"
