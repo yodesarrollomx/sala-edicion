@@ -15,22 +15,7 @@
   "2026-08-30",
   "2026-08-31"
  ],
- "propuestas": [
-  {
-   "id": "vendo-4rehechas-30f901",
-   "titulo": "Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado)",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/vendo-4rehechas/L1.png",
-    "laminas/vendo-4rehechas/L2.png",
-    "laminas/vendo-4rehechas/L3.png",
-    "laminas/vendo-4rehechas/L4.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "origen": null
-  }
- ],
+ "propuestas": [],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -197,7 +182,21 @@
   }
  ],
  "decisiones": {
-  "propuestas": {}
+  "propuestas": {
+   "vendo-4rehechas-30f901": {
+    "laminas": [
+     "no",
+     "no",
+     "si",
+     "si"
+    ],
+    "nota": "tebfalto las laminas iniciales de exolicacion de cada lamina\n",
+    "notas": [
+     "aguanta se me hace una palabra muy vaga... algo mas concreto",
+     "ruta al exito cronograma, presupuestos, proveedores materiales y servicios con precios especisles para aliados yod"
+    ]
+   }
+  }
  },
  "historial": {
   "2026-08-01": {
