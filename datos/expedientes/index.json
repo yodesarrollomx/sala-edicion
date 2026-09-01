@@ -1,0 +1,18 @@
+[
+ {
+  "pieza": "La Servilleta",
+  "archivo": "servilleta.json"
+ },
+ {
+  "pieza": "¿Vendo o construyo?",
+  "archivo": "vendo-construyo.json"
+ },
+ {
+  "pieza": "El Apodo del Terreno",
+  "archivo": "apodo.json"
+ },
+ {
+  "pieza": "El comprador ya sabe",
+  "archivo": "comprador.json"
+ }
+]

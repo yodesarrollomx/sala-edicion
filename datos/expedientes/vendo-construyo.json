@@ -1,0 +1,212 @@
+{
+ "pieza": "¿Vendo o construyo?",
+ "estado": "te espera",
+ "resultado": null,
+ "post": null,
+ "versiones": [
+  {
+   "tag": "guion",
+   "fecha": "28 ago",
+   "nota": "Las 9 láminas escritas en texto, para tu visto bueno antes de gastar una sola imagen.",
+   "viva": false
+  },
+  {
+   "tag": "v1",
+   "fecha": "29 ago",
+   "nota": "La tira completa: 2 hojas de dirección + 9 láminas. Palomeaste 7 y tachaste 4.",
+   "viva": false
+  },
+  {
+   "tag": "v2",
+   "fecha": "29 ago",
+   "nota": "Las 4 tachadas rehechas con tus notas y el orden cambiado (el comprador informado sube al lugar 3).",
+   "viva": false
+  },
+  {
+   "tag": "v2 · solo las 4",
+   "fecha": "29 ago",
+   "nota": "Se retiró la tira entera y quedó en tu mesa SOLO lo rehecho; las 7 aprobadas se pusieron bajo candado.",
+   "viva": true
+  }
+ ],
+ "hitos": [
+  {
+   "quien": "tu",
+   "fecha": "27 AGO",
+   "que": "Dijiste que estábamos dando vueltas a lo mismo y pediste ver de cuántos tamaños sirve un Plan de Potencial.",
+   "dijo": "creo qu eestamos repitined conceptos y no viendo la magnitud de ejemplos que podemos explorar con lo extenso que peude ayudar a distintas situaciones un plan de potencal ",
+   "hecho": "De esa queja salió la tarjeta «La magnitud del Plan de Potencial» con 4 casos distintos para escoger.",
+   "antes_despues": [
+    "dos ganchos del mismo tema, los dos tachados",
+    "4 casos de vida distintos sobre la mesa"
+   ],
+   "fuente": "Sheet 2026-08-27 · decisiones.propuestas.gancho-servilleta (nota general, ambas opciones en «no»)"
+  },
+  {
+   "quien": "tu",
+   "fecha": "28 AGO",
+   "que": "De los 4 casos escogiste el 4: «¿Vendo o construyo?». Ahí nació la pieza.",
+   "hecho": "Marcaste «si» solo en la cuarta opción de «La magnitud del Plan de Potencial».",
+   "antes_despues": [
+    "4 casos posibles",
+    "1 caso elegido: vender o construir"
+   ],
+   "fuente": "Sheet 2026-08-28 · decisiones.propuestas.ganchos-casos = [null,null,null,'si']"
+  },
+  {
+   "quien": "yo",
+   "fecha": "28 AGO",
+   "que": "Te subí el guion en puro texto antes de hacer las imágenes: las 9 láminas, una por una.",
+   "hecho": "Tarjeta «¿Vendo o construyo? · el guion, antes de las láminas» con L1 a L9 escritas, desde la portada «Vender o construir. Llevas años en esa pregunta.» hasta el cierre «Pídele a tu terreno su Plan de Potencial Personalizado.»",
+   "antes_despues": [
+    "un caso elegido y nada escrito",
+    "las 9 láminas redactadas, sin gastar una imagen"
+   ],
+   "fuente": "Sheet · propuesta vendo-construyo-guion (montada el 2026-08-28 10:38 según bitácora del manifiesto)"
+  },
+  {
+   "quien": "yo",
+   "fecha": "29 AGO",
+   "que": "Se montó la tira y salió mal: varias láminas traían fotos de otra pieza porque los archivos se llamaban igual y el programa las dio por hechas.",
+   "hecho": "Se retiró de tu mesa sola, con el aviso «las imágenes salieron de un caché viejo (choque de nombres); la tira buena se monta sola al terminar». Una hora después se repusieron 9 de las 11 imágenes.",
+   "antes_despues": [
+    "11 láminas montadas, 9 con la imagen equivocada",
+    "las 9 imágenes reemplazadas por las buenas"
+   ],
+   "fuente": "commit 97ba8b9 (12:17) vs commit b4d9233 (13:13) en ~/sala-edicion: 9 archivos cambian de tamaño · el salto está en producir.py, que reusa cualquier archivo del mismo nombre que ya pese más de 200 KB · Sheet 2026-08-29, propuesta vendo-construyo-g1-fad7a8 con origen «retirada»"
+  },
+  {
+   "quien": "yo",
+   "fecha": "29 AGO",
+   "que": "Además las dos hojas de dirección habían caído en medio de la tira; se rehizo el orden para que abran ellas.",
+   "hecho": "Tarjeta nueva «la tira (dirección + 9 láminas)» con las hojas de dirección en el lugar 1 y 2.",
+   "antes_despues": [
+    "la dirección salía en los lugares 2 y 4",
+    "la dirección abre la tira y luego van las 9 láminas"
+   ],
+   "fuente": "commit 63a1df9 (13:14) en ~/sala-edicion · Sheet 2026-08-29, la tarjeta vieja queda «retirada — reemplazada por la tira en orden correcto»"
+  },
+  {
+   "quien": "tu",
+   "fecha": "29 AGO",
+   "que": "Revisaste las 11: palomeaste 7 y tachaste 4, con una nota en cada tachada.",
+   "dijo": "pidele a hormozi que vea todo lo que traes y lo que dije y que recomienda y que nos de el unas rwcomenacioens de laminas y de textos y acomodos de laminas. y todo lo que el vea neceario",
+   "hecho": "7 «si» y 4 «no»: la de la neblina, la de qué sale, la de los escenarios y el cierre.",
+   "antes_despues": [
+    "11 láminas sin revisar",
+    "7 aprobadas y 4 con instrucción de qué cambiar"
+   ],
+   "fuente": "Sheet 2026-08-29 · decisiones.propuestas['vendo-construyo-g1-41098b'] = 7 si / 4 no"
+  },
+  {
+   "quien": "tu",
+   "fecha": "29 AGO",
+   "que": "Tacha 1 — la lámina de la neblina no enganchaba.",
+   "dijo": "no me gusto el argumento ni la imagen no se relacionan y como que n hacen gancho",
+   "hecho": "Se cambió por una lámina nueva: «El que te quiere comprar ya sabe cuántos m² aguanta» — un comprador con carpeta en la cerca del terreno.",
+   "antes_despues": [
+    "«Comparas un precio contra una neblina» con un terreno con niebla",
+    "«El que te quiere comprar ya sabe cuántos m² aguanta» con el comprador preparado"
+   ],
+   "fuente": "Sheet 2026-08-29 nota de la lámina 7 · archivo ~/yod_audit/vendo_construyo/tira_v2/VD_comprador.png con fecha 29-ago 14:17 · producir_v2.py: «reemplaza a la neblina»"
+  },
+  {
+   "quien": "tu",
+   "fecha": "29 AGO",
+   "que": "Tacha 2 — la lámina de qué sale del Plan no cerraba.",
+   "dijo": "me gusta pero como que no cierra le falta algo preguntale a hormozi ",
+   "hecho": "Dejó de ser una lista y pasó a ser lo que recibes: «El Plan te lo entrega en una hoja: m², giros y lo que hay que resolver», con las manos recibiendo la hoja.",
+   "antes_despues": [
+    "una lista de cosas que trae el Plan",
+    "una hoja que te entregan en la mano"
+   ],
+   "fuente": "Sheet 2026-08-29 nota de la lámina 9 · archivo tira_v2/VD_entrega.png con fecha 29-ago 14:23"
+  },
+  {
+   "quien": "tu",
+   "fecha": "29 AGO",
+   "que": "Tacha 3 — pediste que de verdad se vieran escenarios distintos comparados.",
+   "dijo": "se me hace mas que compare como diferenets escenarios de diferneets propuestas , depas, bodegs, comercial casas algo asi como que s enote que etsan comparando diferentes escenarios",
+   "hecho": "«Mismo terreno, tres escenarios: departamentos, bodegas, comercio», con tres carpetas abiertas y una maqueta distinta en cada una.",
+   "antes_despues": [
+    "dos folders iguales lado a lado («dos escenarios con la misma cara»)",
+    "tres carpetas con tres maquetas distintas y con nombre"
+   ],
+   "fuente": "Sheet 2026-08-29 nota de la lámina 10 · tira_v2/VD_escenarios.png (14:29) y VD_escenarios2.png (14:43)"
+  },
+  {
+   "quien": "yo",
+   "fecha": "29 AGO",
+   "que": "La primera versión de esa lámina seguía sin verse comparativa, así que la rehice de nuevo el mismo día sin esperar a que me lo dijeras.",
+   "hecho": "Segunda toma de «escenarios», la que quedó montada.",
+   "antes_despues": [
+    "tres carpetas que no se distinguían entre sí",
+    "tres maquetas claramente distintas: edificio, bodega y comercio"
+   ],
+   "fuente": "commit 91877b1 «tira v2: escenarios rehecha literal (tres maquetas comparadas)», 29-ago 14:43"
+  },
+  {
+   "quien": "tu",
+   "fecha": "29 AGO",
+   "que": "Tacha 4 — la pareja del cierre tenía que verse de otro nivel.",
+   "dijo": "de un estatus economico mas elevadocreo yo media alta seria el estilo que estariamos dando para eta pareja",
+   "hecho": "Cierre nuevo con pareja de clase media alta entrando a su terreno al atardecer con el plano enrollado.",
+   "antes_despues": [
+    "pareja de clase media caminando al terreno",
+    "pareja media alta, saco de lino, camioneta al borde del predio"
+   ],
+   "fuente": "Sheet 2026-08-29 nota de la lámina 11 · tira_v2/VD_cierre.png con fecha 29-ago 14:35 · producir_v2.py describe «upper-middle-class Mexican couple»"
+  },
+  {
+   "quien": "yo",
+   "fecha": "29 AGO",
+   "que": "Aparte de rehacer las 4, cambié el orden de la tira: la desventaja frente al comprador sube al tercer lugar.",
+   "hecho": "Orden nuevo: la pregunta → nadie te ha dicho qué aguanta → el comprador ya sabe → el predial corre → el empate → el giro → la hoja → los tres escenarios → el cierre.",
+   "antes_despues": [
+    "el comprador no aparecía en la tira",
+    "el comprador aparece en el lugar 3, justo donde se siente la desventaja"
+   ],
+   "fuente": "producir_v2.py, lista ORDEN y hoja de dirección de la v2 (archivo con fecha 29-ago 14:11)"
+  },
+  {
+   "quien": "yo",
+   "fecha": "29 AGO",
+   "que": "Monté la tira v2 completa y me di cuenta de que te estaba pidiendo aprobar otra vez las 7 que ya habías palomeado. La retiré yo mismo.",
+   "hecho": "Quedó en tu mesa una sola tarjeta: «SOLO las 4 rehechas (las 7 que aprobaste están bajo candado)».",
+   "antes_despues": [
+    "una tarjeta de 11 láminas, 7 ya decididas",
+    "una tarjeta de 4 láminas: solo lo que cambió"
+   ],
+   "fuente": "commit a464bf2 (29-ago 15:05) · Sheet 2026-08-29: vendo-construyo-g2-f1a3a7 queda «retirada — te pedía re-aprobar las 7 ya aprobadas»"
+  },
+  {
+   "quien": "yo",
+   "fecha": "30 AGO",
+   "que": "Las 4 rehechas siguen esperando tu palabra: es lo único que quedó en la mesa.",
+   "hecho": "El día 30 abrió con una sola tarjeta pendiente en la Sala, la de las 4 láminas, y sin marcas tuyas.",
+   "antes_despues": [
+    "mesa con varias tarjetas",
+    "1 tarjeta pendiente: las 4 rehechas"
+   ],
+   "fuente": "Sheet 2026-08-30 · propuestas = [vendo-4rehechas-30f901] y decisiones.propuestas vacío"
+  }
+ ],
+ "reglas": [
+  {
+   "regla": "Cuando rehago láminas, solo te enseño las rehechas; lo que ya aprobaste queda bajo candado y no vuelve a preguntarse.",
+   "nacio": "de la tira v2 del 29-ago, que te pedía volver a palomear las 7 láminas que ya habías aprobado esa misma mañana"
+  },
+  {
+   "regla": "Cada versión re-presentada lleva identificador nuevo y dice de cuál viene («rehecha-de»), nunca reusa el anterior.",
+   "nacio": "de que al reusar el identificador, tu marca vieja cerraba la tarjeta nueva sin que la vieras (memoria sala-decisiones-viajan, 29-ago)"
+  },
+  {
+   "regla": "Las imágenes de cada pieza se generan con nombre propio; nada se da por hecho solo porque ya existe un archivo con ese nombre.",
+   "nacio": "del montaje del 29-ago a las 12:17, donde 9 de 11 láminas salieron con fotos de otra pieza por llamarse igual"
+  },
+  {
+   "regla": "Primero el guion en texto, después las imágenes.",
+   "nacio": "de mandarte a revisar el guion de las 9 láminas el 28-ago antes de generar nada, para no tirar trabajo hecho"
+  }
+ ]
+}

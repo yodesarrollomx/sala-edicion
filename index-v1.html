@@ -1,0 +1,1200 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Sala de Edición · Yo Desarrollo</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>
+/* ══ Sala de Edición v3 — la espec consensuada de la mesa (piso 8.5, cero vetos) ══
+   Umbral → Turno (overlay) → Firma → Cierre → la Mesa. Fintech Editorial intacto. */
+:root{
+  --tinta:#0a0a0c; --papel:#101014; --linea:#22222a; --linea2:#2e2e38;
+  --oro:#c2a06b; --oro-cl:#debc7e; --crema:#f4f1ec; --gris:#8a867e; --guia:#78736b;
+  --si:#3f7d62; --si-cl:#57a582; --no:#a3453a; --teal:#15514c;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--tinta);color:var(--crema);
+  font:16px/1.55 -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing:antialiased}
+.serif{font-family:"Playfair Display","Iowan Old Style",Georgia,serif}
+button{font:inherit;cursor:pointer;border:1px solid var(--linea2);background:transparent;
+  color:var(--crema);border-radius:9px;padding:10px 16px;transition:.13s;min-height:44px}
+button:hover{border-color:var(--oro)}
+button:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
+.menor{color:var(--gris);border-color:transparent}
+.menor:hover{color:var(--crema);border-color:var(--linea2)}
+.destruye{color:#c98c83}
+.destruye:hover{border-color:var(--no);background:rgba(163,69,58,.14)}
+.dorado{background:var(--oro);color:#17130c;border-color:var(--oro);font-weight:600}
+.dorado:hover{background:var(--oro-cl);border-color:var(--oro-cl)}
+.kick{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--oro)}
+::placeholder{color:var(--guia)}
+
+/* ── EL UMBRAL ── */
+header{padding:22px 22px 6px;max-width:900px;margin:0 auto}
+.linea1{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:24px;font-weight:400}
+h1 em{color:var(--oro-cl);font-style:italic}
+select{font:inherit;font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  background:transparent;color:var(--gris);border:0;padding:4px;cursor:pointer;margin-left:auto}
+.avance{font-size:13px;color:var(--gris);border:1px solid var(--linea);border-radius:999px;
+  padding:4px 13px;white-space:nowrap}
+.avance b{color:var(--oro-cl)}
+.umbral{max-width:900px;margin:0 auto;padding:10px 22px 26px}
+.retroTarj{background:var(--papel);border:1px solid var(--linea);border-radius:11px;
+  padding:15px 17px;cursor:pointer;margin-bottom:16px}
+.retroTarj .r1{font-size:15px}
+.retroTarj .r2{font-size:13px;color:var(--guia);margin-top:3px}
+.retroTarj .det{display:none;margin-top:12px;border-top:1px solid var(--linea);padding-top:12px;
+  font-size:14px;color:var(--gris);line-height:1.7}
+.retroTarj.abierta .det{display:block}
+.botonon{width:100%;padding:20px;font-size:19px;border-radius:12px}
+.subboton{text-align:center;font-size:13px;color:var(--guia);margin-top:10px}
+
+/* ── LA MESA ── */
+main{max-width:900px;margin:0 auto;padding:6px 22px 90px}
+.franja{margin:34px 0 0}
+.ftit{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--linea);
+  padding-bottom:9px;margin-bottom:15px}
+.ftit h2{margin:0;font-size:21px;font-weight:400}
+.ftit .mini{font-size:12px;color:var(--guia);margin-left:auto}
+.control{background:var(--papel);border:1px solid var(--linea);border-radius:11px;
+  padding:16px 18px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.control h4{margin:2px 0;font-size:19px;font-weight:400}
+.control .desde{font-size:12.5px;color:var(--guia);line-height:1.5}
+.semana{margin-bottom:14px}
+.semtit{font-size:11px;letter-spacing:2.4px;color:var(--guia);margin:0 0 8px}
+.tiraSem{display:flex;gap:9px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.celda{flex:0 0 150px;background:var(--papel);border:1px solid var(--linea);border-radius:9px;
+  padding:10px 12px;min-height:92px;display:flex;flex-direction:column;gap:5px}
+.celda.vacia{border-style:dashed;opacity:.55}
+.celda.parada{border-color:#4a2a26;cursor:pointer}
+.celda .dia{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:var(--guia)}
+.celda .pieza{font-size:13px;line-height:1.3}
+.camino{display:flex;gap:5px;margin-top:auto;align-items:center}
+.paso{width:7px;height:7px;border-radius:50%;border:1px solid var(--linea2)}
+.paso.on{background:var(--oro);border-color:var(--oro)}
+.celda .estado{font-size:11px;color:var(--gris)}
+.celda .estado.rojo{color:#e0968b}
+.tarjes{display:flex;flex-direction:column;gap:10px}
+.tarj{background:var(--papel);border:1px solid var(--linea);border-radius:10px;
+  padding:13px 15px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.chip{border-radius:999px;padding:3px 12px;font-size:12px;border:1px solid var(--linea2);
+  color:var(--gris);white-space:nowrap}
+.chip.video{border-color:var(--si);color:var(--si-cl)}
+.chip.publicada{background:var(--teal);border-color:var(--teal);color:#e8efe9}
+.chip.rehacer{border-color:var(--no);color:#e0968b}
+.chip.aprobada{border-color:var(--oro);color:var(--oro-cl)}
+.tarj .det{font-size:13.5px;color:var(--gris);flex:1 1 100%}
+.bit{list-style:none;margin:0;padding:0;font-size:14px}
+.bit li{display:flex;gap:13px;padding:8px 0;border-bottom:1px solid var(--linea)}
+.bit .h{color:var(--guia);font-variant-numeric:tabular-nums;white-space:nowrap}
+.conexion{font-size:12.5px;color:var(--guia);padding:12px 0;cursor:pointer}
+
+/* ── EL TURNO ── */
+.turno{position:fixed;inset:0;background:var(--tinta);z-index:60;display:flex;
+  flex-direction:column}
+.turno .arriba{display:flex;align-items:center;gap:12px;padding:14px 18px}
+.turno .cuentaT{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gris);
+  cursor:pointer;padding:6px 4px}
+.turno .salir{margin-left:auto}
+.turno .escena{flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:0 18px;min-height:0;overflow-y:auto}
+/* Centrado SEGURO (29-ago): justify-content:center con contenido más alto que la
+   pantalla empuja la parte de arriba fuera del scroll y NO se puede subir a verla
+   («se corta la pantalla hasta arriba»). Con márgenes auto: corto = centrado,
+   largo = arranca arriba y se puede recorrer completo. */
+.turno .escena>:first-child{margin-top:auto}
+.turno .escena>:last-child{margin-bottom:auto}
+.turno .escena video{max-width:min(92vw,420px);max-height:70vh;border-radius:8px;border:1px solid var(--linea);background:#000}
+.audioCaja{display:flex;flex-direction:column;gap:8px;align-items:center;padding:22px;border:1px solid var(--linea);border-radius:11px;background:var(--papel);min-width:min(90vw,420px)}
+.audioCaja audio{width:100%}
+.medioBoleta{display:flex;justify-content:center;margin-bottom:16px}
+.medioBoleta video{max-width:min(88vw,300px);max-height:46vh;border-radius:10px;border:1px solid var(--linea);background:#000}
+.mapa video{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:5px;border:2px solid var(--linea)}
+.turno .escena img{max-width:min(92vw,480px);max-height:100%;object-fit:contain;
+  border-radius:8px;border:1px solid var(--linea)}
+.turno .titProp{font-size:13px;color:var(--guia);margin:8px 0 0;text-align:center}
+.turno .mandoT{display:flex;gap:1px;background:var(--linea);border-top:1px solid var(--linea)}
+.turno .mandoT button{flex:1;border:0;border-radius:0;min-height:64px;font-size:22px;
+  background:var(--papel);color:var(--gris);padding-bottom:env(safe-area-inset-bottom)}
+.turno .mandoT .tsi.on{background:var(--si);color:#fff}
+.turno .mandoT .tno.on{background:var(--no);color:#fff}
+.boleta{width:100%;max-width:560px;display:flex;flex-direction:column;gap:13px;padding:10px 0}
+.boleta .intro{font-size:14px;color:var(--gris);text-align:center;margin:0 0 4px}
+.opcion{border:1px solid var(--linea);border-radius:10px;background:var(--papel);
+  padding:16px 18px;transition:.13s}
+.opcion.si{border-color:var(--si);box-shadow:0 0 0 1px var(--si)}
+.opcion.apagada{opacity:.4}
+.opcion h4{margin:6px 0 8px;font-size:19px;font-weight:400}
+.opcion p{margin:0 0 12px;font-size:14px;color:var(--gris);line-height:1.55}
+.notaEsc{width:100%;max-width:560px;display:flex;flex-direction:column;gap:12px}
+textarea{width:100%;background:var(--papel);color:var(--crema);border:1px solid var(--linea);
+  border-radius:9px;padding:13px 15px;font:inherit;font-size:16px;resize:vertical;min-height:80px}
+textarea:focus{outline:0;border-color:var(--oro)}
+.mapa{position:absolute;inset:0;background:rgba(6,6,8,.97);z-index:5;overflow-y:auto;
+  padding:20px}
+.mapa .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;
+  max-width:700px;margin:0 auto}
+.mapa img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:5px;border:2px solid var(--linea)}
+.mapa .m-si img{border-color:var(--si)}
+.mapa .m-no img{border-color:var(--no);opacity:.4}
+video{width:100%;max-width:min(88vw,400px);border-radius:8px;border:1px solid var(--linea);background:#000}
+
+/* ── hojas, cierre, toast ── */
+.hoja{position:fixed;left:0;right:0;bottom:0;z-index:80;background:#141419;
+  border-top:1px solid var(--linea2);border-radius:16px 16px 0 0;
+  padding:22px 22px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -14px 40px rgba(0,0,0,.6);
+  max-height:72vh;overflow-y:auto;overscroll-behavior:contain}
+.velo{touch-action:none;overscroll-behavior:contain}
+.hoja p{margin:0 0 16px;font-size:15px;line-height:1.6}
+.hoja .fila{display:flex;gap:10px;flex-wrap:wrap}
+.hoja .fila button{flex:1}
+.velo{position:fixed;inset:0;background:rgba(6,6,8,.6);z-index:75}
+.cierre{position:fixed;inset:0;z-index:90;background:var(--tinta);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:30px;gap:8px}
+.cierre .tasa{font-size:64px;font-family:Georgia,serif;color:var(--oro-cl);line-height:1}
+.cierre .quees{font-size:13px;letter-spacing:2.6px;text-transform:uppercase;color:var(--gris)}
+.cierre .marcador{font-size:15px;color:var(--gris);margin-top:10px}
+.puntos{display:flex;gap:9px;margin:14px 0}
+.punto{width:11px;height:11px;border-radius:50%;border:1px solid var(--linea2)}
+.punto.on{background:var(--oro);border-color:var(--oro)}
+.cierre .reparto{font-size:15px;line-height:1.8;margin-top:6px}
+.cierre .puente{font-size:14px;color:var(--guia);margin-top:14px;font-style:italic}
+.cierre .sello{font-size:12.5px;color:var(--guia);margin-top:18px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom));
+  background:#17171d;border:1px solid var(--linea2);border-radius:10px;padding:11px 15px;
+  display:flex;gap:14px;align-items:center;z-index:95;font-size:14px;
+  box-shadow:0 10px 34px rgba(0,0,0,.55)}
+.toast button{padding:6px 12px;min-height:34px;font-size:14px;border-color:var(--oro);color:var(--oro-cl)}
+.pieCola{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:50}
+dialog{background:var(--papel);color:var(--crema);border:1px solid var(--linea2);
+  border-radius:12px;padding:24px;max-width:430px;width:92vw}
+dialog::backdrop{background:rgba(6,6,8,.8)}
+dialog input{width:100%;background:var(--tinta);color:var(--crema);border:1px solid var(--linea);
+  border-radius:8px;padding:11px 13px;font:inherit;font-size:15px;margin:7px 0 13px}
+.vacio{text-align:center;padding:56px 18px;color:var(--gris)}
+@media(max-width:700px){
+  header{padding:16px 16px 4px} .umbral{padding:8px 16px 20px} main{padding:4px 16px 90px}
+  h1{font-size:21px}
+}
+.aviso-edicion{margin-top:8px;font-size:13px;padding:7px 12px;border-radius:7px;
+  background:rgba(120,110,90,.10);color:#5a5346;border:1px solid rgba(120,110,90,.22);}
+.aviso-edicion[data-viejo="1"]{background:rgba(160,90,30,.10);color:#8a5f18;
+  border-color:rgba(160,90,30,.34);font-weight:600;}
+
+/* Las máquinas: qué corre solo, qué falta y desde dónde mandarme retro */
+.maqs{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.maq{background:var(--papel);border:1px solid var(--linea);border-radius:12px;padding:15px 16px}
+.maq.mal{border-color:var(--no)}
+.maq.duda{border-color:var(--oro)}
+.maq h4{margin:0 0 2px;font-size:16px;font-weight:500}
+.maq .sem{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.maq .sem.bien{background:var(--si-cl)} .maq .sem.duda{background:var(--oro)} .maq .sem.mal{background:var(--no)}
+.maq .hace{color:var(--gris);font-size:13.5px;line-height:1.5;margin:8px 0 0}
+.maq .evita{color:var(--guia);font-size:12.5px;font-style:italic;margin:7px 0 0}
+.maq .pie{margin-top:11px;padding-top:10px;border-top:1px solid var(--linea);
+  display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--guia)}
+.maq .pie b{color:var(--crema);font-weight:500}
+.maq .dijo{margin-top:7px;font-size:11.5px;color:var(--guia);font-family:ui-monospace,Menlo,monospace;
+  word-break:break-word;opacity:.85}
+.faltan{margin:0 0 16px;padding:13px 16px;border:1px solid var(--oro);border-radius:12px;
+  background:rgba(194,160,107,.07)}
+.faltan p{margin:0 0 6px;font-size:13.5px}
+.faltan li{font-size:13.5px;color:var(--gris);margin:4px 0}
+.maqAcc{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0 0;align-items:center}
+.maqAcc textarea{flex:1;min-width:240px;background:var(--papel);color:var(--crema);
+  border:1px solid var(--linea2);border-radius:9px;padding:10px 12px;font:inherit;font-size:14px;resize:vertical}
+
+/* Dentro del OS (?embed=1) la máscara ya pone el título y el marco: aquí se
+   quita el titular repetido y se aprieta el arranque, porque la cabeza doble
+   se comía la primera parte de la revisión. */
+html.embed header{padding:12px 22px 4px}
+html.embed header h1{display:none}
+html.embed .umbral{padding:6px 22px 16px}
+html.embed main{padding-top:2px}
+</style>
+
+<script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
+<header>
+  <div class="linea1">
+    <h1 class="serif">Sala de <em>Edición</em></h1>
+    <select id="sel" aria-label="Ver otro día"></select>
+    <span class="avance" id="avance"><b>0</b> de 0</span>
+  </div>
+  <div class="aviso-edicion" id="avisoEdicion" hidden></div>
+</header>
+
+<section class="umbral" id="umbral"></section>
+<main id="mesa"></main>
+<div id="capas"></div>
+
+<dialog id="dlg">
+  <span class="kick">Conexión</span>
+  <h3 class="serif" style="margin:6px 0 10px;font-weight:400">El Sheet de la Sala</h3>
+  <p style="font-size:13.5px;color:var(--gris);margin:0 0 4px">Liga del conector (termina en /exec):</p>
+  <input id="gasUrl" placeholder="https://script.google.com/macros/s/…/exec">
+  <p style="font-size:13.5px;color:var(--gris);margin:0 0 4px">Tu clave:</p>
+  <input id="gasClave">
+  <div style="display:flex;gap:9px;justify-content:flex-end">
+    <button class="menor" id="dlgNo">Cancelar</button>
+    <button class="dorado" id="dlgSi">Conectar</button>
+  </div>
+</dialog>
+
+<script>
+'use strict';
+/* ════ Sala v3 — implementación de la espec consensuada ════
+   Reglas de la mesa que este código honra:
+   - jerga técnica CERO en pantalla (los códigos G0-G3 viven solo en el Sheet)
+   - una decisión por pantalla en el Turno; auto-avance al marcar
+   - un solo POST consolidado por envío, idempotente por envio_id, con cola offline
+   - todo lo visible sale de datos; todo gesto produce un dato que el agente lee */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function medio(src,extra){
+  const u=String(src||''), b=u.split('?')[0].toLowerCase();
+  if(/\.(mp4|mov|webm|m4v)$/.test(b))
+    return '<video src="'+esc(u)+'" controls playsinline preload="metadata" '+(extra||'')+'></video>';
+  if(/\.(wav|mp3|m4a|aac|ogg)$/.test(b))
+    return '<div class="audioCaja"><span class="kick">escúchalo</span><audio src="'+esc(u)+'" controls preload="metadata"></audio></div>';
+  return '<img src="'+esc(u)+'" alt="" '+(extra||'')+'>';
+}
+const uuid=()=>(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));
+let D={propuestas:[]}, dec={propuestas:{}}, fecha=null, deshacer=null;
+
+/* la liga del correo trae la sesión en el fragmento #gas=…&clave=…&rol=… :
+   no viaja al servidor, se siembra una vez y se limpia de la barra */
+(function(){
+  if(!location.hash) return;
+  const h=new URLSearchParams(location.hash.slice(1));
+  if(h.get('gas')) localStorage.setItem('sala_gas',h.get('gas'));
+  if(h.get('clave')) localStorage.setItem('sala_clave',h.get('clave'));
+  if(h.get('rol')) localStorage.setItem('sala_rol',h.get('rol'));
+  history.replaceState(null,'',location.pathname+location.search);
+})();
+/* si la liga con sesión llega DESPUÉS de cargar (navegación al mismo documento),
+   sembrar y recargar — sin esto el fragmento se ignora en silencio */
+window.addEventListener('hashchange',()=>{
+  const h=new URLSearchParams(location.hash.slice(1));
+  if(!h.get('gas')&&!h.get('clave')) return;
+  if(h.get('gas')) localStorage.setItem('sala_gas',h.get('gas'));
+  if(h.get('clave')) localStorage.setItem('sala_clave',h.get('clave'));
+  if(h.get('rol')) localStorage.setItem('sala_rol',h.get('rol'));
+  history.replaceState(null,'',location.pathname+location.search);
+  location.reload();
+});
+const GAS=()=>localStorage.getItem('sala_gas')||'';
+const CLAVE=()=>localStorage.getItem('sala_clave')||'';
+const ROL=()=>localStorage.getItem('sala_rol')||'editor';
+const dia=f=>{try{return new Date(f+'T12:00:00').toLocaleDateString('es-MX',
+  {weekday:'long',day:'numeric',month:'long'})}catch(e){return f}};
+
+function ficha(pid){
+  const p=dec.propuestas[pid] ||= {laminas:[],nota:''};
+  if(!Array.isArray(p.laminas)) p.laminas=[];
+  return p;
+}
+const prop=pid=>(D.propuestas||[]).find(x=>x.id===pid);
+const items=p=>p.laminas&&p.laminas.length?p.laminas:(p.opciones||[]);
+const estado=(pid,i)=>ficha(pid).laminas[i]||null;
+async function leerJSON(r){
+  // sólo cuenta como respuesta del Sheet lo que de verdad es JSON del GAS
+  try{ const t=await r.text(); return JSON.parse(t) }catch(e){ return null }
+}
+function leerLS(k,def){
+  // lectura blindada: JSON roto o tipo equivocado regresan el default (no truena la sala)
+  try{ const v=JSON.parse(localStorage.getItem(k)||'null');
+    if(v===null) return def;
+    if(Array.isArray(def)&&!Array.isArray(v)) return def;
+    if(!Array.isArray(def)&&typeof def==='object'&&(typeof v!=='object'||Array.isArray(v))) return def;
+    return v;
+  }catch(e){ return def }
+}
+function guardarLocal(){
+  try{ localStorage.setItem('sala-'+fecha, JSON.stringify({...dec,tocado:Date.now()})) }catch(e){}
+}
+function totales(){
+  let s=0,n=0,t=0;
+  for(const p of D.propuestas||[]){
+    if(p.tipo==='eje'){
+      // la boleta es UNA decision, no tres: escoger una opcion la deja decidida,
+      // y «ninguna sirve» (todas en no) tambien. Sin esto, las dos opciones no
+      // elegidas contaban como pendientes y el envio pedia confirmacion siempre.
+      t++;
+      const ms=items(p).map((_,i)=>estado(p.id,i));
+      if(ms.some(e=>e==='si')) s++;
+      else if(ms.length&&ms.every(e=>e==='no')) n++;
+      continue;
+    }
+    items(p).forEach((_,i)=>{
+      t++; const e=estado(p.id,i); if(e==='si')s++; else if(e==='no')n++;
+    });
+  }
+  return {s,n,t,falta:t-s-n};
+}
+
+function marcar(pid,i,v,silencio){
+  const p=ficha(pid), pr=prop(pid);
+  // ✕ sobre una ya tachada = "quiero decirle que cambio", no "quitar la marca"
+  if(v==='no'&&p.laminas[i]==='no'&&pr&&pr.tipo!=='eje'){ hojaTache(pid,i); return }
+  p.laminas[i]=p.laminas[i]===v?null:v;
+  if(pr&&pr.tipo==='eje'&&v==='si'&&p.laminas[i]==='si')
+    items(pr).forEach((_,j)=>{ if(j!==i&&p.laminas[j]==='si') p.laminas[j]=null });
+  guardarLocal(); pintarAvance();
+  // LA PETICION DEL EDITOR (4-ago): al tachar, 3 mejoras precargadas de ESA foto
+  // + casilla de que espera. Solo asi el rehacer deja de ser adivinanza.
+  if(v==='no'&&p.laminas[i]==='no'&&pr&&pr.tipo!=='eje'){ hojaTache(pid,i); return }
+  if(!silencio && turnoVivo) avanzarTurno();
+}
+function hojaTache(pid,i){
+  const pr=prop(pid), f=ficha(pid);
+  f.notas ||= []; f.mejoras ||= [];
+  const sug=(pr.sugerencias&&pr.sugerencias[i])||(D.sugerencias&&D.sugerencias[i])||[];
+  const eleg=new Set(f.mejoras[i]||[]);
+  const velo=document.createElement('div'); velo.className='velo';
+  const h=document.createElement('div'); h.className='hoja';
+  h.innerHTML=`<p style="margin-bottom:10px"><b>La tachaste.</b> ¿Qué le cambio? Palomea o escribe:</p>
+    ${sug.map((t,j)=>`<label style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;cursor:pointer;font-size:15px">
+      <input type="checkbox" data-j="${j}" ${eleg.has(j)?'checked':''} style="margin-top:4px;width:18px;height:18px;accent-color:var(--oro)">
+      <span>${esc(t)}</span></label>`).join('')}
+    <textarea id="notaLam" rows="2" style="margin-top:8px"
+      placeholder="¿Qué esperas de esta lámina? (con tus palabras)">${esc(f.notas[i]||'')}</textarea>
+    <div class="fila" style="margin-top:12px"><button class="dorado" id="okTache">Así la rehago</button></div>`;
+  document.body.append(velo,h);
+  // con el teclado del telefono abierto, la hoja se limita al viewport VISIBLE
+  // para que el boton dorado nunca quede escondido detras del teclado
+  const ajustar=()=>{ if(window.visualViewport) h.style.maxHeight=Math.round(window.visualViewport.height*0.86)+'px' };
+  ajustar(); if(window.visualViewport) window.visualViewport.addEventListener('resize',ajustar);
+  const quitar=()=>{ if(window.visualViewport) window.visualViewport.removeEventListener('resize',ajustar);
+    velo.remove(); h.remove() };
+  // tocar fuera con el teclado abierto = bajar el teclado (gesto natural), NO cerrar
+  velo.onclick=()=>{ const a=document.activeElement;
+    if(a&&(a.tagName==='TEXTAREA'||a.tagName==='INPUT')){ a.blur(); return } quitar() };
+  velo.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+  h.querySelectorAll('input[type=checkbox]').forEach(c=>c.onchange=()=>{
+    const j=+c.dataset.j; c.checked?eleg.add(j):eleg.delete(j);
+    f.mejoras[i]=[...eleg]; guardarLocal();
+  });
+  h.querySelector('#notaLam').oninput=e=>{ f.notas[i]=e.target.value; guardarLocal() };
+  h.querySelector('#okTache').onclick=()=>{ quitar(); if(turnoVivo) avanzarTurno() };
+}
+function toast(txt,fn){
+  if(deshacer) deshacer.remove();
+  const t=document.createElement('div'); t.className='toast';
+  t.innerHTML=`<span>${esc(txt)}</span>`;
+  if(fn){ const b=document.createElement('button'); b.textContent='Deshacer';
+    b.onclick=()=>{ fn(); t.remove(); deshacer=null }; t.appendChild(b); }
+  document.body.appendChild(t); deshacer=t;
+  setTimeout(()=>{ if(deshacer===t){ t.remove(); deshacer=null } },7000);
+}
+function pintarAvance(){
+  const {s,n,t,falta}=totales();
+  $('#avance').innerHTML=`<b>${s+n}</b> de ${t}`;
+  document.title=falta>0?`Sala de Edición · ${falta} sin marcar`:`Sala de Edición · ${dia(fecha)}`;
+  const b=$('#irTurno');
+  if(b) b.textContent = falta>0?`Revisar hoy (${falta})`:'Revisión completa — ver mi turno';
+}
+
+/* ═══ EL UMBRAL ═══ */
+function pintarUmbral(){
+  const u=$('#umbral'), r=D.retro||{}, {t,falta}=totales();
+  const horas=D.ultima_revision?(Date.now()-Date.parse(D.ultima_revision))/36e5:0;
+  const ausente=horas>=48;
+  let retroHtml='';
+  if(ausente && (D.mientras||[]).length){
+    retroHtml=`<div class="retroTarj"><div class="r1">Mientras no estabas</div>
+      <div class="det" style="display:block">${(D.mientras||[]).slice(0,3).map(esc).join('<br>')}</div></div>`;
+  }else if(r.fecha){
+    retroHtml=`<div class="retroTarj" id="retroT">
+      <div class="r1">Ayer: ${r.aprobadas||0}✓ ${r.tiradas||0}✕ · ${r.producidas?`${r.producidas} ya son video`:'sin producción'} →</div>
+      <div class="r2">${r.nota?`tu nota ya se aplicó: «${esc(r.nota.slice(0,60))}${r.nota.length>60?'…':''}»`:'toca para el detalle'}</div>
+      <div class="det">${r.aprobadas||0} aprobadas por ti · ${r.tiradas||0} tiradas · ${r.producidas||0} producidas · ${r.rehechas||0} rehechas con tu nota (vuelven hoy)${r.nota?`<br>«${esc(r.nota)}»`:''}</div>
+    </div>`;
+  }
+  u.innerHTML=`${retroHtml}
+    ${t>0?`<button class="dorado botonon" id="irTurno">Revisar hoy (${falta})</button>
+    <div class="subboton">${(D.propuestas||[]).length} propuesta(s) · ~5 minutos · todo reversible</div>`
+    :`<div class="vacio"><p>Hoy no hay nada que revisar.</p>
+      <p style="font-size:14px">Cuando haya propuestas nuevas, llegan por el correo de las 7:00.</p></div>`}`;
+  const rt=$('#retroT'); if(rt) rt.onclick=()=>rt.classList.toggle('abierta');
+  const b=$('#irTurno'); if(b) b.onclick=()=>abrirTurno(0);
+  pintarAvance();
+}
+
+/* ═══ EL TURNO — una decisión por pantalla ═══ */
+let turnoVivo=null, pasoIdx=0, pasos=[];
+function construirPasos(){
+  pasos=[];
+  for(const p of D.propuestas||[]){
+    if(p.tipo==='eje') pasos.push({tipo:'boleta',pid:p.id});
+    else if(p.opciones&&p.opciones.length)
+      // propuestas de TEXTO (guiones, latidos): una tarjeta por pantalla con ✓/✕.
+      // Antes caian al camino de laminas, p.laminas venia vacio y el Turno se
+      // abria en negro — el bug de «se queda en negro cuando le pico revisar».
+      p.opciones.forEach((_,i)=>pasos.push({tipo:'texto',pid:p.id,i}));
+    else items(p).forEach((_,i)=>pasos.push({tipo:'lamina',pid:p.id,i}));
+    pasos.push({tipo:'nota',pid:p.id});
+  }
+  pasos.push({tipo:'firma'});
+}
+function abrirTurno(desde){
+  construirPasos();
+  pasoIdx=Math.max(0,Math.min(desde??0,pasos.length-1));
+  turnoVivo=document.createElement('div'); turnoVivo.className='turno';
+  document.body.appendChild(turnoVivo); document.body.style.overflow='hidden';
+  pintarPaso();
+}
+function cerrarTurno(){
+  if(!turnoVivo) return;
+  turnoVivo.remove(); turnoVivo=null; document.body.style.overflow='';
+  pintarUmbral();
+}
+function avanzarTurno(){ setTimeout(()=>{ if(!turnoVivo) return;
+  if(pasoIdx<pasos.length-1){ pasoIdx++; pintarPaso() } },160) }
+function saltarAPendiente(){
+  const j=pasos.findIndex(x=>x.tipo==='lamina'&&!estado(x.pid,x.i));
+  if(j>=0){ pasoIdx=j; pintarPaso() }
+}
+function pintarPaso(){
+  // cada paso arranca arriba: sin esto, el scroll del paso anterior corta el nuevo
+  requestAnimationFrame(()=>{const e=turnoVivo&&turnoVivo.querySelector('.escena'); if(e) e.scrollTop=0});
+  const x=pasos[pasoIdx], laminasTot=pasos.filter(p=>['lamina','boleta','texto'].includes(p.tipo)).length;
+  const idxDec=pasos.slice(0,pasoIdx+1).filter(p=>['lamina','boleta','texto'].includes(p.tipo)).length;
+  const arriba=`<div class="arriba">
+    <span class="cuentaT" id="verMapa">${x.tipo==='firma'?'para terminar':`${idxDec} de ${laminasTot}${x.tipo==='lamina'?' · toca para ver la tira':''}`}</span>
+    <button class="menor salir" id="salirT">Guardar y salir</button></div>`;
+
+  if(x.tipo==='lamina'){
+    const p=prop(x.pid), e=estado(x.pid,x.i), f=ficha(x.pid);
+    // PASARELA: si la lámina trae candidatas, se elige ENTRE tomas (modo Miranda)
+    const cand=p.candidatas&&p.candidatas[x.i], el=(f.elegidas&&f.elegidas[x.i])||0;
+    const src=cand?cand[Math.min(el,cand.length-1)]:p.laminas[x.i];
+    turnoVivo.innerHTML=`${arriba}
+      <div class="escena" id="esc">
+        ${medio(src,'alt="pieza '+(x.i+1)+'"')}
+        ${cand?`<div class="pasarela" style="display:flex;gap:10px;justify-content:center;margin:10px 0 2px">
+          ${cand.map((_,k)=>`<button data-k="${k}" style="width:44px;height:44px;border-radius:50%;font-family:inherit;font-size:15px;cursor:pointer;border:1.5px solid ${k===el?'var(--oro-cl,#deb47e)':'rgba(255,255,255,.28)'};background:${k===el?'var(--oro-cl,#deb47e)':'transparent'};color:${k===el?'#141414':'rgba(255,255,255,.75)'}">${String.fromCharCode(65+k)}</button>`).join('')}
+        </div><p class="titProp" style="margin-top:2px">toma ${String.fromCharCode(65+el)} en pantalla — aprueba la que se queda</p>`:''}
+        <p class="titProp">${esc(p.titulo)} · lámina ${x.i+1} de ${p.laminas.length}${p.origen?` · <span style="color:var(--oro-cl)">rehecha con tu nota</span>`:''}</p>
+      </div>
+      <div class="mandoT">
+        <button class="tno ${e==='no'?'on':''}" data-v="no" aria-label="Tirar">✕ Tirar</button>
+        <button class="tsi ${e==='si'?'on':''}" data-v="si" aria-label="Aprobar">✓ Aprobar</button>
+      </div>`;
+    turnoVivo.querySelectorAll('.pasarela button').forEach(b=>
+      b.onclick=ev=>{ev.stopPropagation(); f.elegidas=f.elegidas||[]; f.elegidas[x.i]=+b.dataset.k;
+        guardarLocal(); pintarPaso()});
+    turnoVivo.querySelectorAll('.mandoT button').forEach(b=>
+      b.onclick=()=>marcar(x.pid,x.i,b.dataset.v));
+    gestos($('#esc'),x);
+  }
+  if(x.tipo==='texto'){
+    const p=prop(x.pid), o=p.opciones[x.i], e=estado(x.pid,x.i);
+    turnoVivo.innerHTML=`${arriba}
+      <div class="escena" id="esc"><div class="boleta" style="max-width:520px">
+        <span class="kick" style="text-align:center">${esc(p.titulo)}</span>
+        <div class="opcion ${e==='si'?'si':''}" style="${e==='no'?'opacity:.55':''}">
+          <span class="kick">${esc(o.titulo)}</span>
+          <h4 class="serif" style="font-size:22px;line-height:1.4">${esc(o.texto)}</h4>
+        </div>
+        <p class="intro">Palomea el latido si va; táchalo y dime en la nota qué cambio.</p>
+      </div></div>
+      <div class="mandoT">
+        <button class="tno ${e==='no'?'on':''}" data-v="no" aria-label="Tirar">✕ Cambiar</button>
+        <button class="tsi ${e==='si'?'on':''}" data-v="si" aria-label="Aprobar">✓ Va</button>
+      </div>`;
+    turnoVivo.querySelectorAll('.mandoT button').forEach(b=>
+      b.onclick=()=>marcar(x.pid,x.i,b.dataset.v));
+    gestos($('#esc'),x);
+  }
+  if(x.tipo==='boleta'){
+    const p=prop(x.pid);
+    turnoVivo.innerHTML=`${arriba}
+      <div class="escena">${p.video?('<div class="medioBoleta">'+medio(p.video)+'</div>'):''}
+      <div class="boleta">
+        <span class="kick" style="text-align:center">${esc(p.titulo)}</span>
+        <p class="intro">Escoge la idea de la semana — todo lo demás nace de aquí.</p>
+        ${p.opciones.map((o,i)=>{const e=estado(x.pid,i);
+          const alguna=items(p).some((_,j)=>estado(x.pid,j)==='si');
+          return `<div class="opcion ${e==='si'?'si':(alguna?'apagada':'')}">
+            <span class="kick">Opción ${String.fromCharCode(65+i)}</span>
+            <h4 class="serif">${esc(o.titulo)}</h4><p>${esc(o.texto)}</p>
+            <button class="${e==='si'?'dorado':''}" data-i="${i}">${e==='si'?'✓ Ésta — cambiar':'Ésta'}</button>
+          </div>`}).join('')}
+        <button class="menor" id="ninguna">Ninguna sirve — que propongan otras</button>
+      </div></div>`;
+    turnoVivo.querySelectorAll('.opcion button').forEach(b=>
+      b.onclick=()=>{ marcar(x.pid,+b.dataset.i,'si',true); pintarPaso();
+        if(estado(x.pid,+b.dataset.i)==='si') avanzarTurno(); });
+    $('#ninguna').onclick=()=>{ items(prop(x.pid)).forEach((_,j)=>ficha(x.pid).laminas[j]='no');
+      guardarLocal(); pintarAvance();
+      toast('Las tres descartadas — dime en la nota qué buscas',null); avanzarTurno(); };
+  }
+  if(x.tipo==='nota'){
+    const p=prop(x.pid), f=ficha(x.pid);
+    const dn=items(p).filter((_,i)=>estado(x.pid,i)).length;
+    turnoVivo.innerHTML=`${arriba}
+      <div class="escena"><div class="notaEsc">
+        <span class="kick">${esc(p.titulo)} · ${dn} de ${items(p).length} decididas</span>
+        ${p.video?`<video src="${esc(p.video)}" controls preload="metadata" playsinline></video>`:''}
+        <textarea id="notaP" placeholder="¿Algo que cambiar en esta propuesta? Escríbelo como se lo dirías a alguien.">${esc(f.nota||'')}</textarea>
+        <button class="dorado" id="sigueN">Continuar</button>
+      </div></div>`;
+    $('#notaP').oninput=e=>{ ficha(x.pid).nota=e.target.value; guardarLocal() };
+    $('#sigueN').onclick=avanzarTurno;
+  }
+  if(x.tipo==='firma'){
+    turnoVivo.innerHTML=`${arriba}
+      <div class="escena"><div class="notaEsc">
+        <span class="kick">Para cerrar el día</span>
+        <textarea id="notaG" placeholder="¿Algo más para todo el día? (opcional)">${esc(dec.nota_general||'')}</textarea>
+        <button class="menor" id="rumbo">Cambiar el rumbo…</button>
+        <div id="rumboCampo" style="display:${dec.nota_estrategia?'block':'none'}">
+          <p style="font-size:13px;color:var(--guia);margin:4px 0 6px">Esto no corrige una lámina: corrige la estrategia.</p>
+          <textarea id="notaE" placeholder="Qué estamos vendiendo mal, qué eje hay que girar…">${esc(dec.nota_estrategia||'')}</textarea>
+        </div>
+        <button class="dorado botonon" id="enviarT">Enviar mi revisión</button>
+        <span class="subboton" id="avisoT"></span>
+      </div></div>`;
+    $('#notaG').oninput=e=>{ dec.nota_general=e.target.value; guardarLocal() };
+    $('#rumbo').onclick=()=>{ $('#rumboCampo').style.display='block'; $('#notaE').focus() };
+    $('#notaE').oninput=e=>{ dec.nota_estrategia=e.target.value; guardarLocal() };
+    $('#enviarT').onclick=intentarEnviar;
+  }
+  $('#salirT').onclick=()=>{ toast('Tu avance quedó guardado aquí',null); cerrarTurno() };
+  const vm=$('#verMapa');
+  if(vm && x.tipo!=='firma') vm.onclick=()=>mapaTira(x.pid);
+}
+function gestos(el,x){
+  if(!el) return; let x0=null,y0=null,t0=0;
+  el.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now()},{passive:true});
+  el.addEventListener('touchend',e=>{
+    if(x0===null) return;
+    const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+    x0=null;
+    if(Date.now()-t0>600) return;
+    if(Math.abs(dx)<64 || Math.abs(dy)>Math.abs(dx)*0.5) return;
+    marcar(x.pid,x.i, dx>0?'si':'no');
+  },{passive:true});
+}
+
+function mapaTira(pid){
+  const p=prop(pid); if(!p||!p.laminas||!p.laminas.length) return;
+  const m=document.createElement('div'); m.className='mapa';
+  m.innerHTML=`<div style="text-align:center;margin-bottom:14px">
+      <span class="kick">${esc(p.titulo)} — la historia completa</span></div>
+    <div class="grid">${p.laminas.map((l,i)=>{const e=estado(pid,i);
+      return `<div class="${e?'m-'+e:''}" data-i="${i}">${medio(l)}</div>`}).join('')}
+    </div>
+    <div style="text-align:center;margin-top:16px"><button class="menor">Volver a decidir</button></div>`;
+  m.onclick=ev=>{
+    const c=ev.target.closest('[data-i]');
+    if(c){ const j=pasos.findIndex(y=>y.tipo==='lamina'&&y.pid===pid&&y.i===+c.dataset.i);
+      if(j>=0){ pasoIdx=j; m.remove(); pintarPaso(); return } }
+    if(ev.target.closest('button')||ev.target===m) m.remove();
+  };
+  turnoVivo.appendChild(m);
+}
+
+/* ═══ ENVÍO — un POST consolidado, idempotente, con cola sin conexión ═══ */
+function intentarEnviar(){
+  const {falta}=totales();
+  if(falta>0){
+    const velo=document.createElement('div'); velo.className='velo';
+    const h=document.createElement('div'); h.className='hoja';
+    const {s,n}=totales();
+    h.innerHTML=`<p>Vas a enviar <b>${s+n} decididas</b>. Las <b>${falta} sin marcar</b> vuelven mañana UNA vez y luego mueren.</p>
+      <div class="fila"><button class="menor" id="verlas">Verlas ahora</button>
+      <button class="dorado" id="asi">Enviarlas así</button></div>`;
+    document.body.append(velo,h);
+    const fuera=()=>{velo.remove();h.remove()};
+    velo.onclick=fuera;
+    h.querySelector('#verlas').onclick=()=>{fuera();saltarAPendiente()};
+    h.querySelector('#asi').onclick=()=>{fuera();enviar()};
+    return;
+  }
+  enviar();
+}
+let _enviando=false;
+async function enviar(){
+  if(_enviando) return; _enviando=true;
+  const _btn=$('#enviarT'); if(_btn) _btn.disabled=true;
+  try{ await _enviar() } finally { _enviando=false; if(_btn) _btn.disabled=false }
+}
+async function _enviar(){
+  // el consolidado: TODO el estado del día, pendientes explícitos, autoría y envio_id
+  const envio={accion:'decidir',clave:CLAVE(),fecha:(D.hoy_real||fecha),envio_id:uuid(),ts:Date.now(),quien:ROL(),
+    nota_general:dec.nota_general||'',nota_estrategia:dec.nota_estrategia||'',propuestas:{}};
+  for(const p of D.propuestas||[]){
+    const f=ficha(p.id);
+    envio.propuestas[p.id]={nota:f.nota||'',
+      laminas:items(p).map((_,i)=>f.laminas[i]||'pendiente'),
+      // la toma elegida en la pasarela viaja como texto en la nota de la lámina:
+      // el GAS no necesita redespliegue y en el Sheet se lee tal cual
+      notas:items(p).map((_,i)=>{const n=(f.notas&&f.notas[i])||'';
+        const c=p.candidatas&&p.candidatas[i];
+        return c?((n?n+' ':'')+'[toma elegida: '+String.fromCharCode(65+((f.elegidas&&f.elegidas[i])||0))+']'):n}),
+      mejoras:items(p).map((_,i)=>{
+        const src=(p.sugerencias&&p.sugerencias[i])||(D.sugerencias&&D.sugerencias[i])||[];
+        return ((f.mejoras&&f.mejoras[i])||[]).map(j=>src[j]||('#'+j));
+      })};
+  }
+  dec.guardado=new Date().toISOString(); guardarLocal();
+  if(!GAS()){ encolar(envio); registrarHist(false);
+    mostrarCierre('guardada aquí — sube sola al conectar el Sheet',true); return }
+  const aviso=$('#avisoT'); if(aviso) aviso.textContent='guardando…';
+  try{
+    const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(envio)});
+    // El /exec puede contestar 200 con la PÁGINA DE LOGIN de Google (deploy
+    // republicado, permiso revocado, cuota). Antes eso se leía como éxito y la
+    // revisión se daba por enviada — y se purgaba la cola. Ahora se exige el
+    // contrato explícito del GAS: {ok:true}.
+    const j=await leerJSON(r);
+    if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||('el Sheet no contestó en JSON ('+r.status+')'));
+    // un envio directo que SI llego deja obsoletos los encolados de esa fecha:
+    // sin esta purga, la cola vieja podia pisar despues la revision mas nueva
+    localStorage.setItem('sala_cola',JSON.stringify(leerLS('sala_cola',[]).filter(x=>x.fecha!==fecha)));
+    pintarCola();
+    registrarHist(true); mostrarCierre('enviada '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}));
+  }catch(e){
+    encolar(envio);
+    registrarHist(false);
+    mostrarCierre('sin señal — quedó en cola y se sube sola',true);
+  }
+}
+function encolar(envio){
+  const q=leerLS('sala_cola',[]);
+  if(!q.some(x=>x.envio_id===envio.envio_id)) q.push(envio);
+  localStorage.setItem('sala_cola',JSON.stringify(q)); pintarCola();
+}
+async function subirCola(){
+  const q=leerLS('sala_cola',[]);
+  if(!q.length) return;
+  if(!GAS()){ toast('Primero conecta el Sheet',null); const d=$('#dlg'); if(d&&d.showModal) d.showModal(); return }
+  // un envío encolado ANTES de conectar quedó sin clave y no subía nunca:
+  // se le pone la clave viva de esta sesión al momento de reintentar
+  q.forEach(e=>{ if(!e.clave) e.clave=CLAVE() });
+  const resto=[];
+  for(const envio of q){
+    try{
+      const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify(envio)});
+      const j=await leerJSON(r);
+      if(!r.ok||!j||j.ok!==true){
+        // «no encontré ese día» = el envío ya no aplica: se descarta, no se reintenta eternamente
+        if(j&&/no encontr/i.test(String(j.error||''))) continue;
+        throw 0;
+      }
+    }catch(e){ resto.push(envio) }
+  }
+  localStorage.setItem('sala_cola',JSON.stringify(resto)); pintarCola();
+  if(!resto.length){
+    const h=leerLS('sala_hist',{});
+    for(const k of Object.keys(h)) if(h[k].encolado){ h[k].enviado=true; h[k].encolado=false }
+    localStorage.setItem('sala_hist',JSON.stringify(h));
+    toast('Lo pendiente ya subió al Sheet',null);
+  }
+}
+function pintarCola(){
+  const q=leerLS('sala_cola',[]);
+  let b=$('#colaBox');
+  if(!q.length){ if(b)b.remove(); return }
+  if(!b){ b=document.createElement('div'); b.id='colaBox'; b.className='pieCola';
+    b.style.display='flex'; b.style.gap='8px'; document.body.appendChild(b) }
+  b.innerHTML='';
+  const s=document.createElement('button'); s.textContent=`subir lo pendiente (${q.length})`; s.onclick=subirCola;
+  const c=document.createElement('button'); c.className='menor'; c.textContent='copiar para el chat'; c.onclick=copiarParaChat;
+  b.append(s,c);
+}
+function textoParaChat(){
+  // el rescate manual: TODO lo que no ha llegado al Sheet, en un prompt que
+  // Claude aplica tal cual (el JSON manda; el resumen es para humanos)
+  const q=leerLS('sala_cola',[]);
+  const envios=q.length?q:[(()=>{ // sin cola: el estado de HOY tal como va
+    const e={accion:'decidir',clave:'',fecha,envio_id:uuid(),quien:ROL(),
+      nota_general:dec.nota_general||'',nota_estrategia:dec.nota_estrategia||'',propuestas:{}};
+    for(const p of D.propuestas||[]){ const f=ficha(p.id);
+      e.propuestas[p.id]={nota:f.nota||'',laminas:items(p).map((_,i)=>f.laminas[i]||'pendiente'),
+        notas:items(p).map((_,i)=>(f.notas&&f.notas[i])||''),
+        mejoras:items(p).map((_,i)=>(f.mejoras&&f.mejoras[i])||[])} }
+    return e })()];
+  let res='Claude: te pego mi revisión de la Sala de Edición que no pudo subir sola. Aplícala tal cual al Sheet (acción decidir / parrilla_decision, idempotente por envio_id) y produce lo que dicte.\n\nResumen:\n';
+  for(const e of envios){
+    if(e.accion==='parrilla_decision'){ res+=`· Andón ${e.dia}: ${e.pieza} → ${e.decision}\n`; continue }
+    for(const[pid,p]of Object.entries(e.propuestas||{})){
+      res+=`· ${e.fecha} · ${pid}: `+(p.laminas||[]).map((m,i)=>`L${i+1} ${m==='si'?'✓':m==='no'?'✕':'—'}`).join(' ')+'\n';
+      (p.notas||[]).forEach((n,i)=>{ if(n) res+=`   L${i+1}: ${n}\n` });
+      if(p.nota) res+=`   nota: ${p.nota}\n`;
+    }
+    if(e.nota_general) res+=`   nota del día: ${e.nota_general}\n`;
+  }
+  res+='\nDatos (el JSON manda):\n'+JSON.stringify(envios.map(e=>({...e,clave:''})))+'\n';
+  return res;
+}
+async function copiarParaChat(){
+  const t=textoParaChat();
+  try{ await navigator.clipboard.writeText(t); toast('Copiado — pégamelo en el chat de Claude',null) }
+  catch(e){
+    const velo=document.createElement('div'); velo.className='velo';
+    const h=document.createElement('div'); h.className='hoja';
+    h.innerHTML='<p>Cópialo tú (el navegador no me dejó):</p>';
+    const ta=document.createElement('textarea'); ta.value=t; ta.style.width='100%'; ta.style.height='140px'; ta.readOnly=true;
+    h.appendChild(ta); document.body.append(velo,h);
+    ta.focus(); ta.select();
+    velo.onclick=()=>{velo.remove();h.remove()};
+  }
+}
+window.addEventListener('online',subirCola);
+
+/* el marcador del editor: historial local de tasas (se deriva, no se inventa) */
+function registrarHist(llego){
+  const {s,n,t}=totales();
+  const h=leerLS('sala_hist',{});
+  h[fecha]={tasa:t?Math.round(s/t*100):0,enviado:!!llego,encolado:!llego};
+  localStorage.setItem('sala_hist',JSON.stringify(h));
+}
+function mostrarCierre(sello,enCola){
+  if(turnoVivo) cerrarTurno();
+  const {s,n,t,falta}=totales();
+  const tasa=t?Math.round(s/t*100):0;
+  const h=leerLS('sala_hist',{});
+  const hoyD=new Date(fecha+'T12:00:00');
+  const puntos=[...Array(7)].map((_,i)=>{
+    const d=new Date(hoyD); d.setDate(d.getDate()-6+i);
+    return h[d.toISOString().slice(0,10)]?.enviado;
+  });
+  const rehacen=Object.values(dec.propuestas).filter(p=>p.nota&&p.laminas.some(m=>m==='no')).length;
+  const c=document.createElement('div'); c.className='cierre';
+  c.innerHTML=`
+    <span class="quees">A la primera, hoy</span>
+    <div class="tasa serif">${tasa}%</div>
+    <div class="puntos">${puntos.map(p=>`<span class="punto ${p?'on':''}"></span>`).join('')}</div>
+    <div class="reparto">${s} se animan hoy · ${rehacen?`${rehacen} vuelven con tu nota · `:''}${falta?`${falta} vuelven una vez más · `:''}${n} se ${n===1?'tiró':'tiraron'}</div>
+    <p class="puente">Mañana a las 7:00: lo que firmaste, hecho láminas.</p>
+    <span class="sello">✓ ${esc(sello)}</span>
+    <button class="dorado" style="margin-top:22px" id="cerrarC">La sala queda trabajando</button>
+    ${enCola?'<button class="menor" style="margin-top:10px" id="copiaC">Copiar mi revisión para el chat de Claude</button>':''}`;
+  document.body.appendChild(c);
+  $('#cerrarC').onclick=()=>{ c.remove(); pintarUmbral(); pintarMesa() };
+  const cc=$('#copiaC'); if(cc) cc.onclick=copiarParaChat;
+}
+
+/* ═══ LA MESA ═══ */
+const CAMINO=['idea','guion','láminas','video','publicada'];
+const PASO_DE={g0:1,g1:2,g2:3,g3:4,pub:5,med:5,rehacer:3};
+
+// ---- Las máquinas: lo que corre solo. Se lee de datos/maquinas.json, que
+//      una tarea local reescribe cada media hora leyendo launchd de verdad.
+let MAQ=null;
+async function traerMaquinas(){
+  try{
+    const r=await fetch('datos/maquinas.json?v='+Date.now());
+    if(!r.ok) return null;
+    return await r.json();
+  }catch(e){ return null }
+}
+function pintarMaquinas(){
+  const cont=$('#franjaMaq'); if(!cont) return;
+  if(!MAQ){ cont.innerHTML=''; return }
+  const r=MAQ.resumen||{}; const ms=MAQ.maquinas||[]; const fs=MAQ.faltan||[];
+  const orden={mal:0,duda:1,bien:2};
+  const lista=[...ms].sort((a,b)=>(orden[a.salud]-orden[b.salud]));
+  let h=`<div class="ftit"><span class="kick">Las máquinas</span>
+    <h2 class="serif">Lo que corre solo mientras tú no estás</h2>
+    <span class="mini">${r.bien||0} bien · ${r.duda||0} en duda · ${r.mal||0} mal · al ${esc(MAQ.actualizado||'')}</span></div>`;
+  if(fs.length){
+    h+=`<div class="faltan"><p><b>Lo que falta ahorita:</b></p><ul>`+
+      fs.map(f=>`<li>${esc(f.que)} — esperando ${esc(f.espera||'')}</li>`).join('')+`</ul></div>`;
+  }
+  h+='<div class="maqs">'+lista.map(m=>`<div class="maq ${esc(m.salud)}">
+      <h4><span class="sem ${esc(m.salud)}"></span>${esc(m.nombre)}</h4>
+      <p class="hace">${esc(m.hace)}</p>
+      ${m.evita?`<p class="evita">Te evita ${esc(m.evita)}.</p>`:''}
+      <div class="pie"><span>Corre <b>${esc(m.cuando||'nunca')}</b></span>
+        <span>Última vez: <b>${esc(m.corrio||'nunca')}</b></span></div>
+      <div class="pie" style="border:0;padding-top:2px">${esc(m.porque)}</div>
+      ${m.dijo?`<div class="dijo">${esc(m.dijo)}</div>`:''}
+    </div>`).join('')+'</div>';
+  h+=`<div class="maqAcc">
+      <textarea id="maqRetro" rows="2" placeholder="Retro sobre las máquinas o encargo para el próximo /sala — se guarda en el Sheet"></textarea>
+      <button class="dorado" id="maqEnviar">Mandar</button>
+      <button id="maqSala">Pedir /sala</button>
+    </div>
+    <div class="conexion" id="maqAviso" style="margin-top:8px"></div>`;
+  cont.innerHTML=h;
+  $('#maqEnviar').onclick=()=>mandarEncargo($('#maqRetro').value.trim(),'retro');
+  $('#maqSala').onclick=()=>mandarEncargo($('#maqRetro').value.trim()||'Corre la sala.','sala');
+}
+// Se manda como fila de PRODUCCIÓN (acción que el GAS ya acepta hoy) para no
+// tener que republicar el Apps Script — republicarlo a mano rompe la liga.
+async function mandarEncargo(texto,tipo){
+  const av=$('#maqAviso');
+  if(!texto){ if(av) av.textContent='escribe algo primero'; return }
+  const envio={accion:'produccion',clave:CLAVE(),fecha:D.fecha||new Date().toLocaleDateString('sv-SE'),
+    pieza: tipo==='sala' ? 'ENCARGO · corre la sala' : 'ENCARGO · retro',
+    estado:'pendiente', detalle:texto, enlace:''};
+  if(!GAS()){ encolar(envio); if(av) av.textContent='guardado aquí — sube solo al conectar el Sheet'; return }
+  if(av) av.textContent='mandando…';
+  try{
+    const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(envio)});
+    const j=await leerJSON(r);
+    if(!r.ok||!j||j.ok!==true) throw new Error('el Sheet no contestó');
+    $('#maqRetro').value='';
+    if(av) av.textContent = tipo==='sala'
+      ? 'anotado en el Sheet — lo tomo en el próximo /sala'
+      : 'retro guardada en el Sheet '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+    traer(D.fecha).then(()=>{});
+  }catch(e){ encolar(envio); if(av) av.textContent='sin señal — quedó en cola y sube sola' }
+}
+
+function pintarMesa(){
+  const m=$('#mesa'); let h='';
+  const c=D.control||{};
+  h+=`<section class="franja"><div class="ftit"><span class="kick">El control</span>
+    <h2 class="serif">La pieza a vencer</h2></div>
+    <div class="control"><div>
+      ${c.pieza?`<h4 class="serif">${esc(c.pieza)}</h4><div class="desde">campeona desde ${esc(c.desde||'')}</div>`
+      :`<h4 class="serif" style="color:var(--gris);font-style:italic">Provisional — sin lead medido</h4>
+        <div class="desde">${esc(c.nota||'La primera pieza que traiga un lead con liga etiquetada se corona; toda pieza nueva tendrá que vencerla con números.')}</div>`}
+    </div></div></section>`;
+
+  const pa=D.parrilla||[];
+  if(pa.length){
+    const hoyMs=new Date((D.fecha||'')+'T12:00:00').getTime();
+    const semanas={};
+    pa.forEach(x=>{
+      const d=new Date(x.fecha+'T12:00:00'); const lun=new Date(d); lun.setDate(d.getDate()-((d.getDay()+6)%7));
+      const k=lun.toISOString().slice(0,10); (semanas[k] ||= []).push(x);
+    });
+    h+=`<section class="franja"><div class="ftit"><span class="kick">Parrilla</span>
+      <h2 class="serif">Las próximas semanas</h2>
+      <span class="mini">${pa.filter(x=>!x.pieza).length} hueco(s)</span></div>`;
+    for(const k of Object.keys(semanas).sort()){
+      const lun=new Date(k+'T12:00:00'), dom=new Date(lun); dom.setDate(lun.getDate()+6);
+      const ft=d=>d.toLocaleDateString('es-MX',{day:'numeric',month:'short'}).replace('.','');
+      h+=`<div class="semana"><p class="semtit">SEM ${ft(lun).toUpperCase()} – ${ft(dom).toUpperCase()}</p>
+        <div class="tiraSem">${semanas[k].map(x=>{
+          const dias=x.desde?Math.floor((hoyMs-new Date(x.desde+'T12:00:00').getTime())/864e5):0;
+          const parada=x.pieza&&x.gate!=='pub'&&x.gate!=='med'&&dias>=2;
+          const nivel=PASO_DE[x.gate]||0;
+          const palabra=({g0:'en idea',g1:'en guion',g2:'en láminas',g3:'video listo',
+            pub:'publicada',med:'medida',rehacer:parada?`parada ${dias} días`:'en rehechura'})[x.gate]||'';
+          return `<div class="celda ${x.pieza?'':'vacia'} ${parada?'parada':''}" ${parada?`data-dia="${x.fecha}" data-pieza="${esc(x.pieza)}"`:''}>
+            <span class="dia">${esc(new Date(x.fecha+'T12:00:00').toLocaleDateString('es-MX',{weekday:'short',day:'numeric'}))}</span>
+            <span class="pieza">${esc(x.pieza||'hueco — se llena con un formato probado')}</span>
+            ${x.pieza?`<div class="camino">${CAMINO.map((_,i)=>`<span class="paso ${i<nivel?'on':''}"></span>`).join('')}</div>
+            <span class="estado ${parada?'rojo':''}">${palabra}</span>`:''}
+          </div>`}).join('')}
+        </div></div>`;
+    }
+    h+='</section>';
+  }
+
+  const pr=D.produccion||[];
+  h+=`<section class="franja"><div class="ftit"><span class="kick">Producción</span>
+    <h2 class="serif">En camino y publicado</h2><span class="mini">${pr.length} pieza(s)</span></div>
+    <div class="tarjes">${pr.map(x=>`<div class="tarj">
+      <span style="flex:1;min-width:150px">${esc(x.pieza)}</span>
+      <span class="chip ${esc(x.estado)}">${({video:'video listo',publicada:'publicada',rehacer:'en rehechura',aprobada:'aprobada',animando:'animándose'})[x.estado]||esc(x.estado)}</span>
+      <span style="color:var(--guia);font-size:12.5px">${esc(x.fecha||'')}</span>
+      <span class="det">${esc(x.detalle||'')}</span>
+    </div>`).join('')||'<div class="vacio" style="padding:20px">Nada en camino todavía.</div>'}</div></section>`;
+
+  const pet=D.peticiones||[];
+  if(pet.length){
+    h+=`<section class="franja"><div class="ftit"><span class="kick">Tus peticiones</span>
+      <h2 class="serif">Lo que pediste, y en qué va</h2></div>
+      <div class="tarjes">${pet.map(x=>`<div class="tarj">
+        <span style="flex:1;min-width:200px">${esc(x.pedido)}</span>
+        <span class="chip ${x.estado==='cumplida'?'publicada':(x.estado==='en curso'?'aprobada':'rehacer')}">${esc(x.estado)}</span>
+        <span class="det">${esc(x.evidencia||'')}</span>
+      </div>`).join('')}</div></section>`;
+  }
+
+  h+=`<section class="franja" id="franjaMaq"></section>`;
+
+  const bt=D.bitacora||[];
+  h+=`<section class="franja"><div class="ftit"><span class="kick">Bitácora</span>
+    <h2 class="serif">El registro del día</h2></div>
+    <ul class="bit">${bt.map(b=>`<li><span class="h">${esc(b.hora||'')}</span><span>${esc(b.evento||'')}</span></li>`).join('')}</ul>
+    <div class="conexion" id="con">conexión: ${GAS()?'Sheet ✓':'sin Sheet — toca para conectar'}</div>
+  </section>`;
+  m.innerHTML=h;
+
+  pintarMaquinas();
+  if(!MAQ) traerMaquinas().then(x=>{ if(x){ MAQ=x; pintarMaquinas() } });
+  m.querySelectorAll('.celda.parada').forEach(cel=>cel.onclick=()=>andon(cel.dataset.dia,cel.dataset.pieza));
+  $('#con').onclick=()=>{ $('#gasUrl').value=GAS(); $('#gasClave').value=CLAVE(); $('#dlg').showModal() };
+}
+function andon(diaP,pieza){
+  const velo=document.createElement('div'); velo.className='velo';
+  const h=document.createElement('div'); h.className='hoja';
+  h.innerHTML=`<p><b>${esc(pieza)}</b> lleva días detenida. ¿Qué hacemos?</p>
+    <div class="fila"><button class="destruye" data-d="matar">Mátala — libera el hueco</button>
+    <button class="dorado" data-d="empujar">Empújala — va primero</button></div>`;
+  document.body.append(velo,h);
+  const fuera=()=>{velo.remove();h.remove()};
+  velo.onclick=fuera;
+  h.querySelectorAll('button').forEach(b=>b.onclick=async()=>{
+    const cuerpo={accion:'parrilla_decision',clave:CLAVE(),dia:diaP,pieza,
+      decision:b.dataset.d,envio_id:uuid(),quien:ROL()};
+    fuera();
+    if(!GAS()){ encolar(cuerpo); toast('Decisión guardada — sube al conectar el Sheet',null); return }
+    try{
+      const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify(cuerpo)});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||j.error) throw 0;
+      toast(b.dataset.d==='matar'?'Hueco liberado — se llena con un formato probado':'La pieza va primero en producción',null);
+    }catch(e){ encolar(cuerpo); toast('Sin señal — quedó en cola',null) }
+  });
+}
+
+/* ═══ carga ═══ */
+async function traer(f,intentos){
+  // El respaldo del repo era inalcanzable con GAS puesto: si el Sheet fallaba,
+  // la excepción mataba la pantalla. Ahora un Sheet caído degrada, no tumba.
+  if(GAS()){
+    // El Sheet tarda seguido (los scripts de la Mac reintentan 4 veces); la página
+    // intentaba UNA y caía al respaldo — que si está viejo, sirve tarjetas ya
+    // decididas. Ahora: 3 intentos con espera, 12 s de tope por intento.
+    const N=intentos||3;
+    for(let i=0;i<N;i++){
+      try{
+        const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),12000);
+        const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(CLAVE())+(f?'&f='+encodeURIComponent(f):''),{signal:ctl.signal});
+        clearTimeout(t);
+        if(!r.ok) throw new Error('el Sheet contestó '+r.status);
+        const j=await leerJSON(r);
+        if(!j) throw new Error('el Sheet no contestó en JSON');
+        if(j.error) throw new Error(j.error);
+        return j;
+      }catch(e){
+        console.warn('[sala] Sheet intento '+(i+1)+'/'+N+':',e.message);
+        if(i<N-1) await new Promise(res=>setTimeout(res,700*(i+1)));
+      }
+    }
+  }
+  const r=await fetch('datos/manifiesto.json?v='+(window.__mv||(window.__mv=Date.now())));
+  if(!r.ok) throw new Error('tampoco pude leer el respaldo');
+  const j=await r.json(); j._respaldo=true;
+  // el archivo de dias vive en j.historial: sin esto, elegir un dia viejo
+  // recargaba HOY y el selector rebotaba sin avisar
+  if(f && j.fecha!==f && (j.historial||{})[f]){
+    const h=j.historial[f];
+    return {...j, ...h, fecha:f, dias:j.dias, _respaldo:true, _archivo:true};
+  }
+  return j;
+}
+
+// Avisa cuando lo que está en pantalla NO es la edición de hoy: sin esto, la sala
+// dice "Revisar hoy" y "Ayer: …" sobre una edición vieja y nadie lo nota.
+function pintarAvisoEdicion(){
+  const el=document.getElementById('avisoEdicion'); if(!el) return;
+  const f=(D&&D.fecha)||''; if(!f){ el.hidden=true; return; }
+  const hoyISO=new Date().toLocaleDateString('sv-SE');
+  if(f===hoyISO && !(D&&D._respaldo)){ el.hidden=true; return; }
+  const dias=Math.round((new Date(hoyISO+'T12:00:00')-new Date(f+'T12:00:00'))/86400000);
+  const bonito=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'long'});
+  let txt = f===hoyISO ? 'Edición de hoy' : ('Estás viendo la edición del '+bonito+(dias>0?' · hace '+dias+(dias===1?' día':' días'):''));
+  if(D&&D._respaldo) txt += ' · respaldo local, el Sheet no respondió';
+  el.textContent=txt; el.hidden=false;
+  el.dataset.viejo = (dias>=2 || (D&&D._respaldo)) ? '1' : '';
+}
+
+function normalizarDia(j){
+  // el Sheet ACUMULA filas: la última versión de cada propuesta manda; y las
+  // candidatas de la pasarela pueden venir dentro de opciones_json (el GAS no
+  // conoce el campo) — se suben a p.candidatas para el Turno
+  const porId={};
+  (j.propuestas||[]).forEach(p=>{
+    if(p.opciones&&!Array.isArray(p.opciones)&&p.opciones.candidatas){
+      p.candidatas=p.opciones.candidatas; p.opciones=[];
+    }
+    porId[p.id]=p;
+  });
+  // una propuesta rehecha RETIRA a su original: sin esto el editor vuelve a ver
+  // (y a decidir) la tira vieja junto a la corregida
+  const retiradas=new Set();
+  Object.values(porId).forEach(p=>{
+    const m=/rehecha-de (\S+)/.exec(p.origen||''); if(m) retiradas.add(m[1]);
+    // «retirada — …» en el origen = ya se decidió en el chat o la ejecutó el
+    // agente por orden directa: NUNCA se le vuelve a preguntar (29-ago).
+    if(/^retirada/i.test(p.origen||'')) retiradas.add(p.id);
+  });
+  const marcas=(j.decisiones&&j.decisiones.propuestas)||{};
+  j.propuestas=Object.values(porId).filter(p=>{
+    if(retiradas.has(p.id)) return false;
+    const f=marcas[p.id]; if(!f||!f.laminas) return true;
+    // Un EJE es «elige una»: se cierra en cuanto hay UN sí. Antes se exigía marca
+    // en TODAS las opciones, y como el editor solo palomea la que escoge, el eje
+    // volvía a la mesa para siempre. (28-ago: le reapareció el corte Hormozi que
+    // ya había decidido el 26, y con razón dijo «no corrió mis selecciones».)
+    if(p.tipo==='eje'){
+      const n=(p.opciones||[]).length||0;
+      if(!n) return true;
+      const marcadas=f.laminas.slice(0,n);
+      if(marcadas.some(m=>m==='si')) return false;                     // ya escogió
+      if(marcadas.filter(m=>m==='no').length>=n) return false;         // las rechazó todas
+      return true;
+    }
+    const n=(p.laminas||[]).length||0;
+    if(!n) return true;
+    let hechas=0; for(let i=0;i<n;i++){const m=f.laminas[i]; if(m==='si'||m==='no') hechas++}
+    return hechas<n;   // ya decidida por completo: fuera de la mesa de hoy
+  });
+  return j;
+}
+/* ARRASTRE: lo pendiente NO se pierde al cambiar el día.
+   Si el día pedido llega vacío, se busca hacia atrás el último día con propuestas
+   que aún no estén decididas por completo y ÉSE se sirve, avisando de dónde viene.
+   (26-ago: Alejandro abrió el 27 y su tira del 26 había desaparecido de la vista.) */
+/* Las DECISIONES también viajan.
+   El Sheet guarda las marcas por día. El relevo pasa al día vivo lo que quedó
+   pendiente, pero las marcas se quedan en el día en que las hiciste — y por eso
+   una propuesta ya decidida podía volver a la mesa a la mañana siguiente.
+   Aquí se leen los días anteriores (solo lectura: decidir sigue siendo suyo) y
+   se completan las marcas que faltan, por id de propuesta. */
+async function conMarcasDeAntes(d,f){
+  if(d._respaldo) return d;   // el espejo ya trae las marcas horneadas
+  const hoyMarcas=(d.decisiones&&d.decisiones.propuestas)||{};
+  const sinMarca=(d.propuestas||[]).map(p=>p.id).filter(id=>!hoyMarcas[id]);
+  if(!sinMarca.length) return d;
+  const dias=(d.dias||[]).filter(x=>x<(d.fecha||f||'9999')).sort().reverse().slice(0,5);
+  const faltan=new Set(sinMarca);
+  for(const dd of dias){
+    if(!faltan.size) break;
+    try{
+      const v=await traer(dd,1);
+      const m=(v.decisiones&&v.decisiones.propuestas)||{};
+      for(const id of [...faltan]) if(m[id]){ hoyMarcas[id]=m[id]; faltan.delete(id) }
+    }catch(e){}
+  }
+  d.decisiones=d.decisiones||{}; d.decisiones.propuestas=hoyMarcas;
+  return d;
+}
+async function conArrastre(f){
+  let d=normalizarDia(await conMarcasDeAntes(await traer(f),f));
+  if((d.propuestas||[]).length) return d;
+  const dias=(d.dias||[]).filter(x=>x<(d.fecha||f||'9999')).sort().reverse().slice(0,10);
+  for(const dd of dias){
+    try{
+      const p=normalizarDia(await traer(dd));
+      if(!(p.propuestas||[]).length) continue;
+      const marcas=p.decisiones&&p.decisiones.propuestas||{};
+      const faltan=(p.propuestas||[]).some(pr=>{
+        const f2=marcas[pr.id]; const n=items(pr).length;
+        if(!f2||!f2.laminas) return true;
+        let hechas=0; for(let i=0;i<n;i++){const m=f2.laminas[i]; if(m==='si'||m==='no') hechas++}
+        return hechas<n;
+      });
+      if(faltan){ p.arrastre_de=dd; p.dias=d.dias; return p }
+    }catch(e){}
+  }
+  return d;
+}
+async function cargar(f,silencioso){
+  // El 29-ago la pantalla se quedó NEGRA («0 de 0»): los reintentos al Sheet
+  // (hasta 3×12 s, más los días de marcas) bloqueaban el primer pintado.
+  // Ahora: a los 2.5 s sin Sheet se pinta el RESPALDO ya, y cuando el Sheet
+  // por fin contesta, repinta encima. Ver negro nunca es aceptable.
+  let _pintado=false;
+  const _rapido=silencioso?null:setTimeout(async()=>{
+    try{
+      const r=await fetch('datos/manifiesto.json?v='+Date.now());
+      if(!r.ok) return;
+      const j=await r.json(); j._respaldo=true;
+      if(_pintado) return;
+      D=normalizarDia(j); _pintado=true;
+      _pintarDia(D.fecha);
+      const av=$('#avisoEdicion');
+      if(av){ av.hidden=false; av.textContent='Mostrando el respaldo — buscando el Sheet…' }
+    }catch(e){}
+  },2500);
+  try{ const _d=await conArrastre(f); D=_d; if(_rapido) clearTimeout(_rapido) }
+  catch(e){
+    if(_rapido) clearTimeout(_rapido);
+    if(_pintado) return;
+    if(silencioso){ console.warn('[sala] refresco en fondo falló, dejo la pantalla como está'); return }
+    $('#umbral').innerHTML=`<div class="vacio"><p>No pude alcanzar la sala.</p>
+      <p style="font-size:14px">Puede ser la red. Tu trabajo de hoy sigue guardado aquí.</p>
+      <div class="fila" style="justify-content:center;margin-top:14px">
+        <button class="dorado" id="reintentar">Reintentar</button>
+        <button class="menor" id="rescate">Copiar mi revisión para el chat</button>
+      </div></div>`;
+    const rb=$('#reintentar'); if(rb) rb.onclick=()=>cargar(f);
+    const rc=$('#rescate'); if(rc) rc.onclick=copiarParaChat;
+    return;
+  }
+  _pintado=true;
+  _pintarDia(f);
+  return;
+}
+function _pintarDia(f){
+  fecha=D.fecha;
+  pintarAvisoEdicion();
+
+  const srv=D.decisiones&&Object.keys(D.decisiones).length?D.decisiones:null;
+  let loc=null; try{ loc=JSON.parse(localStorage.getItem('sala-'+fecha)||'null') }catch(e){}
+  const tSrv=srv&&srv.guardado?Date.parse(srv.guardado):0;
+  const tLoc=loc&&loc.tocado?loc.tocado:0;
+  dec=(tLoc>tSrv&&loc)?loc:(srv||loc||{propuestas:{}});
+  dec.propuestas ||= {};
+  const vig=new Set((D.propuestas||[]).map(p=>p.id));
+  for(const k of Object.keys(dec.propuestas)) if(!vig.has(k)) delete dec.propuestas[k];
+  const _dias=(D.dias||[]).slice();
+  if(!_dias.includes(fecha)) _dias.push(fecha);   // hoy SIEMPRE en la lista
+  $('#sel').innerHTML=_dias.sort().reverse()
+    .map(d=>`<option value="${d}" ${d===fecha?'selected':''}>${dia(d)}</option>`).join('');
+  pintarUmbral();
+  if(D.arrastre_de){   // el aviso va DESPUÉS de pintar: antes lo borraba el repintado
+    const a=document.createElement('div'); a.className='aviso-edicion'; a.id='avArrastre'; a.hidden=false;
+    a.textContent='Esto quedó pendiente del '+dia(D.arrastre_de)+' — sigue esperando tu palabra.';
+    $('#umbral').prepend(a);
+  }
+  pintarMesa(); pintarCola();
+}
+$('#sel').onchange=e=>cargar(e.target.value);
+/* el board se actualiza SOLO: al volver a la pestaña y cada 4 minutos.
+   Nunca a media revisión (turnoVivo) ni con una hoja abierta — no se pisa al editor. */
+let _ultRef=Date.now();
+async function refrescar(){
+  if(typeof turnoVivo!=='undefined'&&turnoVivo) return;
+  if(document.querySelector('.hoja,.cierre')) return;
+  if(Date.now()-_ultRef<30000) return;
+  _ultRef=Date.now();
+  try{ await cargar(D.arrastre_de?null:fecha,true) }catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) refrescar() });
+window.addEventListener('focus',refrescar);
+setInterval(refrescar,240000);
+$('#dlgNo').onclick=()=>$('#dlg').close();
+$('#dlgSi').onclick=()=>{
+  const u=$('#gasUrl').value.trim();
+  if(u && !/^https:\/\/script\.google(usercontent)?\.com\/.+\/exec$/.test(u)){
+    toast('Esa liga no parece del conector (debe terminar en /exec)',null); return }
+  localStorage.setItem('sala_gas',u);
+  localStorage.setItem('sala_clave',$('#gasClave').value.trim());
+  $('#dlg').close(); cargar(fecha); subirCola();
+};
+document.addEventListener('keydown',ev=>{
+  // EL BUG DEL 5-AGO: escribiendo en la casilla, la 'a' aprobaba, la 'x' tiraba
+  // y las flechas movian el carrusel de atras. Con foco en un campo de texto o
+  // con una hoja abierta, los atajos se apagan por completo.
+  const t=ev.target;
+  if(t&&(t.tagName==='TEXTAREA'||t.tagName==='INPUT'||t.isContentEditable)) return;
+  if(document.querySelector('.hoja')) return;
+  const _mapa=document.querySelector('.mapa');
+  if(_mapa){ if(ev.key==='Escape') _mapa.remove(); return }   // el mapa tampoco deja pasar teclas
+  if(!turnoVivo) return;
+  const x=pasos[pasoIdx]; if(!x||(x.tipo!=='lamina'&&x.tipo!=='texto')) return;
+  if(ev.key==='a'||ev.key==='A') marcar(x.pid,x.i,'si');
+  if(ev.key==='x'||ev.key==='X') marcar(x.pid,x.i,'no');
+  if(ev.key==='ArrowLeft'&&pasoIdx>0){ pasoIdx--; pintarPaso() }
+  if(ev.key==='ArrowRight'&&pasoIdx<pasos.length-1){ pasoIdx++; pintarPaso() }
+  if(ev.key==='Escape') cerrarTurno();
+});
+cargar();
+</script>

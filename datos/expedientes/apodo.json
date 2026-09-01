@@ -1,0 +1,199 @@
+{
+ "pieza": "El Apodo del Terreno",
+ "estado": "te espera",
+ "resultado": null,
+ "post": null,
+ "versiones": [
+  {
+   "tag": "v1 (g1)",
+   "fecha": "13 ago",
+   "nota": "Las 7 láminas de tu guion A. Se quedaron esperando tu pasada hasta el 26.",
+   "viva": false
+  },
+  {
+   "tag": "v2 (g2)",
+   "fecha": "26 ago",
+   "nota": "Con dos hojas de dirección al frente y las láminas rehechas hablándole al público.",
+   "viva": false
+  },
+  {
+   "tag": "v3 (g3)",
+   "fecha": "27 ago",
+   "nota": "Fuera la palabra «pleito», entorno urbano y tu texto de cierre.",
+   "viva": false
+  },
+  {
+   "tag": "v4 (g4)",
+   "fecha": "28 ago",
+   "nota": "L4 «el baldío», L5 «inventan» y L9 «Personalizado» con mayúscula. Son las oficiales.",
+   "viva": true
+  }
+ ],
+ "hitos": [
+  {
+   "quien": "tu",
+   "fecha": "26 AGO",
+   "que": "Revisaste las 7 primeras: aprobaste 4 y tachaste 3, y de ahí salió la regla más grande de todas — que las láminas le hablen al público.",
+   "dijo": "creo que debemos hablarle al publico osea que la sintaxis de esta lamina y las demas deberia de ser así... un narrador hablandole al publico... asi la sintacis es  mejor.. en el caso de esta laina no me gusta por que no tiene referencia a lo demas... tenemos que dar mas rapido el mensaje o se van...generame una lamina extra al primcipio y ponmela en la primera imagen donde me relatas que va a pasar en cada imagen",
+   "hecho": "Tres cambios de raíz: narrador en segunda persona, láminas de dirección al frente, y la guía del cómo dentro de la última lámina.",
+   "antes_despues": [
+    "7 láminas narradas en tercera persona y sin abrir con nada",
+    "2 hojas de dirección + 7 láminas hablándole al lector"
+   ],
+   "fuente": "Sheet 2026-08-26 · decisiones.propuestas['apodo-g1-c5fa4c'], notas de las láminas 5, 6 y 7"
+  },
+  {
+   "quien": "tu",
+   "fecha": "26 AGO",
+   "que": "También dijiste que la última lámina debe traer el siguiente paso ahí mismo.",
+   "dijo": "igual manera la sitaxis y tmb guia a como hacerlo ahi mismo para que no tengan que ir al copy a descubrilo ",
+   "hecho": "La lámina de cierre lleva desde entonces «Escríbenos · el primer paso es una videollamada».",
+   "antes_despues": [
+    "el siguiente paso estaba solo en el copy del post",
+    "el siguiente paso se lee dentro de la lámina"
+   ],
+   "fuente": "Sheet 2026-08-26, nota de la lámina 7 · manifiesto.json, petición «La última lámina debe traer la GUÍA del cómo ahí mismo», estado cumplida"
+  },
+  {
+   "quien": "yo",
+   "fecha": "26 AGO",
+   "que": "Rehice la tira con eso: dos hojas de dirección más las 7 láminas, ahora en segunda persona.",
+   "hecho": "Versión g2 montada, 9 láminas (2 de dirección + 7 de la tira).",
+   "antes_despues": [
+    "7 láminas",
+    "9: la tira más el plan de lo que pasa en cada escena"
+   ],
+   "fuente": "carpeta ~/sala-edicion/laminas/apodo-g2 con fecha 26-ago 20:39 · Sheet, propuesta apodo-g2-47cdf9 con origen «rehecha-de apodo-g1-c5fa4c con tus notas del 26-ago»"
+  },
+  {
+   "quien": "tu",
+   "fecha": "27 AGO",
+   "que": "Revisaste la g2: 7 sí y 2 no. Te molestó cómo se veían los dos señores y la palabra «pleito».",
+   "dijo": "no me gusta lo que repreentan esos dos señores creo que si esta bien lo mexicano pero no hace falto ser tan gentrificador ... ytmb buscaos en entorno un poco mas urbanos que refleje eso... tmb ya habiamos hablado qu ela palabra pleito daba mala imagen ... ayudame a mejorar eso y que todo quede perfecto",
+   "hecho": "Fuera la palabra «pleito» y la escena se pasó a una avenida urbana.",
+   "antes_despues": [
+    "escena con dos señores y la palabra «pleito»",
+    "escena urbana, sin la palabra «pleito»"
+   ],
+   "fuente": "Sheet 2026-08-27 · decisiones.propuestas['apodo-g2-47cdf9'], nota de la lámina 4"
+  },
+  {
+   "quien": "tu",
+   "fecha": "27 AGO",
+   "que": "Y escribiste tú mismo el cierre de la pieza.",
+   "dijo": "y pidele a terreno su PPP plan de potencial personalizado... o algo asi",
+   "hecho": "El cierre quedó «Pídele a tu terreno su Plan de Potencial Personalizado», y desde entonces es el cierre de todas las piezas.",
+   "antes_despues": [
+    "cierre escrito por mí",
+    "cierre con tus palabras, el que se usa en todo lo demás"
+   ],
+   "fuente": "Sheet 2026-08-27, nota de la lámina 9 · el mismo cierre aparece en el guion de «¿Vendo o construyo?» (Sheet 2026-08-28, L9)"
+  },
+  {
+   "quien": "yo",
+   "fecha": "27 AGO",
+   "que": "Monté la g3 con esos dos cambios.",
+   "hecho": "9 láminas nuevas en la Sala el mismo día.",
+   "antes_despues": [
+    "g2 con «pleito» y el cierre viejo",
+    "g3 con avenida urbana y tu cierre"
+   ],
+   "fuente": "commit 232c616 «sala: Apodo g3 (fuera «pleito», avenida urbana, tu cierre)…», 27-ago 18:44 · carpeta laminas/apodo-g3 con esa fecha"
+  },
+  {
+   "quien": "tu",
+   "fecha": "28 AGO",
+   "que": "Revisaste la g3: 6 sí y 3 no, con tres correcciones cortas y muy claras.",
+   "dijo": "ni creo que un terreno estorbe ... busca como le dicen realmente aalgunos terrenis en internet y propon alguno que te guste",
+   "hecho": "El apodo pasó a ser «el baldío», que es como de verdad les dicen.",
+   "antes_despues": [
+    "el terreno «estorba»",
+    "el terreno es «el baldío»"
+   ],
+   "fuente": "Sheet 2026-08-28 · decisiones.propuestas['apodo-g3'], nota de la lámina 4"
+  },
+  {
+   "quien": "tu",
+   "fecha": "28 AGO",
+   "que": "Corrección de una palabra en la lámina 5.",
+   "dijo": "inventan... no inventa",
+   "hecho": "Cambiada la conjugación en la lámina 5.",
+   "antes_despues": [
+    "«inventa»",
+    "«inventan»"
+   ],
+   "fuente": "Sheet 2026-08-28, nota de la lámina 5"
+  },
+  {
+   "quien": "tu",
+   "fecha": "28 AGO",
+   "que": "Y la razón por la que «Personalizado» va con mayúscula.",
+   "dijo": "Personalizado con P mayúscuka por que es el PPP",
+   "hecho": "«Plan de Potencial Personalizado» con las tres mayúsculas, porque son las siglas del producto. Quedó como regla de la casa.",
+   "antes_despues": [
+    "«plan de potencial personalizado»",
+    "«Plan de Potencial Personalizado» (PPP)"
+   ],
+   "fuente": "Sheet 2026-08-28, nota de la lámina 9 · la misma escritura se usa después en el cierre del video de La Servilleta y en el guion de «¿Vendo o construyo?»"
+  },
+  {
+   "quien": "yo",
+   "fecha": "28 AGO",
+   "que": "Rehice solo esas tres láminas y dejé las otras seis intactas.",
+   "hecho": "En la g4 cambian exactamente los archivos L4, L5 y L9; las otras seis son byte por byte las mismas de la g3.",
+   "antes_despues": [
+    "se rehacía la tira completa cada vuelta",
+    "solo se rehace lo tachado"
+   ],
+   "fuente": "commit ef2c7c8 (28-ago 10:37) · comparación de archivos: apodo-g3 y apodo-g4 solo difieren en L4, L5 y L9"
+  },
+  {
+   "quien": "yo",
+   "fecha": "29 AGO",
+   "que": "Dejé de preguntarte por la g4: tus tres notas eran órdenes, no una consulta. Las láminas se dieron por oficiales.",
+   "hecho": "La tarjeta salió de la mesa con el motivo escrito: «tus notas eran órdenes, no consulta: L4 «el baldío», L5 «inventan», L9 «Personalizado» ya son las láminas oficiales».",
+   "antes_despues": [
+    "la tarjeta del Apodo volvía a tu mesa cada mañana",
+    "fuera de la mesa, marcada como decidida"
+   ],
+   "fuente": "Sheet 2026-08-29 · propuesta apodo-g4-1eb441 con origen «retirada» · producción del 2026-08-29: «3 tarjetas retiradas: ya estaban decididas en el chat (pivote toma A, regla de la voz, apodo por ordenes directas)»"
+  },
+  {
+   "quien": "yo",
+   "fecha": "29 AGO",
+   "que": "Lo que sigue es el video: las 9 láminas están aprobadas y las voces estaban en grabación.",
+   "hecho": "Registro de producción: «aprobada 9/9 · plan de dirección + 7 láminas aprobadas; voces del video en grabación».",
+   "antes_despues": [
+    "tira en revisión",
+    "tira cerrada, pendiente de animar"
+   ],
+   "fuente": "Sheet · producción, renglón con fecha 2026-08-27, pieza «El Apodo del Terreno»"
+  }
+ ],
+ "reglas": [
+  {
+   "regla": "Toda tira abre con una o dos hojas de dirección: qué pasa en cada escena, qué debe entender el cliente y por qué se liga con la siguiente.",
+   "nacio": "de tu nota del 26-ago pidiendo una lámina extra al principio que relate lo que va a pasar, como director de cine"
+  },
+  {
+   "regla": "Las láminas le hablan al lector de tú, y el mensaje se entrega rápido.",
+   "nacio": "de tu nota del 26-ago: «tenemos que dar mas rapido el mensaje o se van»"
+  },
+  {
+   "regla": "La última lámina trae el siguiente paso escrito, para que nadie tenga que ir al copy a buscarlo.",
+   "nacio": "de tu nota del 26-ago sobre la lámina de cierre"
+  },
+  {
+   "regla": "«Plan de Potencial Personalizado» siempre con las tres mayúsculas: es el PPP.",
+   "nacio": "de tu corrección del 28-ago en la lámina 9"
+  },
+  {
+   "regla": "Nada de palabras que dejen mala imagen (se cayó «pleito») y los ambientes son urbanos y reales, sin caricatura.",
+   "nacio": "de tu nota del 27-ago sobre los dos señores y la palabra «pleito»"
+  },
+  {
+   "regla": "En cada vuelta se rehace solo lo tachado; lo aprobado no se toca.",
+   "nacio": "de las cuatro vueltas del Apodo, donde de la g3 a la g4 solo cambiaron las tres láminas que marcaste"
+  }
+ ]
+}
