@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-31 18:43",
+ "actualizado": "2026-08-31 19:13",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -29,10 +29,10 @@
    "hace": "Rehace el corte completo (voces, escenas, mezcla, reel vertical) cuando algo cambió.",
    "evita": "tener que rearmar el video a mano cada vez que se corrige una pieza",
    "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
-   "corrio": "hace 3 días",
+   "corrio": "hace 4 días",
    "dijo": "voces completas; el corte se re-armó",
    "salud": "duda",
-   "porque": "lleva 3 días sin correr — puede que ya terminó su trabajo"
+   "porque": "lleva 4 días sin correr — puede que ya terminó su trabajo"
   },
   {
    "id": "mx.yodesarrollo.cuento",
@@ -62,7 +62,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 2 horas",
+   "corrio": "hace 3 horas",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 36 min",
+   "corrio": "hace 1 horas",
    "dijo": "nada pendiente en 14 días",
    "salud": "bien",
    "porque": "corriendo en su horario"
