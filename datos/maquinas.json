@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-01 05:29",
+ "actualizado": "2026-09-01 06:00",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -40,7 +40,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 23 horas",
+   "corrio": "hace 29 min",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 11 horas",
+   "corrio": "hace 12 horas",
    "dijo": "nada pendiente en 14 días",
    "salud": "bien",
    "porque": "corriendo en su horario"
