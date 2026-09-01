@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-31 20:43",
+ "actualizado": "2026-08-31 21:14",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -52,7 +52,7 @@
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
    "corrio": "hace 30 min",
-   "dijo": "máquinas: publicado",
+   "dijo": "subprocess.CalledProcessError: Command '['git', '-C', '/Users/a./sala-edicion', 'push', '-q']' returned non-zero exit st",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -62,7 +62,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 13 min",
+   "corrio": "hace 43 min",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
