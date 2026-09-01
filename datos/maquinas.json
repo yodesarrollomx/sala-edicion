@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-08-31 16:43",
+ "actualizado": "2026-08-31 17:13",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -62,7 +62,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 3 min",
+   "corrio": "hace 33 min",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
