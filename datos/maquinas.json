@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-02 04:01",
+ "actualizado": "2026-09-02 04:31",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -40,7 +40,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 21 horas",
+   "corrio": "hace 22 horas",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -51,7 +51,7 @@
    "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 44 min",
+   "corrio": "hace 30 min",
    "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -95,10 +95,10 @@
    "hace": "Anima las escenas que faltan en cuanto reabre la cuota de GPU. Cuando ya están las siete, se apaga sola.",
    "evita": "quedarte a media animación porque se acabó la cuota gratis del día",
    "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
-   "corrio": "hace 16 días",
+   "corrio": "hace 17 días",
    "dijo": "  hechos: 2  ·  pendientes: 0",
    "salud": "duda",
-   "porque": "lleva 16 días sin correr — puede que ya terminó su trabajo"
+   "porque": "lleva 17 días sin correr — puede que ya terminó su trabajo"
   },
   {
    "id": "mx.yodesarrollo.vigilante",
@@ -106,7 +106,7 @@
    "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
    "evita": "enterarte por un tercero de que un tablero estaba abierto",
    "cuando": "a las 6:45",
-   "corrio": "hace 21 horas",
+   "corrio": "hace 22 horas",
    "dijo": "==============================================================================",
    "salud": "bien",
    "porque": "corriendo en su horario"
