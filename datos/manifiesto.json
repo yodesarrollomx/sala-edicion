@@ -199,6 +199,10 @@
   {
    "hora": "08:40",
    "evento": "Cosechada tu revisión del 31-ago (se había quedado sin leer) · montadas 2 rehechas + dirección"
+  },
+  {
+   "hora": "13:01",
+   "evento": "Sala 2.1 en vivo: guardado visible, editar/reabrir, zoom, contexto, pedir /sala, 3 pantallas; puente de sesión al dominio nuevo"
   }
  ],
  "decisiones": {
@@ -1168,6 +1172,36 @@
    "pedido": "ME SIGUES MOSTRANDO COSAS QUE YA REVISÉ (29-ago)",
    "estado": "cumplida",
    "evidencia": "Tres tarjetas que ya habías decidido EN EL CHAT salieron de la mesa para siempre (pivote→toma A, regla de la voz→narra lo escrito, apodo→tus notas eran órdenes). Mecanismo nuevo: origen «retirada» las bloquea en cliente, relevo y espejo. Además el Sheet acumula filas y el relevo no deduplicaba por id (corregido), y el iframe de la máscara del OS cacheaba versiones VIEJAS de la Sala aunque recargaras — ahora pide versión fresca en cada apertura. La mesa quedó en 2: el guion «¿Vendo o construyo?» y las 7 publicaciones."
+  },
+  {
+   "pedido": "No sé si mi respuesta ya se guardó; si quiero editar qué pasa",
+   "estado": "cumplida",
+   "evidencia": "Sala 2.1 (2-sep): cada toque se guarda al instante en el dispositivo y sube solo al Sheet 1.2 s después; la píldora de arriba dice siempre en qué estado va (guardado aquí / subiendo / subido HH:MM / sin señal / no has entrado). Al recargar retoma en la primera carta sin decidir. «Ver mis respuestas» lista todo con su marca y nota; «cambiar» regresa a esa carta; las 🔒 de días anteriores sólo tú las reabres. Verificado en móvil, iPad, PC y dentro del OS."
+  },
+  {
+   "pedido": "No puedo ver las imágenes en zoom al picarles",
+   "estado": "cumplida",
+   "evidencia": "Botón «Ampliar» y toque sobre la lámina abren la imagen a pantalla completa con pellizco, doble toque, rueda del mouse y arrastre. Verificado en móvil (375) y PC (rueda 800→920 px)."
+  },
+  {
+   "pedido": "No está clara la secuencia de trabajos y roles en cada decisión",
+   "estado": "cumplida",
+   "evidencia": "Cada carta trae el camino de la pieza (idea·guion·[láminas]·video·copy·publicada) y una línea de consecuencias: «Sí → queda con candado · No → la rehago con tu nota y vuelve aquí». En PC/iPad horizontal, panel lateral con «Qué estás decidiendo» y tus respuestas en vivo."
+  },
+  {
+   "pedido": "Quiero mandar a ejecutar /sala desde la misma Sala",
+   "estado": "cumplida",
+   "evidencia": "Engrane ⚙ arriba a la derecha: estado de las máquinas, lo que falta, retro opcional y botón «Pedir /sala ahora» — queda anotado en el Sheet como ENCARGO con hora; lo toma el próximo /sala. Si no has entrado, se encola y sube al entrar. Honesto: el botón anota, no dispara al agente solo (eso sería un centinela aparte, propuesto)."
+  },
+  {
+   "pedido": "Versión móvil, PC e iPad que funcionen bien",
+   "estado": "cumplida",
+   "evidencia": "Móvil: botones pegados abajo siempre visibles, carta a la altura de la pantalla. iPad: carta de 720 px (antes 440: un flex:1 la aplastaba — corregido). PC ≥960: dos columnas, mazo + panel lateral pegajoso; el tren se envuelve. Sin desborde horizontal en ninguno."
+  },
+  {
+   "pedido": "HALLAZGO RAÍZ: la Sala se mudó de dominio y tu entrada se quedó en el viejo",
+   "estado": "cumplida",
+   "evidencia": "La dirección alexpueblag.github.io ahora redirige a yodesarrollomx.github.io; el navegador guarda la liga por dominio, así que llegabas SIN sesión (la app decía «buscando el Sheet…» para siempre y nada subía). Arreglado por dos lados: (1) el cascarón viejo ahora lleva tus llaves en el #hash al dominio nuevo (puente de sesión, desplegado y verificado); (2) la app dice claro «No has entrado — toca para entrar» con botón «Recuperar mi entrada» que hace ese viaje."
   }
  ],
  "conexion": {
