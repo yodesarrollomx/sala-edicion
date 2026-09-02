@@ -424,6 +424,7 @@ function restaurarBorrador(){
   if((b.pasos||[]).join('|')!==firma) return false;
   for(const pid of Object.keys(dec)) if(b.dec[pid]) dec[pid]={...dec[pid],...b.dec[pid]};
   idx=Math.min(b.idx||0,pasos.length); hist=b.hist||[]; guard.env=b.env||null;
+  while(idx<pasos.length&&marcaDe(pasos[idx])) idx++;   // nunca te para en una carta ya decidida
   return true;
 }
 const marcaDe=x=>x.tipo==='lamina'?dec[x.pid].laminas[x.i]:(dec[x.pid]._eje||'');
@@ -565,7 +566,7 @@ function decidir(m){
 function avanzar(m){
   const el=document.querySelector(`.carta[data-k="${idx}"]`); if(el) el.classList.add(m==='si'?'fuera-si':'fuera-no');
   hist.push(idx); pintarBolas(); programarSubida();
-  setTimeout(()=>{ idx++; pintarCartas() },300);
+  setTimeout(()=>{ idx++; guardarBorrador(); pintarCartas() },300);
 }
 function irA(k){ // volver a una carta: se reabre para cambiarla
   if(k<0||k>=pasos.length) return;
