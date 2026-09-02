@@ -87,6 +87,7 @@ html.embed .app{padding-top:8px}
 
 /* ── contexto de la pieza (qué estoy decidiendo) ── */
 .ctx{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:2px 0 12px}
+@media (max-width:640px){ html.embed .ctx{display:none} html.embed .zona{height:clamp(420px,calc(100dvh - 300px),640px)} }
 .ctx .et{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--linea);border-radius:999px;
   padding:4px 11px;font-size:11.5px;color:var(--guia);background:var(--tarjeta)}
 .ctx .et.on{border-color:var(--si);color:var(--si)} .ctx .et.aqui{border-color:var(--oro);color:var(--oro);font-weight:600}
@@ -109,8 +110,8 @@ html.embed .app{padding-top:8px}
 .cargando{position:absolute;inset:0;display:grid;place-items:center;color:#c9c2b4;font-size:13px;gap:10px;
   background:linear-gradient(110deg,#141210 30%,#1f1c18 50%,#141210 70%);background-size:200% 100%;animation:brilla 1.4s infinite}
 @keyframes brilla{to{background-position:-200% 0}}
-.lupa{position:absolute;right:12px;bottom:12px;z-index:2;border:0;border-radius:999px;background:rgba(20,18,14,.72);
-  color:#f6f2ea;font-size:12.5px;font-weight:600;padding:8px 13px;display:inline-flex;gap:6px;align-items:center;backdrop-filter:blur(4px)}
+.fila-pie{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.lupa{flex:none;border:1px solid var(--linea2);border-radius:999px;background:var(--fondo);color:var(--tinta);font-size:12.5px;font-weight:600;padding:7px 12px;display:inline-flex;gap:6px;align-items:center}
 .lupa svg{width:15px;height:15px}
 .opciones{flex:1;overflow-y:auto;padding:16px}
 .opciones .op{border:2px solid var(--linea);border-radius:16px;padding:15px;margin-bottom:12px;background:var(--fondo)}
@@ -522,9 +523,9 @@ function pintarCartas(){
           <div class="cargando">cargando lámina…</div>
           <span class="sello si" data-si>SÍ</span><span class="sello no" data-no>NO</span>
           <img src="${esc(src)}" alt="Lámina ${x.i+1}" draggable="false">
-          <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button>
         </div>
-        <div class="pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · lámina ${x.i+1} de ${(x.p.laminas||[]).length}</span>${luegoDe(x)}</div>`;
+        <div class="pie"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · lámina ${x.i+1} de ${(x.p.laminas||[]).length}</span>
+          <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button></div>${luegoDe(x)}</div>`;
       const img=el.querySelector('img');
       const lista=()=>{ img.classList.add('lista'); const c=el.querySelector('.cargando'); if(c) c.remove() };
       if(img.complete&&img.naturalWidth) lista(); else { img.onload=lista; img.onerror=()=>{ const c=el.querySelector('.cargando'); if(c) c.textContent='no cargó la imagen — toca Ampliar para reintentar' } }
@@ -675,7 +676,7 @@ async function abrirMaquinas(){
     <button class="listo" id="encSala">Pedir /sala ahora</button>
     <p id="encAviso" style="margin:8px 0 14px;font-size:13px"></p>
     ${ms.slice(0,6).map(m=>`<div class="maq ${esc(m.salud)}"><b><i></i>${esc(m.nombre)}</b><small>${esc(m.hace)}</small><small>Corre ${esc(m.cuando||'nunca')} · última vez ${esc(m.corrio||'nunca')} · ${esc(m.porque)}</small></div>`).join('')}
-    <p style="margin-top:10px;font-size:12.5px"><a href="index-v1.html">Abrir la Sala anterior</a> · <a href="${ORIGEN_VIEJO}" rel="noopener">Recuperar mi entrada desde la dirección vieja</a></p>`);
+    <p style="margin-top:10px;font-size:12.5px"><a href="index-v1.html">Abrir la Sala anterior</a> · <a href="${ORIGEN_VIEJO}#puente=1" target="_top" rel="noopener">Recuperar mi entrada desde la dirección vieja</a></p>`);
   const be=v.querySelector('[data-entrar]'); if(be) be.onclick=()=>{ cerrarHojas(); abrirEntrar() };
   v.querySelector('#encSala').onclick=async()=>{
     const txt=(v.querySelector('#encT').value.trim()||'Corre la sala.'); const av=v.querySelector('#encAviso');
@@ -692,7 +693,7 @@ function abrirEntrar(){
     <p>La Sala se mudó de dirección y tu entrada se quedó en la dirección vieja. Dos formas de recuperarla:</p>
     <p><b>1.</b> Abre tu <b>liga mágica</b> (la que te mandé por el chat) — entra sola.</p>
     <p><b>2.</b> Si en este mismo aparato ya habías entrado antes, toca el botón: pasa por la dirección vieja, recoge tu entrada y te regresa aquí.</p>
-    <a class="listo" style="display:grid;place-items:center;text-decoration:none" href="${ORIGEN_VIEJO}#puente=1">Recuperar mi entrada</a>
+    <a class="listo" style="display:grid;place-items:center;text-decoration:none" href="${ORIGEN_VIEJO}#puente=1" target="_top" rel="noopener">Recuperar mi entrada</a>
     <p style="margin-top:12px;font-size:13px">Mientras, lo que decidas se guarda en este dispositivo y sube en cuanto entres.</p>`);
 }
 function clickEstado(){ if(guard.tipo==='sin'||guard.tipo==='rechazado') abrirEntrar(); else if(guard.tipo==='cola') subirCola(); else abrirRespuestas() }
