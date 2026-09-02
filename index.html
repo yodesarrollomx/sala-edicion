@@ -94,7 +94,7 @@ html.embed .app{padding-top:8px}
 
 /* ── la carta ── */
 .mazo{display:flex;flex-direction:column;min-height:0}
-.zona{position:relative;flex:1;min-height:min(78vw,440px);height:clamp(380px,calc(100dvh - 380px),640px)}
+.zona{position:relative;min-height:min(78vw,440px);height:clamp(380px,calc(100dvh - 380px),640px)}
 @media (min-width:640px){ .zona{height:clamp(480px,calc(100dvh - 330px),720px)} }
 .carta{position:absolute;inset:0;background:var(--tarjeta);border:1px solid var(--linea);
   border-radius:22px;box-shadow:var(--sombra-alta);overflow:hidden;display:flex;flex-direction:column;
