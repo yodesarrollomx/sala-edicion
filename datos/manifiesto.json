@@ -15,7 +15,33 @@
   "2026-08-30",
   "2026-08-31"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "vendo-2rehechas-v3-31ago",
+   "titulo": "¿Vendo o construyo? · rehechas con tus notas del 31-ago (1–2 = la dirección · 3 = «m² que se pueden construir» · 4 = «la ruta»)",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/vendo-2rehechas-v3/L1.png",
+    "laminas/vendo-2rehechas-v3/L2.png",
+    "laminas/vendo-2rehechas-v3/L3.png",
+    "laminas/vendo-2rehechas-v3/L4.png"
+   ],
+   "video": null,
+   "origen": "rehecha-de vendo-4rehechas-30f901 · tus notas: «aguanta es vago» y «ruta al éxito: cronograma, presupuestos, proveedores, materiales»; las 2 que aprobaste quedan bajo candado",
+   "sugerencias": [
+    [
+     "más concreto aún (número de niveles)",
+     "otra imagen del comprador",
+     "cambia el texto"
+    ],
+    [
+     "quita «condiciones de aliado»",
+     "agrega plazos por etapa",
+     "otra imagen de la ruta"
+    ]
+   ]
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -79,12 +105,12 @@
   "nota": "El cuento ya está en la cancha (publicado 4-ago). La primera pieza que traiga un lead con liga etiquetada se corona control."
  },
  "retro": {
-  "fecha": "2026-08-27",
-  "aprobadas": 7,
-  "tiradas": 4,
-  "producidas": 11,
-  "rehechas": 4,
-  "nota": "El corte Hormozi ya está completo y revisado: 32 s, 6 escenas, las 7 voces alineadas con lo que se lee, y el llamado convertido en titular."
+  "fecha": "2026-08-31",
+  "aprobadas": 2,
+  "tiradas": 2,
+  "producidas": 0,
+  "rehechas": 2,
+  "nota": "Tu revisión del 31-ago: aprobaste escenarios y cierre; tachaste «aguanta» y «la hoja»; pediste la explicación de cada lámina. Aquí van las 2 rehechas con 2 hojas de dirección."
  },
  "produccion": [
   {
@@ -179,6 +205,10 @@
   {
    "hora": "15:05",
    "evento": "Propuesta montada: Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado) (4 láminas)"
+  },
+  {
+   "hora": "08:40",
+   "evento": "Cosechada tu revisión del 31-ago (se había quedado sin leer) · montadas 2 rehechas + dirección"
   }
  ],
  "decisiones": {
