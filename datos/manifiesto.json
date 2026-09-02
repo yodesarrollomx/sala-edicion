@@ -13,7 +13,8 @@
   "2026-08-28",
   "2026-08-29",
   "2026-08-30",
-  "2026-08-31"
+  "2026-08-31",
+  "2026-09-02"
  ],
  "propuestas": [
   {
@@ -26,20 +27,9 @@
     "laminas/vendo-2rehechas-v3/L3.png",
     "laminas/vendo-2rehechas-v3/L4.png"
    ],
+   "opciones": [],
    "video": null,
-   "origen": "rehecha-de vendo-4rehechas-30f901 · tus notas: «aguanta es vago» y «ruta al éxito: cronograma, presupuestos, proveedores, materiales»; las 2 que aprobaste quedan bajo candado",
-   "sugerencias": [
-    [
-     "más concreto aún (número de niveles)",
-     "otra imagen del comprador",
-     "cambia el texto"
-    ],
-    [
-     "quita «condiciones de aliado»",
-     "agrega plazos por etapa",
-     "otra imagen de la ruta"
-    ]
-   ]
+   "origen": "rehecha-de vendo-4rehechas-30f901 · tus notas: «aguanta es vago» y «ruta al éxito: cronograma, presupuestos, proveedores, materiales»; las 2 que aprobaste quedan bajo candado"
   }
  ],
  "parrilla": [
@@ -212,7 +202,21 @@
   }
  ],
  "decisiones": {
-  "propuestas": {}
+  "propuestas": {
+   "vendo-4rehechas-30f901": {
+    "laminas": [
+     "no",
+     "no",
+     "si",
+     "si"
+    ],
+    "nota": "tebfalto las laminas iniciales de exolicacion de cada lamina\n",
+    "notas": [
+     "aguanta se me hace una palabra muy vaga... algo mas concreto",
+     "ruta al exito cronograma, presupuestos, proveedores materiales y servicios con precios especisles para aliados yod"
+    ]
+   }
+  }
  },
  "historial": {
   "2026-08-01": {
