@@ -55,7 +55,8 @@ html.embed .app{padding-top:8px}
 /* ── cabecera ── */
 .cab{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;margin-bottom:4px;position:relative}
 .cab .fecha{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--guia);font-weight:600;margin:0}
-.cab h1{font-family:var(--serif);font-weight:400;font-size:29px;margin:2px 0 0;line-height:1.15;text-wrap:balance}
+.cab h1{font-family:var(--serif);font-weight:400;font-size:29px;margin:2px 0 0;line-height:1.15;text-wrap:balance;padding:0 46px}
+@media (min-width:960px){ .cab h1{padding:0} }
 .cab h1 b{color:var(--oro);font-weight:400}
 .engrane{position:absolute;right:0;top:-2px;width:42px;height:42px;border-radius:12px;border:1px solid var(--linea2);
   background:var(--tarjeta);display:grid;place-items:center;color:var(--gris)}
