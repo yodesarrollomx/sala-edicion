@@ -16,22 +16,7 @@
   "2026-08-31",
   "2026-09-02"
  ],
- "propuestas": [
-  {
-   "id": "vendo-2rehechas-v3-31ago",
-   "titulo": "¿Vendo o construyo? · rehechas con tus notas del 31-ago (1–2 = la dirección · 3 = «m² que se pueden construir» · 4 = «la ruta»)",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/vendo-2rehechas-v3/L1.png",
-    "laminas/vendo-2rehechas-v3/L2.png",
-    "laminas/vendo-2rehechas-v3/L3.png",
-    "laminas/vendo-2rehechas-v3/L4.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "origen": "rehecha-de vendo-4rehechas-30f901 · tus notas: «aguanta es vago» y «ruta al éxito: cronograma, presupuestos, proveedores, materiales»; las 2 que aprobaste quedan bajo candado"
-  }
- ],
+ "propuestas": [],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -219,6 +204,15 @@
      "aguanta se me hace una palabra muy vaga... algo mas concreto",
      "ruta al exito cronograma, presupuestos, proveedores materiales y servicios con precios especisles para aliados yod"
     ]
+   },
+   "vendo-2rehechas-v3-31ago": {
+    "laminas": [
+     "si",
+     "si",
+     "si",
+     "si"
+    ],
+    "nota": ""
    }
   }
  },
