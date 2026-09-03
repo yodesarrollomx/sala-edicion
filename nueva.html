@@ -514,7 +514,7 @@ async function subirCola(){
 }
 
 /* ══ pintado ══ */
-function etapaDe(p){ if(p.tipo==='eje'&&p.video) return 'video'; if(p.tipo==='eje') return /copy/i.test(p.titulo||'')?'copy':'guion'; return 'láminas' }
+function etapaDe(p){ if(p.tipo==='eje'&&p.video) return 'video'; if(p.tipo==='eje') return /copy|sale|public/i.test(p.titulo||'')?'copy':'guion'; return /guion/i.test(p.titulo||'')?'guion':'láminas' }
 function pintarCtx(x){
   const c=$('#ctx'); if(!x){ c.innerHTML=''; return }
   const ET=['idea','guion','láminas','video','copy','publicada']; const aqui=etapaDe(x.p); const k=ET.indexOf(aqui);
