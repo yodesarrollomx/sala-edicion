@@ -21,6 +21,7 @@
   {
    "id": "comprador-g1-70ac76",
    "titulo": "El comprador ya sabe · las 9 láminas del guion que aprobaste",
+   "tipo": "laminas",
    "laminas": [
     "laminas/comprador-g1/L1.png",
     "laminas/comprador-g1/L2.png",
@@ -32,7 +33,9 @@
     "laminas/comprador-g1/L8.png",
     "laminas/comprador-g1/L9.png"
    ],
-   "video": null
+   "opciones": [],
+   "video": null,
+   "origen": null
   }
  ],
  "parrilla": [
