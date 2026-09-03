@@ -113,7 +113,7 @@ html.embed .app{padding-top:8px}
 .ctx .lbl{font-size:11px;color:var(--guia);letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-right:2px}
 @media (max-width:640px){
   html.embed .ctx{display:none}
-  .ctx .et{display:none} .ctx .et.aqui{display:inline-flex}   /* solo el paso actual: gana alto la lámina */
+
 }
 .ctx .et{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--linea);border-radius:999px;padding:4px 11px;font-size:11.5px;color:var(--guia);background:var(--tarjeta)}
 .ctx .et.on{border-color:var(--si);color:var(--si)} .ctx .et.aqui{border-color:var(--oro);color:var(--oro);font-weight:600}
@@ -121,9 +121,9 @@ html.embed .app{padding-top:8px}
 
 /* ── la carta ── */
 .mazo{display:flex;flex-direction:column;min-height:0}
-.zona{position:relative;min-height:min(78vw,440px);height:clamp(400px,calc(100dvh - 310px - var(--nav)),640px)}
-@media (min-width:640px){ .zona{height:clamp(480px,calc(100dvh - 320px - var(--nav)),720px)} }
-@media (min-width:960px){ .zona{height:clamp(480px,calc(100dvh - 330px),720px)} }
+.zona{position:relative;min-height:min(74vw,380px);height:clamp(340px,calc(100dvh - 390px - var(--nav)),640px)}
+@media (min-width:640px){ .zona{height:clamp(420px,calc(100dvh - 400px - var(--nav)),720px)} }
+@media (min-width:960px){ .zona{height:clamp(460px,calc(100dvh - 300px),720px)} }
 .carta{position:absolute;inset:0;background:var(--tarjeta);border:1px solid var(--linea);
   border-radius:22px;box-shadow:var(--sombra-alta);overflow:hidden;display:flex;flex-direction:column;
   transition:transform .38s cubic-bezier(.2,.8,.2,1),opacity .38s;touch-action:pan-y}
@@ -647,7 +647,11 @@ function etapaDe(p){ if(p.tipo==='eje'&&p.video) return 'video'; if(p.tipo==='ej
 function pintarCtx(x){
   const c=$('#ctx'); if(!x){ c.innerHTML=''; return }
   const ET=['idea','guion','láminas','video','copy','publicada']; const aqui=etapaDe(x.p); const k=ET.indexOf(aqui);
-  c.innerHTML=`<span class="lbl" title="En qué paso va esta publicación">Va en</span>`+ET.map((e,i)=>`<span class="et ${i<k?'on':''} ${i===k?'aqui':''}" title="${i<k?'ya pasó':i===k?'aquí estamos':'todavía no'}"><i></i>${e}</span>`).join('');
+  const angosto=innerWidth<=640;
+  const lista=angosto?[[aqui,k]]:ET.map((e,i)=>[e,i]);
+  c.innerHTML=`<span class="lbl" title="En qué paso va esta publicación">Va en</span>`+
+    lista.map(([e,i])=>`<span class="et ${i<k?'on':''} ${i===k?'aqui':''}" title="${i<k?'ya pasó':i===k?'aquí estamos':'todavía no'}"><i></i>${e}</span>`).join('')+
+    (angosto?`<span class="lbl" style="margin-left:4px">paso ${k+1} de ${ET.length}</span>`:'');
 }
 function luegoDe(x){
   if(x.tipo==='eje') return `<div class="luego"><span class="s"><i></i>Al elegir, Producción empieza con ésa</span></div>`;
