@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icono-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sala">
+<meta name="theme-color" content="#0a0a0c">
 <title>Sala de Edición · Yo Desarrollo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&display=swap">
@@ -329,6 +335,10 @@ const hora=()=>new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-d
 function leerLS(k,def){ try{ const v=JSON.parse(localStorage.getItem(k)||'null'); return v===null?def:v }catch(e){ return def } }
 async function leerJSON(r){ try{ return JSON.parse(await r.text()) }catch(e){ return null } }
 const bloquear=on=>document.body.classList.toggle('bloqueado',!!on);
+/* Las láminas PNG pesan ~1.5 MB; la carta pide primero la versión .jpg (~200 KB) y
+   si no existe cae al PNG. En 4G esto es la diferencia entre carta negra y carta al instante. */
+const ligera=src=>/\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
+function imgConRespaldo(img,src){ img.src=ligera(src); img.onerror=()=>{ if(img.src!==src){ img.onerror=null; img.src=src } } }
 
 /* ══ datos ══ */
 async function traer(f,intentos){
@@ -531,13 +541,17 @@ function pintarCartas(){
       el.innerHTML=`<div class="lienzo" data-zoom="${esc(src)}">
           <div class="cargando">cargando lámina…</div>
           <span class="sello si" data-si>SÍ</span><span class="sello no" data-no>NO</span>
-          <img src="${esc(src)}" alt="Lámina ${x.i+1}" draggable="false">
+          <img alt="Lámina ${x.i+1}" draggable="false">
         </div>
         <div class="pie"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · lámina ${x.i+1} de ${(x.p.laminas||[]).length}</span>
           <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button></div>${luegoDe(x)}</div>`;
       const img=el.querySelector('img');
       const lista=()=>{ img.classList.add('lista'); const c=el.querySelector('.cargando'); if(c) c.remove() };
-      if(img.complete&&img.naturalWidth) lista(); else { img.onload=lista; img.onerror=()=>{ const c=el.querySelector('.cargando'); if(c) c.textContent='no cargó la imagen — toca Ampliar para reintentar' } }
+      img.onload=lista;
+      img.src=ligera(src);
+      img.onerror=()=>{ if(img.src!==src&&!img.src.endsWith(src)){ img.src=src; return }   // sin .jpg → PNG
+        const c=el.querySelector('.cargando'); if(c) c.textContent='no cargó la imagen — toca Ampliar para reintentar' };
+      if(img.complete&&img.naturalWidth) lista();
       el.querySelector('.lupa').onclick=e=>{ e.stopPropagation(); abrirZoom(src) };
       el.querySelector('.lienzo').addEventListener('click',e=>{ if(Math.abs(_dxUlt)<8) abrirZoom(src) });
     }else{
@@ -552,7 +566,7 @@ function pintarCartas(){
     if(k===idx&&x.tipo==='lamina') arrastrar(el);
   }
   // precarga las dos siguientes para que no aparezcan negras
-  pasos.slice(idx+1,idx+3).forEach(x=>{ if(x.tipo==='lamina'){ const im=new Image(); im.src=x.p.laminas[x.i] } });
+  pasos.slice(idx+1,idx+3).forEach(x=>{ if(x.tipo==='lamina'){ const im=new Image(); im.src=ligera(x.p.laminas[x.i]) } });
   $('#mandoWrap').hidden=pasos[idx].tipo!=='lamina';
   $('#deshacer').hidden=hist.length===0;
   pintarCtx(pasos[idx]); pintarBolas(); pintarPanel();
@@ -613,7 +627,7 @@ function hoja(html){
 function cerrarHojas(){ document.querySelectorAll('.velo').forEach(v=>v.remove()); if(!document.querySelector('.exp,.zoom')) bloquear(false) }
 
 /* ══ mis respuestas: ver, cambiar, reabrir ══ */
-function thumbDe(x){ return x.tipo==='lamina'?`<img class="th" src="${esc(x.p.laminas[x.i])}" alt="" loading="lazy">`:`<div class="th" style="display:grid;place-items:center;color:#c9c2b4;font-size:11px">eje</div>` }
+function thumbDe(x){ return x.tipo==='lamina'?`<img class="th" src="${esc(ligera(x.p.laminas[x.i]))}" alt="" loading="lazy">`:`<div class="th" style="display:grid;place-items:center;color:#c9c2b4;font-size:11px">eje</div>` }
 function filasRespuestas(compacto){
   const hoyF=pasos.map((x,k)=>{ const m=marcaDe(x); const nota=x.tipo==='lamina'?dec[x.pid].notas[x.i]:dec[x.pid].nota;
     return `<div class="fila-r">${thumbDe(x)}<div class="txt"><b>${esc(x.p.titulo||x.pid)}</b><small>${x.tipo==='lamina'?'lámina '+(x.i+1):'elige una'}</small>${nota?`<em>«${esc(nota)}»</em>`:''}</div>
@@ -752,7 +766,7 @@ function pintarTren(){
   const piezas=Object.entries(EXP);
   if(!piezas.length){ $('#tren').innerHTML='<p class="nota-pie">La historia se está escribiendo…</p>'; return }
   $('#tren').innerHTML=piezas.map(([n,e])=>{ const src=miniDe(n);
-    return `<button class="vagon ${estCls(e.estado)}" data-n="${esc(n)}"><span class="mini">${src?`<img src="${esc(src)}" alt="" loading="lazy">`:''}${e.estado==='publicada'?'<span class="candado">🔒</span>':''}<span class="est">${estTxt(e.estado)}</span></span><span class="nom">${esc(n)}</span></button>` }).join('');
+    return `<button class="vagon ${estCls(e.estado)}" data-n="${esc(n)}"><span class="mini">${src?`<img src="${esc(ligera(src))}" alt="" loading="lazy">`:''}${e.estado==='publicada'?'<span class="candado">🔒</span>':''}<span class="est">${estTxt(e.estado)}</span></span><span class="nom">${esc(n)}</span></button>` }).join('');
   document.querySelectorAll('.vagon').forEach(v=>v.onclick=()=>abrirExp(v.dataset.n));
 }
 function abrirExp(nombre){
