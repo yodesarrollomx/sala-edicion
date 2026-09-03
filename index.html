@@ -131,10 +131,10 @@ html.embed .app{padding-top:8px}
 .carta.detras{transform:scale(.94) translateY(14px);box-shadow:var(--sombra);opacity:.55;z-index:0;pointer-events:none}
 .carta.fuera-si{transform:translateX(115%) rotate(9deg);opacity:0}
 .carta.fuera-no{transform:translateX(-115%) rotate(-9deg);opacity:0}
-.lienzo{flex:1 1 0;position:relative;background:#141210;display:grid;place-items:center;min-height:90px}
-.lienzo img{width:100%;height:100%;object-fit:contain;display:block;opacity:0;transition:opacity .3s}
+.lienzo{flex:1 1 0;position:relative;background:#141210;display:grid;place-items:center;min-height:90px;overflow:hidden}
+.lienzo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;opacity:0;transition:opacity .3s}
 .lienzo img.lista{opacity:1}
-.lienzo video{width:100%;max-height:100%;background:#000}
+.lienzo video{width:100%;max-height:100%;background:#000;position:relative}
 .cargando{position:absolute;inset:0;display:grid;place-items:center;color:#c9c2b4;font-size:13px;gap:10px;padding:20px;text-align:center;
   background:linear-gradient(110deg,#141210 30%,#1f1c18 50%,#141210 70%);background-size:200% 100%;animation:brilla 1.4s infinite}
 @keyframes brilla{to{background-position:-200% 0}}
