@@ -148,7 +148,7 @@ html.embed .app{padding-top:8px}
 .opciones .ning{display:block;margin:4px auto 0;background:none;border:0;color:var(--guia);font-size:14px;text-decoration:underline;text-underline-offset:3px;min-height:40px}
 .pie{padding:11px 16px 12px;border-top:1px solid var(--linea);display:flex;flex-direction:column;gap:5px}
 .pie .cual{font-size:13.5px;color:var(--gris)}
-.otra-voz{border-left:3px solid var(--azul);background:var(--azul-suave);border-radius:10px;padding:8px 11px;margin-bottom:4px;font-size:13px}
+.otra-voz{border-bottom:1px solid var(--linea);background:var(--azul-suave);padding:9px 14px;font-size:13px;flex:none}
 .otra-voz b{display:block;color:var(--azul);font-weight:600}
 .otra-voz span{display:block;color:var(--tinta);font-style:italic}
 .otra-voz small{display:block;color:var(--gris);font-size:11.5px;margin-top:4px}
@@ -673,12 +673,12 @@ function pintarCartas(){
     el.className='carta'+(k>idx?' detras':''); el.dataset.k=k;
     if(x.tipo==='lamina'){
       const src=x.p.laminas[x.i];
-      el.innerHTML=`<div class="lienzo">
+      el.innerHTML=`${otrosHTML(x)}<div class="lienzo">
           <div class="cargando">cargando lámina…</div>
           <span class="sello si" data-si>SÍ</span><span class="sello no" data-no>NO</span>
           <img alt="Lámina ${x.i+1}" draggable="false">
         </div>
-        <div class="pie">${otrosHTML(x)}<div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · lámina ${x.i+1} de ${(x.p.laminas||[]).length}</span>
+        <div class="pie"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · lámina ${x.i+1} de ${(x.p.laminas||[]).length}</span>
           <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button></div>${luegoDe(x)}</div>`;
       montarImagen(el,src);
       el.querySelector('.lupa').onclick=e=>{ e.stopPropagation(); abrirZoom(src) };
@@ -695,9 +695,15 @@ function pintarCartas(){
     if(k===idx&&x.tipo==='lamina') arrastrar(el);
   }
   pasos.slice(idx+1,idx+3).forEach(x=>{ if(x.tipo==='lamina'){ const im=new Image(); im.src=ligera(x.p.laminas[x.i]) } });
+  mandoDecidir();
   $('#mandoWrap').hidden=pasos[idx].tipo!=='lamina';
-  $('#deshacer').hidden=hist.length===0;
+  $('#deshacer').hidden=hist.length===0; $('#pistaTeclas').hidden=false;
   pintarCtx(pasos[idx]); pintarBolas(); pintarPanel();
+}
+const MANDO_HTML=`<button class="bNo" id="btnNo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Pedir cambio</button><button class="bSi" id="btnSi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Aprobar</button>`;
+function mandoDecidir(){   // si la Sala venía de la vista de solo lectura, devuelve los botones de decidir
+  const m=$('#mando'); if(m.querySelector('#btnSi')) return;
+  m.innerHTML=MANDO_HTML; $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 }
 function montarImagen(el,src){
   const img=el.querySelector('img');
