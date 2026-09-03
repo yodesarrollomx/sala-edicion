@@ -111,18 +111,13 @@ html.embed .app{padding-top:8px}
 /* ── contexto de la pieza ── */
 .ctx{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:2px 0 12px;align-items:center}
 .ctx .lbl{font-size:11px;color:var(--guia);letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-right:2px}
-@media (max-width:640px){
-  html.embed .ctx{display:none}
-  .otra-voz small{display:none}            /* en teléfono manda la nota, no la explicación */
-  .pie .luego{display:none}                /* el qué-pasa-si ya lo dice el panel y la guía */
-}
 .ctx .et{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--linea);border-radius:999px;padding:4px 11px;font-size:11.5px;color:var(--guia);background:var(--tarjeta)}
 .ctx .et.on{border-color:var(--si);color:var(--si)} .ctx .et.aqui{border-color:var(--oro);color:var(--oro);font-weight:600}
 .ctx .et i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
 
 /* ── la carta ── */
 .mazo{display:flex;flex-direction:column;min-height:0}
-.zona{position:relative;min-height:min(74vw,380px);height:clamp(340px,calc(100dvh - 390px - var(--nav)),640px)}
+.zona{position:relative;min-height:min(74vw,380px);height:clamp(360px,calc(100dvh - 330px - var(--nav)),640px)}
 @media (min-width:640px){ .zona{height:clamp(420px,calc(100dvh - 400px - var(--nav)),720px)} }
 @media (min-width:960px){ .zona{height:clamp(460px,calc(100dvh - 300px),720px)} }
 .carta{position:absolute;inset:0;background:var(--tarjeta);border:1px solid var(--linea);
@@ -345,6 +340,16 @@ html.cargando::before{content:'';position:fixed;top:0;left:0;height:3px;width:10
 html.cargando #actualizando{display:flex}
 #actualizando i{width:10px;height:10px;border-radius:50%;border:2px solid var(--oro-suave);border-top-color:var(--oro);animation:gira .8s linear infinite}
 @keyframes gira{to{transform:rotate(360deg)}}
+/* teléfono: la lámina manda. Estas reglas van al final a propósito: anulan a las de arriba. */
+@media (max-width:640px){
+  html.embed .ctx{display:none}
+  .otra-voz{padding:7px 12px;font-size:12.5px;max-height:30%}
+  .otra-voz small{display:none}
+  .otra-voz span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .pie{padding:8px 12px 9px}
+  .pie .luego{display:none}
+  .pie .cual{font-size:12.5px}
+}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
