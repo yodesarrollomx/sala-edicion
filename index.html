@@ -341,12 +341,12 @@ const ligera=src=>/\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
 function imgConRespaldo(img,src){ img.src=ligera(src); img.onerror=()=>{ if(img.src!==src){ img.onerror=null; img.src=src } } }
 
 /* ══ datos ══ */
-async function traer(f,intentos){
+async function traer(f,intentos,tope){
   if(ENTRADO()){
     const N=intentos||3;
     for(let i=0;i<N;i++){
       try{
-        const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),12000);
+        const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),tope||10000);
         const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(CLAVE())+(f?'&f='+encodeURIComponent(f):''),{signal:ctl.signal});
         clearTimeout(t);
         const j=await leerJSON(r);
@@ -365,12 +365,15 @@ async function conMarcasDeAntes(d,f){
   const M=(d.decisiones&&d.decisiones.propuestas)||{};
   const falta=(d.propuestas||[]).map(p=>p.id).filter(id=>!M[id]);
   if(!falta.length){ d.decisiones={propuestas:M}; return d }
-  const dias=(d.dias||[]).filter(x=>x<(d.fecha||f||'9999')).sort().reverse().slice(0,5);
+  // Los días anteriores se piden EN PARALELO y con tope corto: en serie tardaban
+  // hasta un minuto y la mesa cambiaba debajo del dedo (2-sep).
+  const dias=(d.dias||[]).filter(x=>x<(d.fecha||f||'9999')).sort().reverse().slice(0,4);
+  const vistas=await Promise.all(dias.map(dd=>traer(dd,1,6000).catch(()=>null)));
   const set=new Set(falta);
-  for(const dd of dias){
-    if(!set.size) break;
-    try{ const v=await traer(dd,1); const m=(v.decisiones&&v.decisiones.propuestas)||{};
-      for(const id of [...set]) if(m[id]){ M[id]=m[id]; set.delete(id) } }catch(e){}
+  for(const v of vistas){
+    if(!v||!set.size) continue;
+    const m=(v.decisiones&&v.decisiones.propuestas)||{};
+    for(const id of [...set]) if(m[id]){ M[id]=m[id]; set.delete(id) }
   }
   d.decisiones={propuestas:M}; return d;
 }
@@ -808,7 +811,13 @@ function montar(d){
 (async function(){
   cargarExpedientes(); subirCola();
   const rapido=setTimeout(async()=>{ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); if(!r.ok) return; const j=await r.json(); j._respaldo=true; if(!_pintado) montar(normalizarDia(j)) }catch(e){} },2500);
-  try{ const d=normalizarDia(await conMarcasDeAntes(await traer(),'')); clearTimeout(rapido); _pintado=true; montar(d) }
+  try{ const d=normalizarDia(await conMarcasDeAntes(await traer(),'')); clearTimeout(rapido);
+    // Si el respaldo ya pintó y tú ya decidiste algo, la mesa NO cambia debajo del dedo:
+    // se actualizan los datos para el envío y se sigue donde ibas.
+    const firma=x=>(x.propuestas||[]).map(p=>p.id+':'+((p.laminas||[]).length||(p.opciones||[]).length)).join('|');
+    if(_pintado&&D&&cuentas().hoy>0){ if(firma(D)!==firma(d)){ D.propuestas=d.propuestas.map(p=>{const v=(D.propuestas||[]).find(q=>q.id===p.id); return v||p}); }
+      D.decisiones=d.decisiones; D._respaldo=false; const av=$('#aviso'); if(av) av.hidden=true; estadoInicial(); }
+    else { _pintado=true; montar(d) } }
   catch(e){ clearTimeout(rapido); if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)) }
     catch(e2){ $('#titulo').textContent='No pude alcanzar la sala'; pintarEstado('sin','Puede ser la red — recarga en un momento') } } }
 })();
