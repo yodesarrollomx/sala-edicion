@@ -188,6 +188,10 @@
   {
    "hora": "13:01",
    "evento": "Sala 2.1 en vivo: guardado visible, editar/reabrir, zoom, contexto, pedir /sala, 3 pantallas; puente de sesión al dominio nuevo"
+  },
+  {
+   "hora": "18:44",
+   "evento": "Sala 2.1: puente en ventana principal, Ampliar fuera de la imagen, y el borrador del aparato manda sobre el Sheet viejo (probado)"
   }
  ],
  "decisiones": {
@@ -1196,6 +1200,11 @@
    "pedido": "HALLAZGO RAÍZ: la Sala se mudó de dominio y tu entrada se quedó en el viejo",
    "estado": "cumplida",
    "evidencia": "La dirección alexpueblag.github.io ahora redirige a yodesarrollomx.github.io; el navegador guarda la liga por dominio, así que llegabas SIN sesión (la app decía «buscando el Sheet…» para siempre y nada subía). Arreglado por dos lados: (1) el cascarón viejo ahora lleva tus llaves en el #hash al dominio nuevo (puente de sesión, desplegado y verificado); (2) la app dice claro «No has entrado — toca para entrar» con botón «Recuperar mi entrada» que hace ese viaje."
+  },
+  {
+   "pedido": "Mira esto es lo que le está pasando a mi Sala: no guarda; la imagen se corta al cargar; ¿cómo seguir con una edición fluida?",
+   "estado": "cumplida",
+   "evidencia": "Causa: tu iPhone está sin sesión en el dominio nuevo (tus 4 respuestas de las 14:00 quedaron en el teléfono). Corregido 2-sep tarde: (1) «Recuperar mi entrada» ahora abre en la ventana principal — dentro del marco del OS, Safari aislaba el almacén y el puente llegaba sin llaves; (2) el botón «Ampliar» ya no tapa la lámina (estaba encima del texto: eso era el «corte»); (3) más carta en el marco del OS en teléfono; (4) CONFLICTO detectado: el Sheet ya traía un envío tuyo de las 08:04 (4 sí) y la app habría descartado el borrador del teléfono (3 sí + 1 no con nota) al entrar. Regla nueva: un borrador MÁS NUEVO que la última revisión del Sheet manda — no se filtra, no se canda, se restaura y sube solo. Probado en vivo simulando el camino del Sheet: «Terminaste · 3 aprobadas · 1 a rehacer», la nota sobrevive, y el envío queda en cola hasta entrar."
   }
  ],
  "conexion": {
