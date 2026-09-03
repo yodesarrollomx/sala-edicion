@@ -708,10 +708,14 @@ function abrirEntrar(){
 function clickEstado(){ if(guard.tipo==='sin'||guard.tipo==='rechazado') abrirEntrar(); else if(guard.tipo==='cola') subirCola(); else abrirRespuestas() }
 
 /* ══ final / vacío ══ */
+/* «En camino» sale del ESTADO VIVO (datos/piezas.json, que el agente actualiza en cada
+   paso), no del último hito del expediente — ése es historia y se congela. */
+let PZ={};
 function enCaminoHTML(){
-  const items=Object.entries(EXP).filter(([n,e])=>e.estado!=='publicada').map(([n,e])=>{ const h=(e.hitos||[]).slice(-1)[0];
-    return `<div class="enc"><i></i><div><b>${esc(n)}</b><small>${esc(h?h.que:'')}</small></div></div>` }).join('');
-  return items?`<div class="encamino"><h4>En camino (no necesitas hacer nada)</h4>${items}</div>`:'';
+  const lista=Object.values(PZ).filter(p=>p.estado!=='publicada');
+  const items=lista.map(p=>`<div class="enc"><i style="background:${p.espera==='tú'?'var(--no)':'var(--oro)'}"></i><div><b>${esc(p.pieza)}</b><small>${esc(p.siguiente||'')}</small>${p.espera==='tú'?'<small style="color:var(--no);font-weight:600">te toca a ti</small>':''}</div></div>`).join('');
+  const act=(Object.values(PZ)[0]||{}).actualizado;
+  return items?`<div class="encamino"><h4>En camino${act?' · al '+esc(act):''}</h4>${items}</div>`:'';
 }
 function pintarFin(){
   const c=cuentas(); $('#titulo').textContent='Terminaste'; $('#mandoWrap').hidden=true; $('#bolas').innerHTML=''; pintarCtx(null);
@@ -733,12 +737,16 @@ function pintarVacio(){
 let EXP={}, METR=null;
 async function cargarExpedientes(){
   try{ METR=await (await fetch('datos/metricas.json?v='+Date.now())).json() }catch(e){}
+  try{ const z=await (await fetch('datos/piezas.json?v='+Date.now())).json();
+    (z.piezas||[]).forEach(p=>{ PZ[p.pieza]={...p,actualizado:z.actualizado} }) }catch(e){}
   let idxE=[]; try{ idxE=await (await fetch('datos/expedientes/index.json?v='+Date.now())).json() }catch(e){}
-  for(const it of idxE){ try{ EXP[it.pieza]=await (await fetch('datos/expedientes/'+it.archivo+'?v='+Date.now())).json() }catch(e){} }
+  for(const it of idxE){ try{ EXP[it.pieza]=await (await fetch('datos/expedientes/'+it.archivo+'?v='+Date.now())).json();
+    if(PZ[it.pieza]) EXP[it.pieza].estado=PZ[it.pieza].estado;   // el estado vivo manda sobre el archivado
+  }catch(e){} }
   pintarTren(); if(D&&!pasos.length) pintarVacio();
 }
 const estCls=e=>e==='publicada'?'listo':(e==='te espera'?'espera':'');
-const estTxt=e=>e==='publicada'?'YA SALIÓ':(e==='te espera'?'TE ESPERA':'EN IDEA');
+const estTxt=e=>e==='publicada'?'YA SALIÓ':(e==='te espera'?'TE ESPERA':(e==='en camino'?'EN CAMINO':'EN IDEA'));
 function miniDe(n){ return {'¿Vendo o construyo?':'laminas/vendo-construyo-g2/L3.png','El Apodo del Terreno':'laminas/apodo-g4/L1.png'}[n]||'' }
 function pintarTren(){
   const piezas=Object.entries(EXP);

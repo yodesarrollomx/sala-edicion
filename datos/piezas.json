@@ -1,0 +1,33 @@
+{
+ "actualizado": "2026-09-02 19:05",
+ "piezas": [
+  {
+   "pieza": "La Servilleta",
+   "estado": "publicada",
+   "etapa": "publicada",
+   "siguiente": "Métricas a la semana (yo) — FB sin alcance: 0 vistas; IG sí camina.",
+   "espera": "yo"
+  },
+  {
+   "pieza": "¿Vendo o construyo?",
+   "estado": "te espera",
+   "etapa": "copy",
+   "siguiente": "Tira final 9/9 aprobada (2-sep 08:04). Paquete de publicación listo: espera tu «publicamos» en el chat.",
+   "espera": "tú"
+  },
+  {
+   "pieza": "El Apodo del Terreno",
+   "estado": "en camino",
+   "etapa": "video",
+   "siguiente": "Láminas 9/9 aprobadas. Video en producción: voces regrabándose con los textos oficiales, escenas animándose.",
+   "espera": "yo"
+  },
+  {
+   "pieza": "El comprador ya sabe",
+   "estado": "en camino",
+   "etapa": "guion",
+   "siguiente": "Guion en escritura (yo). Te llega por el chat para tu visto bueno.",
+   "espera": "yo"
+  }
+ ]
+}
