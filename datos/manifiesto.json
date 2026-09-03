@@ -17,38 +17,7 @@
   "2026-09-02",
   "2026-09-03"
  ],
- "propuestas": [
-  {
-   "id": "comprador-guion-0166a8",
-   "titulo": "El comprador ya sabe · el guion (2 hojas) — ¿lo produzco?",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/comprador-guion/L1.png",
-    "laminas/comprador-guion/L2.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "origen": null
-  },
-  {
-   "id": "publicar-vendo-construyo",
-   "titulo": "¿Vendo o construyo? · tira 9/9 aprobada — ¿sale a FB e IG?",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "Publícala con el copy «El empate»",
-     "texto": "Sale el carrusel de 9 láminas a Facebook e Instagram con este copy: «No es que no te decidas. Es que el empate está mal armado. / Vender trae un número: la oferta que te llegó. Construir trae neblina: nadie lo ha medido. Y contra un número, la neblina siempre pierde. / Mientras tanto el predial corre, y el que te quiere comprar ya sabe cuántos m² se pueden construir en tu terreno. Tú todavía no. / El Plan de Potencial Personalizado le pone número a la otra mitad: los m² que permite la norma, los giros que caben, y la ruta completa: cronograma, presupuesto, proveedores y materiales, con condiciones de aliado YOD. / Ahora sí comparas dos escenarios con la misma cara. Y decides tú. / Tú traes la ubicación. El primer paso es una videollamada 👇» · Liga medible en el texto (FB) y en el primer comentario (IG), que yo pongo."
-    },
-    {
-     "titulo": "Todavía no",
-     "texto": "Se queda lista. Dime en la nota qué frase cambio y la afino antes de que salga."
-    }
-   ],
-   "video": null,
-   "origen": "tira aprobada 4/4 el 2-sep 08:04 · copy elegido entre tres conceptos"
-  }
- ],
+ "propuestas": [],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -245,12 +214,17 @@
      "ruta al exito cronograma, presupuestos, proveedores materiales y servicios con precios especisles para aliados yod"
     ]
    },
-   "vendo-2rehechas-v3-31ago": {
+   "comprador-guion-0166a8": {
     "laminas": [
      "si",
-     "si",
-     "si",
      "si"
+    ],
+    "nota": ""
+   },
+   "publicar-vendo-construyo": {
+    "laminas": [
+     "si",
+     null
     ],
     "nota": ""
    }
