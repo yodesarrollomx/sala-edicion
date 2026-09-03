@@ -397,10 +397,12 @@ let D=null, fecha='', pasos=[], idx=0, hist=[], dec={}, lockeadas=[], guard={tip
 const marcasPrevias=pid=>((D.decisiones||{}).propuestas||{})[pid]||null;
 const claveBorrador=()=>'sala2-'+fecha;
 
-function armarPasos(){
+function armarPasos(sinCandado){
+  // sinCandado=true: hay un borrador en este aparato MÁS NUEVO que lo que trae el Sheet;
+  // entonces sus láminas no se candan con la marca vieja — el borrador manda y sube.
   pasos=[]; dec={}; lockeadas=[];
   for(const p of D.propuestas||[]){
-    const prev=marcasPrevias(p.id);
+    const prev=sinCandado?null:marcasPrevias(p.id);
     if(p.tipo==='eje'){
       const n=(p.opciones||[]).length;
       dec[p.id]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:'',_eje:''};
@@ -763,7 +765,13 @@ function abrirExp(nombre){
 function pintarFecha(f){ try{ $('#fechaTxt').textContent=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}) }catch(e){ $('#fechaTxt').textContent=f } }
 let _pintado=false;
 function montar(d){
-  D=d; fecha=D.fecha||''; pintarFecha(fecha); armarPasos();
+  D=d; fecha=D.fecha||''; pintarFecha(fecha);
+  // Si en este aparato hay respuestas MÁS NUEVAS que la última revisión que tiene el
+  // Sheet (p. ej. decidiste sin sesión), esas mandan: no se candan, se restauran y suben.
+  const b=leerLS('sala2-'+fecha,null);
+  const tSheet=Date.parse(D.ultima_revision||'')||0;
+  const borradorManda=!!(b&&b.dec&&(b.t||0)>tSheet&&Object.values(b.dec).some(x=>(x.laminas||[]).some(m=>m==='si'||m==='no')));
+  armarPasos(borradorManda);
   const hubo=restaurarBorrador(); if(!hubo){ idx=0; hist=[] }
   estadoInicial(); pintarCartas();
   if(hubo&&idx>0&&idx<pasos.length) $('#titulo').innerHTML=`Retomas donde ibas: <b>${pasos.length-idx} por ver</b>`;
