@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-03 04:43",
+ "actualizado": "2026-09-03 05:13",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 46 min",
+   "corrio": "hace 1 horas",
    "dijo": "PIPELINE DETENIDO por cuota — sigue en la próxima corrida",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 8 horas",
+   "corrio": "hace 9 horas",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
