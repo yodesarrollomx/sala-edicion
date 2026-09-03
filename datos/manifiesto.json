@@ -17,7 +17,24 @@
   "2026-09-02",
   "2026-09-03"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "comprador-g1-70ac76",
+   "titulo": "El comprador ya sabe · las 9 láminas del guion que aprobaste",
+   "laminas": [
+    "laminas/comprador-g1/L1.png",
+    "laminas/comprador-g1/L2.png",
+    "laminas/comprador-g1/L3.png",
+    "laminas/comprador-g1/L4.png",
+    "laminas/comprador-g1/L5.png",
+    "laminas/comprador-g1/L6.png",
+    "laminas/comprador-g1/L7.png",
+    "laminas/comprador-g1/L8.png",
+    "laminas/comprador-g1/L9.png"
+   ],
+   "video": null
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -197,6 +214,10 @@
   {
    "hora": "21:21",
    "evento": "Propuesta montada: El comprador ya sabe · el guion (2 hojas) — ¿lo produzco? (2 láminas)"
+  },
+  {
+   "hora": "23:02",
+   "evento": "Propuesta montada: El comprador ya sabe · las 9 láminas del guion que aprobaste (9 láminas)"
   }
  ],
  "decisiones": {
