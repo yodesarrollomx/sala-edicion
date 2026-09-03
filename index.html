@@ -810,7 +810,7 @@ function pasoPendienteDe(nombre){
   return -1;
 }
 function esperaHTML(nombre){
-  const z=(PZ&&PZ.piezas||[]).find(q=>q.pieza===nombre); if(!z||z.estado!=='te espera') return '';
+  const z=PZ[nombre]; if(!z||z.estado!=='te espera') return '';
   const k=pasoPendienteDe(nombre);
   return `<div class="espera-caja"><small>Te espera tu palabra</small><p>${esc(z.siguiente||'Hay una decisión tuya pendiente.')}</p>
     ${k>=0?`<button onclick="irADecidir(${k})">Ir a decidir →</button>`
