@@ -17,7 +17,20 @@
   "2026-09-02",
   "2026-09-03"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "comprador-g2-fcf0ca",
+   "titulo": "El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8)",
+   "laminas": [
+    "laminas/comprador-g2/L1.png",
+    "laminas/comprador-g2/L2.png",
+    "laminas/comprador-g2/L3.png",
+    "laminas/comprador-g2/L4.png"
+   ],
+   "video": null,
+   "origen": "rehecha-de comprador-g1-70ac76"
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -201,6 +214,10 @@
   {
    "hora": "23:02",
    "evento": "Propuesta montada: El comprador ya sabe · las 9 láminas del guion que aprobaste (9 láminas)"
+  },
+  {
+   "hora": "09:10",
+   "evento": "Propuesta montada: El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8) (4 láminas)"
   }
  ],
  "decisiones": {
