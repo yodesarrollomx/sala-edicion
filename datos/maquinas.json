@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-02 18:33",
+ "actualizado": "2026-09-02 19:03",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -29,10 +29,10 @@
    "hace": "Rehace el corte completo (voces, escenas, mezcla, reel vertical) cuando algo cambió.",
    "evita": "tener que rearmar el video a mano cada vez que se corrige una pieza",
    "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
-   "corrio": "hace 5 días",
+   "corrio": "hace 6 días",
    "dijo": "voces completas; el corte se re-armó",
    "salud": "duda",
-   "porque": "lleva 5 días sin correr — puede que ya terminó su trabajo"
+   "porque": "lleva 6 días sin correr — puede que ya terminó su trabajo"
   },
   {
    "id": "mx.yodesarrollo.cuento",
@@ -62,7 +62,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 10 horas",
+   "corrio": "hace 11 horas",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 3 horas",
+   "corrio": "hace 4 horas",
    "dijo": "OJO: el Sheet no contestó en 3 día(s) (2026-09-01, 2026-08-30, 2026-08-27); no se puede afirmar que no hay pendientes",
    "salud": "bien",
    "porque": "corriendo en su horario"
