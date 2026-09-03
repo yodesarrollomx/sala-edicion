@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-02 17:02",
+ "actualizado": "2026-09-02 17:32",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -40,7 +40,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 10 horas",
+   "corrio": "hace 11 horas",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -106,7 +106,7 @@
    "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
    "evita": "enterarte por un tercero de que un tablero estaba abierto",
    "cuando": "a las 6:45",
-   "corrio": "hace 10 horas",
+   "corrio": "hace 11 horas",
    "dijo": "==============================================================================",
    "salud": "bien",
    "porque": "corriendo en su horario"
