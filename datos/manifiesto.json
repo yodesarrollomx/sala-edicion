@@ -21,12 +21,14 @@
   {
    "id": "comprador-g2-fcf0ca",
    "titulo": "El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8)",
+   "tipo": "laminas",
    "laminas": [
     "laminas/comprador-g2/L1.png",
     "laminas/comprador-g2/L2.png",
     "laminas/comprador-g2/L3.png",
     "laminas/comprador-g2/L4.png"
    ],
+   "opciones": [],
    "video": null,
    "origen": "rehecha-de comprador-g1-70ac76"
   }
