@@ -1,18 +1,76 @@
 {
  "pieza": "La Servilleta",
  "estado": "publicada",
- "resultado": [["61", "vistas IG"], ["58", "alcance"], ["3", "me gusta"]],
+ "resultado": [
+  [
+   "61",
+   "vistas IG"
+  ],
+  [
+   "58",
+   "alcance"
+  ],
+  [
+   "3",
+   "me gusta"
+  ]
+ ],
  "post": "https://www.instagram.com/reel/DcpTY8kiRb2/",
  "versiones": [
-  {"tag": "g3", "fecha": "12 ago", "nota": "Pasarela de tomas: tú elegías la buena en L4, L6 y L7.", "viva": false},
-  {"tag": "g4", "fecha": "12 ago", "nota": "L2, L3 y L5 rehechas con tus notas; las tomas B quedaron oficiales.", "viva": false},
-  {"tag": "g5", "fecha": "12 ago", "nota": "Solo cambió L3, por tu corrección de diálogo.", "viva": false},
-  {"tag": "tira final", "fecha": "12 ago", "nota": "Las 7 láminas aprobadas, con membrete solo de Yodesarrollo.", "viva": false},
-  {"tag": "video «el cuento»", "fecha": "24 ago", "nota": "7 escenas en cámara lenta con voces y reel 9:16. Nunca salió: se quedó esperando tu palabra 17 días.", "viva": false},
-  {"tag": "corte Hormozi", "fecha": "28 ago", "nota": "El corte que sí salió: 6 escenas, 33.4 segundos, pivote nuevo, voz nueva de ella, música y cierre «Personalizado».", "viva": true},
-  {"tag": "copy v1", "fecha": "29 ago", "nota": "El copy contado como cuento. Lo frenaste.", "viva": false},
-  {"tag": "copy Hormozi v2", "fecha": "29 ago", "nota": "Reescrito con la ecuación de valor: decidir con dato, entregables reales, esfuerzo casi cero.", "viva": false},
-  {"tag": "copy del panel (publicado)", "fecha": "29 ago", "nota": "El que salió, con tu cambio de la primera línea: «Casi toda familia tiene un terreno…».", "viva": true}
+  {
+   "tag": "g3",
+   "fecha": "12 ago",
+   "nota": "Pasarela de tomas: tú elegías la buena en L4, L6 y L7.",
+   "viva": false
+  },
+  {
+   "tag": "g4",
+   "fecha": "12 ago",
+   "nota": "L2, L3 y L5 rehechas con tus notas; las tomas B quedaron oficiales.",
+   "viva": false
+  },
+  {
+   "tag": "g5",
+   "fecha": "12 ago",
+   "nota": "Solo cambió L3, por tu corrección de diálogo.",
+   "viva": false
+  },
+  {
+   "tag": "tira final",
+   "fecha": "12 ago",
+   "nota": "Las 7 láminas aprobadas, con membrete solo de Yodesarrollo.",
+   "viva": false
+  },
+  {
+   "tag": "video «el cuento»",
+   "fecha": "24 ago",
+   "nota": "7 escenas en cámara lenta con voces y reel 9:16. Nunca salió: se quedó esperando tu palabra 17 días.",
+   "viva": false
+  },
+  {
+   "tag": "corte Hormozi",
+   "fecha": "28 ago",
+   "nota": "El corte que sí salió: 6 escenas, 33.4 segundos, pivote nuevo, voz nueva de ella, música y cierre «Personalizado».",
+   "viva": true
+  },
+  {
+   "tag": "copy v1",
+   "fecha": "29 ago",
+   "nota": "El copy contado como cuento. Lo frenaste.",
+   "viva": false
+  },
+  {
+   "tag": "copy Hormozi v2",
+   "fecha": "29 ago",
+   "nota": "Reescrito con la ecuación de valor: decidir con dato, entregables reales, esfuerzo casi cero.",
+   "viva": false
+  },
+  {
+   "tag": "copy del panel (publicado)",
+   "fecha": "29 ago",
+   "nota": "El que salió, con tu cambio de la primera línea: «Casi toda familia tiene un terreno…».",
+   "viva": true
+  }
  ],
  "hitos": [
   {
@@ -21,7 +79,10 @@
    "que": "Aprobaste la tira final de las 7 láminas, pero pediste cambiar una frase del diálogo.",
    "dijo": "creo que en vez de que diga y si mejor lo calculamos ... ponemos y si mejor calculamos en verdad su potencial?",
    "hecho": "Quedó cerrada la tira «APROBADA 7/7 — tira final (membrete solo Yodesarrollo)» con una sola corrección pendiente.",
-   "antes_despues": ["«¿Y si mejor lo calculamos?»", "«¿Y si mejor calculamos en verdad su potencial?»"],
+   "antes_despues": [
+    "«¿Y si mejor lo calculamos?»",
+    "«¿Y si mejor calculamos en verdad su potencial?»"
+   ],
    "fuente": "Sheet 2026-08-12 decisiones · propuesta servilleta-final-444bef (marcas + nota), guardado 12-ago 08:50"
   },
   {
@@ -29,7 +90,10 @@
    "fecha": "12 AGO",
    "que": "Metí tu frase al guion y volví a grabar esa escena.",
    "hecho": "Guion actualizado en S5 con tu frase exacta y voz S5_0 regrabada; L5 final rehecha.",
-   "antes_despues": ["Guion y voz con la frase vieja", "Guion S5 y voz S5_0 con «¿Y si mejor calculamos en verdad su potencial?»"],
+   "antes_despues": [
+    "Guion y voz con la frase vieja",
+    "Guion S5 y voz S5_0 con «¿Y si mejor calculamos en verdad su potencial?»"
+   ],
    "fuente": "Archivos _VIDEO/guion.json (escena S5) · _VIDEO/voces/S5_0.wav y _G2/FINAL_YOD/L5.png, ambos con fecha 13-ago 10:07"
   },
   {
@@ -38,7 +102,10 @@
    "que": "Tumbaste el estilo de animación anterior y aprobaste uno nuevo: que se mueva toda la escena, no un pedacito.",
    "dijo": "se mueve algo pero no el dibujo… dales movimiento en cámara lenta, no solo un pedazo sino toda la escena",
    "hecho": "Quedó como lenguaje oficial del video: escena completa en cámara lenta, el texto va en capa aparte y nunca se anima, y el boceto «se dibuja solo».",
-   "antes_despues": ["Solo se movía un óvalo dentro de la lámina", "Toda la escena viva en cámara lenta, con el texto encima nítido"],
+   "antes_despues": [
+    "Solo se movía un óvalo dentro de la lámina",
+    "Toda la escena viva en cámara lenta, con el texto encima nítido"
+   ],
    "fuente": "Memoria servilleta-video-estilo.md (12-ago-2026) · prototipo _VIDEO/S2_FULL.mp4 con fecha 12-ago 13:04"
   },
   {
@@ -46,7 +113,10 @@
    "fecha": "13–16 AGO",
    "que": "Animé las escenas del video una por una hasta terminarlas.",
    "hecho": "De 4 escenas listas el 13-ago a las 7 completas el 16-ago.",
-   "antes_despues": ["4 de 7 escenas animadas", "7 de 7 animadas; faltaba el armado final"],
+   "antes_despues": [
+    "4 de 7 escenas animadas",
+    "7 de 7 animadas; faltaba el armado final"
+   ],
    "fuente": "Sheet · producción 2026-08-13 y 2026-08-14 («escenas listas: 4/7») y 2026-08-16 («7/7 — TODAS»); archivos _VIDEO/_ESCENAS_FULL/S5_animado.mp4 y S6_animado.mp4 con fecha 16-ago 16:01 y 16:03"
   },
   {
@@ -54,7 +124,10 @@
    "fecha": "24 AGO",
    "que": "Armé el video completo y el reel vertical.",
    "hecho": "Quedaron PELICULA_SERVILLETA.mp4 y REEL_SERVILLETA.mp4 listos, más los copys y las ligas medibles.",
-   "antes_despues": ["7 escenas sueltas", "Video armado y reel 9:16 listos para salir"],
+   "antes_despues": [
+    "7 escenas sueltas",
+    "Video armado y reel 9:16 listos para salir"
+   ],
    "fuente": "Archivos _VIDEO/PELICULA_SERVILLETA.mp4 y _VIDEO/REEL_SERVILLETA.mp4 con fecha 24-ago 20:36 · Sheet producción 2026-08-26 «armado, esperando tu palabra»"
   },
   {
@@ -63,7 +136,10 @@
    "que": "Rechazaste los dos ganchos que te propuse para los primeros 3 segundos.",
    "dijo": "creo qu eestamos repitined conceptos y no viendo la magnitud de ejemplos que podemos explorar con lo extenso que peude ayudar a distintas situaciones un plan de potencal",
    "hecho": "Los dos ganchos quedaron tachados y se abrió otra pregunta: qué caso abrir para mostrar de cuánto es capaz el Plan de Potencial.",
-   "antes_despues": ["Dos ganchos que repetían el mismo concepto", "Se buscó un caso nuevo que enseñe la magnitud del Plan de Potencial"],
+   "antes_despues": [
+    "Dos ganchos que repetían el mismo concepto",
+    "Se buscó un caso nuevo que enseñe la magnitud del Plan de Potencial"
+   ],
    "fuente": "Sheet 2026-08-27 decisiones · propuesta gancho-servilleta (no/no + nota), guardado 27-ago 14:31"
   },
   {
@@ -71,7 +147,10 @@
    "fecha": "27 AGO",
    "que": "Aprobaste completo el plan del corte nuevo: las tarjetas de las 6 escenas con texto, voz y movimiento.",
    "hecho": "Con eso se autorizó rehacer el video de 7 escenas a 6, con dirección escrita escena por escena.",
-   "antes_despues": ["Video de 7 escenas contado como cuento", "Plan de 6 escenas con el gancho que le habla al dueño desde el primer segundo"],
+   "antes_despues": [
+    "Video de 7 escenas contado como cuento",
+    "Plan de 6 escenas con el gancho que le habla al dueño desde el primer segundo"
+   ],
    "fuente": "Sheet 2026-08-27 decisiones · propuesta plan-hormozi (2 de 2 en sí)"
   },
   {
@@ -79,7 +158,10 @@
    "fecha": "27 AGO",
    "que": "Produje las 6 láminas del corte nuevo y empecé las voces.",
    "hecho": "6 capas nuevas (H1 a H6), las 2 tarjetas de dirección y el guion del corte, con la primera voz grabada.",
-   "antes_despues": ["Solo el plan en papel", "6 láminas y el guion del corte listos"],
+   "antes_despues": [
+    "Solo el plan en papel",
+    "6 láminas y el guion del corte listos"
+   ],
    "fuente": "Archivos _VIDEO/_CAPAS_H/H1–H6.png (27-ago 19:45 y 19:59), _VIDEO/TARJETAS/D1.png y D2.png (27-ago 18:17), _VIDEO/guion_hormozi.json y _VIDEO/voces_h/H1_0.wav (27-ago 18:53)"
   },
   {
@@ -88,7 +170,10 @@
    "que": "Frenaste la publicación: dijiste que el video no sonaba a anuncio profesional y pediste rehacer la escena del giro.",
    "dijo": "el audio se escucha mal como que habla en portugues la señora no son la entonaciones correctas ... tmb la escena dos no tiene voz... y se siente rara... tmb creo que no tiene musica de fondo y eso la hace sentirse menos profesinal ... analiza que estamos omitiendo que no se haga ver como un anuncio profesional",
    "hecho": "Se paró la salida y quedaron tres encargos: voz de ella, voz en la escena 2 y música.",
-   "antes_despues": ["El corte iba a salir tal cual", "Se detuvo para rehacer voz, escena 2, música y el pivote"],
+   "antes_despues": [
+    "El corte iba a salir tal cual",
+    "Se detuvo para rehacer voz, escena 2, música y el pivote"
+   ],
    "fuente": "Sheet 2026-08-28 decisiones · propuesta corte-hormozi (marcaste «Rehaz la escena 4 primero» + nota), guardado 28-ago 05:53"
   },
   {
@@ -96,7 +181,10 @@
    "fecha": "28 AGO",
    "que": "Escogiste la toma A del pivote entre las tres que te presenté.",
    "hecho": "Se animó y montó esa toma como la escena del giro: ella aparta la servilleta y pone el plano del predio.",
-   "antes_despues": ["La escena 4 mostraba papeles y el giro no se sentía giro", "El giro es un gesto: apartar la servilleta y poner el plano"],
+   "antes_despues": [
+    "La escena 4 mostraba papeles y el giro no se sentía giro",
+    "El giro es un gesto: apartar la servilleta y poner el plano"
+   ],
    "fuente": "Sheet · propuesta pivote-e4-0430e7 (3 tomas, 28-ago) y producción 2026-08-29 «3 tarjetas retiradas: ya estaban decididas en el chat (pivote toma A…)» · archivos _VIDEO/_PIVOTE/pivote_A–C.png (28-ago 10:35–10:48) y _PIVOTE/anim/P4_animado.mp4 (28-ago 11:04)"
   },
   {
@@ -104,7 +192,10 @@
    "fecha": "28 AGO",
    "que": "Cambié la voz de ella: comparé cuatro voces y regrabé sus líneas con acento de acá.",
    "hecho": "Voz nueva (Aoede) con dirección de acento sonorense; se regrabaron las líneas de las escenas 1, 3 y 4.",
-   "antes_despues": ["La voz de ella sonaba a portugués", "Voz nueva con entonación mexicana en todas sus líneas"],
+   "antes_despues": [
+    "La voz de ella sonaba a portugués",
+    "Voz nueva con entonación mexicana en todas sus líneas"
+   ],
    "fuente": "Archivos _VIDEO/pruebas_voz/COMPARA_VOCES.wav (28-ago 09:55) y _VIDEO/voces_h/H1_1, H3_1, H4_0.wav (28-ago 10:15–10:16) · manifiesto.json, petición del anuncio profesional marcada «cumplida»"
   },
   {
@@ -112,7 +203,10 @@
    "fecha": "28 AGO",
    "que": "Le puse voz a la escena 2 y le bajé al ruido del plumón.",
    "hecho": "El narrador dice la placa palabra por palabra: «El cuñado lo resolvió en una servilleta.» El rayoneo bajó de −13.7 a −22.2 dB.",
-   "antes_despues": ["La escena 2 sin voz y con el plumón muy fuerte", "Voz que lee la placa y plumón casi 9 dB más bajo"],
+   "antes_despues": [
+    "La escena 2 sin voz y con el plumón muy fuerte",
+    "Voz que lee la placa y plumón casi 9 dB más bajo"
+   ],
    "fuente": "Archivos _VIDEO/voces_h/H2_0.wav y _VIDEO/_MONTAJE_H/.voz_h2 (28-ago 11:33) · manifiesto.json, petición del rayoneo marcada «cumplida»"
   },
   {
@@ -120,7 +214,10 @@
    "fecha": "28 AGO",
    "que": "Le puse música y ambiente al video, y cerré con la palabra que faltaba.",
    "hecho": "Corte final de 33.4 s: cama musical, ambiente de mesa, casa y campo, voz 8 dB encima de la música, pico −0.9 dBFS, y el cierre ya dice «Plan de Potencial Personalizado».",
-   "antes_despues": ["Video sin música, sin ambiente y con el cierre incompleto", "Corte de 33.4 s mezclado, con música y cierre completo"],
+   "antes_despues": [
+    "Video sin música, sin ambiente y con el cierre incompleto",
+    "Corte de 33.4 s mezclado, con música y cierre completo"
+   ],
    "fuente": "Sheet producción 2026-08-28 «corte final 33.4s: pivote nuevo, voz de ella con Aoede, narración de la escena 2, cierre «Personalizado», melodía, 1.15x, 48 kHz» · archivos _VIDEO/_SONIDO/cama.wav (28-ago 11:16), _VIDEO/voces_h/H6_0.wav y _VIDEO/CORTE_HORMOZI.mp4 (28-ago 13:04)"
   },
   {
@@ -129,7 +226,10 @@
    "que": "Reclamaste que la Sala te volvía a preguntar cosas que ya habías decidido.",
    "dijo": "no corrió mis selecciones pasadas",
    "hecho": "Se encontró la falla: la Sala pedía palomear TODAS las opciones de una pregunta para darla por cerrada, y una pregunta de «elige una» nunca se cerraba. Ahora cierra con un solo sí. La mesa bajó de 7 tarjetas a 5.",
-   "antes_despues": ["El corte y los ganchos ya decididos volvían a la mesa todos los días", "Una pregunta de elegir se cierra con una sola paloma"],
+   "antes_despues": [
+    "El corte y los ganchos ya decididos volvían a la mesa todos los días",
+    "Una pregunta de elegir se cierra con una sola paloma"
+   ],
    "fuente": "Sheet producción 2026-08-28 «un eje se cierra con UN sí; el corte Hormozi y los ganchos ya no vuelven a la mesa» · manifiesto.json peticiones y memoria sala-decisiones-viajan.md"
   },
   {
@@ -138,7 +238,10 @@
    "que": "Otra vez frenaste la salida: el video sí, el copy no. Pediste rehacerlo con la cabeza de Hormozi.",
    "dijo": "Usa un copy que usaria hormozi para convertir en el plan de potencial analiza a fondo de que se tarat que. hacemos que ofrecemos como y cuando revisa en nuestrasredes y de todo lo qu ehemos hecho",
    "hecho": "El copy contado como cuento se retiró y se reescribió antes de publicar, no después.",
-   "antes_despues": ["Copy narrativo: «la servilleta se quedó de recuerdo»", "Copy de conversión con los entregables reales del Plan de Potencial"],
+   "antes_despues": [
+    "Copy narrativo: «la servilleta se quedó de recuerdo»",
+    "Copy de conversión con los entregables reales del Plan de Potencial"
+   ],
    "fuente": "Sheet 2026-08-29 decisiones · propuesta publicar-servilleta (marcaste la segunda opción + nota), guardado 29-ago 10:07"
   },
   {
@@ -146,7 +249,10 @@
    "fecha": "29 AGO",
    "que": "Reescribí el copy con la ecuación de valor y te lo volví a presentar como tarjeta nueva.",
    "hecho": "Copy nuevo: la promesa es decidir con dato, la prueba son los entregables que ya hacemos (m² por giro, agua, drenaje, vialidad, estacionamiento), el esfuerzo del cliente es traer la ubicación y el primer paso es una videollamada.",
-   "antes_despues": ["Copy que contaba la historia y cerraba con la liga", "Copy que nombra el problema, muestra la prueba y pide un solo paso"],
+   "antes_despues": [
+    "Copy que contaba la historia y cerraba con la liga",
+    "Copy que nombra el problema, muestra la prueba y pide un solo paso"
+   ],
    "fuente": "Archivo _PUBLICAR/copy_servilleta_hormozi.txt (29-ago 14:11) · Sheet 2026-08-29, propuesta publicar-servilleta-v2 con origen «rehecha-de publicar-servilleta»"
   },
   {
@@ -155,7 +261,10 @@
    "que": "Diste la orden de publicar, cambiando tú mismo la primera línea del copy.",
    "dijo": "Casi toda familia tiene un terreno…",
    "hecho": "Salió el reel con el copy del panel y tu cambio de arranque.",
-   "antes_despues": ["El copy abría con «Todos opinan de tu terreno»", "Abre con «Casi toda familia tiene un terreno…»"],
+   "antes_despues": [
+    "El copy abría con «Todos opinan de tu terreno»",
+    "Abre con «Casi toda familia tiene un terreno…»"
+   ],
    "fuente": "Archivo _PUBLICAR/PUBLICADO_2026-08-29.txt · memoria sala-edicion-produccion.md"
   },
   {
@@ -163,7 +272,10 @@
    "fecha": "29 AGO",
    "que": "Publiqué en Facebook e Instagram y dejé puesto el primer comentario con la liga.",
    "hecho": "Reel en IG (instagram.com/reel/DcpTY8kiRb2/) y video en FB; primer comentario de IG puesto con la liga medible. Las ligas se miden con utm_campaign fb-2026-08-29 e ig-2026-08-29, utm_content=servilleta.",
-   "antes_despues": ["17 días de video terminado esperando la palabra", "Publicada en las dos redes y medible desde el primer día"],
+   "antes_despues": [
+    "17 días de video terminado esperando la palabra",
+    "Publicada en las dos redes y medible desde el primer día"
+   ],
    "fuente": "Archivo _PUBLICAR/PUBLICADO_2026-08-29.txt (FB id 1048401544642901 · IG reel id 18440830471121351 · comentario id 18141041347587547) · Sheet producción 2026-08-29 «FB + IG reel publicados»"
   },
   {
@@ -172,7 +284,10 @@
    "que": "Volviste a reclamar lo mismo con mayúsculas: te seguían apareciendo cosas ya revisadas.",
    "dijo": "ME SIGUES MOSTRANDO COSAS QUE YA REVISÉ",
    "hecho": "Se cerraron tres causas más: lo decidido en el chat se retira para siempre, el Sheet acumulaba filas repetidas y la pantalla del OS cargaba versiones viejas de la Sala. La mesa quedó en 2 tarjetas.",
-   "antes_despues": ["Mesa con 5 tarjetas, 3 ya decididas por chat", "Mesa con 2: el guion «¿Vendo o construyo?» y las publicaciones"],
+   "antes_despues": [
+    "Mesa con 5 tarjetas, 3 ya decididas por chat",
+    "Mesa con 2: el guion «¿Vendo o construyo?» y las publicaciones"
+   ],
    "fuente": "manifiesto.json peticiones (registro del 29-ago) · Sheet producción 2026-08-29 «3 tarjetas retiradas… La mesa queda en 2» · memoria sala-decisiones-viajan.md"
   }
  ],
@@ -213,5 +328,6 @@
    "regla": "La voz y la placa no se contradicen: en la primera y la última lámina la voz dice exactamente lo que se lee.",
    "nacio": "Del desfase del cierre, donde la placa decía «Personalizado» y la voz no; se cerró el 29-ago con la orden de que el narrador diga lo escrito."
   }
- ]
+ ],
+ "portada": "laminas/servilleta-final/L1.png"
 }

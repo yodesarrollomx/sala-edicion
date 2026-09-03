@@ -788,7 +788,7 @@ async function cargarExpedientes(){
 }
 const estCls=e=>e==='publicada'?'listo':(e==='te espera'?'espera':'');
 const estTxt=e=>e==='publicada'?'YA SALIÓ':(e==='te espera'?'TE ESPERA':(e==='en camino'?'EN CAMINO':'EN IDEA'));
-function miniDe(n){ return {'¿Vendo o construyo?':'laminas/vendo-construyo-g2/L3.png','El Apodo del Terreno':'laminas/apodo-g4/L1.png'}[n]||'' }
+function miniDe(n){ return (EXP[n]&&EXP[n].portada)||{'La Servilleta':'laminas/servilleta-final/L1.png','¿Vendo o construyo?':'laminas/vendo-construyo-g2/L3.png','El Apodo del Terreno':'laminas/apodo-g4/L1.png','El comprador ya sabe':'laminas/comprador-g1/L1.png'}[n]||'' }
 function pintarTren(){
   const piezas=Object.entries(EXP);
   if(!piezas.length){ $('#tren').innerHTML='<p class="nota-pie">La historia se está escribiendo…</p>'; return }
