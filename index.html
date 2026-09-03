@@ -242,6 +242,21 @@ html.embed .app{padding-top:8px}
 .exp{position:fixed;inset:0;background:var(--fondo);z-index:30;overflow-y:auto;animation:entra .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes entra{from{transform:translateY(26px);opacity:0}to{transform:none;opacity:1}}
 .exp-in{max-width:640px;margin:0 auto;padding:14px 18px 60px}
+
+/* indicador de carga (3-sep) */
+html.cargando::before{content:'';position:fixed;top:0;left:0;height:3px;width:100%;z-index:9999;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--oro),transparent);background-size:40% 100%;animation:barra 1.1s linear infinite}
+@keyframes barra{from{background-position:-40% 0}to{background-position:140% 0}}
+#actualizando{position:fixed;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:9998;display:none;align-items:center;gap:8px;
+  padding:6px 12px;border-radius:999px;background:rgba(18,18,22,.92);border:1px solid rgba(194,160,107,.5);color:var(--oro-cl);font-size:12px;font-weight:600;letter-spacing:.04em;pointer-events:none}
+html.cargando #actualizando{display:flex}
+#actualizando i{width:10px;height:10px;border-radius:50%;border:2px solid rgba(194,160,107,.35);border-top-color:var(--oro-cl);animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.espera-caja{margin:0 0 14px;padding:14px 16px;border-radius:14px;background:rgba(194,160,107,.10);border:1px solid rgba(194,160,107,.45)}
+.espera-caja small{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--oro);font-weight:600;margin-bottom:4px}
+.espera-caja p{margin:0 0 10px;font-size:15px;line-height:1.4}
+.espera-caja button{width:100%;padding:12px;border-radius:12px;border:0;background:var(--oro);color:#1a1408;font-weight:700;font-size:15px;cursor:pointer}
+.espera-caja .nota-esp{font-size:13px;color:var(--gris);margin:0}
 .exp-top{position:sticky;top:0;background:var(--fondo);padding:10px 0 12px;z-index:2;display:flex;align-items:center;gap:12px}
 .volver{border:2px solid var(--linea2);background:var(--tarjeta);border-radius:14px;width:46px;height:46px;display:grid;place-items:center;flex:none}
 .volver svg{width:22px;height:22px}
@@ -279,7 +294,7 @@ html.embed .app{padding-top:8px}
 .fuente{font-size:11px;color:var(--guia);margin-top:6px;opacity:.8}
 a{color:var(--oro)}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
-</style></head><body>
+</style></head><body><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
 
 <div class="app">
@@ -334,6 +349,15 @@ const uuid=()=>('xxxxxxxxyxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;re
 const hora=()=>new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
 function leerLS(k,def){ try{ const v=JSON.parse(localStorage.getItem(k)||'null'); return v===null?def:v }catch(e){ return def } }
 async function leerJSON(r){ try{ return JSON.parse(await r.text()) }catch(e){ return null } }
+/* INDICADOR DE CARGA (3-sep): «no sé cuándo está cargando». Cada fetch cuenta; mientras
+   haya alguno vivo se ve la barra dorada arriba y la píldora «Actualizando…». */
+let _vivos=0;
+const _fetch0=window.fetch.bind(window);
+window.fetch=async function(...a){
+  _vivos++; document.documentElement.classList.add('cargando');
+  try{ return await _fetch0(...a) }
+  finally{ _vivos=Math.max(0,_vivos-1); if(!_vivos) document.documentElement.classList.remove('cargando') }
+};
 const bloquear=on=>document.body.classList.toggle('bloqueado',!!on);
 /* Las láminas PNG pesan ~1.5 MB; la carta pide primero la versión .jpg (~200 KB) y
    si no existe cae al PNG. En 4G esto es la diferencia entre carta negra y carta al instante. */
@@ -772,6 +796,27 @@ function pintarTren(){
     return `<button class="vagon ${estCls(e.estado)}" data-n="${esc(n)}"><span class="mini">${src?`<img src="${esc(ligera(src))}" alt="" loading="lazy">`:''}${e.estado==='publicada'?'<span class="candado">🔒</span>':''}<span class="est">${estTxt(e.estado)}</span></span><span class="nom">${esc(n)}</span></button>` }).join('');
   document.querySelectorAll('.vagon').forEach(v=>v.onclick=()=>abrirExp(v.dataset.n));
 }
+
+/* «TE ESPERA» (3-sep): qué espera de ti y el botón para ir a decidirlo */
+function pasoPendienteDe(nombre){
+  const claves=nombre.toLowerCase().replace(/[¿?¡!]/g,'').split(/\s+/).filter(w=>w.length>3);
+  for(let k=0;k<pasos.length;k++){
+    const x=pasos[k]; const txt=JSON.stringify(x.p||{}).toLowerCase();
+    if(!claves.some(w=>txt.includes(w))) continue;
+    const d=dec[x.pid]; if(!d) continue;
+    const vacio = x.tipo==='lamina' ? !d.laminas[x.i] : !d._eje;
+    if(vacio) return k;
+  }
+  return -1;
+}
+function esperaHTML(nombre){
+  const z=(PZ&&PZ.piezas||[]).find(q=>q.pieza===nombre); if(!z||z.estado!=='te espera') return '';
+  const k=pasoPendienteDe(nombre);
+  return `<div class="espera-caja"><small>Te espera tu palabra</small><p>${esc(z.siguiente||'Hay una decisión tuya pendiente.')}</p>
+    ${k>=0?`<button onclick="irADecidir(${k})">Ir a decidir →</button>`
+          :`<p class="nota-esp">Ya la decidiste en este aparato o la carta llega en la próxima corrida. Si quieres cambiarla: engrane ⚙ → «Ver mis respuestas».</p>`}</div>`;
+}
+function irADecidir(k){ document.querySelectorAll('.exp').forEach(e=>e.remove()); bloquear(false); idx=k; cerrarHojas(); pintarCartas(); window.scrollTo(0,0) }
 function abrirExp(nombre){
   const e=EXP[nombre]; if(!e) return; bloquear(true);
   const d=document.createElement('div'); d.className='exp';
@@ -779,6 +824,7 @@ function abrirExp(nombre){
   let resultado=e.resultado;
   if(nombre==='La Servilleta'&&METR&&METR[0]&&METR[0].ig&&!METR[0].ig.error){ const g=METR[0].ig; resultado=[[String(g.views??'–'),'vistas IG'],[String(g.reach??'–'),'alcance'],[String(g.likes??'–'),'me gusta']] }
   d.innerHTML=`<div class="exp-in"><div class="exp-top"><button class="volver" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>${esc(nombre)}</h2><span class="chip-est ${estCls(e.estado)||'idea'}">${estTxt(e.estado)}</span></div>
+    ${esperaHTML(nombre)}
     ${resultado?`<div class="result">${resultado.map(r=>`<div><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join('')}</div>`:''}
     ${e.post?`<a class="verpost" href="${esc(e.post)}" target="_blank" rel="noopener">Ver la publicación ↗</a>`:''}
     ${(e.versiones||[]).length?`<div class="carrete">${e.versiones.map(v=>`<div class="ver ${v.viva?'viva':''}"><div class="mini2"><span class="tg">${v.viva?'LA BUENA':esc((v.tag||'').toUpperCase())}</span></div><small>${esc(v.fecha||'')}</small></div>`).join('')}</div>`:''}
