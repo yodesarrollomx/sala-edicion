@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-02 19:14",
+ "actualizado": "2026-09-02 19:22",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -19,7 +19,7 @@
    "pieza": "El Apodo del Terreno",
    "estado": "en camino",
    "etapa": "video",
-   "siguiente": "Láminas 9/9 aprobadas. Video en producción: voces regrabándose con los textos oficiales, escenas animándose.",
+   "siguiente": "Video en producción con los textos oficiales: voces 7/8, escenas animadas 3/7 (cuota de GPU); sigue solo cada 2 h y se arma al completarse.",
    "espera": "yo"
   },
   {
