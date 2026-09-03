@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-02 23:02",
+ "actualizado": "2026-09-03 09:10",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -25,8 +25,8 @@
   {
    "pieza": "El comprador ya sabe",
    "estado": "te espera",
-   "etapa": "láminas",
-   "siguiente": "Las 9 láminas están en tu mesa.",
+   "etapa": "láminas v2",
+   "siguiente": "Rehice las 4 láminas que tachaste (4, 6, 7 y 8) con tus notas; las 5 aprobadas quedaron con candado. Solo esas 4 están en tu mesa.",
    "espera": "tú"
   }
  ]
