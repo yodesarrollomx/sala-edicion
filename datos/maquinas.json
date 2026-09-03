@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-02 19:03",
+ "actualizado": "2026-09-02 19:33",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -11,6 +11,17 @@
    "dijo": "",
    "salud": "bien",
    "porque": "es un servidor: está encendido ahora mismo"
+  },
+  {
+   "id": "mx.yodesarrollo.apodo",
+   "nombre": "apodo",
+   "hace": "(sin descripción todavía)",
+   "evita": "",
+   "cuando": "cada 120 minutos",
+   "corrio": null,
+   "dijo": "",
+   "salud": "duda",
+   "porque": "nunca ha escrito: o no le ha tocado su hora, o falla en silencio"
   },
   {
    "id": "mx.yodesarrollo.cierre",
@@ -40,7 +51,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 12 horas",
+   "corrio": "hace 13 horas",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -52,7 +63,7 @@
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
    "corrio": "hace 30 min",
-   "dijo": "subprocess.CalledProcessError: Command '['git', '-C', '/Users/a./sala-edicion', 'push', '-q']' returned non-zero exit st",
+   "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -106,7 +117,7 @@
    "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
    "evita": "enterarte por un tercero de que un tablero estaba abierto",
    "cuando": "a las 6:45",
-   "corrio": "hace 12 horas",
+   "corrio": "hace 13 horas",
    "dijo": "==============================================================================",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -115,7 +126,7 @@
  "faltan": [],
  "resumen": {
   "bien": 7,
-  "duda": 3,
+  "duda": 4,
   "mal": 0
  }
 }
