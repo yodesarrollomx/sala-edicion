@@ -148,6 +148,10 @@ html.embed .app{padding-top:8px}
 .opciones .ning{display:block;margin:4px auto 0;background:none;border:0;color:var(--guia);font-size:14px;text-decoration:underline;text-underline-offset:3px;min-height:40px}
 .pie{padding:11px 16px 12px;border-top:1px solid var(--linea);display:flex;flex-direction:column;gap:5px}
 .pie .cual{font-size:13.5px;color:var(--gris)}
+.otra-voz{border-left:3px solid var(--azul);background:var(--azul-suave);border-radius:10px;padding:8px 11px;margin-bottom:4px;font-size:13px}
+.otra-voz b{display:block;color:var(--azul);font-weight:600}
+.otra-voz span{display:block;color:var(--tinta);font-style:italic}
+.otra-voz small{display:block;color:var(--gris);font-size:11.5px;margin-top:4px}
 .pie .cual b{color:var(--tinta);font-weight:600}
 .pie .luego{font-size:12px;color:var(--guia);display:flex;gap:10px;flex-wrap:wrap}
 .pie .luego span{display:inline-flex;align-items:center;gap:5px}
@@ -409,6 +413,9 @@ const GAS=()=>localStorage.getItem('sala_gas')||'';
 const CLAVE=()=>localStorage.getItem('sala_clave')||'';
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
 const DECIDE=()=>ROL()==='editor'||ROL()==='editor2';     // los demás roles solo miran
+const YO=()=>ROL()==='editor2'?'Sayri':'Alejandro';       // los nombres los sirve el Sheet en las firmas
+const OTROS=fs=>(fs||[]).filter(f=>f.quien!==YO()&&(f.marca||f.nota));
+const MIA=fs=>(fs||[]).find(f=>f.quien===YO()&&f.marca);
 const ENTRADO=()=>!!(GAS()&&CLAVE());
 const EMBED=()=>document.documentElement.classList.contains('embed');
 const ORIGEN_VIEJO='https://alexpueblag.github.io/sala-edicion/';
@@ -544,9 +551,13 @@ function armarPasos(sinCandado){
       const n=(p.laminas||[]).length;
       dec[p.id]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:''};
       for(let i=0;i<n;i++){
-        const ya=prev&&prev.laminas&&(prev.laminas[i]==='si'||prev.laminas[i]==='no');
-        if(ya){ dec[p.id].laminas[i]=prev.laminas[i]; dec[p.id].notas[i]=(prev.notas||[])[i]||''; lockeadas.push({pid:p.id,i,p,marca:prev.laminas[i]}); continue }
-        pasos.push({tipo:'lamina',pid:p.id,i,p});
+        const firmas=(prev&&prev.firmas&&prev.firmas[i])||null;
+        // DOS EDITORES: solo TU propia marca canda la lámina. Si la marcó la otra
+        // persona, la carta sigue en tu mesa con su nota a la vista, y Producción
+        // cumple las dos. (Si el Sheet no manda firmas, se comporta como antes.)
+        const mia=firmas?MIA(firmas):(prev&&prev.laminas&&(prev.laminas[i]==='si'||prev.laminas[i]==='no')?{marca:prev.laminas[i]}:null);
+        if(mia&&mia.marca){ dec[p.id].laminas[i]=mia.marca; dec[p.id].notas[i]=(mia.nota)||((prev.notas||[])[i]||''); lockeadas.push({pid:p.id,i,p,marca:mia.marca}); continue }
+        pasos.push({tipo:'lamina',pid:p.id,i,p,otros:firmas?OTROS(firmas):[]});
       }
     }
   }
@@ -639,6 +650,11 @@ function luegoDe(x){
   if(x.tipo==='eje') return `<div class="luego"><span class="s"><i></i>Al elegir, Producción empieza con ésa</span></div>`;
   return `<div class="luego"><span class="s"><i></i>Aprobar → queda lista</span><span class="n"><i></i>Pedir cambio → Producción la rehace con tu nota</span></div>`;
 }
+function otrosHTML(x){
+  const o=x.otros||[]; if(!o.length) return '';
+  return `<div class="otra-voz">${o.map(f=>`<b>${esc(f.quien)} ${f.marca==='si'?'aprobó':f.marca==='no'?'pidió cambio':'la vio'}</b>${f.nota?`<span>«${esc(f.nota)}»</span>`:''}`).join('')}
+    <small>Tu respuesta se suma a la suya: si alguno pide cambio, Producción rehace cumpliendo las dos notas.</small></div>`;
+}
 function piezaDe(x){ return (x&&x.p&&(x.p.pieza||String(x.p.titulo||'').split(' · ')[0]))||'' }
 function pintarBolas(){
   $('#bolas').innerHTML=pasos.map((x,k)=>{ const m=marcaDe(x); return `<span class="bola ${m==='si'?'si':m==='no'?'no':''} ${k===idx&&!m?'hoy':''}"></span>`}).join('');
@@ -662,7 +678,7 @@ function pintarCartas(){
           <span class="sello si" data-si>SÍ</span><span class="sello no" data-no>NO</span>
           <img alt="Lámina ${x.i+1}" draggable="false">
         </div>
-        <div class="pie"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · lámina ${x.i+1} de ${(x.p.laminas||[]).length}</span>
+        <div class="pie">${otrosHTML(x)}<div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · lámina ${x.i+1} de ${(x.p.laminas||[]).length}</span>
           <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button></div>${luegoDe(x)}</div>`;
       montarImagen(el,src);
       el.querySelector('.lupa').onclick=e=>{ e.stopPropagation(); abrirZoom(src) };
@@ -757,7 +773,7 @@ function filasRespuestas(compacto){
     return `<div class="fila-r">${thumbDe(x)}<div class="txt"><b>${esc(x.p.titulo||x.pid)}</b><small>${x.tipo==='lamina'?'lámina '+(x.i+1):'elige una opción'}</small>${nota?`<em>«${esc(nota)}»</em>`:''}</div>
       <div class="acc"><span class="chipm ${m==='si'?'si':m==='no'?'no':'pend'}">${m==='si'?'Aprobada':m==='no'?'Cambio':'Sin ver'}</span>${!compacto&&DECIDE()?`<button data-ir="${k}">${m?'Cambiar':'Ir'}</button>`:''}</div></div>` }).join('');
   const lockF=lockeadas.map((l,k)=>`<div class="fila-r">${thumbDe({tipo:'lamina',p:l.p,i:l.i})}<div class="txt"><b>${esc(l.p.titulo||l.pid)}</b><small>lámina ${l.i+1} · decidida antes</small></div>
-      <div class="acc"><span class="chipm lock">✓ ${l.marca==='si'?'Aprobada':'Cambio'}</span>${!compacto&&DECIDE()?`<button data-reabrir="${k}">Reabrir</button>`:''}</div></div>`).join('');
+      <div class="acc"><span class="chipm lock">✓ ${l.marca==='si'?'Aprobada':'Cambio'} · tú</span>${!compacto&&DECIDE()?`<button data-reabrir="${k}">Reabrir</button>`:''}</div></div>`).join('');
   return {hoyF,lockF};
 }
 function conSeguro(b,fn){ // primer toque pregunta, segundo ejecuta; se olvida a los 4 s
@@ -848,7 +864,7 @@ function pintarMira(){
   const M=(D.decisiones&&D.decisiones.propuestas)||{};
   MIRA=[]; for(const p of D._todas||[]){
     if(p.tipo==='eje'){ const f=M[p.id]; const el=(f&&f.laminas||[]).indexOf('si'); MIRA.push({tipo:'eje',p,dec:el>=0?'si':(f&&f.laminas&&f.laminas.some(x=>x==='no')?'no':''),elegida:el}) }
-    else (p.laminas||[]).forEach((src,i)=>{ const f=M[p.id]; const m=f&&f.laminas&&f.laminas[i]; MIRA.push({tipo:'lamina',p,i,src,dec:m==='si'||m==='no'?m:'',nota:(f&&f.notas||[])[i]||''}) });
+    else (p.laminas||[]).forEach((src,i)=>{ const f=M[p.id]; const m=f&&f.laminas&&f.laminas[i]; MIRA.push({tipo:'lamina',p,i,src,dec:m==='si'||m==='no'?m:'',nota:(f&&f.notas||[])[i]||'',firmas:((f&&f.firmas)||[])[i]||[]}) });
   }
   $('#bolas').innerHTML=''; $('#verresp').hidden=true; $('#deshacer').hidden=true; $('#pistaTeclas').hidden=true;
   const z=$('#zona');
@@ -861,8 +877,8 @@ function pintarMira(){
   const el=document.createElement('div'); el.className='carta';
   if(x.tipo==='lamina'){
     el.innerHTML=`<div class="lienzo"><div class="cargando">cargando lámina…</div>${chip}<img alt="Lámina ${x.i+1}" draggable="false"></div>
-      <div class="pie"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.p.id)}</b> · lámina ${x.i+1} de ${(x.p.laminas||[]).length}</span>
-        <button class="lupa" type="button">Ampliar</button></div>${x.nota?`<div class="luego"><span class="n"><i></i>Nota: «${esc(x.nota)}»</span></div>`:''}</div>`;
+      <div class="pie">${(x.firmas||[]).filter(f=>f.marca||f.nota).length?`<div class="otra-voz">${(x.firmas||[]).filter(f=>f.marca||f.nota).map(f=>`<b>${esc(f.quien)} ${f.marca==='si'?'aprobó':f.marca==='no'?'pidió cambio':'la vio'}</b>${f.nota?`<span>«${esc(f.nota)}»</span>`:''}`).join('')}</div>`:''}<div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.p.id)}</b> · lámina ${x.i+1} de ${(x.p.laminas||[]).length}</span>
+        <button class="lupa" type="button">Ampliar</button></div>${x.nota&&!(x.firmas||[]).length?`<div class="luego"><span class="n"><i></i>Nota: «${esc(x.nota)}»</span></div>`:''}</div>`;
     montarImagen(el,x.src); el.querySelector('.lupa').onclick=()=>abrirZoom(x.src); dobleToque(el.querySelector('.lienzo'),()=>abrirZoom(x.src));
   }else{
     const ops=(x.p.opciones||[]).map((o,j)=>`<div class="op ${j===x.elegida?'elegida':''}"><h4>${esc(o.titulo||('Opción '+(j+1)))}${j===x.elegida?' ✓':''}</h4><p>${esc(o.texto||'')}</p></div>`).join('');
