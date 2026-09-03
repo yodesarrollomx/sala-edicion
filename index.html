@@ -134,7 +134,7 @@ html.embed .app{padding-top:8px}
 .cargando{position:absolute;inset:0;display:grid;place-items:center;color:#c9c2b4;font-size:13px;gap:10px;padding:20px;text-align:center;
   background:linear-gradient(110deg,#141210 30%,#1f1c18 50%,#141210 70%);background-size:200% 100%;animation:brilla 1.4s infinite}
 @keyframes brilla{to{background-position:-200% 0}}
-.chip-dec{position:absolute;top:12px;left:12px;z-index:3;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;background:rgba(20,18,14,.8);color:#f6f2ea;backdrop-filter:blur(4px)}
+.chip-dec{position:absolute;top:12px;right:12px;z-index:3;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;background:rgba(20,18,14,.8);color:#f6f2ea;backdrop-filter:blur(4px)}
 .chip-dec.si{background:var(--si);color:#fff} .chip-dec.no{background:var(--no);color:#fff}
 .fila-pie{display:flex;align-items:center;gap:10px;justify-content:space-between}
 .lupa{flex:none;border:1px solid var(--linea2);border-radius:999px;background:var(--fondo);color:var(--tinta);font-size:12.5px;font-weight:600;padding:8px 12px;min-height:36px;display:inline-flex;gap:6px;align-items:center}
@@ -955,12 +955,16 @@ function pintarAjustes(){
       <span class="rolchip ${DECIDE()?'':'lectura'}">${DECIDE()?'Decides tú':'Solo lectura'}</span>
       <p>${ENTRADO()?(DECIDE()?'Tu entrada está activa: lo que decides se guarda en el Sheet.':'Puedes ver la mesa y las publicaciones. Las decisiones las toma Alejandro.'):'No has entrado. Lo que decidas se guarda en este aparato y sube cuando entres.'}</p>
       ${ENTRADO()?'':`<button class="listo" style="margin-top:0" id="ajEntrar">Entrar</button>`}</div>
-    <div class="bloque-aj"><h4>Cómo se usa</h4><ol>
+    <div class="bloque-aj"><h4>Cómo se usa</h4><ol>${DECIDE()?`
       <li><b>Abre «Hoy».</b> Si dice «Faltan N decisiones», hay trabajo para ti. Si dice «Nada pendiente», cierra.</li>
       <li><b>Una carta a la vez.</b> Aprobar la deja lista. Pedir cambio te pide una línea: escribe lo que quieres ver, no lo que no te gustó.</li>
       <li><b>Todo se guarda solo.</b> La píldora de arriba dice «Guardado ✓» cuando ya subió. Si dice «sin señal», no repitas: sube sola.</li>
       <li><b>¿Te equivocaste?</b> «Deshacer la última» o «ver mis respuestas» → Cambiar.</li>
-      <li><b>«Publicaciones»</b> es para mirar en qué anda Producción y la historia de cada pieza. Nunca durante la revisión.</li></ol>
+      <li><b>«Publicaciones»</b> es para mirar en qué anda Producción y la historia de cada pieza. Nunca durante la revisión.</li>`:`
+      <li><b>«Hoy»</b> es la mesa de Alejandro: las láminas y preguntas que Producción le manda, con lo que ya decidió en cada una.</li>
+      <li><b>Recorre</b> con Anterior y Siguiente; «Ampliar» abre la lámina en grande.</li>
+      <li><b>«Publicaciones»</b> muestra qué trae Producción en camino y la historia de cada pieza.</li>
+      <li><b>Nada se guarda</b> desde tu acceso: es de solo lectura.</li>`}</ol>
       <button class="secund" id="ajGuia">Ver la guía otra vez</button></div>
     ${DECIDE()?`<div class="bloque-aj"><h4>Producción</h4>
       <p>Un mensaje para el equipo (una idea, una queja, un encargo). Lo lee en la próxima ronda.</p>
