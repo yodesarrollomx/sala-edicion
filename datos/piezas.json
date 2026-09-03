@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-02 19:05",
+ "actualizado": "2026-09-02 19:14",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -24,10 +24,10 @@
   },
   {
    "pieza": "El comprador ya sabe",
-   "estado": "en camino",
+   "estado": "te espera",
    "etapa": "guion",
-   "siguiente": "Guion en escritura (yo). Te llega por el chat para tu visto bueno.",
-   "espera": "yo"
+   "siguiente": "Guion de 9 láminas escrito (te lo mandé por el chat). Con tu OK se generan las láminas.",
+   "espera": "tú"
   }
  ]
 }
