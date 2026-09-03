@@ -42,8 +42,11 @@ function instalar() {
   });
   // 4 claves por rol; si ya existe la del editor se conserva (migración sin dolor)
   var cfg = ss.getSheetByName('CONFIG');
-  ['clave', 'clave_editor2', 'clave_lector', 'clave_agente'].forEach(function (k) {
-    if (!leerConfig(k)) cfg.appendRow([k, Utilities.getUuid().slice(0, 8)]);
+  // claves sembradas desde la Mac al conectar (este script es privado de la cuenta;
+  // la copia publica del repo NO las lleva). Cambiarlas aqui y en ~/.sala_gas si un dia rotan.
+  var SEMILLA = {'clave':'…','clave_editor2':'…','clave_lector':'…','clave_agente':'…'};
+  Object.keys(SEMILLA).forEach(function (k) {
+    if (!leerConfig(k)) cfg.appendRow([k, SEMILLA[k]]);
   });
   ScriptApp.getProjectTriggers().forEach(function (t) {
     if (t.getHandlerFunction() === 'correoDiario') ScriptApp.deleteTrigger(t);
@@ -59,7 +62,8 @@ function ahora() { return Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd'T'HH:
 function leerConfig(k) {
   var v = hoja('CONFIG'); if (!v || v.getLastRow() < 1) return '';
   var datos = v.getDataRange().getValues();
-  for (var i = 0; i < datos.length; i++) if (String(datos[i][0]) === k) return String(datos[i][1]);
+  // i=1: la fila 0 es el encabezado 'clave|valor' (leerConfig('clave') devolvia 'valor')
+  for (var i = 1; i < datos.length; i++) if (String(datos[i][0]) === k) return String(datos[i][1]);
   return '';
 }
 function rolDe(clave) {
@@ -90,21 +94,43 @@ function fechaDe(v) {
 
 /* El envio vigente de un dia = el del sello 'guardado' mas alto QUE PUSO EL GAS al
    recibir (nunca el reloj del telefono — objecion firmada del ingeniero). */
-function envioVigente(decRows, f) {
-  var mejor = '';
+function selloDe(v) {            // los sellos se guardan como Date: comparar como texto ordenaba por dia de la semana
+  if (v instanceof Date) return v.getTime();
+  var t = Date.parse(String(v)); return isNaN(t) ? 0 : t;
+}
+function envioVigente(decRows, f) {   // compatibilidad: el ultimo envio del dia, de quien sea
+  var mejor = 0, id = '';
   decRows.forEach(function (d) {
-    if (fechaDe(d.fecha) === f && String(d.guardado) > mejor) mejor = String(d.guardado);
-  });
-  var id = '';
-  decRows.forEach(function (d) {
-    if (fechaDe(d.fecha) === f && String(d.guardado) === mejor) id = String(d.envio_id);
+    if (fechaDe(d.fecha) !== f) return;
+    var t = selloDe(d.guardado);
+    if (t >= mejor) { mejor = t; id = String(d.envio_id); }
   });
   return id;
+}
+/* DOS EDITORES, UNA MESA (3-sep-2026, pedido de Alejandro):
+   Alejandro y Sayri son editores por igual. Antes solo contaba el ultimo envio del dia,
+   asi que quien guardaba despues borraba la revision del otro. Ahora se toma el ULTIMO
+   envio DE CADA EDITOR y se fusionan: si alguno pide cambio, la lamina se rehace, y las
+   notas de ambos viajan firmadas para que Produccion cumpla las dos. */
+function vigentePorEditor(decRows, f) {
+  var mejor = {}, id = {};
+  decRows.forEach(function (d) {
+    if (fechaDe(d.fecha) !== f) return;
+    var q = String(d.quien || 'editor'); var t = selloDe(d.guardado);
+    if (!(q in mejor) || t >= mejor[q]) { mejor[q] = t; id[q] = String(d.envio_id); }
+  });
+  return id;                                   // { editor: envio_id, editor2: envio_id }
+}
+function nombreDe(rol) {
+  var n = leerConfig(rol === 'editor2' ? 'nombre_editor2' : 'nombre_editor');
+  return n || (rol === 'editor2' ? 'Sayri' : 'Alejandro');
 }
 
 /* ------------------------------------------------ lectura */
 function doGet(e) {
   var p = (e && e.parameter) || {};
+  resembrar();   // instalar() corrio antes de la siembra: las claves canonicas mandan
+
   if (!rolDe(p.clave)) return json({ error: 'clave incorrecta' });
   if (p.recurso !== 'dia') return json({ error: 'recurso desconocido' });
   var f = /^\d{4}-\d{2}-\d{2}$/.test(p.f || '') ? p.f : hoy();
@@ -122,33 +148,55 @@ function doGet(e) {
              origen: String(x.origen || '') || null };
   });
 
-  // decisiones: SOLO el envio vigente del dia (reenviar deja numeros identicos)
-  var vig = envioVigente(DE, f);
-  var dec = { propuestas: {} }, ult = '';
+  // decisiones: el ultimo envio DE CADA EDITOR, fusionados (ver vigentePorEditor)
+  var vigE = vigentePorEditor(DE, f);
+  var vivos = {}; Object.keys(vigE).forEach(function (q) { vivos[vigE[q]] = q; });
+  var dec = { propuestas: {}, editores: [] }, ult = 0;
   DE.forEach(function (d) {
-    if (fechaDe(d.fecha) !== f || String(d.envio_id) !== vig) return;
+    if (fechaDe(d.fecha) !== f) return;
+    var eid = String(d.envio_id); if (!(eid in vivos)) return;
+    var rol = vivos[eid], quien = nombreDe(rol);
+    if (dec.editores.indexOf(quien) < 0) dec.editores.push(quien);
     var pid = String(d.prop_id);
     if (pid) {
-      var fi = dec.propuestas[pid] = dec.propuestas[pid] || { laminas: [], nota: '' };
+      var fi = dec.propuestas[pid] = dec.propuestas[pid] || { laminas: [], nota: '', notas: [], firmas: [] };
       if (d.lamina !== '' && d.lamina !== null) {
-        var m = String(d.marca || '');
-        fi.laminas[Number(d.lamina)] = (m === 'si' || m === 'no') ? m : null;
-        // la nota POR LAMINA es la instruccion de edicion del editor: no se pierde
-        if (d.nota_propuesta) { fi.notas = fi.notas || []; fi.notas[Number(d.lamina)] = String(d.nota_propuesta); }
-      } else if (d.nota_propuesta) fi.nota = String(d.nota_propuesta);
+        var i2 = Number(d.lamina), m = String(d.marca || '');
+        m = (m === 'si' || m === 'no') ? m : null;
+        var nota = d.nota_propuesta ? String(d.nota_propuesta) : '';
+        // el NO manda: si a uno no le gusto, se rehace cumpliendo las notas de los dos
+        var prev = fi.laminas[i2] || null;
+        fi.laminas[i2] = (prev === 'no' || m === 'no') ? 'no' : (m || prev);
+        fi.firmas[i2] = (fi.firmas[i2] || []).concat([{ quien: quien, marca: m, nota: nota }]);
+      } else if (d.nota_propuesta) {
+        var t = String(d.nota_propuesta);
+        fi.nota = fi.nota ? (fi.nota + ' | ' + quien + ': ' + t) : t;
+      }
     }
-    if (d.nota_dia) dec.nota_general = String(d.nota_dia);
+    if (d.nota_dia) dec.nota_general = (dec.nota_general ? dec.nota_general + ' | ' : '') + quien + ': ' + String(d.nota_dia);
     if (d.nota_estrategia) dec.nota_estrategia = String(d.nota_estrategia);
-    if (String(d.guardado) > ult) ult = String(d.guardado);
+    var ts = selloDe(d.guardado); if (ts > ult) ult = ts;
   });
-  if (ult) dec.guardado = ult;
+  // notas: una sola voz se deja tal cual; dos o mas van firmadas para que Produccion
+  // cumpla las dos. Una lamina que un editor dejo pendiente y el otro marco, cuenta marcada.
+  Object.keys(dec.propuestas).forEach(function (pid) {
+    var fi = dec.propuestas[pid];
+    for (var i = 0; i < fi.laminas.length; i++) {
+      if (fi.laminas[i] === undefined) fi.laminas[i] = null;
+      var con = (fi.firmas[i] || []).filter(function (x) { return x.nota; });
+      if (con.length === 1) fi.notas[i] = con[0].nota;
+      else if (con.length > 1) fi.notas[i] = con.map(function (x) { return x.quien + ': ' + x.nota; }).join(' | ');
+    }
+  });
+  if (ult) dec.guardado = Utilities.formatDate(new Date(ult), TZ, "yyyy-MM-dd'T'HH:mm:ss");
 
   // retro de ayer, contando SOLO su envio vigente
   var ayer = Utilities.formatDate(new Date(new Date(f + 'T12:00:00').getTime() - 864e5), TZ, 'yyyy-MM-dd');
-  var vigA = envioVigente(DE, ayer);
+  var vigAmap = vigentePorEditor(DE, ayer), vigA = {};
+  Object.keys(vigAmap).forEach(function (q) { vigA[vigAmap[q]] = 1; });
   var r = { fecha: ayer, aprobadas: 0, tiradas: 0, producidas: 0, rehechas: 0, nota: '' };
   DE.forEach(function (d) {
-    if (fechaDe(d.fecha) !== ayer || String(d.envio_id) !== vigA) return;
+    if (fechaDe(d.fecha) !== ayer || !vigA[String(d.envio_id)]) return;
     if (String(d.marca) === 'si') r.aprobadas++;
     if (String(d.marca) === 'no') r.tiradas++;
     if (d.nota_dia) r.nota = String(d.nota_dia);
@@ -171,14 +219,15 @@ function doGet(e) {
     .map(function (b) { return { hora: String(b.fecha_hora).slice(11, 16), evento: String(b.evento) }; });
 
   // ultima revision enviada (para el modo «Mientras no estabas» del Umbral)
-  var ultRev = '';
-  DE.forEach(function (d) { if (String(d.guardado) > ultRev) ultRev = String(d.guardado); });
+  var ultRevT = 0;
+  DE.forEach(function (d) { var t = selloDe(d.guardado); if (t > ultRevT) ultRevT = t; });
+  var ultRev = ultRevT ? Utilities.formatDate(new Date(ultRevT), TZ, "yyyy-MM-dd'T'HH:mm:ss") : '';
 
   return json({
     fecha: f, dias: Object.keys(dias).sort(), propuestas: props, decisiones: dec, retro: r,
     parrilla: parr, control: CO.length ? CO[CO.length - 1] : null,
     produccion: PD.slice().reverse().slice(0, 30).map(function (x) { x.fecha = fechaDe(x.fecha); return x; }),
-    bitacora: bit, ultima_revision: ultRev, rol: rolDe(p.clave)
+    bitacora: bit, ultima_revision: ultRev, rol: rolDe(p.clave), version: 'dos-editores-2026-09-03b'
   });
 }
 
@@ -285,4 +334,20 @@ function correoDiario() {
     'y escribe lo que quieres distinto.</p></div>';
   MailApp.sendEmail({ to: CORREO, subject: asunto, htmlBody: html });
   bitacora('Correo de las 7:00 enviado', asunto);
+}
+
+
+/* Migracion de un solo sentido: instalar() corrio con claves aleatorias antes de
+   que la siembra llegara al despliegue. Las claves canonicas (las que la Mac y el
+   portal conocen) sobreescriben; cuando ya coinciden, no toca nada. */
+function resembrar() {
+  var SEM = {'clave':'…','clave_editor2':'…','clave_lector':'…','clave_agente':'…'};
+  var h = hoja('CONFIG'); if (!h) return;
+  var datos = h.getDataRange().getValues(), vistos = {};
+  for (var i = 1; i < datos.length; i++) {
+    var k = String(datos[i][0]);
+    if (SEM[k] !== undefined) { vistos[k] = true;
+      if (String(datos[i][1]) !== SEM[k]) h.getRange(i + 1, 2).setValue(SEM[k]); }
+  }
+  Object.keys(SEM).forEach(function (k) { if (!vistos[k]) h.appendRow([k, SEM[k]]); });
 }
