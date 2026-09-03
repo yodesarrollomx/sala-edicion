@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-02 21:22",
+ "actualizado": "2026-09-02 22:01",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -10,10 +10,10 @@
   },
   {
    "pieza": "¿Vendo o construyo?",
-   "estado": "te espera",
-   "etapa": "copy",
-   "siguiente": "Tira 9/9 aprobada. En tu mesa: ¿sale a FB e IG con el copy «El empate»?",
-   "espera": "tú"
+   "estado": "publicada",
+   "etapa": "publicada",
+   "siguiente": "Publicada el 2-sep en FB e IG con el copy «El empate». Métricas 2×/día.",
+   "espera": "yo"
   },
   {
    "pieza": "El Apodo del Terreno",
@@ -24,10 +24,10 @@
   },
   {
    "pieza": "El comprador ya sabe",
-   "estado": "te espera",
-   "etapa": "guion",
-   "siguiente": "Guion de 9 láminas en tu mesa (2 hojas). Con tu sí, se generan las láminas.",
-   "espera": "tú"
+   "estado": "en camino",
+   "etapa": "láminas",
+   "siguiente": "Guion aprobado 2/2 (17:53). Las 9 láminas se están generando; llegan a tu mesa solas.",
+   "espera": "yo"
   }
  ]
 }
