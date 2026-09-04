@@ -4,6 +4,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icono-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Sala">
 <meta name="theme-color" content="#0a0a0c">
@@ -691,9 +692,12 @@ async function subirCola(){
 /* ══ LA TIRA COMPLETA (3-sep): «se vuelve confuso ver la lámina 4 sin las otras 3».
    Cada propuesta puede traer su tira en datos/tiras/<id>.json: las 9 láminas con su
    texto, cuáles ya aprobó y cuál se está rehaciendo. Así la carta nunca llega sola. ══ */
-const TIRAS={};
+const TIRAS={}; let TIRAS_HAY=null;
 async function cargarTira(pid){
   if(pid in TIRAS) return TIRAS[pid];
+  // el índice evita pedir tiras que no existen (404 en la consola por cada carta suelta)
+  if(TIRAS_HAY===null){ try{ TIRAS_HAY=await (await fetch('datos/tiras/index.json?v='+Date.now())).json() }catch(e){ TIRAS_HAY=[] } }
+  if(Array.isArray(TIRAS_HAY)&&!TIRAS_HAY.includes(pid)){ TIRAS[pid]=null; return null }
   try{ const r=await fetch('datos/tiras/'+pid+'.json?v='+Date.now()); TIRAS[pid]=r.ok?await r.json():null }
   catch(e){ TIRAS[pid]=null }
   return TIRAS[pid];
