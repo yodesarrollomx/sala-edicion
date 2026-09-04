@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-03 22:06",
+ "actualizado": "2026-09-03 22:09",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -16,7 +16,7 @@
     },
     {
      "que": "Escenas animadas",
-     "hechos": 3,
+     "hechos": 4,
      "total": 7
     },
     {
@@ -40,6 +40,11 @@
      "que": "Escena 3 animada",
      "tipo": "video",
      "src": "muestras/apodo/S3_animado.mp4"
+    },
+    {
+     "que": "Escena 4 animada",
+     "tipo": "video",
+     "src": "muestras/apodo/S4_animado.mp4"
     },
     {
      "que": "Voz S1",
@@ -89,7 +94,7 @@
    },
    "atorada": true,
    "vuelve_en_min": null,
-   "dice": "Atorada: la máquina que anima las escenas lleva 9 corridas devolviendo error. No te doy hora hasta destrabarla."
+   "dice": "Faltan 3 escenas. La cuota gratis de GPU se agota y las corridas devuelven vacío (9 seguidas): avanza por tandas cuando reabre, normalmente al día siguiente."
   }
  ]
 }
