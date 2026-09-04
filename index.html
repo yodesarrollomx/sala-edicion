@@ -1128,10 +1128,17 @@ async function cargarExpedientes(){
     (g.piezas||[]).forEach(p=>{ PROG[p.pieza]={...p,actualizado:g.actualizado} }) }catch(e){}
   try{ const z=await (await fetch('datos/piezas.json?v='+Date.now())).json();
     (z.piezas||[]).forEach(p=>{ PZ[p.pieza]={...p,actualizado:z.actualizado} }) }catch(e){}
+  // La historia lleva tus palabras textuales: vive en el Sheet, tras la credencial.
+  // (Antes estaba en el repo público, que cualquiera puede descargar.)
+  if(ENTRADO()){
+    try{ const r=await fetch(GAS()+'?recurso=expedientes&clave='+encodeURIComponent(CLAVE()));
+      const j=await leerJSON(r);
+      if(j&&j.expedientes) Object.entries(j.expedientes).forEach(([n,e])=>{ EXP[n]=e });
+    }catch(e){}
+  }
   let idxE=[]; try{ idxE=await (await fetch('datos/expedientes/index.json?v='+Date.now())).json() }catch(e){}
-  for(const it of idxE){ try{ EXP[it.pieza]=await (await fetch('datos/expedientes/'+it.archivo+'?v='+Date.now())).json();
-    if(PZ[it.pieza]) EXP[it.pieza].estado=PZ[it.pieza].estado;
-  }catch(e){} }
+  for(const it of idxE){ if(!EXP[it.pieza]) EXP[it.pieza]={pieza:it.pieza,hitos:[],sinLlave:!ENTRADO()};
+    if(PZ[it.pieza]) EXP[it.pieza].estado=PZ[it.pieza].estado; }
   for(const n of Object.keys(PZ)) if(!EXP[n]) EXP[n]={pieza:n,estado:PZ[n].estado,hitos:[]};
   pintarPublicaciones(); if(D&&!pasos.length&&DECIDE()) pintarVacio();
 }
@@ -1180,7 +1187,9 @@ function abrirExp(nombre){
     ${resultado?`<div class="result">${resultado.map(r=>`<div><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join('')}</div>`:''}
     ${e.post?`<a class="verpost" href="${esc(e.post)}" target="_blank" rel="noopener">Ver la publicación ↗</a>`:''}
     ${(e.versiones||[]).length?`<div class="carrete">${e.versiones.map(v=>`<div class="ver ${v.viva?'viva':''}"><div class="mini2"><span class="tg">${v.viva?'LA BUENA':esc((v.tag||'').toUpperCase())}</span></div><small>${esc(v.fecha||'')}</small></div>`).join('')}</div>`:''}
-    ${(e.hitos||[]).length?`<div class="linea-t">${(e.hitos||[]).map(h=>`<div class="hito ${h.quien==='tu'?'tu':'yo'}"><p class="cuando">${esc(h.fecha||'')} · ${h.quien==='tu'?'Alejandro decidió':'Producción hizo'}</p><p class="que">${esc(h.que||'')}</p>
+    ${e.sinLlave?`<p class="nota-pie">La historia completa se ve al entrar: se guarda con tu credencial, no en el sitio público.</p>`:''}
+    ${e.ahora?`<p class="nota-pie" style="text-align:left;margin:0 0 14px">Ahora mismo: ${esc(e.ahora)}</p>`:''}
+    ${(e.hitos||[]).length?`<div class="linea-t">${(e.hitos||[]).slice().reverse().map(h=>`<div class="hito ${h.quien==='tu'?'tu':'yo'}"><p class="cuando">${esc(h.fecha||'')} · ${h.quien==='tu'?'Alejandro decidió':'Producción hizo'}</p><p class="que">${esc(h.que||'')}</p>
         ${h.dijo?`<p class="dijo">«${esc(h.dijo)}»</p>`:''}${h.hecho?`<p class="paso-a">${ICO_CHECK}<span>${esc(h.hecho)}</span></p>`:''}
         ${h.antes_despues?`<div class="ad"><div class="cuadro">${esc(h.antes_despues[0])}<span>ANTES</span></div><span class="flecha">→</span><div class="cuadro nueva">${esc(h.antes_despues[1])}<span>AHORA</span></div></div>`:''}
         ${h.fuente?`<p class="fuente">fuente: ${esc(h.fuente)}</p>`:''}</div>`).join('')}</div>`:'<p class="nota-pie">Esta pieza todavía no tiene historia escrita.</p>'}
