@@ -1,0 +1,491 @@
+<title>Manual de la Sala</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Manual de operación de la Sala de Edición · Yo Desarrollo.
+   Viste como el producto que documenta: papel crema, tinta cálida, oro de la casa,
+   verde y rojo sólo donde significan aprobar y pedir cambio. */
+:root{
+  --papel:#f7f4ed; --hoja:#fffdf8; --linea:#e2dccd; --linea2:#cdc5b2;
+  --tinta:#1c1a15; --gris:#5f594d; --guia:#837b6c;
+  --oro:#9c6f22; --oro-suave:#f4e9d2; --si:#28714b; --si-suave:#e0f0e6;
+  --no:#a8402c; --no-suave:#fae7e2; --azul:#2c5a86; --azul-suave:#e4edf6;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Instrument Sans',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --sombra:0 1px 2px rgba(28,26,21,.05), 0 12px 30px rgba(28,26,21,.09);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --papel:#131311; --hoja:#1b1b18; --linea:#2c2b26; --linea2:#3d3b33;
+    --tinta:#f3efe6; --gris:#aaa396; --guia:#8b8479;
+    --oro:#d8ab5c; --oro-suave:#33291733; --si:#68b58c; --si-suave:#17301f;
+    --no:#df8d78; --no-suave:#331e19; --azul:#7fa9d6; --azul-suave:#182533;
+    --sombra:0 1px 2px rgba(0,0,0,.4), 0 14px 34px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --papel:#131311; --hoja:#1b1b18; --linea:#2c2b26; --linea2:#3d3b33;
+  --tinta:#f3efe6; --gris:#aaa396; --guia:#8b8479;
+  --oro:#d8ab5c; --oro-suave:#33291733; --si:#68b58c; --si-suave:#17301f;
+  --no:#df8d78; --no-suave:#331e19; --azul:#7fa9d6; --azul-suave:#182533;
+  --sombra:0 1px 2px rgba(0,0,0,.4), 0 14px 34px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:var(--sans);
+  font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.doc{max-width:1080px;margin:0 auto;padding:40px 22px 90px}
+@media (min-width:900px){ .doc{padding:60px 40px 110px} }
+
+/* ── portada ── */
+header{border-bottom:2px solid var(--tinta);padding-bottom:26px;margin-bottom:40px}
+.marca{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--oro);font-weight:600;margin:0}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,64px);line-height:1;margin:12px 0 14px;text-wrap:balance}
+.entrada{font-family:var(--serif);font-size:clamp(19px,2.4vw,23px);line-height:1.45;color:var(--gris);margin:0;max-width:56ch}
+.entrada b{color:var(--tinta);font-weight:400;font-style:italic}
+.meta{display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:22px;font-size:12.5px;color:var(--guia);font-family:var(--mono)}
+.meta b{color:var(--tinta);font-weight:500}
+
+/* ── índice ── */
+.indice{background:var(--hoja);border:1px solid var(--linea);border-radius:4px;padding:22px 24px;margin-bottom:52px}
+.indice h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--guia);font-weight:600;margin:0 0 14px}
+.indice ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+@media (max-width:640px){ .indice ol{columns:1} }
+.indice li{margin-bottom:7px;font-size:14.5px;break-inside:avoid}
+.indice a{color:var(--tinta);text-decoration:none;border-bottom:1px solid var(--linea2);padding-bottom:1px}
+.indice a:hover{border-color:var(--oro);color:var(--oro)}
+.indice .n{font-family:var(--mono);font-size:12px;color:var(--oro);margin-right:9px}
+
+/* ── secciones con pantalla ── */
+.paso{padding:34px 0;border-top:1px solid var(--linea)}
+.paso:first-of-type{border-top:0}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--oro);margin:0 0 6px}
+.paso h3{font-family:var(--serif);font-weight:400;font-size:clamp(25px,3.4vw,32px);line-height:1.15;margin:0 0 10px;text-wrap:balance}
+.paso .intro{margin:0 0 20px;color:var(--gris);max-width:62ch}
+.paso .intro b{color:var(--tinta);font-weight:600}
+.con-pantalla{display:grid;gap:30px;align-items:start}
+@media (min-width:820px){ .con-pantalla{grid-template-columns:330px 1fr;gap:44px} }
+
+/* ── el teléfono ── */
+.tel{position:relative;width:330px;max-width:100%;margin:0 auto;border-radius:26px;
+  border:1px solid var(--linea2);background:#000;box-shadow:var(--sombra);overflow:hidden;line-height:0}
+.tel img{width:100%;display:block}
+.mk{position:absolute;width:26px;height:26px;border-radius:50%;background:var(--oro);color:#fff;
+  font-family:var(--mono);font-size:13px;font-weight:500;display:grid;place-items:center;
+  transform:translate(-50%,-50%);box-shadow:0 0 0 3px var(--papel),0 2px 6px rgba(0,0,0,.3);line-height:1}
+.mk.v{background:var(--si)} .mk.r{background:var(--no)}
+
+/* ── llamadas ── */
+.llamadas{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px}
+.llamadas li{display:grid;grid-template-columns:26px 1fr;gap:13px;align-items:start}
+.bola{width:26px;height:26px;border-radius:50%;background:var(--oro);color:#fff;font-family:var(--mono);
+  font-size:13px;display:grid;place-items:center;line-height:1;margin-top:2px}
+.bola.v{background:var(--si)} .bola.r{background:var(--no)}
+.llamadas b{display:block;font-weight:600;font-size:15.5px}
+.llamadas p{margin:2px 0 0;color:var(--gris);font-size:14.5px;line-height:1.5}
+.llamadas code{font-family:var(--mono);font-size:13px;background:var(--oro-suave);padding:1px 5px;border-radius:3px;color:var(--tinta)}
+
+/* ── avisos ── */
+.ojo{margin-top:18px;border-left:3px solid var(--oro);background:var(--oro-suave);padding:12px 16px;border-radius:0 4px 4px 0;font-size:14.5px}
+.ojo b{color:var(--oro)}
+.ojo.rojo{border-color:var(--no);background:var(--no-suave)} .ojo.rojo b{color:var(--no)}
+
+/* ── tablas ── */
+.tabla-env{overflow-x:auto;margin-top:18px;border:1px solid var(--linea);border-radius:4px;background:var(--hoja)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+th{text-align:left;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--guia);
+  font-weight:600;padding:12px 16px;border-bottom:1px solid var(--linea2);white-space:nowrap}
+td{padding:12px 16px;border-bottom:1px solid var(--linea);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td b{font-weight:600}
+td.q{color:var(--gris)}
+
+/* ── el circuito ── */
+.circuito{background:var(--hoja);border:1px solid var(--linea);border-radius:4px;padding:26px 24px;margin-top:20px}
+.circuito svg{width:100%;height:auto;display:block}
+.leyenda{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:16px;font-size:13px;color:var(--gris)}
+.leyenda span{display:inline-flex;align-items:center;gap:7px}
+.leyenda i{width:11px;height:11px;border-radius:2px;display:inline-block}
+
+/* ── ritual ── */
+.ritual{counter-reset:paso;display:flex;flex-direction:column;gap:14px;margin-top:20px}
+.ritual li{list-style:none;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:baseline;
+  background:var(--hoja);border:1px solid var(--linea);border-radius:4px;padding:15px 18px}
+.ritual li::before{counter-increment:paso;content:counter(paso);font-family:var(--serif);font-size:26px;color:var(--oro);line-height:1}
+.ritual b{font-weight:600}
+.ritual p{margin:3px 0 0;color:var(--gris);font-size:14.5px}
+
+.cierre{margin-top:54px;border-top:2px solid var(--tinta);padding-top:24px;font-family:var(--serif);
+  font-size:19px;line-height:1.5;color:var(--gris);max-width:58ch}
+.cierre b{color:var(--tinta);font-weight:400;font-style:italic}
+.pie-doc{margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--guia)}
+a{color:var(--oro)}
+@media print{ body{background:#fff} .tel{box-shadow:none} .paso{break-inside:avoid} }
+</style>
+
+<div class="doc">
+<header>
+  <p class="marca">Yo Desarrollo · operación</p>
+  <h1>Manual de la Sala</h1>
+  <p class="entrada">La Sala de Edición es donde <b>una persona decide</b> y la producción sale sola.
+    Este manual la recorre pantalla por pantalla: qué hace cada cosa, qué pasa al tocarla y qué hacer
+    cuando algo falla. Sirve para operarla sin preguntarle a nadie.</p>
+  <div class="meta">
+    <span>Versión <b>Sala 3.0</b></span>
+    <span>Al <b>4 de septiembre de 2026</b></span>
+    <span><b>yodesarrollomx.github.io/sala-edicion</b></span>
+  </div>
+</header>
+
+<nav class="indice">
+  <h2>Lo que vas a encontrar</h2>
+  <ol>
+    <li><a href="#entrar"><span class="n">01</span>Entrar: una sola llave</a></li>
+    <li><a href="#hoy"><span class="n">02</span>Hoy: la carta que te toca</a></li>
+    <li><a href="#tira"><span class="n">03</span>La tira y la guía</a></li>
+    <li><a href="#cambio"><span class="n">04</span>Pedir cambio: la nota manda</a></li>
+    <li><a href="#dos"><span class="n">05</span>Dos editores en la misma mesa</a></li>
+    <li><a href="#video"><span class="n">06</span>Cuando lo que se decide es un video</a></li>
+    <li><a href="#pub"><span class="n">07</span>Publicaciones y avance real</a></li>
+    <li><a href="#exp"><span class="n">08</span>El expediente de una pieza</a></li>
+    <li><a href="#ajustes"><span class="n">09</span>Ajustes: recados y automáticos</a></li>
+    <li><a href="#falla"><span class="n">10</span>Cuando algo falla</a></li>
+    <li><a href="#circuito"><span class="n">11</span>Cómo funciona por dentro</a></li>
+    <li><a href="#ritual"><span class="n">12</span>El ritual de cada día</a></li>
+  </ol>
+</nav>
+
+<!-- 01 -->
+<section class="paso" id="entrar">
+  <p class="eyebrow">01 · Entrar</p>
+  <h3>Una sola llave: la de tu cuenta</h3>
+  <p class="intro">La Sala vive dentro del <b>YOD OS</b> (Embudo comercial → Sala de Edición) y también
+    sola en su propia dirección. En los dos casos la llave es la misma: <b>tu sesión del YOD OS</b>.
+    Si entraste al tablero con Google, la Sala abre sin pedirte nada.</p>
+  <div class="con-pantalla">
+    <figure class="tel">
+      <img src="{{IMG:01-bienvenida}}" alt="Pantalla de bienvenida de la Sala con la guía de tres pasos">
+      <span class="mk" style="left:50%;top:44%">1</span>
+      <span class="mk" style="left:50%;top:69%">2</span>
+      <span class="mk" style="left:50%;top:76%">3</span>
+    </figure>
+    <ol class="llamadas">
+      <li><span class="bola">1</span><div><b>La guía sale una vez por aparato</b>
+        <p>Tres pantallas que explican la mesa. Aparece la primera vez y nunca más; se puede volver a ver desde Ajustes.</p></div></li>
+      <li><span class="bola">2</span><div><b>Siguiente</b><p>Avanza por las tres.</p></div></li>
+      <li><span class="bola">3</span><div><b>Saltar</b><p>Se la salta y va directo a la mesa.</p></div></li>
+    </ol>
+  </div>
+  <div class="ojo"><b>Si dice «No has entrado»:</b> el navegador borró la llave (iPhone lo hace cada
+    ~7 días). Ajustes → <b>Entrar</b> → «Mandar mi entrada al correo»: llega un botón a la cuenta de
+    Dirección y con abrirlo en ese aparato queda resuelto. También se puede pegar la liga a mano.</div>
+</section>
+
+<!-- 02 -->
+<section class="paso" id="hoy">
+  <p class="eyebrow">02 · Hoy</p>
+  <h3>Una carta a la vez, y nada más</h3>
+  <p class="intro">La puerta <b>Hoy</b> es lo único que hay que atender. Si dice «Faltan N decisiones»,
+    hay trabajo; si dice «Nada pendiente para ti», se cierra y ya.</p>
+  <div class="con-pantalla">
+    <figure class="tel">
+      <img src="{{IMG:02-hoy}}" alt="La pantalla Hoy con la tira de nueve láminas y la carta actual">
+      <span class="mk" style="left:50%;top:7%">1</span>
+      <span class="mk" style="left:50%;top:15%">2</span>
+      <span class="mk" style="left:50%;top:20%">3</span>
+      <span class="mk" style="left:50%;top:36%">4</span>
+      <span class="mk" style="left:37%;top:79%">5</span>
+      <span class="mk r" style="left:26%;top:87%">6</span>
+      <span class="mk v" style="left:74%;top:87%">7</span>
+      <span class="mk" style="left:50%;top:96%">8</span>
+    </figure>
+    <ol class="llamadas">
+      <li><span class="bola">1</span><div><b>Cuántas faltan</b><p>El número baja con cada decisión. Abajo dice de qué publicación es la carta.</p></div></li>
+      <li><span class="bola">2</span><div><b>Si se guardó o no</b>
+        <p>«Nada decidido aún» → «Guardando…» → <b>«Guardado ✓ 10:42»</b>. Si dice «Se guarda al volver la señal», ya quedó en el aparato y sube solo. No hay que repetir nada.</p></div></li>
+      <li><span class="bola">3</span><div><b>El avance del día</b><p>Una bolita por carta: verde aprobada, roja con cambio, dorada la que estás viendo.</p></div></li>
+      <li><span class="bola">4</span><div><b>La tira de la publicación</b><p>Las láminas completas de la pieza. Ver el punto 03.</p></div></li>
+      <li><span class="bola">5</span><div><b>Qué estás viendo</b><p>Nombre de la publicación y el número real de la lámina dentro de la historia — no el número de la tanda.</p></div></li>
+      <li><span class="bola r">6</span><div><b>Pedir cambio</b><p>Abre la nota. Lo que escribas es la orden de trabajo.</p></div></li>
+      <li><span class="bola v">7</span><div><b>Aprobar</b><p>La deja lista y no vuelve a preguntarse. En computadora: flecha derecha aprueba, izquierda pide cambio.</p></div></li>
+      <li><span class="bola">8</span><div><b>Las tres puertas</b><p>Hoy · Publicaciones · Ajustes. Todo lo demás vive en las otras dos: en Hoy no hay a dónde perderse.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 03 -->
+<section class="paso" id="tira">
+  <p class="eyebrow">03 · Contexto</p>
+  <h3>La tira completa y la guía</h3>
+  <p class="intro">Una lámina suelta no se puede juzgar. Por eso arriba de la carta siempre está
+    <b>la tira entera</b> de esa publicación: verdes con ✓ las que ya se aprobaron, dorada la que se
+    está viendo. Tocar cualquiera la muestra con su texto — <b>sin volver a preguntar por ella</b>.</p>
+  <div class="con-pantalla">
+    <figure class="tel">
+      <img src="{{IMG:03-guia}}" alt="La guía de la tira: las nueve láminas con lo que dice y lo que se ve en cada una">
+      <span class="mk" style="left:50%;top:9%">1</span>
+      <span class="mk" style="left:50%;top:30%">2</span>
+      <span class="mk" style="left:83%;top:30%">3</span>
+    </figure>
+    <ol class="llamadas">
+      <li><span class="bola">1</span><div><b>La guía de la tira</b><p>Se abre con el botón «Ver la guía». Es el guion completo: qué <b>dice</b> y qué <b>se ve</b> en cada lámina, en orden.</p></div></li>
+      <li><span class="bola">2</span><div><b>Cada renglón es una lámina</b><p>Con su miniatura y su frase. Si hay una nota tuya de una ronda anterior, aparece en rojo debajo.</p></div></li>
+      <li><span class="bola">3</span><div><b>Aprobada o se rehízo</b><p>El chip dice en qué estado quedó. Así se ve de un golpe qué parte de la historia ya está cerrada.</p></div></li>
+    </ol>
+  </div>
+  <div class="ojo"><b>Regla del sistema:</b> nunca se monta una tanda rehecha sin su tira. Si llegan
+    cuatro láminas sueltas y no se entiende dónde encajan, eso es una falla — hay que reportarla.</div>
+</section>
+
+<!-- 04 -->
+<section class="paso" id="cambio">
+  <p class="eyebrow">04 · Pedir cambio</p>
+  <h3>La nota es la orden de trabajo</h3>
+  <p class="intro">Al tocar «Pedir cambio» se abre una sola pregunta: <b>¿qué cambiamos?</b>
+    Una línea basta. Producción rehace la lámina obedeciendo a esa línea, así que conviene escribir
+    <b>lo que se quiere ver</b>, no lo que no gustó.</p>
+  <div class="con-pantalla">
+    <figure class="tel">
+      <img src="{{IMG:04-nota}}" alt="La hoja de nota con botones de razones rápidas">
+      <span class="mk" style="left:50%;top:33%">1</span>
+      <span class="mk" style="left:50%;top:52%">2</span>
+      <span class="mk" style="left:50%;top:66%">3</span>
+    </figure>
+    <ol class="llamadas">
+      <li><span class="bola">1</span><div><b>Escribe aquí</b><p>«Más luminosa», «que se lea de un golpe», «cambia a la pareja de la lámina 2». Concreto.</p></div></li>
+      <li><span class="bola">2</span><div><b>Razones rápidas</b><p>Cinco frases de un toque para las quejas de siempre. Se pueden combinar.</p></div></li>
+      <li><span class="bola">3</span><div><b>Enviar a Producción</b><p>Cierra la carta y la manda a rehacer. La lámina vuelve a la mesa en la siguiente ronda, marcada como <b>Versión 2</b> y con la nota a la vista.</p></div></li>
+    </ol>
+  </div>
+  <div class="ojo rojo"><b>Ojo:</b> cerrar la hoja con la × cancela la decisión — la carta se queda
+    sin responder. Es a propósito: pedir un cambio sin decir cuál no sirve de nada.</div>
+</section>
+
+<!-- 05 -->
+<section class="paso" id="dos">
+  <p class="eyebrow">05 · Dos editores</p>
+  <h3>Alejandro y Sayri deciden por igual</h3>
+  <p class="intro">Los dos son editores. Cuando los dos revisan el mismo día, el sistema
+    <b>no elige</b> entre sus notas: las cumple las dos.</p>
+  <div class="tabla-env"><table>
+    <thead><tr><th>Situación</th><th>Qué hace el sistema</th></tr></thead>
+    <tbody>
+      <tr><td><b>Los dos aprueban</b></td><td>La lámina queda lista.</td></tr>
+      <tr><td><b>Uno aprueba, el otro pide cambio</b></td><td class="q">Manda el «pedir cambio»: se rehace.</td></tr>
+      <tr><td><b>Los dos piden cambio</b></td><td class="q">Se rehace <b>una sola versión</b> que cumple las dos notas. Si son incompatibles, vuelven como dos opciones para elegir.</td></tr>
+      <tr><td><b>El otro ya decidió y tú no</b></td><td class="q">La carta <b>sigue en tu mesa</b> con una franja azul: «Sayri pidió cambio: …». Tu respuesta se suma.</td></tr>
+      <tr><td><b>Tú ya decidiste</b></td><td class="q">No vuelve a preguntarse. Para cambiarla: «ver mis respuestas» → Cambiar.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 06 -->
+<section class="paso" id="video">
+  <p class="eyebrow">06 · Otra clase de carta</p>
+  <h3>Cuando lo que se decide es un video</h3>
+  <p class="intro">No todo son láminas. Un guion, un copy o un video llegan como <b>carta de opciones</b>:
+    se lee, se ve, y se elige una. Cada opción dice exactamente qué pasa si se elige.</p>
+  <div class="con-pantalla">
+    <figure class="tel">
+      <img src="{{IMG:08-video}}" alt="Carta de opciones con el video del Apodo del Terreno">
+      <span class="mk" style="left:50%;top:54%">1</span>
+      <span class="mk" style="left:50%;top:72%">2</span>
+      <span class="mk" style="left:50%;top:88%">3</span>
+    </figure>
+    <ol class="llamadas">
+      <li><span class="bola">1</span><div><b>Se reproduce ahí mismo</b><p>El video, el audio o la lámina se ven dentro de la carta. Nada de bajar archivos.</p></div></li>
+      <li><span class="bola">2</span><div><b>Cada opción con su consecuencia</b><p>«Sale así», «Rehaz la escena 7», «Enséñamelo mañana». El texto dice qué implica cada una, incluidas las limitaciones honestas.</p></div></li>
+      <li><span class="bola">3</span><div><b>Ninguna — dejo una nota</b><p>Si nada convence, se escribe qué falta y Producción vuelve con otra propuesta.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 07 -->
+<section class="paso" id="pub">
+  <p class="eyebrow">07 · Publicaciones</p>
+  <h3>Qué está haciendo Producción, sin preguntar</h3>
+  <p class="intro">La segunda puerta es para mirar, no para decidir. Muestra lo que viene en camino,
+    <b>el avance real medido</b> y la historia de cada pieza.</p>
+  <div class="con-pantalla">
+    <figure class="tel">
+      <img src="{{IMG:05-publicaciones}}" alt="Publicaciones con la franja de avance real del video">
+      <span class="mk" style="left:50%;top:16%">1</span>
+      <span class="mk" style="left:27%;top:32%">2</span>
+      <span class="mk" style="left:52%;top:41%">3</span>
+      <span class="mk" style="left:52%;top:62%">4</span>
+      <span class="mk" style="left:52%;top:69%">5</span>
+    </figure>
+    <ol class="llamadas">
+      <li><span class="bola">1</span><div><b>En camino</b><p>Una tarjeta por pieza viva, con la hora de la última actualización.</p></div></li>
+      <li><span class="bola">2</span><div><b>Ir a decidir</b><p>Aparece cuando esa pieza espera tu palabra: lleva directo a su carta en Hoy.</p></div></li>
+      <li><span class="bola">3</span><div><b>Avance real</b><p>Paso por paso con barra: guion, voces, escenas, video armado. Son archivos contados, no una promesa.</p></div></li>
+      <li><span class="bola">4</span><div><b>Qué falta y cuánto tarda</b><p>Calculado con los tiempos medidos en corridas anteriores. Si algo está atorado, lo dice con su error y <b>no inventa una hora</b>.</p></div></li>
+      <li><span class="bola">5</span><div><b>Ver lo que ya salió</b><p>Las escenas y las voces terminadas se reproducen aquí, aunque el video final no exista todavía.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 08 -->
+<section class="paso" id="exp">
+  <p class="eyebrow">08 · Expediente</p>
+  <h3>La historia completa de una pieza</h3>
+  <p class="intro">Tocar cualquier publicación abre su expediente: los números si ya salió, las
+    versiones por las que pasó y la línea del tiempo con <b>cada decisión y cada cosa hecha</b>.</p>
+  <div class="con-pantalla">
+    <figure class="tel">
+      <img src="{{IMG:06-expediente}}" alt="Expediente de La Servilleta con métricas y línea del tiempo">
+      <span class="mk" style="left:20%;top:6%">1</span>
+      <span class="mk" style="left:50%;top:17%">2</span>
+      <span class="mk" style="left:50%;top:30%">3</span>
+      <span class="mk" style="left:50%;top:58%">4</span>
+    </figure>
+    <ol class="llamadas">
+      <li><span class="bola">1</span><div><b>Volver</b><p>Regresa a la lista. También sirven Escape y el botón «atrás» del teléfono.</p></div></li>
+      <li><span class="bola">2</span><div><b>Los números reales</b><p>Vistas, alcance y me gusta que devuelve Instagram. Se refrescan dos veces al día.</p></div></li>
+      <li><span class="bola">3</span><div><b>Las versiones</b><p>Por dónde pasó la pieza y cuál quedó como la buena.</p></div></li>
+      <li><span class="bola">4</span><div><b>La línea del tiempo</b><p>En dorado lo que decidió un editor (con su frase textual), en verde lo que hizo Producción, con la fuente de cada dato.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 09 -->
+<section class="paso" id="ajustes">
+  <p class="eyebrow">09 · Ajustes</p>
+  <h3>Tu acceso, los recados y lo que corre solo</h3>
+  <div class="con-pantalla">
+    <figure class="tel">
+      <img src="{{IMG:07-ajustes}}" alt="Ajustes: tu acceso, cómo se usa, producción y automáticos">
+      <span class="mk" style="left:21%;top:22%">1</span>
+      <span class="mk" style="left:50%;top:41%">2</span>
+      <span class="mk" style="left:50%;top:74%">3</span>
+    </figure>
+    <ol class="llamadas">
+      <li><span class="bola">1</span><div><b>Tu acceso</b><p>Dice si decides o si solo miras, y con qué llave entraste. Si es de solo lectura, dice a quién pedirle permiso.</p></div></li>
+      <li><span class="bola">2</span><div><b>Cómo se usa</b><p>Los cinco pasos del ritual, dentro de la propia Sala. Y el botón para ver la guía otra vez.</p></div></li>
+      <li><span class="bola">3</span><div><b>Producción</b>
+        <p><b>Enviar mensaje</b> deja un recado (una idea, una queja). <b>Pedir nueva ronda</b> pide que se produzca ya. Abajo aparecen <b>tus recados con su estado real</b>: pedido, tomado a tal hora, o hecho.</p></div></li>
+    </ol>
+  </div>
+  <div class="ojo"><b>Automáticos:</b> «Ver qué está corriendo» lista las máquinas que trabajan solas
+    —voces, escenas, métricas, relevo, recados— con su última corrida y su salud. Verde: corriendo.
+    Ámbar: lleva rato sin correr. Rojo: falló.</div>
+</section>
+
+<!-- 10 -->
+<section class="paso" id="falla">
+  <p class="eyebrow">10 · Cuando algo falla</p>
+  <h3>Qué hacer sin llamar a nadie</h3>
+  <div class="tabla-env"><table>
+    <thead><tr><th>Lo que ves</th><th>Qué pasó</th><th>Qué haces</th></tr></thead>
+    <tbody>
+      <tr><td><b>«No has entrado»</b></td><td class="q">El navegador borró la llave.</td><td>Ajustes → Entrar → «Mandar mi entrada al correo». Abrir el botón del correo en ese mismo aparato.</td></tr>
+      <tr><td><b>«Se guarda al volver la señal»</b></td><td class="q">Sin internet.</td><td>Nada. Ya quedó guardado en el aparato y sube solo. No repetir.</td></tr>
+      <tr><td><b>«Tu acceso es de solo lectura»</b></td><td class="q">Esa credencial no puede decidir.</td><td>Pedirle a Alejandro acceso de editor. Lo que se marcó <b>no</b> se guardó.</td></tr>
+      <tr><td><b>La lámina no carga</b></td><td class="q">La imagen tardó o falló.</td><td>Tocar «Ampliar» para reintentar. Si sigue negra, reportarlo: es una falla.</td></tr>
+      <tr><td><b>«Nada pendiente para ti»</b> pero se esperaba algo</td><td class="q">Producción todavía no lo pone en la mesa.</td><td>Ver Publicaciones: ahí está el avance real y qué falta.</td></tr>
+      <tr><td><b>Una carta ya decidida vuelve a aparecer</b></td><td class="q">Es una <b>Versión 2</b>: la lámina se rehizo con la nota.</td><td>Nada: la franja dorada dice de qué versión viene y qué se pidió.</td></tr>
+      <tr><td><b>La Sala no abre</b></td><td class="q">Puede ser la red o el Sheet.</td><td>Cerrar y volver a abrir. La Sala guarda una copia local y sigue funcionando para decidir.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 11 -->
+<section class="paso" id="circuito">
+  <p class="eyebrow">11 · Por dentro</p>
+  <h3>El circuito completo</h3>
+  <p class="intro">Tres piezas y una regla: <b>el Sheet manda</b>. La Sala es la superficie, la Mac
+    es el taller, y todo lo que se decide queda escrito en el Sheet.</p>
+  <div class="circuito">
+    <svg viewBox="0 0 760 300" role="img" aria-label="Diagrama: la Mac produce y propone al Sheet; los editores deciden en la Sala; la Sala lee del Sheet y del respaldo">
+      <defs>
+        <marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+      <g font-family="Instrument Sans, sans-serif" font-size="13">
+        <!-- Mac -->
+        <rect x="8" y="96" width="176" height="108" rx="4" fill="var(--oro-suave)" stroke="var(--oro)"/>
+        <text x="96" y="124" text-anchor="middle" font-size="14" font-weight="600" fill="var(--tinta)">La Mac (Producción)</text>
+        <text x="96" y="146" text-anchor="middle" fill="var(--gris)">genera láminas, voces</text>
+        <text x="96" y="164" text-anchor="middle" fill="var(--gris)">y video · monta la mesa</text>
+        <text x="96" y="188" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--oro)">/sala · centinelas</text>
+
+        <!-- Sheet -->
+        <rect x="292" y="86" width="176" height="128" rx="4" fill="var(--hoja)" stroke="var(--tinta)" stroke-width="1.5"/>
+        <text x="380" y="114" text-anchor="middle" font-size="14" font-weight="600" fill="var(--tinta)">El Sheet</text>
+        <text x="380" y="136" text-anchor="middle" fill="var(--gris)">propuestas · decisiones</text>
+        <text x="380" y="154" text-anchor="middle" fill="var(--gris)">producción · bitácora</text>
+        <text x="380" y="180" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--tinta)">manda siempre</text>
+        <text x="380" y="198" text-anchor="middle" font-size="11.5" fill="var(--guia)">valida la llave del YOD OS</text>
+
+        <!-- Sala -->
+        <rect x="576" y="96" width="176" height="108" rx="4" fill="var(--si-suave)" stroke="var(--si)"/>
+        <text x="664" y="124" text-anchor="middle" font-size="14" font-weight="600" fill="var(--tinta)">La Sala</text>
+        <text x="664" y="146" text-anchor="middle" fill="var(--gris)">Hoy · Publicaciones</text>
+        <text x="664" y="164" text-anchor="middle" fill="var(--gris)">Ajustes</text>
+        <text x="664" y="188" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--si)">teléfono · tablero</text>
+
+        <!-- flechas -->
+        <g stroke="var(--oro)" stroke-width="1.6" fill="none" color="var(--oro)">
+          <path d="M186 128 H288" marker-end="url(#f)"/>
+        </g>
+        <text x="237" y="120" text-anchor="middle" font-size="11.5" fill="var(--oro)">propone</text>
+
+        <g stroke="var(--si)" stroke-width="1.6" fill="none" color="var(--si)">
+          <path d="M574 128 H472" marker-end="url(#f)"/>
+        </g>
+        <text x="523" y="120" text-anchor="middle" font-size="11.5" fill="var(--si)">decide</text>
+
+        <g stroke="var(--tinta)" stroke-width="1.4" fill="none" color="var(--tinta)" stroke-dasharray="5 4">
+          <path d="M472 176 H574" marker-end="url(#f)"/>
+          <path d="M288 176 H186" marker-end="url(#f)"/>
+        </g>
+        <text x="523" y="196" text-anchor="middle" font-size="11.5" fill="var(--gris)">le sirve la mesa</text>
+        <text x="237" y="196" text-anchor="middle" font-size="11.5" fill="var(--gris)">cosecha lo decidido</text>
+
+        <!-- respaldo -->
+        <rect x="576" y="238" width="176" height="46" rx="4" fill="var(--papel)" stroke="var(--linea2)" stroke-dasharray="4 3"/>
+        <text x="664" y="258" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--tinta)">Respaldo en el repo</text>
+        <text x="664" y="274" text-anchor="middle" font-size="11.5" fill="var(--guia)">si el Sheet no contesta</text>
+        <g stroke="var(--linea2)" stroke-width="1.4" fill="none" color="var(--linea2)" stroke-dasharray="4 3">
+          <path d="M664 236 V206" marker-end="url(#f)"/>
+        </g>
+        <!-- llave -->
+        <rect x="292" y="20" width="176" height="44" rx="4" fill="var(--azul-suave)" stroke="var(--azul)"/>
+        <text x="380" y="40" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--tinta)">Portero del YOD OS</text>
+        <text x="380" y="56" text-anchor="middle" font-size="11.5" fill="var(--gris)">dice quién eres y qué puedes</text>
+        <g stroke="var(--azul)" stroke-width="1.4" fill="none" color="var(--azul)">
+          <path d="M380 66 V84" marker-end="url(#f)"/>
+        </g>
+      </g>
+    </svg>
+    <div class="leyenda">
+      <span><i style="background:var(--oro)"></i>La Mac produce y propone</span>
+      <span><i style="background:var(--si)"></i>El editor decide</span>
+      <span><i style="background:var(--azul)"></i>La llave (una sola)</span>
+      <span><i style="background:var(--linea2)"></i>Respaldo si algo se cae</span>
+    </div>
+  </div>
+  <div class="ojo"><b>Qué significa en la práctica:</b> nada se pierde por cerrar el teléfono — lo
+    decidido está en el Sheet. Y si el Sheet no contesta, la Sala abre igual con la copia del repo:
+    se puede seguir decidiendo y sube cuando vuelva.</div>
+</section>
+
+<!-- 12 -->
+<section class="paso" id="ritual">
+  <p class="eyebrow">12 · El ritual</p>
+  <h3>Cinco pasos, todos los días</h3>
+  <ol class="ritual">
+    <li><div><b>Abre Hoy.</b><p>Si dice «Nada pendiente para ti», cierra. No hay más que hacer.</p></div></li>
+    <li><div><b>Decide carta por carta, en orden.</b><p>Aprobar la deja lista. Pedir cambio pide una línea: se escribe lo que se quiere ver.</p></div></li>
+    <li><div><b>Comprueba la píldora de arriba.</b><p>Cuando diga «Guardado ✓» con la hora, terminaste. Si dice «sin señal», ya quedó y sube solo.</p></div></li>
+    <li><div><b>¿Urge algo?</b><p>Ajustes → «Pedir nueva ronda». El recado queda con hora y abajo se ve cuándo lo tomaron.</p></div></li>
+    <li><div><b>Una vez por semana, mira los números.</b><p>Publicaciones → la pieza que ya salió → su expediente. Nunca durante la revisión.</p></div></li>
+  </ol>
+</section>
+
+<p class="cierre">La Sala no es una app para hacer publicaciones. Es <b>una mesa donde alguien decide</b>,
+y las publicaciones se hacen solas — y regresan a contar cómo les fue.</p>
+<p class="pie-doc">Manual de la Sala 3.0 · Yo Desarrollo · 4 de septiembre de 2026 · las capturas son de la Sala en vivo.</p>
+</div>
