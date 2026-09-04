@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-04 08:40",
+ "actualizado": "2026-09-04 08:41",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -108,8 +108,8 @@
     "ultimo_error": "RuntimeError: null"
    },
    "atorada": false,
-   "vuelve_en_min": 124,
-   "dice": "Escenas completas. Falta armar el video.",
+   "vuelve_en_min": null,
+   "dice": "El video está armado y esperando tu palabra en la mesa.",
    "corriendo": true
   }
  ]
