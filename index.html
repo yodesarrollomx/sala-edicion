@@ -463,7 +463,7 @@ const ROL=()=>localStorage.getItem('sala_rol')||'editor';
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
-const YO=()=>ROL()==='editor2'?'Sayri':'Alejandro';       // los nombres los sirve el Sheet en las firmas
+const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
 const OTROS=fs=>(fs||[]).filter(f=>f.quien!==YO()&&(f.marca||f.nota));
 const MIA=fs=>(fs||[]).find(f=>f.quien===YO()&&f.marca);
 const ENTRADO=()=>!!(GAS()&&CLAVE());
@@ -517,12 +517,15 @@ function cerrarCapa(id,desdeHistorial){
   if(!desdeHistorial&&history.state&&history.state.sala===id){ try{ history.back() }catch(e){} }
   if(!CAPAS.length) bloquear(false);
 }
-function cerrarCapas(){ while(CAPAS.length){ const c=CAPAS.pop(); c.cerrar() } bloquear(false) }
+function cerrarCapas(){ const n=CAPAS.length; while(CAPAS.length){ const c=CAPAS.pop(); c.cerrar() }
+  // devolver al historial los pasos que abrimos, o «atrás» se queda sin efecto
+  if(n&&history.state&&history.state.sala){ try{ history.go(-n) }catch(e){} }
+  bloquear(false) }
 window.addEventListener('popstate',()=>{ if(CAPAS.length){ const c=CAPAS[CAPAS.length-1]; cerrarCapa(c.id,true) } });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&CAPAS.length){ e.preventDefault(); cerrarCapa(CAPAS[CAPAS.length-1].id) } });
 
 /* ══ datos (idéntico contrato: recurso=dia, respaldo en datos/manifiesto.json) ══ */
-async function traer(f,intentos,tope){
+async function traer(f,intentos,tope,sinRespaldo){
   if(ENTRADO()){
     const N=intentos||3;
     for(let i=0;i<N;i++){
@@ -537,6 +540,7 @@ async function traer(f,intentos,tope){
       }catch(e){ if(i<N-1) await new Promise(res=>setTimeout(res,700*(i+1))) }
     }
   }
+  if(sinRespaldo) throw new Error('sin datos de ese día');   // el respaldo es de HOY: no sirve de sustituto
   const r=await fetch('datos/manifiesto.json?v='+Date.now());
   if(!r.ok) throw new Error('tampoco pude leer el respaldo');
   const j=await r.json(); j._respaldo=true; return j;
@@ -547,7 +551,7 @@ async function conMarcasDeAntes(d,f){
   const falta=(d.propuestas||[]).map(p=>p.id).filter(id=>!M[id]);
   if(!falta.length){ d.decisiones={propuestas:M}; return d }
   const dias=(d.dias||[]).filter(x=>x<(d.fecha||f||'9999')).sort().reverse().slice(0,4);
-  const vistas=await Promise.all(dias.map(dd=>traer(dd,1,6000).catch(()=>null)));
+  const vistas=await Promise.all(dias.map(dd=>traer(dd,1,6000,true).catch(()=>null)));
   const set=new Set(falta);
   for(const v of vistas){
     if(!v||!set.size) continue;
@@ -636,9 +640,15 @@ function restaurarBorrador(){
   return true;
 }
 const marcaDe=x=>x.tipo==='lamina'?dec[x.pid].laminas[x.i]:(dec[x.pid]._eje||'');
-const cuentas=()=>({si:Object.values(dec).flatMap(d=>d.laminas).filter(m=>m==='si').length,
-                    no:Object.values(dec).flatMap(d=>d.laminas).filter(m=>m==='no').length,
-                    hoy:pasos.filter(x=>marcaDe(x)).length});
+// un «eje» es UNA decisión aunque por dentro marque varias opciones
+const cuentas=()=>{
+  let si=0,no=0;
+  for(const [pid,d] of Object.entries(dec)){
+    if(d._eje!==undefined){ if(d._eje==='si') si++; else if(d._eje==='no') no++; continue }
+    si+=d.laminas.filter(m=>m==='si').length; no+=d.laminas.filter(m=>m==='no').length;
+  }
+  return {si,no,hoy:pasos.filter(x=>marcaDe(x)).length};
+};
 
 /* ══ estado de guardado: una píldora que solo informa (no es botón) ══ */
 function pintarEstado(tipo,texto){
@@ -854,7 +864,7 @@ function arrastrar(el){
     el.style.transform=`translateX(${dx}px) rotate(${dx/22}deg)`; si.classList.toggle('ver',dx>55); no.classList.toggle('ver',dx<-55) });
   const fin=()=>{ if(x0===null) return; el.style.transition='';
     const d=dx; x0=null; dx=0; setTimeout(()=>{_dxUlt=0},50);
-    if(d>110){ decidir('si') } else if(d<-110){ reposo(); decidir('no') } else reposo() };
+    if(d>110){ el.style.transform=''; decidir('si') } else if(d<-110){ reposo(); decidir('no') } else reposo() };
   el.addEventListener('pointerup',fin); el.addEventListener('pointercancel',fin); el.addEventListener('pointerleave',fin);
 }
 let _decidiendo=false;
@@ -1295,7 +1305,7 @@ function montar(d){
 (async function(){
   abrirGuia(false);            // la bienvenida no espera al Sheet
   cargarExpedientes(); subirCola();
-  const rapido=setTimeout(async()=>{ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); if(!r.ok) return; const j=await r.json(); j._respaldo=true; if(!_pintado) montar(normalizarDia(j)) }catch(e){} },2500);
+  const rapido=setTimeout(async()=>{ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); if(!r.ok) return; const j=await r.json(); j._respaldo=true; if(!_pintado){ _pintado=true; montar(normalizarDia(j)) } }catch(e){} },2500);
   try{ const d=normalizarDia(await conMarcasDeAntes(await traer(),'')); clearTimeout(rapido);
     const firma=x=>(x.propuestas||[]).map(p=>p.id+':'+((p.laminas||[]).length||(p.opciones||[]).length)).join('|');
     if(_pintado&&D&&DECIDE()&&cuentas().hoy>0){ if(firma(D)!==firma(d)){ D.propuestas=d.propuestas.map(p=>{const v=(D.propuestas||[]).find(q=>q.id===p.id); return v||p}); }
@@ -1306,7 +1316,7 @@ function montar(d){
   avisarLlave();
 })();
 $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
-$('#deshacer').onclick=()=>{ if(!hist.length) return; irA(hist.pop()) };
+$('#deshacer').onclick=()=>{ if(_decidiendo||!hist.length) return; irA(hist.pop()) };
 $('#verresp').onclick=abrirRespuestas; $('#btnEntrar').onclick=abrirEntrar;
 document.addEventListener('keydown',e=>{ if(CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
   if(e.key==='ArrowRight') decidir('si'); if(e.key==='ArrowLeft') decidir('no') });
