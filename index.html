@@ -460,6 +460,10 @@ window.fetch=async function(...a){
   finally{ _vivos=Math.max(0,_vivos-1); if(!_vivos) document.documentElement.classList.remove('cargando') }
 };
 const bloquear=on=>document.body.classList.toggle('bloqueado',!!on);
+/* Si entras dentro del tablero, le devolvemos la llave al tablero: la próxima vez
+   él se la pasa al marco aunque Safari le haya apartado el almacenamiento. */
+function avisarLlave(){ if(!EMBED()||!ENTRADO()) return;
+  try{ parent.postMessage({tipo:'sala:llave',gas:GAS(),clave:CLAVE(),rol:ROL()},'*') }catch(e){} }
 const ligera=src=>/\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
 const ICO_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 const ICO_VOLVER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
@@ -1104,8 +1108,11 @@ async function pintarMaquinas(){
   $('#ajMaq').hidden=true;
 }
 function abrirEntrar(){
+  const dentro=EMBED();
   const v=hoja(`<h3>Entrar a la Sala</h3>
-    <p>Tu teléfono borra la llave cada tanto por seguridad del navegador. Recupérala de un toque:</p>
+    <p><b>Qué pasa:</b> ${dentro?'estás viendo la Sala dentro del tablero. Tu acceso de Google es del tablero, no de la Sala: la Sala tiene su propia llave.':'este navegador no tiene la llave de la Sala.'} El teléfono la borra cada tanto por seguridad; por eso vuelve a pedirla.</p>
+    ${dentro?`<a class="secund" style="display:grid;place-items:center;text-decoration:none;margin:0 0 14px" href="${location.pathname}" target="_blank" rel="noopener">Abrir la Sala en pestaña aparte</a>`:''}
+    <p>Recupérala de un toque:</p>
     <button class="listo" id="entCorreo" style="margin-top:0">Mándame mi entrada al correo</button>
     <p id="entAviso" style="margin:10px 0 16px;font-size:13.5px;color:var(--si)"></p>
     <p style="margin-bottom:6px"><b>¿Ya tienes la liga?</b> Pégala aquí:</p>
@@ -1180,7 +1187,7 @@ function montar(d){
     else { _pintado=true; montar(d) } }
   catch(e){ clearTimeout(rapido); if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)) }
     catch(e2){ $('#titulo').textContent='No pude abrir la sala'; $('#subt').textContent='Puede ser la red. Cierra y vuelve a abrir en un momento.'; pintarEstado('sin','Sin conexión') } } }
-  abrirGuia(false);
+  abrirGuia(false); avisarLlave();
 })();
 $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 $('#deshacer').onclick=()=>{ if(!hist.length) return; irA(hist.pop()) };
