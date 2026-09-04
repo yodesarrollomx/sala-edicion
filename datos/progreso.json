@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-03 22:11",
+ "actualizado": "2026-09-03 22:13",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -16,7 +16,7 @@
     },
     {
      "que": "Escenas animadas",
-     "hechos": 5,
+     "hechos": 6,
      "total": 7
     },
     {
@@ -50,6 +50,11 @@
      "que": "Escena 5 animada",
      "tipo": "video",
      "src": "muestras/apodo/S5_animado.mp4"
+    },
+    {
+     "que": "Escena 6 animada",
+     "tipo": "video",
+     "src": "muestras/apodo/S6_animado.mp4"
     },
     {
      "que": "Voz S1",
@@ -98,8 +103,8 @@
     "ultimo_error": "RuntimeError: null"
    },
    "atorada": false,
-   "vuelve_en_min": 6,
-   "dice": "Faltan 2 escenas. Va corriendo: cada una tarda ~84s.",
+   "vuelve_en_min": 586,
+   "dice": "Hoy avanzó hasta aquí y se acabó la cuota gratis de GPU. Queda 1 escena para la primera tanda de mañana; en cuanto salga, el video se arma solo.",
    "corriendo": true
   }
  ]
