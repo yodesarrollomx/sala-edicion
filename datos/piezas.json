@@ -1,32 +1,32 @@
 {
- "actualizado": "2026-09-04 08:40",
+ "actualizado": "2026-09-04 12:14",
  "piezas": [
   {
    "pieza": "La Servilleta",
    "estado": "publicada",
    "etapa": "publicada",
-   "siguiente": "Métricas a la semana (yo) — FB sin alcance: 0 vistas; IG sí camina.",
+   "siguiente": "Publicada el 29-ago en FB e IG. Métricas cada 12 h.",
    "espera": "yo"
   },
   {
    "pieza": "¿Vendo o construyo?",
    "estado": "publicada",
    "etapa": "publicada",
-   "siguiente": "Publicada el 2-sep en FB e IG con el copy «El empate». Métricas 2×/día.",
+   "siguiente": "Publicada el 2-sep como carrusel en FB e IG.",
    "espera": "yo"
   },
   {
    "pieza": "El Apodo del Terreno",
    "estado": "te espera",
    "etapa": "video",
-   "siguiente": "El video está armado (42 s, 7 escenas y 8 voces). Está en tu mesa: dime si sale así o si rehago la escena 7 cuando reabra la cuota de GPU.",
+   "siguiente": "1 decisión(es) tuyas en la mesa: El Apodo del Terreno · el video está armado (42 s) — ¿sale así?",
    "espera": "tú"
   },
   {
    "pieza": "El comprador ya sabe",
    "estado": "te espera",
-   "etapa": "láminas v2",
-   "siguiente": "Rehice las 4 láminas que tachaste (4, 6, 7 y 8) con tus notas; las 5 aprobadas quedaron con candado. Solo esas 4 están en tu mesa.",
+   "etapa": "láminas",
+   "siguiente": "4 decisión(es) tuyas en la mesa: El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8)",
    "espera": "tú"
   }
  ]
