@@ -4,7 +4,7 @@ El portal diario de producción de contenido. Cada mañana a las 7:00 llega un c
 liga; el editor palomea, tacha y escribe al margen; lo aprobado se vuelve video y todo queda
 registrado día por día.
 
-**En línea:** https://yodesarrollo.github.io/sala-edicion/
+**En línea:** https://yodesarrollomx.github.io/sala-edicion/
 
 ## Cómo viaja el dato
 
