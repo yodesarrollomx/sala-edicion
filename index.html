@@ -445,7 +445,9 @@ const ORIGEN_VIEJO='https://alexpueblag.github.io/sala-edicion/';
   if(!location.hash) return;
   const h=new URLSearchParams(location.hash.slice(1));
   if(h.get('gas')) localStorage.setItem('sala_gas',h.get('gas'));
-  if(h.get('clave')) localStorage.setItem('sala_clave',h.get('clave'));
+  // Si la que llega es la credencial del OS, NO se copia: se lee viva de ahí, así
+  // cuando el Portero la renueve la Sala sigue entrando sin tocar nada.
+  if(h.get('clave')&&h.get('clave')!==localStorage.getItem('pyod_clave_v1')) localStorage.setItem('sala_clave',h.get('clave'));
   if(h.get('rol')) localStorage.setItem('sala_rol',h.get('rol'));
   if(h.get('clave')) history.replaceState(null,'',location.pathname+location.search);
 })();
@@ -1104,6 +1106,7 @@ function pintarAjustes(){
     <div class="bloque-aj"><h4>Tu acceso</h4>
       <span class="rolchip ${DECIDE()?'':'lectura'}">${DECIDE()?'Decides tú':'Solo lectura'}</span>
       <p>${ENTRADO()?(DECIDE()?'Tu entrada está activa: lo que decides se guarda en el Sheet.':'Puedes ver la mesa y las publicaciones. Las decisiones las toma Alejandro.'):'No has entrado. Lo que decidas se guarda en este aparato y sube cuando entres.'}</p>
+      ${ENTRADO()?`<p style="font-size:13px;color:var(--guia)">Entraste con ${PORLLAVE_OS()?'<b>tu cuenta del YOD OS</b> — la misma llave para todo':'la liga de la Sala'}.</p>`:''}
       ${ENTRADO()?'':`<button class="listo" style="margin-top:0" id="ajEntrar">Entrar</button>`}</div>
     <div class="bloque-aj"><h4>Cómo se usa</h4><ol>${DECIDE()?`
       <li><b>Abre «Hoy».</b> Si dice «Faltan N decisiones», hay trabajo para ti. Si dice «Nada pendiente», cierra.</li>
