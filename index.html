@@ -68,7 +68,7 @@ a{color:var(--oro)}
 }
 
 /* ── armazón ── */
-.app{max-width:560px;margin:0 auto;padding:16px 16px calc(var(--nav) + 30px + env(safe-area-inset-bottom));min-height:100dvh}
+.app{max-width:560px;margin:0 auto;padding:16px 16px calc(var(--nav) + env(safe-area-inset-bottom));min-height:100dvh}
 html.embed .app{padding-top:8px}
 .vista{display:none} body[data-vista="hoy"] #vHoy,body[data-vista="pub"] #vPub,body[data-vista="aj"] #vAj{display:block}
 .panel-lateral{display:none}
@@ -100,7 +100,7 @@ html.embed .app{padding-top:8px}
 .estado.lectura i{background:var(--guia)}
 @keyframes late{0%,100%{opacity:1}50%{opacity:.3}}
 .estado span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.btn-entrar{border:2px solid var(--oro);background:var(--oro-suave);color:var(--tinta);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;min-height:34px}
+.btn-entrar{border:2px solid var(--oro);background:var(--oro-suave);color:var(--tinta);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;min-height:44px}
 
 /* ── progreso ── */
 .bolas{display:flex;gap:9px;justify-content:center;margin:14px 0 6px;flex-wrap:wrap;pointer-events:none}
@@ -137,7 +137,7 @@ html.embed .app{padding-top:8px}
 .chip-dec{position:absolute;top:12px;right:12px;z-index:3;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;background:rgba(20,18,14,.8);color:#f6f2ea;backdrop-filter:blur(4px)}
 .chip-dec.si{background:var(--si);color:#fff} .chip-dec.no{background:var(--no);color:#fff}
 .fila-pie{display:flex;align-items:center;gap:10px;justify-content:space-between}
-.lupa{flex:none;border:1px solid var(--linea2);border-radius:999px;background:var(--fondo);color:var(--tinta);font-size:12.5px;font-weight:600;padding:8px 12px;min-height:36px;display:inline-flex;gap:6px;align-items:center}
+.lupa{flex:none;border:1px solid var(--linea2);border-radius:999px;background:var(--fondo);color:var(--tinta);font-size:12.5px;font-weight:600;padding:8px 12px;min-height:44px;display:inline-flex;gap:6px;align-items:center}
 .lupa svg{width:15px;height:15px}
 .opciones{flex:1;overflow-y:auto;padding:16px}
 .opciones .op{border:2px solid var(--linea);border-radius:16px;padding:15px;margin-bottom:12px;background:var(--fondo)}
@@ -167,7 +167,7 @@ html.embed .app{padding-top:8px}
 .tira{margin:0 0 8px}
 .tira-cab{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--guia);margin-bottom:6px}
 .tira-cab b{color:var(--tinta);font-weight:600}
-.guia-b{margin-left:auto;border:1px solid var(--linea2);background:var(--tarjeta);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:600;min-height:32px}
+.guia-b{margin-left:auto;border:1px solid var(--linea2);background:var(--tarjeta);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:600;min-height:44px}
 .tira-fila{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
 .tl{flex:none;width:46px;border:2px solid var(--linea);background:#141210;border-radius:9px;padding:0;overflow:hidden;position:relative;height:58px}
 .tl img{width:100%;height:100%;object-fit:cover;opacity:.75}
@@ -257,7 +257,7 @@ html.embed .app{padding-top:8px}
 .enc i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--oro);margin-top:7px}
 .enc b{display:block;font-weight:600}
 .enc small{color:var(--gris);display:block}
-.enc .ir{margin-top:8px;border:0;border-radius:10px;background:var(--oro);color:#191408;font-weight:600;padding:9px 14px;font-size:13.5px;min-height:38px}
+.enc .ir{margin-top:8px;border:0;border-radius:10px;background:var(--oro);color:#191408;font-weight:600;padding:9px 14px;font-size:13.5px;min-height:44px}
 .tren{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
 .vagon{text-align:left;border:1px solid var(--linea);background:var(--tarjeta);padding:0;border-radius:16px;overflow:hidden;box-shadow:var(--sombra)}
 .vagon:active{transform:scale(.97)}
@@ -371,9 +371,9 @@ html.cargando #actualizando{display:flex}
 /* teléfono: la lámina manda. Estas reglas van al final a propósito: anulan a las de arriba. */
 @media (max-width:640px){
   html.embed .ctx{display:none}
-  .otra-voz{padding:7px 12px;font-size:12.5px;max-height:30%}
-  .otra-voz small{display:none}
-  .otra-voz span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .otra-voz{padding:7px 12px;font-size:12.5px;max-height:60%}
+  .otra-voz small:not(.explica){display:none}
+  .otra-voz span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
   .pie{padding:8px 12px 9px}
   .pie .luego{display:none}
   .pie .cual{font-size:12.5px}
@@ -780,7 +780,7 @@ function versionHTML(x){
 function otrosHTML(x){
   const o=x.otros||[]; if(!o.length) return '';
   return `<div class="otra-voz">${o.map(f=>`<b>${esc(f.quien)} ${f.marca==='si'?'aprobó':f.marca==='no'?'pidió cambio':'la vio'}</b>${f.nota?`<span>«${esc(f.nota)}»</span>`:''}`).join('')}
-    <small>Tu respuesta se suma a la suya: si alguno pide cambio, Producción rehace cumpliendo las dos notas.</small></div>`;
+    <small class="explica">Tu respuesta se suma a la suya: si alguno pide cambio, Producción rehace cumpliendo las dos notas.</small></div>`;
 }
 function numeroReal(x){
   const t=tiraDe(x), l=t?laminaTira(t,x.tipo==='lamina'?x.p.laminas[x.i]:'',x.i+1):null;
@@ -973,16 +973,39 @@ function enTiempo(min){
   if(min<60) return `vuelve en ~${min} min`;
   const h=Math.round(min/60); return h<24?`vuelve en ~${h} h`:`vuelve mañana`;
 }
+/* El error crudo NUNCA se imprime: si no hay traducción en llano, no se escribe nada. */
+function enLlano(e){
+  const t=String(e==null?'':e).trim();
+  if(!t||/^(null|undefined|none|nan|0|-)$/i.test(t)) return '';
+  if(/quota|cuota|rate.?limit|429|too many/i.test(t)) return 'se acabó la cuota del proveedor';
+  if(/timeout|timed ?out|deadline|tiempo de espera/i.test(t)) return 'se acabó el tiempo de espera';
+  if(/network|conexi|econn|dns|socket|offline|unreachable/i.test(t)) return 'se cayó la conexión';
+  if(/401|403|unauthor|forbidden|permis|denied|credencial/i.test(t)) return 'faltó permiso para entrar';
+  if(/404|not found|no encontr|no existe/i.test(t)) return 'no encontró el archivo';
+  if(/memor|oom/i.test(t)) return 'se quedó sin memoria';
+  if(/disk|disco|space|espacio/i.test(t)) return 'se quedó sin espacio en disco';
+  if(/50\d|server error|internal error/i.test(t)) return 'el servidor del proveedor falló';
+  return '';
+}
 function avanceHTML(nombre){
   const g=PROG[nombre]; if(!g) return '';
   const pasos=(g.pasos||[]).map(x=>{ const pct=x.total?Math.round(100*x.hechos/x.total):0;
     return `<div class="pa"><span>${esc(x.que)}</span><i><b style="width:${pct}%"></b></i><small>${x.hechos}/${x.total}</small></div>`+
       (x.nota?`<p class="pa-nota">${esc(x.nota)}</p>`:'') }).join('');
   const m=(g.muestras||[]);
+  /* el « · » solo aparece si hay dato de los dos lados */
+  const vuelve=g.atorada?'':enTiempo(g.vuelve_en_min);
+  const dice=[esc(g.dice||''),vuelve?`<b>${esc(vuelve)}</b>`:''].filter(Boolean).join(' · ');
+  /* «último intento» solo cuando hay algo que reportar */
+  const it=g.intento||{}, porque=enLlano(it.ultimo_error), dat=[];
+  if(it.corridas_sin_avanzar) dat.push(`${it.corridas_sin_avanzar} corridas sin avanzar`);
+  if(porque) dat.push(`«${esc(porque)}»`);
+  const intento=(it.cuando&&(dat.length||g.atorada))
+    ? `<p class="int">Último intento ${esc(it.cuando)}${dat.length?' · '+dat.join(' · '):''}</p>` : '';
   return `<div class="avance ${g.atorada?'mal':''}">
     <h5>Avance real${g.actualizado?` · al ${esc(g.actualizado)}`:''}</h5>${pasos}
-    <p class="dice">${esc(g.dice||'')}${g.atorada?'':` · <b>${esc(enTiempo(g.vuelve_en_min))}</b>`}</p>
-    ${g.intento&&g.intento.cuando?`<p class="int">Último intento ${esc(g.intento.cuando)}${g.intento.corridas_sin_avanzar?` · ${g.intento.corridas_sin_avanzar} corridas sin avanzar`:''}${g.intento.ultimo_error?` · «${esc(g.intento.ultimo_error)}»`:''}</p>`:''}
+    ${dice?`<p class="dice">${dice}</p>`:''}
+    ${intento}
     ${m.length?`<button class="secund" style="margin-top:8px" onclick="verMuestras('${esc(nombre)}')">Ver lo que ya salió (${m.length})</button>`:''}</div>`;
 }
 function verMuestras(nombre){
@@ -1154,16 +1177,29 @@ function pintarAjustes(){
       <textarea id="ajMsg" placeholder="Escribe aquí…"></textarea>
       <button class="secund" id="ajEnviar">Enviar mensaje</button>
       <button class="listo" id="ajRonda">Pedir nueva ronda ahora</button>
-      <p class="aviso" id="ajAviso"></p></div>
+      <p class="aviso" id="ajAviso"></p>
+      <div id="ajRecados"></div></div>
     <div class="bloque-aj"><h4>Automáticos</h4><p>Lo que corre solo mientras nadie mira.</p><button class="secund" id="ajMaq">Ver qué está corriendo</button><div id="ajMaqLista"></div></div>`:''}
     <div class="bloque-aj"><h4>Ayuda</h4><p>${ENTRADO()?'Si algo no carga, cierra y vuelve a abrir la Sala.':'Tu entrada es una liga personal. Si ya habías entrado en este aparato, puedes recuperarla:'}</p>
       ${ENTRADO()?'':`<a class="secund" style="display:grid;place-items:center;text-decoration:none;margin-top:0" href="${ORIGEN_VIEJO}#puente=1" ${EMBED()?'target="_blank"':'target="_top"'} rel="noopener">Recuperar mi entrada</a>`}
-      <p style="margin:10px 0 0;font-size:12.5px"><a href="index-v2.html">Abrir la Sala anterior</a></p></div>`;
+      <p style="margin:10px 0 0;font-size:12.5px"><a href="index-v2.html" style="display:inline-flex;align-items:center;min-height:44px">Abrir la Sala anterior</a></p></div>`;
   const be=$('#ajEntrar'); if(be) be.onclick=abrirEntrar;
   $('#ajGuia').onclick=()=>abrirGuia(true);
   const bm=$('#ajMaq'); if(bm) bm.onclick=pintarMaquinas;
   const env=$('#ajEnviar'); if(env) env.onclick=()=>mandarProduccion('RETRO',$('#ajMsg').value.trim()||'',true);
   const rd=$('#ajRonda'); if(rd) rd.onclick=()=>mandarProduccion('ENCARGO · corre la sala',$('#ajMsg').value.trim()||'Corre la sala.',false);
+  pintarRecados();
+}
+async function pintarRecados(){
+  const c=$('#ajRecados'); if(!c) return;
+  try{
+    const r=await fetch('datos/encargos.json?v='+Date.now()); if(!r.ok) return;
+    const j=await r.json(); const l=(j.encargos||[]).filter(e=>e.que).slice(-3).reverse();
+    if(!l.length) return;
+    c.innerHTML=`<p style="margin:12px 0 6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--guia);font-weight:600">Tus recados</p>`+
+      l.map(e=>`<div class="maq ${e.estado==='cumplida'?'bien':e.estado==='en curso'?'duda':'mal'}"><b><i></i>${esc((e.que||'').slice(0,70))}</b>
+        <small>${e.estado==='cumplida'?'Hecho':e.estado==='en curso'?('Tomado'+(e.tomado?' a las '+esc(e.tomado):'')+' — la ronda la lanza Alejandro'):'Atorado'}${e.cuando?' · pedido el '+esc(e.cuando):''}</small></div>`).join('');
+  }catch(e){}
 }
 async function mandarProduccion(pieza,txt,esMensaje){
   const av=$('#ajAviso'); if(esMensaje&&!txt){ av.textContent='Escribe el mensaje primero.'; return }
@@ -1172,7 +1208,7 @@ async function mandarProduccion(pieza,txt,esMensaje){
   av.textContent='Anotando…';
   try{ const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(envio)}); const j=await leerJSON(r);
     if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||'');
-    av.textContent=(esMensaje?'Mensaje anotado':'Ronda pedida')+' a las '+hora()+'. Producción lo toma en su siguiente corrida.'; $('#ajMsg').value='' }
+    av.textContent=(esMensaje?'Mensaje anotado':'Ronda pedida')+' a las '+hora()+'. El recado ya está en el Sheet; te aviso aquí abajo cuando Producción lo tome.'; setTimeout(pintarRecados,1000); $('#ajMsg').value='' }
   catch(e){ if(/solo el agente|solo lee/i.test(String(e.message))){ av.textContent='Tu acceso no puede escribirle a Producción.'; return } encolar(envio); av.textContent='Sin señal: quedó en cola y sube solo.' }
 }
 async function pintarMaquinas(){
