@@ -248,7 +248,80 @@
   }
  ],
  "decisiones": {
-  "propuestas": {}
+  "propuestas": {
+   "comprador-g2-fcf0ca": {
+    "laminas": [
+     "si",
+     null,
+     null,
+     null
+    ],
+    "nota": "",
+    "notas": [],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": null,
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": null,
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": null,
+       "nota": ""
+      }
+     ]
+    ]
+   },
+   "apodo-video-4sep": {
+    "laminas": [
+     null,
+     null,
+     null
+    ],
+    "nota": "",
+    "notas": [],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": null,
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": null,
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": null,
+       "nota": ""
+      }
+     ]
+    ]
+   }
+  }
  },
  "historial": {
   "2026-08-01": {

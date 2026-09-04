@@ -48,6 +48,13 @@ function instalar() {
   Object.keys(SEMILLA).forEach(function (k) {
     if (!leerConfig(k)) cfg.appendRow([k, SEMILLA[k]]);
   });
+  // sin estas filas, quien entra por Google nunca puede ser editor2 (Sayri): el canje
+  // compara el correo contra CONFIG y, vacío, la degrada a lectora.
+  ['correo_editor', 'correo_editor2', 'nombre_editor', 'nombre_editor2'].forEach(function (k) {
+    if (!leerConfig(k)) cfg.appendRow([k, k === 'correo_editor'  ? CORREO :
+                                          k === 'correo_editor2' ? 'proyectos@aurumarquitectos.com' :
+                                          k === 'nombre_editor'  ? 'Alejandro' : 'Sayri']);
+  });
   ScriptApp.getProjectTriggers().forEach(function (t) {
     if (t.getHandlerFunction() === 'correoDiario') ScriptApp.deleteTrigger(t);
   });
@@ -106,10 +113,10 @@ function rolPorPortero_(k) {
       if (correo && correo === String(leerConfig('correo_editor') || CORREO).toLowerCase()) rol = 'editor';
       else if (correo && correo === String(leerConfig('correo_editor2') || '').toLowerCase()) rol = 'editor2';
       else rol = 'lector';
-      if (nombre) cache.put(ck + '_n', nombre, 600);
+      if (nombre) cache.put(ck + '_n', nombre, 300);
     }
   } catch (err) { rol = null; }        // Portero inaccesible → fail-closed
-  cache.put(ck, rol || 'no', rol ? 600 : 60);
+  cache.put(ck, rol || 'no', rol ? 300 : 60);   // 5 min: revocar a alguien no debe tardar 20
   return rol;
 }
 function nombrePortero_(k) {
@@ -174,8 +181,8 @@ function nombreDe(rol) {
 /* ------------------------------------------------ lectura */
 function doGet(e) {
   var p = (e && e.parameter) || {};
-  resembrar();   // instalar() corrio antes de la siembra: las claves canonicas mandan
-
+  // (Antes aquí corría resembrar() en cada lectura: escribía en CONFIG en cada request y
+  //  volvía imposible rotar las claves. Ahora sólo se corre a mano desde el editor.)
   var rolQuien = rolDe(p.clave);
   if (!rolQuien) return json({ error: 'clave incorrecta' });
   if (p.recurso !== 'dia') return json({ error: 'recurso desconocido' });
@@ -286,44 +293,27 @@ function doPost(e) {
      El OS ya validó al usuario con su Portero. Aquí NO se cree el correo que digan:
      se le pregunta al Portero por el token, y solo si él contesta ok se entrega la
      llave que corresponde a ese correo. El token no se guarda ni se escribe en la hoja. */
-  if (d.accion === 'canje_os') {
-    if (!d.token) return json({ error: 'falta el token' });
-    var PORTEROS = ['https://script.google.com/macros/s/AKfycbwlDDCWWzOWYZsUpBU9uqsQ7aenQ469PF6s6FkNlBFS1_cJSU5njG9oQmuyELy5zlqzFg/exec',
-                    'https://script.google.com/macros/s/AKfycbyrhqMb70Qh8BljAOYnSYBZ8IXUuEclFWPg10NWIv3GJ-nAR597OTsGB4IL-xyUl7Ms/exec'];
-    var id = null;
-    for (var i = 0; i < PORTEROS.length && !id; i++) {
-      try {
-        var res = UrlFetchApp.fetch(PORTEROS[i] + '?recurso=canje&t=' + encodeURIComponent(d.token),
-                                    { muteHttpExceptions: true, followRedirects: true });
-        var j = JSON.parse(res.getContentText());
-        if (j && j.ok) id = j;
-      } catch (err) {}
-    }
-    if (!id) return json({ error: 'el Portero no reconoció tu sesión' });
-    var correo = String(id.correo || '').toLowerCase().trim();
-    var quien = '', clave = '', rol = '';
-    if (correo === String(leerConfig('correo_editor') || CORREO).toLowerCase()) { quien = nombreDe('editor'); clave = leerConfig('clave'); rol = 'editor'; }
-    else if (correo && correo === String(leerConfig('correo_editor2') || '').toLowerCase()) { quien = nombreDe('editor2'); clave = leerConfig('clave_editor2'); rol = 'editor2'; }
-    else { quien = String(id.nombre || 'invitado'); clave = leerConfig('clave_lector'); rol = 'lector'; }
-    bitacora('Entrada por Google', quien + ' (' + rol + ')');
-    return json({ ok: true, gas: ScriptApp.getService().getUrl(), clave: clave, rol: rol, quien: quien });
+  // (accion 'canje_os' retirada el 4-sep: entregaba una llave permanente a cualquier sesión
+  //  viva del Portero. Ya no hace falta: la credencial del Portero VALE como clave, y el
+  //  backend decide el rol en cada request — ver rolPorPortero_.)
+
+  if (d.accion === 'sembrar_editores') {
+    if (rolDe(d.clave) !== 'agente' && rolDe(d.clave) !== 'editor') return json({ error: 'solo el agente' });
+    return json({ ok: true, resultado: sembrarEditores() });
   }
 
   if (d.accion === 'entrada') {                 // «mándame mi entrada» desde cualquier aparato
     var props = PropertiesService.getScriptProperties();
     var ult = Number(props.getProperty('ult_entrada') || 0);
     if (Date.now() - ult < 60000) return json({ ok: true, espera: true });   // un correo por minuto
+    var dia = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd');
+    var cuenta = JSON.parse(props.getProperty('entradas_dia') || '{}');
+    if (cuenta.dia !== dia) cuenta = { dia: dia, n: 0 };
+    if (cuenta.n >= 8) return json({ ok: true, espera: true, tope: true });  // nadie agota la cuota
+    cuenta.n++; props.setProperty('entradas_dia', JSON.stringify(cuenta));
     props.setProperty('ult_entrada', String(Date.now()));
     var exec = ScriptApp.getService().getUrl();
     var ligaE = PORTAL + '#gas=' + encodeURIComponent(exec) + '&clave=' + encodeURIComponent(leerConfig('clave')) + '&rol=editor';
-    var liga2 = PORTAL + '#gas=' + encodeURIComponent(exec) + '&clave=' + encodeURIComponent(leerConfig('clave_editor2')) + '&rol=editor2';
-    MailApp.sendEmail({ to: CORREO, subject: 'Sala de Edición · tu entrada',
-      htmlBody: '<div style="background:#0a0a0c;padding:30px 22px;font-family:Georgia,serif;color:#f4f1ec">' +
-        '<h2 style="font-weight:400;margin:0 0 14px">Entrar a la <em style="color:#debc7e">Sala</em></h2>' +
-        '<p style="font-size:15px;line-height:1.6">Abre este botón en el aparato donde vas a revisar. Entra solo.</p>' +
-        '<a href="' + ligaE + '" style="background:#c2a06b;color:#17130c;text-decoration:none;padding:13px 26px;border-radius:8px;font-family:-apple-system,sans-serif;font-weight:600">Entrar como Alejandro</a>' +
-        '<p style="margin:22px 0 6px;color:#8a867e;font-size:12px">La de Sayri (mándasela tú):</p>' +
-        '<a href="' + liga2 + '" style="color:#debc7e;font-size:13px">Entrar como Sayri</a></div>' });
     bitacora('Entrada enviada por correo', 'pedida desde la Sala');
     return json({ ok: true, correo: CORREO.replace(/^(.).*(@.*)$/, '$1•••$2') });
   }
@@ -444,4 +434,21 @@ function resembrar() {
       if (String(datos[i][1]) !== SEM[k]) h.getRange(i + 1, 2).setValue(SEM[k]); }
   }
   Object.keys(SEM).forEach(function (k) { if (!vistos[k]) h.appendRow([k, SEM[k]]); });
+}
+
+
+/* Siembra/actualiza los correos y nombres de los dos editores sin tocar nada más.
+   Se corre desde la Mac con accion:'sembrar_editores' o a mano desde el editor. */
+function sembrarEditores() {
+  var pares = { correo_editor: CORREO, correo_editor2: 'proyectos@aurumarquitectos.com',
+                nombre_editor: 'Alejandro', nombre_editor2: 'Sayri' };
+  var h = hoja('CONFIG'), datos = h.getDataRange().getValues(), vistos = {};
+  for (var i = 1; i < datos.length; i++) {
+    var k = String(datos[i][0]);
+    if (pares[k] !== undefined) { vistos[k] = true;
+      if (String(datos[i][1]) !== pares[k]) h.getRange(i + 1, 2).setValue(pares[k]); }
+  }
+  Object.keys(pares).forEach(function (k) { if (!vistos[k]) h.appendRow([k, pares[k]]); });
+  bitacora('Editores sembrados', 'Alejandro y Sayri con su correo');
+  return 'ok';
 }
