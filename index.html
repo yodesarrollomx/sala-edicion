@@ -952,6 +952,7 @@ function pintarMira(){
     else (p.laminas||[]).forEach((src,i)=>{ const f=M[p.id]; const m=f&&f.laminas&&f.laminas[i]; MIRA.push({tipo:'lamina',p,i,src,dec:m==='si'||m==='no'?m:'',nota:(f&&f.notas||[])[i]||'',firmas:((f&&f.firmas)||[])[i]||[]}) });
   }
   $('#bolas').innerHTML=''; $('#verresp').hidden=true; $('#deshacer').hidden=true; $('#pistaTeclas').hidden=true;
+  Promise.all([...new Set((D._todas||[]).map(p=>p.id))].map(cargarTira)).then(()=>{ const x=MIRA[mIdx]; if(x) pintarTira({pid:x.p.id,tipo:x.tipo,i:x.i,p:x.p}) });
   const z=$('#zona');
   if(!MIRA.length){ $('#titulo').textContent='Nada en la mesa hoy'; $('#subt').textContent='Cuando Producción proponga algo, lo ves aquí.'; $('#mandoWrap').hidden=true; z.innerHTML=`<div class="vacio-hoy"><div class="palomon">${ICO_CHECK}</div><h2>Todo al día</h2></div>`; pintarCtx(null); return }
   mIdx=Math.max(0,Math.min(mIdx,MIRA.length-1));
@@ -973,7 +974,7 @@ function pintarMira(){
   $('#mandoWrap').hidden=false;
   $('#mando').innerHTML=`<button class="bNav" id="mAnt" ${mIdx===0?'disabled style="opacity:.4"':''}>${ICO_VOLVER}Anterior</button><button class="bNav" id="mSig" ${mIdx===MIRA.length-1?'disabled style="opacity:.4"':''}>Siguiente <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>`;
   $('#mAnt').onclick=()=>{ mIdx--; pintarMira() }; $('#mSig').onclick=()=>{ mIdx++; pintarMira() };
-  pintarCtx({p:x.p}); pintarPanelMira();
+  pintarCtx({p:x.p}); pintarPanelMira(); pintarTira({pid:x.p.id,tipo:x.tipo,i:x.i,p:x.p});
 }
 function pintarPanelMira(){
   const p=$('#panel'); if(!p||getComputedStyle(p).display==='none') return;
