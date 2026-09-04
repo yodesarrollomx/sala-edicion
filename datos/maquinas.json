@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-04 09:45",
+ "actualizado": "2026-09-04 10:03",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,8 +18,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 2 horas",
-   "dijo": "PIPELINE DETENIDO por cuota — sigue en la próxima corrida",
+   "corrio": "hace 14 min",
+   "dijo": "  El video está armado y esperando tu palabra en la mesa. Ojo: 1 escena con plan B (acercamiento sobre la lámina, no ani",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -73,7 +73,7 @@
    "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 12 min",
+   "corrio": "hace 30 min",
    "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -84,7 +84,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 1 horas",
+   "corrio": "hace 2 horas",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
