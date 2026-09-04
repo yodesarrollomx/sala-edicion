@@ -21,7 +21,7 @@
  */
 
 var TZ = 'America/Hermosillo';
-var PORTAL = 'https://yodesarrollomx.github.io/sala-edicion/';  // casa canonica: yodesarrollomx.github.io/sala-edicion
+var PORTAL = 'https://yodesarrollomx.github.io/sala-edicion/';  // al migrar: yodesarrollo.github.io/sala-edicion
 var CORREO = 'direccion@aurumarquitectos.com';
 
 var PESTANAS = {
@@ -72,7 +72,52 @@ function rolDe(clave) {
   if (clave === leerConfig('clave_editor2')) return 'editor2';
   if (clave === leerConfig('clave_lector')) return 'lector';
   if (clave === leerConfig('clave_agente')) return 'agente';
-  return null;
+  return rolPorPortero_(clave);          // UNA SOLA LLAVE: la sesión del YOD OS también entra
+}
+
+/* UNA SOLA LLAVE (3-sep-2026, pedido de Alejandro: «la misma clave del portero me debe dar
+   acceso a todo, incluida la Sala»). Patrón de la casa (ver board-aurum/apps-script/
+   portero-auth.gs): el backend le pregunta al Portero por la credencial —liga mágica de 90
+   días, clave de equipo o Google— y decide él mismo la autorización. Se canjea SIN &board=
+   para no depender del filtro del Portero. Caché por hash: 10 min si vale, 1 min si no.
+   Portero caído = nadie entra por esta vía (fail-closed), pero las claves suaves siguen. */
+var PORTERO_EXEC = 'https://script.google.com/macros/s/AKfycbwlDDCWWzOWYZsUpBU9uqsQ7aenQ469PF6s6FkNlBFS1_cJSU5njG9oQmuyELy5zlqzFg/exec';
+var CODIGO_SALA  = 'MK';               // la Sala vive en el Embudo, junto a Métricas/Marketing
+function rolPorPortero_(k) {
+  k = String(k || '').trim();
+  if (k.length < 8) return null;
+  var cache = CacheService.getScriptCache();
+  var ck = 'sala_auth_' + Utilities.base64EncodeWebSafe(
+    Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, k)).slice(0, 24);
+  var hit = cache.get(ck);
+  if (hit) return hit === 'no' ? null : hit;
+  var rol = null, nombre = '';
+  try {
+    var r = UrlFetchApp.fetch(PORTERO_EXEC + '?recurso=canje&t=' + encodeURIComponent(k),
+      { muteHttpExceptions: true, followRedirects: true });
+    var j = JSON.parse(r.getContentText());
+    var role = String(j && j.rol || '').toLowerCase();
+    var boards = String(j && j.boards || '');
+    var puede = !!(j && j.ok && (role === 'admin' || boards.trim() === '*' ||
+      boards.split(',').map(function (v) { return v.trim().toUpperCase(); }).indexOf(CODIGO_SALA) >= 0));
+    if (puede) {
+      var correo = String(j.correo || '').toLowerCase().trim();
+      nombre = String(j.nombre || '');
+      if (correo && correo === String(leerConfig('correo_editor') || CORREO).toLowerCase()) rol = 'editor';
+      else if (correo && correo === String(leerConfig('correo_editor2') || '').toLowerCase()) rol = 'editor2';
+      else rol = 'lector';
+      if (nombre) cache.put(ck + '_n', nombre, 600);
+    }
+  } catch (err) { rol = null; }        // Portero inaccesible → fail-closed
+  cache.put(ck, rol || 'no', rol ? 600 : 60);
+  return rol;
+}
+function nombrePortero_(k) {
+  try {
+    var ck = 'sala_auth_' + Utilities.base64EncodeWebSafe(
+      Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(k || ''))).slice(0, 24);
+    return CacheService.getScriptCache().get(ck + '_n') || '';
+  } catch (e) { return '' }
 }
 function filas(n) {
   var h = hoja(n); if (!h || h.getLastRow() < 2) return [];
@@ -131,7 +176,8 @@ function doGet(e) {
   var p = (e && e.parameter) || {};
   resembrar();   // instalar() corrio antes de la siembra: las claves canonicas mandan
 
-  if (!rolDe(p.clave)) return json({ error: 'clave incorrecta' });
+  var rolQuien = rolDe(p.clave);
+  if (!rolQuien) return json({ error: 'clave incorrecta' });
   if (p.recurso !== 'dia') return json({ error: 'recurso desconocido' });
   var f = /^\d{4}-\d{2}-\d{2}$/.test(p.f || '') ? p.f : hoy();
 
@@ -227,13 +273,61 @@ function doGet(e) {
     fecha: f, dias: Object.keys(dias).sort(), propuestas: props, decisiones: dec, retro: r,
     parrilla: parr, control: CO.length ? CO[CO.length - 1] : null,
     produccion: PD.slice().reverse().slice(0, 30).map(function (x) { x.fecha = fechaDe(x.fecha); return x; }),
-    bitacora: bit, ultima_revision: ultRev, rol: rolDe(p.clave), version: 'dos-editores-2026-09-03b'
+    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), version: 'una-sola-llave-2026-09-03'
   });
 }
 
 /* ------------------------------------------------ escritura */
 function doPost(e) {
   var d; try { d = JSON.parse(e.postData.contents); } catch (err) { return json({ error: 'cuerpo ilegible' }); }
+  // «mándame mi entrada» NO pide clave: es justo para cuando ya no la tienes.
+  // No revela nada: el correo va SOLO a la dirección de CONFIG.
+  /* ENTRAR CON GOOGLE (3-sep): «estoy entrando por Google, quiero que así funcione».
+     El OS ya validó al usuario con su Portero. Aquí NO se cree el correo que digan:
+     se le pregunta al Portero por el token, y solo si él contesta ok se entrega la
+     llave que corresponde a ese correo. El token no se guarda ni se escribe en la hoja. */
+  if (d.accion === 'canje_os') {
+    if (!d.token) return json({ error: 'falta el token' });
+    var PORTEROS = ['https://script.google.com/macros/s/AKfycbwlDDCWWzOWYZsUpBU9uqsQ7aenQ469PF6s6FkNlBFS1_cJSU5njG9oQmuyELy5zlqzFg/exec',
+                    'https://script.google.com/macros/s/AKfycbyrhqMb70Qh8BljAOYnSYBZ8IXUuEclFWPg10NWIv3GJ-nAR597OTsGB4IL-xyUl7Ms/exec'];
+    var id = null;
+    for (var i = 0; i < PORTEROS.length && !id; i++) {
+      try {
+        var res = UrlFetchApp.fetch(PORTEROS[i] + '?recurso=canje&t=' + encodeURIComponent(d.token),
+                                    { muteHttpExceptions: true, followRedirects: true });
+        var j = JSON.parse(res.getContentText());
+        if (j && j.ok) id = j;
+      } catch (err) {}
+    }
+    if (!id) return json({ error: 'el Portero no reconoció tu sesión' });
+    var correo = String(id.correo || '').toLowerCase().trim();
+    var quien = '', clave = '', rol = '';
+    if (correo === String(leerConfig('correo_editor') || CORREO).toLowerCase()) { quien = nombreDe('editor'); clave = leerConfig('clave'); rol = 'editor'; }
+    else if (correo && correo === String(leerConfig('correo_editor2') || '').toLowerCase()) { quien = nombreDe('editor2'); clave = leerConfig('clave_editor2'); rol = 'editor2'; }
+    else { quien = String(id.nombre || 'invitado'); clave = leerConfig('clave_lector'); rol = 'lector'; }
+    bitacora('Entrada por Google', quien + ' (' + rol + ')');
+    return json({ ok: true, gas: ScriptApp.getService().getUrl(), clave: clave, rol: rol, quien: quien });
+  }
+
+  if (d.accion === 'entrada') {                 // «mándame mi entrada» desde cualquier aparato
+    var props = PropertiesService.getScriptProperties();
+    var ult = Number(props.getProperty('ult_entrada') || 0);
+    if (Date.now() - ult < 60000) return json({ ok: true, espera: true });   // un correo por minuto
+    props.setProperty('ult_entrada', String(Date.now()));
+    var exec = ScriptApp.getService().getUrl();
+    var ligaE = PORTAL + '#gas=' + encodeURIComponent(exec) + '&clave=' + encodeURIComponent(leerConfig('clave')) + '&rol=editor';
+    var liga2 = PORTAL + '#gas=' + encodeURIComponent(exec) + '&clave=' + encodeURIComponent(leerConfig('clave_editor2')) + '&rol=editor2';
+    MailApp.sendEmail({ to: CORREO, subject: 'Sala de Edición · tu entrada',
+      htmlBody: '<div style="background:#0a0a0c;padding:30px 22px;font-family:Georgia,serif;color:#f4f1ec">' +
+        '<h2 style="font-weight:400;margin:0 0 14px">Entrar a la <em style="color:#debc7e">Sala</em></h2>' +
+        '<p style="font-size:15px;line-height:1.6">Abre este botón en el aparato donde vas a revisar. Entra solo.</p>' +
+        '<a href="' + ligaE + '" style="background:#c2a06b;color:#17130c;text-decoration:none;padding:13px 26px;border-radius:8px;font-family:-apple-system,sans-serif;font-weight:600">Entrar como Alejandro</a>' +
+        '<p style="margin:22px 0 6px;color:#8a867e;font-size:12px">La de Sayri (mándasela tú):</p>' +
+        '<a href="' + liga2 + '" style="color:#debc7e;font-size:13px">Entrar como Sayri</a></div>' });
+    bitacora('Entrada enviada por correo', 'pedida desde la Sala');
+    return json({ ok: true, correo: CORREO.replace(/^(.).*(@.*)$/, '$1•••$2') });
+  }
+
   var rol = rolDe(d.clave);
   if (!rol) return json({ error: 'clave incorrecta' });
 

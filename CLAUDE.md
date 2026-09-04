@@ -4,10 +4,9 @@ Contexto para Claude Code. **Lee este archivo completo antes de tocar nada.**
 
 ## Qué es esto
 
-El portal diario de producción de contenido de **Yo Desarrollo**. Cada mañana llega un correo con
-la liga; el editor entra, palomea o tacha lo que se le propone, escribe su nota al margen y manda
-su revisión. De esa revisión sale lo que la Mac produce ese día, y todo queda registrado día por
-día.
+El portal diario de producción de contenido de **Yo Desarrollo**. Cada mañana llega un correo con la
+liga; el editor entra, palomea o tacha lo que se le propone, escribe su nota al margen y manda su
+revisión. De ahí sale lo que la Mac produce ese día, y todo queda registrado día por día.
 
 - **Quién lo usa:** Alejandro (`editor`) y **Sayri** (`editor2`) — los dos deciden por igual desde
   el 3-sep-2026 ([[sala-dos-editores]]). Clientes/socios entran como `lector` (solo miran). La Mac
@@ -15,8 +14,7 @@ día.
 - **Dirección en vivo:** `https://yodesarrollomx.github.io/sala-edicion/` — **HTTP 200,
   comprobado con curl el 2026-09-04.**
 - **Dirección vieja:** `https://alexpueblag.github.io/sala-edicion/` — **HTTP 200 (4-sep)**, pero
-  ya NO es la Sala: es un cascarón que reenvía al dominio nuevo **y hace el puente de sesión**
-  (ver Arquitectura).
+  ya NO es la Sala: es un cascarón que reenvía al dominio nuevo **y hace el puente de sesión**.
 - **`tableros.yodesarrollo.mx/sala-edicion/` NO existe todavía** (curl 4-sep: código `000`, sin
   DNS). Si una memoria vieja usa esa liga, no la "arregles": el corte no ha pasado.
 - El ciclo se gira con la frase **«corre la sala»** / `/sala` ([[sala-corre-la-sala]]).
@@ -26,9 +24,8 @@ día.
 1. **El repo es ESPEJO del Apps Script: lo que corre es lo pegado en el editor.** `gas/Code.gs` es
    una copia pública sin claves; cambiarlo aquí no cambia nada en vivo. (Hoy divergen: ver «Por
    confirmar».)
-2. **Nunca subir claves al repo.** Es público. Las 4 claves viven en `~/.sala_gas_claves.json` y la
-   liga /exec en `~/.sala_gas` (ambos 600, verificado 4-sep); la copia pública del .gs trae `'…'`
-   en lugar de la semilla (`gas/Code.gs:47`).
+2. **Nunca subir claves al repo:** es público. Las 4 claves viven en `~/.sala_gas_claves.json` y la
+   liga /exec en `~/.sala_gas` (ambos 600, 4-sep); el .gs público trae `'…'` (`gas/Code.gs:47`).
 3. **Decidir es de los editores; el `agente` no marca.** El GAS contesta *«tu rol solo lee»* a un
    `accion:"decidir"` con `clave_agente` ([[sala-decisiones-viajan]]). Cualquier arrastre de marcas
    se hace del lado del cliente, en lectura.
@@ -53,7 +50,7 @@ día.
 |---|---|
 | `index.html` (1,248 líneas) | La Sala completa, un solo archivo sin build. **Sala 3.0 «tres puertas»**: Hoy · Publicaciones · Ajustes (commit `c09b2c6`, 3-sep-2026). |
 | `gas/Code.gs` (352 líneas) | Copia pública del backend. **Espejo, no fuente.** Instrucciones de instalación adentro. |
-| `gas/appsscript.json` | Manifiesto. Lleva `webapp: {executeAs: USER_DEPLOYING, access: ANYONE_ANONYMOUS}` — sin eso, cada versión nueva nacía cerrada y el /exec daba 404 ([[sala-dos-editores]]). |
+| `gas/appsscript.json` | Lleva `webapp: {executeAs: USER_DEPLOYING, access: ANYONE_ANONYMOUS}` — sin eso, cada versión nueva nacía cerrada y el /exec daba 404 ([[sala-dos-editores]]). |
 | `datos/manifiesto.json` | **Respaldo espejo**: el relevo lo reescribe en cada corrida con sólo lo pendiente y las marcas horneadas. La Sala cae aquí si el Sheet no contesta. |
 | `datos/tiras/<pid>.json` | La tira completa de una pieza (dice/ve/entiende, estado y nota por lámina). |
 | `datos/piezas.json` · `progreso.json` · `maquinas.json` · `metricas.json` · `expedientes/*.json` | Estado vivo que publica la Mac: etapa de cada pieza, avance con «vuelve en ~X», semáforo de centinelas, números de las publicaciones, un expediente por pieza. |
@@ -70,20 +67,19 @@ launchd verificados el 4-sep: `mx.yodesarrollo.relevo` (6, 9, 12, 15 y 18 h),
 El **Sheet manda**. El repo es superficie y respaldo.
 
 ```
-Mac (~/yod_audit)                Apps Script /exec              La Sala (GitHub Pages)
-sala_publicar.py ─ láminas ────────────────────────────────────▶ repo (imágenes, tiras)
-                 ─ accion:proponer ──▶ pestaña PROPUESTAS
-                 ─ accion:produccion ▶ PRODUCCION + BITACORA
-sala_relevo_diario.py ─ pendientes ─▶ PROPUESTAS (día vivo)
-                      └─ respaldo espejo ─────────────────────▶ datos/manifiesto.json
+Mac (~/yod_audit)                    Apps Script /exec (el Sheet)      La Sala (GitHub Pages)
+sala_publicar.py ─ láminas/video ───────────────────────────────────▶ repo (imágenes, tiras)
+                 ─ accion:proponer ────▶ pestaña PROPUESTAS
+                 ─ accion:produccion ──▶ PRODUCCION + BITACORA
+sala_relevo_diario.py ─ pendientes ───▶ PROPUESTAS (día vivo)
+                      └─ respaldo espejo ──────────────────────────▶ datos/manifiesto.json
 
-                       GET ?recurso=dia&clave=… ──────────────▶ index.html  (traer(), reintenta 3× / 12 s)
-                       (si no contesta) ──────────────────────▶ datos/manifiesto.json  (index.html:534)
+                        GET ?recurso=dia&clave=… ─────────────────▶ index.html (traer(): 3 intentos / 12 s)
+                        (si no contesta) ─────────────────────────▶ datos/manifiesto.json (index.html:534)
 
-editor (Alejandro / Sayri) ─ accion:decidir ─▶ DECISIONES ─── el GAS toma el ÚLTIMO ENVÍO
-                                                              DE CADA EDITOR y los fusiona
-                                                              (vigentePorEditor, Code.gs:115).
-                                                              **El «no» manda.**  v16.
+editor (Alejandro / Sayri) ─ accion:decidir ─▶ DECISIONES ── el GAS toma el ÚLTIMO ENVÍO DE CADA
+                                                             EDITOR y los fusiona (vigentePorEditor,
+                                                             Code.gs:115). **El «no» manda.** v16.
 GAS ─ trigger diario 7:00 (TZ America/Hermosillo) ─ correo con la liga ─▶ direccion@aurumarquitectos.com
 ```
 
@@ -95,10 +91,10 @@ GAS ─ trigger diario 7:00 (TZ America/Hermosillo) ─ correo con la liga ─�
 - **Acciones que acepta la copia del repo:** `decidir`, `parrilla_decision`, `proponer`,
   `parrilla`, `produccion`. Los botones «Mandar retro» y «Pedir /sala» reusan `produccion`
   **a propósito**, para no republicar el Apps Script ([[sala-maquinas-franja]]).
-- **⚠️ EL REPO ES ESPEJO.** Para subir código: `clasp push` → *Manage deployments* → lápiz →
-  **New version** → Deploy (la URL no cambia). `clasp create-deployment`/`update-deployment`
-  rompen la entrada web. Hay ~40 s de propagación con 404: verificar con varios curl antes de
-  cantar victoria. Y para POST al GAS desde la Mac, **`curl -L`**: `urllib` dio 404 una vez.
+- **⚠️ EL REPO ES ESPEJO.** Para subir código: `clasp push` → *Manage deployments* → lápiz → **New
+  version** → Deploy (la URL no cambia). `clasp create-deployment`/`update-deployment` rompen la
+  entrada web. Hay ~40 s de propagación con 404: verificar con varios curl antes de cantar
+  victoria. Y para POST al GAS desde la Mac, **`curl -L`**: `urllib` dio 404 una vez.
 
 ### El puente ORIGEN_VIEJO (la mudanza de dominio)
 
@@ -111,29 +107,29 @@ nuevo antes de redirigir; (2) la Sala nueva declara `ORIGEN_VIEJO` (`index.html:
 
 **Una sola llave (3-sep):** si no hay `sala_clave` propia, vale la credencial del YOD OS
 (`pyod_clave_v1`, mismo origen). **No se copia: se lee viva**, para que siga valiendo cuando el
-Portero la renueve (commit `a026510`). Llaves en localStorage: `sala_gas`, `sala_clave`,
-`sala_rol`, `sala_cola` (envíos pendientes), `sala2-<fecha>` (borrador del día).
+Portero la renueve (commit `a026510`). Llaves en localStorage: `sala_gas`, `sala_clave`, `sala_rol`,
+`sala_cola` (envíos pendientes), `sala2-<fecha>` (borrador del día).
 
 ## Decisiones
 
-- **2026-08-01 · Alejandro + panel (Duolingo/Lingokids/Editor/Ingeniero)** — el ritual:
-  UMBRAL → TURNO (una decisión por pantalla) → FIRMA → CIERRE → LA MESA. Porqué: tenía que caber
-  en pocos taps; medido en 12 (límite 25).
+- **2026-08-01 · Alejandro + panel (Duolingo/Lingokids/Editor/Ingeniero)** — el ritual: UMBRAL →
+  TURNO (una decisión por pantalla) → FIRMA → CIERRE → LA MESA. Porqué: tenía que caber en pocos
+  taps; medido en 12 (límite 25).
 - **2026-08-04 · conectada al Sheet** («Sala de Edición · YOD», Gmail personal). Porqué: ese día
-  Alejandro revisó, su revisión quedó atrapada en el navegador y el día amaneció como si no
-  hubiera decidido.
+  Alejandro revisó, su revisión quedó atrapada en el navegador y el día amaneció como si no hubiera
+  decidido.
 - **2026-08-05 · Alejandro (reclamo justo)** — nace el **registro de peticiones**: toda nota suya
   que pida un cambio al sistema se rastrea y no se cierra sin evidencia verificable.
 - **2026-08-28 · Alejandro** — franja «Las máquinas» dentro de la misma Sala: «así puedo editar
   desde ahí o mandar retro y hacer /sala directamente».
 - **2026-08-29 · respaldo espejo** — la Sala servía tarjetas viejas porque caía al manifiesto
-  congelado. Ahora el relevo lo reescribe en cada corrida. Porqué: los arreglos «no llegaban».
+  congelado; ahora el relevo lo reescribe cada corrida. Porqué: los arreglos «no llegaban».
 - **2026-09-02 · Alejandro (desde el iPhone)** — un **borrador más nuevo que el Sheet manda**: no
   se filtra, no se canda, se restaura y sube solo. Porqué: sus 4 respuestas de las 14:00 casi se
-  pierden contra un envío del Sheet de las 08:04.
-- **2026-09-03 · Alejandro** — *«los dos somos editores… contempla ambas y cumple los criterios
-  de ambos»*: GAS **v16** fusiona el último envío de cada uno, **el «no» manda**, notas firmadas.
-  La marca del OTRO editor **no canda** tu carta (llega con franja azul).
+  pierden contra un envío del Sheet de las 08:04 del mismo día.
+- **2026-09-03 · Alejandro** — *«los dos somos editores… contempla ambas y cumple los criterios de
+  ambos»*: GAS **v16** fusiona el último envío de cada uno, **el «no» manda**, notas firmadas. La
+  marca del OTRO editor **no canda** tu carta (llega con franja azul).
 - **2026-09-03 · Sala 3.0 «tres puertas»** (commit `c09b2c6`) tras la auditoría UX de la demo a
   Sayri: un solo orden, retorno consistente, solo-lectura honesta, textos en llano. Mismo día,
   **una sola llave** (commits `891215b` → `a026510`): la credencial del YOD OS vale en la Sala.
@@ -147,21 +143,18 @@ Portero la renueve (commit `a026510`). Llaves en localStorage: `sala_gas`, `sala
 
 - **La copia del repo va atrás del script desplegado.** `gas/Code.gs` NO contiene las acciones
   `entrada` (mandar la liga al correo) ni `canje_os` (entrar con Google vía Portero) que
-  [[sala-dos-editores]] describe como desplegadas el 3-sep. La cabecera del archivo aún dice
-  «v3, espec de la mesa 1-ago» aunque el `version:` de la línea 230 ya diga
-  `dos-editores-2026-09-03b`. **Pregunta: ¿bajamos la copia pública del editor para que el repo
-  vuelva a ser espejo fiel?**
-- **El id del Sheet «Sala de Edición · YOD»** no está en el repo (correcto: es privado). Vive en
-  el Gmail personal según memoria; no verificable desde aquí.
-- **La rama local `dominio-propio`** existe (`git branch`) y no tiene remoto. Pregunta: ¿sigue
-  viva o se borra?
+  [[sala-dos-editores]] describe como desplegadas el 3-sep; y la cabecera aún dice «v3, espec de
+  la mesa 1-ago» aunque el `version:` de la línea 230 ya diga `dos-editores-2026-09-03b`.
+  **Pregunta: ¿bajamos la copia pública del editor para que el repo vuelva a ser espejo fiel?**
+- **El id del Sheet «Sala de Edición · YOD»** no está en el repo (correcto: es privado); vive en el
+  Gmail personal según memoria, no verificable desde aquí. Y **la rama local `dominio-propio`**
+  existe sin remoto: ¿sigue viva o se borra?
 
 ## Pendientes
 
 | Tema | Dueño | Evidencia para darlo por cerrado |
 |---|---|---|
-| DNS de `tableros.yodesarrollo.mx` | Alejandro (con Miguel Reina / cPanel) | `curl -I https://tableros.yodesarrollo.mx/sala-edicion/` → 200. Hoy da `000`. Al cortar hay que cambiar `PORTAL` en `gas/Code.gs:23` **a mano en el editor** y la liga de `sala_publicar.py:127`. |
+| DNS de `tableros.yodesarrollo.mx` | Alejandro (con Miguel Reina / cPanel) | `curl -I https://tableros.yodesarrollo.mx/sala-edicion/` → 200 (hoy `000`). Al cortar: cambiar `PORTAL` en `gas/Code.gs:23` **a mano en el editor** y la liga de `sala_publicar.py:127`. |
 | Bajar la copia pública del .gs desplegado al repo | Claude / agente | `diff` del contenido del editor contra `gas/Code.gs` sin diferencias de funciones (hoy faltan `entrada` y `canje_os`). |
 | `~/yod_audit/sala_publicar.py.nuevo` está **desactualizado**, no adelantado | Claude / agente | Le faltan `origen`, `tira` y el .jpg ligero que sí trae el vivo (`diff` 4-sep). O se regenera o se borra. |
 | `gas/appsscript.json` declara `timeZone: America/New_York` mientras `Code.gs:22` usa `America/Hermosillo` | Alejandro decide (tocarlo obliga a redesplegar) | Ver si algún cálculo de fecha se corre; si no, dejarlo documentado y no moverlo. |
-| Métricas de La Servilleta en FB: alcance 0 (`datos/piezas.json`, 4-sep) | Alejandro | Explicación de por qué FB no repartió, o segunda medición. |
