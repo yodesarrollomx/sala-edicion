@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-04 04:01",
+ "actualizado": "2026-09-04 04:31",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 45 min",
+   "corrio": "hace 1 horas",
    "dijo": "PIPELINE DETENIDO por cuota — sigue en la próxima corrida",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -51,7 +51,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 21 horas",
+   "corrio": "hace 22 horas",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 7 horas",
+   "corrio": "hace 8 horas",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -106,10 +106,10 @@
    "hace": "Anima las escenas que faltan en cuanto reabre la cuota de GPU. Cuando ya están las siete, se apaga sola.",
    "evita": "quedarte a media animación porque se acabó la cuota gratis del día",
    "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
-   "corrio": "hace 18 días",
+   "corrio": "hace 19 días",
    "dijo": "  hechos: 2  ·  pendientes: 0",
    "salud": "duda",
-   "porque": "lleva 18 días sin correr — puede que ya terminó su trabajo"
+   "porque": "lleva 19 días sin correr — puede que ya terminó su trabajo"
   },
   {
    "id": "mx.yodesarrollo.vigilante",
@@ -117,7 +117,7 @@
    "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
    "evita": "enterarte por un tercero de que un tablero estaba abierto",
    "cuando": "a las 6:45",
-   "corrio": "hace 21 horas",
+   "corrio": "hace 22 horas",
    "dijo": "==============================================================================",
    "salud": "bien",
    "porque": "corriendo en su horario"
