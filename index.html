@@ -457,7 +457,10 @@ const ORIGEN_VIEJO='https://alexpueblag.github.io/sala-edicion/';
 const GAS=()=>localStorage.getItem('sala_gas')||GAS_DEF;
 const CLAVE=()=>localStorage.getItem('sala_clave')||localStorage.getItem('pyod_clave_v1')||'';
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
-const DECIDE=()=>ROL()==='editor'||ROL()==='editor2';     // los demás roles solo miran
+/* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
+   editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
+const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
+const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
 const YO=()=>ROL()==='editor2'?'Sayri':'Alejandro';       // los nombres los sirve el Sheet en las firmas
 const OTROS=fs=>(fs||[]).filter(f=>f.quien!==YO()&&(f.marca||f.nota));
 const MIA=fs=>(fs||[]).find(f=>f.quien===YO()&&f.marca);
