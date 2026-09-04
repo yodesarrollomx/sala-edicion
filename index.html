@@ -1229,6 +1229,7 @@ function montar(d){
   if(hubo&&idx>0&&idx<pasos.length) $('#subt').textContent=`Sigues donde ibas · ${piezaDe(pasos[idx])}`;
 }
 (async function(){
+  abrirGuia(false);            // la bienvenida no espera al Sheet
   cargarExpedientes(); subirCola();
   const rapido=setTimeout(async()=>{ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); if(!r.ok) return; const j=await r.json(); j._respaldo=true; if(!_pintado) montar(normalizarDia(j)) }catch(e){} },2500);
   try{ const d=normalizarDia(await conMarcasDeAntes(await traer(),'')); clearTimeout(rapido);
@@ -1238,7 +1239,7 @@ function montar(d){
     else { _pintado=true; montar(d) } }
   catch(e){ clearTimeout(rapido); if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)) }
     catch(e2){ $('#titulo').textContent='No pude abrir la sala'; $('#subt').textContent='Puede ser la red. Cierra y vuelve a abrir en un momento.'; pintarEstado('sin','Sin conexión') } } }
-  abrirGuia(false); avisarLlave();
+  avisarLlave();
 })();
 $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 $('#deshacer').onclick=()=>{ if(!hist.length) return; irA(hist.pop()) };
