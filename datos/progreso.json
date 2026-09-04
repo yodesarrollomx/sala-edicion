@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-03 22:13",
+ "actualizado": "2026-09-04 08:37",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -98,14 +98,14 @@
     }
    ],
    "intento": {
-    "cuando": "18:22",
-    "corridas_sin_avanzar": 0,
+    "cuando": "07:47",
+    "corridas_sin_avanzar": 14,
     "ultimo_error": "RuntimeError: null"
    },
-   "atorada": false,
-   "vuelve_en_min": 586,
-   "dice": "Hoy avanzó hasta aquí y se acabó la cuota gratis de GPU. Queda 1 escena para la primera tanda de mañana; en cuanto salga, el video se arma solo.",
-   "corriendo": true
+   "atorada": true,
+   "vuelve_en_min": null,
+   "dice": "Faltan 1 escenas. La cuota gratis de GPU se agota y las corridas devuelven vacío (14 seguidas): avanza por tandas cuando reabre, normalmente al día siguiente.",
+   "corriendo": false
   }
  ]
 }
