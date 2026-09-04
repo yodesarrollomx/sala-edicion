@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-04 09:33",
+ "actualizado": "2026-09-04 09:45",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -57,12 +57,23 @@
    "porque": "corriendo en su horario"
   },
   {
+   "id": "mx.yodesarrollo.encargos",
+   "nombre": "Recados de la Sala",
+   "hace": "Recoge lo que pides con «Pedir nueva ronda» o «Enviar mensaje», te avisa en la Mac y deja escrito en la Sala que ya se tomó.",
+   "evita": "Que pidas una ronda y nadie se entere: antes el recado se quedaba dormido en el Sheet.",
+   "cuando": "cada 15 minutos",
+   "corrio": "hace 1 min",
+   "dijo": "sin encargos pendientes",
+   "salud": "bien",
+   "porque": "corriendo en su horario"
+  },
+  {
    "id": "mx.yodesarrollo.maquinas",
    "nombre": "Este reporte",
    "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 30 min",
+   "corrio": "hace 12 min",
    "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -84,7 +95,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 3 horas",
+   "corrio": "hace 4 horas",
    "dijo": "   · comprador-g2-fcf0ca",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -125,7 +136,7 @@
  ],
  "faltan": [],
  "resumen": {
-  "bien": 8,
+  "bien": 9,
   "duda": 3,
   "mal": 0
  }
