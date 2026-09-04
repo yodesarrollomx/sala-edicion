@@ -1,6 +1,6 @@
 {
  "_que_es": "Manifiesto de respaldo: el portal lo lee cuando el Sheet aún no está conectado. Cuando el GAS ya está en línea, esta copia queda de plan B.",
- "fecha": "2026-09-03",
+ "fecha": "2026-09-04",
  "dias": [
   "2026-08-01",
   "2026-08-04",
@@ -15,24 +15,11 @@
   "2026-08-30",
   "2026-08-31",
   "2026-09-02",
-  "2026-09-03"
+  "2026-09-03",
+  "2026-01-02",
+  "2026-01-03"
  ],
- "propuestas": [
-  {
-   "id": "comprador-g2-fcf0ca",
-   "titulo": "El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8)",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/comprador-g2/L1.png",
-    "laminas/comprador-g2/L2.png",
-    "laminas/comprador-g2/L3.png",
-    "laminas/comprador-g2/L4.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "origen": "rehecha-de comprador-g1-70ac76"
-  }
- ],
+ "propuestas": [],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -223,46 +210,7 @@
   }
  ],
  "decisiones": {
-  "propuestas": {
-   "comprador-guion-0166a8": {
-    "laminas": [
-     "si",
-     "si"
-    ],
-    "nota": ""
-   },
-   "publicar-vendo-construyo": {
-    "laminas": [
-     "si",
-     null
-    ],
-    "nota": ""
-   },
-   "comprador-g1-70ac76": {
-    "laminas": [
-     "si",
-     "si",
-     "si",
-     "no",
-     "si",
-     "no",
-     "no",
-     "no",
-     "si"
-    ],
-    "nota": "",
-    "notas": [
-     null,
-     null,
-     null,
-     "mmmm pudiera decirse mejor y que se entienda mas",
-     null,
-     "creo que se paraeemuchoa otra lamina y no expresa mucho lo que dice el texto la imagen",
-     "La imagen no cuadra con el texto",
-     "mmm revisa si se escuhca y cuadra mejor con la sintaxis decir el o es mejor ellos como enfrentandolos a muchos.. pero revisa bien toda la hsitoria a ver que textro queda mejor"
-    ]
-   }
-  }
+  "propuestas": {}
  },
  "historial": {
   "2026-08-01": {
@@ -1240,6 +1188,143 @@
     {
      "hora": "23:02",
      "evento": "Propuesta montada: El comprador ya sabe · las 9 láminas del guion que aprobaste (9 láminas)"
+    }
+   ]
+  },
+  "2026-09-03": {
+   "propuestas": [
+    {
+     "id": "comprador-g2-fcf0ca",
+     "titulo": "El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8)",
+     "tipo": "laminas",
+     "laminas": [
+      "laminas/comprador-g2/L1.png",
+      "laminas/comprador-g2/L2.png",
+      "laminas/comprador-g2/L3.png",
+      "laminas/comprador-g2/L4.png"
+     ],
+     "opciones": [],
+     "video": null,
+     "origen": "rehecha-de comprador-g1-70ac76"
+    }
+   ],
+   "produccion": [
+    {
+     "pieza": "El terreno que dijo que sí · el cuento (47 s)",
+     "estado": "publicada",
+     "detalle": "FB + IG (reel) · copy «los dos bandos» · liga única fb/ig-2026-08-04 · primer comentario puesto",
+     "fecha": "2026-08-04",
+     "enlace": "https://www.instagram.com/reel/DboskQogVy1/"
+    },
+    {
+     "pieza": "El terreno que dijo que sí · carrusel",
+     "estado": "publicada",
+     "detalle": "FB + IG · liga medible activa · 4 interacciones IG al 30-jul",
+     "fecha": "2026-07-27"
+    },
+    {
+     "pieza": "La Servilleta · láminas",
+     "estado": "rehacer",
+     "detalle": "quitar «EDICIÓN POR AURUM ARQUITECTOS»",
+     "fecha": "2026-07-29"
+    }
+   ],
+   "bitacora": [
+    {
+     "hora": "17:13",
+     "evento": "Tu revisión de anoche recogida: L3 y L4 tachadas — rehechas con más gente y líneas cortas (tu nota del texto)"
+    },
+    {
+     "hora": "17:13",
+     "evento": "L1, L2, L5, L6, L7 sin marcar: vuelven HOY una única vez; lo que no se marque hoy, muere"
+    },
+    {
+     "hora": "17:13",
+     "evento": "El cuento de Pub 1 sigue en la cancha (FB+IG): primer día de medición orgánica"
+    },
+    {
+     "hora": "10:37",
+     "evento": "Propuesta montada: El Apodo del Terreno · L4 «el baldío», L5 «inventan», L9 «Personalizado» (9 láminas)"
+    },
+    {
+     "hora": "10:38",
+     "evento": "Guion montado: ¿Vendo o construyo? (9 láminas, texto para tu visto bueno)"
+    },
+    {
+     "hora": "10:50",
+     "evento": "Propuesta montada: Escena 4 · el pivote rehecho · ¿toma A, B o C? (recomiendo la B) (3 láminas)"
+    },
+    {
+     "hora": "19:27",
+     "evento": "Montada la lista «Publicaciones fáciles de explicar» (7 ideas) + el corte con el cierre corregido"
+    },
+    {
+     "hora": "21:47",
+     "evento": "Registro de peticiones al día: 16 en total, 1 en curso (la Sala cortada)"
+    },
+    {
+     "hora": "21:48",
+     "evento": "Montada la regla de la voz (¿lee la placa o la complementa?) para cerrarla en la Sala"
+    },
+    {
+     "hora": "22:39",
+     "evento": "Corregido: lo ya decidido deja de volver a la mesa (un eje se cierra con un sí)"
+    },
+    {
+     "hora": "10:48",
+     "evento": "Cerrado el ciclo: las decisiones ya viajan al día vivo; el relevo no vuelve a montar lo decidido"
+    },
+    {
+     "hora": "11:12",
+     "evento": "Motor afinado: respaldo espejo + reintentos + unión de marcas; el peor camino ya sirve la mesa correcta"
+    },
+    {
+     "hora": "11:54",
+     "evento": "Mesa reducida a 2 (solo lo nunca decidido) + corte de pantalla resuelto (centrado seguro) + iframe fresco"
+    },
+    {
+     "hora": "12:17",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste) (11 láminas)"
+    },
+    {
+     "hora": "13:13",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste) (11 láminas)"
+    },
+    {
+     "hora": "13:14",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (dirección + 9 láminas del guion que aprobaste) (11 láminas)"
+    },
+    {
+     "hora": "14:35",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · tira v2 — revisión Hormozi aplicada a tus 4 notas (11 láminas)"
+    },
+    {
+     "hora": "15:05",
+     "evento": "Propuesta montada: Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado) (4 láminas)"
+    },
+    {
+     "hora": "08:40",
+     "evento": "Cosechada tu revisión del 31-ago (se había quedado sin leer) · montadas 2 rehechas + dirección"
+    },
+    {
+     "hora": "13:01",
+     "evento": "Sala 2.1 en vivo: guardado visible, editar/reabrir, zoom, contexto, pedir /sala, 3 pantallas; puente de sesión al dominio nuevo"
+    },
+    {
+     "hora": "18:44",
+     "evento": "Sala 2.1: puente en ventana principal, Ampliar fuera de la imagen, y el borrador del aparato manda sobre el Sheet viejo (probado)"
+    },
+    {
+     "hora": "21:21",
+     "evento": "Propuesta montada: El comprador ya sabe · el guion (2 hojas) — ¿lo produzco? (2 láminas)"
+    },
+    {
+     "hora": "23:02",
+     "evento": "Propuesta montada: El comprador ya sabe · las 9 láminas del guion que aprobaste (9 láminas)"
+    },
+    {
+     "hora": "09:10",
+     "evento": "Propuesta montada: El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8) (4 láminas)"
     }
    ]
   }
