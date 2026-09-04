@@ -163,7 +163,7 @@ html.embed .app{padding-top:8px}
 .sello.ver{opacity:1;transform:rotate(-8deg) scale(1)} .sello.no.ver{transform:rotate(8deg) scale(1)}
 
 /* ── tira completa bajo la carta ── */
-.tira{margin-top:10px}
+.tira{margin-top:6px;padding-bottom:4px}
 .tira-cab{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--guia);margin-bottom:6px}
 .tira-cab b{color:var(--tinta);font-weight:600}
 .guia-b{margin-left:auto;border:1px solid var(--linea2);background:var(--tarjeta);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:600;min-height:32px}
@@ -387,7 +387,6 @@ html.cargando #actualizando{display:flex}
       <button class="verresp" id="verresp" hidden>ver mis respuestas</button>
       <div class="ctx" id="ctx"></div>
       <div class="zona" id="zona"></div>
-      <div class="tira" id="tira" hidden></div>
       <div class="mando-wrap" id="mandoWrap" hidden>
         <div class="mando" id="mando">
           <button class="bNo" id="btnNo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Pedir cambio</button>
@@ -396,6 +395,7 @@ html.cargando #actualizando{display:flex}
         <button class="deshacer" id="deshacer" hidden>↩ Deshacer la última</button>
         <p class="pista-teclas" id="pistaTeclas">Teclas: ← Pedir cambio · → Aprobar</p>
       </div>
+      <div class="tira" id="tira" hidden></div>
     </div>
     <aside class="panel-lateral" id="panel"></aside>
   </section>
