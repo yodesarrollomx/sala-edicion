@@ -1,0 +1,104 @@
+{
+ "pieza": "El comprador ya sabe",
+ "promesa": "Que el dueño sienta que está negociando a ciegas contra alguien que ya midió su terreno — y que la única salida digna es medirlo él primero.",
+ "version": "v2",
+ "de": "comprador-g1-70ac76",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/comprador-g1/L1.png",
+   "dice": "El que te quiere comprar / no llega con una corazonada.",
+   "ve": "Una camioneta blanca estacionada frente a un terreno baldío, un hombre de saco ligero bajando con un folder",
+   "entiende": "a mí ya me visitaron así",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "nota_previa": ""
+  },
+  {
+   "n": 2,
+   "src": "laminas/comprador-g1/L2.png",
+   "dice": "Llega con tu terreno / ya medido.",
+   "ve": "El mismo hombre en la cerca con una tableta: un modelo 3D de un edificio montado sobre ese lote",
+   "entiende": "sabe algo de mi propiedad que yo no",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "nota_previa": ""
+  },
+  {
+   "n": 3,
+   "src": "laminas/comprador-g1/L3.png",
+   "dice": "Sabe cuántos m² permite la norma / y qué giro le deja más.",
+   "ve": "Primer plano de la tableta: el volumen del edificio con cotas y una tabla de usos",
+   "entiende": "tiene el dato exacto",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "nota_previa": ""
+  },
+  {
+   "n": 4,
+   "src": "laminas/comprador-g1/L4.png",
+   "dice": "Y su oferta es / ese cálculo, menos su ganancia.",
+   "ve": "Mesa de negociación: el folder abierto entre dos personas, la mano del comprador sobre una hoja con un solo número tachado",
+   "entiende": "la oferta viene con descuento escondido",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "mmmm pudiera decirse mejor y que se entienda más"
+  },
+  {
+   "n": 5,
+   "src": "laminas/comprador-g1/L5.png",
+   "dice": "Tú no tienes que adivinarlo. / Tienes que medirlo primero.",
+   "ve": "El dueño solo en su terreno, con el plano desenrollado sobre el cofre de su carro, luz de tarde",
+   "entiende": "hay una jugada antes de contestar",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "nota_previa": ""
+  },
+  {
+   "n": 6,
+   "src": "laminas/comprador-g1/L6.png",
+   "dice": "El Plan de Potencial te dice / lo que él ya sabe de tu terreno.",
+   "ve": "La hoja del Plan sobre la mesa: m², giros y pendientes con la ciudad, una mano del dueño señalando",
+   "entiende": "puedo tener su mismo dato",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "creo que se parece mucho a otra lámina y no expresa mucho lo que dice el texto la imagen"
+  },
+  {
+   "n": 7,
+   "src": "laminas/comprador-g1/L7.png",
+   "dice": "Con eso, su oferta deja de ser un misterio / y se vuelve una comparación.",
+   "ve": "Dos hojas lado a lado: la oferta y el Plan, la mano del dueño entre las dos",
+   "entiende": "ahora comparo, no adivino",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto"
+  },
+  {
+   "n": 8,
+   "src": "laminas/comprador-g1/L8.png",
+   "dice": "Vender puede ser la mejor decisión. / Pero que sea tuya, no de él.",
+   "ve": "Pareja media alta de espaldas, el terreno y la ciudad al fondo, él con el Plan bajo el brazo",
+   "entiende": "no me quitan la decisión",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "mmm revisa si se escucha y cuadra mejor con la sintaxis decir él o es mejor ellos"
+  },
+  {
+   "n": 9,
+   "src": "laminas/comprador-g1/L9.png",
+   "dice": "Pídele a tu terreno su / Plan de Potencial Personalizado.",
+   "ve": "Placa de cierre sobre el terreno al atardecer",
+   "entiende": "ese es el paso",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "nota_previa": ""
+  }
+ ],
+ "decidir": [
+  4,
+  6,
+  7,
+  8
+ ]
+}
