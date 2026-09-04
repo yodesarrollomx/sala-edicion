@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-04 08:38",
+ "actualizado": "2026-09-04 08:40",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -21,7 +21,7 @@
     },
     {
      "que": "Video armado",
-     "hechos": 0,
+     "hechos": 1,
      "total": 1
     }
    ],

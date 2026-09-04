@@ -19,7 +19,30 @@
   "2026-01-02",
   "2026-01-03"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "apodo-video-4sep",
+   "titulo": "El Apodo del Terreno · el video está armado (42 s) — ¿sale así?",
+   "laminas": [],
+   "video": "video/apodo/REEL_9x16.mp4",
+   "origen": "7 escenas + 8 voces sobre el guion que aprobaste 9/9 el 27-ago",
+   "tipo": "eje",
+   "opciones": [
+    {
+     "titulo": "Sale así",
+     "texto": "Lo publico como está, con el copy y la liga medible. Ojo honesto: la escena 7 (el cierre) NO es animación de IA — la cuota de GPU lleva dos días cerrada y la resolví con un acercamiento lento sobre la lámina. Las otras seis sí están animadas."
+    },
+    {
+     "titulo": "Sale, pero rehaz la escena 7",
+     "texto": "Publico cuando la cuota reabra y la séptima quede animada como las demás. Puede tardar un día."
+    },
+    {
+     "titulo": "Enséñamelo otra vez mañana",
+     "texto": "Lo dejo en la mesa sin publicar y te lo vuelvo a poner con las métricas de las otras piezas al lado."
+    }
+   ]
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",

@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-03 22:13",
+ "actualizado": "2026-09-04 08:40",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -17,10 +17,10 @@
   },
   {
    "pieza": "El Apodo del Terreno",
-   "estado": "en camino",
+   "estado": "te espera",
    "etapa": "video",
-   "siguiente": "Video: guion y 8 voces listas, 6 de 7 escenas animadas. La última espera la cuota de GPU de mañana; al salir se arma solo. Puedes ver y oír lo que ya salió.",
-   "espera": "yo"
+   "siguiente": "El video está armado (42 s, 7 escenas y 8 voces). Está en tu mesa: dime si sale así o si rehago la escena 7 cuando reabra la cuota de GPU.",
+   "espera": "tú"
   },
   {
    "pieza": "El comprador ya sabe",
