@@ -132,7 +132,9 @@ html.embed .app{padding-top:8px}
 .lienzo{flex:1 1 0;position:relative;background:#141210;display:grid;place-items:center;min-height:90px;overflow:hidden}
 .lienzo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;opacity:0;transition:opacity .3s}
 .lienzo img.lista{opacity:1}
-.lienzo video{width:100%;max-height:100%;background:#000;position:relative}
+.lienzo video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.lienzo.conVideo{flex:1 1 auto;min-height:190px}
+.abrir-video{display:block;text-align:center;font-size:12.5px;color:var(--oro);text-decoration:none;padding:6px 0 0}
 .cargando{position:absolute;inset:0;display:grid;place-items:center;color:#c9c2b4;font-size:13px;gap:10px;padding:20px;text-align:center;
   background:linear-gradient(110deg,#141210 30%,#1f1c18 50%,#141210 70%);background-size:200% 100%;animation:brilla 1.4s infinite}
 @keyframes brilla{to{background-position:-200% 0}}
@@ -707,11 +709,20 @@ async function subir(){
         acceso de editor, o entra con la liga de editor si la tienes (Ajustes → Entrar).</p>
         <button class="listo" onclick="cerrarCapa('degradado');irVista('aj')">Ir a Ajustes</button>`,'degradado');
       _subiendo=false; return }
+    if(j&&j.error){                                  // el Sheet contestó y dijo que no
+      guard.ultimoError=String(j.error);
+      pintarEstado('rechazado','No se guardó: '+String(j.error).slice(0,40));
+      if(/clave|credencial/i.test(j.error)) hoja(`<h3>El Sheet no reconoció tu entrada</h3>
+        <p>Lo que marcaste <b>no se guardó</b>. Está a salvo en este aparato y sube en cuanto entres bien.</p>
+        <p style="color:var(--gris);font-size:13px">Dijo: «${esc(j.error)}»</p>
+        <button class="listo" onclick="cerrarCapa('malaclave');abrirEntrar()">Entrar otra vez</button>`,'malaclave');
+      encolar(envio); _subiendo=false; return }
     if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||'el Sheet no contestó');
     guard.env={id:envio.envio_id,hora:hora()}; guardarBorrador();
     localStorage.setItem('sala_cola',JSON.stringify(leerLS('sala_cola',[]).filter(x=>x.fecha!==fecha)));
     pintarEstado('subido','Guardado ✓ '+guard.env.hora);
-  }catch(e){ encolar(envio); pintarEstado('cola','Se guarda al volver la señal') }
+  }catch(e){ guard.ultimoError=String(e&&e.message||e);
+    encolar(envio); pintarEstado('cola','Sin conexión con el Sheet · se guarda al volver') }
   _subiendo=false; if(_pendiente) subir();
 }
 async function subirCola(){
@@ -846,9 +857,10 @@ function pintarCartas(){
       dobleToque(el.querySelector('.lienzo'),()=>abrirZoom(src));
     }else{
       const ops=(x.p.opciones||[]).map((o,j)=>`<div class="op"><h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Elegir ésta</button></div>`).join('');
-      el.innerHTML=`${x.p.video?`<div class="lienzo" style="flex:0 0 38%"><video src="${esc(x.p.video)}" controls playsinline preload="metadata"></video></div>`:''}
+      el.innerHTML=`${x.p.video?`<div class="lienzo conVideo"><video src="${esc(x.p.video)}" controls playsinline preload="metadata" poster=""></video></div>`:''}
         <div class="opciones">${ops}<button class="ning" data-ning>Ninguna — dejo una nota</button></div>
-        <div class="pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · elige una opción</span>${luegoDe(x)}</div>`;
+        <div class="pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · elige una opción</span>
+          ${x.p.video?`<a class="abrir-video" href="${esc(x.p.video)}" target="_blank" rel="noopener">Abrirlo en pantalla completa ↗</a>`:''}${luegoDe(x)}</div>`;
       el.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{ dec[x.pid].laminas=dec[x.pid].laminas.map(()=>''); dec[x.pid].laminas[+b.dataset.op]='si'; dec[x.pid]._eje='si'; avanzar('si') });
       el.querySelector('[data-ning]').onclick=()=>pedirNota(nota=>{ dec[x.pid].laminas=dec[x.pid].laminas.map(()=>'no'); dec[x.pid].nota=nota; dec[x.pid]._eje='no'; avanzar('no') });
     }
@@ -1208,6 +1220,7 @@ function pintarAjustes(){
     <div class="bloque-aj"><h4>Tu acceso</h4>
       <span class="rolchip ${DECIDE()?'':'lectura'}">${DECIDE()?'Decides tú':'Solo lectura'}</span>
       <p>${ENTRADO()?(DECIDE()?'Tu entrada está activa: lo que decides se guarda en el Sheet.':'Puedes ver la mesa y las publicaciones, pero no decidir. Si necesitas decidir, pídele a Alejandro que te dé acceso de editor (él lo da desde la matriz de Accesos del YOD OS).'):'No has entrado. Lo que decidas se guarda en este aparato y sube cuando entres.'}</p>
+      ${guard.ultimoError?`<p style="font-size:13px;color:var(--no)">Último intento de guardado: «${esc(guard.ultimoError)}»</p>`:''}
       ${ENTRADO()?`<p style="font-size:13px;color:var(--guia)">Entraste con ${PORLLAVE_OS()?'<b>tu cuenta del YOD OS</b> — la misma llave para todo':'la liga de la Sala'}.</p>`:''}
       ${ENTRADO()?'':`<button class="listo" style="margin-top:0" id="ajEntrar">Entrar</button>`}</div>
     <div class="bloque-aj"><h4>Cómo se usa</h4><ol>${DECIDE()?`
