@@ -1,0 +1,95 @@
+{
+ "actualizado": "2026-09-03 22:06",
+ "piezas": [
+  {
+   "pieza": "El Apodo del Terreno",
+   "pasos": [
+    {
+     "que": "Guion oficial",
+     "hechos": 1,
+     "total": 1
+    },
+    {
+     "que": "Voces grabadas",
+     "hechos": 8,
+     "total": 8
+    },
+    {
+     "que": "Escenas animadas",
+     "hechos": 3,
+     "total": 7
+    },
+    {
+     "que": "Video armado",
+     "hechos": 0,
+     "total": 1
+    }
+   ],
+   "muestras": [
+    {
+     "que": "Escena 1 animada",
+     "tipo": "video",
+     "src": "muestras/apodo/S1_animado.mp4"
+    },
+    {
+     "que": "Escena 2 animada",
+     "tipo": "video",
+     "src": "muestras/apodo/S2_animado.mp4"
+    },
+    {
+     "que": "Escena 3 animada",
+     "tipo": "video",
+     "src": "muestras/apodo/S3_animado.mp4"
+    },
+    {
+     "que": "Voz S1",
+     "tipo": "audio",
+     "src": "muestras/apodo/S1.wav"
+    },
+    {
+     "que": "Voz S2",
+     "tipo": "audio",
+     "src": "muestras/apodo/S2.wav"
+    },
+    {
+     "que": "Voz S3",
+     "tipo": "audio",
+     "src": "muestras/apodo/S3.wav"
+    },
+    {
+     "que": "Voz S4",
+     "tipo": "audio",
+     "src": "muestras/apodo/S4.wav"
+    },
+    {
+     "que": "Voz S5",
+     "tipo": "audio",
+     "src": "muestras/apodo/S5.wav"
+    },
+    {
+     "que": "Voz S6",
+     "tipo": "audio",
+     "src": "muestras/apodo/S6.wav"
+    },
+    {
+     "que": "Voz S7",
+     "tipo": "audio",
+     "src": "muestras/apodo/S7.wav"
+    },
+    {
+     "que": "Voz S7b",
+     "tipo": "audio",
+     "src": "muestras/apodo/S7b.wav"
+    }
+   ],
+   "intento": {
+    "cuando": "18:22",
+    "corridas_sin_avanzar": 9,
+    "ultimo_error": "RuntimeError: null"
+   },
+   "atorada": true,
+   "vuelve_en_min": null,
+   "dice": "Atorada: la máquina que anima las escenas lleva 9 corridas devolviendo error. No te doy hora hasta destrabarla."
+  }
+ ]
+}

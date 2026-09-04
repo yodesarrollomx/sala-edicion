@@ -307,6 +307,19 @@ html.embed .app{padding-top:8px}
 .regla-c p{margin:0;font-size:14.5px} .regla-c small{display:block;margin-top:5px;color:var(--guia);font-size:12.5px}
 .fuente{font-size:11px;color:var(--guia);margin-top:6px;opacity:.85}
 
+/* ── avance real ── */
+.avance{margin-top:10px;border:1px solid var(--linea);border-radius:12px;padding:11px 12px;background:var(--fondo)}
+.avance.mal{border-color:var(--no)}
+.avance h5{margin:0 0 8px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--guia);font-weight:600}
+.pa{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:12.5px}
+.pa span{flex:0 0 40%;color:var(--gris)}
+.pa i{flex:1;height:6px;border-radius:99px;background:var(--linea);display:block;overflow:hidden}
+.pa i b{display:block;height:100%;background:var(--si)}
+.pa small{color:var(--guia);font-variant-numeric:tabular-nums}
+.avance .dice{margin:8px 0 0;font-size:13px}
+.avance.mal .dice{color:var(--no)}
+.avance .int{margin:4px 0 0;font-size:11.5px;color:var(--guia)}
+
 /* ── Ajustes ── */
 .bloque-aj{background:var(--tarjeta);border:1px solid var(--linea);border-radius:18px;padding:16px 18px;margin-bottom:14px}
 .bloque-aj p{margin:0 0 10px;color:var(--gris);font-size:14.5px}
@@ -919,12 +932,36 @@ function abrirZoom(src){
 }
 
 /* ══ final / vacío ══ */
-let PZ={};
+let PZ={}, PROG={};
+function enTiempo(min){
+  if(min==null) return '';
+  if(min<60) return `vuelve en ~${min} min`;
+  const h=Math.round(min/60); return h<24?`vuelve en ~${h} h`:`vuelve mañana`;
+}
+function avanceHTML(nombre){
+  const g=PROG[nombre]; if(!g) return '';
+  const pasos=(g.pasos||[]).map(x=>{ const pct=x.total?Math.round(100*x.hechos/x.total):0;
+    return `<div class="pa"><span>${esc(x.que)}</span><i><b style="width:${pct}%"></b></i><small>${x.hechos}/${x.total}</small></div>` }).join('');
+  const m=(g.muestras||[]);
+  return `<div class="avance ${g.atorada?'mal':''}">
+    <h5>Avance real${g.actualizado?` · al ${esc(g.actualizado)}`:''}</h5>${pasos}
+    <p class="dice">${esc(g.dice||'')}${g.atorada?'':` · <b>${esc(enTiempo(g.vuelve_en_min))}</b>`}</p>
+    ${g.intento&&g.intento.cuando?`<p class="int">Último intento ${esc(g.intento.cuando)}${g.intento.corridas_sin_avanzar?` · ${g.intento.corridas_sin_avanzar} corridas sin avanzar`:''}${g.intento.ultimo_error?` · «${esc(g.intento.ultimo_error)}»`:''}</p>`:''}
+    ${m.length?`<button class="secund" style="margin-top:8px" onclick="verMuestras('${esc(nombre)}')">Ver lo que ya salió (${m.length})</button>`:''}</div>`;
+}
+function verMuestras(nombre){
+  const g=PROG[nombre]; if(!g) return;
+  hoja(`<h3>Lo que ya salió</h3><p>${esc(nombre)} · puedes verlo y oírlo aunque el video no esté armado.</p>
+    ${(g.muestras||[]).map(x=>`<div style="margin-bottom:14px"><p style="margin:0 0 6px;font-weight:600;font-size:14px">${esc(x.que)}</p>
+      ${x.tipo==='video'?`<video src="${esc(x.src)}" controls playsinline preload="none" style="width:100%;border-radius:12px;background:#000"></video>`
+                        :`<audio src="${esc(x.src)}" controls preload="none" style="width:100%"></audio>`}</div>`).join('')}`,'muestras');
+}
 function enCaminoHTML(conBoton){
   const lista=Object.values(PZ).filter(p=>p.estado!=='publicada');
   const items=lista.map(p=>{ const k=p.espera==='tú'?pasoPendienteDe(p.pieza):-1;
     return `<div class="enc"><i style="background:${p.espera==='tú'?'var(--no)':'var(--oro)'}"></i><div><b>${esc(p.pieza)}</b><small>${esc(p.siguiente||'')}</small>
-      ${p.espera==='tú'?(k>=0&&conBoton&&DECIDE()?`<button class="ir" onclick="irADecidir(${k})">Ir a decidir →</button>`:`<small style="color:var(--no);font-weight:600">Espera tu decisión</small>`):`<small style="color:var(--guia)">Lo trae Producción</small>`}</div></div>` }).join('');
+      ${p.espera==='tú'?(k>=0&&conBoton&&DECIDE()?`<button class="ir" onclick="irADecidir(${k})">Ir a decidir →</button>`:`<small style="color:var(--no);font-weight:600">Espera tu decisión</small>`):`<small style="color:var(--guia)">Lo trae Producción</small>`}
+      ${conBoton?avanceHTML(p.pieza):''}</div></div>` }).join('');
   const act=(Object.values(PZ)[0]||{}).actualizado;
   return items?`<div class="encamino"><h4>En camino${act?' · al '+esc(act):''}</h4>${items}</div>`:'';
 }
@@ -990,6 +1027,8 @@ function pintarPanelMira(){
 let EXP={}, METR=null;
 async function cargarExpedientes(){
   try{ METR=await (await fetch('datos/metricas.json?v='+Date.now())).json() }catch(e){}
+  try{ const g=await (await fetch('datos/progreso.json?v='+Date.now())).json();
+    (g.piezas||[]).forEach(p=>{ PROG[p.pieza]={...p,actualizado:g.actualizado} }) }catch(e){}
   try{ const z=await (await fetch('datos/piezas.json?v='+Date.now())).json();
     (z.piezas||[]).forEach(p=>{ PZ[p.pieza]={...p,actualizado:z.actualizado} }) }catch(e){}
   let idxE=[]; try{ idxE=await (await fetch('datos/expedientes/index.json?v='+Date.now())).json() }catch(e){}
@@ -1039,6 +1078,7 @@ function abrirExp(nombre){
   const d=$('#expIn'); $('#pubLista').hidden=true; d.hidden=false;
   d.innerHTML=`<div class="exp-in"><div class="exp-top"><button class="volver" id="expVolver">${ICO_VOLVER}Volver</button><h2>${esc(nombre)}</h2><span class="chip-est ${estCls(e.estado)||'idea'}">${estTxt(e.estado)}</span></div>
     ${esperaHTML(nombre)}
+    ${avanceHTML(nombre)}
     ${resultado?`<div class="result">${resultado.map(r=>`<div><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join('')}</div>`:''}
     ${e.post?`<a class="verpost" href="${esc(e.post)}" target="_blank" rel="noopener">Ver la publicación ↗</a>`:''}
     ${(e.versiones||[]).length?`<div class="carrete">${e.versiones.map(v=>`<div class="ver ${v.viva?'viva':''}"><div class="mini2"><span class="tg">${v.viva?'LA BUENA':esc((v.tag||'').toUpperCase())}</span></div><small>${esc(v.fecha||'')}</small></div>`).join('')}</div>`:''}
