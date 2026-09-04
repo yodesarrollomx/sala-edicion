@@ -318,6 +318,7 @@ html.embed .app{padding-top:8px}
 .pa i b{display:block;height:100%;background:var(--si)}
 .pa small{color:var(--guia);font-variant-numeric:tabular-nums}
 .avance .dice{margin:8px 0 0;font-size:13px}
+.pa-nota{margin:-2px 0 6px;font-size:11.5px;color:var(--oro);padding-left:calc(40% + 8px)}
 .avance.mal .dice{color:var(--no)}
 .avance .int{margin:4px 0 0;font-size:11.5px;color:var(--guia)}
 
@@ -975,7 +976,8 @@ function enTiempo(min){
 function avanceHTML(nombre){
   const g=PROG[nombre]; if(!g) return '';
   const pasos=(g.pasos||[]).map(x=>{ const pct=x.total?Math.round(100*x.hechos/x.total):0;
-    return `<div class="pa"><span>${esc(x.que)}</span><i><b style="width:${pct}%"></b></i><small>${x.hechos}/${x.total}</small></div>` }).join('');
+    return `<div class="pa"><span>${esc(x.que)}</span><i><b style="width:${pct}%"></b></i><small>${x.hechos}/${x.total}</small></div>`+
+      (x.nota?`<p class="pa-nota">${esc(x.nota)}</p>`:'') }).join('');
   const m=(g.muestras||[]);
   return `<div class="avance ${g.atorada?'mal':''}">
     <h5>Avance real${g.actualizado?` · al ${esc(g.actualizado)}`:''}</h5>${pasos}
