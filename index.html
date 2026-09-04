@@ -396,7 +396,7 @@ html.cargando #actualizando{display:flex}
       <p class="fecha" id="fechaTxt">…</p>
       <h1 id="titulo">Abriendo la sala…</h1>
       <p class="sub" id="subt"></p>
-      <div class="fila-estado"><span class="estado" id="estado" role="status" aria-live="polite"><i></i><span>Preparando…</span></span><button class="btn-entrar" id="btnEntrar" hidden>Entrar</button></div>
+      <div class="fila-estado"><span class="estado" id="estado" role="status" aria-live="polite"><i></i><span>Preparando…</span></span><button class="btn-entrar" id="btnEntrar" hidden>Entrar</button><button class="btn-entrar" id="btnReintentar" hidden>Reintentar ahora</button></div>
     </div>
     <div class="mazo">
       <div class="bolas" id="bolas" aria-hidden="true"></div>
@@ -659,8 +659,10 @@ const cuentas=()=>{
 function pintarEstado(tipo,texto){
   guard.tipo=tipo; guard.texto=texto;
   const e=$('#estado'); e.className='estado '+tipo; e.querySelector('span').textContent=texto;
+  const fg=$('#finGuardado'); if(fg) fg.textContent=texto;
   const p=$('#pEstado'); if(p){ p.className='estado '+tipo; p.querySelector('span').textContent=texto }
   $('#btnEntrar').hidden=ENTRADO();
+  const br=$('#btnReintentar'); if(br) br.hidden=!(tipo==='cola'||tipo==='sin'&&leerLS('sala_cola',[]).length);
   avisarPuerta('aj',!ENTRADO());
 }
 function estadoInicial(){
@@ -757,7 +759,7 @@ function pintarTira(x){
   const src=x.tipo==='lamina'?x.p.laminas[x.i]:'';
   const act=laminaTira(t,src,nLamina(x));
   c.hidden=false;
-  c.innerHTML=`<div class="tira-cab"><b>${esc(t.pieza)}</b> · tira completa de ${t.laminas.length}<button class="guia-b" id="verGuia">Ver la guía</button></div>
+  c.innerHTML=`<div class="tira-cab"><b>${esc(t.pieza)}</b> · tira completa de ${t.laminas.length}<button class="guia-b" id="verGuia">Ver el guion</button></div>
     <div class="tira-fila">${t.laminas.map(l=>`<button class="tl ${l.estado==='aprobada'?'ok':''} ${act&&l.n===act.n?'aqui':''}" data-n="${l.n}" aria-label="Lámina ${l.n}">
       <img src="${esc(ligera(l.src))}" alt="" loading="lazy"><span>${l.n}${l.estado==='aprobada'?' ✓':''}</span></button>`).join('')}</div>`;
   c.querySelectorAll('.tl').forEach(b=>b.onclick=()=>verLamina(t,+b.dataset.n));
@@ -773,7 +775,7 @@ function verLamina(t,n){
     ${notaDeLamina(t,l)?`<p style="color:var(--no)"><b>La nota:</b> «${esc(notaDeLamina(t,l))}»</p>`:''}`,'lamina'+n);
 }
 function verGuia(t){
-  hoja(`<h3>La guía de la tira</h3><p>${esc(t.promesa||t.pieza)}</p>
+  hoja(`<h3>El guion de la publicación</h3><p>${esc(t.promesa||t.pieza)}</p>
     <div class="lista-r">${(t.laminas||[]).map(l=>`<div class="fila-r"><img class="th" src="${esc(ligera(l.src))}" alt="" loading="lazy">
       <div class="txt"><b>${l.n}. ${esc((l.dice||'').replace(' / ',' · '))}</b><small>${esc(l.ve||'')}</small>${notaDeLamina(t,l)?`<em>nota: «${esc(notaDeLamina(t,l))}»</em>`:''}</div>
       <div class="acc"><span class="chipm ${l.estado==='aprobada'?'si':'pend'}">${l.estado==='aprobada'?'Aprobada':'Se rehízo'}</span></div></div>`).join('')}</div>`,'guia-tira');
@@ -850,7 +852,9 @@ function pintarCartas(){
   }
   pasos.slice(idx+1,idx+3).forEach(x=>{ if(x.tipo==='lamina'){ const im=new Image(); im.src=ligera(x.p.laminas[x.i]) } });
   mandoDecidir();
-  $('#mandoWrap').hidden=pasos[idx].tipo!=='lamina';
+  const esLam=pasos[idx].tipo==='lamina';
+  $('#mando').hidden=!esLam;                 // en una carta de opciones se elige arriba…
+  $('#mandoWrap').hidden=!esLam&&!hist.length;   // …pero «Deshacer» sigue disponible
   $('#deshacer').hidden=hist.length===0; $('#pistaTeclas').hidden=false;
   pintarCtx(pasos[idx]); pintarBolas(); pintarPanel(); pintarTira(pasos[idx]);   // la tira sigue a la carta
 }
@@ -911,7 +915,13 @@ function pedirNota(cb,inicial){
     <button class="listo" id="notaOk">Enviar a Producción</button>`,'nota');
   const ta=velo.querySelector('#notaT');
   velo.querySelectorAll('.rapidas button').forEach(b=>b.onclick=()=>{ta.value=(ta.value?ta.value+'. ':'')+b.dataset.r;ta.focus()});
-  velo.querySelector('#notaOk').onclick=()=>{const n=ta.value.trim();cerrarCapa('nota');cb(n)};
+  velo.querySelector('#notaOk').onclick=()=>{
+    const n=ta.value.trim();
+    if(!n){ ta.focus(); ta.style.borderColor='var(--no)';
+      let av=velo.querySelector('.av-nota'); if(!av){ av=document.createElement('p'); av.className='av-nota';
+        av.style.cssText='margin:8px 0 0;color:var(--no);font-size:13.5px'; ta.after(av) }
+      av.textContent='Sin una línea, Producción no sabe qué cambiar. Escribe qué quieres ver.'; return }
+    cerrarCapa('nota'); cb(n) };
   setTimeout(()=>ta.focus(),60);
 }
 function hoja(html,id){
@@ -937,7 +947,7 @@ function filasRespuestas(compacto){
   return {hoyF,lockF};
 }
 function conSeguro(b,fn){ // primer toque pregunta, segundo ejecuta; se olvida a los 4 s
-  b.onclick=()=>{ if(b.dataset.seguro){ fn(); return } b.dataset.seguro='1'; const t=b.textContent; b.textContent='¿Seguro? Sí'; b.classList.add('seguro');
+  b.onclick=()=>{ if(b.dataset.seguro){ fn(); return } b.dataset.seguro='1'; const t=b.textContent; b.textContent='Sí, borrar mi respuesta'; b.classList.add('seguro');
     setTimeout(()=>{ if(b.isConnected){ delete b.dataset.seguro; b.textContent=t; b.classList.remove('seguro') } },4000) };
 }
 function abrirRespuestas(){
@@ -1051,7 +1061,8 @@ function pintarFin(){
   const c=cuentas(); $('#titulo').textContent='Listo por hoy'; $('#subt').textContent=''; $('#mandoWrap').hidden=true; $('#bolas').innerHTML=''; pintarCtx(null);
   const enCam=Object.values(PZ).filter(p=>p.estado!=='publicada').length;
   $('#zona').innerHTML=`<div class="fin"><div class="palomon">${ICO_CHECK}</div>
-    <h2>${c.si} aprobada${c.si===1?'':'s'} · ${c.no} con cambio${c.no===1?'':'s'}</h2><p>Las aprobadas quedan listas.${c.no?' Las de cambio las rehace Producción con tus notas y vuelven aquí.':''}</p>
+    <h2>${c.si} aprobada${c.si===1?'':'s'} · ${c.no} con cambio${c.no===1?'':'s'}</h2>
+    <p id="finGuardado" class="nota-pie" style="margin-top:-2px">${esc(guard.texto||'')}</p><p>Las aprobadas quedan listas.${c.no?' Las de cambio las rehace Producción con tus notas y vuelven aquí.':''}</p>
     <div class="resumen"><div class="rbox si"><b>${c.si}</b><span>aprobadas</span></div><div class="rbox no"><b>${c.no}</b><span>con cambios</span></div></div>
     <button class="secund" id="finCambiar">Cambiar alguna respuesta</button>${enCam?`<button class="secund" onclick="irVista('pub')">Ver publicaciones</button>`:''}</div>`;
   $('#finCambiar').onclick=abrirRespuestas; $('#verresp').hidden=false;
@@ -1185,6 +1196,7 @@ function pintarAjustes(){
       ${ENTRADO()?`<p style="font-size:13px;color:var(--guia)">Entraste con ${PORLLAVE_OS()?'<b>tu cuenta del YOD OS</b> — la misma llave para todo':'la liga de la Sala'}.</p>`:''}
       ${ENTRADO()?'':`<button class="listo" style="margin-top:0" id="ajEntrar">Entrar</button>`}</div>
     <div class="bloque-aj"><h4>Cómo se usa</h4><ol>${DECIDE()?`
+      <li><b>Producción es la máquina, no una persona.</b> Es el sistema que arma láminas, voces y videos con lo que tú decides; corre en la Mac de Alejandro.</li>
       <li><b>Abre «Hoy».</b> Si dice «Faltan N decisiones», hay trabajo para ti. Si dice «Nada pendiente», cierra.</li>
       <li><b>Una carta a la vez.</b> Aprobar la deja lista. Pedir cambio te pide una línea: escribe lo que quieres ver, no lo que no te gustó.</li>
       <li><b>Todo se guarda solo.</b> La píldora de arriba dice «Guardado ✓» cuando ya subió. Si dice «sin señal», no repitas: sube sola.</li>
@@ -1194,12 +1206,13 @@ function pintarAjustes(){
       <li><b>Recorre</b> con Anterior y Siguiente; «Ampliar» abre la lámina en grande.</li>
       <li><b>«Publicaciones»</b> muestra qué trae Producción en camino y la historia de cada pieza.</li>
       <li><b>Nada se guarda</b> desde tu acceso: es de solo lectura.</li>`}</ol>
-      <button class="secund" id="ajGuia">Ver la guía otra vez</button></div>
+      <button class="secund" id="ajGuia">Ver la bienvenida otra vez</button></div>
     ${DECIDE()?`<div class="bloque-aj"><h4>Producción</h4>
       <p>Un mensaje para el equipo (una idea, una queja, un encargo). Lo lee en la próxima ronda.</p>
       <textarea id="ajMsg" placeholder="Escribe aquí…"></textarea>
       <button class="secund" id="ajEnviar">Enviar mensaje</button>
-      <button class="listo" id="ajRonda">Pedir nueva ronda ahora</button>
+      <button class="listo" id="ajRonda">Pedir que produzcan ya</button>
+      <p style="margin:6px 0 0;font-size:12.5px;color:var(--guia)">Deja un recado con la hora. No produce en el momento: alguien lo toma y lo verás abajo.</p>
       <p class="aviso" id="ajAviso"></p>
       <div id="ajRecados"></div></div>
     <div class="bloque-aj"><h4>Automáticos</h4><p>Lo que corre solo mientras nadie mira.</p><button class="secund" id="ajMaq">Ver qué está corriendo</button><div id="ajMaqLista"></div></div>`:''}
@@ -1330,6 +1343,7 @@ function montar(d){
 $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 $('#deshacer').onclick=()=>{ if(_decidiendo||!hist.length) return; irA(hist.pop()) };
 $('#verresp').onclick=abrirRespuestas; $('#btnEntrar').onclick=abrirEntrar;
+$('#btnReintentar').onclick=async()=>{ pintarEstado('subiendo','Reintentando…'); await subirCola(); await subir(); };
 document.addEventListener('keydown',e=>{ if(CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
   if(e.key==='ArrowRight') decidir('si'); if(e.key==='ArrowLeft') decidir('no') });
 window.addEventListener('online',subirCola);
