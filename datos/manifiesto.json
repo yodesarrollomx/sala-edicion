@@ -17,16 +17,29 @@
   "2026-09-02",
   "2026-09-03",
   "2026-01-02",
-  "2026-01-03"
+  "2026-01-03",
+  "2026-09-04"
  ],
  "propuestas": [
   {
+   "id": "comprador-g2-fcf0ca",
+   "titulo": "El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8)",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/comprador-g2/L1.png",
+    "laminas/comprador-g2/L2.png",
+    "laminas/comprador-g2/L3.png",
+    "laminas/comprador-g2/L4.png"
+   ],
+   "opciones": [],
+   "video": null,
+   "origen": "rehecha-de comprador-g1-70ac76"
+  },
+  {
    "id": "apodo-video-4sep",
    "titulo": "El Apodo del Terreno · el video está armado (42 s) — ¿sale así?",
-   "laminas": [],
-   "video": "video/apodo/REEL_9x16.mp4",
-   "origen": "7 escenas + 8 voces sobre el guion que aprobaste 9/9 el 27-ago",
    "tipo": "eje",
+   "laminas": [],
    "opciones": [
     {
      "titulo": "Sale así",
@@ -40,7 +53,9 @@
      "titulo": "Enséñamelo otra vez mañana",
      "texto": "Lo dejo en la mesa sin publicar y te lo vuelvo a poner con las métricas de las otras piezas al lado."
     }
-   ]
+   ],
+   "video": "video/apodo/REEL_9x16.mp4",
+   "origen": "7 escenas + 8 voces sobre el guion que aprobaste 9/9 el 27-ago"
   }
  ],
  "parrilla": [
