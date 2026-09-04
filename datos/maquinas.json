@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-04 00:46",
+ "actualizado": "2026-09-04 01:16",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 2 horas",
+   "corrio": "hace 14 min",
    "dijo": "PIPELINE DETENIDO por cuota — sigue en la próxima corrida",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -51,7 +51,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 18 horas",
+   "corrio": "hace 19 horas",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 4 horas",
+   "corrio": "hace 5 horas",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
