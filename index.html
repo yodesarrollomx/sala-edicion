@@ -736,6 +736,12 @@ async function cargarTira(pid){
   catch(e){ TIRAS[pid]=null }
   return TIRAS[pid];
 }
+/* La nota de una lámina vive en el Sheet (con credencial), no en el archivo público del repo. */
+function notaDeLamina(t,l){
+  if(!t||!l) return l&&l.nota_previa||'';
+  const prev=((D&&D.decisiones||{}).propuestas||{})[t.de]||null;
+  return (prev&&prev.notas&&prev.notas[l.n-1])||l.nota_previa||'';
+}
 function nLamina(x){ return (x&&x.tipo==='lamina')?x.i+1:0 }
 function tiraDe(x){ const t=TIRAS[x&&x.pid]; return t||null }
 function laminaTira(t,src,n){          // la lámina de la tira que corresponde a esta carta
@@ -764,12 +770,12 @@ function verLamina(t,n){
     <img src="${esc(ligera(l.src))}" alt="Lámina ${n}" style="width:100%;border-radius:14px;background:#141210">
     <p style="margin-top:12px"><b>Dice:</b> ${esc((l.dice||'').replace(' / ',' · '))}</p>
     ${l.ve?`<p><b>Se ve:</b> ${esc(l.ve)}</p>`:''}
-    ${l.nota_previa?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(l.nota_previa)}»</p>`:''}`,'lamina'+n);
+    ${notaDeLamina(t,l)?`<p style="color:var(--no)"><b>La nota:</b> «${esc(notaDeLamina(t,l))}»</p>`:''}`,'lamina'+n);
 }
 function verGuia(t){
   hoja(`<h3>La guía de la tira</h3><p>${esc(t.promesa||t.pieza)}</p>
     <div class="lista-r">${(t.laminas||[]).map(l=>`<div class="fila-r"><img class="th" src="${esc(ligera(l.src))}" alt="" loading="lazy">
-      <div class="txt"><b>${l.n}. ${esc((l.dice||'').replace(' / ',' · '))}</b><small>${esc(l.ve||'')}</small>${l.nota_previa?`<em>tu nota: «${esc(l.nota_previa)}»</em>`:''}</div>
+      <div class="txt"><b>${l.n}. ${esc((l.dice||'').replace(' / ',' · '))}</b><small>${esc(l.ve||'')}</small>${notaDeLamina(t,l)?`<em>nota: «${esc(notaDeLamina(t,l))}»</em>`:''}</div>
       <div class="acc"><span class="chipm ${l.estado==='aprobada'?'si':'pend'}">${l.estado==='aprobada'?'Aprobada':'Se rehízo'}</span></div></div>`).join('')}</div>`,'guia-tira');
 }
 /* ══ pintado de Hoy ══ */
@@ -791,7 +797,8 @@ function versionHTML(x){
   const t=tiraDe(x); if(!t) return '';
   const l=laminaTira(t,x.tipo==='lamina'?x.p.laminas[x.i]:'',nLamina(x));
   if(!l||l.estado!=='rehecha') return '';
-  return `<div class="otra-voz version"><b>Versión 2 de la lámina ${l.n}</b>${l.nota_previa?`<span>Pediste: «${esc(l.nota_previa)}»</span>`:''}<small>Las otras ${(t.laminas||[]).filter(z=>z.estado==='aprobada').length} ya están aprobadas; las ves abajo en la tira.</small></div>`;
+  const nt=notaDeLamina(t,l);
+  return `<div class="otra-voz version"><b>Versión 2 de la lámina ${l.n}</b>${nt?`<span>Pediste: «${esc(nt)}»</span>`:''}<small>Las otras ${(t.laminas||[]).filter(z=>z.estado==='aprobada').length} ya están aprobadas; las ves abajo en la tira.</small></div>`;
 }
 function otrosHTML(x){
   const o=x.otros||[]; if(!o.length) return '';
