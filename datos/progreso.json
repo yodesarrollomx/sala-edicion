@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-04 11:49",
+ "actualizado": "2026-09-04 12:15",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -30,77 +30,77 @@
     {
      "que": "Escena 1 animada",
      "tipo": "video",
-     "src": "muestras/apodo/S1_animado.mp4"
+     "src": "muestras/el-apodo-del-terreno/S1_animado.mp4"
     },
     {
      "que": "Escena 2 animada",
      "tipo": "video",
-     "src": "muestras/apodo/S2_animado.mp4"
+     "src": "muestras/el-apodo-del-terreno/S2_animado.mp4"
     },
     {
      "que": "Escena 3 animada",
      "tipo": "video",
-     "src": "muestras/apodo/S3_animado.mp4"
+     "src": "muestras/el-apodo-del-terreno/S3_animado.mp4"
     },
     {
      "que": "Escena 4 animada",
      "tipo": "video",
-     "src": "muestras/apodo/S4_animado.mp4"
+     "src": "muestras/el-apodo-del-terreno/S4_animado.mp4"
     },
     {
      "que": "Escena 5 animada",
      "tipo": "video",
-     "src": "muestras/apodo/S5_animado.mp4"
+     "src": "muestras/el-apodo-del-terreno/S5_animado.mp4"
     },
     {
      "que": "Escena 6 animada",
      "tipo": "video",
-     "src": "muestras/apodo/S6_animado.mp4"
+     "src": "muestras/el-apodo-del-terreno/S6_animado.mp4"
     },
     {
      "que": "Escena 7 animada",
      "tipo": "video",
-     "src": "muestras/apodo/S7_animado.mp4"
+     "src": "muestras/el-apodo-del-terreno/S7_animado.mp4"
     },
     {
      "que": "Voz S1",
      "tipo": "audio",
-     "src": "muestras/apodo/S1.wav"
+     "src": "muestras/el-apodo-del-terreno/S1.wav"
     },
     {
      "que": "Voz S2",
      "tipo": "audio",
-     "src": "muestras/apodo/S2.wav"
+     "src": "muestras/el-apodo-del-terreno/S2.wav"
     },
     {
      "que": "Voz S3",
      "tipo": "audio",
-     "src": "muestras/apodo/S3.wav"
+     "src": "muestras/el-apodo-del-terreno/S3.wav"
     },
     {
      "que": "Voz S4",
      "tipo": "audio",
-     "src": "muestras/apodo/S4.wav"
+     "src": "muestras/el-apodo-del-terreno/S4.wav"
     },
     {
      "que": "Voz S5",
      "tipo": "audio",
-     "src": "muestras/apodo/S5.wav"
+     "src": "muestras/el-apodo-del-terreno/S5.wav"
     },
     {
      "que": "Voz S6",
      "tipo": "audio",
-     "src": "muestras/apodo/S6.wav"
+     "src": "muestras/el-apodo-del-terreno/S6.wav"
     },
     {
      "que": "Voz S7",
      "tipo": "audio",
-     "src": "muestras/apodo/S7.wav"
+     "src": "muestras/el-apodo-del-terreno/S7.wav"
     },
     {
      "que": "Voz S7b",
      "tipo": "audio",
-     "src": "muestras/apodo/S7b.wav"
+     "src": "muestras/el-apodo-del-terreno/S7b.wav"
     }
    ],
    "intento": {},
