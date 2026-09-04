@@ -1,16 +1,16 @@
 {
- "actualizado": "2026-09-04 09:40",
+ "actualizado": "2026-09-04 09:42",
  "encargos": [
   {
-   "que": "",
+   "que": "PRUEBA — comprobando que el botón de «Las máquinas» escribe en el Sheet. Se puede borrar.",
    "estado": "cumplida",
-   "cuando": "",
+   "cuando": "2026-08-28",
    "tomado": ""
   },
   {
-   "que": "",
+   "que": "Corre la sala.",
    "estado": "cumplida",
-   "cuando": "",
+   "cuando": "2026-09-03",
    "tomado": ""
   }
  ]
