@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-04 09:37",
+ "actualizado": "2026-09-04 09:48",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -104,8 +104,8 @@
     }
    ],
    "intento": {
-    "cuando": "07:47",
-    "corridas_sin_avanzar": 4,
+    "cuando": "09:48",
+    "corridas_sin_avanzar": 5,
     "ultimo_error": "RuntimeError: null"
    },
    "atorada": true,
