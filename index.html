@@ -840,7 +840,7 @@ function pintarCartas(){
   mandoDecidir();
   $('#mandoWrap').hidden=pasos[idx].tipo!=='lamina';
   $('#deshacer').hidden=hist.length===0; $('#pistaTeclas').hidden=false;
-  pintarCtx(pasos[idx]); pintarBolas(); pintarPanel();
+  pintarCtx(pasos[idx]); pintarBolas(); pintarPanel(); pintarTira(pasos[idx]);   // la tira sigue a la carta
 }
 const MANDO_HTML=`<button class="bNo" id="btnNo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Pedir cambio</button><button class="bSi" id="btnSi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Aprobar</button>`;
 function mandoDecidir(){   // si la Sala venía de la vista de solo lectura, devuelve los botones de decidir
