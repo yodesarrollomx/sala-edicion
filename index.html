@@ -1244,15 +1244,45 @@ function pintarAjustes(){
       <p class="aviso" id="ajAviso"></p>
       <div id="ajRecados"></div></div>
     <div class="bloque-aj"><h4>Automáticos</h4><p>Lo que corre solo mientras nadie mira.</p><button class="secund" id="ajMaq">Ver qué está corriendo</button><div id="ajMaqLista"></div></div>`:''}
+    <div class="bloque-aj"><h4>Revisar la conexión</h4>
+      <p>Si algo no se guarda, esto dice exactamente qué contesta el Sheet.</p>
+      <button class="secund" style="margin-top:0" id="ajDiag">Probar mi conexión</button>
+      <div id="ajDiagRes"></div></div>
     <div class="bloque-aj"><h4>Ayuda</h4><p>${ENTRADO()?'Si algo no carga, cierra y vuelve a abrir la Sala.':'Tu entrada es una liga personal. Si ya habías entrado en este aparato, puedes recuperarla:'}</p>
       ${ENTRADO()?'':`<a class="secund" style="display:grid;place-items:center;text-decoration:none;margin-top:0" href="${ORIGEN_VIEJO}#puente=1" ${EMBED()?'target="_blank"':'target="_top"'} rel="noopener">Recuperar mi entrada</a>`}
       <p style="margin:10px 0 0;font-size:12.5px"><a href="index-v2.html" style="display:inline-flex;align-items:center;min-height:44px">Abrir la Sala anterior</a></p></div>`;
   const be=$('#ajEntrar'); if(be) be.onclick=abrirEntrar;
   $('#ajGuia').onclick=()=>abrirGuia(true);
   const bm=$('#ajMaq'); if(bm) bm.onclick=pintarMaquinas;
+  const bd=$('#ajDiag'); if(bd) bd.onclick=diagnostico;
   const env=$('#ajEnviar'); if(env) env.onclick=()=>mandarProduccion('RETRO',$('#ajMsg').value.trim()||'',true);
   const rd=$('#ajRonda'); if(rd) rd.onclick=()=>mandarProduccion('ENCARGO · corre la sala',$('#ajMsg').value.trim()||'Corre la sala.',false);
   pintarRecados();
+}
+/* Diagnóstico de un toque: lee, escribe una prueba y enseña la respuesta cruda.
+   Nació el 4-sep porque 4 decisiones se quedaron en cola sin que nadie supiera por qué. */
+async function diagnostico(){
+  const c=$('#ajDiagRes'); const li=[];
+  const pon=()=>{ c.innerHTML=li.map(x=>`<div class="maq ${x[0]}"><b><i></i>${esc(x[1])}</b><small>${esc(x[2])}</small></div>`).join('') };
+  li.push(['duda','Probando…','']); pon();
+  li.length=0;
+  li.push(['bien','Entrada', ENTRADO()?('sí · '+(PORLLAVE_OS()?'con tu cuenta del YOD OS':'con la liga de la Sala')):'NO has entrado']);
+  li.push([ENTRADO()?'bien':'mal','Rol que dices tener', ROL()]); pon();
+  try{
+    const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(CLAVE()));
+    const j=await leerJSON(r);
+    li.push([j&&j.rol?'bien':'mal','Leer del Sheet', j&&j.rol?('te reconoce como '+j.rol+(j.quien?' ('+j.quien+')':'')):('respondió: '+JSON.stringify(j).slice(0,120))]);
+  }catch(e){ li.push(['mal','Leer del Sheet','no contestó: '+(e.message||e)]) }
+  pon();
+  try{
+    const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({accion:'decidir',clave:CLAVE(),fecha:fecha,envio_id:'prueba-'+uuid(),ts:Date.now(),quien:ROL(),propuestas:{}})});
+    const j=await leerJSON(r);
+    li.push([j&&j.ok?'bien':'mal','Escribir en el Sheet', j&&j.ok?'sí puede guardar':('lo rechazó: '+((j&&j.error)||JSON.stringify(j)).slice(0,140))]);
+  }catch(e){ li.push(['mal','Escribir en el Sheet','no contestó: '+(e.message||e)]) }
+  const q=leerLS('sala_cola',[]);
+  li.push([q.length?'duda':'bien','Pendiente por subir', q.length?(q.length+' envío(s) esperando'):'nada']);
+  pon();
 }
 async function pintarRecados(){
   const c=$('#ajRecados'); if(!c) return;
