@@ -31,7 +31,8 @@ var PESTANAS = {
   PARRILLA:   ['fecha', 'pieza', 'gate', 'desde', 'decision_editor', 'decidido'],
   CONTROL:    ['pieza', 'desde', 'formula', 'alcance', 'clics', 'leads', 'nota'],
   PRODUCCION: ['fecha', 'pieza', 'estado', 'detalle', 'enlace'],
-  BITACORA:   ['fecha_hora', 'evento', 'detalle']
+  BITACORA:   ['fecha_hora', 'evento', 'detalle'],
+  EXPEDIENTES:['pieza', 'actualizado', 'json']   // la historia con sus palabras: privada, tras la clave
 };
 
 function instalar() {
@@ -89,6 +90,7 @@ function rolDe(clave) {
    para no depender del filtro del Portero. Caché por hash: 10 min si vale, 1 min si no.
    Portero caído = nadie entra por esta vía (fail-closed), pero las claves suaves siguen. */
 var PORTERO_EXEC = 'https://script.google.com/macros/s/AKfycbwlDDCWWzOWYZsUpBU9uqsQ7aenQ469PF6s6FkNlBFS1_cJSU5njG9oQmuyELy5zlqzFg/exec';
+var PORTERO_RESPALDO = 'https://script.google.com/macros/s/AKfycbyrhqMb70Qh8BljAOYnSYBZ8IXUuEclFWPg10NWIv3GJ-nAR597OTsGB4IL-xyUl7Ms/exec';
 var CODIGO_SALA  = 'MK';               // la Sala vive en el Embudo, junto a Métricas/Marketing
 function rolPorPortero_(k) {
   k = String(k || '').trim();
@@ -98,26 +100,72 @@ function rolPorPortero_(k) {
     Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, k)).slice(0, 24);
   var hit = cache.get(ck);
   if (hit) return hit === 'no' ? null : hit;
-  var rol = null, nombre = '';
+  var rol = null, nombre = '', porque = '';
+  /* 4-sep-2026: este script NUNCA fue autorizado para UrlFetchApp (se desplegó por API y nadie
+     dio el consentimiento), así que preguntarle al Portero por HTTP fallaba siempre con «No
+     cuentas con el permiso…» y la Sala rechazaba la sesión del OS. El Portero guarda sus
+     sesiones en un Google Sheet del mismo dueño: se validan leyendo esa hoja, sin HTTP. */
   try {
-    var r = UrlFetchApp.fetch(PORTERO_EXEC + '?recurso=canje&t=' + encodeURIComponent(k),
-      { muteHttpExceptions: true, followRedirects: true });
-    var j = JSON.parse(r.getContentText());
-    var role = String(j && j.rol || '').toLowerCase();
-    var boards = String(j && j.boards || '');
-    var puede = !!(j && j.ok && (role === 'admin' || boards.trim() === '*' ||
-      boards.split(',').map(function (v) { return v.trim().toUpperCase(); }).indexOf(CODIGO_SALA) >= 0));
-    if (puede) {
-      var correo = String(j.correo || '').toLowerCase().trim();
-      nombre = String(j.nombre || '');
+    var v = validarEnHojaDelPortero_(k);
+    if (v.ok) {
+      nombre = v.nombre || '';
+      var correo = String(v.correo || '').toLowerCase().trim();
       if (correo && correo === String(leerConfig('correo_editor') || CORREO).toLowerCase()) rol = 'editor';
       else if (correo && correo === String(leerConfig('correo_editor2') || '').toLowerCase()) rol = 'editor2';
       else rol = 'lector';
       if (nombre) cache.put(ck + '_n', nombre, 300);
-    }
-  } catch (err) { rol = null; }        // Portero inaccesible → fail-closed
-  cache.put(ck, rol || 'no', rol ? 300 : 60);   // 5 min: revocar a alguien no debe tardar 20
+    } else porque = v.porque || 'sin acceso';
+  } catch (err) { porque = 'hoja del Portero: ' + err; }
+  // Segundo camino: preguntarle al Portero por HTTP. Funciona en cuanto alguien autorice
+  // UrlFetchApp una vez en el editor del script (cualquiera de las dos autorizaciones basta).
+  if (!rol && /permiso/i.test(porque)) {
+    try {
+      var r = UrlFetchApp.fetch(PORTERO_EXEC + '?recurso=canje&t=' + encodeURIComponent(k), { muteHttpExceptions: true, followRedirects: true });
+      var j = JSON.parse(r.getContentText());
+      var role = String(j && j.rol || '').toLowerCase(), boards = String(j && j.boards || '');
+      var puede = !!(j && j.ok && (role === 'admin' || boards.trim() === '*' ||
+        boards.split(',').map(function (x) { return x.trim().toUpperCase(); }).indexOf(CODIGO_SALA) >= 0));
+      if (puede) {
+        var correo2 = String(j.correo || '').toLowerCase().trim(); nombre = String(j.nombre || '');
+        if (correo2 && correo2 === String(leerConfig('correo_editor') || CORREO).toLowerCase()) rol = 'editor';
+        else if (correo2 && correo2 === String(leerConfig('correo_editor2') || '').toLowerCase()) rol = 'editor2';
+        else rol = 'lector';
+        if (nombre) cache.put(ck + '_n', nombre, 300);
+        porque = '';
+      } else porque += ' · Portero HTTP: ' + JSON.stringify(j).slice(0, 80);
+    } catch (err2) { porque += ' · Portero HTTP: ' + String(err2).slice(0, 120); }
+  }
+  if (!rol) { try { bitacora('Portero no autorizó una credencial', porque.replace(/[A-Za-z0-9_-]{24,}/g, '…')); } catch (e2) {} }
+  cache.put(ck, rol || 'no', rol ? 300 : 60);
   return rol;
+}
+/* Lee SESIONES y ACCESOS del Sheet del Portero («YOD - POTENCIALES», hoja de accesos). */
+var PORTERO_SHEET_ID = '1Ld2ytzwYniIXmxu_TuLViN4hPILSg-xMbFpFgPnqf7Y';
+function filasDe_(ss, nombre) {
+  var h = ss.getSheetByName(nombre); if (!h) return null;
+  var v = h.getDataRange().getValues(); if (v.length < 2) return [];
+  var hdr = v[0].map(function (x) { return String(x).trim(); });
+  return v.slice(1).map(function (r) { var o = {}; hdr.forEach(function (c, i) { o[c] = r[i]; }); return o; });
+}
+function validarEnHojaDelPortero_(k) {
+  if (k.indexOf('sy') !== 0 || k.length < 20) return { ok: false, porque: 'no es un token de sesión del Portero' };
+  var ss = SpreadsheetApp.openById(PORTERO_SHEET_ID);
+  var ses = filasDe_(ss, 'SESIONES'); if (!ses) return { ok: false, porque: 'la hoja SESIONES no existe en ' + PORTERO_SHEET_ID };
+  var s = null;
+  for (var i = ses.length - 1; i >= 0; i--) if (String(ses[i].token || '').trim() === k) { s = ses[i]; break; }
+  if (!s) return { ok: false, porque: 'sesión no encontrada' };
+  if (String(s.revocada || '').toLowerCase() === 'si') return { ok: false, porque: 'sesión revocada' };
+  var exp = selloDe(s.expira); if (exp && exp < Date.now()) return { ok: false, porque: 'sesión vencida' };
+  var correo = String(s.correo || '').toLowerCase().trim();
+  if (correo === String(CORREO).toLowerCase()) return { ok: true, correo: correo, nombre: 'Alejandro', rol: 'admin' };
+  var acc = (filasDe_(ss, 'ACCESOS') || []).filter(function (a) { return String(a.correo || '').toLowerCase().trim() === correo; })[0];
+  if (!acc) return { ok: false, porque: 'correo sin fila en ACCESOS: ' + correo };
+  if (String(acc.estado || '').toLowerCase() !== 'activo') return { ok: false, porque: 'acceso no activo: ' + acc.estado };
+  var role = String(acc.rol || '').toLowerCase(), boards = String(acc.boards || '');
+  var puede = role === 'admin' || boards.trim() === '*' ||
+    boards.split(',').map(function (x) { return x.trim().toUpperCase(); }).indexOf(CODIGO_SALA) >= 0;
+  if (!puede) return { ok: false, porque: 'sin el tablero ' + CODIGO_SALA + ' en sus accesos (' + boards + ')' };
+  return { ok: true, correo: correo, nombre: String(acc.nombre || ''), rol: role };
 }
 function nombrePortero_(k) {
   try {
@@ -185,6 +233,22 @@ function doGet(e) {
   //  volvía imposible rotar las claves. Ahora sólo se corre a mano desde el editor.)
   var rolQuien = rolDe(p.clave);
   if (!rolQuien) return json({ error: 'clave incorrecta' });
+  if (p.recurso === 'bitacora') {                 // las últimas líneas, para diagnosticar desde la Mac
+    if (rolDe(p.clave) !== 'agente') return json({ error: 'solo el agente' });
+    var ult = filas('BITACORA').slice(-40).map(function (b) { var t = selloDe(b.fecha_hora);
+      return { cuando: t ? Utilities.formatDate(new Date(t), TZ, 'yyyy-MM-dd HH:mm') : String(b.fecha_hora),
+               evento: String(b.evento), detalle: String(b.detalle || '').slice(0, 300) }; });
+    return json({ ok: true, bitacora: ult });
+  }
+  if (p.recurso === 'expedientes') {
+    if (!rolDe(p.clave)) return json({ error: 'clave incorrecta' });
+    var ex = {};
+    filas('EXPEDIENTES').forEach(function (r) {
+      if (!r.pieza) return;
+      try { ex[String(r.pieza)] = JSON.parse(String(r.json || '{}')); } catch (e) {}
+    });
+    return json({ ok: true, expedientes: ex });
+  }
   if (p.recurso !== 'dia') return json({ error: 'recurso desconocido' });
   var f = /^\d{4}-\d{2}-\d{2}$/.test(p.f || '') ? p.f : hoy();
 
@@ -268,8 +332,9 @@ function doGet(e) {
     .sort(function (a, b) { return a.fecha < b.fecha ? -1 : 1; });
 
   var dias = {}; PR.forEach(function (x) { dias[fechaDe(x.fecha)] = 1; });
-  var bit = BI.filter(function (b) { return String(b.fecha_hora).slice(0, 10) === f; })
-    .map(function (b) { return { hora: String(b.fecha_hora).slice(11, 16), evento: String(b.evento) }; });
+  var bit = BI.filter(function (b) { return fechaDe(b.fecha_hora) === f; })
+    .map(function (b) { var t = selloDe(b.fecha_hora);
+      return { hora: t ? Utilities.formatDate(new Date(t), TZ, 'HH:mm') : '', evento: String(b.evento), detalle: String(b.detalle || '').slice(0, 200) }; });
 
   // ultima revision enviada (para el modo «Mientras no estabas» del Umbral)
   var ultRevT = 0;
@@ -280,7 +345,7 @@ function doGet(e) {
     fecha: f, dias: Object.keys(dias).sort(), propuestas: props, decisiones: dec, retro: r,
     parrilla: parr, control: CO.length ? CO[CO.length - 1] : null,
     produccion: PD.slice().reverse().slice(0, 30).map(function (x) { x.fecha = fechaDe(x.fecha); return x; }),
-    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), version: 'una-sola-llave-2026-09-03'
+    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), version: 'portero-por-hoja-2026-09-04'
   });
 }
 
@@ -296,6 +361,21 @@ function doPost(e) {
   // (accion 'canje_os' retirada el 4-sep: entregaba una llave permanente a cualquier sesión
   //  viva del Portero. Ya no hace falta: la credencial del Portero VALE como clave, y el
   //  backend decide el rol en cada request — ver rolPorPortero_.)
+
+  if (d.accion === 'expediente') {                 // la Mac publica la historia de una pieza
+    if (rolDe(d.clave) !== 'agente' && rolDe(d.clave) !== 'editor') return json({ error: 'solo el agente' });
+    if (!d.pieza) return json({ error: 'falta la pieza' });
+    var h = hoja('EXPEDIENTES');
+    if (!h) {                                     // la pestaña nace sola la primera vez
+      h = SpreadsheetApp.getActive().insertSheet('EXPEDIENTES');
+      h.appendRow(PESTANAS.EXPEDIENTES); h.setFrozenRows(1);
+    }
+    var datos = h.getDataRange().getValues(), fila = 0;
+    for (var i = 1; i < datos.length; i++) if (String(datos[i][0]) === String(d.pieza)) { fila = i + 1; break; }
+    var v = [String(d.pieza), ahora(), JSON.stringify(d.expediente || {})];
+    if (fila) h.getRange(fila, 1, 1, 3).setValues([v]); else h.appendRow(v);
+    return json({ ok: true });
+  }
 
   if (d.accion === 'sembrar_editores') {
     if (rolDe(d.clave) !== 'agente' && rolDe(d.clave) !== 'editor') return json({ error: 'solo el agente' });
@@ -319,7 +399,7 @@ function doPost(e) {
   }
 
   var rol = rolDe(d.clave);
-  if (!rol) return json({ error: 'clave incorrecta' });
+  if (!rol) return json({ error: 'no reconocí tu entrada (credencial no válida o sin acceso a la Sala)' });
 
   if (d.accion === 'decidir') {
     if (rol !== 'editor' && rol !== 'editor2') return json({ error: 'tu rol solo lee' });
@@ -451,4 +531,14 @@ function sembrarEditores() {
   Object.keys(pares).forEach(function (k) { if (!vistos[k]) h.appendRow([k, pares[k]]); });
   bitacora('Editores sembrados', 'Alejandro y Sayri con su correo');
   return 'ok';
+}
+
+
+/* CAMINO B para «una sola llave»: correr esta función UNA vez desde el editor del script
+   (▶ Ejecutar → Revisar permisos → Permitir). Con eso el script queda autorizado para
+   preguntarle al Portero por HTTP y la sesión del YOD OS entra a la Sala. */
+function autorizar() {
+  var r = UrlFetchApp.fetch(PORTERO_EXEC + '?recurso=meta', { muteHttpExceptions: true, followRedirects: true });
+  bitacora('Autorización concedida', 'UrlFetchApp responde ' + r.getResponseCode());
+  return 'ok · ' + r.getResponseCode();
 }
