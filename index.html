@@ -683,7 +683,9 @@ function sobre(){
   }
   return envio;
 }
-function encolar(envio){ const q=leerLS('sala_cola',[]); if(!q.some(x=>x.envio_id===envio.envio_id)) q.push(envio); localStorage.setItem('sala_cola',JSON.stringify(q)) }
+function encolar(envio){ const q=leerLS('sala_cola',[]);
+  envio.quien=envio.quien||ROL();          // firmado: no lo sube por ti el siguiente que entre
+  if(!q.some(x=>x.envio_id===envio.envio_id)) q.push(envio); localStorage.setItem('sala_cola',JSON.stringify(q)) }
 let _tSubir=null, _subiendo=false, _pendiente=false;
 function programarSubida(){ guardarBorrador(); if(!ENTRADO()||!DECIDE()){ estadoInicial(); return }
   pintarEstado('local','Guardando…'); clearTimeout(_tSubir); _tSubir=setTimeout(subir,1200) }
@@ -713,16 +715,18 @@ async function subir(){
 }
 async function subirCola(){
   const q=leerLS('sala_cola',[]); if(!q.length||!ENTRADO()) return;
-  q.forEach(e=>{if(!e.clave)e.clave=CLAVE()});
-  const resto=[];
-  for(const envio of q){
+  // sólo sube lo que firmó QUIEN está entrando ahora; lo ajeno se queda esperando a su dueño
+  const mio=q.filter(e=>!e.quien||e.quien===ROL()), ajeno=q.filter(e=>e.quien&&e.quien!==ROL());
+  mio.forEach(e=>{if(!e.clave)e.clave=CLAVE()});
+  const resto=[...ajeno];
+  for(const envio of mio){
     try{ const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(envio)});
       const j=await leerJSON(r);
       if(!r.ok||!j||j.ok!==true){ if(j&&/no encontr|solo lee|solo el agente/i.test(String(j.error||''))) continue; throw 0 } }
     catch(e){ resto.push(envio) }
   }
   localStorage.setItem('sala_cola',JSON.stringify(resto));
-  if(!resto.length&&q.length&&guard.tipo==='cola') pintarEstado('subido','Guardado ✓ '+hora());
+  if(!resto.length&&mio.length&&guard.tipo==='cola') pintarEstado('subido','Guardado ✓ '+hora());
 }
 
 /* ══ LA TIRA COMPLETA (3-sep): «se vuelve confuso ver la lámina 4 sin las otras 3».
@@ -768,7 +772,7 @@ function pintarTira(x){
 function verLamina(t,n){
   const l=(t.laminas||[]).find(z=>z.n===n); if(!l) return;
   hoja(`<h3>Lámina ${n} de ${t.laminas.length}</h3>
-    <p>${l.estado==='aprobada'?'Ya la aprobaste: no vuelve a preguntarse.':'Ésta es la que se rehízo con tu nota.'}</p>
+    <p>${l.estado==='aprobada'?'Ya está aprobada: no vuelve a preguntarse.':'Ésta es la que se rehízo con la nota.'}</p>
     <img src="${esc(ligera(l.src))}" alt="Lámina ${n}" style="width:100%;border-radius:14px;background:#141210">
     <p style="margin-top:12px"><b>Dice:</b> ${esc((l.dice||'').replace(' / ',' · '))}</p>
     ${l.ve?`<p><b>Se ve:</b> ${esc(l.ve)}</p>`:''}
@@ -942,7 +946,7 @@ function filasRespuestas(compacto){
   const hoyF=pasos.map((x,k)=>{ const m=marcaDe(x); const nota=x.tipo==='lamina'?dec[x.pid].notas[x.i]:dec[x.pid].nota;
     return `<div class="fila-r">${thumbDe(x)}<div class="txt"><b>${esc(x.p.titulo||x.pid)}</b><small>${x.tipo==='lamina'?'lámina '+(x.i+1):'elige una opción'}</small>${nota?`<em>«${esc(nota)}»</em>`:''}</div>
       <div class="acc"><span class="chipm ${m==='si'?'si':m==='no'?'no':'pend'}">${m==='si'?'Aprobada':m==='no'?'Cambio':'Sin ver'}</span>${!compacto&&DECIDE()?`<button data-ir="${k}">${m?'Cambiar':'Ir'}</button>`:''}</div></div>` }).join('');
-  const lockF=lockeadas.map((l,k)=>`<div class="fila-r">${thumbDe({tipo:'lamina',p:l.p,i:l.i})}<div class="txt"><b>${esc(l.p.titulo||l.pid)}</b><small>lámina ${l.i+1} · decidida antes</small></div>
+  const lockF=lockeadas.map((l,k)=>`<div class="fila-r">${thumbDe({tipo:'lamina',p:l.p,i:l.i})}<div class="txt"><b>${esc(l.p.titulo||l.pid)}</b><small>lámina ${l.i+1} · ya decidida</small></div>
       <div class="acc"><span class="chipm lock">✓ ${l.marca==='si'?'Aprobada':'Cambio'} · tú</span>${!compacto&&DECIDE()?`<button data-reabrir="${k}">Reabrir</button>`:''}</div></div>`).join('');
   return {hoyF,lockF};
 }
@@ -1159,7 +1163,8 @@ function esperaHTML(nombre){
     ${k>=0&&DECIDE()?`<button class="listo" style="margin-top:0" onclick="irADecidir(${k})">Ir a decidir →</button>`
       :DECIDE()?`<p class="nota-esp">Ya la decidiste en este aparato, o la carta llega en la próxima ronda. Para cambiarla: Hoy → «ver mis respuestas».</p>`:''}</div>`;
 }
-function irADecidir(k){ cerrarCapas(); cerrarExp(); irVista('hoy'); idx=k; pintarCartas() }
+function irADecidir(k){ if(!(k>=0&&k<pasos.length)) { irVista('hoy'); return }
+  cerrarCapas(); cerrarExp(); irVista('hoy'); idx=k; pintarCartas() }
 function metricasDe(nombre,e){
   const m=(METR||[]).find(x=>x.pieza===nombre); if(!m||!m.ig||m.ig.error) return e.resultado;
   return [[String(m.ig.views??'–'),'vistas IG'],[String(m.ig.reach??'–'),'alcance'],[String(m.ig.likes??'–'),'me gusta']];
