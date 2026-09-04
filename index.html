@@ -709,6 +709,9 @@ function nLamina(x){ return (x&&x.tipo==='lamina')?x.i+1:0 }
 function tiraDe(x){ const t=TIRAS[x&&x.pid]; return t||null }
 function laminaTira(t,src,n){          // la lámina de la tira que corresponde a esta carta
   if(!t) return null;
+  // «lámina 1 de 4» de una tira rehecha NO es la 1 de la historia: el mapa lo traduce
+  const real=(t.mapa&&t.mapa[String(n)])||null;
+  if(real) return (t.laminas||[]).find(l=>l.n===real)||null;
   const porSrc=(t.laminas||[]).find(l=>src&&l.src&&src.endsWith(l.src.split('/').pop()));
   return porSrc||(t.laminas||[]).find(l=>l.n===n)||null;
 }
@@ -764,6 +767,10 @@ function otrosHTML(x){
   return `<div class="otra-voz">${o.map(f=>`<b>${esc(f.quien)} ${f.marca==='si'?'aprobó':f.marca==='no'?'pidió cambio':'la vio'}</b>${f.nota?`<span>«${esc(f.nota)}»</span>`:''}`).join('')}
     <small>Tu respuesta se suma a la suya: si alguno pide cambio, Producción rehace cumpliendo las dos notas.</small></div>`;
 }
+function numeroReal(x){
+  const t=tiraDe(x), l=t?laminaTira(t,x.tipo==='lamina'?x.p.laminas[x.i]:'',x.i+1):null;
+  return l?`lámina ${l.n} de ${(t.laminas||[]).length}`:`lámina ${x.i+1} de ${(x.p.laminas||[]).length}`;
+}
 function piezaDe(x){ return (x&&x.p&&(x.p.pieza||String(x.p.titulo||'').split(' · ')[0]))||'' }
 function pintarBolas(){
   $('#bolas').innerHTML=pasos.map((x,k)=>{ const m=marcaDe(x); return `<span class="bola ${m==='si'?'si':m==='no'?'no':''} ${k===idx&&!m?'hoy':''}"></span>`}).join('');
@@ -787,7 +794,7 @@ function pintarCartas(){
           <span class="sello si" data-si>SÍ</span><span class="sello no" data-no>NO</span>
           <img alt="Lámina ${x.i+1}" draggable="false">
         </div>
-        <div class="pie"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · lámina ${x.i+1} de ${(x.p.laminas||[]).length}</span>
+        <div class="pie"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · ${numeroReal(x)}</span>
           <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button></div>${luegoDe(x)}</div>`;
       montarImagen(el,src);
       el.querySelector('.lupa').onclick=e=>{ e.stopPropagation(); abrirZoom(src) };
