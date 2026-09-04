@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-04 09:48",
+ "actualizado": "2026-09-04 09:56",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -103,12 +103,8 @@
      "src": "muestras/apodo/S7b.wav"
     }
    ],
-   "intento": {
-    "cuando": "09:48",
-    "corridas_sin_avanzar": 5,
-    "ultimo_error": "RuntimeError: null"
-   },
-   "atorada": true,
+   "intento": {},
+   "atorada": false,
    "vuelve_en_min": null,
    "dice": "El video está armado y esperando tu palabra en la mesa. Ojo: 1 escena con plan B (acercamiento sobre la lámina, no animación).",
    "corriendo": false
