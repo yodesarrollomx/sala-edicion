@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-04 08:37",
+ "actualizado": "2026-09-04 08:38",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -16,7 +16,7 @@
     },
     {
      "que": "Escenas animadas",
-     "hechos": 6,
+     "hechos": 7,
      "total": 7
     },
     {
@@ -55,6 +55,11 @@
      "que": "Escena 6 animada",
      "tipo": "video",
      "src": "muestras/apodo/S6_animado.mp4"
+    },
+    {
+     "que": "Escena 7 animada",
+     "tipo": "video",
+     "src": "muestras/apodo/S7_animado.mp4"
     },
     {
      "que": "Voz S1",
@@ -99,13 +104,13 @@
    ],
    "intento": {
     "cuando": "07:47",
-    "corridas_sin_avanzar": 14,
+    "corridas_sin_avanzar": 0,
     "ultimo_error": "RuntimeError: null"
    },
-   "atorada": true,
-   "vuelve_en_min": null,
-   "dice": "Faltan 1 escenas. La cuota gratis de GPU se agota y las corridas devuelven vacío (14 seguidas): avanza por tandas cuando reabre, normalmente al día siguiente.",
-   "corriendo": false
+   "atorada": false,
+   "vuelve_en_min": 124,
+   "dice": "Escenas completas. Falta armar el video.",
+   "corriendo": true
   }
  ]
 }
