@@ -447,7 +447,12 @@ const ORIGEN_VIEJO='https://alexpueblag.github.io/sala-edicion/';
 (function(){
   if(!location.hash) return;
   const h=new URLSearchParams(location.hash.slice(1));
-  if(h.get('gas')) localStorage.setItem('sala_gas',h.get('gas'));
+  // SEGURIDAD (4-sep): antes se guardaba cualquier `gas` que viniera en la liga. Un enlace
+  // por WhatsApp podía apuntar la Sala a un servidor ajeno y mandarle tu credencial en el
+  // primer fetch. Ahora sólo se acepta la dirección del Apps Script de la casa.
+  const gasOk=u=>{ try{ const x=new URL(u); return x.origin==='https://script.google.com'
+    && /^\/macros\/s\/[\w-]+\/exec$/.test(x.pathname) }catch(e){ return false } };
+  if(h.get('gas')&&gasOk(h.get('gas'))) localStorage.setItem('sala_gas',h.get('gas'));
   // Si la que llega es la credencial del OS, NO se copia: se lee viva de ahí, así
   // cuando el Portero la renueve la Sala sigue entrando sin tocar nada.
   if(h.get('clave')&&h.get('clave')!==localStorage.getItem('pyod_clave_v1')) localStorage.setItem('sala_clave',h.get('clave'));
@@ -485,10 +490,10 @@ window.fetch=async function(...a){
   finally{ _vivos=Math.max(0,_vivos-1); if(!_vivos) document.documentElement.classList.remove('cargando') }
 };
 const bloquear=on=>document.body.classList.toggle('bloqueado',!!on);
-/* Si entras dentro del tablero, le devolvemos la llave al tablero: la próxima vez
-   él se la pasa al marco aunque Safari le haya apartado el almacenamiento. */
-function avisarLlave(){ if(!EMBED()||!ENTRADO()) return;
-  try{ parent.postMessage({tipo:'sala:llave',gas:GAS(),clave:CLAVE(),rol:ROL()},'*') }catch(e){} }
+/* (Se retiró el relevo por postMessage: publicaba la llave con destino '*' —cualquier sitio
+   que enmarcara la Sala se la llevaba— y ya no hace falta, porque la Sala lee sola la
+   credencial del YOD OS al ser el mismo origen.) */
+function avisarLlave(){}
 const ligera=src=>/\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
 const ICO_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 const ICO_VOLVER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
@@ -508,7 +513,7 @@ const CAPAS=[];
 function abrirCapa(id,cerrarFn,foco){
   CAPAS.push({id,cerrar:cerrarFn});
   try{ history.pushState({sala:id},'') }catch(e){}
-  if(EMBED()){ try{ parent.postMessage({tipo:'sala:arriba'},'*') }catch(e){} }
+  if(EMBED()&&window.parent!==window){ try{ parent.postMessage({tipo:'sala:arriba'},location.origin) }catch(e){} }
   if(foco){ setTimeout(()=>{ try{ foco.focus({preventScroll:true}) }catch(e){} },60) }
 }
 function cerrarCapa(id,desdeHistorial){
