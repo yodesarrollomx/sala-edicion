@@ -377,6 +377,7 @@ html.cargando #actualizando{display:flex}
 /* teléfono: la lámina manda. Estas reglas van al final a propósito: anulan a las de arriba. */
 @media (max-width:640px){
   html.embed .ctx{display:none}
+  body.apretado .ctx{display:none}
   .otra-voz{padding:7px 12px;font-size:12.5px;max-height:60%;flex:0 1 auto}
   .otra-voz small:not(.explica){display:none}
   .otra-voz span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
@@ -862,7 +863,7 @@ function pintarCartas(){
       el.innerHTML=`${versionHTML(x)}${otrosHTML(x)}<div class="lienzo">
           <div class="cargando">cargando lámina…</div>
           <span class="sello si" data-si>SÍ</span><span class="sello no" data-no>NO</span>
-          <img alt="Lámina ${x.i+1}" draggable="false">
+          <img alt="${numeroReal(x)}" draggable="false">
           <button class="num-movil" type="button">${numeroReal(x)} · ampliar</button>
         </div>
         <div class="pie pie-lamina"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · ${numeroReal(x)}</span>
@@ -1128,7 +1129,7 @@ function pintarMira(){
   const chip=x.dec==='si'?'<span class="chip-dec si">✓ Aprobada</span>':x.dec==='no'?'<span class="chip-dec no">Pidió cambio</span>':'<span class="chip-dec">Sin decidir aún</span>';
   const el=document.createElement('div'); el.className='carta';
   if(x.tipo==='lamina'){
-    el.innerHTML=`<div class="lienzo"><div class="cargando">cargando lámina…</div>${chip}<img alt="Lámina ${x.i+1}" draggable="false"></div>
+    el.innerHTML=`<div class="lienzo"><div class="cargando">cargando lámina…</div>${chip}<img alt="${numeroReal(x)}" draggable="false"></div>
       <div class="pie">${(x.firmas||[]).filter(f=>f.marca||f.nota).length?`<div class="otra-voz">${(x.firmas||[]).filter(f=>f.marca||f.nota).map(f=>`<b>${esc(f.quien)} ${f.marca==='si'?'aprobó':f.marca==='no'?'pidió cambio':'la vio'}</b>${f.nota?`<span>«${esc(f.nota)}»</span>`:''}`).join('')}</div>`:''}<div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.p.id)}</b> · ${numeroReal(x)}</span>
         <button class="lupa" type="button">Ampliar</button></div>${x.nota&&!(x.firmas||[]).length?`<div class="luego"><span class="n"><i></i>Nota: «${esc(x.nota)}»</span></div>`:''}</div>`;
     montarImagen(el,x.src); el.querySelector('.lupa').onclick=()=>abrirZoom(x.src); dobleToque(el.querySelector('.lienzo'),()=>abrirZoom(x.src));
@@ -1373,17 +1374,22 @@ function montar(d){
   estadoInicial(); pintarCartas();
   Promise.all([...new Set(pasos.map(x=>x.pid))].map(cargarTira)).then(()=>{ if(pasos[idx]){ pintarTira(pasos[idx]); pintarCartas() } });
   if(hubo&&idx>0&&idx<pasos.length) $('#subt').textContent=`Sigues donde ibas · ${piezaDe(pasos[idx])}`;
+  ajustarZona();
 }
 /* ══ el alto de la carta en teléfono se MIDE (auditoría 5-sep): la fórmula de CSS suponía una cabecera de 415 px
    y el mando (sticky) acababa tapando el pie y el texto de la lámina. Aquí: lo que queda entre la cabecera y el mando. ══ */
 function ajustarZona(){
   const z=$('#zona'); if(!z) return;
   if(innerWidth>=640){ z.style.height=''; return }
-  const m=$('#mandoWrap'), nav=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav'))||72;
-  const top=z.getBoundingClientRect().top+scrollY, mh=(m&&!m.hidden)?m.getBoundingClientRect().height:0;
-  z.style.height=Math.max(230,Math.min(innerHeight-top-mh-nav-8,620))+'px';
+  const calc=()=>{ const m=$('#mandoWrap'), nav=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav'))||72;
+    const top=z.getBoundingClientRect().top+scrollY, mh=(m&&!m.hidden)?m.getBoundingClientRect().height:0;
+    return innerHeight-top-mh-nav-8 };
+  let h=calc();
+  // si la cabecera creció (píldora larga, «Deshacer») y la carta quedaría chica, se esconde la fila «VA EN» (info repetida)
+  if(h<230&&!document.body.classList.contains('apretado')){ document.body.classList.add('apretado'); h=calc() }
+  z.style.height=Math.max(200,Math.min(h,620))+'px';
 }
-addEventListener('resize',ajustarZona);
+addEventListener('resize',ajustarZona); addEventListener('load',ajustarZona); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(ajustarZona);
 try{ const ro=new ResizeObserver(()=>ajustarZona()); ['.cab','#ctx','#tira','#mandoWrap'].forEach(q=>{ const e=$(q); if(e) ro.observe(e) }) }catch(e){}
 (async function(){
   abrirGuia(false); ajustarZona();            // la bienvenida no espera al Sheet
