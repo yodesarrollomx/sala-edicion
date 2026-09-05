@@ -378,6 +378,7 @@ html.cargando #actualizando{display:flex}
 @media (max-width:640px){
   html.embed .ctx{display:none}
   body.apretado .ctx{display:none}
+  .carta .pie:not(.pie-lamina) .cual{display:none}   /* el título ya está en la cabecera; las opciones necesitan el alto */
   .otra-voz{padding:7px 12px;font-size:12.5px;max-height:60%;flex:0 1 auto}
   .otra-voz small:not(.explica){display:none}
   .otra-voz span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
@@ -523,7 +524,7 @@ function abrirCapa(id,cerrarFn,foco){
   if(EMBED()&&window.parent!==window){ try{ parent.postMessage({tipo:'sala:arriba'},location.origin) }catch(e){} }
   if(foco){ setTimeout(()=>{ try{ foco.focus({preventScroll:true}) }catch(e){} },60) }
 }
-function cerrarCapa(id,desdeHistorial){
+function cerrarCapa(id,desdeHistorial){ try{ if(typeof ajustarZona==='function') setTimeout(ajustarZona,60) }catch(e){}
   const k=CAPAS.findIndex(c=>c.id===id); if(k<0) return;
   const [c]=CAPAS.splice(k,1); c.cerrar();
   if(!desdeHistorial&&history.state&&history.state.sala===id){ try{ history.back() }catch(e){} }
