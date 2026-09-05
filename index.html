@@ -136,6 +136,8 @@ html.embed .app{padding-top:8px}
 .lienzo.conVideo{flex:1 1 auto;min-height:190px}
 .num-movil{display:none}
 .abrir-video{display:block;text-align:center;font-size:12.5px;color:var(--oro);text-decoration:none;padding:6px 0 0}
+.ruedita{width:26px;height:26px;border-radius:50%;border:3px solid var(--oro-suave);border-top-color:var(--oro);animation:gira .8s linear infinite}
+.cargando-carta .cargando{display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:14.5px;color:#e6dfd2}
 .cargando{position:absolute;inset:0;display:grid;place-items:center;color:#c9c2b4;font-size:13px;gap:10px;padding:20px;text-align:center;
   background:linear-gradient(110deg,#141210 30%,#1f1c18 50%,#141210 70%);background-size:200% 100%;animation:brilla 1.4s infinite}
 @keyframes brilla{to{background-position:-200% 0}}
@@ -649,6 +651,7 @@ function restaurarBorrador(){
   const firma=pasos.map(x=>x.tipo+':'+x.pid+':'+(x.i??'')).join('|');
   if((b.pasos||[]).join('|')!==firma) return false;
   for(const pid of Object.keys(dec)) if(b.dec[pid]) dec[pid]={...dec[pid],...b.dec[pid]};
+  for(const pid of Object.keys(b.dec)) if(!dec[pid]&&b.dec[pid]&&b.dec[pid]._reabierta) dec[pid]=b.dec[pid];
   idx=Math.min(b.idx||0,pasos.length); hist=b.hist||[]; guard.env=b.env||null;
   while(idx<pasos.length&&marcaDe(pasos[idx])) idx++;
   return true;
@@ -686,9 +689,10 @@ function estadoInicial(){
 /* ══ envío — sobre idéntico al de siempre ══ */
 function sobre(){
   const envio={accion:'decidir',clave:CLAVE(),fecha,envio_id:uuid(),ts:Date.now(),quien:ROL(),nota_general:'',nota_estrategia:'',propuestas:{}};
-  for(const p of D.propuestas||[]){
-    const d=dec[p.id]; if(!d) continue;
-    envio.propuestas[p.id]={nota:d.nota||'',laminas:d.laminas.map(m=>m||'pendiente'),notas:d.notas.slice(),mejoras:d.laminas.map(()=>[])};
+  const orden=[...(D.propuestas||[]).map(p=>p.id),...Object.keys(dec).filter(k=>!(D.propuestas||[]).some(p=>p.id===k))];
+  for(const pid of orden){
+    const d=dec[pid]; if(!d) continue;
+    envio.propuestas[pid]={nota:d.nota||'',laminas:d.laminas.map(m=>m||'pendiente'),notas:d.notas.slice(),mejoras:d.laminas.map(()=>[])};
   }
   return envio;
 }
@@ -700,7 +704,7 @@ let _tSubir=null, _subiendo=false, _pendiente=false; let _ultimoEnviado='';   //
 function programarSubida(){ guardarBorrador(); if(!ENTRADO()||!DECIDE()){ estadoInicial(); return }
   pintarEstado('local','Guardando…'); clearTimeout(_tSubir); _tSubir=setTimeout(()=>{ _tSubir=null; subir() },1200) }
 async function subir(){
-  if(!ENTRADO()||!DECIDE()||!cuentas().hoy) return;
+  if(!ENTRADO()||!DECIDE()||(!cuentas().hoy&&!reaperturas().length)) return;
   if(_subiendo){ _pendiente=true; return } _subiendo=true; _pendiente=false;
   pintarEstado('subiendo','Guardando…');
   const envio=sobre(), firmaEnvio=JSON.stringify(envio.propuestas);
@@ -783,7 +787,9 @@ function laminaTira(t,src,n){          // la lámina de la tira que corresponde 
   return porSrc||(t.laminas||[]).find(l=>l.n===n)||null;
 }
 function marcaTira(x,t,l){        // lo que el editor ya dijo de esa lámina en esta ronda (4-sep: la 4 y la 6 aprobadas seguían sin ✓)
-  if(!x||!t) return ''; const M=mapaDe(t), k=Object.keys(M).find(q=>M[q]===l.n); if(k===undefined) return '';
+  if(!x||!t) return '';
+  if(t.base&&dec[t.base]&&dec[t.base].laminas&&dec[t.base].laminas[l.n-1]==='no') return 'no';   // aprobada con petición de cambio
+  const M=mapaDe(t), k=Object.keys(M).find(q=>M[q]===l.n); if(k===undefined) return '';
   const i=+k-1, pid=x.pid||(x.p&&x.p.id), d=dec[pid]; const m=(d&&d.laminas&&d.laminas[i])||(!DECIDE()?(((marcasPrevias(pid)||{}).laminas||[])[i]):'');
   return m==='si'||m==='no'?m:'';
 }
@@ -800,12 +806,45 @@ function pintarTira(x){
 }
 function verLamina(t,n){
   const l=(t.laminas||[]).find(z=>z.n===n); if(!l) return;
-  hoja(`<h3>Lámina ${n} de ${t.laminas.length}</h3>
-    <p>${l.estado==='aprobada'?'Ya está aprobada: no vuelve a preguntarse.':'Ésta es la que se rehízo con la nota.'}</p>
+  const reab=t.base&&dec[t.base]&&dec[t.base].laminas[n-1]==='no';
+  const v=hoja(`<h3>Lámina ${n} de ${t.laminas.length}</h3>
+    <p>${reab?'Ya pediste cambio a esta lámina aunque estaba aprobada.':l.estado==='aprobada'?'Ya está aprobada: no vuelve a preguntarse.':'Ésta es la que se rehízo con la nota.'}</p>
+    ${reab?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(dec[t.base].notas[n-1]||'')}»</p><button class="secund" id="quitarReab">Quitar la petición</button>`:''}
+    ${(!reab&&l.estado==='aprobada'&&DECIDE()&&t.base)?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
     <img src="${esc(ligera(l.src))}" alt="Lámina ${n}" style="width:100%;border-radius:14px;background:#141210">
     <p style="margin-top:12px"><b>Dice:</b> ${esc((l.dice||'').replace(' / ',' · '))}</p>
     ${l.ve?`<p><b>Se ve:</b> ${esc(l.ve)}</p>`:''}
     ${notaDeLamina(t,l)?`<p style="color:var(--no)"><b>La nota:</b> «${esc(notaDeLamina(t,l))}»</p>`:''}`,'lamina'+n);
+  const br=v.querySelector('#reabrirLam'); if(br) br.onclick=()=>pedirNota(nota=>reabrirAprobada(t,l,nota));
+  const bq=v.querySelector('#quitarReab'); if(bq) conSeguro(bq,()=>quitarReapertura(t.base,n-1));
+}
+/* REABRIR (5-sep, Alejandro): «si la abro y quiero volver a revisarla porque Sayri o yo queremos mejorar
+   algo que aunque pensamos que estaba bien está mal… que se pueda pedir para rehacer». La petición viaja
+   como marca «no» de la propuesta ORIGINAL (t.base) en el mismo envío del día; Producción la cosecha como
+   reapertura. Nunca borra la aprobación de la historia: se suma una orden de cambio. */
+const reaperturas=()=>Object.entries(dec).filter(([pid,d])=>d&&d._reabierta&&(d.laminas||[]).some(m=>m==='no'));
+function reabrirAprobada(t,l,nota){
+  const pid=t.base; if(!pid) return;
+  const n=(t.laminas||[]).length;
+  if(!dec[pid]) dec[pid]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:'',_reabierta:true,_tira:t.pieza||''};
+  dec[pid].laminas[l.n-1]='no'; dec[pid].notas[l.n-1]=nota;
+  cerrarCapas(); programarSubida(); if(pasos[idx]) pintarTira(pasos[idx]); pintarPanel();
+  pintarEstado('local','Petición anotada · se guarda');
+}
+function quitarReapertura(pid,i){
+  if(!dec[pid]) return; dec[pid].laminas[i]=''; dec[pid].notas[i]='';
+  if(!dec[pid].laminas.some(x=>x)) delete dec[pid];
+  cerrarCapas(); programarSubida(); if(pasos[idx]) pintarTira(pasos[idx]); pintarPanel();
+}
+function hidratarReaperturas(){      // lo que ya pedí hoy (del Sheet) vuelve a dec, para que el siguiente envío no lo borre
+  const M=(D&&D.decisiones&&D.decisiones.propuestas)||{}; const enMesa=new Set((D.propuestas||[]).map(p=>p.id));
+  const yo=(D&&D.quien)||((localStorage.getItem('sala_rol')==='editor2')?'Sayri':'Alejandro');
+  for(const [pid,f] of Object.entries(M)){
+    if(enMesa.has(pid)||!f||!f.firmas||dec[pid]) continue;
+    const mias=(f.firmas||[]).map(fs=>(fs||[]).find(x=>x.quien===yo)||null);
+    const l=mias.map(m=>m&&m.marca==='no'?'no':''); if(!l.some(x=>x)) continue;
+    dec[pid]={laminas:l,notas:mias.map(m=>(m&&m.nota)||''),nota:'',_reabierta:true};
+  }
 }
 function verGuia(t){
   hoja(`<h3>El guion de la publicación</h3><p>${esc(t.promesa||t.pieza)}</p>
@@ -979,7 +1018,11 @@ function filasRespuestas(compacto){
       <div class="acc"><span class="chipm ${m==='si'?'si':m==='no'?'no':'pend'}">${m==='si'?'Aprobada':m==='no'?'Cambio':'Sin ver'}</span>${!compacto&&DECIDE()?`<button data-ir="${k}">${m?'Cambiar':'Ir'}</button>`:''}</div></div>` }).join('');
   const lockF=lockeadas.map((l,k)=>`<div class="fila-r">${thumbDe({tipo:'lamina',p:l.p,i:l.i})}<div class="txt"><b>${esc(l.p.titulo||l.pid)}</b><small>${numeroReal({tipo:'lamina',p:l.p,pid:l.p.id,i:l.i})} · ya decidida</small></div>
       <div class="acc"><span class="chipm lock">✓ ${l.marca==='si'?'Aprobada':'Cambio'} · tú</span>${!compacto&&DECIDE()?`<button data-reabrir="${k}">Reabrir</button>`:''}</div></div>`).join('');
-  return {hoyF,lockF};
+  const reF=reaperturas().map(([pid,d])=>d.laminas.map((m,i)=>{ if(m!=='no') return '';
+    const t=Object.values(TIRAS).find(z=>z&&z.base===pid), l=t&&(t.laminas||[]).find(z=>z.n===i+1);
+    return `<div class="fila-r">${l?`<img class="th" src="${esc(ligera(l.src))}" alt="" loading="lazy">`:'<div class="th"></div>'}<div class="txt"><b>${esc((t&&t.pieza)||d._tira||pid)}</b><small>lámina ${i+1} · estaba aprobada, pediste cambio</small>${d.notas[i]?`<em>«${esc(d.notas[i])}»</em>`:''}</div>
+      <div class="acc"><span class="chipm no">Cambio</span>${!compacto&&DECIDE()?`<button data-quitar="${esc(pid)}:${i}">Quitar</button>`:''}</div></div>` }).join('')).join('');
+  return {hoyF:hoyF+reF,lockF};
 }
 function conSeguro(b,fn){ // primer toque pregunta, segundo ejecuta; se olvida a los 4 s
   b.onclick=()=>{ if(b.dataset.seguro){ fn(); return } b.dataset.seguro='1'; const t=b.textContent; b.textContent='Sí, borrar mi respuesta'; b.classList.add('seguro');
@@ -992,6 +1035,7 @@ function abrirRespuestas(){
     ${lockF?`<h4 style="margin:18px 0 8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--guia)">Decididas antes</h4><div class="lista-r">${lockF}</div>`:''}`,'respuestas');
   v.querySelectorAll('[data-ir]').forEach(b=>{ const k=+b.dataset.ir; if(marcaDe(pasos[k])) conSeguro(b,()=>irA(k)); else b.onclick=()=>irA(k) });
   v.querySelectorAll('[data-reabrir]').forEach(b=>conSeguro(b,()=>reabrir(lockeadas[+b.dataset.reabrir])));
+  v.querySelectorAll('[data-quitar]').forEach(b=>conSeguro(b,()=>{ const [pid,i]=b.dataset.quitar.split(':'); quitarReapertura(pid,+i) }));
 }
 function pintarPanel(){
   const p=$('#panel'); if(!p||getComputedStyle(p).display==='none') return;
@@ -1363,7 +1407,30 @@ function abrirGuia(forzar){
 
 /* ══ arranque ══ */
 function pintarFecha(f){ try{ $('#fechaTxt').textContent=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}) }catch(e){ $('#fechaTxt').textContent=f } }
-let _pintado=false;
+let _pintado=false, _tFrases=null;
+function pintarCargando(){
+  const z=$('#zona'); if(!z) return;
+  $('#titulo').innerHTML='Abriendo la mesa…'; $('#subt').textContent='Leyendo el Sheet, no una copia';
+  const frases=['Preguntándole al Sheet qué falta hoy…','Trayendo tus marcas de otros días…','Acomodando la tira de láminas…','Afinando la carta…','Ya casi…'];
+  z.innerHTML=`<div class="carta cargando-carta"><div class="lienzo"><div class="cargando"><i class="ruedita"></i><span id="fraseCarga">${frases[0]}</span></div></div></div>`;
+  const mw=$('#mandoWrap'); if(mw) mw.hidden=true;
+  let k=0; clearInterval(_tFrases); _tFrases=setInterval(()=>{ const e=$('#fraseCarga'); if(!e){ clearInterval(_tFrases); return } k=(k+1)%frases.length; e.textContent=frases[k] },1700);
+}
+function aplicarDia(d){
+  clearInterval(_tFrases);
+  const firma=x=>(x.propuestas||[]).map(p=>p.id+':'+((p.laminas||[]).length||(p.opciones||[]).length)).join('|');
+  if(_pintado&&D&&DECIDE()&&cuentas().hoy>0){ if(firma(D)!==firma(d)){ D.propuestas=d.propuestas.map(p=>{const v=(D.propuestas||[]).find(q=>q.id===p.id); return v||p}); }
+    D.decisiones=d.decisiones; D._respaldo=false; estadoInicial(); $('#subt').textContent=pasos[idx]&&piezaDe(pasos[idx])?`Publicación: ${piezaDe(pasos[idx])}`:''; }
+  else { _pintado=true; montar(d) }
+}
+function avisarRespaldo(){
+  $('#subt').textContent='Sin señal con el Sheet · te muestro la última copia; lo que marques se guarda al volver';
+  pintarEstado('cola','Sin señal con el Sheet · reintentando');
+}
+function reintentarSheet(n){            // tras caer al respaldo, se insiste hasta 6 veces (cada 30 s)
+  if(n>=6) return;
+  setTimeout(async()=>{ try{ aplicarDia(normalizarDia(await conMarcasDeAntes(await traer(1,15000),''))) }catch(e){ reintentarSheet(n+1) } },30000);
+}
 function montar(d){
   D=d; fecha=D.fecha||''; pintarFecha(fecha);
   if(d.rol&&!d._respaldo) localStorage.setItem('sala_rol',d.rol);   // el Sheet sabe quién eres; la Sala le cree
@@ -1371,9 +1438,9 @@ function montar(d){
   const b=leerLS('sala2-'+fecha,null);
   const tSheet=Date.parse(D.ultima_revision||'')||0;
   const borradorManda=!!(b&&b.dec&&(b.t||0)>tSheet&&Object.values(b.dec).some(x=>(x.laminas||[]).some(m=>m==='si'||m==='no')));
-  armarPasos(borradorManda);
+  armarPasos(borradorManda); hidratarReaperturas();
   const hubo=restaurarBorrador(); if(!hubo){ idx=0; hist=[] }
-  estadoInicial(); pintarCartas();
+  estadoInicial(); pintarCartas(); const mw=$('#mandoWrap'); if(mw&&pasos.length&&idx<pasos.length) mw.hidden=false;
   Promise.all([...new Set(pasos.map(x=>x.pid))].map(cargarTira)).then(()=>{ if(pasos[idx]){ pintarTira(pasos[idx]); pintarCartas() } });
   if(hubo&&idx>0&&idx<pasos.length) $('#subt').textContent=`Sigues donde ibas · ${piezaDe(pasos[idx])}`;
   ajustarZona();
@@ -1397,13 +1464,12 @@ try{ const ro=new ResizeObserver(()=>ajustarZona()); ['.cab','#ctx','#tira','#ma
 (async function(){
   abrirGuia(false); ajustarZona();            // la bienvenida no espera al Sheet
   cargarExpedientes(); subirCola();
-  const rapido=setTimeout(async()=>{ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); if(!r.ok) return; const j=await r.json(); j._respaldo=true; if(!_pintado){ _pintado=true; montar(normalizarDia(j)) } }catch(e){} },2500);
-  try{ const d=normalizarDia(await conMarcasDeAntes(await traer(),'')); clearTimeout(rapido);
-    const firma=x=>(x.propuestas||[]).map(p=>p.id+':'+((p.laminas||[]).length||(p.opciones||[]).length)).join('|');
-    if(_pintado&&D&&DECIDE()&&cuentas().hoy>0){ if(firma(D)!==firma(d)){ D.propuestas=d.propuestas.map(p=>{const v=(D.propuestas||[]).find(q=>q.id===p.id); return v||p}); }
-      D.decisiones=d.decisiones; D._respaldo=false; estadoInicial(); }
-    else { _pintado=true; montar(d) } }
-  catch(e){ clearTimeout(rapido); if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)) }
+  // 5-sep (Alejandro): «prefiero una animación mientras carga que estar viendo algo pasado».
+  // Ya NO se pinta la copia de respaldo a los 2.5 s: se espera al Sheet con una carta de carga.
+  // El respaldo solo entra si el Sheet de verdad no contesta, y se dice con todas sus letras.
+  pintarCargando();
+  try{ aplicarDia(normalizarDia(await conMarcasDeAntes(await traer(),''))) }
+  catch(e){ if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)); avisarRespaldo(); reintentarSheet(0) }
     catch(e2){ $('#titulo').textContent='No pude abrir la sala'; $('#subt').textContent='Puede ser la red. Cierra y vuelve a abrir en un momento.'; pintarEstado('sin','Sin conexión') } } }
   avisarLlave();
 })();
