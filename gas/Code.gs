@@ -346,6 +346,14 @@ function doGet(e) {
     }
     return json({ ok: true, antes: antes, ahora: ss0.getSpreadsheetTimeZone(), script: Session.getScriptTimeZone() });
   }
+  if (p.recurso === 'calentador') {                // (agente) instala el disparador que mantiene el cache tibio cada 10 min
+    if (rolDe(p.clave) !== 'agente') return json({ error: 'solo el agente' });
+    var b = 0; ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'calentarCache') { ScriptApp.deleteTrigger(t); b++; } });
+    ScriptApp.newTrigger('calentarCache').timeBased().everyMinutes(10).create();
+    calentarCache();
+    bitacora('Calentador de cache instalado', 'cada 10 min · ' + b + ' anterior(es) borrado(s)');
+    return json({ ok: true, borrados: b });
+  }
   if (p.recurso === 'expedientes') {
     if (!rolDe(p.clave)) return json({ error: 'clave incorrecta' });
     var ex = {};
@@ -357,7 +365,32 @@ function doGet(e) {
   }
   if (p.recurso !== 'dia') return json({ error: 'recurso desconocido' });
   var f = /^\d{4}-\d{2}-\d{2}$/.test(p.f || '') ? p.f : hoy();
+  var cuerpo = diaCacheado_(f, p.fresco === '1');
+  cuerpo.rol = rolQuien;
+  cuerpo.quien = (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || '');
+  cuerpo.version = 'cache-tibio-2026-09-05';
+  return json(cuerpo);
+}
 
+/* CACHE (5-sep): cada lectura leia 6 pestanas y tardaba 7-12 s. El dia se arma una vez, se guarda 5 min
+   en CacheService y CUALQUIER escritura (doPost) lo invalida, asi que nunca se sirve algo viejo tras
+   una decision. Lo que depende de quien pregunta (rol, quien) se agrega fuera del cache. */
+function diaCacheado_(f, fresco) {
+  var cache = CacheService.getScriptCache(), ck = 'dia:v2:' + f;
+  if (!fresco) { try { var raw = cache.get(ck); if (raw) { var o = JSON.parse(raw); o.cache = true; return o; } } catch (e) {} }
+  var cuerpo = armarDia_(f);
+  try { var txt = JSON.stringify(cuerpo); if (txt.length < 95000) cache.put(ck, txt, 900); } catch (e2) {}
+  cuerpo.cache = false; return cuerpo;
+}
+function calentarCache() {
+  var f = hoy(), c = armarDia_(f);
+  try { var txt = JSON.stringify(c); if (txt.length < 95000) CacheService.getScriptCache().put('dia:v2:' + f, txt, 900); } catch (e) {}
+}
+function invalidarDia_(f) {
+  var ks = ['dia:v2:' + hoy()]; if (f && /^\d{4}-\d{2}-\d{2}$/.test(String(f)) && ks.indexOf('dia:v2:' + f) < 0) ks.push('dia:v2:' + f);
+  try { CacheService.getScriptCache().removeAll(ks); } catch (e) {}
+}
+function armarDia_(f) {
   // una lectura por pestaña (presupuesto <3 s firmado por el ingeniero)
   var PR = filas('PROPUESTAS'), DE = filas('DECISIONES'), PA = filas('PARRILLA'),
       CO = filas('CONTROL'), PD = filas('PRODUCCION'), BI = filas('BITACORA');
@@ -427,17 +460,18 @@ function doGet(e) {
   DE.forEach(function (d) { var t = selloDe(d.guardado); if (t > ultRevT) ultRevT = t; });
   var ultRev = ultRevT ? Utilities.formatDate(new Date(ultRevT), TZ, "yyyy-MM-dd'T'HH:mm:ss") : '';
 
-  return json({
+  return {
     fecha: f, dias: Object.keys(dias).sort(), propuestas: props, decisiones: dec, retro: r,
     parrilla: parr, control: CO.length ? CO[CO.length - 1] : null,
     produccion: PD.slice().reverse().slice(0, 30).map(function (x) { x.fecha = fechaDe(x.fecha); return x; }),
-    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), relevo_virtual: relevoVirtual, version: 'herencia-2026-09-05'
-  });
+    bitacora: bit, ultima_revision: ultRev, relevo_virtual: relevoVirtual
+  };
 }
 
 /* ------------------------------------------------ escritura */
 function doPost(e) {
   var d; try { d = JSON.parse(e.postData.contents); } catch (err) { return json({ error: 'cuerpo ilegible' }); }
+  if (d && d.accion && d.accion !== 'entrada') invalidarDia_(d.fecha || d.dia);   // lo que se escribe se ve en la siguiente lectura
   // «mándame mi entrada» NO pide clave: es justo para cuando ya no la tienes.
   // No revela nada: el correo va SOLO a la dirección de CONFIG.
   /* ENTRAR CON GOOGLE (3-sep): «estoy entrando por Google, quiero que así funcione».
