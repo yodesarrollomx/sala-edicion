@@ -263,6 +263,15 @@ function doGet(e) {
     bitacora('Correo diario reprogramado', 'entre 7:00 y 8:00 ' + TZ + ' (' + borrados + ' disparador(es) anteriores borrados)');
     return json({ ok: true, borrados: borrados, zona: TZ });
   }
+  if (p.recurso === 'zona_hoja') {                // la hoja parseaba ahora() (hora Hermosillo) como UTC: bitacora y guardado salian 7 h atras
+    if (rolDe(p.clave) !== 'agente') return json({ error: 'solo el agente' });
+    var ss0 = SpreadsheetApp.getActive(), antes = ss0.getSpreadsheetTimeZone();
+    if (p.fijar === '1' && antes !== TZ) {
+      ss0.setSpreadsheetTimeZone(TZ);
+      bitacora('Zona horaria de la hoja fijada', antes + ' → ' + TZ + ' (los sellos anteriores se leen 7 h antes; los nuevos van bien)');
+    }
+    return json({ ok: true, antes: antes, ahora: ss0.getSpreadsheetTimeZone(), script: Session.getScriptTimeZone() });
+  }
   if (p.recurso === 'expedientes') {
     if (!rolDe(p.clave)) return json({ error: 'clave incorrecta' });
     var ex = {};
@@ -385,7 +394,7 @@ function doGet(e) {
     fecha: f, dias: Object.keys(dias).sort(), propuestas: props, decisiones: dec, retro: r,
     parrilla: parr, control: CO.length ? CO[CO.length - 1] : null,
     produccion: PD.slice().reverse().slice(0, 30).map(function (x) { x.fecha = fechaDe(x.fecha); return x; }),
-    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), relevo_virtual: relevoVirtual, version: 'correo-7am-2026-09-05'
+    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), relevo_virtual: relevoVirtual, version: 'zona-hoja-2026-09-05'
   });
 }
 
