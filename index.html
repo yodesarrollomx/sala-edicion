@@ -1381,7 +1381,7 @@ function montar(d){
 /* ══ el alto de la carta en teléfono se MIDE (auditoría 5-sep): la fórmula de CSS suponía una cabecera de 415 px
    y el mando (sticky) acababa tapando el pie y el texto de la lámina. Aquí: lo que queda entre la cabecera y el mando. ══ */
 function ajustarZona(){
-  const z=$('#zona'); if(!z) return;
+  const z=$('#zona'); if(!z||!innerWidth) return;   // sin ancho (iframe oculto, pestaña en transición) no hay nada que medir
   if(innerWidth>=640){ z.style.height=''; z.style.minHeight=''; return }
   const calc=()=>{ const m=$('#mandoWrap'), nav=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav'))||72;
     const top=z.getBoundingClientRect().top+scrollY, mh=(m&&!m.hidden)?m.getBoundingClientRect().height:0;
