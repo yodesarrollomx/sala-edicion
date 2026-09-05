@@ -241,6 +241,18 @@ function doGet(e) {
                evento: String(b.evento), detalle: String(b.detalle || '').slice(0, 300) }; });
     return json({ ok: true, bitacora: ult });
   }
+  if (p.recurso === 'envios') {                   // TODAS las filas de DECISIONES de un dia (auditoria desde la Mac):
+    if (rolDe(p.clave) !== 'agente') return json({ error: 'solo el agente' });   // recupera marcas que un envio posterior tapo
+    var fE = /^\d{4}-\d{2}-\d{2}$/.test(p.f || '') ? p.f : hoy();
+    var fil = filas('DECISIONES').filter(function (d) { return fechaDe(d.fecha) === fE; }).map(function (d) {
+      var t = selloDe(d.guardado);
+      return { envio: String(d.envio_id), quien: String(d.quien),
+               guardado: t ? Utilities.formatDate(new Date(t), TZ, 'yyyy-MM-dd HH:mm:ss') : String(d.guardado),
+               prop: String(d.prop_id || ''), lamina: (d.lamina === '' || d.lamina === null) ? null : Number(d.lamina),
+               marca: String(d.marca || ''), nota: String(d.nota_propuesta || ''), nota_dia: String(d.nota_dia || '') };
+    });
+    return json({ ok: true, fecha: fE, filas: fil });
+  }
   if (p.recurso === 'expedientes') {
     if (!rolDe(p.clave)) return json({ error: 'clave incorrecta' });
     var ex = {};
@@ -346,7 +358,7 @@ function doGet(e) {
     fecha: f, dias: Object.keys(dias).sort(), propuestas: props, decisiones: dec, retro: r,
     parrilla: parr, control: CO.length ? CO[CO.length - 1] : null,
     produccion: PD.slice().reverse().slice(0, 30).map(function (x) { x.fecha = fechaDe(x.fecha); return x; }),
-    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), version: 'portero-autorizado-2026-09-04'
+    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), version: 'envios-auditables-2026-09-05'
   });
 }
 
@@ -400,7 +412,11 @@ function doPost(e) {
   }
 
   var rol = rolDe(d.clave);
-  if (!rol) return json({ error: 'no reconocí tu entrada (credencial no válida o sin acceso a la Sala)' });
+  if (!rol) {                                    // que NINGÚN rechazo sea silencioso
+    try { var kk = String(d.clave || ''); bitacora('Envío rechazado: credencial no reconocida',
+      (d.accion || '') + ' · clave ' + kk.slice(0, 3) + '…(' + kk.length + ')'); } catch (e0) {}
+    return json({ error: 'no reconocí tu entrada (credencial no válida o sin acceso a la Sala)' });
+  }
 
   if (d.accion === 'decidir') {
     if (rol !== 'editor' && rol !== 'editor2') return json({ error: 'tu rol solo lee' });
