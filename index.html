@@ -671,7 +671,7 @@ function pintarEstado(tipo,texto){
 function estadoInicial(){
   if(!DECIDE()) return pintarEstado('lectura','Solo lectura · decide Alejandro');
   const c=cuentas();
-  if(!ENTRADO()) return pintarEstado('sin', c.hoy?'Guardado en este aparato · falta entrar':'No has entrado');
+  if(!ENTRADO()) return pintarEstado('sin', c.hoy?'Guardado aquí · entra por el YOD OS para subirlo':'Entra por el YOD OS');
   if(guard.env) return pintarEstado('subido','Guardado ✓ '+guard.env.hora);
   if(leerLS('sala_cola',[]).length) return pintarEstado('cola','Se guarda al volver la señal');
   return pintarEstado(c.hoy?'local':'', c.hoy?'Guardando…':'Nada decidido aún');
@@ -1221,7 +1221,7 @@ function pintarAjustes(){
       <span class="rolchip ${DECIDE()?'':'lectura'}">${DECIDE()?'Decides tú':'Solo lectura'}</span>
       <p>${ENTRADO()?(DECIDE()?'Tu entrada está activa: lo que decides se guarda en el Sheet.':'Puedes ver la mesa y las publicaciones, pero no decidir. Si necesitas decidir, pídele a Alejandro que te dé acceso de editor (él lo da desde la matriz de Accesos del YOD OS).'):'No has entrado. Lo que decidas se guarda en este aparato y sube cuando entres.'}</p>
       ${guard.ultimoError?`<p style="font-size:13px;color:var(--no)">Último intento de guardado: «${esc(guard.ultimoError)}»</p>`:''}
-      ${ENTRADO()?`<p style="font-size:13px;color:var(--guia)">Entraste con ${PORLLAVE_OS()?'<b>tu cuenta del YOD OS</b> — la misma llave para todo':'la liga de la Sala'}.</p>`:''}
+      ${ENTRADO()?`<p style="font-size:13px;color:var(--guia)">Entraste con <b>tu cuenta del YOD OS</b>.</p>`:''}
       ${ENTRADO()?'':`<button class="listo" style="margin-top:0" id="ajEntrar">Entrar</button>`}</div>
     <div class="bloque-aj"><h4>Cómo se usa</h4><ol>${DECIDE()?`
       <li><b>Producción es la máquina, no una persona.</b> Es el sistema que arma láminas, voces y videos con lo que tú decides; corre en la Mac de Alejandro.</li>
@@ -1315,36 +1315,12 @@ async function pintarMaquinas(){
   $('#ajMaq').hidden=true;
 }
 function abrirEntrar(){
-  const dentro=EMBED();
-  const v=hoja(`<h3>Entrar a la Sala</h3>
-    <p><b>Qué pasa:</b> ${dentro?'estás viendo la Sala dentro del tablero. Tu acceso de Google es del tablero, no de la Sala: la Sala tiene su propia llave.':'este navegador no tiene la llave de la Sala.'} El teléfono la borra cada tanto por seguridad; por eso vuelve a pedirla.</p>
-    ${dentro?`<a class="secund" style="display:grid;place-items:center;text-decoration:none;margin:0 0 14px" href="${location.pathname}" target="_blank" rel="noopener">Abrir la Sala en pestaña aparte</a>`:''}
-    <p>Recupérala de un toque:</p>
-    <button class="listo" id="entCorreo" style="margin-top:0">Mandar mi entrada al correo</button>
-    <p style="margin:6px 0 0;font-size:12.5px;color:var(--guia)">El correo llega a la cuenta de Dirección. Si no eres tú quien lo recibe, pídele a Alejandro que te reenvíe el botón.</p>
-    <p id="entAviso" style="margin:10px 0 16px;font-size:13.5px;color:var(--si)"></p>
-    <p style="margin-bottom:6px"><b>¿Ya tienes la liga?</b> Pégala aquí:</p>
-    <textarea id="entLiga" placeholder="Pega aquí la liga que te llegó…" style="min-height:64px"></textarea>
-    <button class="secund" id="entPegar">Entrar con esta liga</button>
-    <p style="margin-top:14px;font-size:12.5px;color:var(--guia)">Mientras tanto lo que decidas se guarda en este aparato y sube en cuanto entres.</p>`,'entrar');
-  const av=v.querySelector('#entAviso');
-  v.querySelector('#entCorreo').onclick=async()=>{
-    av.style.color='var(--gris)'; av.textContent='Pidiendo…';
-    try{ const r=await fetch(GAS()||GAS_DEF,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({accion:'entrada'})});
-      const j=await leerJSON(r);
-      if(j&&j.espera){ av.style.color='var(--oro)'; av.textContent='Ya se mandó uno hace menos de un minuto: revisa tu correo.'; return }
-      if(!j||!j.ok) throw 0;
-      av.style.color='var(--si)'; av.textContent='Listo: te llegó a '+(j.correo||'tu correo')+'. Abre el botón «Entrar» del correo en ESTE aparato.';
-    }catch(e){ av.style.color='var(--no)'; av.textContent='No pude pedirlo (puede ser la red). Intenta otra vez.' }
-  };
-  v.querySelector('#entPegar').onclick=()=>{
-    const t=v.querySelector('#entLiga').value.trim(); const h=t.split('#')[1]||'';
-    const q=new URLSearchParams(h);
-    if(!q.get('gas')||!q.get('clave')){ av.style.color='var(--no)'; av.textContent='Esa liga no trae la entrada. Copia la del correo completa.'; return }
-    localStorage.setItem('sala_gas',q.get('gas')); localStorage.setItem('sala_clave',q.get('clave'));
-    if(q.get('rol')) localStorage.setItem('sala_rol',q.get('rol'));
-    cerrarCapa('entrar'); location.reload();
-  };
+  const OS='https://yodesarrollomx.github.io/yod-portal/os/#/embudo/sala';
+  hoja(`<h3>Entrar a la Sala</h3>
+    <p>La Sala usa <b>tu cuenta de Google del YOD OS</b>. No hay otra clave.</p>
+    <p>Abre el YOD OS, entra con Google y toca <b>Embudo comercial → Sala de Edición</b>: la Sala abre sola con tu acceso.</p>
+    <a class="listo" style="display:grid;place-items:center;text-decoration:none" href="${OS}" ${EMBED()?'target="_top"':''}>Abrir el YOD OS</a>
+    <p style="margin-top:12px;font-size:13px;color:var(--guia)">Lo que decidas mientras tanto se guarda en este aparato y sube solo en cuanto entres.</p>`,'entrar');
 }
 
 /* ══ guía de primer uso (3 pantallas, una vez por aparato) ══ */
@@ -1405,6 +1381,7 @@ $('#btnReintentar').onclick=async()=>{ pintarEstado('subiendo','Reintentando…'
 document.addEventListener('keydown',e=>{ if(CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
   if(e.key==='ArrowRight') decidir('si'); if(e.key==='ArrowLeft') decidir('no') });
 window.addEventListener('online',subirCola);
+setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subirCola() },60000);   // sin tocar nada, sube solo
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); subir() } } });
 window.addEventListener('resize',()=>{ if(DECIDE()) pintarPanel(); else pintarPanelMira() });
 </script>
