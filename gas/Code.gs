@@ -249,6 +249,21 @@ function doGet(e) {
     });
     return json({ ok: true, expedientes: ex });
   }
+  /* HISTORIAL (5-sep-2026): quién y cuándo decidió cada lámina, para la historia por versión
+     que pinta la Sala. Sólo lectura, sólo las propuestas pedidas (máx. 20). Sin este bloque en
+     el editor la Sala igual arma la historia con la fecha del día; con él, con hora exacta. */
+  if (p.recurso === 'historial') {
+    var ids = String(p.ids || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 20);
+    var filasH = filas('DECISIONES').filter(function (d) {
+      return ids.indexOf(String(d.prop_id)) >= 0 && d.lamina !== '' && (String(d.marca || '') === 'si' || String(d.marca || '') === 'no');
+    }).map(function (d) {
+      var t = selloDe(d.guardado);
+      return { prop_id: String(d.prop_id), lamina: Number(d.lamina) || 0, quien: nombreDe(String(d.quien || 'editor')),
+               marca: String(d.marca), nota: String(d.nota_propuesta || ''), fecha: fechaDe(d.fecha),
+               cuando: t ? Utilities.formatDate(new Date(t), TZ, 'yyyy-MM-dd HH:mm') : fechaDe(d.fecha) };
+    });
+    return json({ ok: true, filas: filasH, version: 'historial-2026-09-05' });
+  }
   if (p.recurso !== 'dia') return json({ error: 'recurso desconocido' });
   var f = /^\d{4}-\d{2}-\d{2}$/.test(p.f || '') ? p.f : hoy();
 

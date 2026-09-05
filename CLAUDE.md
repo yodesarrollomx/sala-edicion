@@ -106,6 +106,22 @@ propio `sala_gas`/`sala_clave`/`sala_rol` de localStorage y los manda en el `#ha
 nuevo antes de redirigir; (2) la Sala nueva declara `ORIGEN_VIEJO` (constante en `index.html`) y pinta
 **«Recuperar mi entrada»** → `<ORIGEN_VIEJO>#puente=1`, que fuerza ese viaje.
 
+**La historia de cada lámina (5-sep-2026):** debajo de la carta (y al tocar una lámina en la tira
+o en «Ver el guion») la Sala pinta todas las versiones de esa lámina, de la primera a la que está
+en la mesa, con quién marcó qué y cuándo. La cadena se arma en el navegador siguiendo
+`origen: "rehecha-de <id>"` (y `de` de la tira) hacia atrás por los días del Sheet (`diaDe`,
+`cadenaDe`, `historiaN` en `index.html`); el número real de cada lámina sale del `mapa` de la tira
+o, si no hay, del orden de los «no» de la versión anterior. **«Usar ésta»** sobre una versión
+pasada es una decisión normal: «pedir cambio» con la nota `Volver a la versión N (fecha): <src>`,
+que viaja por el sobre de siempre. Con `recurso=historial` en el .gs (está en `gas/Code.gs`,
+**falta pegarlo en el editor**) la historia trae la hora exacta; sin él, la fecha del día.
+
+**La Sala se pone al día sola (5-sep-2026):** relee el Sheet cada 90 s, al volver a la pestaña,
+al recuperar el foco y al volver la red (`refrescar`). Si algo cambió, estrena `SELLO` (toda
+imagen se pide con `?s=<sello>`: las láminas se reescriben con el mismo nombre y antes el CDN las
+servía viejas) y vuelve a montar la mesa conservando lo decidido (`restaurarBorrador` ya no tira
+el borrador cuando la mesa cambia de forma). Nunca en medio de una decisión ni con una capa abierta.
+
 **Una sola llave (3-sep):** si no hay `sala_clave` propia, vale la credencial del YOD OS
 (`pyod_clave_v1`, mismo origen). **No se copia: se lee viva**, para que siga valiendo cuando el
 Portero la renueve (commit `a026510`). Llaves en localStorage: `sala_gas`, `sala_clave`, `sala_rol`,
@@ -158,6 +174,7 @@ Portero la renueve (commit `a026510`). Llaves en localStorage: `sala_gas`, `sala
 | Tema | Dueño | Evidencia para darlo por cerrado |
 |---|---|---|
 | DNS de `tableros.yodesarrollo.mx` | Alejandro (con Miguel Reina / cPanel) | `curl -I https://tableros.yodesarrollo.mx/sala-edicion/` → 200 (hoy `000`). Al cortar: cambiar la constante `PORTAL` de `gas/Code.gs` **a mano en el editor** y la liga de `sala_publicar.py`. |
+| Pegar `recurso=historial` de `gas/Code.gs` en el editor de Apps Script y publicar «Versión nueva» | Alejandro | La historia de una lámina muestra hora (`18:03`) y no sólo la fecha; `GET ?recurso=historial&ids=<id>&clave=…` contesta `{ok:true, filas:[…]}` |
 | Bajar la copia pública del .gs desplegado al repo | Claude / agente | `diff` del contenido del editor contra `gas/Code.gs` sin diferencias de funciones. (No se sabe qué falta: al 4-sep el repo ya trae `entrada`, y `canje_os` está retirado a propósito.) |
 | `~/yod_audit/sala_publicar.py.nuevo` está **desactualizado**, no adelantado | Claude / agente | Le faltan `origen`, `tira` y el .jpg ligero que sí trae el vivo (`diff` 4-sep). O se regenera o se borra. |
 | `gas/appsscript.json` declara `timeZone: America/New_York` mientras la constante `TZ` de `Code.gs` usa `America/Hermosillo` | Alejandro decide (tocarlo obliga a redesplegar) | Ver si algún cálculo de fecha se corre; si no, dejarlo documentado y no moverlo. |
