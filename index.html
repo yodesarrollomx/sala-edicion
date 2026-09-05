@@ -382,7 +382,7 @@ html.cargando #actualizando{display:flex}
   .otra-voz span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
   .pie{padding:8px 12px 9px}
   .carta .pie.pie-lamina{display:none}   /* el mando lo tapaba; la píldora sobre la imagen dice lo mismo y amplía */
-  .num-movil{display:inline-flex;align-items:center;position:absolute;left:10px;bottom:10px;z-index:2;border:0;border-radius:999px;background:rgba(20,18,14,.82);color:#f6f2ea;font-size:12px;font-weight:600;padding:0 12px;min-height:34px;backdrop-filter:blur(4px)}
+  .num-movil{display:inline-flex;align-items:center;position:absolute;left:10px;top:10px;z-index:2;border:0;border-radius:999px;background:rgba(20,18,14,.82);color:#f6f2ea;font-size:12px;font-weight:600;padding:0 12px;min-height:34px;backdrop-filter:blur(4px)}
   .pie .luego{display:none}
   .pie .cual{font-size:12.5px}
 }
@@ -1374,8 +1374,19 @@ function montar(d){
   Promise.all([...new Set(pasos.map(x=>x.pid))].map(cargarTira)).then(()=>{ if(pasos[idx]){ pintarTira(pasos[idx]); pintarCartas() } });
   if(hubo&&idx>0&&idx<pasos.length) $('#subt').textContent=`Sigues donde ibas · ${piezaDe(pasos[idx])}`;
 }
+/* ══ el alto de la carta en teléfono se MIDE (auditoría 5-sep): la fórmula de CSS suponía una cabecera de 415 px
+   y el mando (sticky) acababa tapando el pie y el texto de la lámina. Aquí: lo que queda entre la cabecera y el mando. ══ */
+function ajustarZona(){
+  const z=$('#zona'); if(!z) return;
+  if(innerWidth>=640){ z.style.height=''; return }
+  const m=$('#mandoWrap'), nav=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav'))||72;
+  const top=z.getBoundingClientRect().top+scrollY, mh=(m&&!m.hidden)?m.getBoundingClientRect().height:0;
+  z.style.height=Math.max(230,Math.min(innerHeight-top-mh-nav-8,620))+'px';
+}
+addEventListener('resize',ajustarZona);
+try{ const ro=new ResizeObserver(()=>ajustarZona()); ['.cab','#ctx','#tira','#mandoWrap'].forEach(q=>{ const e=$(q); if(e) ro.observe(e) }) }catch(e){}
 (async function(){
-  abrirGuia(false);            // la bienvenida no espera al Sheet
+  abrirGuia(false); ajustarZona();            // la bienvenida no espera al Sheet
   cargarExpedientes(); subirCola();
   const rapido=setTimeout(async()=>{ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); if(!r.ok) return; const j=await r.json(); j._respaldo=true; if(!_pintado){ _pintado=true; montar(normalizarDia(j)) } }catch(e){} },2500);
   try{ const d=normalizarDia(await conMarcasDeAntes(await traer(),'')); clearTimeout(rapido);

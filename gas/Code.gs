@@ -227,6 +227,79 @@ function nombreDe(rol) {
   return n || (rol === 'editor2' ? 'Sayri' : 'Alejandro');
 }
 
+
+/* Un dia fusionado: el ultimo envio DE CADA EDITOR de ese dia (el "no" manda, notas firmadas). */
+function fusionDia_(DE, f) {
+  // decisiones: el ultimo envio DE CADA EDITOR, fusionados (ver vigentePorEditor)
+  var vigE = vigentePorEditor(DE, f);
+  var vivos = {}; Object.keys(vigE).forEach(function (q) { vivos[vigE[q]] = q; });
+  var dec = { propuestas: {}, editores: [] }, ult = 0;
+  DE.forEach(function (d) {
+    if (fechaDe(d.fecha) !== f) return;
+    var eid = String(d.envio_id); if (!(eid in vivos)) return;
+    var rol = vivos[eid], quien = nombreDe(rol);
+    if (dec.editores.indexOf(quien) < 0) dec.editores.push(quien);
+    var pid = String(d.prop_id);
+    if (pid) {
+      var fi = dec.propuestas[pid] = dec.propuestas[pid] || { laminas: [], nota: '', notas: [], firmas: [] };
+      if (d.lamina !== '' && d.lamina !== null) {
+        var i2 = Number(d.lamina), m = String(d.marca || '');
+        m = (m === 'si' || m === 'no') ? m : null;
+        var nota = d.nota_propuesta ? String(d.nota_propuesta) : '';
+        // el NO manda: si a uno no le gusto, se rehace cumpliendo las notas de los dos
+        var prev = fi.laminas[i2] || null;
+        fi.laminas[i2] = (prev === 'no' || m === 'no') ? 'no' : (m || prev);
+        fi.firmas[i2] = (fi.firmas[i2] || []).concat([{ quien: quien, marca: m, nota: nota }]);
+      } else if (d.nota_propuesta) {
+        var t = String(d.nota_propuesta);
+        fi.nota = fi.nota ? (fi.nota + ' | ' + quien + ': ' + t) : t;
+      }
+    }
+    if (d.nota_dia) dec.nota_general = (dec.nota_general ? dec.nota_general + ' | ' : '') + quien + ': ' + String(d.nota_dia);
+    if (d.nota_estrategia) dec.nota_estrategia = String(d.nota_estrategia);
+    var ts = selloDe(d.guardado); if (ts > ult) ult = ts;
+  });
+  // notas: una sola voz se deja tal cual; dos o mas van firmadas para que Produccion
+  // cumpla las dos. Una lamina que un editor dejo pendiente y el otro marco, cuenta marcada.
+  Object.keys(dec.propuestas).forEach(function (pid) {
+    var fi = dec.propuestas[pid];
+    for (var i = 0; i < fi.laminas.length; i++) {
+      if (fi.laminas[i] === undefined) fi.laminas[i] = null;
+      var con = (fi.firmas[i] || []).filter(function (x) { return x.nota; });
+      if (con.length === 1) fi.notas[i] = con[0].nota;
+      else if (con.length > 1) fi.notas[i] = con.map(function (x) { return x.quien + ': ' + x.nota; }).join(' | ');
+    }
+  });
+  return { dec: dec, ult: ult };
+}
+/* Herencia (5-sep): una propuesta que sigue en la mesa pero se decidio (parcialmente) otro dia trae esas
+   marcas en la misma respuesta. Antes la Sala las pedia aparte (4 dias, 6 s de tope) y con el GAS tardando
+   5-11 s los ✓ se perdian y volvia a preguntar lo ya aprobado. */
+function heredarMarcas_(DE, props, dec, f) {
+  var faltan = props.map(function (p) { return p.id; }).filter(function (id) { return !dec.propuestas[id]; });
+  for (var k = 1; k <= 14 && faltan.length; k++) {
+    var fk = Utilities.formatDate(new Date(new Date(f + 'T12:00:00').getTime() - k * 864e5), TZ, 'yyyy-MM-dd');
+    var hay = DE.some(function (d) { return fechaDe(d.fecha) === fk && faltan.indexOf(String(d.prop_id)) >= 0; });
+    if (!hay) continue;
+    var fz = fusionDia_(DE, fk).dec;
+    faltan = faltan.filter(function (id) {
+      if (!fz.propuestas[id]) return true;
+      var m = fz.propuestas[id]; m.heredada = fk; dec.propuestas[id] = m; return false;
+    });
+  }
+}
+/* Misma regla que el relevo de la Mac: un eje se cierra con UN si (o todas no); una tira, con marca en todas. */
+function cerrada_(p, m) {
+  var marcas = (m && m.laminas) || [];
+  if (p.tipo === 'eje') {
+    var n = (p.opciones || []).length; if (!n) return false;
+    var s = marcas.slice(0, n);
+    return s.some(function (x) { return x === 'si'; }) || s.filter(function (x) { return x === 'no'; }).length >= n;
+  }
+  var n2 = (p.laminas || []).length; if (!n2) return false;
+  return marcas.slice(0, n2).filter(function (x) { return x === 'si' || x === 'no'; }).length >= n2;
+}
+
 /* ------------------------------------------------ lectura */
 function doGet(e) {
   var p = (e && e.parameter) || {};
@@ -243,13 +316,14 @@ function doGet(e) {
   }
   if (p.recurso === 'envios') {                   // TODAS las filas de DECISIONES de un dia (auditoria desde la Mac):
     if (rolDe(p.clave) !== 'agente') return json({ error: 'solo el agente' });   // recupera marcas que un envio posterior tapo
-    var fE = /^\d{4}-\d{2}-\d{2}$/.test(p.f || '') ? p.f : hoy();
+    if (p.f && !/^\d{4}-\d{2}-\d{2}$/.test(p.f)) return json({ error: 'fecha inválida (yyyy-mm-dd)' });
+    var fE = p.f || hoy();
     var fil = filas('DECISIONES').filter(function (d) { return fechaDe(d.fecha) === fE; }).map(function (d) {
       var t = selloDe(d.guardado);
       return { envio: String(d.envio_id), quien: String(d.quien),
                guardado: t ? Utilities.formatDate(new Date(t), TZ, 'yyyy-MM-dd HH:mm:ss') : String(d.guardado),
                prop: String(d.prop_id || ''), lamina: (d.lamina === '' || d.lamina === null) ? null : Number(d.lamina),
-               marca: String(d.marca || ''), nota: String(d.nota_propuesta || ''), nota_dia: String(d.nota_dia || '') };
+               marca: String(d.marca || ''), nota: String(d.nota_propuesta || ''), nota_dia: String(d.nota_dia || ''), nota_estrategia: String(d.nota_estrategia || '') };
     });
     return json({ ok: true, fecha: fE, filas: fil });
   }
@@ -314,47 +388,10 @@ function doGet(e) {
              origen: String(x.origen || '') || null };
   });
 
-  // decisiones: el ultimo envio DE CADA EDITOR, fusionados (ver vigentePorEditor)
-  var vigE = vigentePorEditor(DE, f);
-  var vivos = {}; Object.keys(vigE).forEach(function (q) { vivos[vigE[q]] = q; });
-  var dec = { propuestas: {}, editores: [] }, ult = 0;
-  DE.forEach(function (d) {
-    if (fechaDe(d.fecha) !== f) return;
-    var eid = String(d.envio_id); if (!(eid in vivos)) return;
-    var rol = vivos[eid], quien = nombreDe(rol);
-    if (dec.editores.indexOf(quien) < 0) dec.editores.push(quien);
-    var pid = String(d.prop_id);
-    if (pid) {
-      var fi = dec.propuestas[pid] = dec.propuestas[pid] || { laminas: [], nota: '', notas: [], firmas: [] };
-      if (d.lamina !== '' && d.lamina !== null) {
-        var i2 = Number(d.lamina), m = String(d.marca || '');
-        m = (m === 'si' || m === 'no') ? m : null;
-        var nota = d.nota_propuesta ? String(d.nota_propuesta) : '';
-        // el NO manda: si a uno no le gusto, se rehace cumpliendo las notas de los dos
-        var prev = fi.laminas[i2] || null;
-        fi.laminas[i2] = (prev === 'no' || m === 'no') ? 'no' : (m || prev);
-        fi.firmas[i2] = (fi.firmas[i2] || []).concat([{ quien: quien, marca: m, nota: nota }]);
-      } else if (d.nota_propuesta) {
-        var t = String(d.nota_propuesta);
-        fi.nota = fi.nota ? (fi.nota + ' | ' + quien + ': ' + t) : t;
-      }
-    }
-    if (d.nota_dia) dec.nota_general = (dec.nota_general ? dec.nota_general + ' | ' : '') + quien + ': ' + String(d.nota_dia);
-    if (d.nota_estrategia) dec.nota_estrategia = String(d.nota_estrategia);
-    var ts = selloDe(d.guardado); if (ts > ult) ult = ts;
-  });
-  // notas: una sola voz se deja tal cual; dos o mas van firmadas para que Produccion
-  // cumpla las dos. Una lamina que un editor dejo pendiente y el otro marco, cuenta marcada.
-  Object.keys(dec.propuestas).forEach(function (pid) {
-    var fi = dec.propuestas[pid];
-    for (var i = 0; i < fi.laminas.length; i++) {
-      if (fi.laminas[i] === undefined) fi.laminas[i] = null;
-      var con = (fi.firmas[i] || []).filter(function (x) { return x.nota; });
-      if (con.length === 1) fi.notas[i] = con[0].nota;
-      else if (con.length > 1) fi.notas[i] = con.map(function (x) { return x.quien + ': ' + x.nota; }).join(' | ');
-    }
-  });
+  var fus = fusionDia_(DE, f), dec = fus.dec, ult = fus.ult;
   if (ult) dec.guardado = Utilities.formatDate(new Date(ult), TZ, "yyyy-MM-dd'T'HH:mm:ss");
+  heredarMarcas_(DE, props, dec, f);                   // marcas de dias previos en la misma respuesta
+  if (relevoVirtual) props = props.filter(function (p) { return !cerrada_(p, dec.propuestas[p.id]); });   // sin cartas ya decididas
 
   // retro de ayer, contando SOLO su envio vigente
   var ayer = Utilities.formatDate(new Date(new Date(f + 'T12:00:00').getTime() - 864e5), TZ, 'yyyy-MM-dd');
@@ -371,7 +408,7 @@ function doGet(e) {
     if (fechaDe(x.fecha) !== ayer) return;
     if (String(x.estado) === 'video' || String(x.estado) === 'publicada') r.producidas++;
   });
-  r.rehechas = props.filter(function (x) { return x.origen; }).length;
+  r.rehechas = relevoVirtual ? 0 : props.filter(function (x) { return x.origen; }).length;
 
   var lim = Utilities.formatDate(new Date(new Date(f + 'T12:00:00').getTime() + 35 * 864e5), TZ, 'yyyy-MM-dd');
   var parr = PA.filter(function (x) { var d = fechaDe(x.fecha); return d >= f && d <= lim; })
@@ -394,7 +431,7 @@ function doGet(e) {
     fecha: f, dias: Object.keys(dias).sort(), propuestas: props, decisiones: dec, retro: r,
     parrilla: parr, control: CO.length ? CO[CO.length - 1] : null,
     produccion: PD.slice().reverse().slice(0, 30).map(function (x) { x.fecha = fechaDe(x.fecha); return x; }),
-    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), relevo_virtual: relevoVirtual, version: 'zona-hoja-2026-09-05'
+    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), relevo_virtual: relevoVirtual, version: 'herencia-2026-09-05'
   });
 }
 
