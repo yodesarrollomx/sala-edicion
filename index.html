@@ -134,6 +134,7 @@ html.embed .app{padding-top:8px}
 .lienzo img.lista{opacity:1}
 .lienzo video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
 .lienzo.conVideo{flex:1 1 auto;min-height:190px}
+.num-movil{display:none}
 .abrir-video{display:block;text-align:center;font-size:12.5px;color:var(--oro);text-decoration:none;padding:6px 0 0}
 .cargando{position:absolute;inset:0;display:grid;place-items:center;color:#c9c2b4;font-size:13px;gap:10px;padding:20px;text-align:center;
   background:linear-gradient(110deg,#141210 30%,#1f1c18 50%,#141210 70%);background-size:200% 100%;animation:brilla 1.4s infinite}
@@ -379,6 +380,8 @@ html.cargando #actualizando{display:flex}
   .otra-voz small:not(.explica){display:none}
   .otra-voz span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
   .pie{padding:8px 12px 9px}
+  .carta .pie.pie-lamina{display:none}   /* el mando lo tapaba; la píldora sobre la imagen dice lo mismo y amplía */
+  .num-movil{display:inline-flex;align-items:center;position:absolute;left:10px;bottom:10px;z-index:2;border:0;border-radius:999px;background:rgba(20,18,14,.82);color:#f6f2ea;font-size:12px;font-weight:600;padding:0 12px;min-height:34px;backdrop-filter:blur(4px)}
   .pie .luego{display:none}
   .pie .cual{font-size:12.5px}
 }
@@ -698,7 +701,9 @@ async function subir(){
   pintarEstado('subiendo','Guardando…');
   const envio=sobre(), firmaEnvio=JSON.stringify(envio.propuestas);
   // 4-sep 13:13: dos envíos idénticos en 4 s (el temporizador y el cambio de pestaña). Si nada cambió, no viaja.
-  if(firmaEnvio===_ultimoEnviado){ _subiendo=false; pintarEstado('subido','Guardado ✓ '+((guard.env&&guard.env.hora)||hora())); return }
+  if(firmaEnvio===_ultimoEnviado){   // el estado actual YA está en el Sheet: lo encolado hoy es un intermedio viejo y no debe viajar
+    localStorage.setItem('sala_cola',JSON.stringify(leerLS('sala_cola',[]).filter(x=>x.fecha!==fecha)));
+    _subiendo=false; pintarEstado('subido','Guardado ✓ '+((guard.env&&guard.env.hora)||hora())); return }
   try{
     const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(envio)});
     const j=await leerJSON(r);
@@ -856,11 +861,12 @@ function pintarCartas(){
           <div class="cargando">cargando lámina…</div>
           <span class="sello si" data-si>SÍ</span><span class="sello no" data-no>NO</span>
           <img alt="Lámina ${x.i+1}" draggable="false">
+          <button class="num-movil" type="button">${numeroReal(x)} · ampliar</button>
         </div>
-        <div class="pie"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · ${numeroReal(x)}</span>
+        <div class="pie pie-lamina"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · ${numeroReal(x)}</span>
           <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button></div>${luegoDe(x)}</div>`;
       montarImagen(el,src);
-      el.querySelector('.lupa').onclick=e=>{ e.stopPropagation(); abrirZoom(src) };
+      el.querySelectorAll('.lupa,.num-movil').forEach(b=>b.onclick=e=>{ e.stopPropagation(); abrirZoom(src) });
       dobleToque(el.querySelector('.lienzo'),()=>abrirZoom(src));
     }else{
       const ops=(x.p.opciones||[]).map((o,j)=>`<div class="op"><h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Elegir ésta</button></div>`).join('');
