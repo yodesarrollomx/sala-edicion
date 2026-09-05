@@ -383,6 +383,7 @@ html.cargando #actualizando{display:flex}
   .pie .cual{font-size:12.5px}
 }
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+.tl.cambio{border-color:var(--no)} .tl.cambio span{background:var(--no);color:#fff}
 </style></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
 
@@ -762,7 +763,7 @@ function notaDeLamina(t,l){
   return (prev&&prev.notas&&prev.notas[l.n-1])||l.nota_previa||'';
 }
 function nLamina(x){ return (x&&x.tipo==='lamina')?x.i+1:0 }
-function tiraDe(x){ const t=TIRAS[x&&x.pid]; return t||null }
+function tiraDe(x){ const t=TIRAS[x&&(x.pid||(x.p&&x.p.id))]; return t||null }
 function laminaTira(t,src,n){          // la lámina de la tira que corresponde a esta carta
   if(!t) return null;
   // «lámina 1 de 4» de una tira rehecha NO es la 1 de la historia: el mapa lo traduce
@@ -771,14 +772,19 @@ function laminaTira(t,src,n){          // la lámina de la tira que corresponde 
   const porSrc=(t.laminas||[]).find(l=>src&&l.src&&src.endsWith(l.src.split('/').pop()));
   return porSrc||(t.laminas||[]).find(l=>l.n===n)||null;
 }
+function marcaTira(x,t,l){        // lo que el editor ya dijo de esa lámina en esta ronda (4-sep: la 4 y la 6 aprobadas seguían sin ✓)
+  if(!x||!t||!t.mapa) return ''; const k=Object.keys(t.mapa).find(q=>t.mapa[q]===l.n); if(k===undefined) return '';
+  const i=+k-1, pid=x.pid||(x.p&&x.p.id), d=dec[pid]; const m=(d&&d.laminas&&d.laminas[i])||(((marcasPrevias(pid)||{}).laminas||[])[i]);
+  return m==='si'||m==='no'?m:'';
+}
 function pintarTira(x){
   const c=$('#tira'); const t=tiraDe(x); if(!t||!(t.laminas||[]).length){ c.innerHTML=''; c.hidden=true; return }
   const src=x.tipo==='lamina'?x.p.laminas[x.i]:'';
   const act=laminaTira(t,src,nLamina(x));
   c.hidden=false;
   c.innerHTML=`<div class="tira-cab"><b>${esc(t.pieza)}</b> · tira completa de ${t.laminas.length}<button class="guia-b" id="verGuia">Ver el guion</button></div>
-    <div class="tira-fila">${t.laminas.map(l=>`<button class="tl ${l.estado==='aprobada'?'ok':''} ${act&&l.n===act.n?'aqui':''}" data-n="${l.n}" aria-label="Lámina ${l.n}">
-      <img src="${esc(ligera(l.src))}" alt="" loading="lazy"><span>${l.n}${l.estado==='aprobada'?' ✓':''}</span></button>`).join('')}</div>`;
+    <div class="tira-fila">${t.laminas.map(l=>{ const m=marcaTira(x,t,l), ok=l.estado==='aprobada'||m==='si'; return `<button class="tl ${ok?'ok':''} ${m==='no'?'cambio':''} ${act&&l.n===act.n?'aqui':''}" data-n="${l.n}" aria-label="Lámina ${l.n}">
+      <img src="${esc(ligera(l.src))}" alt="" loading="lazy"><span>${l.n}${ok?' ✓':m==='no'?' ✗':''}</span></button>`}).join('')}</div>`;
   c.querySelectorAll('.tl').forEach(b=>b.onclick=()=>verLamina(t,+b.dataset.n));
   $('#verGuia').onclick=()=>verGuia(t);
 }
@@ -817,7 +823,7 @@ function versionHTML(x){
   const l=laminaTira(t,x.tipo==='lamina'?x.p.laminas[x.i]:'',nLamina(x));
   if(!l||l.estado!=='rehecha') return '';
   const nt=notaDeLamina(t,l);
-  return `<div class="otra-voz version"><b>Versión 2 de la lámina ${l.n}</b>${nt?`<span>Pediste: «${esc(nt)}»</span>`:''}<small>Las otras ${(t.laminas||[]).filter(z=>z.estado==='aprobada').length} ya están aprobadas; las ves abajo en la tira.</small></div>`;
+  return `<div class="otra-voz version"><b>Versión 2 de la lámina ${l.n}</b>${nt?`<span>Pediste: «${esc(nt)}»</span>`:''}<small>Las otras ${(t.laminas||[]).filter(z=>z.estado==='aprobada'||marcaTira(x,t,z)==='si').length} ya están aprobadas; las ves abajo en la tira.</small></div>`;
 }
 function otrosHTML(x){
   const o=x.otros||[]; if(!o.length) return '';
@@ -958,9 +964,9 @@ function hoja(html,id){
 function thumbDe(x){ return x.tipo==='lamina'?`<img class="th" src="${esc(ligera(x.p.laminas[x.i]))}" alt="" loading="lazy">`:`<div class="th" style="display:grid;place-items:center;color:#c9c2b4;font-size:11px;text-align:center">opción</div>` }
 function filasRespuestas(compacto){
   const hoyF=pasos.map((x,k)=>{ const m=marcaDe(x); const nota=x.tipo==='lamina'?dec[x.pid].notas[x.i]:dec[x.pid].nota;
-    return `<div class="fila-r">${thumbDe(x)}<div class="txt"><b>${esc(x.p.titulo||x.pid)}</b><small>${x.tipo==='lamina'?'lámina '+(x.i+1):'elige una opción'}</small>${nota?`<em>«${esc(nota)}»</em>`:''}</div>
+    return `<div class="fila-r">${thumbDe(x)}<div class="txt"><b>${esc(x.p.titulo||x.pid)}</b><small>${x.tipo==='lamina'?numeroReal(x):'elige una opción'}</small>${nota?`<em>«${esc(nota)}»</em>`:''}</div>
       <div class="acc"><span class="chipm ${m==='si'?'si':m==='no'?'no':'pend'}">${m==='si'?'Aprobada':m==='no'?'Cambio':'Sin ver'}</span>${!compacto&&DECIDE()?`<button data-ir="${k}">${m?'Cambiar':'Ir'}</button>`:''}</div></div>` }).join('');
-  const lockF=lockeadas.map((l,k)=>`<div class="fila-r">${thumbDe({tipo:'lamina',p:l.p,i:l.i})}<div class="txt"><b>${esc(l.p.titulo||l.pid)}</b><small>lámina ${l.i+1} · ya decidida</small></div>
+  const lockF=lockeadas.map((l,k)=>`<div class="fila-r">${thumbDe({tipo:'lamina',p:l.p,i:l.i})}<div class="txt"><b>${esc(l.p.titulo||l.pid)}</b><small>${numeroReal({tipo:'lamina',p:l.p,pid:l.p.id,i:l.i})} · ya decidida</small></div>
       <div class="acc"><span class="chipm lock">✓ ${l.marca==='si'?'Aprobada':'Cambio'} · tú</span>${!compacto&&DECIDE()?`<button data-reabrir="${k}">Reabrir</button>`:''}</div></div>`).join('');
   return {hoyF,lockF};
 }
@@ -980,7 +986,7 @@ function pintarPanel(){
   const p=$('#panel'); if(!p||getComputedStyle(p).display==='none') return;
   const x=pasos[idx]; const {hoyF,lockF}=filasRespuestas(true); const c=cuentas();
   p.innerHTML=`<div class="bloque"><h4>Tu revisión</h4><span class="estado ${guard.tipo}" id="pEstado"><i></i><span>${esc(guard.texto)}</span></span></div>
-    ${x&&DECIDE()?`<div class="bloque"><h4>Qué estás decidiendo</h4><p class="luego2"><b>${esc(x.p.titulo||x.pid)}</b><br>${x.tipo==='lamina'?`Lámina ${x.i+1} de ${(x.p.laminas||[]).length}. <b>Aprobar</b> → queda lista. <b>Pedir cambio</b> → Producción la rehace con tu nota y vuelve a tu mesa.`:'Eliges una opción y Producción empieza con ésa.'}</p></div>`:''}
+    ${x&&DECIDE()?`<div class="bloque"><h4>Qué estás decidiendo</h4><p class="luego2"><b>${esc(x.p.titulo||x.pid)}</b><br>${x.tipo==='lamina'?`${numeroReal(x).replace(/^l/,'L')}. <b>Aprobar</b> → queda lista. <b>Pedir cambio</b> → Producción la rehace con tu nota y vuelve a tu mesa.`:'Eliges una opción y Producción empieza con ésa.'}</p></div>`:''}
     <div class="bloque"><h4>Mis respuestas · ${c.hoy}/${pasos.length}</h4><div class="lista-r">${hoyF||'<p class="luego2">Nada todavía.</p>'}</div>
       ${pasos.length&&DECIDE()?`<button class="secund" style="margin-top:10px" id="pVer">Cambiar alguna</button>`:''}</div>
     ${lockF?`<div class="bloque"><h4>Decididas antes</h4><div class="lista-r">${lockF}</div></div>`:''}`;
@@ -1131,7 +1137,7 @@ function pintarMira(){
 function pintarPanelMira(){
   const p=$('#panel'); if(!p||getComputedStyle(p).display==='none') return;
   p.innerHTML=`<div class="bloque"><h4>Tu acceso</h4><span class="estado lectura"><i></i><span>Solo lectura</span></span></div>
-    <div class="bloque"><h4>Cómo va la mesa</h4><div class="lista-r">${MIRA.map((x,k)=>`<div class="fila-r">${x.tipo==='lamina'?`<img class="th" src="${esc(ligera(x.src))}" alt="" loading="lazy">`:'<div class="th"></div>'}<div class="txt"><b>${esc(x.p.titulo||'')}</b><small>${x.tipo==='lamina'?'lámina '+(x.i+1):'elige una opción'}</small></div><div class="acc"><span class="chipm ${x.dec==='si'?'si':x.dec==='no'?'no':'pend'}">${x.dec==='si'?'Aprobada':x.dec==='no'?'Cambio':'Sin ver'}</span></div></div>`).join('')}</div></div>`;
+    <div class="bloque"><h4>Cómo va la mesa</h4><div class="lista-r">${MIRA.map((x,k)=>`<div class="fila-r">${x.tipo==='lamina'?`<img class="th" src="${esc(ligera(x.src))}" alt="" loading="lazy">`:'<div class="th"></div>'}<div class="txt"><b>${esc(x.p.titulo||'')}</b><small>${x.tipo==='lamina'?numeroReal(x):'elige una opción'}</small></div><div class="acc"><span class="chipm ${x.dec==='si'?'si':x.dec==='no'?'no':'pend'}">${x.dec==='si'?'Aprobada':x.dec==='no'?'Cambio':'Sin ver'}</span></div></div>`).join('')}</div></div>`;
 }
 
 /* ══ Publicaciones ══ */
