@@ -101,40 +101,41 @@ function rolPorPortero_(k) {
   var hit = cache.get(ck);
   if (hit) return hit === 'no' ? null : hit;
   var rol = null, nombre = '', porque = '';
-  /* 4-sep-2026: este script NUNCA fue autorizado para UrlFetchApp (se desplegó por API y nadie
-     dio el consentimiento), así que preguntarle al Portero por HTTP fallaba siempre con «No
-     cuentas con el permiso…» y la Sala rechazaba la sesión del OS. El Portero guarda sus
-     sesiones en un Google Sheet del mismo dueño: se validan leyendo esa hoja, sin HTTP. */
-  try {
-    var v = validarEnHojaDelPortero_(k);
-    if (v.ok) {
-      nombre = v.nombre || '';
-      var correo = String(v.correo || '').toLowerCase().trim();
-      if (correo && correo === String(leerConfig('correo_editor') || CORREO).toLowerCase()) rol = 'editor';
-      else if (correo && correo === String(leerConfig('correo_editor2') || '').toLowerCase()) rol = 'editor2';
-      else rol = 'lector';
-      if (nombre) cache.put(ck + '_n', nombre, 300);
-    } else porque = v.porque || 'sin acceso';
-  } catch (err) { porque = 'hoja del Portero: ' + err; }
-  // Segundo camino: preguntarle al Portero por HTTP. Funciona en cuanto alguien autorice
-  // UrlFetchApp una vez en el editor del script (cualquiera de las dos autorizaciones basta).
-  if (!rol && /permiso/i.test(porque)) {
-    try {
-      var r = UrlFetchApp.fetch(PORTERO_EXEC + '?recurso=canje&t=' + encodeURIComponent(k), { muteHttpExceptions: true, followRedirects: true });
-      var j = JSON.parse(r.getContentText());
-      var role = String(j && j.rol || '').toLowerCase(), boards = String(j && j.boards || '');
-      var puede = !!(j && j.ok && (role === 'admin' || boards.trim() === '*' ||
-        boards.split(',').map(function (x) { return x.trim().toUpperCase(); }).indexOf(CODIGO_SALA) >= 0));
-      if (puede) {
-        var correo2 = String(j.correo || '').toLowerCase().trim(); nombre = String(j.nombre || '');
-        if (correo2 && correo2 === String(leerConfig('correo_editor') || CORREO).toLowerCase()) rol = 'editor';
-        else if (correo2 && correo2 === String(leerConfig('correo_editor2') || '').toLowerCase()) rol = 'editor2';
-        else rol = 'lector';
-        if (nombre) cache.put(ck + '_n', nombre, 300);
-        porque = '';
-      } else porque += ' · Portero HTTP: ' + JSON.stringify(j).slice(0, 80);
-    } catch (err2) { porque += ' · Portero HTTP: ' + String(err2).slice(0, 120); }
+  /* 4-sep-2026: el permiso de HTTP (UrlFetchApp) quedó autorizado desde el editor. El camino
+     principal es preguntarle al Portero, como hacen los demás tableros; leer su hoja queda de
+     respaldo por si el Portero no contesta. */
+  function decidirRol_(correo, nom) {
+    correo = String(correo || '').toLowerCase().trim(); nombre = String(nom || '');
+    if (correo && correo === String(leerConfig('correo_editor') || CORREO).toLowerCase()) return 'editor';
+    if (correo && correo === String(leerConfig('correo_editor2') || '').toLowerCase()) return 'editor2';
+    return 'lector';
   }
+  try {
+    var j = null, ultimo = '';
+    var porteros = [PORTERO_EXEC, PORTERO_RESPALDO];
+    for (var i = 0; i < porteros.length && !(j && j.ok); i++) {
+      try {
+        var r = UrlFetchApp.fetch(porteros[i] + '?recurso=canje&t=' + encodeURIComponent(k), { muteHttpExceptions: true, followRedirects: true });
+        ultimo = String(r.getResponseCode()) + ' ' + r.getContentText().slice(0, 120);
+        j = JSON.parse(r.getContentText());
+      } catch (e1) { ultimo = 'excepción: ' + e1; }
+    }
+    if (j && j.ok) {
+      var role = String(j.rol || '').toLowerCase(), boards = String(j.boards || '');
+      var puede = role === 'admin' || boards.trim() === '*' ||
+        boards.split(',').map(function (x) { return x.trim().toUpperCase(); }).indexOf(CODIGO_SALA) >= 0;
+      if (puede) rol = decidirRol_(j.correo, j.nombre);
+      else porque = 'sin el tablero ' + CODIGO_SALA + ' en sus accesos (' + boards + ')';
+    } else porque = 'Portero: ' + ultimo;
+  } catch (err) { porque = 'Portero HTTP: ' + err; }
+  if (!rol && !/sin el tablero/.test(porque)) {
+    try {                                           // respaldo: leer la hoja del Portero
+      var v = validarEnHojaDelPortero_(k);
+      if (v.ok) { rol = decidirRol_(v.correo, v.nombre); porque = ''; }
+      else porque += ' · hoja: ' + (v.porque || 'sin acceso');
+    } catch (err2) { porque += ' · hoja: ' + String(err2).slice(0, 100); }
+  }
+  if (rol && nombre) cache.put(ck + '_n', nombre, 300);
   if (!rol) { try { bitacora('Portero no autorizó una credencial', porque.replace(/[A-Za-z0-9_-]{24,}/g, '…')); } catch (e2) {} }
   cache.put(ck, rol || 'no', rol ? 300 : 60);
   return rol;
@@ -345,7 +346,7 @@ function doGet(e) {
     fecha: f, dias: Object.keys(dias).sort(), propuestas: props, decisiones: dec, retro: r,
     parrilla: parr, control: CO.length ? CO[CO.length - 1] : null,
     produccion: PD.slice().reverse().slice(0, 30).map(function (x) { x.fecha = fechaDe(x.fecha); return x; }),
-    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), version: 'portero-por-hoja-2026-09-04'
+    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), version: 'portero-autorizado-2026-09-04'
   });
 }
 
