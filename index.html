@@ -688,14 +688,16 @@ function sobre(){
 function encolar(envio){ const q=leerLS('sala_cola',[]);
   envio.quien=envio.quien||ROL();          // firmado: no lo sube por ti el siguiente que entre
   if(!q.some(x=>x.envio_id===envio.envio_id)) q.push(envio); localStorage.setItem('sala_cola',JSON.stringify(q)) }
-let _tSubir=null, _subiendo=false, _pendiente=false;
+let _tSubir=null, _subiendo=false, _pendiente=false; let _ultimoEnviado='';   // firma del último envío que el Sheet aceptó
 function programarSubida(){ guardarBorrador(); if(!ENTRADO()||!DECIDE()){ estadoInicial(); return }
   pintarEstado('local','Guardando…'); clearTimeout(_tSubir); _tSubir=setTimeout(subir,1200) }
 async function subir(){
   if(!ENTRADO()||!DECIDE()||!cuentas().hoy) return;
   if(_subiendo){ _pendiente=true; return } _subiendo=true; _pendiente=false;
   pintarEstado('subiendo','Guardando…');
-  const envio=sobre();
+  const envio=sobre(), firmaEnvio=JSON.stringify(envio.propuestas);
+  // 4-sep 13:13: dos envíos idénticos en 4 s (el temporizador y el cambio de pestaña). Si nada cambió, no viaja.
+  if(firmaEnvio===_ultimoEnviado){ _subiendo=false; pintarEstado('subido','Guardado ✓ '+((guard.env&&guard.env.hora)||hora())); return }
   try{
     const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(envio)});
     const j=await leerJSON(r);
@@ -717,7 +719,7 @@ async function subir(){
         <button class="listo" onclick="cerrarCapa('malaclave');abrirEntrar()">Entrar otra vez</button>`,'malaclave');
       encolar(envio); _subiendo=false; return }
     if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||'el Sheet no contestó');
-    guard.env={id:envio.envio_id,hora:hora()}; guardarBorrador();
+    _ultimoEnviado=firmaEnvio; guard.env={id:envio.envio_id,hora:hora()}; guardarBorrador();
     localStorage.setItem('sala_cola',JSON.stringify(leerLS('sala_cola',[]).filter(x=>x.fecha!==fecha)));
     pintarEstado('subido','Guardado ✓ '+guard.env.hora);
   }catch(e){ guard.ultimoError=String(e&&e.message||e);
