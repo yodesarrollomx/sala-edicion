@@ -1407,7 +1407,7 @@ function abrirGuia(forzar){
 
 /* ══ arranque ══ */
 function pintarFecha(f){ try{ $('#fechaTxt').textContent=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}) }catch(e){ $('#fechaTxt').textContent=f } }
-let _pintado=false, _tFrases=null;
+let _pintado=false, _tFrases=null, _reintentando=false;
 function pintarCargando(){
   const z=$('#zona'); if(!z) return;
   $('#titulo').innerHTML='Abriendo la mesa…'; $('#subt').textContent='Leyendo el Sheet, no una copia';
@@ -1418,6 +1418,9 @@ function pintarCargando(){
 }
 function aplicarDia(d){
   clearInterval(_tFrases);
+  // traer() cae solo al respaldo si el Sheet no contestó: con sesión, eso se dice y se reintenta (nunca pasa por «lo de hoy»)
+  if(d&&d._respaldo&&ENTRADO()&&!_reintentando){ _reintentando=true; setTimeout(()=>{ avisarRespaldo(); reintentarSheet(0) },0) }
+  if(d&&!d._respaldo) _reintentando=false;
   const firma=x=>(x.propuestas||[]).map(p=>p.id+':'+((p.laminas||[]).length||(p.opciones||[]).length)).join('|');
   if(_pintado&&D&&DECIDE()&&cuentas().hoy>0){ if(firma(D)!==firma(d)){ D.propuestas=d.propuestas.map(p=>{const v=(D.propuestas||[]).find(q=>q.id===p.id); return v||p}); }
     D.decisiones=d.decisiones; D._respaldo=false; estadoInicial(); $('#subt').textContent=pasos[idx]&&piezaDe(pasos[idx])?`Publicación: ${piezaDe(pasos[idx])}`:''; }
