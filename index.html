@@ -1356,7 +1356,7 @@ let _pintado=false;
 function montar(d){
   D=d; fecha=D.fecha||''; pintarFecha(fecha);
   if(d.rol&&!d._respaldo) localStorage.setItem('sala_rol',d.rol);   // el Sheet sabe quién eres; la Sala le cree
-  if(!DECIDE()){ estadoInicial(); pintarMira(); return }
+  if(!DECIDE()){ estadoInicial(); pintarMira(); Promise.all([...new Set((D._todas||[]).map(p=>p.id))].map(cargarTira)).then(()=>pintarMira()); return }   // con la tira, la vista de solo lectura también dice «lámina 7 de 9»
   const b=leerLS('sala2-'+fecha,null);
   const tSheet=Date.parse(D.ultima_revision||'')||0;
   const borradorManda=!!(b&&b.dec&&(b.t||0)>tSheet&&Object.values(b.dec).some(x=>(x.laminas||[]).some(m=>m==='si'||m==='no')));
