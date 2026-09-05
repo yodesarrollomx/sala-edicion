@@ -446,7 +446,6 @@ html.cargando #actualizando{display:flex}
 /* La dirección del Sheet NO es secreta (sin credencial no entrega nada); la credencial sí,
    y ésa nunca vive aquí. */
 const GAS_DEF='https://script.google.com/macros/s/AKfycbx61UWsEYCL_dHzi0JrUv3GuAUFSDWW4iCmlNmbDDvWBIYY4Hhqkf6sYmt4d8UGIlk7MA/exec';
-const ORIGEN_VIEJO='https://alexpueblag.github.io/sala-edicion/';
 (function(){
   if(!location.hash) return;
   const h=new URLSearchParams(location.hash.slice(1));
@@ -1248,9 +1247,7 @@ function pintarAjustes(){
       <p>Si algo no se guarda, esto dice exactamente qué contesta el Sheet.</p>
       <button class="secund" style="margin-top:0" id="ajDiag">Probar mi conexión</button>
       <div id="ajDiagRes"></div></div>
-    <div class="bloque-aj"><h4>Ayuda</h4><p>${ENTRADO()?'Si algo no carga, cierra y vuelve a abrir la Sala.':'Tu entrada es una liga personal. Si ya habías entrado en este aparato, puedes recuperarla:'}</p>
-      ${ENTRADO()?'':`<a class="secund" style="display:grid;place-items:center;text-decoration:none;margin-top:0" href="${ORIGEN_VIEJO}#puente=1" ${EMBED()?'target="_blank"':'target="_top"'} rel="noopener">Recuperar mi entrada</a>`}
-      <p style="margin:10px 0 0;font-size:12.5px"><a href="index-v2.html" style="display:inline-flex;align-items:center;min-height:44px">Abrir la Sala anterior</a></p></div>`;
+    <div class="bloque-aj"><h4>Ayuda</h4><p>${ENTRADO()?'Si algo no carga, cierra y vuelve a abrir la Sala desde el YOD OS.':'Entra al YOD OS con tu cuenta de Google y abre la Sala desde «Embudo comercial».'}</p></div>`;
   const be=$('#ajEntrar'); if(be) be.onclick=abrirEntrar;
   $('#ajGuia').onclick=()=>abrirGuia(true);
   const bm=$('#ajMaq'); if(bm) bm.onclick=pintarMaquinas;
