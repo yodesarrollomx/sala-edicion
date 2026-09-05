@@ -253,6 +253,16 @@ function doGet(e) {
     });
     return json({ ok: true, fecha: fE, filas: fil });
   }
+  if (p.recurso === 'reprogramar_correo') {       // el correo "de las 7:00" salia a las 00:30 (5-sep): se recrea el disparador en la zona de la casa
+    if (rolDe(p.clave) !== 'agente') return json({ error: 'solo el agente' });
+    var borrados = 0;
+    ScriptApp.getProjectTriggers().forEach(function (t) {
+      if (t.getHandlerFunction() === 'correoDiario') { ScriptApp.deleteTrigger(t); borrados++; }
+    });
+    ScriptApp.newTrigger('correoDiario').timeBased().everyDays(1).atHour(7).inTimezone(TZ).create();
+    bitacora('Correo diario reprogramado', 'entre 7:00 y 8:00 ' + TZ + ' (' + borrados + ' disparador(es) anteriores borrados)');
+    return json({ ok: true, borrados: borrados, zona: TZ });
+  }
   if (p.recurso === 'expedientes') {
     if (!rolDe(p.clave)) return json({ error: 'clave incorrecta' });
     var ex = {};
@@ -375,7 +385,7 @@ function doGet(e) {
     fecha: f, dias: Object.keys(dias).sort(), propuestas: props, decisiones: dec, retro: r,
     parrilla: parr, control: CO.length ? CO[CO.length - 1] : null,
     produccion: PD.slice().reverse().slice(0, 30).map(function (x) { x.fecha = fechaDe(x.fecha); return x; }),
-    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), relevo_virtual: relevoVirtual, version: 'relevo-virtual-2026-09-05'
+    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), relevo_virtual: relevoVirtual, version: 'correo-7am-2026-09-05'
   });
 }
 
