@@ -1382,14 +1382,14 @@ function montar(d){
    y el mando (sticky) acababa tapando el pie y el texto de la lámina. Aquí: lo que queda entre la cabecera y el mando. ══ */
 function ajustarZona(){
   const z=$('#zona'); if(!z) return;
-  if(innerWidth>=640){ z.style.height=''; return }
+  if(innerWidth>=640){ z.style.height=''; z.style.minHeight=''; return }
   const calc=()=>{ const m=$('#mandoWrap'), nav=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav'))||72;
     const top=z.getBoundingClientRect().top+scrollY, mh=(m&&!m.hidden)?m.getBoundingClientRect().height:0;
     return innerHeight-top-mh-nav-14 };
   let h=calc();
   // si la cabecera creció (píldora larga, «Deshacer») y la carta quedaría chica, se esconde la fila «VA EN» (info repetida)
   if(h<230&&!document.body.classList.contains('apretado')){ document.body.classList.add('apretado'); h=calc() }
-  const nuevo=Math.max(200,Math.min(h,620)); if(Math.abs((parseFloat(z.style.height)||0)-nuevo)>1) z.style.height=nuevo+'px';
+  const nuevo=Math.max(200,Math.min(h,620)); if(Math.abs((parseFloat(z.style.height)||0)-nuevo)>1){ z.style.height=nuevo+'px'; z.style.minHeight=nuevo+'px' }
 }
 addEventListener('resize',ajustarZona); addEventListener('load',ajustarZona);
 setInterval(()=>{ if(innerWidth<640&&document.body.dataset.vista==='hoy') ajustarZona() },600); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(ajustarZona);
