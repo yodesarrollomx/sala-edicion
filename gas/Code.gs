@@ -269,7 +269,24 @@ function doGet(e) {
   var PR = filas('PROPUESTAS'), DE = filas('DECISIONES'), PA = filas('PARRILLA'),
       CO = filas('CONTROL'), PD = filas('PRODUCCION'), BI = filas('BITACORA');
 
-  var props = PR.filter(function (x) { return fechaDe(x.fecha) === f; }).map(function (x) {
+  var deHoy = PR.filter(function (x) { return fechaDe(x.fecha) === f; });
+  var relevoVirtual = false;
+  if (!deHoy.length && f === hoy()) {
+    // La mesa amanecía vacía de 00:00 a que la Mac despertara y corriera el relevo (5-sep: el de las
+    // 6:00 no corrió). Si hoy no hay filas, se sirve la última versión de cada propuesta de los 14 días
+    // previos que no esté retirada; la Sala descarta las ya decididas con las marcas de esos días.
+    var lim14 = Utilities.formatDate(new Date(new Date(f + 'T12:00:00').getTime() - 14 * 864e5), TZ, 'yyyy-MM-dd');
+    var ultimaPorId = {};
+    PR.forEach(function (x) {
+      var fx = fechaDe(x.fecha); if (fx < lim14 || fx >= f) return;
+      var id = String(x.prop_id); if (!id) return;
+      if (!ultimaPorId[id] || fechaDe(ultimaPorId[id].fecha) <= fx) ultimaPorId[id] = x;
+    });
+    deHoy = Object.keys(ultimaPorId).map(function (id) { return ultimaPorId[id]; })
+      .filter(function (x) { return !/^retirada/i.test(String(x.origen || '')); });
+    relevoVirtual = deHoy.length > 0;
+  }
+  var props = deHoy.map(function (x) {
     var lam, opc;
     try { lam = JSON.parse(x.laminas_json); } catch (err) { lam = []; }
     try { opc = JSON.parse(x.opciones_json); } catch (err) { opc = []; }
@@ -358,7 +375,7 @@ function doGet(e) {
     fecha: f, dias: Object.keys(dias).sort(), propuestas: props, decisiones: dec, retro: r,
     parrilla: parr, control: CO.length ? CO[CO.length - 1] : null,
     produccion: PD.slice().reverse().slice(0, 30).map(function (x) { x.fecha = fechaDe(x.fecha); return x; }),
-    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), version: 'envios-auditables-2026-09-05'
+    bitacora: bit, ultima_revision: ultRev, rol: rolQuien, quien: (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || ''), relevo_virtual: relevoVirtual, version: 'relevo-virtual-2026-09-05'
   });
 }
 
