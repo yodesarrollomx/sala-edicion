@@ -597,7 +597,7 @@ function normalizarDia(j){
   const fuerza=new Set();
   try{ const b=JSON.parse(localStorage.getItem('sala2-'+(j.fecha||''))||'null');
     const tSheet=Date.parse(j.ultima_revision||'')||0;
-    if(b&&b.dec&&(b.t||0)>tSheet) Object.keys(b.dec).forEach(pid=>{ if((b.dec[pid].laminas||[]).some(m=>m==='si'||m==='no')) fuerza.add(pid) }) }catch(e){}
+    if(b&&b.dec&&(b.t||0)>tSheet) Object.keys(b.dec).forEach(pid=>{ const x=b.dec[pid]; if(x&&!x._reabierta&&(x.laminas||[]).some(m=>m==='si'||m==='no')) fuerza.add(pid) }) }catch(e){}
   j._todas=Object.values(porId).filter(p=>!fuera.has(p.id)&&(((p.laminas||[]).length)||((p.opciones||[]).length)));   // para la vista de solo lectura
   j.propuestas=Object.values(porId).filter(p=>{
     if(fuera.has(p.id)) return false;
@@ -1440,7 +1440,7 @@ function montar(d){
   if(!DECIDE()){ estadoInicial(); pintarMira(); Promise.all([...new Set((D._todas||[]).map(p=>p.id))].map(cargarTira)).then(()=>pintarMira()); return }   // con la tira, la vista de solo lectura también dice «lámina 7 de 9»
   const b=leerLS('sala2-'+fecha,null);
   const tSheet=Date.parse(D.ultima_revision||'')||0;
-  const borradorManda=!!(b&&b.dec&&(b.t||0)>tSheet&&Object.values(b.dec).some(x=>(x.laminas||[]).some(m=>m==='si'||m==='no')));
+  const borradorManda=!!(b&&b.dec&&(b.t||0)>tSheet&&Object.values(b.dec).some(x=>x&&!x._reabierta&&(x.laminas||[]).some(m=>m==='si'||m==='no')));   // las reaperturas no cuentan
   armarPasos(borradorManda); hidratarReaperturas();
   const hubo=restaurarBorrador(); if(!hubo){ idx=0; hist=[] }
   estadoInicial(); pintarCartas(); const mw=$('#mandoWrap'); if(mw&&pasos.length&&idx<pasos.length) mw.hidden=false;
