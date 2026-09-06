@@ -482,6 +482,18 @@ function doPost(e) {
   //  viva del Portero. Ya no hace falta: la credencial del Portero VALE como clave, y el
   //  backend decide el rol en cada request — ver rolPorPortero_.)
 
+  if (d.accion === 'rotar_claves') {               // (agente) las 4 claves suaves cambian; la nueva del agente viaja en la respuesta y se guarda en la Mac
+    if (rolDe(d.clave) !== 'agente') return json({ error: 'solo el agente' });
+    var cfgR = hoja('CONFIG'), valsR = cfgR.getDataRange().getValues(), nuevas = {};
+    ['clave', 'clave_editor2', 'clave_lector', 'clave_agente'].forEach(function (k) {
+      var nv = Utilities.getUuid().replace(/-/g, '').slice(0, 16), fila = -1;
+      for (var i = 1; i < valsR.length; i++) if (String(valsR[i][0]) === k) fila = i + 1;
+      if (fila > 0) cfgR.getRange(fila, 2).setValue(nv); else cfgR.appendRow([k, nv]);
+      nuevas[k] = nv;
+    });
+    bitacora('Claves rotadas', 'las 4 claves suaves cambiaron a peticion del agente');
+    return json({ ok: true, claves: nuevas });
+  }
   if (d.accion === 'expediente') {                 // la Mac publica la historia de una pieza
     if (rolDe(d.clave) !== 'agente' && rolDe(d.clave) !== 'editor') return json({ error: 'solo el agente' });
     if (!d.pieza) return json({ error: 'falta la pieza' });
