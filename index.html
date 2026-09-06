@@ -473,7 +473,7 @@ const GAS_DEF='https://script.google.com/macros/s/AKfycbx61UWsEYCL_dHzi0JrUv3GuA
 /* UNA SOLA LLAVE (3-sep): si no hay llave propia de la Sala, vale la credencial del
    YOD OS (mismo origen). El Sheet la valida contra el Portero y decide tu rol. */
 const GAS=()=>localStorage.getItem('sala_gas')||GAS_DEF;
-const CLAVE=()=>localStorage.getItem('sala_clave')||localStorage.getItem('pyod_clave_v1')||'';
+const CLAVE=()=>localStorage.getItem('pyod_clave_v1')||localStorage.getItem('sala_clave')||'';   // 5-sep: la sesión de Google del OS manda; una clave vieja guardada no estorba
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
