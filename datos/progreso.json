@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-07 12:34",
+ "actualizado": "2026-09-07 13:09",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -16,9 +16,9 @@
     },
     {
      "que": "Escenas animadas",
-     "hechos": 6,
+     "hechos": 5,
      "total": 7,
-     "nota": "1 con plan B (acercamiento sobre la lámina, sin animación de IA)"
+     "nota": "2 con plan B (acercamiento sobre la lámina, sin animación de IA)"
     },
     {
      "que": "Video armado",
@@ -106,8 +106,8 @@
    "intento": {},
    "atorada": false,
    "vuelve_en_min": null,
-   "dice": "El video está armado y esperando tu palabra en la mesa. Ojo: 1 escena con plan B (acercamiento sobre la lámina, no animación).",
-   "corriendo": false
+   "dice": "El video está armado y esperando tu palabra en la mesa. Ojo: 2 escena con plan B (acercamiento sobre la lámina, no animación).",
+   "corriendo": true
   }
  ]
 }
