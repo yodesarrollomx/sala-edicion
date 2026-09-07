@@ -26,25 +26,25 @@
  "propuestas": [
   {
    "id": "apodo-video-7sep",
-   "titulo": "El Apodo del Terreno · el video ya modificado, con todo y sonido (42 s) — ¿sale así?",
+   "titulo": "El Apodo del Terreno · video v2 sin máscara, con sonido (42 s) — ¿sale así?",
    "tipo": "eje",
    "laminas": [],
    "opciones": [
     {
      "titulo": "Sale así",
-     "texto": "Quité el choque de manos de la escena 3: ahora es un acercamiento lento sobre la sobremesa hacia la foto del terreno, sin nadie levantando los brazos. Va con las 8 voces, ambiente y cama con volumen ajustado. Ojo honesto: las escenas 3 y 7 son acercamientos sobre la lámina, no animación de IA (el servicio de animación cerró). Las otras cinco sí están animadas."
+     "texto": "Quité la máscara: ya no hay franjas de foto congelada arriba y abajo; el video llena todo el cuadro y encima va solo el texto. Escena 7 (el cierre) ahora sí animada. Escena 3: foto nueva de sobremesa con las manos en la mesa (sin choque), pero va como acercamiento lento porque la cuota de GPU del día se agotó; la animo mañana y te la vuelvo a enseñar."
     },
     {
-     "titulo": "Sale, pero anima las escenas 3 y 7",
-     "texto": "Lo publico cuando encuentre otra GPU y las dos queden animadas como las demás. No te doy fecha."
+     "titulo": "Sale, pero espera la escena 3 animada",
+     "texto": "Lo publico mañana, cuando la escena 3 quede animada como las otras seis."
     },
     {
      "titulo": "Todavía no",
      "texto": "Lo dejo en la mesa sin publicar. Dime en la nota qué más cambiar y lo rehago."
     }
    ],
-   "video": "video/apodo/REEL_9x16.mp4?v=7sep",
-   "origen": "rehecho-de apodo-video-4sep · tu nota del 7-sep: «la escena 3 donde se chocan no tiene que ver… vamos a ver ahora con todo y sonido el video ya modificado»"
+   "video": "video/apodo/REEL_9x16.mp4?v=7sep-v2",
+   "origen": "rehecho-de apodo-video-4sep · tus notas del 7-sep: «la escena 3 donde se chocan no tiene que ver» y «esa máscara está arruinando los videos… que esté normal todo»"
   },
   {
    "id": "comprador-g3-11a28f",
@@ -254,6 +254,10 @@
   {
    "hora": "13:57",
    "evento": "Propuesta montada: El comprador ya sabe · las 2 láminas que rehice con tus notas de hoy (4 y 7) (2 láminas)"
+  },
+  {
+   "hora": "14:57",
+   "evento": "Video del Apodo v2: sin máscara, escena 7 animada, escena 3 con foto nueva (acercamiento hasta que haya GPU)"
   }
  ],
  "decisiones": {
