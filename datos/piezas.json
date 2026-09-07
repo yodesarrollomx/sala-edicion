@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-07 14:00",
+ "actualizado": "2026-09-07 15:04",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -17,17 +17,17 @@
   },
   {
    "pieza": "El Apodo del Terreno",
-   "estado": "te espera",
+   "estado": "en camino",
    "etapa": "video",
-   "siguiente": "1 decisión(es) tuyas en la mesa: El Apodo del Terreno · el video ya modificado, con todo y sonido (42 s) — ¿sale así?",
-   "espera": "tú"
+   "siguiente": "El video está armado y esperando tu palabra en la mesa. Ojo: 2 escena con plan B (acercamiento sobre la lámina, no animación).",
+   "espera": "yo"
   },
   {
    "pieza": "El comprador ya sabe",
-   "estado": "te espera",
+   "estado": "en camino",
    "etapa": "láminas",
-   "siguiente": "2 decisión(es) tuyas en la mesa: El comprador ya sabe · las 2 láminas que rehice con tus notas de hoy (4 y 7)",
-   "espera": "tú"
+   "siguiente": "En producción.",
+   "espera": "yo"
   }
  ]
 }
