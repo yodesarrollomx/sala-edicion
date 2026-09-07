@@ -23,42 +23,7 @@
   "2026-09-06",
   "2026-09-07"
  ],
- "propuestas": [
-  {
-   "id": "apodo-video-7sep",
-   "titulo": "El Apodo del Terreno · video v2 sin máscara, con sonido (42 s) — ¿sale así?",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "Sale así",
-     "texto": "Quité la máscara: ya no hay franjas de foto congelada arriba y abajo; el video llena todo el cuadro y encima va solo el texto. Escena 7 (el cierre) ahora sí animada. Escena 3: foto nueva de sobremesa con las manos en la mesa (sin choque), pero va como acercamiento lento porque la cuota de GPU del día se agotó; la animo mañana y te la vuelvo a enseñar."
-    },
-    {
-     "titulo": "Sale, pero espera la escena 3 animada",
-     "texto": "Lo publico mañana, cuando la escena 3 quede animada como las otras seis."
-    },
-    {
-     "titulo": "Todavía no",
-     "texto": "Lo dejo en la mesa sin publicar. Dime en la nota qué más cambiar y lo rehago."
-    }
-   ],
-   "video": "video/apodo/REEL_9x16.mp4?v=7sep-v2",
-   "origen": "rehecho-de apodo-video-4sep · tus notas del 7-sep: «la escena 3 donde se chocan no tiene que ver» y «esa máscara está arruinando los videos… que esté normal todo»"
-  },
-  {
-   "id": "comprador-g3-11a28f",
-   "titulo": "El comprador ya sabe · las 2 láminas que rehice con tus notas de hoy (4 y 7)",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/comprador-g3/L1.png",
-    "laminas/comprador-g3/L2.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "origen": "rehecha-de comprador-g1-70ac76 · v3 de la 4 (texto más claro) y de la 7 (comparación ordenada)"
-  }
- ],
+ "propuestas": [],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -267,20 +232,21 @@
      "no",
      "si",
      "no",
-     "si"
+     "no"
     ],
     "nota": "",
     "notas": [
-     "la sintaxis de esta lamina no me agrada ocmo que enreda mas en vez de clarificar al cliente",
+     "no se entiend ebien la frase preguntale a hormozi como deberia de ir bien exlicado para que cumpla con los criterios y su formula",
      null,
-     "una comparación, justa y ordenada."
+     "te pedi en el cambio pasado que pusieras que es una ... comparación justa y ordenada.",
+     "creo que debes d epreguntar ahormozi como reeesribiria esta lamina otra vez para que se entienda mejor"
     ],
     "firmas": [
      [
       {
        "quien": "Alejandro",
        "marca": "no",
-       "nota": "la sintaxis de esta lamina no me agrada ocmo que enreda mas en vez de clarificar al cliente"
+       "nota": "no se entiend ebien la frase preguntale a hormozi como deberia de ir bien exlicado para que cumpla con los criterios y su formula"
       }
      ],
      [
@@ -294,14 +260,14 @@
       {
        "quien": "Alejandro",
        "marca": "no",
-       "nota": "una comparación, justa y ordenada."
+       "nota": "te pedi en el cambio pasado que pusieras que es una ... comparación justa y ordenada."
       }
      ],
      [
       {
        "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
+       "marca": "no",
+       "nota": "creo que debes d epreguntar ahormozi como reeesribiria esta lamina otra vez para que se entienda mejor"
       }
      ]
     ]
@@ -312,7 +278,7 @@
      "no",
      "no"
     ],
-    "nota": "la escena 3 donde se chocan todo como que no tiene que ver con lo que estanmos haciendo... no me gusto .. peor ok vamos a ver ahora con todo y sonido el video ya modifcado y todo en orden",
+    "nota": "",
     "notas": [],
     "firmas": [
      [
@@ -334,6 +300,65 @@
        "quien": "Alejandro",
        "marca": "no",
        "nota": ""
+      }
+     ]
+    ]
+   },
+   "apodo-video-7sep": {
+    "laminas": [
+     null,
+     "si",
+     null
+    ],
+    "nota": "",
+    "notas": [],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": null,
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": null,
+       "nota": ""
+      }
+     ]
+    ]
+   },
+   "comprador-g3-11a28f": {
+    "laminas": [
+     "no",
+     "no"
+    ],
+    "nota": "",
+    "notas": [
+     "estamos revisnaod dos veces la misma publicacion o que ondaPOR QUE ME HABALS D ELO MISMO!?!?!",
+     "POR QUE ME DUPKICAS COSAS A REVISAR!!!! DIOS MIO ORDENATE BIEN!"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "estamos revisnaod dos veces la misma publicacion o que ondaPOR QUE ME HABALS D ELO MISMO!?!?!"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "POR QUE ME DUPKICAS COSAS A REVISAR!!!! DIOS MIO ORDENATE BIEN!"
       }
      ]
     ]
