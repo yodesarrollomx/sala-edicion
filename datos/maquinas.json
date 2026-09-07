@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-06 17:50",
+ "actualizado": "2026-09-06 18:20",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 1 horas",
+   "corrio": "hace 2 horas",
    "dijo": "  El video está armado y esperando tu palabra en la mesa. Ojo: 1 escena con plan B (acercamiento sobre la lámina, no ani",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -51,7 +51,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 11 horas",
+   "corrio": "hace 12 horas",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -62,7 +62,7 @@
    "hace": "Recoge lo que pides con «Pedir nueva ronda» o «Enviar mensaje», te avisa en la Mac y deja escrito en la Sala que ya se tomó.",
    "evita": "Que pidas una ronda y nadie se entere: antes el recado se quedaba dormido en el Sheet.",
    "cuando": "cada 15 minutos",
-   "corrio": "hace 13 min",
+   "corrio": "hace 11 min",
    "dijo": "sin encargos pendientes",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -84,7 +84,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 9 horas",
+   "corrio": "hace 10 horas",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -95,7 +95,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 3 horas",
+   "corrio": "hace 16 min",
    "dijo": "expedientes.py ·   La Servilleta: 24 hitos · publicada",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -128,7 +128,7 @@
    "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
    "evita": "enterarte por un tercero de que un tablero estaba abierto",
    "cuando": "a las 6:45",
-   "corrio": "hace 11 horas",
+   "corrio": "hace 12 horas",
    "dijo": "==============================================================================",
    "salud": "bien",
    "porque": "corriendo en su horario"
