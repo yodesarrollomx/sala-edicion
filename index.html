@@ -890,7 +890,7 @@ function versionHTML(x){
   const l=laminaTira(t,x.tipo==='lamina'?x.p.laminas[x.i]:'',nLamina(x));
   if(!l||l.estado!=='rehecha') return '';
   const nt=notaDeLamina(t,l);
-  return `<div class="otra-voz version"><b>Versión 2 de la lámina ${l.n}</b>${nt?`<span>Pediste: «${esc(nt)}»</span>`:''}<small>Las otras ${(t.laminas||[]).filter(z=>z.estado==='aprobada'||marcaTira(x,t,z)==='si').length} ya están aprobadas; las ves abajo en la tira.</small></div>`;
+  return `<div class="otra-voz version"><b>Versión ${l.version||2} de la lámina ${l.n}</b>${nt?`<span>Pediste: «${esc(nt)}»</span>`:''}<small>Las otras ${(t.laminas||[]).filter(z=>z.estado==='aprobada'||marcaTira(x,t,z)==='si').length} ya están aprobadas; las ves abajo en la tira.</small></div>`;
 }
 function otrosHTML(x){
   const o=x.otros||[]; if(!o.length) return '';
