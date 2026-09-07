@@ -59,6 +59,28 @@
    ],
    "video": "video/apodo/REEL_9x16.mp4",
    "origen": "7 escenas + 8 voces sobre el guion que aprobaste 9/9 el 27-ago"
+  },
+  {
+   "id": "apodo-video-7sep",
+   "titulo": "El Apodo del Terreno · el video ya modificado, con todo y sonido (42 s) — ¿sale así?",
+   "tipo": "eje",
+   "laminas": [],
+   "opciones": [
+    {
+     "titulo": "Sale así",
+     "texto": "Quité el choque de manos de la escena 3: ahora es un acercamiento lento sobre la sobremesa hacia la foto del terreno, sin nadie levantando los brazos. Va con las 8 voces, ambiente y cama con volumen ajustado. Ojo honesto: las escenas 3 y 7 son acercamientos sobre la lámina, no animación de IA (el servicio de animación cerró). Las otras cinco sí están animadas."
+    },
+    {
+     "titulo": "Sale, pero anima las escenas 3 y 7",
+     "texto": "Lo publico cuando encuentre otra GPU y las dos queden animadas como las demás. No te doy fecha."
+    },
+    {
+     "titulo": "Todavía no",
+     "texto": "Lo dejo en la mesa sin publicar. Dime en la nota qué más cambiar y lo rehago."
+    }
+   ],
+   "video": "video/apodo/REEL_9x16.mp4?v=7sep",
+   "origen": "rehecho-de apodo-video-4sep · tu nota del 7-sep: «la escena 3 donde se chocan no tiene que ver… vamos a ver ahora con todo y sonido el video ya modificado»"
   }
  ],
  "parrilla": [
@@ -248,6 +270,10 @@
   {
    "hora": "09:10",
    "evento": "Propuesta montada: El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8) (4 láminas)"
+  },
+  {
+   "hora": "13:11",
+   "evento": "Video del Apodo rehecho: escena 3 sin choque de manos, con sonido"
   }
  ],
  "decisiones": {
