@@ -25,42 +25,6 @@
  ],
  "propuestas": [
   {
-   "id": "comprador-g2-fcf0ca",
-   "titulo": "El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8)",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/comprador-g2/L1.png",
-    "laminas/comprador-g2/L2.png",
-    "laminas/comprador-g2/L3.png",
-    "laminas/comprador-g2/L4.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "origen": "rehecha-de comprador-g1-70ac76"
-  },
-  {
-   "id": "apodo-video-4sep",
-   "titulo": "El Apodo del Terreno · el video está armado (42 s) — ¿sale así?",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "Sale así",
-     "texto": "Lo publico como está, con el copy y la liga medible. Ojo honesto: la escena 7 (el cierre) NO es animación de IA — la cuota de GPU lleva dos días cerrada y la resolví con un acercamiento lento sobre la lámina. Las otras seis sí están animadas."
-    },
-    {
-     "titulo": "Sale, pero rehaz la escena 7",
-     "texto": "Publico cuando la cuota reabra y la séptima quede animada como las demás. Puede tardar un día."
-    },
-    {
-     "titulo": "Enséñamelo otra vez mañana",
-     "texto": "Lo dejo en la mesa sin publicar y te lo vuelvo a poner con las métricas de las otras piezas al lado."
-    }
-   ],
-   "video": "video/apodo/REEL_9x16.mp4",
-   "origen": "7 escenas + 8 voces sobre el guion que aprobaste 9/9 el 27-ago"
-  },
-  {
    "id": "apodo-video-7sep",
    "titulo": "El Apodo del Terreno · el video ya modificado, con todo y sonido (42 s) — ¿sale así?",
    "tipo": "eje",
@@ -85,10 +49,12 @@
   {
    "id": "comprador-g3-11a28f",
    "titulo": "El comprador ya sabe · las 2 láminas que rehice con tus notas de hoy (4 y 7)",
+   "tipo": "laminas",
    "laminas": [
     "laminas/comprador-g3/L1.png",
     "laminas/comprador-g3/L2.png"
    ],
+   "opciones": [],
    "video": null,
    "origen": "rehecha-de comprador-g1-70ac76 · v3 de la 4 (texto más claro) y de la 7 (comparación ordenada)"
   }
@@ -294,19 +260,23 @@
   "propuestas": {
    "comprador-g2-fcf0ca": {
     "laminas": [
+     "no",
      "si",
-     "si",
-     null,
-     null
+     "no",
+     "si"
     ],
     "nota": "",
-    "notas": [],
+    "notas": [
+     "la sintaxis de esta lamina no me agrada ocmo que enreda mas en vez de clarificar al cliente",
+     null,
+     "una comparación, justa y ordenada."
+    ],
     "firmas": [
      [
       {
        "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
+       "marca": "no",
+       "nota": "la sintaxis de esta lamina no me agrada ocmo que enreda mas en vez de clarificar al cliente"
       }
      ],
      [
@@ -319,52 +289,50 @@
      [
       {
        "quien": "Alejandro",
-       "marca": null,
-       "nota": ""
+       "marca": "no",
+       "nota": "una comparación, justa y ordenada."
       }
      ],
      [
       {
        "quien": "Alejandro",
-       "marca": null,
+       "marca": "si",
        "nota": ""
       }
      ]
-    ],
-    "heredada": "2026-09-04"
+    ]
    },
    "apodo-video-4sep": {
     "laminas": [
-     null,
-     null,
-     null
+     "no",
+     "no",
+     "no"
     ],
-    "nota": "",
+    "nota": "la escena 3 donde se chocan todo como que no tiene que ver con lo que estanmos haciendo... no me gusto .. peor ok vamos a ver ahora con todo y sonido el video ya modifcado y todo en orden",
     "notas": [],
     "firmas": [
      [
       {
        "quien": "Alejandro",
-       "marca": null,
+       "marca": "no",
        "nota": ""
       }
      ],
      [
       {
        "quien": "Alejandro",
-       "marca": null,
+       "marca": "no",
        "nota": ""
       }
      ],
      [
       {
        "quien": "Alejandro",
-       "marca": null,
+       "marca": "no",
        "nota": ""
       }
      ]
-    ],
-    "heredada": "2026-09-04"
+    ]
    }
   }
  },
