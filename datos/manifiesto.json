@@ -81,6 +81,16 @@
    ],
    "video": "video/apodo/REEL_9x16.mp4?v=7sep",
    "origen": "rehecho-de apodo-video-4sep · tu nota del 7-sep: «la escena 3 donde se chocan no tiene que ver… vamos a ver ahora con todo y sonido el video ya modificado»"
+  },
+  {
+   "id": "comprador-g3-11a28f",
+   "titulo": "El comprador ya sabe · las 2 láminas que rehice con tus notas de hoy (4 y 7)",
+   "laminas": [
+    "laminas/comprador-g3/L1.png",
+    "laminas/comprador-g3/L2.png"
+   ],
+   "video": null,
+   "origen": "rehecha-de comprador-g1-70ac76 · v3 de la 4 (texto más claro) y de la 7 (comparación ordenada)"
   }
  ],
  "parrilla": [
@@ -274,6 +284,10 @@
   {
    "hora": "13:11",
    "evento": "Video del Apodo rehecho: escena 3 sin choque de manos, con sonido"
+  },
+  {
+   "hora": "13:57",
+   "evento": "Propuesta montada: El comprador ya sabe · las 2 láminas que rehice con tus notas de hoy (4 y 7) (2 láminas)"
   }
  ],
  "decisiones": {
