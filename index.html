@@ -807,16 +807,34 @@ function pintarTira(x){
 function verLamina(t,n){
   const l=(t.laminas||[]).find(z=>z.n===n); if(!l) return;
   const reab=t.base&&dec[t.base]&&dec[t.base].laminas[n-1]==='no';
+  const em=enMesaTira(t,n);
   const v=hoja(`<h3>Lámina ${n} de ${t.laminas.length}</h3>
     <p>${reab?'Ya pediste cambio a esta lámina aunque estaba aprobada.':l.estado==='aprobada'?'Ya está aprobada: no vuelve a preguntarse.':'Ésta es la que se rehízo con la nota.'}</p>
     ${reab?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(dec[t.base].notas[n-1]||'')}»</p><button class="secund" id="quitarReab">Quitar la petición</button>`:''}
     ${(!reab&&l.estado==='aprobada'&&DECIDE()&&t.base)?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
+    ${(em&&DECIDE())?(em.m==='no'?`<p style="color:var(--no)"><b>Ya pediste cambio hoy:</b> «${esc(em.nota||'')}»</p><button class="secund" id="cambiarMesa">Cambiar la nota</button>`:`<p style="font-size:13px;color:var(--gris)">${em.m==='si'?'Hoy la aprobaste. Si la quieres mejorar, pide el cambio aquí.':'Está en tu mesa de hoy. Puedes decidirla desde aquí.'}</p><button class="secund" id="cambiarMesa">Pedir cambio a esta lámina</button>`):''}
     <img src="${esc(ligera(l.src))}" alt="Lámina ${n}" style="width:100%;border-radius:14px;background:#141210">
     <p style="margin-top:12px"><b>Dice:</b> ${esc((l.dice||'').replace(' / ',' · '))}</p>
     ${l.ve?`<p><b>Se ve:</b> ${esc(l.ve)}</p>`:''}
     ${notaDeLamina(t,l)?`<p style="color:var(--no)"><b>La nota:</b> «${esc(notaDeLamina(t,l))}»</p>`:''}`,'lamina'+n);
   const br=v.querySelector('#reabrirLam'); if(br) br.onclick=()=>pedirNota(nota=>reabrirAprobada(t,l,nota));
+  const bm=v.querySelector('#cambiarMesa'); if(bm) bm.onclick=()=>pedirNota(nota=>cambioDesdeTira(em,nota),em.m==='no'?em.nota:'');
   const bq=v.querySelector('#quitarReab'); if(bq) conSeguro(bq,()=>quitarReapertura(t.base,n-1));
+}
+/* 7-sep (Alejandro): «en la lámina 4 no me deja solicitar cambios como en la lámina 3». La 4 era una rehecha
+   que vive HOY en la mesa; el botón solo salía en aprobadas. Ahora la tira también decide las de la mesa. */
+function enMesaTira(t,n){
+  const x=pasos[idx]||lockeadas[0]; const pid=x&&(x.pid||(x.p&&x.p.id)); if(!pid||!dec[pid]) return null;
+  const M=mapaDe(t), k=Object.keys(M).find(q=>M[q]===n); if(k===undefined) return null;
+  const i=+k-1, p=x.p; return {pid,i,p,m:dec[pid].laminas[i]||'',nota:dec[pid].notas[i]||''};
+}
+function cambioDesdeTira(em,nota){
+  dec[em.pid].laminas[em.i]='no'; dec[em.pid].notas[em.i]=nota;
+  const k=pasos.findIndex((z,j)=>j>=idx&&z.tipo==='lamina'&&z.pid===em.pid&&z.i===em.i);
+  if(k>=0) pasos.splice(k,1);
+  if(!lockeadas.some(z=>z.pid===em.pid&&z.i===em.i)&&k>=0) lockeadas.push({pid:em.pid,i:em.i,p:em.p,marca:'no'});
+  cerrarCapas(); guardarBorrador(); programarSubida(); pintarBolas(); pintarCartas(); if(pasos[idx]) pintarTira(pasos[idx]); pintarPanel();
+  pintarEstado('local','Cambio anotado · se guarda');
 }
 /* REABRIR (5-sep, Alejandro): «si la abro y quiero volver a revisarla porque Sayri o yo queremos mejorar
    algo que aunque pensamos que estaba bien está mal… que se pueda pedir para rehacer». La petición viaja
