@@ -183,6 +183,9 @@ html.embed .app{padding-top:8px}
 .tl.cambio{border-color:var(--no)} .tl.cambio span{background:var(--no);color:#fff}
 .tl.aqui{border-color:var(--oro);box-shadow:0 0 0 3px var(--oro-suave)} .tl.aqui img{opacity:1}
 .otra-voz.version{background:var(--oro-suave)} .otra-voz.version b{color:var(--oro)}
+.otra-voz.version .fechas{display:block;font-size:12px;opacity:.8} .ver-vers{margin-top:6px;background:none;border:1px solid var(--oro);color:var(--oro);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
+.vers{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:10px} .ver{text-align:center;font-size:12px} .ver img{width:100%;border-radius:10px;background:#141210;display:block;margin-bottom:6px} .ver b{display:block} .ver small{display:block;color:var(--guia)} .ver em{display:block;margin-top:4px;font-style:normal;color:var(--gris)} .ver em.mal{color:var(--no);font-weight:700} .ver em.bien{color:var(--si)} .ver.igual img{outline:2px solid var(--no)}
+p.fechas{font-size:12.5px;color:var(--guia)} button.liga{background:none;border:0;color:var(--oro);text-decoration:underline;cursor:pointer;font:inherit;font-size:12.5px;padding:0}
 
 /* ── mando ── */
 .mando-wrap{position:sticky;bottom:calc(var(--nav) + env(safe-area-inset-bottom));padding:12px 0 6px;
@@ -810,6 +813,7 @@ function verLamina(t,n){
   const em=enMesaTira(t,n);
   const v=hoja(`<h3>Lámina ${n} de ${t.laminas.length}</h3>
     <p>${reab?'Ya pediste cambio a esta lámina aunque estaba aprobada.':l.estado==='aprobada'?'Ya está aprobada: no vuelve a preguntarse.':'Ésta es la que se rehízo con la nota.'}</p>
+    <p class="fechas">Versión ${l.version||1} · salió ${fechaBonita(l.fecha)}${(l.versiones||[]).length>1?` · <button type="button" class="liga" data-versiones="${esc(Object.keys(TIRAS).find(k=>TIRAS[k]===t)||'')}" data-n="${n}">ver las ${l.versiones.length} versiones</button>`:''}</p>
     ${reab?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(dec[t.base].notas[n-1]||'')}»</p><button class="secund" id="quitarReab">Quitar la petición</button>`:''}
     ${(!reab&&l.estado==='aprobada'&&DECIDE()&&t.base)?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
     ${(em&&DECIDE())?(em.m==='no'?`<p style="color:var(--no)"><b>Ya pediste cambio hoy:</b> «${esc(em.nota||'')}»</p><button class="secund" id="cambiarMesa">Cambiar la nota</button>`:`<p style="font-size:13px;color:var(--gris)">${em.m==='si'?'Hoy la aprobaste. Si la quieres mejorar, pide el cambio aquí.':'Está en tu mesa de hoy. Puedes decidirla desde aquí.'}</p><button class="secund" id="cambiarMesa">Pedir cambio a esta lámina</button>`):''}
@@ -890,8 +894,29 @@ function versionHTML(x){
   const l=laminaTira(t,x.tipo==='lamina'?x.p.laminas[x.i]:'',nLamina(x));
   if(!l||l.estado!=='rehecha') return '';
   const nt=notaDeLamina(t,l);
-  return `<div class="otra-voz version"><b>Versión ${l.version||2} de la lámina ${l.n}</b>${nt?`<span>Pediste: «${esc(nt)}»</span>`:''}<small>Las otras ${(t.laminas||[]).filter(z=>z.estado==='aprobada'||marcaTira(x,t,z)==='si').length} ya están aprobadas; las ves abajo en la tira.</small></div>`;
+  const vs=l.versiones||[], ant=vs.length>1?vs[vs.length-2]:null;
+  return `<div class="otra-voz version"><b>Versión ${l.version||2} de la lámina ${l.n}</b><span class="fechas">salió ${fechaBonita(l.fecha)}${ant?` · la anterior fue ${fechaBonita(ant.fecha)}`:''}</span>${nt?`<span>Pediste: «${esc(nt)}»</span>`:''}${vs.length>1?`<button type="button" class="ver-vers" data-versiones="${esc(x.pid||(x.p&&x.p.id)||'')}" data-n="${l.n}">Comparar con las versiones anteriores</button>`:''}<small>Las otras ${(t.laminas||[]).filter(z=>z.estado==='aprobada'||marcaTira(x,t,z)==='si').length} ya están aprobadas; las ves abajo en la tira.</small></div>`;
 }
+/* HISTORIAL DE VERSIONES (7-sep, Alejandro: «cada vez que me mandas una lámina nueva dices que es nueva pero la veo
+   igual… quiero saber qué día salieron las ediciones»). Cada lámina de la tira trae `versiones:[{v,fecha,src,hash,igual,marca,nota}]`;
+   aquí se comparan lado a lado con su fecha, y si dos son el mismo archivo se dice «IDÉNTICA». */
+function fechaBonita(f){
+  if(!f) return 'sin fecha';
+  const [y,m,d]=f.split('-').map(Number); const dia=new Date(y,m-1,d); const hoy=new Date(); hoy.setHours(0,0,0,0);
+  const dif=Math.round((hoy-dia)/86400000); const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const corta=`${d}-${MES[m-1]}`;
+  return dif===0?`hoy (${corta})`:dif===1?`ayer (${corta})`:dif>1?`hace ${dif} días (${corta})`:`el ${corta}`;
+}
+function verVersiones(t,l){
+  const vs=(l.versiones||[]).slice().reverse();
+  hoja(`<h3>Lámina ${l.n} · ${vs.length} versiones</h3><p>De la más nueva a la más vieja. Si dos son el mismo archivo, lo digo.</p>
+    <div class="vers">${vs.map(v=>`<div class="ver ${v.igual?'igual':''}"><img src="${esc(ligera(v.src))}" alt="Versión ${v.v}" loading="lazy">
+      <b>Versión ${v.v}</b><small>${fechaBonita(v.fecha)}</small>
+      ${v.igual?`<em class="mal">IDÉNTICA a la versión ${v.v-1}: no cambió nada</em>`:''}
+      ${v.marca==='no'?`<em>✗ pediste cambio${v.nota?`: «${esc(v.nota)}»`:''}</em>`:v.marca==='si'?`<em class="bien">✓ aprobada</em>`:`<em>en tu mesa</em>`}</div>`).join('')}</div>`,'versiones'+l.n);
+}
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-versiones]'); if(!b) return; e.stopPropagation();
+  const t=tiraDe({pid:b.dataset.versiones}); const l=t&&(t.laminas||[]).find(z=>z.n===+b.dataset.n); if(l) verVersiones(t,l) });
 function otrosHTML(x){
   const o=x.otros||[]; if(!o.length) return '';
   return `<div class="otra-voz">${o.map(f=>`<b>${esc(f.quien)} ${f.marca==='si'?'aprobó':f.marca==='no'?'pidió cambio':'la vio'}</b>${f.nota?`<span>«${esc(f.nota)}»</span>`:''}`).join('')}
