@@ -98,7 +98,10 @@ Puntos fijos de esa cadena:
     (al montar el video desaparecieron las láminas 4 y 7 ya montadas).
 19. **Deshacer viaja al Sheet.** La subida contempla los borrados explícitos; la píldora nunca se queda en
     «Guardando…» sin haber mandado nada.
-20. **Una credencial rechazada se dice.** «El Sheet no reconoció tu entrada» con «Entrar otra vez», nunca
+20. **Una nota escrita no se borra con un vacío** (GAS v49 + rehidratación en el cliente). *Por qué:* la nota
+    del video («que lo revise Hormozi, escena por escena…») se perdió porque los envíos siguientes mandaron
+    esa fila vacía. Igual que las marcas: el vacío nunca pisa lo escrito.
+21. **Una credencial rechazada se dice.** «El Sheet no reconoció tu entrada» con «Entrar otra vez», nunca
     un «Abriendo la mesa…» eterno ni un «sin señal» falso.
 
 ### Recorrido real contra el Sheet (7-sep, día aislado 2026-01-05)
