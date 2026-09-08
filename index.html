@@ -77,10 +77,10 @@ html.embed .app{padding-top:8px}
 @media (min-width:640px){ .app{max-width:640px;padding-left:22px;padding-right:22px} }
 @media (min-width:960px){
   .app{max-width:1120px;padding-top:70px;padding-bottom:48px}
-  #vHoy{display:grid;grid-template-columns:minmax(440px,560px) minmax(300px,1fr);grid-template-areas:"cab panel" "mazo panel";column-gap:32px;align-items:start}
+  #vHoy{display:grid;grid-template-columns:minmax(440px,560px) minmax(300px,1fr);grid-template-areas:"cab panel" "mazo panel";grid-template-rows:auto 1fr;column-gap:32px;align-items:start}   /* 7-sep: sin `auto 1fr` el panel alto repartía su altura entre las dos filas y la carta caía debajo del pliegue (Alejandro veía la mesa vacía) */
   body[data-vista="hoy"] #vHoy{display:grid}
   .cab{grid-area:cab} .mazo{grid-area:mazo}
-  .panel-lateral{display:block;grid-area:panel;position:sticky;top:70px;
+  .panel-lateral{display:block;grid-area:panel;position:sticky;top:70px;max-height:calc(100vh - 90px);overflow:auto;
     background:var(--tarjeta);border:1px solid var(--linea);border-radius:20px;padding:20px;box-shadow:var(--sombra)}
   #vPub,#vAj{max-width:760px;margin:0 auto}
 }
