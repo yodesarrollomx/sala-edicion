@@ -982,8 +982,8 @@ function pintarCartas(){
         <div class="opciones">${ops}<button class="ning" data-ning>Ninguna — dejo una nota</button></div>
         <div class="pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · elige una opción</span>
           ${x.p.video?`<a class="abrir-video" href="${esc(x.p.video)}" target="_blank" rel="noopener">Abrirlo en pantalla completa ↗</a>`:''}${luegoDe(x)}</div>`;
-      el.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{ dec[x.pid].laminas=dec[x.pid].laminas.map(()=>''); dec[x.pid].laminas[+b.dataset.op]='si'; dec[x.pid]._eje='si'; dec[x.pid]._borrar={}; avanzar('si') });
-      el.querySelector('[data-ning]').onclick=()=>pedirNota(nota=>{ dec[x.pid].laminas=dec[x.pid].laminas.map(()=>'no'); dec[x.pid].nota=nota; dec[x.pid]._eje='no'; avanzar('no') });
+      el.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{ const j=+b.dataset.op, d0=dec[x.pid]; d0._borrar=d0._borrar||{}; d0.laminas.forEach((m,i)=>{ if(m&&i!==j) d0._borrar[i]=1 }); delete d0._borrar[j]; d0.laminas[j]='si'; d0._eje='si'; avanzar('si') });
+      el.querySelector('[data-ning]').onclick=()=>pedirNota(nota=>{ dec[x.pid].laminas=dec[x.pid].laminas.map(()=>'no'); dec[x.pid].nota=nota; dec[x.pid]._eje='no'; dec[x.pid]._borrar={}; avanzar('no') });
     }
     z.appendChild(el);
     if(k===idx&&x.tipo==='lamina') arrastrar(el);
