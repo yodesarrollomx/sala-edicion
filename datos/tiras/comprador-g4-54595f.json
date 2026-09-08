@@ -18,19 +18,12 @@
      "fecha": "2026-09-02",
      "src": "laminas/comprador-g1/L1.png",
      "hash": "08913336",
-     "marca": "si"
-    },
-    {
-     "v": 2,
-     "fecha": "2026-09-07",
-     "src": "laminas/comprador-g1/L1.png",
-     "hash": "089133362fe4bffa07085216c175770d",
-     "marca": "",
+     "marca": "si",
      "igual": false
     }
    ],
-   "version": 2,
-   "fecha": "2026-09-07"
+   "version": 1,
+   "fecha": "2026-09-02"
   },
   {
    "n": 2,
@@ -46,19 +39,12 @@
      "fecha": "2026-09-02",
      "src": "laminas/comprador-g1/L2.png",
      "hash": "e3943577",
-     "marca": "si"
-    },
-    {
-     "v": 2,
-     "fecha": "2026-09-07",
-     "src": "laminas/comprador-g1/L2.png",
-     "hash": "e39435774fc7935c96d5e5c4351a262a",
-     "marca": "",
+     "marca": "si",
      "igual": false
     }
    ],
-   "version": 2,
-   "fecha": "2026-09-07"
+   "version": 1,
+   "fecha": "2026-09-02"
   },
   {
    "n": 3,
@@ -74,19 +60,12 @@
      "fecha": "2026-09-02",
      "src": "laminas/comprador-g1/L3.png",
      "hash": "f87a0e9f",
-     "marca": "si"
-    },
-    {
-     "v": 2,
-     "fecha": "2026-09-07",
-     "src": "laminas/comprador-g1/L3.png",
-     "hash": "f87a0e9f467064dfadfca496da13a655",
-     "marca": "",
+     "marca": "si",
      "igual": false
     }
    ],
-   "version": 2,
-   "fecha": "2026-09-07"
+   "version": 1,
+   "fecha": "2026-09-02"
   },
   {
    "n": 4,
@@ -105,7 +84,8 @@
      "src": "laminas/comprador-g1/L4.png",
      "hash": "0c534cab",
      "marca": "no",
-     "nota": "tachada el 2/3-sep"
+     "nota": "tachada el 2/3-sep",
+     "igual": false
     },
     {
      "v": 2,
@@ -128,7 +108,7 @@
      "v": 4,
      "fecha": "2026-09-07",
      "src": "laminas/comprador-g4/L1.png",
-     "hash": "77cc4d950ff4f9e68da71f574a837ee8",
+     "hash": "77cc4d95",
      "marca": "",
      "igual": false
     }
@@ -149,19 +129,12 @@
      "fecha": "2026-09-02",
      "src": "laminas/comprador-g1/L5.png",
      "hash": "e90902cc",
-     "marca": "si"
-    },
-    {
-     "v": 2,
-     "fecha": "2026-09-07",
-     "src": "laminas/comprador-g1/L5.png",
-     "hash": "e90902cc062e8ec5a6bbd989029c06e6",
-     "marca": "",
+     "marca": "si",
      "igual": false
     }
    ],
-   "version": 2,
-   "fecha": "2026-09-07"
+   "version": 1,
+   "fecha": "2026-09-02"
   },
   {
    "n": 6,
@@ -178,7 +151,8 @@
      "src": "laminas/comprador-g1/L6.png",
      "hash": "1ba93fba",
      "marca": "no",
-     "nota": "tachada el 2/3-sep"
+     "nota": "tachada el 2/3-sep",
+     "igual": false
     },
     {
      "v": 2,
@@ -187,18 +161,10 @@
      "hash": "04157044",
      "marca": "si",
      "igual": false
-    },
-    {
-     "v": 3,
-     "fecha": "2026-09-07",
-     "src": "laminas/comprador-g2/L2.png",
-     "hash": "04157044927e9d239ad81c730369589f",
-     "marca": "",
-     "igual": false
     }
    ],
-   "version": 3,
-   "fecha": "2026-09-07"
+   "version": 2,
+   "fecha": "2026-09-03"
   },
   {
    "n": 7,
@@ -217,7 +183,8 @@
      "src": "laminas/comprador-g1/L7.png",
      "hash": "cfe24d3d",
      "marca": "no",
-     "nota": "tachada el 2/3-sep"
+     "nota": "tachada el 2/3-sep",
+     "igual": false
     },
     {
      "v": 2,
@@ -240,7 +207,7 @@
      "v": 4,
      "fecha": "2026-09-07",
      "src": "laminas/comprador-g4/L2.png",
-     "hash": "f115f6153f182917d9d4645f297eadd3",
+     "hash": "f115f615",
      "marca": "",
      "igual": false
     }
@@ -262,7 +229,8 @@
      "src": "laminas/comprador-g1/L8.png",
      "hash": "25de82e4",
      "marca": "no",
-     "nota": "tachada el 2/3-sep"
+     "nota": "tachada el 2/3-sep",
+     "igual": false
     },
     {
      "v": 2,
@@ -276,7 +244,7 @@
      "v": 3,
      "fecha": "2026-09-07",
      "src": "laminas/comprador-g4/L3.png",
-     "hash": "b0a97a785e060e84113b731478398978",
+     "hash": "b0a97a78",
      "marca": "",
      "igual": false
     }
@@ -299,19 +267,12 @@
      "fecha": "2026-09-02",
      "src": "laminas/comprador-g1/L9.png",
      "hash": "3dd845fe",
-     "marca": "si"
-    },
-    {
-     "v": 2,
-     "fecha": "2026-09-07",
-     "src": "laminas/comprador-g1/L9.png",
-     "hash": "3dd845fe1f150b1b7be2765e75de4a67",
-     "marca": "",
+     "marca": "si",
      "igual": false
     }
    ],
-   "version": 2,
-   "fecha": "2026-09-07"
+   "version": 1,
+   "fecha": "2026-09-02"
   }
  ],
  "decidir": [
