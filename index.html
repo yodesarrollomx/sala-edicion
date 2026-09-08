@@ -183,6 +183,12 @@ html.embed .app{padding-top:8px}
 .tl.cambio{border-color:var(--no)} .tl.cambio span{background:var(--no);color:#fff}
 .tl.aqui{border-color:var(--oro);box-shadow:0 0 0 3px var(--oro-suave)} .tl.aqui img{opacity:1}
 .otra-voz.version{background:var(--oro-suave)} .otra-voz.version b{color:var(--oro)}
+@media (max-width:640px){
+  body.apretado2 .cab .fecha{display:none}
+  body.apretado2 .cab #titulo{font-size:20px;line-height:1.15}
+  body.apretado2 .cab{gap:2px;margin-bottom:0}
+  body.apretado2 #tira{margin-top:2px}
+}
 @media (max-width:640px){ body.compacta .otra-voz.version{padding:6px 10px;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:12px}
   body.compacta .otra-voz.version .fechas,body.compacta .otra-voz.version small{display:none} body.compacta .otra-voz.version span{display:none}
   body.compacta .otra-voz.version.abierta span{display:block;width:100%} body.compacta .otra-voz.version .ver-vers{margin:0;padding:2px 8px;font-size:11px}
@@ -1591,11 +1597,18 @@ function ajustarZona(){
     return innerHeight-top-mh-nav-14 };
   let h=calc();
   // si la cabecera creció (píldora larga, «Deshacer») y la carta quedaría chica, se esconde la fila «VA EN» (info repetida)
-  if(h<230&&!document.body.classList.contains('apretado')){ document.body.classList.add('apretado'); h=calc() }
+  // 8-sep (medición en 375×812): tras un swipe la carta bajaba a 200 px y la lámina no se veía.
+  // Ahora la cabecera se encoge por pasos hasta que la carta llegue a 260 px: primero «VA EN», luego la
+  // fecha y el título grande, al final la píldora. La lámina es lo último que se sacrifica.
+  const B=document.body.classList;
+  if(h<300&&!B.contains('apretado')){ B.add('apretado'); h=calc() }
+  if(h<260&&!B.contains('apretado2')){ B.add('apretado2'); h=calc() }
+  if(h>=340&&B.contains('apretado2')){ B.remove('apretado2'); h=calc() }
+  if(h>=380&&B.contains('apretado')){ B.remove('apretado'); h=calc() }
   // 7-sep: en teléfono la franja «Versión N · Pediste…» se comía la lámina (quedaba de 200 px). Si la carta
   // quedaría chica, la franja se compacta a una línea y la nota se lee tocándola.
   const chico=h<360; if(chico!==document.body.classList.contains('compacta')){ document.body.classList.toggle('compacta',chico); h=calc() }
-  const nuevo=Math.max(200,Math.min(h,620)); if(Math.abs((parseFloat(z.style.height)||0)-nuevo)>1){ z.style.height=nuevo+'px'; z.style.minHeight=nuevo+'px' }
+  const nuevo=Math.max(240,Math.min(h,620)); if(Math.abs((parseFloat(z.style.height)||0)-nuevo)>1){ z.style.height=nuevo+'px'; z.style.minHeight=nuevo+'px' }
 }
 addEventListener('resize',ajustarZona); addEventListener('load',ajustarZona);
 setInterval(()=>{ if(innerWidth<640&&document.body.dataset.vista==='hoy') ajustarZona() },600); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(ajustarZona);
