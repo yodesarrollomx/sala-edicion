@@ -1038,7 +1038,7 @@ function arrastrar(el){
    avanza EN EL MISMO clic; el candado es solo un anti-doble-toque de 250 ms medido con el reloj, y un
    vigilante lo suelta si por lo que sea se quedara puesto. ══ */
 let _decidiendo=false, _tDecidio=0;
-function candadoLibre(){ if(_decidiendo&&Date.now()-_tDecidio>1200){ _decidiendo=false } return !_decidiendo }
+function candadoLibre(){ if(_decidiendo&&Date.now()-_tDecidio>260){ _decidiendo=false } return !_decidiendo }   // 8-sep: por RELOJ, no por temporizador (en pestaña oculta el setTimeout de 250 ms tardó 800 ms y comía clics buenos)
 function vigilante(){   // cada medio segundo: candados sueltos, capas huérfanas fuera, cuerpo desbloqueado si no hay capas
   candadoLibre();
   for(let i=CAPAS.length-1;i>=0;i--){ const c=CAPAS[i]; if(c.el&&!c.el.isConnected) CAPAS.splice(i,1) }   // solo capas cuyo nodo ya no existe (auditoría 7-sep: antes mataba «exp» y «guia»)
@@ -1057,8 +1057,7 @@ function avanzar(m){
   if(el){ fantasma=el.cloneNode(true); fantasma.style.cssText='position:absolute;inset:0;margin:0;pointer-events:none;z-index:5' }
   hist.push(idx); idx++;                       // el estado cambia AHORA, no en 300 ms
   while(idx<pasos.length&&marcaDe(pasos[idx])) idx++;   // 7-sep: nunca volver a preguntar una carta ya decidida (tras «Cambiar» seguía por las que ya estaban)
-  try{ guardarBorrador() }catch(e){}
-  programarSubida();
+  programarSubida();                           // guarda el borrador una sola vez y programa la subida
   try{ pintarCartas() }catch(e){ console.error('pintarCartas',e); idx--; hist.pop(); const x=pasos[idx]; if(x&&dec[x.pid]){ if(x.tipo==='lamina'){ dec[x.pid].laminas[x.i]=''; dec[x.pid].notas[x.i]='' } else { dec[x.pid].laminas=dec[x.pid].laminas.map(()=>''); dec[x.pid]._eje='' } }
     $('#zona').innerHTML='<div class="carta"><div class="lienzo"><div class="cargando">No pude pintar la siguiente carta. <button class="secund" onclick="location.reload()">Recargar</button></div></div></div>'; _decidiendo=false; return }
   if(fantasma){                                // la carta que sale se anima aparte, encima de la nueva; si no hay cuadros (pestaña tapada) simplemente desaparece
@@ -1528,7 +1527,8 @@ function pintarCargando(){
 function aplicarDia(d){
   clearInterval(_tFrases);
   // traer() cae solo al respaldo si el Sheet no contestó: con sesión, eso se dice y se reintenta (nunca pasa por «lo de hoy»)
-  if(d&&d._respaldo&&ENTRADO()&&!_reintentando){ _reintentando=true; setTimeout(()=>{ avisarRespaldo(); reintentarSheet(0) },0) }
+  if(d&&d._respaldo&&ENTRADO()&&_ultimoErrorLlave){ /* llave rechazada: no se dice «sin señal» ni se reintenta en balde */ }
+  else if(d&&d._respaldo&&ENTRADO()&&!_reintentando){ _reintentando=true; setTimeout(()=>{ avisarRespaldo(); reintentarSheet(0) },0) }
   if(d&&!d._respaldo) _reintentando=false;
   const firma=x=>(x.propuestas||[]).map(p=>p.id+':'+((p.laminas||[]).length||(p.opciones||[]).length)).join('|');
   if(_pintado&&d&&d._respaldo){ avisarRespaldo(); return }   // con mesa armada, una copia de respaldo no la reconstruye bajo los pies del editor
