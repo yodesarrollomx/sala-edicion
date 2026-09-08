@@ -78,6 +78,16 @@
    ],
    "video": "video/apodo/REEL_9x16.mp4?v=7sep-v3",
    "origen": "v3 · tu palabra de hoy: «sale, pero espera la escena 3 animada» → ya está animada (LTX en tu Mac)"
+  },
+  {
+   "id": "comprador-g5-b1cf4e",
+   "titulo": "El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40",
+   "laminas": [
+    "laminas/comprador-g5/L1.png",
+    "laminas/comprador-g5/L2.png"
+   ],
+   "video": null,
+   "origen": "rehecha-de comprador-g4-54595f"
   }
  ],
  "parrilla": [
@@ -287,6 +297,10 @@
   {
    "hora": "18:13",
    "evento": "Propuesta montada: El comprador ya sabe · láminas 4, 7 y 8 reescritas con la fórmula de Hormozi (tus notas de hoy) (3 láminas)"
+  },
+  {
+   "hora": "22:00",
+   "evento": "Propuesta montada: El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40 (2 láminas)"
   }
  ],
  "decisiones": {
