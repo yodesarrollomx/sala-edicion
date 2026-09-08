@@ -686,7 +686,8 @@ function estadoInicial(){
   if(!ENTRADO()) return pintarEstado('sin', c.hoy?'Guardado aquí · entra por el YOD OS para subirlo':'Entra por el YOD OS');
   if(guard.env) return pintarEstado('subido','Guardado ✓ '+guard.env.hora);
   if(leerLS('sala_cola',[]).length) return pintarEstado('cola','Se guarda al volver la señal');
-  return pintarEstado(c.hoy?'local':'', c.hoy?'Guardando…':'Nada decidido aún');
+  const yaHoy=lockeadas.length+reaperturas().reduce((a,[,d])=>a+d.laminas.filter(m=>m==='no').length,0);
+  return pintarEstado(c.hoy?'local':'', c.hoy?'Guardando…':(yaHoy?`Hoy decidiste ${yaHoy} · guardado en el Sheet`:'Nada decidido aún'));
 }
 
 /* ══ envío — sobre idéntico al de siempre ══ */
@@ -857,6 +858,12 @@ function quitarReapertura(pid,i){
   if(!dec[pid]) return; dec[pid].laminas[i]=''; dec[pid].notas[i]='';
   if(!dec[pid].laminas.some(x=>x)) delete dec[pid];
   cerrarCapas(); programarSubida(); if(pasos[idx]) pintarTira(pasos[idx]); pintarPanel();
+}
+function tituloDe(pid){          // el título humano de una pieza, esté hoy en la mesa o en el historial
+  const hoyP=(D&&D.propuestas||[]).find(p=>p.id===pid); if(hoyP) return (hoyP.titulo||'').split(' · ')[0]||pid;
+  for(const dia of Object.values((D&&D.historial)||{})){ const p=((dia&&dia.propuestas)||[]).find(q=>q.id===pid); if(p) return (p.titulo||'').split(' · ')[0]||pid }
+  const t=TIRAS[pid]; if(t&&t.pieza) return t.pieza;
+  return pid.replace(/-g\d+-[0-9a-f]{6}$/,'').replace(/-/g,' ');
 }
 function hidratarReaperturas(){      // lo que ya pedí hoy (del Sheet) vuelve a dec, para que el siguiente envío no lo borre
   const M=(D&&D.decisiones&&D.decisiones.propuestas)||{}; const enMesa=new Set((D.propuestas||[]).map(p=>p.id));
@@ -1062,8 +1069,11 @@ function filasRespuestas(compacto){
   const lockF=lockeadas.map((l,k)=>`<div class="fila-r">${thumbDe({tipo:'lamina',p:l.p,i:l.i})}<div class="txt"><b>${esc(l.p.titulo||l.pid)}</b><small>${numeroReal({tipo:'lamina',p:l.p,pid:l.p.id,i:l.i})} · ya decidida</small></div>
       <div class="acc"><span class="chipm lock">✓ ${l.marca==='si'?'Aprobada':'Cambio'} · tú</span>${!compacto&&DECIDE()?`<button data-reabrir="${k}">Reabrir</button>`:''}</div></div>`).join('');
   const reF=reaperturas().map(([pid,d])=>d.laminas.map((m,i)=>{ if(m!=='no') return '';
-    const t=Object.values(TIRAS).find(z=>z&&z.base===pid), l=t&&(t.laminas||[]).find(z=>z.n===i+1);
-    return `<div class="fila-r">${l?`<img class="th" src="${esc(ligera(l.src))}" alt="" loading="lazy">`:'<div class="th"></div>'}<div class="txt"><b>${esc((t&&t.pieza)||d._tira||pid)}</b><small>lámina ${i+1} · estaba aprobada, pediste cambio</small>${d.notas[i]?`<em>«${esc(d.notas[i])}»</em>`:''}</div>
+    // 7-sep: nunca enseñar un id interno ni un número de índice: título de la pieza y número REAL de la lámina
+    const t=Object.values(TIRAS).find(z=>z&&z.base===pid)||TIRAS[pid]||null;
+    const M=TIRAS[pid]?mapaDe(TIRAS[pid]):null, nReal=M?(M[String(i+1)]||i+1):(i+1);
+    const l=t&&(t.laminas||[]).find(z=>z.n===nReal);
+    return `<div class="fila-r">${l?`<img class="th" src="${esc(ligera(l.src))}" alt="" loading="lazy">`:'<div class="th"></div>'}<div class="txt"><b>${esc((t&&t.pieza)||d._tira||tituloDe(pid))}</b><small>lámina ${nReal} · pediste cambio</small>${d.notas[i]?`<em>«${esc(d.notas[i])}»</em>`:''}</div>
       <div class="acc"><span class="chipm no">Cambio</span>${!compacto&&DECIDE()?`<button data-quitar="${esc(pid)}:${i}">Quitar</button>`:''}</div></div>` }).join('')).join('');
   return {hoyF:hoyF+reF,lockF};
 }
