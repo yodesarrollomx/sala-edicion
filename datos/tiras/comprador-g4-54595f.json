@@ -1,0 +1,328 @@
+{
+ "pieza": "El comprador ya sabe",
+ "promesa": "Que el dueño sienta que está negociando a ciegas contra alguien que ya midió su terreno — y que la única salida digna es medirlo él primero.",
+ "version": "v2",
+ "de": "comprador-g1-70ac76",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/comprador-g1/L1.png",
+   "dice": "El que te quiere comprar / no llega con una corazonada.",
+   "ve": "Una camioneta blanca estacionada frente a un terreno baldío, un hombre de saco ligero bajando con un folder",
+   "entiende": "a mí ya me visitaron así",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-02",
+     "src": "laminas/comprador-g1/L1.png",
+     "hash": "08913336",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g1/L1.png",
+     "hash": "089133362fe4bffa07085216c175770d",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-07"
+  },
+  {
+   "n": 2,
+   "src": "laminas/comprador-g1/L2.png",
+   "dice": "Llega con tu terreno / ya medido.",
+   "ve": "El mismo hombre en la cerca con una tableta: un modelo 3D de un edificio montado sobre ese lote",
+   "entiende": "sabe algo de mi propiedad que yo no",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-02",
+     "src": "laminas/comprador-g1/L2.png",
+     "hash": "e3943577",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g1/L2.png",
+     "hash": "e39435774fc7935c96d5e5c4351a262a",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-07"
+  },
+  {
+   "n": 3,
+   "src": "laminas/comprador-g1/L3.png",
+   "dice": "Sabe cuántos m² permite la norma / y qué giro le deja más.",
+   "ve": "Primer plano de la tableta: el volumen del edificio con cotas y una tabla de usos",
+   "entiende": "tiene el dato exacto",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-02",
+     "src": "laminas/comprador-g1/L3.png",
+     "hash": "f87a0e9f",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g1/L3.png",
+     "hash": "f87a0e9f467064dfadfca496da13a655",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-07"
+  },
+  {
+   "n": 4,
+   "src": "laminas/comprador-g4/L1.png",
+   "dice": "El comprador ya sabe lo que vale tu terreno. / Su oferta es eso, menos su ganancia.",
+   "ve": "Café luminoso: el comprador desliza una hoja con una sola cifra hacia el dueño; calculadora y folder al lado",
+   "entiende": "la oferta viene con descuento escondido",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "no se entiende bien la frase; pregúntale a Hormozi cómo debería ir para que cumpla su fórmula",
+   "version": 4,
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-02",
+     "src": "laminas/comprador-g1/L4.png",
+     "hash": "0c534cab",
+     "marca": "no",
+     "nota": "tachada el 2/3-sep"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-03",
+     "src": "laminas/comprador-g2/L1.png",
+     "hash": "f1b5d19e",
+     "marca": "no",
+     "igual": false,
+     "nota": "la sintaxis de esta lámina no me agrada, como que enreda más en vez de clarificar al cliente"
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g3/L1.png",
+     "hash": "568c74ca",
+     "marca": "",
+     "igual": false
+    },
+    {
+     "v": 4,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g4/L1.png",
+     "hash": "77cc4d950ff4f9e68da71f574a837ee8",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "fecha": "2026-09-07"
+  },
+  {
+   "n": 5,
+   "src": "laminas/comprador-g1/L5.png",
+   "dice": "Tú no tienes que adivinarlo. / Tienes que medirlo primero.",
+   "ve": "El dueño solo en su terreno, con el plano desenrollado sobre el cofre de su carro, luz de tarde",
+   "entiende": "hay una jugada antes de contestar",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-02",
+     "src": "laminas/comprador-g1/L5.png",
+     "hash": "e90902cc",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g1/L5.png",
+     "hash": "e90902cc062e8ec5a6bbd989029c06e6",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-07"
+  },
+  {
+   "n": 6,
+   "src": "laminas/comprador-g2/L2.png",
+   "dice": "El Plan de Potencial te dice / lo que él ya sabe de tu terreno.",
+   "ve": "La hoja del Plan sobre la mesa: m², giros y pendientes con la ciudad, una mano del dueño señalando",
+   "entiende": "puedo tener su mismo dato",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-02",
+     "src": "laminas/comprador-g1/L6.png",
+     "hash": "1ba93fba",
+     "marca": "no",
+     "nota": "tachada el 2/3-sep"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-03",
+     "src": "laminas/comprador-g2/L2.png",
+     "hash": "04157044",
+     "marca": "si",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g2/L2.png",
+     "hash": "04157044927e9d239ad81c730369589f",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 3,
+   "fecha": "2026-09-07"
+  },
+  {
+   "n": 7,
+   "src": "laminas/comprador-g4/L2.png",
+   "dice": "Con el Plan comparas dos números: / lo que él ofrece y lo que tu terreno vale.",
+   "ve": "Vista cenital: dos hojas iguales, paralelas y a la misma distancia —la oferta y el Plan—, una mano del dueño sobre cada una",
+   "entiende": "ahora comparo, no adivino",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "te pedí en el cambio pasado que pusieras qué es una comparación justa y ordenada",
+   "version": 4,
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-02",
+     "src": "laminas/comprador-g1/L7.png",
+     "hash": "cfe24d3d",
+     "marca": "no",
+     "nota": "tachada el 2/3-sep"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-03",
+     "src": "laminas/comprador-g2/L3.png",
+     "hash": "74fa5818",
+     "marca": "no",
+     "igual": false,
+     "nota": "una comparación, justa y ordenada."
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g3/L2.png",
+     "hash": "d46eef57",
+     "marca": "",
+     "igual": false
+    },
+    {
+     "v": 4,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g4/L2.png",
+     "hash": "f115f6153f182917d9d4645f297eadd3",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "fecha": "2026-09-07"
+  },
+  {
+   "n": 8,
+   "src": "laminas/comprador-g4/L3.png",
+   "dice": "Vender puede ser lo mejor. / Pero decídelo tú con tu número, no él con el suyo.",
+   "ve": "Pareja media alta de espaldas, el terreno y la ciudad al fondo, él con el Plan bajo el brazo",
+   "entiende": "no me quitan la decisión",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-02",
+     "src": "laminas/comprador-g1/L8.png",
+     "hash": "25de82e4",
+     "marca": "no",
+     "nota": "tachada el 2/3-sep"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-03",
+     "src": "laminas/comprador-g2/L4.png",
+     "hash": "ba695c26",
+     "marca": "si",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g4/L3.png",
+     "hash": "b0a97a785e060e84113b731478398978",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 3,
+   "fecha": "2026-09-07",
+   "nota_previa": "pregúntale a Hormozi cómo reescribiría esta lámina para que se entienda mejor"
+  },
+  {
+   "n": 9,
+   "src": "laminas/comprador-g1/L9.png",
+   "dice": "Pídele a tu terreno su / Plan de Potencial Personalizado.",
+   "ve": "Placa de cierre sobre el terreno al atardecer",
+   "entiende": "ese es el paso",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-02",
+     "src": "laminas/comprador-g1/L9.png",
+     "hash": "3dd845fe",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-07",
+     "src": "laminas/comprador-g1/L9.png",
+     "hash": "3dd845fe1f150b1b7be2765e75de4a67",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-07"
+  }
+ ],
+ "decidir": [
+  4,
+  7,
+  8
+ ],
+ "base": "comprador-g1-70ac76",
+ "mapa": {
+  "1": 4,
+  "2": 7,
+  "3": 8
+ }
+}
