@@ -182,6 +182,7 @@ html.embed .app{padding-top:8px}
 .tl.ok{border-color:var(--si)} .tl.ok span{background:var(--si);color:#fff} .tl.ok img{opacity:.95}
 .tl.cambio{border-color:var(--no)} .tl.cambio span{background:var(--no);color:#fff}
 .tl.aqui{border-color:var(--oro);box-shadow:0 0 0 3px var(--oro-suave)} .tl.aqui img{opacity:1}
+.promesa{background:var(--oro-suave);border-radius:10px;padding:10px 12px;margin:8px 0}
 .otra-voz.version{background:var(--oro-suave)} .otra-voz.version b{color:var(--oro)}
 @media (max-width:640px){
   /* 8-sep: con la carta apretada el pie quedaba CORTADO. Nada se esconde: lo que no cabe se desliza dentro de la carta. */
@@ -495,7 +496,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='462592d5cd';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='9094999964';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
@@ -846,11 +847,25 @@ function pintarTira(x){
   const src=x.tipo==='lamina'?x.p.laminas[x.i]:'';
   const act=laminaTira(t,src,nLamina(x));
   c.hidden=false;
-  c.innerHTML=`<div class="tira-cab"><b>${esc(t.pieza)}</b> · tira completa de ${t.laminas.length}<button class="guia-b" id="verGuia">Ver el guion</button></div>
+  c.innerHTML=`<div class="tira-cab"><b>${esc(t.pieza)}</b> · tira completa de ${t.laminas.length}${t.direccion?`<button class="guia-b" id="verDir">Hoja de dirección</button>`:''}<button class="guia-b" id="verGuia">Ver el guion</button></div>
     <div class="tira-fila">${t.laminas.map(l=>{ const m=marcaTira(x,t,l), cambio=m==='no', ok=!cambio&&(l.estado==='aprobada'||m==='si'); return `<button class="tl ${ok?'ok':''} ${cambio?'cambio':''} ${act&&l.n===act.n?'aqui':''}" data-n="${l.n}" aria-label="Lámina ${l.n}">
       <img src="${esc(ligera(l.src))}" alt="" loading="lazy"><span>${l.n}${cambio?' ✗':ok?' ✓':''}</span></button>`}).join('')}</div>`;
   c.querySelectorAll('.tl').forEach(b=>b.onclick=()=>verLamina(t,+b.dataset.n));
   $('#verGuia').onclick=()=>verGuia(t);
+  const bd=$('#verDir'); if(bd) bd.onclick=()=>verDireccion(t);
+}
+/* HOJA DE DIRECCIÓN (8-sep, pedido de Alejandro: «genérame una lámina al principio donde me relatas
+   qué va a pasar en cada imagen, qué quieres decir y por qué… como directores de cine; la lámina es
+   el primer paso, luego va a ser animar el video»). La tira puede traer
+   direccion:{promesa, escenas:[{n, se_ve, entiende, por_que}]} y aquí se lee antes de decidir. */
+function verDireccion(t){
+  const d=t.direccion||{}; const es=d.escenas||[];
+  hoja(`<h3>Hoja de dirección · ${esc(t.pieza||'')}</h3>
+    ${d.promesa?`<p class="promesa"><b>La promesa:</b> ${esc(d.promesa)}</p>`:''}
+    <div class="lista-r">${es.map(e=>{ const l=(t.laminas||[]).find(z=>z.n===e.n); return `<div class="fila-r">
+      ${l?`<img class="th" src="${esc(ligera(l.src))}" alt="" loading="lazy">`:'<div class="th"></div>'}
+      <div class="txt"><b>Lámina ${e.n}</b><small><b>Se ve:</b> ${esc(e.se_ve||'')}</small>
+        <small><b>Entiende:</b> ${esc(e.entiende||'')}</small><em>Por qué va aquí: ${esc(e.por_que||'')}</em></div></div>`}).join('')}</div>`,'direccion');
 }
 function verLamina(t,n){
   const l=(t.laminas||[]).find(z=>z.n===n); if(!l) return;
