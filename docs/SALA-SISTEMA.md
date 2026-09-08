@@ -86,6 +86,12 @@ Puntos fijos de esa cadena:
 14. **Lo decidido hoy se queda en Mis respuestas** (láminas y ejes) para poder Reabrir; no desaparece.
 15. **Las cuatro llaves se rotan en TODAS las filas de CONFIG** (v46). *Por qué:* con una fila repetida se
     escribía la última y se leía la primera → «clave incorrecta».
+16. **Un id NUNCA vuelve con contenido distinto** (8-sep). Si cambian las opciones o el número de láminas,
+    va id nuevo + `origen: "rehech[ao]-de <id viejo>"`; `sala_publicar.py` aborta si detecta el choque.
+    *Por qué:* el eje del video se republicó con el mismo id y otras opciones; el «sí» al índice 1
+    («espera la escena 3 animada») pasó a leerse como la nueva opción 1 («cambia el texto»).
+17. **El comparador dice la verdad de cada versión:** una versión con otra después dice «se rehízo»; solo
+    la última puede decir «en tu mesa». El publicador sella esa marca al montar.
 
 ### Recorrido real contra el Sheet (7-sep, día aislado 2026-01-05)
 
