@@ -933,7 +933,8 @@ function verVersiones(t,l){
     <div class="vers">${vs.map(v=>`<div class="ver ${v.igual?'igual':''}"><img src="${esc(ligera(v.src))}" alt="Versión ${v.v}" loading="lazy">
       <b>Versión ${v.v}</b><small>${fechaBonita(v.fecha)}</small>
       ${v.igual?`<em class="mal">IDÉNTICA a la versión ${v.v-1}: no cambió nada</em>`:''}
-      ${v.marca==='no'?`<em>✗ pediste cambio${v.nota?`: «${esc(v.nota)}»`:''}</em>`:v.marca==='si'?`<em class="bien">✓ aprobada</em>`:`<em>en tu mesa</em>`}</div>`).join('')}</div>`,'versiones'+l.n);
+      ${(vs.filter(z=>z.fecha===v.fecha).length>1)?`<em style="font-size:11px">versión ${v.v} de ese día</em>`:''}
+      ${v.marca==='no'?`<em>✗ pediste cambio${v.nota?`: «${esc(v.nota)}»`:''}</em>`:v.marca==='si'?`<em class="bien">✓ aprobada</em>`:(v.v===vs.length?`<em>en tu mesa</em>`:`<em>se rehízo</em>`)}</div>`).join('')}</div>`,'versiones'+l.n);
 }
 document.addEventListener('click',e=>{ const v=e.target.closest('.otra-voz.version'); if(v&&!e.target.closest('button')&&document.body.classList.contains('compacta')){ v.classList.toggle('abierta'); setTimeout(ajustarZona,60); return }
   const b=e.target.closest('[data-versiones]'); if(!b) return; e.stopPropagation();

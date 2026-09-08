@@ -101,7 +101,7 @@
      "fecha": "2026-09-07",
      "src": "laminas/comprador-g3/L1.png",
      "hash": "568c74ca",
-     "marca": "",
+     "marca": "no",
      "igual": false
     },
     {
@@ -109,7 +109,7 @@
      "fecha": "2026-09-07",
      "src": "laminas/comprador-g4/L1.png",
      "hash": "77cc4d95",
-     "marca": "",
+     "marca": "no",
      "igual": false
     },
     {
@@ -208,7 +208,7 @@
      "fecha": "2026-09-07",
      "src": "laminas/comprador-g3/L2.png",
      "hash": "d46eef57",
-     "marca": "",
+     "marca": "no",
      "igual": false
     },
     {
@@ -216,7 +216,7 @@
      "fecha": "2026-09-07",
      "src": "laminas/comprador-g4/L2.png",
      "hash": "f115f615",
-     "marca": "",
+     "marca": "no",
      "igual": false
     },
     {
@@ -261,7 +261,7 @@
      "fecha": "2026-09-07",
      "src": "laminas/comprador-g4/L3.png",
      "hash": "b0a97a78",
-     "marca": "",
+     "marca": "si",
      "igual": false
     }
    ],

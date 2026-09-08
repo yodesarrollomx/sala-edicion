@@ -101,7 +101,7 @@
      "fecha": "2026-09-07",
      "src": "laminas/comprador-g3/L1.png",
      "hash": "568c74ca",
-     "marca": "",
+     "marca": "no",
      "igual": false
     },
     {
@@ -200,7 +200,7 @@
      "fecha": "2026-09-07",
      "src": "laminas/comprador-g3/L2.png",
      "hash": "d46eef57",
-     "marca": "",
+     "marca": "no",
      "igual": false
     },
     {
