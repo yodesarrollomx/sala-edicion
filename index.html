@@ -498,7 +498,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='a9868e0dbe';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='90ec477b8d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
@@ -542,7 +542,10 @@ async function traerCatalogo(){
     const d=await r.json(); if(!d||!d.catalogo) return;
     CATALOGO=d.catalogo; _porRuta={};
     for(const s in CATALOGO) for(const v of (CATALOGO[s].revisiones||[]))
-      if(v.ruta) _porRuta[v.ruta]={serial:s,r:v.r,de:v.de,prueba:v.prueba,original:v.original};
+      // una misma revisión puede estar copiada en varias carpetas (apodo-g3/L2.png es la misma
+      // imagen que apodo-g2/L2.png). Todas apuntan al mismo archivo de Drive.
+      for(const ruta of String(v.rutas||v.ruta||'').split('|').filter(Boolean))
+        _porRuta[ruta]={serial:s,r:v.r,de:v.de,prueba:v.prueba,original:v.original};
     // 8-sep: el catálogo llega DESPUÉS de que las cartas ya se pintaron (probado en su Chrome:
     // 49 láminas cargadas y aun así las 4 imágenes salían del repo). Al llegar, se vuelve a
     // pintar para que la foto se pida a Drive y el serial se vea.
@@ -1055,7 +1058,7 @@ function pintarCartas(){
           <img alt="${numeroReal(x)}" draggable="false">
           <button class="num-movil" type="button">${numeroReal(x)} · ampliar</button>
         </div>
-        <div class="pie pie-lamina"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · ${numeroReal(x)}</span>
+        <div class="pie pie-lamina"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · ${numeroReal(x)}${serialDe(src)?` · <b class="serial">${esc(serialDe(src))}</b>`:``}</span>
           <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button></div>${luegoDe(x)}</div>`;
       montarImagen(el,src);
       el.querySelectorAll('.lupa,.num-movil').forEach(b=>b.onclick=e=>{ e.stopPropagation(); abrirZoom(src) });
