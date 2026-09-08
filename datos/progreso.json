@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-07 15:04",
+ "actualizado": "2026-09-07 18:02",
  "piezas": [
   {
    "pieza": "El Apodo del Terreno",
@@ -107,7 +107,7 @@
    "atorada": false,
    "vuelve_en_min": null,
    "dice": "El video está armado y esperando tu palabra en la mesa. Ojo: 1 escena con plan B (acercamiento sobre la lámina, no animación).",
-   "corriendo": true
+   "corriendo": false
   }
  ]
 }
