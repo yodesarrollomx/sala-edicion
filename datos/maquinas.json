@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-07 23:41",
+ "actualizado": "2026-09-08 00:14",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -73,7 +73,7 @@
    "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 30 min",
+   "corrio": "hace 32 min",
    "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -84,7 +84,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 3 horas",
+   "corrio": "hace 4 horas",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
