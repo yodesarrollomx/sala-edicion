@@ -489,11 +489,13 @@ const GAS_DEF='https://script.google.com/macros/s/AKfycbx61UWsEYCL_dHzi0JrUv3GuA
 /* UNA SOLA LLAVE (3-sep): si no hay llave propia de la Sala, vale la credencial del
    YOD OS (mismo origen). El Sheet la valida contra el Portero y decide tu rol. */
 const GAS=()=>localStorage.getItem('sala_gas')||GAS_DEF;
-const CLAVE=()=>localStorage.getItem('pyod_clave_v1')||localStorage.getItem('sala_clave')||'';   // 5-sep: la sesión de Google del OS manda; una clave vieja guardada no estorba
+const CLAVE=()=>_llaveViva||localStorage.getItem('pyod_clave_v1')||localStorage.getItem('sala_clave')||'';   // 5-sep: la sesión del OS manda; 8-sep: si otra llave resultó ser la buena, esa manda
+let _llaveViva='';
+const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage.getItem('sala_clave')].filter(Boolean))];   // se PRUEBAN todas; nunca se borra ninguna
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='88030bb 08-Sep 09:16';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='79bc9c4 08-Sep 09:29';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
@@ -558,28 +560,34 @@ window.addEventListener('popstate',()=>{ if(CAPAS.length){ const c=CAPAS[CAPAS.l
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&CAPAS.length){ e.preventDefault(); cerrarCapa(CAPAS[CAPAS.length-1].id) } });
 
 /* ══ datos (idéntico contrato: recurso=dia, respaldo en datos/manifiesto.json) ══ */
-let _ultimoErrorLlave='', _probeOS=false;
+let _ultimoErrorLlave='';
 async function traer(f,intentos,tope,sinRespaldo){
   _ultimoErrorLlave='';
   if(ENTRADO()){
     const N=intentos||3;
     for(let i=0;i<N;i++){
+      // 8-sep (revisión): se prueban TODAS las llaves guardadas, empezando por la que ya sirvió.
+      // Antes se borraba `sala_clave` dando por hecho que era la que había fallado, y como CLAVE()
+      // prefería la del OS, se perdía una llave buena sin haberla probado nunca.
+      let ultimoError=null, sirvio=null, resp=null;
+      for(const llave of (_llaveViva?[_llaveViva,...LLAVES().filter(k=>k!==_llaveViva)]:LLAVES())){
+        try{
+          const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),tope||(ENTRADO()?60000:20000));   // con sesión se espera al Sheet frío
+          const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(llave)+(f?'&f='+encodeURIComponent(f):''),{signal:ctl.signal});
+          clearTimeout(t);
+          const j=await leerJSON(r);
+          if(!r.ok||!j) throw new Error('sin JSON ('+r.status+')');
+          if(j.error) throw new Error(j.error);
+          sirvio=llave; resp=j; break;
+        }catch(e){ const m=String(e&&e.message||e); ultimoError=m;
+          if(!/clave|credencial|no reconoc/i.test(m)) break;   // no es la llave: es la red; no tiene caso probar otras
+        }
+      }
       try{
-        const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),tope||(ENTRADO()?60000:20000));   // con sesión se espera al Sheet frío
-        const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(CLAVE())+(f?'&f='+encodeURIComponent(f):''),{signal:ctl.signal});
-        clearTimeout(t);
-        const j=await leerJSON(r);
-        if(!r.ok||!j) throw new Error('sin JSON ('+r.status+')');
-        if(j.error) throw new Error(j.error);
-        return j;
+        if(sirvio){ _llaveViva=sirvio; if(localStorage.getItem('sala_clave')&&localStorage.getItem('sala_clave')!==sirvio&&sirvio!==localStorage.getItem('pyod_clave_v1')) localStorage.setItem('sala_clave',sirvio); return resp }
+        throw new Error(ultimoError||'sin respuesta del Sheet');
       }catch(e){ const m=String(e&&e.message||e);
-        // 8-sep: una llave que el Sheet rechaza NO es «no hay señal». Antes se reintentaba en silencio y la
-        // Sala se quedaba en «Abriendo la mesa…» para siempre. Ahora se dice y se ofrece entrar otra vez.
-        if(/clave|credencial|no reconoc/i.test(m)){
-          // antes de rendirse: si la llave guardada de la Sala es la que falla, se prueba la del YOD OS
-          const os=localStorage.getItem('pyod_clave_v1'), mia=localStorage.getItem('sala_clave');
-          if(os&&mia&&os!==mia&&!_probeOS){ _probeOS=true; try{ localStorage.removeItem('sala_clave'); }catch(e2){} i=-1; continue }
-          _ultimoErrorLlave=m; break }
+        if(/clave|credencial|no reconoc/i.test(m)){ _ultimoErrorLlave=m; break }
         if(i<N-1) await new Promise(res=>setTimeout(res,700*(i+1))) }
     }
   }
@@ -1635,11 +1643,12 @@ async function vigilarVersion(){
     const m=t.match(/const SELLO_SALA='([^']+)'/); if(!m||m[1]===SELLO_SALA) return;
     if(document.querySelector('#avisoVersion')) return;
     const b=document.createElement('div'); b.id='avisoVersion';
-    b.style.cssText='position:fixed;left:0;right:0;bottom:calc(var(--nav,72px) + 8px);z-index:60;display:flex;justify-content:center;pointer-events:none';
+    b.style.cssText='position:fixed;left:0;right:0;bottom:calc(var(--nav,72px) + 118px);z-index:60;display:flex;justify-content:center;pointer-events:none';
     b.innerHTML=`<button type="button" style="pointer-events:auto;background:var(--oro);color:#12100c;border:0;border-radius:999px;padding:9px 16px;font-weight:700;font-size:13px;box-shadow:var(--sombra-alta);cursor:pointer">Hay una versión más nueva de la Sala · Recargar</button>`;
     b.querySelector('button').onclick=()=>location.replace('index.html?v='+Date.now());
     document.body.appendChild(b);
-  }catch(e){}
+  }catch(e){ if(!vigilarVersion._n){ vigilarVersion._n=1; setTimeout(vigilarVersion,10000) }
+    else if(vigilarVersion._n<3){ vigilarVersion._n++; setTimeout(vigilarVersion,30000) } }
 }
 setInterval(vigilarVersion,600000);
 (async function(){
