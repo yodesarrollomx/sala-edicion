@@ -23,7 +23,30 @@
   "2026-09-06",
   "2026-09-07"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "motores-video-7sep",
+   "titulo": "Prueba de motores · la misma escena 7 en tres motores — ¿con cuál seguimos?",
+   "tipo": "eje",
+   "laminas": [],
+   "opciones": [
+    {
+     "titulo": "A · Wan (gratis, ~3 clips al día)",
+     "texto": "El que hemos usado. Sin marca de agua. Se agota rápido: un video de 7 escenas toma 2–3 días."
+    },
+    {
+     "titulo": "B · Kling (gratis, 2 clips al día)",
+     "texto": "Movimiento más natural, pero el gratis trae marca de agua «KlingAI» en la esquina; sin marca es de pago."
+    },
+    {
+     "titulo": "C · LTX en tu Mac (sin límite)",
+     "texto": "Gratis e ilimitado, 18 minutos por clip. Movimiento sutil, no deforma caras. Ideal como respaldo de noche."
+    }
+   ],
+   "video": "video/pruebas/S7_tres_motores.mp4?v=7sep",
+   "origen": "Tu petición del 7-sep: «haz la prueba del mismo video… y me presentas las 3». Los tres clips salen de la misma foto y el mismo prompt."
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -223,6 +246,10 @@
   {
    "hora": "14:57",
    "evento": "Video del Apodo v2: sin máscara, escena 7 animada, escena 3 con foto nueva (acercamiento hasta que haya GPU)"
+  },
+  {
+   "hora": "17:40",
+   "evento": "Prueba de motores de video montada (escena 7 × Wan/Kling/LTX)"
   }
  ],
  "decisiones": {
