@@ -183,6 +183,10 @@ html.embed .app{padding-top:8px}
 .tl.cambio{border-color:var(--no)} .tl.cambio span{background:var(--no);color:#fff}
 .tl.aqui{border-color:var(--oro);box-shadow:0 0 0 3px var(--oro-suave)} .tl.aqui img{opacity:1}
 .otra-voz.version{background:var(--oro-suave)} .otra-voz.version b{color:var(--oro)}
+@media (max-width:640px){ body.compacta .otra-voz.version{padding:6px 10px;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:12px}
+  body.compacta .otra-voz.version .fechas,body.compacta .otra-voz.version small{display:none} body.compacta .otra-voz.version span{display:none}
+  body.compacta .otra-voz.version.abierta span{display:block;width:100%} body.compacta .otra-voz.version .ver-vers{margin:0;padding:2px 8px;font-size:11px}
+  body.compacta .otra-voz.version::after{content:'▸ nota';color:var(--oro);font-size:11px;cursor:pointer} body.compacta .otra-voz.version.abierta::after{content:'▾'} }
 .otra-voz.version .fechas{display:block;font-size:12px;opacity:.8} .ver-vers{margin-top:6px;background:none;border:1px solid var(--oro);color:var(--oro);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
 .vers{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:10px} @media(max-width:640px){.vers{grid-template-columns:1fr 1fr}} .ver{text-align:center;font-size:12px} .ver img{width:100%;border-radius:10px;background:#141210;display:block;margin-bottom:6px} .ver b{display:block} .ver small{display:block;color:var(--guia)} .ver em{display:block;margin-top:4px;font-style:normal;color:var(--gris)} .ver em.mal{color:var(--no);font-weight:700} .ver em.bien{color:var(--si)} .ver.igual img{outline:2px solid var(--no)}
 p.fechas{font-size:12.5px;color:var(--guia)} button.liga{background:none;border:0;color:var(--oro);text-decoration:underline;cursor:pointer;font:inherit;font-size:12.5px;padding:0}
@@ -924,7 +928,8 @@ function verVersiones(t,l){
       ${v.igual?`<em class="mal">IDÉNTICA a la versión ${v.v-1}: no cambió nada</em>`:''}
       ${v.marca==='no'?`<em>✗ pediste cambio${v.nota?`: «${esc(v.nota)}»`:''}</em>`:v.marca==='si'?`<em class="bien">✓ aprobada</em>`:`<em>en tu mesa</em>`}</div>`).join('')}</div>`,'versiones'+l.n);
 }
-document.addEventListener('click',e=>{ const b=e.target.closest('[data-versiones]'); if(!b) return; e.stopPropagation();
+document.addEventListener('click',e=>{ const v=e.target.closest('.otra-voz.version'); if(v&&!e.target.closest('button')&&document.body.classList.contains('compacta')){ v.classList.toggle('abierta'); setTimeout(ajustarZona,60); return }
+  const b=e.target.closest('[data-versiones]'); if(!b) return; e.stopPropagation();
   const t=tiraDe({pid:b.dataset.versiones}); const l=t&&(t.laminas||[]).find(z=>z.n===+b.dataset.n); if(l) verVersiones(t,l) });
 function otrosHTML(x){
   const o=x.otros||[]; if(!o.length) return '';
@@ -1536,6 +1541,9 @@ function ajustarZona(){
   let h=calc();
   // si la cabecera creció (píldora larga, «Deshacer») y la carta quedaría chica, se esconde la fila «VA EN» (info repetida)
   if(h<230&&!document.body.classList.contains('apretado')){ document.body.classList.add('apretado'); h=calc() }
+  // 7-sep: en teléfono la franja «Versión N · Pediste…» se comía la lámina (quedaba de 200 px). Si la carta
+  // quedaría chica, la franja se compacta a una línea y la nota se lee tocándola.
+  const chico=h<360; if(chico!==document.body.classList.contains('compacta')){ document.body.classList.toggle('compacta',chico); h=calc() }
   const nuevo=Math.max(200,Math.min(h,620)); if(Math.abs((parseFloat(z.style.height)||0)-nuevo)>1){ z.style.height=nuevo+'px'; z.style.minHeight=nuevo+'px' }
 }
 addEventListener('resize',ajustarZona); addEventListener('load',ajustarZona);
