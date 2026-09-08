@@ -92,6 +92,14 @@ Puntos fijos de esa cadena:
     («espera la escena 3 animada») pasó a leerse como la nueva opción 1 («cambia el texto»).
 17. **El comparador dice la verdad de cada versión:** una versión con otra después dice «se rehízo»; solo
     la última puede decir «en tu mesa». El publicador sella esa marca al montar.
+18. **El relevo COMPLEMENTA la mesa, no la sustituye** (GAS v48). Lo pendiente de los 14 días previos se
+    suma a lo montado hoy y se marca con `de_antes`; solo eso se filtra por decisión. *Por qué:* montar una
+    pieza nueva en un día que venía de relevo virtual apagaba el relevo y **borraba de la mesa lo pendiente**
+    (al montar el video desaparecieron las láminas 4 y 7 ya montadas).
+19. **Deshacer viaja al Sheet.** La subida contempla los borrados explícitos; la píldora nunca se queda en
+    «Guardando…» sin haber mandado nada.
+20. **Una credencial rechazada se dice.** «El Sheet no reconoció tu entrada» con «Entrar otra vez», nunca
+    un «Abriendo la mesa…» eterno ni un «sin señal» falso.
 
 ### Recorrido real contra el Sheet (7-sep, día aislado 2026-01-05)
 
