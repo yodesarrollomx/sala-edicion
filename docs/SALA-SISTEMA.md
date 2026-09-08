@@ -75,6 +75,34 @@ Puntos fijos de esa cadena:
    retiradas se cargan para nombrarlas.
 9. **La carta nunca llega sola** (tira completa) y **un eje se cierra con un solo sí**.
 10. **Decidir es de los editores.** El agente propone, retira y reporta; nunca marca.
+11. **«Pendiente» nunca borra; «borrar» es explícito** (GAS v45). Por editor, pieza y LÁMINA manda la fila
+    más reciente con marca real; una copia sin marcas no puede deshacer nada. Deshacer/Cambiar/Reabrir mandan
+    `borrar`. *Por qué:* un cliente que abrió una copia mandó «pendiente» y borró las marcas del día.
+12. **Con sesión, la Sala nunca abre una copia.** Si el Sheet no contesta, espera (reintento cada 20 s,
+    tope 60 s) con «Reintentar ahora»; jamás una mesa de respaldo donde decidir. *Por qué:* decidir sobre la
+    copia produjo la falla anterior.
+13. **Guardar tarda segundos, no medio minuto.** `fechaDe` memoizada (un día frío pasó de 48 s a ~6 s) y la
+    cache del día se recalienta en un disparador diferido (`calentarUnaVez_`), no dentro del POST.
+14. **Lo decidido hoy se queda en Mis respuestas** (láminas y ejes) para poder Reabrir; no desaparece.
+15. **Las cuatro llaves se rotan en TODAS las filas de CONFIG** (v46). *Por qué:* con una fila repetida se
+    escribía la última y se leía la primera → «clave incorrecta».
+
+### Recorrido real contra el Sheet (7-sep, día aislado 2026-01-05)
+
+| # | Acción en la Sala | Sobre que viaja | Sheet después | ✓ |
+|---|---|---|---|---|
+| 1 | Aprobar L1 | `si,pendiente,pendiente` | L1 si | ✓ |
+| 2 | Pedir cambio L2 con nota | `si,no,pendiente` + nota | L1 si · L2 no «cambia el fondo» | ✓ |
+| 3 | Deshacer | `si,borrar,pendiente` | L1 si · L2 vacía | ✓ |
+| 4-5 | L2 sí · L3 sí | `si,si,si` | las tres sí | ✓ |
+| 6 | Eje → B | eje `pendiente,si,pendiente` | eje B | ✓ |
+| 7 | Mis respuestas → Cambiar L1 | `borrar,si,si` | L1 vacía, resto intacto | ✓ |
+| 8 | Re-aprobar L1 | `si,si,si` | todo sí | ✓ |
+| 9 | Copia vacía (todo pendiente) | `pendiente×3` | **nada cambió** | ✓ |
+| 10-11 | Reabrir L1 → no con nota | `borrar…` luego `no…` | L1 no «ahora sí cámbiala» | ✓ |
+| 12 | Reabrir eje → C | eje `pendiente,borrar,si` | eje C (B borrada) | ✓ |
+
+Herramienta: `python3 ~/yod_audit/sala_sobre.py <fecha-aislada> '<sobre>'` (solo fechas anteriores a jun-2026).
 
 ## 4. Fallas del 7-sep: causa raíz → corrección → por qué no vuelve
 
