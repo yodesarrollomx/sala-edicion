@@ -192,6 +192,15 @@ Herramienta: `python3 ~/yod_audit/sala_sobre.py <fecha-aislada> '<sobre>'` (solo
     ~1.3 MB, solo al Ampliar) y `Ln.jpg` (~120 KB, lo que se pinta). *Por qué:* 73 de 142 láminas no
     tenían ligera y su teléfono bajaba 1.3 MB por carta: 153 MB contra 17 MB.
 
+27. **Cada lámina tiene un serial que no cambia nunca** (8-sep). `APODO-L04` nace con la lámina;
+    la revisión `r1…rN` sube SÓLO cuando la huella cambia. Copiar una carpeta no es una revisión.
+    → `sala_catalogo.py`, pestaña `CATALOGO`, `recurso=catalogo`. *Por qué:* la misma queja se
+    repitió cinco veces porque una lámina no tenía identidad. Ver `docs/LA-LEY.md`.
+28. **Las imágenes viven en Drive; el Sheet sólo lleva letras** (8-sep). `YOD Editorial/<PIEZA>/
+    <SERIAL>/` con dos archivos por revisión: `-original.png` (maestro limpio, es lo que se
+    publica) y `-prueba.jpg` (ligera y SELLADA con el serial, es lo que se revisa). Una prueba
+    nunca se publica. Medido: Drive 1.7 s · jpg del repo 2.1 s · PNG del repo 6.8 s.
+
 ## Dónde vive cada cosa (y qué NO usamos)
 
 | Cosa | Dónde | Peso típico |
@@ -202,8 +211,9 @@ Herramienta: `python3 ~/yod_audit/sala_sobre.py <fecha-aislada> '<sobre>'` (solo
 | La lámina de obra (Ampliar, publicar) | `laminas/<slug>/Ln.png` | ~1.3 MB |
 | El guion / la tira / la dirección | `datos/tiras/<pid>.json` | ~4 KB |
 
-**Google Drive no participa.** Nada se sube ni se baja de Drive; el Sheet no guarda imágenes,
-solo la ruta. Si guardar o traer se siente lento, no es el peso de las fotos: es el Apps Script
+**Corrección del 8-sep (más abajo en el día):** Drive SÍ participa ahora, y es el archivo
+maestro — una carpeta por lámina, un archivo por revisión, con el serial en el nombre. Lo que
+sigue siendo cierto es que **el Sheet nunca guarda imágenes**, sólo la ruta y el id de Drive. Si guardar o traer se siente lento, no es el peso de las fotos: es el Apps Script
 (por eso la cache `dia:v2` y el calentador diferido).
 
 ## 8. El proceso vive en el código, no en este documento
