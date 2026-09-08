@@ -498,7 +498,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='b92c80d902';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='a9868e0dbe';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
@@ -543,6 +543,10 @@ async function traerCatalogo(){
     CATALOGO=d.catalogo; _porRuta={};
     for(const s in CATALOGO) for(const v of (CATALOGO[s].revisiones||[]))
       if(v.ruta) _porRuta[v.ruta]={serial:s,r:v.r,de:v.de,prueba:v.prueba,original:v.original};
+    // 8-sep: el catálogo llega DESPUÉS de que las cartas ya se pintaron (probado en su Chrome:
+    // 49 láminas cargadas y aun así las 4 imágenes salían del repo). Al llegar, se vuelve a
+    // pintar para que la foto se pida a Drive y el serial se vea.
+    if(Object.keys(_porRuta).length && typeof pintarCartas==='function' && pasos && pasos.length) pintarCartas();
   }catch(e){ /* sin catálogo la Sala sigue igual: sirve las ligeras del repo */ }
 }
 /* La liga de Drive que SÍ responde parejo para pintar en una página. (`uc?export=view` tarda
