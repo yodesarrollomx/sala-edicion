@@ -183,6 +183,29 @@ Herramienta: `python3 ~/yod_audit/sala_sobre.py <fecha-aislada> '<sobre>'` (solo
   `_decidiendo`, `document.hidden`. Con la ventana tapada las capturas salen congeladas: verificar
   por DOM.
 
+25. **Una lámina que ya vio no se le vuelve a preguntar** (8-sep). El publicador anota en
+    `datos/laminas_vistas.json` la huella de cada lámina que se mandó a decidir; `regla_no_repetir_lo_visto`
+    bloquea montar una imagen idéntica como carta (de contexto en la tira sí, como carta nunca).
+    *Por qué:* `apodo-g3` llegó con 9 láminas y solo 2 eran nuevas — las otras 7 eran byte por byte
+    las de g1 y g2. Su reclamo: «me pones cosas que ya habíamos modificado».
+26. **Al teléfono nunca le viaja un PNG** (8-sep). Cada lámina se guarda dos veces: `Ln.png` (obra,
+    ~1.3 MB, solo al Ampliar) y `Ln.jpg` (~120 KB, lo que se pinta). *Por qué:* 73 de 142 láminas no
+    tenían ligera y su teléfono bajaba 1.3 MB por carta: 153 MB contra 17 MB.
+
+## Dónde vive cada cosa (y qué NO usamos)
+
+| Cosa | Dónde | Peso típico |
+|---|---|---|
+| La decisión (marca + nota) | fila de texto en el Sheet | 0.4–2 KB |
+| El día entero que pide la Sala | respuesta del Apps Script | ~28 KB |
+| La lámina que ve en pantalla | `laminas/<slug>/Ln.jpg` en GitHub Pages | ~120 KB |
+| La lámina de obra (Ampliar, publicar) | `laminas/<slug>/Ln.png` | ~1.3 MB |
+| El guion / la tira / la dirección | `datos/tiras/<pid>.json` | ~4 KB |
+
+**Google Drive no participa.** Nada se sube ni se baja de Drive; el Sheet no guarda imágenes,
+solo la ruta. Si guardar o traer se siente lento, no es el peso de las fotos: es el Apps Script
+(por eso la cache `dia:v2` y el calentador diferido).
+
 ## 8. El proceso vive en el código, no en este documento
 
 Pregunta de Alejandro (8-sep): «¿se puede que el proceso de edición viva en el código y no en tu

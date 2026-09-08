@@ -1,0 +1,104 @@
+{
+ "da6a3adb74b37ed4abd5adc2dec1c522": {
+  "pieza": "apodo-g5-dcff8d",
+  "n": 1,
+  "fecha": "2026-09-08",
+  "src": "laminas/apodo-g5/L1.png"
+ },
+ "6016380ab8ef0481a28eb384fea17a9f": {
+  "pieza": "apodo-g5-dcff8d",
+  "n": 3,
+  "fecha": "2026-09-08",
+  "src": "laminas/apodo-g5/L2.png"
+ },
+ "bd2ca8d76756dceba8e9f4b96a722ce6": {
+  "pieza": "apodo-g5-dcff8d",
+  "n": 4,
+  "fecha": "2026-09-08",
+  "src": "laminas/apodo-g5/L3.png"
+ },
+ "7d9a08985fe7afaa6d656d67a0ebc523": {
+  "pieza": "apodo-g5-dcff8d",
+  "n": 5,
+  "fecha": "2026-09-08",
+  "src": "laminas/apodo-g5/L4.png"
+ },
+ "d21a50d97af18f98a9f21fe80eb8653d": {
+  "pieza": "apodo-g5-dcff8d",
+  "n": 6,
+  "fecha": "2026-09-08",
+  "src": "laminas/apodo-g5/L5.png"
+ },
+ "f1b7b1acb765b1459e80b7035d6f1303": {
+  "pieza": "apodo-g5-dcff8d",
+  "n": 9,
+  "fecha": "2026-09-08",
+  "src": "laminas/apodo-g5/L6.png"
+ },
+ "f1b5d19e58783e0d1a38f772c9899734": {
+  "pieza": "comprador-g2-fcf0ca",
+  "n": 4,
+  "fecha": "2026-09-07",
+  "src": "laminas/comprador-g2/L1.png"
+ },
+ "04157044927e9d239ad81c730369589f": {
+  "pieza": "comprador-g2-fcf0ca",
+  "n": 6,
+  "fecha": "2026-09-07",
+  "src": "laminas/comprador-g2/L2.png"
+ },
+ "74fa58187151c51ff48136277d037d2f": {
+  "pieza": "comprador-g2-fcf0ca",
+  "n": 7,
+  "fecha": "2026-09-07",
+  "src": "laminas/comprador-g2/L3.png"
+ },
+ "ba695c26b93644181f8daa8e8322588e": {
+  "pieza": "comprador-g2-fcf0ca",
+  "n": 8,
+  "fecha": "2026-09-07",
+  "src": "laminas/comprador-g2/L4.png"
+ },
+ "568c74cae92f51dc1083520ec2297714": {
+  "pieza": "comprador-g3-11a28f",
+  "n": 4,
+  "fecha": "2026-09-07",
+  "src": "laminas/comprador-g3/L1.png"
+ },
+ "d46eef57d25d6827d2be03838b660cf6": {
+  "pieza": "comprador-g3-11a28f",
+  "n": 7,
+  "fecha": "2026-09-07",
+  "src": "laminas/comprador-g3/L2.png"
+ },
+ "77cc4d950ff4f9e68da71f574a837ee8": {
+  "pieza": "comprador-g4-54595f",
+  "n": 4,
+  "fecha": "2026-09-08",
+  "src": "laminas/comprador-g4/L1.png"
+ },
+ "f115f6153f182917d9d4645f297eadd3": {
+  "pieza": "comprador-g4-54595f",
+  "n": 7,
+  "fecha": "2026-09-08",
+  "src": "laminas/comprador-g4/L2.png"
+ },
+ "b0a97a785e060e84113b731478398978": {
+  "pieza": "comprador-g4-54595f",
+  "n": 8,
+  "fecha": "2026-09-08",
+  "src": "laminas/comprador-g4/L3.png"
+ },
+ "f2e33560c0f5168e3a9ea73d2f00ce1e": {
+  "pieza": "comprador-g5-b1cf4e",
+  "n": 4,
+  "fecha": "2026-09-08",
+  "src": "laminas/comprador-g5/L1.png"
+ },
+ "f2e5514351834fbd94d369cbabb03927": {
+  "pieza": "comprador-g5-b1cf4e",
+  "n": 7,
+  "fecha": "2026-09-08",
+  "src": "laminas/comprador-g5/L2.png"
+ }
+}
