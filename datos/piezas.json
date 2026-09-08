@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-07 19:00",
+ "actualizado": "2026-09-08 09:02",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -10,24 +10,24 @@
   },
   {
    "pieza": "¿Vendo o construyo?",
-   "estado": "publicada",
+   "estado": "te espera",
    "etapa": "publicada",
-   "siguiente": "Publicada el 2-sep como carrusel en FB e IG.",
-   "espera": "yo"
+   "siguiente": "11 decisión(es) tuyas en la mesa: ¿Vendo o construyo? · la tira (dirección + 9 láminas del guion que aprobaste)",
+   "espera": "tú"
   },
   {
    "pieza": "El Apodo del Terreno",
-   "estado": "en camino",
+   "estado": "te espera",
    "etapa": "video",
-   "siguiente": "El video está armado y esperando tu palabra en la mesa.",
-   "espera": "yo"
+   "siguiente": "1 decisión(es) tuyas en la mesa: El Apodo del Terreno · video v5: revisado escena por escena, audio arreglado y a 1.10",
+   "espera": "tú"
   },
   {
    "pieza": "El comprador ya sabe",
-   "estado": "en camino",
+   "estado": "te espera",
    "etapa": "láminas",
-   "siguiente": "En producción.",
-   "espera": "yo"
+   "siguiente": "2 decisión(es) tuyas en la mesa: El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus",
+   "espera": "tú"
   }
  ]
 }
