@@ -48,3 +48,43 @@ los arreglos; los agentes no escriben en producción.
 
 El ciclo se repite hasta que **dos vueltas seguidas salgan limpias**. Después: la prueba en su
 Chrome con su sesión, y la mesa lista con lo que le falta decidir.
+
+---
+
+# Lo que encontró el enjambre (primera vuelta, 8-sep)
+
+4 hallazgos confirmados de 6 reportados. Los 2 graves habrían roto el sistema en la siguiente
+publicación:
+
+| # | Qué | Por qué importaba |
+|---|---|---|
+| 1 **rompe** | `sala_catalogo.py` **borraba los ids de Drive** al reconstruir (607 líneas menos por corrida) | y el publicador lo llama al montar: **la próxima publicación habría dejado el catálogo sin sus fotos** |
+| 2 **rompe** | `sala_publicar.py` montaba la pieza en la mesa **antes** de catalogarla, con un `except` que solo imprimía | una falla de red dejaba una carta viva **sin serial**: justo lo que produce los duplicados |
+| 3 molesta | el respaldo de `montarImagen()` bajaba el **PNG maestro de 1.8 MB** al teléfono | pasaba justo cuando la señal está mal, que es cuando más duele |
+| 4 molesta | `vigilante.py` apuntaba a los repos en el Escritorio | quedó ciego cuando se movieron a `~/Repos` |
+
+Y uno mío, visto en su Chrome: **el catálogo llegaba después del pintado** y las fotos seguían
+saliendo del repo; además el navegador **cacheaba** la respuesta del catálogo.
+
+## Cómo quedaron
+
+1. `construir()` **fusiona** con lo guardado: la huella es la identidad, así que una revisión que
+   conserva su huella conserva sus ids de Drive. Probado corriéndolo dos veces seguidas: 115 de 115.
+2. **El catálogo primero, la mesa después.** Si el catálogo, Drive o el Sheet fallan, la pieza
+   **no se monta** (`sys.exit`), en vez de llegar sin serial.
+3. El respaldo cae a la **ligera del repo**, nunca al maestro.
+4. `vigilante.py` → `~/Repos`.
+5. `traerCatalogo()` **repinta** al llegar y la liga lleva el sello (`cache:'no-store'`).
+
+## Comprobado en su Chrome (8-sep)
+
+| Puerta | Resultado |
+|---|---|
+| P1 · llave cerrada | `find ~/Desktop -name .git` = **0** |
+| P2 · catálogo | 49 láminas · 115 revisiones · **142 rutas** · 115 ids de Drive |
+| P3 · sólo letras | **29 imágenes, las 29 de Drive**, 0 del repo, **0 maestros .png** |
+| P4/P5 · guardia | repetida **bloquea**; dinero/gratis/plazo **3 de 3** |
+| P6 · pantallas | Sala directa ✓ · máscara del OS ✓ · móvil 375 px sin desborde ✓ |
+| serial a la vista | **APODO-L01 · revisión 3 de 3**, sobre la lámina |
+
+Verificador: **15 verdes · 0 rojos**.
