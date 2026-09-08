@@ -493,6 +493,7 @@ const CLAVE=()=>localStorage.getItem('pyod_clave_v1')||localStorage.getItem('sal
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
+const SELLO_SALA='58b665f 08-Sep 09:15';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
@@ -1626,8 +1627,23 @@ function ajustarZona(){
 addEventListener('resize',ajustarZona); addEventListener('load',ajustarZona);
 setInterval(()=>{ if(innerWidth<640&&document.body.dataset.vista==='hoy') ajustarZona() },600); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(ajustarZona);
 try{ const ro=new ResizeObserver(()=>ajustarZona()); ['.cab','#ctx','#tira','#mandoWrap'].forEach(q=>{ const e=$(q); if(e) ro.observe(e) }) }catch(e){}
+async function vigilarVersion(){
+  // 8-sep: GitHub Pages sirvió la RAÍZ cacheada (una Sala vieja) mientras index.html ya era nuevo.
+  // Por eso «los arreglos no llegaban». Ahora la Sala compara su sello con el del servidor y avisa.
+  try{
+    const t=await (await fetch('index.html?nc='+Date.now(),{cache:'no-store'})).text();
+    const m=t.match(/const SELLO_SALA='([^']+)'/); if(!m||m[1]===SELLO_SALA) return;
+    if(document.querySelector('#avisoVersion')) return;
+    const b=document.createElement('div'); b.id='avisoVersion';
+    b.style.cssText='position:fixed;left:0;right:0;bottom:calc(var(--nav,72px) + 8px);z-index:60;display:flex;justify-content:center;pointer-events:none';
+    b.innerHTML=`<button type="button" style="pointer-events:auto;background:var(--oro);color:#12100c;border:0;border-radius:999px;padding:9px 16px;font-weight:700;font-size:13px;box-shadow:var(--sombra-alta);cursor:pointer">Hay una versión más nueva de la Sala · Recargar</button>`;
+    b.querySelector('button').onclick=()=>location.replace('index.html?v='+Date.now());
+    document.body.appendChild(b);
+  }catch(e){}
+}
+setInterval(vigilarVersion,600000);
 (async function(){
-  abrirGuia(false); ajustarZona();            // la bienvenida no espera al Sheet
+  abrirGuia(false); ajustarZona(); setTimeout(vigilarVersion,4000);            // la bienvenida no espera al Sheet
   cargarExpedientes(); subirCola();
   // 5-sep (Alejandro): «prefiero una animación mientras carga que estar viendo algo pasado».
   // Ya NO se pinta la copia de respaldo a los 2.5 s: se espera al Sheet con una carta de carga.
