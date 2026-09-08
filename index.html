@@ -557,7 +557,7 @@ window.addEventListener('popstate',()=>{ if(CAPAS.length){ const c=CAPAS[CAPAS.l
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&CAPAS.length){ e.preventDefault(); cerrarCapa(CAPAS[CAPAS.length-1].id) } });
 
 /* ══ datos (idéntico contrato: recurso=dia, respaldo en datos/manifiesto.json) ══ */
-let _ultimoErrorLlave='';
+let _ultimoErrorLlave='', _probeOS=false;
 async function traer(f,intentos,tope,sinRespaldo){
   _ultimoErrorLlave='';
   if(ENTRADO()){
@@ -574,7 +574,11 @@ async function traer(f,intentos,tope,sinRespaldo){
       }catch(e){ const m=String(e&&e.message||e);
         // 8-sep: una llave que el Sheet rechaza NO es «no hay señal». Antes se reintentaba en silencio y la
         // Sala se quedaba en «Abriendo la mesa…» para siempre. Ahora se dice y se ofrece entrar otra vez.
-        if(/clave|credencial|no reconoc/i.test(m)){ _ultimoErrorLlave=m; break }
+        if(/clave|credencial|no reconoc/i.test(m)){
+          // antes de rendirse: si la llave guardada de la Sala es la que falla, se prueba la del YOD OS
+          const os=localStorage.getItem('pyod_clave_v1'), mia=localStorage.getItem('sala_clave');
+          if(os&&mia&&os!==mia&&!_probeOS){ _probeOS=true; try{ localStorage.removeItem('sala_clave'); }catch(e2){} i=-1; continue }
+          _ultimoErrorLlave=m; break }
         if(i<N-1) await new Promise(res=>setTimeout(res,700*(i+1))) }
     }
   }
@@ -1575,6 +1579,11 @@ function reintentarSheet(n){            // se insiste cada 20 s hasta 30 veces; 
 }
 function montar(d){
   D=d; fecha=D.fecha||''; pintarFecha(fecha);
+  // 8-sep: si el Sheet manda una llave renovada (entré con la anterior, dentro del periodo de gracia),
+  // la Sala la guarda sola y no vuelve a fallar cuando la vieja caduque. Nunca se muestra en pantalla.
+  if(d.clave_nueva&&typeof d.clave_nueva==='string'&&d.clave_nueva.length>=8){
+    try{ if(localStorage.getItem('sala_clave')&&localStorage.getItem('sala_clave')!==d.clave_nueva){ localStorage.setItem('sala_clave',d.clave_nueva); pintarEstado('subido','Tu entrada se renovó sola') } }catch(e){}
+  }
   if(d.rol&&!d._respaldo){
     const antes=localStorage.getItem('sala_rol');
     if(d.rol==='lector'&&/^editor/.test(antes||'')&&_pintado){ pintarEstado('sin','El Sheet ahora te ve como lector · vuelve a entrar'); }   // no se borra el rol de editor en silencio (auditoría 7-sep)
