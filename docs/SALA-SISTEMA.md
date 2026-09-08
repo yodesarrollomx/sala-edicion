@@ -104,6 +104,19 @@ Puntos fijos de esa cadena:
 21. **Una credencial rechazada se dice.** «El Sheet no reconoció tu entrada» con «Entrar otra vez», nunca
     un «Abriendo la mesa…» eterno ni un «sin señal» falso.
 
+22. **Rotar una llave nunca deja fuera a nadie** (GAS v50-v52). Al rotar se guarda `<clave>_anterior` con su
+    fecha y se acepta 72 h; quien entra con ella recibe `clave_nueva` en la respuesta —también al ESCRIBIR—
+    y la Sala la guarda sola. Una segunda rotación dentro de la gracia no pisa la vigente. Acción
+    `gracia_manual` (agente) para desbloquear a alguien. *Por qué:* el 7-sep roté las cuatro claves y el
+    navegador de Alejandro se quedó con la vieja: «la entrada está incorrecta».
+23. **Las llaves se PRUEBAN, nunca se borran.** `traer()` recorre todas las guardadas (la del OS y la de la
+    Sala) y se queda con la que el Sheet acepta. *Por qué:* el primer arreglo borraba `sala_clave` dando por
+    hecho que era la que había fallado, y podía perder la buena sin probarla.
+24. **Nadie publica sin sellar la versión.** `SELLO_SALA` es la huella del propio archivo; `sellar_sala.py`
+    lo actualiza y un hook de `pre-push` bloquea el envío si no está al día. La Sala compara su sello con el
+    del servidor y ofrece recargar; el verificador comprueba que la dirección corta no sirva una Sala vieja.
+    *Por qué:* GitHub Pages servía la raíz cacheada y «los arreglos no llegaban».
+
 ### Recorrido real contra el Sheet (7-sep, día aislado 2026-01-05)
 
 | # | Acción en la Sala | Sobre que viaja | Sheet después | ✓ |
