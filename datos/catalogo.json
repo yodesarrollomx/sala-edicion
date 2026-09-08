@@ -399,45 +399,65 @@
     "huella": "089133362fe4bffa07085216c175770d",
     "src": "laminas/comprador-g1/L1.png",
     "grupo": "comprador-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1ep6v_RgU7ItHRf3JNUrLHqDWgNzzTv3z",
+    "drive_prueba": "1v4tHe3Qw6miLgomcmLq2lBFSJTZUYMOd",
+    "liga": "https://drive.google.com/thumbnail?id=1v4tHe3Qw6miLgomcmLq2lBFSJTZUYMOd&sz=w1200"
    },
    {
     "r": 2,
     "huella": "f1b5d19e58783e0d1a38f772c9899734",
     "src": "laminas/comprador-g2/L1.png",
     "grupo": "comprador-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1ennMURU_RHKRq5N69K0xBCwWUutYfnUw",
+    "drive_prueba": "1xi9LhHiC0o8X6r5oH2vBo5V2Oc1lZHGg",
+    "liga": "https://drive.google.com/thumbnail?id=1xi9LhHiC0o8X6r5oH2vBo5V2Oc1lZHGg&sz=w1200"
    },
    {
     "r": 3,
     "huella": "568c74cae92f51dc1083520ec2297714",
     "src": "laminas/comprador-g3/L1.png",
     "grupo": "comprador-g3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1j6HbzplfFb83uuhSxiDQJ-l0WSd5qEuJ",
+    "drive_prueba": "1o4XkJzV5fBCCwheXx79Z32wfOk906z9D",
+    "liga": "https://drive.google.com/thumbnail?id=1o4XkJzV5fBCCwheXx79Z32wfOk906z9D&sz=w1200"
    },
    {
     "r": 4,
     "huella": "77cc4d950ff4f9e68da71f574a837ee8",
     "src": "laminas/comprador-g4/L1.png",
     "grupo": "comprador-g4",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1paiD7_c5J-RugQsnA2Xoy6DysdiTJ8Vj",
+    "drive_prueba": "1YZQ6M8yg3rRoESpu-uvAh0HcuNQS9qTc",
+    "liga": "https://drive.google.com/thumbnail?id=1YZQ6M8yg3rRoESpu-uvAh0HcuNQS9qTc&sz=w1200"
    },
    {
     "r": 5,
     "huella": "f2e33560c0f5168e3a9ea73d2f00ce1e",
     "src": "laminas/comprador-g5/L1.png",
     "grupo": "comprador-g5",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1d3Dubx5KJ40EjtWsNUkJ_Pnwww-kwKZU",
+    "drive_prueba": "1uyNrVWYC9KNAbJntrdyU2GzXr_xj7OJx",
+    "liga": "https://drive.google.com/thumbnail?id=1uyNrVWYC9KNAbJntrdyU2GzXr_xj7OJx&sz=w1200"
    },
    {
     "r": 6,
     "huella": "32b59331ed4cb013146aff3ed2bfbc33",
     "src": "laminas/comprador-guion/L1.png",
     "grupo": "comprador-guion",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "17I5Njmn2QLyl48A03AQggjRzCMj5L0bV",
+    "drive_prueba": "1D9vXASDP5DfvZJ54aPyvVuy2A4AB6OmY",
+    "liga": "https://drive.google.com/thumbnail?id=1D9vXASDP5DfvZJ54aPyvVuy2A4AB6OmY&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1XgCZJk-4PbvTg3RE0Ibk8TeR4lmMHpiY",
+  "revision_vigente": 6
  },
  "COMPRADOR-L02": {
   "serial": "COMPRADOR-L02",
