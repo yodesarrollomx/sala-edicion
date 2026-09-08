@@ -944,7 +944,7 @@ function pintarCartas(){
   const z=$('#zona');
   if(!pasos.length){ pintarVacio(); return }
   if(idx>=pasos.length){ pintarFin(); return }
-  const r=pasos.length-idx; const x0=pasos[idx];
+  const r=pasos.filter((x,k)=>k>=idx&&!marcaDe(x)).length||1; const x0=pasos[idx];   // cuenta solo lo que falta de verdad
   $('#titulo').innerHTML=r===1?`Falta <b>1 decisión</b>`:`Faltan <b>${r} decisiones</b>`;
   $('#subt').textContent=piezaDe(x0)?`Publicación: ${piezaDe(x0)}`:'';
   z.innerHTML='';
@@ -1033,6 +1033,7 @@ function avanzar(m){
   const el=document.querySelector(`.carta[data-k="${idx}"]`); let fantasma=null;
   if(el){ fantasma=el.cloneNode(true); fantasma.style.cssText='position:absolute;inset:0;margin:0;pointer-events:none;z-index:5' }
   hist.push(idx); idx++;                       // el estado cambia AHORA, no en 300 ms
+  while(idx<pasos.length&&marcaDe(pasos[idx])) idx++;   // 7-sep: nunca volver a preguntar una carta ya decidida (tras «Cambiar» seguía por las que ya estaban)
   try{ guardarBorrador() }catch(e){}
   programarSubida();
   try{ pintarCartas() }catch(e){ console.error('pintarCartas',e) }
