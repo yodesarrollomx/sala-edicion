@@ -182,3 +182,28 @@ Herramienta: `python3 ~/yod_audit/sala_sobre.py <fecha-aislada> '<sobre>'` (solo
 - Si el cliente parece «trabado»: abrir consola y ver `vigilante` (existe), `CAPAS.length`,
   `_decidiendo`, `document.hidden`. Con la ventana tapada las capturas salen congeladas: verificar
   por DOM.
+
+## 8. El proceso vive en el código, no en este documento
+
+Pregunta de Alejandro (8-sep): «¿se puede que el proceso de edición viva en el código y no en tu
+sistema md o lo que sea?». Sí, y es la dirección del sistema. Este documento explica el **porqué**;
+lo que **impide** que las reglas se rompan es código que bloquea:
+
+| Regla | Dónde vive ahora | Qué pasa si se rompe |
+|---|---|---|
+| Cero cifras de dinero, nada de «gratis», sin plazos ni garantías | `sala_guardia.py` | el montaje se detiene |
+| Áreas en m², nunca m³ | `sala_guardia.py` | el montaje se detiene |
+| Una rehecha nunca llega sola (tira completa) | `sala_guardia.py` | el montaje se detiene |
+| Cada versión su carpeta; nunca sobrescribir | `sala_guardia.py` + `sala_publicar.py` | el montaje se detiene |
+| Un id nunca vuelve con otro contenido | `sala_publicar.py` | el montaje se detiene |
+| Una publicación ya salida no vuelve a la mesa | `sala_guardia.py` + `sala_relevo_diario.py` | el montaje se detiene / el relevo la retira |
+| Nadie publica la Sala sin sellar la versión | hook `pre-push` + `sala_guardia.py` | el envío se rechaza |
+| Lámina idéntica a una versión previa | `sala_publicar.py` | el montaje se detiene |
+| Rotar llaves no deja fuera a nadie | `Code.gs` (gracia + renovación) | no aplica: es automático |
+| «Pendiente» no borra; el vacío no pisa lo escrito | `Code.gs` (fusión por lámina) | no aplica: es automático |
+
+Lo que sigue viviendo en prosa —y por tanto sigue dependiendo de que se lea— es el criterio:
+qué hace buena a una lámina, cómo se atiende una nota, cuándo una pieza está lista. Eso es juicio,
+no regla. La frontera es esa: **si se puede comprobar, va en `sala_guardia.py`; si hay que
+juzgarlo, va aquí**. Añadir una regla nueva es añadir una función `regla_*` a la guardia: se
+descubren solas y cada una lleva al lado la fecha en que costó caro.
