@@ -651,13 +651,13 @@ function armarPasos(sinCandado){
     const prev=sinCandado?null:marcasPrevias(p.id);
     if(p.tipo==='eje'){
       const n=(p.opciones||[]).length;
-      dec[p.id]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:'',_eje:''};
+      dec[p.id]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:(prev&&prev.nota)||'',_eje:''};   // 8-sep: la nota general que ya está en el Sheet se rehidrata; si no, el siguiente sobre la borraba
       const miaE=prev&&prev.firmas?prev.firmas.map((fs,i)=>({i,m:MIA(fs||[])})).find(z=>z.m&&z.m.marca==='si'):null;
       if(miaE){ dec[p.id].laminas[miaE.i]='si'; dec[p.id]._eje='si'; lockeadas.push({pid:p.id,i:miaE.i,p,marca:'si',eje:true}); continue }   // un eje que ya elegí hoy no vuelve a la mesa: va a «ya decididas»
       pasos.push({tipo:'eje',pid:p.id,p});
     }else{
       const n=(p.laminas||[]).length;
-      dec[p.id]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:''};
+      dec[p.id]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:(prev&&prev.nota)||''};
       for(let i=0;i<n;i++){
         const firmas=(prev&&prev.firmas&&prev.firmas[i])||null;
         // DOS EDITORES: solo TU propia marca canda la lámina. Si la marcó la otra
@@ -665,6 +665,7 @@ function armarPasos(sinCandado){
         // cumple las dos. (Si el Sheet no manda firmas, se comporta como antes.)
         const mia=firmas?MIA(firmas):(prev&&prev.laminas&&(prev.laminas[i]==='si'||prev.laminas[i]==='no')?{marca:prev.laminas[i]}:null);
         if(mia&&mia.marca){ dec[p.id].laminas[i]=mia.marca; dec[p.id].notas[i]=(mia.nota)||((prev.notas||[])[i]||''); lockeadas.push({pid:p.id,i,p,marca:mia.marca}); continue }
+        if(prev&&prev.notas&&prev.notas[i]&&!dec[p.id].notas[i]) dec[p.id].notas[i]=prev.notas[i];   // no se pierde lo ya escrito
         pasos.push({tipo:'lamina',pid:p.id,i,p,otros:firmas?OTROS(firmas):[]});
       }
     }
