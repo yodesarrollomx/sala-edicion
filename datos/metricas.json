@@ -1,6 +1,6 @@
 [
  {
-  "sello": "2026-09-07T20:31:44.943856-07:00",
+  "sello": "2026-09-08T08:30:03.359646-07:00",
   "pieza": "La Servilleta",
   "campana": "2026-08-29",
   "ig": {
@@ -21,18 +21,11 @@
   }
  },
  {
-  "sello": "2026-09-07T20:31:44.943856-07:00",
+  "sello": "2026-09-08T08:30:03.359646-07:00",
   "pieza": "¿Vendo o construyo?",
   "campana": "2026-09-02",
   "ig": {
-   "views": 44,
-   "reach": 13,
-   "likes": 1,
-   "comments": 1,
-   "shares": 0,
-   "saved": 0,
-   "total_interactions": 2,
-   "permalink": "https://www.instagram.com/p/Dc0Ao2ZDqM4/"
+   "error": "The read operation timed out"
   },
   "fb": {
    "error": "HTTP Error 400: Bad Request"

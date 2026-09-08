@@ -22,21 +22,10 @@
   "2026-09-05",
   "2026-09-06",
   "2026-09-07",
-  "2026-01-05"
+  "2026-01-05",
+  "2026-09-08"
  ],
  "propuestas": [
-  {
-   "id": "comprador-g5-b1cf4e",
-   "titulo": "El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/comprador-g5/L1.png",
-    "laminas/comprador-g5/L2.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "origen": "rehecha-de comprador-g4-54595f"
-  },
   {
    "id": "apodo-video-9sep-v5",
    "titulo": "El Apodo del Terreno · video v5: revisado escena por escena, audio arreglado y a 1.10",
@@ -57,7 +46,43 @@
     }
    ],
    "video": "video/apodo/REEL_v5.mp4?v=8sep",
+   "de_antes": null,
    "origen": "rehecho-de apodo-video-8sep · tu nota: «que lo revise Hormozi, escena por escena, y rehagas todo lo que te pide; en la escena 3 se traba el audio; 1.10 la velocidad»"
+  },
+  {
+   "id": "vendo-construyo-g1-41098b",
+   "titulo": "¿Vendo o construyo? · la tira (dirección + 9 láminas del guion que aprobaste)",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/vendo-construyo-g1/L1.png",
+    "laminas/vendo-construyo-g1/L2.png",
+    "laminas/vendo-construyo-g1/L3.png",
+    "laminas/vendo-construyo-g1/L4.png",
+    "laminas/vendo-construyo-g1/L5.png",
+    "laminas/vendo-construyo-g1/L6.png",
+    "laminas/vendo-construyo-g1/L7.png",
+    "laminas/vendo-construyo-g1/L8.png",
+    "laminas/vendo-construyo-g1/L9.png",
+    "laminas/vendo-construyo-g1/L10.png",
+    "laminas/vendo-construyo-g1/L11.png"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": "2026-08-29",
+   "origen": null
+  },
+  {
+   "id": "comprador-g5-b1cf4e",
+   "titulo": "El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/comprador-g5/L1.png",
+    "laminas/comprador-g5/L2.png"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": "2026-09-07",
+   "origen": "rehecha-de comprador-g4-54595f"
   }
  ],
  "parrilla": [
@@ -282,7 +307,128 @@
   }
  ],
  "decisiones": {
-  "propuestas": {}
+  "propuestas": {
+   "vendo-construyo-g1-41098b": {
+    "laminas": [
+     "si",
+     null,
+     null,
+     null,
+     null,
+     null,
+     "no",
+     null,
+     "no",
+     "no",
+     "no"
+    ],
+    "nota": "",
+    "notas": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     "no me gusto el argumento ni la imagen no se relacionan y como que n hacen gancho",
+     null,
+     "me gusta pero como que no cierra le falta algo preguntale a hormozi ",
+     "se me hace mas que compare como diferenets escenarios de diferneets propuestas , depas, bodegs, comercial casas algo asi como que s enote que etsan comparando diferentes escenarios\n",
+     "de un estatus economico mas elevadocreo yo media alta seria el estilo que estariamos dando para eta pareja\n"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ],
+     null,
+     null,
+     null,
+     null,
+     null,
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "no me gusto el argumento ni la imagen no se relacionan y como que n hacen gancho"
+      }
+     ],
+     null,
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "me gusta pero como que no cierra le falta algo preguntale a hormozi "
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "se me hace mas que compare como diferenets escenarios de diferneets propuestas , depas, bodegs, comercial casas algo asi como que s enote que etsan comparando diferentes escenarios\n"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "de un estatus economico mas elevadocreo yo media alta seria el estilo que estariamos dando para eta pareja\n"
+      }
+     ]
+    ]
+   },
+   "apodo-video-8sep": {
+    "laminas": [
+     "no",
+     "no",
+     "no"
+    ],
+    "nota": "quiero que lo revise hormzi, que de sus puntos escena por escena y que rehagas todo lo que te pide... en la escena creo 3 se traba un poco el audio, el audio por favor 1.10 la velocidad",
+    "notas": [],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": ""
+      }
+     ]
+    ]
+   },
+   "comprador-g5-b1cf4e": {
+    "laminas": [
+     "si"
+    ],
+    "nota": "",
+    "notas": [],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ]
+    ]
+   }
+  }
  },
  "historial": {
   "2026-08-01": {
