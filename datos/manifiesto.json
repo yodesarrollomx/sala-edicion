@@ -83,6 +83,20 @@
    "video": null,
    "de_antes": "2026-09-07",
    "origen": "rehecha-de comprador-g4-54595f"
+  },
+  {
+   "id": "apodo-g5-dcff8d",
+   "titulo": "El Apodo del Terreno · las 6 láminas rehechas con tus notas (pregunta, apodos reales y Personalizado)",
+   "laminas": [
+    "laminas/apodo-g5/L1.png",
+    "laminas/apodo-g5/L2.png",
+    "laminas/apodo-g5/L3.png",
+    "laminas/apodo-g5/L4.png",
+    "laminas/apodo-g5/L5.png",
+    "laminas/apodo-g5/L6.png"
+   ],
+   "video": null,
+   "origen": "rehecha-de apodo-g3"
   }
  ],
  "parrilla": [
@@ -304,6 +318,10 @@
   {
    "hora": "08:51",
    "evento": "Video del Apodo v5: revisión escena por escena aplicada, voz de la escena 3 regrabada, velocidad 1.10"
+  },
+  {
+   "hora": "12:06",
+   "evento": "Propuesta montada: El Apodo del Terreno · las 6 láminas rehechas con tus notas (pregunta, apodos reales y Personalizado) (6 láminas)"
   }
  ],
  "decisiones": {
