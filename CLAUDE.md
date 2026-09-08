@@ -43,6 +43,13 @@ revisión. De ahí sale lo que la Mac produce ese día, y todo queda registrado 
    en la cabecera de `gas/Code.gs` = `direccion@aurumarquitectos.com`). No cablear otro destinatario.
 10. **Nada avanza sobre una pieza con petición abierta** (PASO 0 del ciclo: revisar
     `manifiesto.peticiones` antes de producir).
+11. **Ningún botón depende de un temporizador** (7-sep): el estado cambia en el clic; `vigilante()` suelta
+    candados y capas huérfanas. Dentro del OS los `setTimeout` se congelan.
+12. **El Sheet fusiona por PIEZA** (GAS v44) y **montar es idempotente + `retirar`** (v43). Una rehecha
+    retira a su base. El relevo solo llena una mesa vacía.
+13. **Cada versión, su carpeta, con fecha y md5** (`versiones[]` en la tira). Idéntica = no se monta.
+14. **Antes de decir «hecho»:** `python3 ~/yod_audit/sala_verificar.py` + recorrido de botones. Manual completo:
+    `docs/SALA-SISTEMA.md`.
 
 ## Archivos
 
@@ -77,9 +84,9 @@ sala_relevo_diario.py ─ pendientes ───▶ PROPUESTAS (día vivo)
                         GET ?recurso=dia&clave=… ─────────────────▶ index.html (traer(): 3 intentos / 12 s)
                         (si no contesta) ─────────────────────────▶ datos/manifiesto.json (el respaldo espejo)
 
-editor (Alejandro / Sayri) ─ accion:decidir ─▶ DECISIONES ── el GAS toma el ÚLTIMO ENVÍO DE CADA
-                                                             EDITOR y los fusiona (vigentePorEditor,
-                                                             en Code.gs). **El «no» manda.** v16.
+editor (Alejandro / Sayri) ─ accion:decidir ─▶ DECISIONES ── el GAS fusiona POR PIEZA: por editor manda el sobre
+                                                             más reciente que mencione esa pieza (fusionDia_, v44).
+                                                             **El «no» manda.**
 GAS ─ trigger diario 7:00 (TZ America/Hermosillo) ─ correo con la liga ─▶ direccion@aurumarquitectos.com
 ```
 
