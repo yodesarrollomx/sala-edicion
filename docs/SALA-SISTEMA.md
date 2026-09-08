@@ -201,6 +201,15 @@ Herramienta: `python3 ~/yod_audit/sala_sobre.py <fecha-aislada> '<sobre>'` (solo
     publica) y `-prueba.jpg` (ligera y SELLADA con el serial, es lo que se revisa). Una prueba
     nunca se publica. Medido: Drive 1.7 s · jpg del repo 2.1 s · PNG del repo 6.8 s.
 
+29. **El número de lámina lo dice la TIRA, no el nombre del archivo** (8-sep). Una carpeta
+    montada trae sólo las rehechas: `laminas/apodo-g5/L2.png` es la lámina **3**. El `mapa` de la
+    tira (posición → lámina real) manda sobre el nombre. *Por qué:* al derivar el serial del
+    nombre se corrompieron 8 seriales — la rehecha de la lámina 9 acabó como `APODO-L06` y las
+    cinco versiones de la lámina 4 de El Comprador quedaron apiladas en `COMPRADOR-L01`.
+30. **Una pieza bloqueada no deja rastro** (8-sep). Si la guardia o el catálogo detienen el
+    montaje, `_deshacer()` borra las láminas copiadas y revierte el manifiesto. *Por qué:*
+    `empujar()` hace `git add -A` y la basura de una pieza rechazada viajaba en el push siguiente.
+
 ## Dónde vive cada cosa (y qué NO usamos)
 
 | Cosa | Dónde | Peso típico |

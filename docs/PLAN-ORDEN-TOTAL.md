@@ -88,3 +88,47 @@ saliendo del repo; además el navegador **cacheaba** la respuesta del catálogo.
 | serial a la vista | **APODO-L01 · revisión 3 de 3**, sobre la lámina |
 
 Verificador: **15 verdes · 0 rojos**.
+
+
+---
+
+# Segunda vuelta del enjambre — y el hallazgo que valía por todos
+
+La primera vuelta cerró 4 fallas. La segunda encontró una **peor**, y desmonta lo que yo había
+dado por bueno:
+
+## El serial se asignaba por POSICIÓN del archivo, no por la lámina real
+
+Una carpeta montada casi nunca trae las láminas 1..N: trae **las que se rehicieron**. La tira
+ya lo decía en su campo `mapa`, y yo nunca lo leí. `laminas/apodo-g5/L2.png` no es la lámina 2:
+es la **3**.
+
+| Archivo | Serial que le puse | El que le tocaba |
+|---|---|---|
+| `apodo-g5/L2.png` | APODO-L02 | **APODO-L03** |
+| `apodo-g5/L3.png` | APODO-L03 | **APODO-L04** |
+| `apodo-g5/L4.png` | APODO-L04 | **APODO-L05** |
+| `apodo-g5/L5.png` | APODO-L05 | **APODO-L06** |
+| `apodo-g5/L6.png` | APODO-L06 | **APODO-L09** |
+| `comprador-g5/L1.png` | COMPRADOR-L01 | **COMPRADOR-L04** |
+| `comprador-g5/L2.png` | COMPRADOR-L02 | **COMPRADOR-L07** |
+
+Consecuencias reales que ya estaban en el catálogo:
+- La rehecha de hoy de la **lámina 9** de El Apodo nunca llegó a `APODO-L09`: se guardó como
+  `APODO-L06`. `APODO-L09` seguía mostrando la versión vieja.
+- Las **cinco versiones de la lámina 4** de El Comprador estaban apiladas en `COMPRADOR-L01`,
+  mientras `COMPRADOR-L04` se quedó atorada en la r2 del 3-sep.
+
+Es exactamente la enfermedad que el catálogo venía a curar, en otra forma: **un serial que
+cambiaba de identidad**. Sin este arreglo, el catálogo habría sido una capa de orden encima
+del mismo desorden.
+
+**Arreglado:** `_mapa_de(slug)` lee la tira y el número real manda sobre el nombre del archivo.
+Después: catálogo reconstruido, archivo de Drive rehecho y registro del Sheet reescrito.
+
+## Las otras dos de la segunda vuelta
+
+| | Qué | Arreglo |
+|---|---|---|
+| **rompe** | La guardia bloqueaba **después** de copiar las láminas y escribir el manifiesto; como `empujar()` hace `git add -A`, la basura de una pieza rechazada viajaba en el push de otra | `_deshacer(slug, pid)`: si algo bloquea, se borran los archivos y se revierte el manifiesto |
+| molesta | Con `SALA_FORZAR=1` el catálogo se saltaba en silencio y la pieza salía sin serial | ahora lo grita: «esta pieza va a la mesa SIN SERIAL» |
