@@ -36,6 +36,28 @@
    "opciones": [],
    "video": null,
    "origen": "rehecha-de comprador-g4-54595f"
+  },
+  {
+   "id": "apodo-video-8sep",
+   "titulo": "El Apodo del Terreno · el video ya quedó completo (42 s) — ¿lo publico?",
+   "tipo": "eje",
+   "laminas": [],
+   "opciones": [
+    {
+     "titulo": "Publícalo hoy",
+     "texto": "Va a Facebook e Instagram como reel, con este texto:\n\nA tu terreno ya le pusieron nombre: «el de la esquina». También «el baldío». Y «el que no se vende».\n\nEn cada sobremesa le inventan un apodo nuevo. El apodo se mueve con cada rumor.\n\nNinguno de esos nombres se lo puso tu terreno. Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener.\n\nPídele a tu terreno su Plan de Potencial Personalizado. El primer paso es una videollamada.\n\nY la liga medible al Plan de Potencial: en Facebook dentro del texto, en Instagram en el primer comentario."
+    },
+    {
+     "titulo": "Sale, pero cambia el texto",
+     "texto": "Dime en la nota qué cambiar del texto del post y lo publico con tu versión."
+    },
+    {
+     "titulo": "Todavía no",
+     "texto": "Lo dejo sin publicar. Dime en la nota qué más cambiar del video."
+    }
+   ],
+   "video": "video/apodo/REEL_9x16.mp4?v=7sep-v3",
+   "origen": "rehecho-de apodo-video-7sep · ayer dijiste «sale, pero espera la escena 3 animada»: ya está animada (LTX en tu Mac) y las 7 escenas van sin máscara. Lo monto con id nuevo porque cambiaron las opciones."
   }
  ],
  "parrilla": [
@@ -249,6 +271,10 @@
   {
    "hora": "22:00",
    "evento": "Propuesta montada: El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40 (2 láminas)"
+  },
+  {
+   "hora": "07:18",
+   "evento": "Video del Apodo v3 remontado con id nuevo (las opciones habían cambiado bajo el mismo id)"
   }
  ],
  "decisiones": {
