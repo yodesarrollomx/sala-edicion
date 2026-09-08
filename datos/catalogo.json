@@ -1,0 +1,1294 @@
+{
+ "APODO-L01": {
+  "serial": "APODO-L01",
+  "pieza": "APODO",
+  "pieza_nombre": "El Apodo del Terreno",
+  "lamina": 1,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "5a5cd56c23f2f6f208a06758f16a34c5",
+    "src": "laminas/apodo-g1/L1.png",
+    "grupo": "apodo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "91221688eea65fca659023926325b1ad",
+    "src": "laminas/apodo-g2/L1.png",
+    "grupo": "apodo-g2",
+    "tambien_en": [
+     "laminas/apodo-g3/L1.png",
+     "laminas/apodo-g4/L1.png"
+    ]
+   },
+   {
+    "r": 3,
+    "huella": "da6a3adb74b37ed4abd5adc2dec1c522",
+    "src": "laminas/apodo-g5/L1.png",
+    "grupo": "apodo-g5",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "APODO-L02": {
+  "serial": "APODO-L02",
+  "pieza": "APODO",
+  "pieza_nombre": "El Apodo del Terreno",
+  "lamina": 2,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "7ca8f08aec11581c9f5ef472e01f2f4f",
+    "src": "laminas/apodo-g1/L2.png",
+    "grupo": "apodo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "280a70e64ca8504d5fcff0770578096c",
+    "src": "laminas/apodo-g2/L2.png",
+    "grupo": "apodo-g2",
+    "tambien_en": [
+     "laminas/apodo-g3/L2.png",
+     "laminas/apodo-g4/L2.png"
+    ]
+   },
+   {
+    "r": 3,
+    "huella": "6016380ab8ef0481a28eb384fea17a9f",
+    "src": "laminas/apodo-g5/L2.png",
+    "grupo": "apodo-g5",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "APODO-L03": {
+  "serial": "APODO-L03",
+  "pieza": "APODO",
+  "pieza_nombre": "El Apodo del Terreno",
+  "lamina": 3,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "6660dca9f3337085bb24ce3032814df7",
+    "src": "laminas/apodo-g1/L3.png",
+    "grupo": "apodo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "5a5cd56c23f2f6f208a06758f16a34c5",
+    "src": "laminas/apodo-g2/L3.png",
+    "grupo": "apodo-g2",
+    "tambien_en": [
+     "laminas/apodo-g3/L3.png",
+     "laminas/apodo-g4/L3.png"
+    ]
+   },
+   {
+    "r": 3,
+    "huella": "bd2ca8d76756dceba8e9f4b96a722ce6",
+    "src": "laminas/apodo-g5/L3.png",
+    "grupo": "apodo-g5",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "APODO-L04": {
+  "serial": "APODO-L04",
+  "pieza": "APODO",
+  "pieza_nombre": "El Apodo del Terreno",
+  "lamina": 4,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "9d1000c9114ac840d99a04a8d210b091",
+    "src": "laminas/apodo-g1/L4.png",
+    "grupo": "apodo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "7ca8f08aec11581c9f5ef472e01f2f4f",
+    "src": "laminas/apodo-g2/L4.png",
+    "grupo": "apodo-g2",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "7e4ea635167e8703ff8a6aad701c3c79",
+    "src": "laminas/apodo-g3/L4.png",
+    "grupo": "apodo-g3",
+    "tambien_en": []
+   },
+   {
+    "r": 4,
+    "huella": "20f6ff679f0c3f1ec99e9a9fe517f938",
+    "src": "laminas/apodo-g4/L4.png",
+    "grupo": "apodo-g4",
+    "tambien_en": []
+   },
+   {
+    "r": 5,
+    "huella": "7d9a08985fe7afaa6d656d67a0ebc523",
+    "src": "laminas/apodo-g5/L4.png",
+    "grupo": "apodo-g5",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "APODO-L05": {
+  "serial": "APODO-L05",
+  "pieza": "APODO",
+  "pieza_nombre": "El Apodo del Terreno",
+  "lamina": 5,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "7fdfb523f2b918d101b4b9fe05054446",
+    "src": "laminas/apodo-g1/L5.png",
+    "grupo": "apodo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "6660dca9f3337085bb24ce3032814df7",
+    "src": "laminas/apodo-g2/L5.png",
+    "grupo": "apodo-g2",
+    "tambien_en": [
+     "laminas/apodo-g3/L5.png"
+    ]
+   },
+   {
+    "r": 3,
+    "huella": "2f35b40230c1901734ebe64a84b9ae2c",
+    "src": "laminas/apodo-g4/L5.png",
+    "grupo": "apodo-g4",
+    "tambien_en": []
+   },
+   {
+    "r": 4,
+    "huella": "d21a50d97af18f98a9f21fe80eb8653d",
+    "src": "laminas/apodo-g5/L5.png",
+    "grupo": "apodo-g5",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "APODO-L06": {
+  "serial": "APODO-L06",
+  "pieza": "APODO",
+  "pieza_nombre": "El Apodo del Terreno",
+  "lamina": 6,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "04b1f6fe9b86b405ccf1d4bc0576a922",
+    "src": "laminas/apodo-g1/L6.png",
+    "grupo": "apodo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "9d1000c9114ac840d99a04a8d210b091",
+    "src": "laminas/apodo-g2/L6.png",
+    "grupo": "apodo-g2",
+    "tambien_en": [
+     "laminas/apodo-g3/L6.png",
+     "laminas/apodo-g4/L6.png"
+    ]
+   },
+   {
+    "r": 3,
+    "huella": "f1b7b1acb765b1459e80b7035d6f1303",
+    "src": "laminas/apodo-g5/L6.png",
+    "grupo": "apodo-g5",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "APODO-L07": {
+  "serial": "APODO-L07",
+  "pieza": "APODO",
+  "pieza_nombre": "El Apodo del Terreno",
+  "lamina": 7,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "f615b0b6844e7549dc65afebbb845764",
+    "src": "laminas/apodo-g1/L7.png",
+    "grupo": "apodo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "70aa20265ed9e327c5680fa56af5f563",
+    "src": "laminas/apodo-g2/L7.png",
+    "grupo": "apodo-g2",
+    "tambien_en": [
+     "laminas/apodo-g3/L7.png",
+     "laminas/apodo-g4/L7.png"
+    ]
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "APODO-L08": {
+  "serial": "APODO-L08",
+  "pieza": "APODO",
+  "pieza_nombre": "El Apodo del Terreno",
+  "lamina": 8,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "a01d6d5dbc5b10899f8bfead0b9f540c",
+    "src": "laminas/apodo-g2/L8.png",
+    "grupo": "apodo-g2",
+    "tambien_en": [
+     "laminas/apodo-g3/L8.png",
+     "laminas/apodo-g4/L8.png"
+    ]
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "APODO-L09": {
+  "serial": "APODO-L09",
+  "pieza": "APODO",
+  "pieza_nombre": "El Apodo del Terreno",
+  "lamina": 9,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "94c97e71354f6645ef49de9c1ec2e6b7",
+    "src": "laminas/apodo-g2/L9.png",
+    "grupo": "apodo-g2",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "152dbb311c4418af2abb2d97e089156f",
+    "src": "laminas/apodo-g3/L9.png",
+    "grupo": "apodo-g3",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "1bbf890a5eb2e31a50e4e6d59cbf4fa3",
+    "src": "laminas/apodo-g4/L9.png",
+    "grupo": "apodo-g4",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "COMPRADOR-L01": {
+  "serial": "COMPRADOR-L01",
+  "pieza": "COMPRADOR",
+  "pieza_nombre": "El Comprador",
+  "lamina": 1,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "089133362fe4bffa07085216c175770d",
+    "src": "laminas/comprador-g1/L1.png",
+    "grupo": "comprador-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "f1b5d19e58783e0d1a38f772c9899734",
+    "src": "laminas/comprador-g2/L1.png",
+    "grupo": "comprador-g2",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "568c74cae92f51dc1083520ec2297714",
+    "src": "laminas/comprador-g3/L1.png",
+    "grupo": "comprador-g3",
+    "tambien_en": []
+   },
+   {
+    "r": 4,
+    "huella": "77cc4d950ff4f9e68da71f574a837ee8",
+    "src": "laminas/comprador-g4/L1.png",
+    "grupo": "comprador-g4",
+    "tambien_en": []
+   },
+   {
+    "r": 5,
+    "huella": "f2e33560c0f5168e3a9ea73d2f00ce1e",
+    "src": "laminas/comprador-g5/L1.png",
+    "grupo": "comprador-g5",
+    "tambien_en": []
+   },
+   {
+    "r": 6,
+    "huella": "32b59331ed4cb013146aff3ed2bfbc33",
+    "src": "laminas/comprador-guion/L1.png",
+    "grupo": "comprador-guion",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "COMPRADOR-L02": {
+  "serial": "COMPRADOR-L02",
+  "pieza": "COMPRADOR",
+  "pieza_nombre": "El Comprador",
+  "lamina": 2,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "e39435774fc7935c96d5e5c4351a262a",
+    "src": "laminas/comprador-g1/L2.png",
+    "grupo": "comprador-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "04157044927e9d239ad81c730369589f",
+    "src": "laminas/comprador-g2/L2.png",
+    "grupo": "comprador-g2",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "d46eef57d25d6827d2be03838b660cf6",
+    "src": "laminas/comprador-g3/L2.png",
+    "grupo": "comprador-g3",
+    "tambien_en": []
+   },
+   {
+    "r": 4,
+    "huella": "f115f6153f182917d9d4645f297eadd3",
+    "src": "laminas/comprador-g4/L2.png",
+    "grupo": "comprador-g4",
+    "tambien_en": []
+   },
+   {
+    "r": 5,
+    "huella": "f2e5514351834fbd94d369cbabb03927",
+    "src": "laminas/comprador-g5/L2.png",
+    "grupo": "comprador-g5",
+    "tambien_en": []
+   },
+   {
+    "r": 6,
+    "huella": "dd53aeb7a19273df300dd37d844f67a8",
+    "src": "laminas/comprador-guion/L2.png",
+    "grupo": "comprador-guion",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "COMPRADOR-L03": {
+  "serial": "COMPRADOR-L03",
+  "pieza": "COMPRADOR",
+  "pieza_nombre": "El Comprador",
+  "lamina": 3,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "f87a0e9f467064dfadfca496da13a655",
+    "src": "laminas/comprador-g1/L3.png",
+    "grupo": "comprador-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "74fa58187151c51ff48136277d037d2f",
+    "src": "laminas/comprador-g2/L3.png",
+    "grupo": "comprador-g2",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "b0a97a785e060e84113b731478398978",
+    "src": "laminas/comprador-g4/L3.png",
+    "grupo": "comprador-g4",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "COMPRADOR-L04": {
+  "serial": "COMPRADOR-L04",
+  "pieza": "COMPRADOR",
+  "pieza_nombre": "El Comprador",
+  "lamina": 4,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "0c534cab30117f71d7b0b59e75182dc9",
+    "src": "laminas/comprador-g1/L4.png",
+    "grupo": "comprador-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "ba695c26b93644181f8daa8e8322588e",
+    "src": "laminas/comprador-g2/L4.png",
+    "grupo": "comprador-g2",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "COMPRADOR-L05": {
+  "serial": "COMPRADOR-L05",
+  "pieza": "COMPRADOR",
+  "pieza_nombre": "El Comprador",
+  "lamina": 5,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "e90902cc062e8ec5a6bbd989029c06e6",
+    "src": "laminas/comprador-g1/L5.png",
+    "grupo": "comprador-g1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "COMPRADOR-L06": {
+  "serial": "COMPRADOR-L06",
+  "pieza": "COMPRADOR",
+  "pieza_nombre": "El Comprador",
+  "lamina": 6,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "1ba93fba245afabd96a22e182144ff02",
+    "src": "laminas/comprador-g1/L6.png",
+    "grupo": "comprador-g1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "COMPRADOR-L07": {
+  "serial": "COMPRADOR-L07",
+  "pieza": "COMPRADOR",
+  "pieza_nombre": "El Comprador",
+  "lamina": 7,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "cfe24d3d0db63d8670714a4fd5f20964",
+    "src": "laminas/comprador-g1/L7.png",
+    "grupo": "comprador-g1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "COMPRADOR-L08": {
+  "serial": "COMPRADOR-L08",
+  "pieza": "COMPRADOR",
+  "pieza_nombre": "El Comprador",
+  "lamina": 8,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "25de82e4eb3d262e56fd7747fbc0ccbd",
+    "src": "laminas/comprador-g1/L8.png",
+    "grupo": "comprador-g1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "COMPRADOR-L09": {
+  "serial": "COMPRADOR-L09",
+  "pieza": "COMPRADOR",
+  "pieza_nombre": "El Comprador",
+  "lamina": 9,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "3dd845fe1f150b1b7be2765e75de4a67",
+    "src": "laminas/comprador-g1/L9.png",
+    "grupo": "comprador-g1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "PIVOTE-L01": {
+  "serial": "PIVOTE-L01",
+  "pieza": "PIVOTE",
+  "pieza_nombre": "El Pivote",
+  "lamina": 1,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "d5148b3427d6a5917e6437b00a63ee91",
+    "src": "laminas/pivote-e4/L1.png",
+    "grupo": "pivote-e4",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "PIVOTE-L02": {
+  "serial": "PIVOTE-L02",
+  "pieza": "PIVOTE",
+  "pieza_nombre": "El Pivote",
+  "lamina": 2,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "244c2cefd7789c87d24eb1215508f903",
+    "src": "laminas/pivote-e4/L2.png",
+    "grupo": "pivote-e4",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "PIVOTE-L03": {
+  "serial": "PIVOTE-L03",
+  "pieza": "PIVOTE",
+  "pieza_nombre": "El Pivote",
+  "lamina": 3,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "6ff9e166eecb7e63a32e4a4dbaf11ef0",
+    "src": "laminas/pivote-e4/L3.png",
+    "grupo": "pivote-e4",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "SERVILLETA-L01": {
+  "serial": "SERVILLETA-L01",
+  "pieza": "SERVILLETA",
+  "pieza_nombre": "La Servilleta",
+  "lamina": 1,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "b125631257a5867cfeb9c2ce9ed16d90",
+    "src": "laminas/servilleta-g2/L1.png",
+    "grupo": "servilleta-g2",
+    "tambien_en": [
+     "laminas/servilleta-g3/L1.png",
+     "laminas/servilleta-g4/L1.png",
+     "laminas/servilleta-g5/L1.png"
+    ]
+   },
+   {
+    "r": 2,
+    "huella": "9cee7e5b63aa47e185ce6c5da4f046f2",
+    "src": "laminas/servilleta-hormozi/L1.png",
+    "grupo": "servilleta-hormozi",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "004e9179927cb681c618baf6938976a8",
+    "src": "laminas/servilleta-final/L1.png",
+    "grupo": "servilleta-final",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "SERVILLETA-L02": {
+  "serial": "SERVILLETA-L02",
+  "pieza": "SERVILLETA",
+  "pieza_nombre": "La Servilleta",
+  "lamina": 2,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "7bf2f3f38ac5ae363367a38219d1fa53",
+    "src": "laminas/servilleta-g2/L2.png",
+    "grupo": "servilleta-g2",
+    "tambien_en": [
+     "laminas/servilleta-g3/L2.png"
+    ]
+   },
+   {
+    "r": 2,
+    "huella": "01c59b0d0dd8dd7eda8f4ec37a52f69b",
+    "src": "laminas/servilleta-g4/L2.png",
+    "grupo": "servilleta-g4",
+    "tambien_en": [
+     "laminas/servilleta-g5/L2.png"
+    ]
+   },
+   {
+    "r": 3,
+    "huella": "0dc14ea00572b04164671b82589fadeb",
+    "src": "laminas/servilleta-hormozi/L2.png",
+    "grupo": "servilleta-hormozi",
+    "tambien_en": []
+   },
+   {
+    "r": 4,
+    "huella": "7aaeee2ef9ea4b831268a478068aa7d4",
+    "src": "laminas/servilleta-final/L2.png",
+    "grupo": "servilleta-final",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "SERVILLETA-L03": {
+  "serial": "SERVILLETA-L03",
+  "pieza": "SERVILLETA",
+  "pieza_nombre": "La Servilleta",
+  "lamina": 3,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "8689022e8b64e7d2078420a354f42d76",
+    "src": "laminas/servilleta-g2/L3.png",
+    "grupo": "servilleta-g2",
+    "tambien_en": [
+     "laminas/servilleta-g3/L3.png"
+    ]
+   },
+   {
+    "r": 2,
+    "huella": "6bb374fec6f4c58d9b1a91a072455cf0",
+    "src": "laminas/servilleta-g4/L3.png",
+    "grupo": "servilleta-g4",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "d42e1ee916a82299c8dc6bf297c77c7b",
+    "src": "laminas/servilleta-g5/L3.png",
+    "grupo": "servilleta-g5",
+    "tambien_en": []
+   },
+   {
+    "r": 4,
+    "huella": "d4c3ba338a75d55c9b598ab54a755267",
+    "src": "laminas/servilleta-final/L3.png",
+    "grupo": "servilleta-final",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "SERVILLETA-L04": {
+  "serial": "SERVILLETA-L04",
+  "pieza": "SERVILLETA",
+  "pieza_nombre": "La Servilleta",
+  "lamina": 4,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "d76f00d54af046d205068707f3ad76ec",
+    "src": "laminas/servilleta-g2/L4.png",
+    "grupo": "servilleta-g2",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "9cb38736e6fc6415b95915783f35c51f",
+    "src": "laminas/servilleta-g3/L4.png",
+    "grupo": "servilleta-g3",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "7366700e0867799098dcf67f7cb63c4c",
+    "src": "laminas/servilleta-g4/L4.png",
+    "grupo": "servilleta-g4",
+    "tambien_en": [
+     "laminas/servilleta-g5/L4.png"
+    ]
+   },
+   {
+    "r": 4,
+    "huella": "d1ef9b8fa1e67d9aadb96b67576319b0",
+    "src": "laminas/servilleta-final/L4.png",
+    "grupo": "servilleta-final",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "SERVILLETA-L05": {
+  "serial": "SERVILLETA-L05",
+  "pieza": "SERVILLETA",
+  "pieza_nombre": "La Servilleta",
+  "lamina": 5,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "48edded83135aacfde3ce4437db612ad",
+    "src": "laminas/servilleta-g2/L5.png",
+    "grupo": "servilleta-g2",
+    "tambien_en": [
+     "laminas/servilleta-g3/L5.png"
+    ]
+   },
+   {
+    "r": 2,
+    "huella": "bbe7e998d9bd99cb0a71ee5e9caebbac",
+    "src": "laminas/servilleta-g4/L5.png",
+    "grupo": "servilleta-g4",
+    "tambien_en": [
+     "laminas/servilleta-g5/L5.png"
+    ]
+   },
+   {
+    "r": 3,
+    "huella": "16ca113d555f52a4f46c389081112218",
+    "src": "laminas/servilleta-final/L5.png",
+    "grupo": "servilleta-final",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "SERVILLETA-L06": {
+  "serial": "SERVILLETA-L06",
+  "pieza": "SERVILLETA",
+  "pieza_nombre": "La Servilleta",
+  "lamina": 6,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "11ea5a374cc8a6c25ce1c66f27b698ff",
+    "src": "laminas/servilleta-g2/L6.png",
+    "grupo": "servilleta-g2",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "b84cea55baf401963e10a498f33ff2ad",
+    "src": "laminas/servilleta-g3/L6.png",
+    "grupo": "servilleta-g3",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "56a4c1090b19f2089ca42d6fe8ed1081",
+    "src": "laminas/servilleta-g4/L6.png",
+    "grupo": "servilleta-g4",
+    "tambien_en": [
+     "laminas/servilleta-g5/L6.png"
+    ]
+   },
+   {
+    "r": 4,
+    "huella": "35319e474c4908428b38dd730ffe8c3f",
+    "src": "laminas/servilleta-final/L6.png",
+    "grupo": "servilleta-final",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "SERVILLETA-L07": {
+  "serial": "SERVILLETA-L07",
+  "pieza": "SERVILLETA",
+  "pieza_nombre": "La Servilleta",
+  "lamina": 7,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "5bc430ecb163deb1c29ed0d1cadb2fc7",
+    "src": "laminas/servilleta-g2/L7.png",
+    "grupo": "servilleta-g2",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "08401a9d3a1ec582e95babc9cc770e15",
+    "src": "laminas/servilleta-g3/L7.png",
+    "grupo": "servilleta-g3",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "81dc49980a88cb2921b741f99ab8b9ab",
+    "src": "laminas/servilleta-g4/L7.png",
+    "grupo": "servilleta-g4",
+    "tambien_en": [
+     "laminas/servilleta-g5/L7.png"
+    ]
+   },
+   {
+    "r": 4,
+    "huella": "e887a5fe76ab41806e4f0c2503b450b8",
+    "src": "laminas/servilleta-final/L7.png",
+    "grupo": "servilleta-final",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "SERVILLETA-L04B": {
+  "serial": "SERVILLETA-L04B",
+  "pieza": "SERVILLETA",
+  "pieza_nombre": "La Servilleta",
+  "lamina": 4,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "7366700e0867799098dcf67f7cb63c4c",
+    "src": "laminas/servilleta-g3/L4b.png",
+    "grupo": "servilleta-g3",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "SERVILLETA-L06B": {
+  "serial": "SERVILLETA-L06B",
+  "pieza": "SERVILLETA",
+  "pieza_nombre": "La Servilleta",
+  "lamina": 6,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "56a4c1090b19f2089ca42d6fe8ed1081",
+    "src": "laminas/servilleta-g3/L6b.png",
+    "grupo": "servilleta-g3",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "SERVILLETA-L07B": {
+  "serial": "SERVILLETA-L07B",
+  "pieza": "SERVILLETA",
+  "pieza_nombre": "La Servilleta",
+  "lamina": 7,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "81dc49980a88cb2921b741f99ab8b9ab",
+    "src": "laminas/servilleta-g3/L7b.png",
+    "grupo": "servilleta-g3",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "TERRENO-L01": {
+  "serial": "TERRENO-L01",
+  "pieza": "TERRENO",
+  "pieza_nombre": "El Terreno Dormido",
+  "lamina": 1,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "bdb11b8eda1b862c603dea295cccfb75",
+    "src": "laminas/pub1/L1.png",
+    "grupo": "pub1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "TERRENO-L02": {
+  "serial": "TERRENO-L02",
+  "pieza": "TERRENO",
+  "pieza_nombre": "El Terreno Dormido",
+  "lamina": 2,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "9d5b413ad1f3e1ecfa7a00af3b56773f",
+    "src": "laminas/pub1/L2.png",
+    "grupo": "pub1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "TERRENO-L03": {
+  "serial": "TERRENO-L03",
+  "pieza": "TERRENO",
+  "pieza_nombre": "El Terreno Dormido",
+  "lamina": 3,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "ede8bfecbd5c82244b5ea7eb56fe8ae5",
+    "src": "laminas/pub1/L3.png",
+    "grupo": "pub1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "TERRENO-L04": {
+  "serial": "TERRENO-L04",
+  "pieza": "TERRENO",
+  "pieza_nombre": "El Terreno Dormido",
+  "lamina": 4,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "78b8be275f5936c89e90a126a295fec3",
+    "src": "laminas/pub1/L4.png",
+    "grupo": "pub1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "TERRENO-L05": {
+  "serial": "TERRENO-L05",
+  "pieza": "TERRENO",
+  "pieza_nombre": "El Terreno Dormido",
+  "lamina": 5,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "e51a7b6c3123f515347c5aeee38de89d",
+    "src": "laminas/pub1/L5.png",
+    "grupo": "pub1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "TERRENO-L06": {
+  "serial": "TERRENO-L06",
+  "pieza": "TERRENO",
+  "pieza_nombre": "El Terreno Dormido",
+  "lamina": 6,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "a6dede680dc25b70c259f6f1d3818240",
+    "src": "laminas/pub1/L6.png",
+    "grupo": "pub1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "TERRENO-L07": {
+  "serial": "TERRENO-L07",
+  "pieza": "TERRENO",
+  "pieza_nombre": "El Terreno Dormido",
+  "lamina": 7,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "9cf2ea4edaa1311ed6d6f1d5ab335b5a",
+    "src": "laminas/pub1/L7.png",
+    "grupo": "pub1",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L01": {
+  "serial": "VENDO-L01",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 1,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "e0bc03d132eedc29efc73a37792f299e",
+    "src": "laminas/vendo-2rehechas-v3/L1.png",
+    "grupo": "vendo-2rehechas-v3",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "9c884233794ec5282091692ce022b2c6",
+    "src": "laminas/vendo-4rehechas/L1.png",
+    "grupo": "vendo-4rehechas",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "d6d2473b6cae2d0e58a9ed3871950d98",
+    "src": "laminas/vendo-construyo-g1/L1.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 4,
+    "huella": "38f58625dbfaad6112dda2081b073dc7",
+    "src": "laminas/vendo-construyo-g2/L1.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L02": {
+  "serial": "VENDO-L02",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 2,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "14060be965809d2581af3840c907c8b7",
+    "src": "laminas/vendo-2rehechas-v3/L2.png",
+    "grupo": "vendo-2rehechas-v3",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "9a0a607b36fe00eb11b9e2f4512d3118",
+    "src": "laminas/vendo-4rehechas/L2.png",
+    "grupo": "vendo-4rehechas",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "39287709121bb680c4814c3bdd8243e1",
+    "src": "laminas/vendo-construyo-g1/L2.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 4,
+    "huella": "a5f9e4aa8d4e83162673e5cddad0b869",
+    "src": "laminas/vendo-construyo-g2/L2.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L03": {
+  "serial": "VENDO-L03",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 3,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "04ea063968be6b8fe35f4b97f8c28e5c",
+    "src": "laminas/vendo-2rehechas-v3/L3.png",
+    "grupo": "vendo-2rehechas-v3",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "7e2fdbf60255ba30bb94469afbdad49f",
+    "src": "laminas/vendo-4rehechas/L3.png",
+    "grupo": "vendo-4rehechas",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "12d1ff00d248c7283756944741c0a667",
+    "src": "laminas/vendo-construyo-g1/L3.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": [
+     "laminas/vendo-construyo-g2/L3.png"
+    ]
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L04": {
+  "serial": "VENDO-L04",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 4,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "1ebb85a817d2bc1acebf1d846ae9c802",
+    "src": "laminas/vendo-2rehechas-v3/L4.png",
+    "grupo": "vendo-2rehechas-v3",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "198dfa29edbe95a35b7d94ae5020eb6e",
+    "src": "laminas/vendo-4rehechas/L4.png",
+    "grupo": "vendo-4rehechas",
+    "tambien_en": []
+   },
+   {
+    "r": 3,
+    "huella": "dca9b2c11a693dba82d9c2bf682c806e",
+    "src": "laminas/vendo-construyo-g1/L4.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": [
+     "laminas/vendo-construyo-g2/L4.png"
+    ]
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L10": {
+  "serial": "VENDO-L10",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 10,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "13c034437252ced35bcc93b54e7bcc3c",
+    "src": "laminas/vendo-construyo-g1/L10.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "7e2fdbf60255ba30bb94469afbdad49f",
+    "src": "laminas/vendo-construyo-g2/L10.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L11": {
+  "serial": "VENDO-L11",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 11,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "1e7baab8eb189799eefcd1a30c80a400",
+    "src": "laminas/vendo-construyo-g1/L11.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "198dfa29edbe95a35b7d94ae5020eb6e",
+    "src": "laminas/vendo-construyo-g2/L11.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L05": {
+  "serial": "VENDO-L05",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 5,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "0817f6f7701362ad5d0f77987a427630",
+    "src": "laminas/vendo-construyo-g1/L5.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "9c884233794ec5282091692ce022b2c6",
+    "src": "laminas/vendo-construyo-g2/L5.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L06": {
+  "serial": "VENDO-L06",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 6,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "8e6298c96b5b90f0057886f6eb6351b8",
+    "src": "laminas/vendo-construyo-g1/L6.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "0817f6f7701362ad5d0f77987a427630",
+    "src": "laminas/vendo-construyo-g2/L6.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L07": {
+  "serial": "VENDO-L07",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 7,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "5d7c3bbc3a68b6cc6e236838d7633337",
+    "src": "laminas/vendo-construyo-g1/L7.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "8e6298c96b5b90f0057886f6eb6351b8",
+    "src": "laminas/vendo-construyo-g2/L7.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L08": {
+  "serial": "VENDO-L08",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 8,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "b4a3f609657a8252b13c2f6a5fdc0a87",
+    "src": "laminas/vendo-construyo-g1/L8.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": [
+     "laminas/vendo-construyo-g2/L8.png"
+    ]
+   }
+  ],
+  "estado": "en revisión"
+ },
+ "VENDO-L09": {
+  "serial": "VENDO-L09",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 9,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "e19e39d2f949ad8481acd5dea7ba2e67",
+    "src": "laminas/vendo-construyo-g1/L9.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": []
+   },
+   {
+    "r": 2,
+    "huella": "9a0a607b36fe00eb11b9e2f4512d3118",
+    "src": "laminas/vendo-construyo-g2/L9.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": []
+   }
+  ],
+  "estado": "en revisión"
+ }
+}
