@@ -1009,18 +1009,39 @@ function arrastrar(el){
     if(d>110){ el.style.transform=''; decidir('si') } else if(d<-110){ reposo(); decidir('no') } else reposo() };
   el.addEventListener('pointerup',fin); el.addEventListener('pointercancel',fin); el.addEventListener('pointerleave',fin);
 }
-let _decidiendo=false;
+/* ══ 7-sep · REGLA: ningún botón depende de un temporizador. Antes `_decidiendo=true` se soltaba en un
+   setTimeout(300); dentro del OS o con la ventana tapada el navegador congela los temporizadores y el candado
+   se quedaba puesto: «después de varias pantallas los botones ya no corren» (Alejandro). Ahora el estado
+   avanza EN EL MISMO clic; el candado es solo un anti-doble-toque de 250 ms medido con el reloj, y un
+   vigilante lo suelta si por lo que sea se quedara puesto. ══ */
+let _decidiendo=false, _tDecidio=0;
+function candadoLibre(){ if(_decidiendo&&Date.now()-_tDecidio>1200){ _decidiendo=false } return !_decidiendo }
+function vigilante(){   // cada medio segundo: candados sueltos, capas huérfanas fuera, cuerpo desbloqueado si no hay capas
+  candadoLibre();
+  for(let i=CAPAS.length-1;i>=0;i--){ const c=CAPAS[i]; const vivo=document.querySelector(`.velo[data-id="${c.id}"], .zoom`); if(!vivo){ CAPAS.splice(i,1) } }
+  if(!CAPAS.length&&document.body.classList.contains('bloqueado')) bloquear(false);
+}
+setInterval(vigilante,500);
 function decidir(m){
-  if(!DECIDE()||_decidiendo) return;
+  if(!DECIDE()||!candadoLibre()) return;
   const x=pasos[idx]; if(!x||x.tipo!=='lamina') return;
   if(m==='no'){ pedirNota(nota=>{ dec[x.pid].laminas[x.i]='no'; dec[x.pid].notas[x.i]=nota; avanzar('no') }); return }
   dec[x.pid].laminas[x.i]='si'; dec[x.pid].notas[x.i]=''; avanzar('si');
 }
 function avanzar(m){
-  _decidiendo=true;
-  const el=document.querySelector(`.carta[data-k="${idx}"]`); if(el) el.classList.add(m==='si'?'fuera-si':'fuera-no');
-  hist.push(idx); pintarBolas(); programarSubida();
-  setTimeout(()=>{ idx++; guardarBorrador(); _decidiendo=false; pintarCartas() },300);
+  _decidiendo=true; _tDecidio=Date.now();
+  const el=document.querySelector(`.carta[data-k="${idx}"]`); let fantasma=null;
+  if(el){ fantasma=el.cloneNode(true); fantasma.style.cssText='position:absolute;inset:0;margin:0;pointer-events:none;z-index:5' }
+  hist.push(idx); idx++;                       // el estado cambia AHORA, no en 300 ms
+  try{ guardarBorrador() }catch(e){}
+  programarSubida();
+  try{ pintarCartas() }catch(e){ console.error('pintarCartas',e) }
+  if(fantasma){                                // la carta que sale se anima aparte, encima de la nueva; si no hay cuadros (pestaña tapada) simplemente desaparece
+    const cls=m==='si'?'fuera-si':'fuera-no'; $('#zona').appendChild(fantasma);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>fantasma.classList.add(cls)));
+    setTimeout(()=>fantasma.remove(),450);
+  }
+  setTimeout(()=>{ _decidiendo=false },250);
 }
 function irA(k){
   if(k<0||k>=pasos.length) return;
@@ -1532,7 +1553,7 @@ try{ const ro=new ResizeObserver(()=>ajustarZona()); ['.cab','#ctx','#tira','#ma
   avisarLlave();
 })();
 $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
-$('#deshacer').onclick=()=>{ if(_decidiendo||!hist.length) return; irA(hist.pop()) };
+$('#deshacer').onclick=()=>{ if(!candadoLibre()||!hist.length) return; irA(hist.pop()) };
 $('#verresp').onclick=abrirRespuestas; $('#btnEntrar').onclick=abrirEntrar;
 $('#btnReintentar').onclick=async()=>{ pintarEstado('subiendo','Reintentando…'); await subirCola(); await subir(); };
 document.addEventListener('keydown',e=>{ if(CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
