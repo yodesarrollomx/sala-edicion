@@ -498,7 +498,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='90ec477b8d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='07c7b6419b';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
@@ -538,7 +538,9 @@ function avisarLlave(){}
 let CATALOGO={}, _porRuta={};
 async function traerCatalogo(){
   try{
-    const r=await fetch(GAS()+'?recurso=catalogo&clave='+encodeURIComponent(CLAVE()));
+    // el sello va en la liga para que el navegador no sirva un catálogo viejo de su caché
+    // (8-sep: en su Chrome seguía con 115 rutas cuando el Sheet ya devolvía 142).
+    const r=await fetch(GAS()+'?recurso=catalogo&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'});
     const d=await r.json(); if(!d||!d.catalogo) return;
     CATALOGO=d.catalogo; _porRuta={};
     for(const s in CATALOGO) for(const v of (CATALOGO[s].revisiones||[]))
@@ -1092,7 +1094,12 @@ function montarImagen(el,src){
   const img=el.querySelector('img');
   const lista=()=>{ img.classList.add('lista'); const c=el.querySelector('.cargando'); if(c) c.remove() };
   img.onload=lista; img.src=ligera(src);
-  img.onerror=()=>{ if(!img.src.endsWith(src)){ img.src=src; return } const c=el.querySelector('.cargando'); if(c) c.textContent='No cargó la imagen. Toca «Ampliar» para reintentar.' };
+  // 8-sep: si la de Drive no llega, se cae a la LIGERA del repo — nunca al maestro .png.
+  // (Antes el respaldo era `src` crudo: 1.8 MB al teléfono justo cuando la señal está mal,
+  // que es lo contrario de lo que se quería.)
+  const _repoLigera=/\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
+  img.onerror=()=>{ if(!img.src.endsWith(_repoLigera)){ img.src=_repoLigera; return }
+    const c=el.querySelector('.cargando'); if(c) c.textContent='No cargó la imagen. Toca «Ampliar» para reintentar.' };
   if(img.complete&&img.naturalWidth) lista();
 }
 function dobleToque(el,fn){ let t=0; el.addEventListener('pointerup',e=>{ const n=Date.now(); if(n-t<320&&Math.abs(_dxUlt)<8){ t=0; fn() } else t=n }) }
