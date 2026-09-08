@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-07 18:59",
+ "actualizado": "2026-09-07 19:00",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -19,7 +19,7 @@
    "pieza": "El Apodo del Terreno",
    "estado": "en camino",
    "etapa": "video",
-   "siguiente": "El video está armado y esperando tu palabra en la mesa. Ojo: 1 escena con plan B (acercamiento sobre la lámina, no animación).",
+   "siguiente": "El video está armado y esperando tu palabra en la mesa.",
    "espera": "yo"
   },
   {
