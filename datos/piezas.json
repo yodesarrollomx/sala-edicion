@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-08 12:06",
+ "actualizado": "2026-09-08 15:02",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -10,16 +10,16 @@
   },
   {
    "pieza": "¿Vendo o construyo?",
-   "estado": "te espera",
+   "estado": "publicada",
    "etapa": "publicada",
-   "siguiente": "11 decisión(es) tuyas en la mesa: ¿Vendo o construyo? · la tira (dirección + 9 láminas del guion que aprobaste)",
-   "espera": "tú"
+   "siguiente": "Publicada el 2-sep como carrusel en FB e IG.",
+   "espera": "yo"
   },
   {
    "pieza": "El Apodo del Terreno",
    "estado": "te espera",
    "etapa": "video",
-   "siguiente": "1 decisión(es) tuyas en la mesa: El Apodo del Terreno · video v5: revisado escena por escena, audio arreglado y a 1.10",
+   "siguiente": "6 decisión(es) tuyas en la mesa: El Apodo del Terreno · las 6 láminas rehechas con tus notas (pregunta, apodos reales y Per",
    "espera": "tú"
   },
   {
