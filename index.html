@@ -528,8 +528,8 @@ function avisarPuerta(v,on){ const b=document.querySelector(`#puertas button[dat
 
 /* ══ capas: una pila; siempre se cierran con Volver, ×, Escape y «atrás» del teléfono ══ */
 const CAPAS=[];
-function abrirCapa(id,cerrarFn,foco){
-  CAPAS.push({id,cerrar:cerrarFn});
+function abrirCapa(id,cerrarFn,foco,el){
+  CAPAS.push({id,cerrar:cerrarFn,el:el||null});
   try{ history.pushState({sala:id},'') }catch(e){}
   if(EMBED()&&window.parent!==window){ try{ parent.postMessage({tipo:'sala:arriba'},location.origin) }catch(e){} }
   if(foco){ setTimeout(()=>{ try{ foco.focus({preventScroll:true}) }catch(e){} },60) }
@@ -707,7 +707,8 @@ function sobre(){
 function encolar(envio){ const firma=JSON.stringify(envio.propuestas);
   const q=leerLS('sala_cola',[]).filter(x=>!(x.fecha===envio.fecha&&(x.quien||ROL())===(envio.quien||ROL())&&JSON.stringify(x.propuestas)===firma));   // un sobre igual ya esperando no se duplica
   envio.quien=envio.quien||ROL();          // firmado: no lo sube por ti el siguiente que entre
-  if(!q.some(x=>x.envio_id===envio.envio_id)) q.push(envio); localStorage.setItem('sala_cola',JSON.stringify(q)) }
+  if(!q.some(x=>x.envio_id===envio.envio_id)) q.push(envio);
+  try{ localStorage.setItem('sala_cola',JSON.stringify(q)) }catch(e){ pintarEstado('sin','Este navegador no deja guardar la cola (modo privado o lleno)') } }
 let _tSubir=null, _subiendo=false, _pendiente=false; let _ultimoEnviado='';   // firma del último envío que el Sheet aceptó
 function programarSubida(){ guardarBorrador(); if(!ENTRADO()||!DECIDE()){ estadoInicial(); return }
   pintarEstado('local','Guardando…'); clearTimeout(_tSubir); _tSubir=setTimeout(()=>{ _tSubir=null; subir() },1200) }
@@ -746,7 +747,8 @@ async function subir(){
     pintarEstado('subido','Guardado ✓ '+guard.env.hora);
   }catch(e){ guard.ultimoError=String(e&&e.message||e);
     encolar(envio); pintarEstado('cola','Sin conexión con el Sheet · se guarda al volver') }
-  _subiendo=false; if(_pendiente) subir();
+  finally{ _subiendo=false }                              // auditoría 7-sep: pase lo que pase, el candado de subida se suelta
+  if(_pendiente) subir();
 }
 async function subirCola(){
   const q=leerLS('sala_cola',[]); if(!q.length||!ENTRADO()) return;
@@ -833,7 +835,7 @@ function verLamina(t,n){
 /* 7-sep (Alejandro): «en la lámina 4 no me deja solicitar cambios como en la lámina 3». La 4 era una rehecha
    que vive HOY en la mesa; el botón solo salía en aprobadas. Ahora la tira también decide las de la mesa. */
 function enMesaTira(t,n){
-  const x=pasos[idx]||lockeadas[0]; const pid=x&&(x.pid||(x.p&&x.p.id)); if(!pid||!dec[pid]) return null;
+  const x=[...pasos.slice(idx),...lockeadas].find(z=>TIRAS[z.pid||(z.p&&z.p.id)]===t)||pasos[idx]; const pid=x&&(x.pid||(x.p&&x.p.id)); if(!pid||!dec[pid]) return null;
   const M=mapaDe(t), k=Object.keys(M).find(q=>M[q]===n); if(k===undefined) return null;
   const i=+k-1, p=x.p; return {pid,i,p,m:dec[pid].laminas[i]||'',nota:dec[pid].notas[i]||''};
 }
@@ -1023,14 +1025,14 @@ let _decidiendo=false, _tDecidio=0;
 function candadoLibre(){ if(_decidiendo&&Date.now()-_tDecidio>1200){ _decidiendo=false } return !_decidiendo }
 function vigilante(){   // cada medio segundo: candados sueltos, capas huérfanas fuera, cuerpo desbloqueado si no hay capas
   candadoLibre();
-  for(let i=CAPAS.length-1;i>=0;i--){ const c=CAPAS[i]; const vivo=document.querySelector(`.velo[data-id="${c.id}"], .zoom`); if(!vivo){ CAPAS.splice(i,1) } }
+  for(let i=CAPAS.length-1;i>=0;i--){ const c=CAPAS[i]; if(c.el&&!c.el.isConnected) CAPAS.splice(i,1) }   // solo capas cuyo nodo ya no existe (auditoría 7-sep: antes mataba «exp» y «guia»)
   if(!CAPAS.length&&document.body.classList.contains('bloqueado')) bloquear(false);
 }
 setInterval(vigilante,500);
 function decidir(m){
   if(!DECIDE()||!candadoLibre()) return;
   const x=pasos[idx]; if(!x||x.tipo!=='lamina') return;
-  if(m==='no'){ pedirNota(nota=>{ dec[x.pid].laminas[x.i]='no'; dec[x.pid].notas[x.i]=nota; avanzar('no') }); return }
+  if(m==='no'){ if(CAPAS.some(c=>c.id==='nota')) return; _tDecidio=Date.now(); pedirNota(nota=>{ dec[x.pid].laminas[x.i]='no'; dec[x.pid].notas[x.i]=nota; avanzar('no') }); return }
   dec[x.pid].laminas[x.i]='si'; dec[x.pid].notas[x.i]=''; avanzar('si');
 }
 function avanzar(m){
@@ -1041,7 +1043,8 @@ function avanzar(m){
   while(idx<pasos.length&&marcaDe(pasos[idx])) idx++;   // 7-sep: nunca volver a preguntar una carta ya decidida (tras «Cambiar» seguía por las que ya estaban)
   try{ guardarBorrador() }catch(e){}
   programarSubida();
-  try{ pintarCartas() }catch(e){ console.error('pintarCartas',e) }
+  try{ pintarCartas() }catch(e){ console.error('pintarCartas',e); idx--; hist.pop(); const x=pasos[idx]; if(x&&dec[x.pid]){ if(x.tipo==='lamina'){ dec[x.pid].laminas[x.i]=''; dec[x.pid].notas[x.i]='' } else { dec[x.pid].laminas=dec[x.pid].laminas.map(()=>''); dec[x.pid]._eje='' } }
+    $('#zona').innerHTML='<div class="carta"><div class="lienzo"><div class="cargando">No pude pintar la siguiente carta. <button class="secund" onclick="location.reload()">Recargar</button></div></div></div>'; _decidiendo=false; return }
   if(fantasma){                                // la carta que sale se anima aparte, encima de la nueva; si no hay cuadros (pestaña tapada) simplemente desaparece
     const cls=m==='si'?'fuera-si':'fuera-no'; $('#zona').appendChild(fantasma);
     requestAnimationFrame(()=>requestAnimationFrame(()=>fantasma.classList.add(cls)));
@@ -1078,14 +1081,15 @@ function pedirNota(cb,inicial){
   setTimeout(()=>ta.focus(),60);
 }
 function hoja(html,id){
-  id=id||('hoja'+Date.now()); bloquear(true);
+  id=id||('hoja'+Date.now()); const ya=CAPAS.find(c=>c.id===id); if(ya&&ya.el&&ya.el.isConnected) return ya.el;   // una hoja por id
+  bloquear(true);
   const velo=document.createElement('div'); velo.className='velo'; velo.dataset.id=id;
   velo.innerHTML=`<div class="hoja" role="dialog" aria-modal="true" tabindex="-1"><button class="cerrar-h" aria-label="Cerrar">×</button>${html}</div>`;
   document.body.appendChild(velo);
   const cerrar=()=>velo.remove();
   velo.querySelector('.cerrar-h').onclick=()=>cerrarCapa(id);
   velo.addEventListener('click',e=>{ if(e.target===velo) cerrarCapa(id) });
-  abrirCapa(id,cerrar,velo.querySelector('.hoja'));
+  abrirCapa(id,cerrar,velo.querySelector('.hoja'),velo);
   return velo;
 }
 
@@ -1157,7 +1161,7 @@ function abrirZoom(src){
   const onResize=()=>ajustar(); addEventListener('resize',onResize);
   const id='zoom'+Date.now();
   z.querySelector('.zx').onclick=()=>cerrarCapa(id);
-  abrirCapa(id,()=>{ z.remove(); removeEventListener('resize',onResize) },z.querySelector('.zx'));
+  abrirCapa(id,()=>{ z.remove(); removeEventListener('resize',onResize) },z.querySelector('.zx'),z);
 }
 
 /* ══ final / vacío ══ */
@@ -1353,7 +1357,7 @@ function abrirExp(nombre){
     ${(e.reglas||[]).length?`<div class="reglas"><h3>Reglas que nacieron aquí</h3>${e.reglas.map(r=>`<div class="regla-c"><p><b>${esc(r.regla)}</b></p><small>${esc(r.nacio||'')}</small></div>`).join('')}</div>`:''}</div>`;
   window.scrollTo(0,0);
   $('#expVolver').onclick=()=>cerrarCapa('exp');
-  abrirCapa('exp',cerrarExp,$('#expVolver'));
+  abrirCapa('exp',cerrarExp,$('#expVolver'),$('#expIn'));
 }
 
 /* ══ Ajustes ══ */
@@ -1484,7 +1488,7 @@ function abrirGuia(forzar){
       <button class="listo" id="tSig">${n<P.length-1?'Siguiente':'Empezar'}</button><button class="saltar" id="tSalta">Saltar</button>`;
     $('#tSig').onclick=()=>{ if(n<P.length-1){ n++; pinta() } else cerrarCapa('guia') }; $('#tSalta').onclick=()=>cerrarCapa('guia') };
   pinta();
-  abrirCapa('guia',()=>{ t.remove(); localStorage.setItem('sala_guia','1') },t);
+  abrirCapa('guia',()=>{ t.remove(); localStorage.setItem('sala_guia','1') },t,t);
 }
 
 /* ══ arranque ══ */
@@ -1504,9 +1508,10 @@ function aplicarDia(d){
   if(d&&d._respaldo&&ENTRADO()&&!_reintentando){ _reintentando=true; setTimeout(()=>{ avisarRespaldo(); reintentarSheet(0) },0) }
   if(d&&!d._respaldo) _reintentando=false;
   const firma=x=>(x.propuestas||[]).map(p=>p.id+':'+((p.laminas||[]).length||(p.opciones||[]).length)).join('|');
+  if(_pintado&&d&&d._respaldo){ avisarRespaldo(); return }   // con mesa armada, una copia de respaldo no la reconstruye bajo los pies del editor
   if(_pintado&&D&&DECIDE()&&cuentas().hoy>0){ if(firma(D)!==firma(d)){ D.propuestas=d.propuestas.map(p=>{const v=(D.propuestas||[]).find(q=>q.id===p.id); return v||p}); }
     D.decisiones=d.decisiones; D._respaldo=false; estadoInicial(); $('#subt').textContent=pasos[idx]&&piezaDe(pasos[idx])?`Publicación: ${piezaDe(pasos[idx])}`:''; }
-  else { _pintado=true; montar(d) }
+  else { try{ montar(d); _pintado=true }catch(e){ console.error('montar',e); $('#titulo').textContent='No pude armar la mesa'; $('#subt').textContent='Recarga la Sala. Detalle: '+String(e&&e.message||e).slice(0,90); pintarEstado('sin','Error al abrir'); } }
 }
 function avisarRespaldo(){
   $('#subt').textContent='Sin señal con el Sheet · te muestro la última copia; lo que marques se guarda al volver';
@@ -1518,7 +1523,11 @@ function reintentarSheet(n){            // tras caer al respaldo, se insiste has
 }
 function montar(d){
   D=d; fecha=D.fecha||''; pintarFecha(fecha);
-  if(d.rol&&!d._respaldo) localStorage.setItem('sala_rol',d.rol);   // el Sheet sabe quién eres; la Sala le cree
+  if(d.rol&&!d._respaldo){
+    const antes=localStorage.getItem('sala_rol');
+    if(d.rol==='lector'&&/^editor/.test(antes||'')&&_pintado){ pintarEstado('sin','El Sheet ahora te ve como lector · vuelve a entrar'); }   // no se borra el rol de editor en silencio (auditoría 7-sep)
+    else localStorage.setItem('sala_rol',d.rol);
+  }
   if(!DECIDE()){ estadoInicial(); pintarMira(); Promise.all([...new Set((D._todas||[]).map(p=>p.id))].map(cargarTira)).then(()=>pintarMira()); return }   // con la tira, la vista de solo lectura también dice «lámina 7 de 9»
   const b=leerLS('sala2-'+fecha,null);
   const tSheet=Date.parse(D.ultima_revision||'')||0;
