@@ -199,6 +199,8 @@ html.embed .app{padding-top:8px}
   body.compacta .otra-voz.version::after{content:'▸ nota';color:var(--oro);font-size:11px;cursor:pointer} body.compacta .otra-voz.version.abierta::after{content:'▾'} }
 .otra-voz.version .fechas{display:block;font-size:12px;opacity:.8} .ver-vers{margin-top:6px;background:none;border:1px solid var(--oro);color:var(--oro);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
 .vers{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:10px} @media(max-width:640px){.vers{grid-template-columns:1fr 1fr}} .ver{text-align:center;font-size:12px} .ver img{width:100%;border-radius:10px;background:#141210;display:block;margin-bottom:6px} .ver b{display:block} .ver small{display:block;color:var(--guia)} .ver em{display:block;margin-top:4px;font-style:normal;color:var(--gris)} .ver em.mal{color:var(--no);font-weight:700} .ver em.bien{color:var(--si)} .ver.igual img{outline:2px solid var(--no)}
+/* 8-sep: el serial de la lámina, para no volver a dudar si es la r1 o la r5 */
+.serial{color:#dcbc7e;letter-spacing:.04em;font-variant-numeric:tabular-nums}
 p.fechas{font-size:12.5px;color:var(--guia)} button.liga{background:none;border:0;color:var(--oro);text-decoration:underline;cursor:pointer;font:inherit;font-size:12.5px;padding:0}
 
 /* ── mando ── */
@@ -496,7 +498,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='9094999964';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='b92c80d902';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
@@ -525,7 +527,36 @@ const bloquear=on=>document.body.classList.toggle('bloqueado',!!on);
    que enmarcara la Sala se la llevaba— y ya no hace falta, porque la Sala lee sola la
    credencial del YOD OS al ser el mismo origen.) */
 function avisarLlave(){}
-const ligera=src=>/\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
+/* ══ EL CATÁLOGO (8-sep) ══════════════════════════════════════════════════════════
+   Pedido de Alejandro: «quiero que cargue solo datos de letras y cuando le demos click nos
+   permita jalar de drive… que vayamos viendo el serial de la publicación, así sabemos si es
+   la versión 1 o 5».
+   Cada lámina tiene un serial que no cambia nunca (APODO-L04) y una revisión que sube sólo
+   cuando el contenido cambia de verdad. El registro llega del Sheet como TEXTO (~30 KB) y las
+   fotos se piden a Drive una por una, apenas cuando se van a ver. Al aparato nunca le viaja
+   un original de 1.3 MB. */
+let CATALOGO={}, _porRuta={};
+async function traerCatalogo(){
+  try{
+    const r=await fetch(GAS()+'?recurso=catalogo&clave='+encodeURIComponent(CLAVE()));
+    const d=await r.json(); if(!d||!d.catalogo) return;
+    CATALOGO=d.catalogo; _porRuta={};
+    for(const s in CATALOGO) for(const v of (CATALOGO[s].revisiones||[]))
+      if(v.ruta) _porRuta[v.ruta]={serial:s,r:v.r,de:v.de,prueba:v.prueba,original:v.original};
+  }catch(e){ /* sin catálogo la Sala sigue igual: sirve las ligeras del repo */ }
+}
+/* La liga de Drive que SÍ responde parejo para pintar en una página. (`uc?export=view` tarda
+   el triple y `lh3` se estrangula; medido el 8-sep.) */
+const deDrive=(id,ancho)=>`https://drive.google.com/thumbnail?id=${id}&sz=w${ancho||1200}`;
+/* Lo que se pinta: la prueba de Drive si el catálogo la conoce; si no, la ligera del repo. */
+const ligera=src=>{
+  const c=_porRuta[src]; if(c&&c.prueba) return deDrive(c.prueba,1200);
+  return /\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
+};
+/* Ampliar sí pide el original limpio (sin sello), que para eso está. */
+const original=src=>{ const c=_porRuta[src]; return (c&&c.original)?deDrive(c.original,2000):src };
+/* El serial visible: «APODO-L04 · revisión 5 de 5». Para no volver a dudar si es nueva. */
+function serialDe(src){ const c=_porRuta[src]; return c?`${c.serial} · revisión ${c.r} de ${c.de}`:'' }
 const ICO_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 const ICO_VOLVER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
 
@@ -873,7 +904,7 @@ function verLamina(t,n){
   const em=enMesaTira(t,n);
   const v=hoja(`<h3>Lámina ${n} de ${t.laminas.length}</h3>
     <p>${reab?'Ya pediste cambio a esta lámina aunque estaba aprobada.':l.estado==='aprobada'?'Ya está aprobada: no vuelve a preguntarse.':'Ésta es la que se rehízo con la nota.'}</p>
-    <p class="fechas">Versión ${l.version||1} · salió ${fechaBonita(l.fecha)}${(l.versiones||[]).length>1?` · <button type="button" class="liga" data-versiones="${esc(Object.keys(TIRAS).find(k=>TIRAS[k]===t)||'')}" data-n="${n}">ver las ${l.versiones.length} versiones</button>`:''}</p>
+    <p class="fechas">${serialDe(l.src)?`<b class="serial">${esc(serialDe(l.src))}</b> · `:``}Versión ${l.version||1} · salió ${fechaBonita(l.fecha)}${(l.versiones||[]).length>1?` · <button type="button" class="liga" data-versiones="${esc(Object.keys(TIRAS).find(k=>TIRAS[k]===t)||'')}" data-n="${n}">ver las ${l.versiones.length} versiones</button>`:''}</p>
     ${reab?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(dec[t.base].notas[n-1]||'')}»</p><button class="secund" id="quitarReab">Quitar la petición</button>`:''}
     ${(!reab&&l.estado==='aprobada'&&DECIDE()&&t.base)?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
     ${(em&&DECIDE())?(em.m==='no'?`<p style="color:var(--no)"><b>Ya pediste cambio hoy:</b> «${esc(em.nota||'')}»</p><button class="secund" id="cambiarMesa">Cambiar la nota</button>`:`<p style="font-size:13px;color:var(--gris)">${em.m==='si'?'Hoy la aprobaste. Si la quieres mejorar, pide el cambio aquí.':'Está en tu mesa de hoy. Puedes decidirla desde aquí.'}</p><button class="secund" id="cambiarMesa">Pedir cambio a esta lámina</button>`):''}
@@ -1197,6 +1228,7 @@ function pintarPanel(){
 /* ══ zoom ══ */
 function abrirZoom(src){
   bloquear(true);
+  src=original(src);   // 8-sep: al ampliar se trae el maestro limpio, sin el sello de la prueba
   const z=document.createElement('div'); z.className='zoom';
   z.innerHTML=`<img src="${esc(src)}" alt="Lámina ampliada"><button class="zx">${ICO_VOLVER}Volver</button><div class="zt">${matchMedia('(hover:hover)').matches?'Rueda o doble clic para acercar · arrastra para mover':'Pellizca o doble toque para acercar · desliza para mover'}</div>`;
   document.body.appendChild(z);
@@ -1673,6 +1705,7 @@ setInterval(vigilarVersion,600000);
   // Ya NO se pinta la copia de respaldo a los 2.5 s: se espera al Sheet con una carta de carga.
   // El respaldo solo entra si el Sheet de verdad no contesta, y se dice con todas sus letras.
   pintarCargando();
+  traerCatalogo();   // 8-sep: en paralelo; si tarda, la Sala abre igual con las ligeras del repo
   try{ aplicarDia(normalizarDia(await conMarcasDeAntes(await traer(),''))) }
   catch(e){ if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)); avisarRespaldo(); reintentarSheet(0) }
     catch(e2){ $('#titulo').textContent='No pude abrir la sala'; $('#subt').textContent='Puede ser la red. Cierra y vuelve a abrir en un momento.'; pintarEstado('sin','Sin conexión') } } }

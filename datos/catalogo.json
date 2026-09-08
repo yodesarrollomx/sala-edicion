@@ -10,7 +10,10 @@
     "huella": "5a5cd56c23f2f6f208a06758f16a34c5",
     "src": "laminas/apodo-g1/L1.png",
     "grupo": "apodo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1TMItYMcqdHM2-eZ-_H9Y7paK_tmSaLM5",
+    "drive_prueba": "1UZ6CBEgmA6tLY19noyd9GvsASlxLPAQD",
+    "liga": "https://drive.google.com/thumbnail?id=1UZ6CBEgmA6tLY19noyd9GvsASlxLPAQD&sz=w1200"
    },
    {
     "r": 2,
@@ -20,17 +23,25 @@
     "tambien_en": [
      "laminas/apodo-g3/L1.png",
      "laminas/apodo-g4/L1.png"
-    ]
+    ],
+    "drive_original": "1Qf1s6Ut7xUeSqk4s_cEKcpY3ATgnB0XQ",
+    "drive_prueba": "1Idr0r6z73GlvgkeN1_THTedbWvPuUeVq",
+    "liga": "https://drive.google.com/thumbnail?id=1Idr0r6z73GlvgkeN1_THTedbWvPuUeVq&sz=w1200"
    },
    {
     "r": 3,
     "huella": "da6a3adb74b37ed4abd5adc2dec1c522",
     "src": "laminas/apodo-g5/L1.png",
     "grupo": "apodo-g5",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1tyrPaoTvzrSF2haVFaf1F4krJ6QeFgke",
+    "drive_prueba": "1ym67h1elS4GrTrI72mtuOWVvrSAYJpk6",
+    "liga": "https://drive.google.com/thumbnail?id=1ym67h1elS4GrTrI72mtuOWVvrSAYJpk6&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1OHrbcQYe3L2UuTfPSIeGGXeHs0nlZ5pr",
+  "revision_vigente": 3
  },
  "APODO-L02": {
   "serial": "APODO-L02",
@@ -43,7 +54,10 @@
     "huella": "7ca8f08aec11581c9f5ef472e01f2f4f",
     "src": "laminas/apodo-g1/L2.png",
     "grupo": "apodo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1IndlM_v_jehCgt9uUH_79Uz2613foDbJ",
+    "drive_prueba": "1KiD3KZ1jjP-tRUfCQEAjG-445FpUpLds",
+    "liga": "https://drive.google.com/thumbnail?id=1KiD3KZ1jjP-tRUfCQEAjG-445FpUpLds&sz=w1200"
    },
    {
     "r": 2,
@@ -53,17 +67,25 @@
     "tambien_en": [
      "laminas/apodo-g3/L2.png",
      "laminas/apodo-g4/L2.png"
-    ]
+    ],
+    "drive_original": "1nWWoAQRbPjyo-TTK5cTcQOlceCvJVVUO",
+    "drive_prueba": "1bytSk-TMw2d_ireucvBfLL2bRbO_jXlf",
+    "liga": "https://drive.google.com/thumbnail?id=1bytSk-TMw2d_ireucvBfLL2bRbO_jXlf&sz=w1200"
    },
    {
     "r": 3,
     "huella": "6016380ab8ef0481a28eb384fea17a9f",
     "src": "laminas/apodo-g5/L2.png",
     "grupo": "apodo-g5",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1N0ZRLgaxed3DdYSM0IA-fU_5_I71gsIu",
+    "drive_prueba": "17szeWdBx8y5ux-49iRPWAShJy-r8nF_g",
+    "liga": "https://drive.google.com/thumbnail?id=17szeWdBx8y5ux-49iRPWAShJy-r8nF_g&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1o2d3vHlvXRUe3UiY3bGyjv_dQMQFjFj9",
+  "revision_vigente": 3
  },
  "APODO-L03": {
   "serial": "APODO-L03",
@@ -76,7 +98,10 @@
     "huella": "6660dca9f3337085bb24ce3032814df7",
     "src": "laminas/apodo-g1/L3.png",
     "grupo": "apodo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1BWlvUc8eIkXVwamu-3WusCqrac5qDNJT",
+    "drive_prueba": "1KFUPaUOZIi-8SRI9RCDKF34eVlYBqSYk",
+    "liga": "https://drive.google.com/thumbnail?id=1KFUPaUOZIi-8SRI9RCDKF34eVlYBqSYk&sz=w1200"
    },
    {
     "r": 2,
@@ -86,17 +111,25 @@
     "tambien_en": [
      "laminas/apodo-g3/L3.png",
      "laminas/apodo-g4/L3.png"
-    ]
+    ],
+    "drive_original": "1MUDq4_gbNRb9FrSqOxVT1_NDxpO-pP9r",
+    "drive_prueba": "1kM4YmrCEPhfaQWJuTVd7yZTLVA4G_aLa",
+    "liga": "https://drive.google.com/thumbnail?id=1kM4YmrCEPhfaQWJuTVd7yZTLVA4G_aLa&sz=w1200"
    },
    {
     "r": 3,
     "huella": "bd2ca8d76756dceba8e9f4b96a722ce6",
     "src": "laminas/apodo-g5/L3.png",
     "grupo": "apodo-g5",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1ukIPnTnZZXs2wqxDZ8bK5aqH-6e2nP4o",
+    "drive_prueba": "1xk7yHKQdBJ11Ydzwm2I2CmioZpC6gwHJ",
+    "liga": "https://drive.google.com/thumbnail?id=1xk7yHKQdBJ11Ydzwm2I2CmioZpC6gwHJ&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1Rd1EK-gURmtnE6i-5o-heeGahMbBiBKh",
+  "revision_vigente": 3
  },
  "APODO-L04": {
   "serial": "APODO-L04",
@@ -109,38 +142,55 @@
     "huella": "9d1000c9114ac840d99a04a8d210b091",
     "src": "laminas/apodo-g1/L4.png",
     "grupo": "apodo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "19XnytUip9WdnjVV88UuEaWwogAnQt_j1",
+    "drive_prueba": "17bsIBsb0PwjCya_SUQcyHrc6f30VlH-6",
+    "liga": "https://drive.google.com/thumbnail?id=17bsIBsb0PwjCya_SUQcyHrc6f30VlH-6&sz=w1200"
    },
    {
     "r": 2,
     "huella": "7ca8f08aec11581c9f5ef472e01f2f4f",
     "src": "laminas/apodo-g2/L4.png",
     "grupo": "apodo-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1TPKWV2dXR16_xM2XCKEg62cdN8GolfOu",
+    "drive_prueba": "15Z331zMBm0fwADM9T4dJwxqGxY_J-oc7",
+    "liga": "https://drive.google.com/thumbnail?id=15Z331zMBm0fwADM9T4dJwxqGxY_J-oc7&sz=w1200"
    },
    {
     "r": 3,
     "huella": "7e4ea635167e8703ff8a6aad701c3c79",
     "src": "laminas/apodo-g3/L4.png",
     "grupo": "apodo-g3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1HxURaAfXKVJNBe6KX-wosiIyQvxo0JYD",
+    "drive_prueba": "1wedpgnSCL2FLhFIWEj4J76taIeWO2SCI",
+    "liga": "https://drive.google.com/thumbnail?id=1wedpgnSCL2FLhFIWEj4J76taIeWO2SCI&sz=w1200"
    },
    {
     "r": 4,
     "huella": "20f6ff679f0c3f1ec99e9a9fe517f938",
     "src": "laminas/apodo-g4/L4.png",
     "grupo": "apodo-g4",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1NQSDCMTeyKdw8tuQuTANp3jtkMVhdBOl",
+    "drive_prueba": "1dEFpsbvU3MFBDd5KXbpBnVoLxd5Ez4g0",
+    "liga": "https://drive.google.com/thumbnail?id=1dEFpsbvU3MFBDd5KXbpBnVoLxd5Ez4g0&sz=w1200"
    },
    {
     "r": 5,
     "huella": "7d9a08985fe7afaa6d656d67a0ebc523",
     "src": "laminas/apodo-g5/L4.png",
     "grupo": "apodo-g5",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1Ror7qFHk--QCMpCZpK4EieVOLaUIIirl",
+    "drive_prueba": "10pEAUOHYk66547hnAUX66_hzkadmZZ-x",
+    "liga": "https://drive.google.com/thumbnail?id=10pEAUOHYk66547hnAUX66_hzkadmZZ-x&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1XL4FB6WNzUcqAjVfu73M5RGSbtStvqlr",
+  "revision_vigente": 5
  },
  "APODO-L05": {
   "serial": "APODO-L05",
@@ -153,7 +203,10 @@
     "huella": "7fdfb523f2b918d101b4b9fe05054446",
     "src": "laminas/apodo-g1/L5.png",
     "grupo": "apodo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1zp2VY5u-Jna5J-t-p50IlnFAIqABEuRQ",
+    "drive_prueba": "1tcKX6BzZ-UjSlIgp3tDpK6QTwJ7Y8bSf",
+    "liga": "https://drive.google.com/thumbnail?id=1tcKX6BzZ-UjSlIgp3tDpK6QTwJ7Y8bSf&sz=w1200"
    },
    {
     "r": 2,
@@ -162,24 +215,35 @@
     "grupo": "apodo-g2",
     "tambien_en": [
      "laminas/apodo-g3/L5.png"
-    ]
+    ],
+    "drive_original": "1vHNYMMiZqn0Xo0JdhuCAUv_ZE1yfW3FW",
+    "drive_prueba": "1M-TVqflEaq83twE41cEngEjuRH7ZRn8j",
+    "liga": "https://drive.google.com/thumbnail?id=1M-TVqflEaq83twE41cEngEjuRH7ZRn8j&sz=w1200"
    },
    {
     "r": 3,
     "huella": "2f35b40230c1901734ebe64a84b9ae2c",
     "src": "laminas/apodo-g4/L5.png",
     "grupo": "apodo-g4",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1L-6QqRmcrHucTwygrgixg_Bf2OcEvYg-",
+    "drive_prueba": "12gtVemW934_W7gDJqg1QMphbQaAeLqIF",
+    "liga": "https://drive.google.com/thumbnail?id=12gtVemW934_W7gDJqg1QMphbQaAeLqIF&sz=w1200"
    },
    {
     "r": 4,
     "huella": "d21a50d97af18f98a9f21fe80eb8653d",
     "src": "laminas/apodo-g5/L5.png",
     "grupo": "apodo-g5",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1HxjYW8FrdHAPL9rmHHq4HmTlyMsVCJ6H",
+    "drive_prueba": "172OyXQXX0lmICmzy0Nc4AhK284PCU8cb",
+    "liga": "https://drive.google.com/thumbnail?id=172OyXQXX0lmICmzy0Nc4AhK284PCU8cb&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1AGKE-Jqjj4oGRiNdonn1IwXGAffQ9sgP",
+  "revision_vigente": 4
  },
  "APODO-L06": {
   "serial": "APODO-L06",
@@ -192,7 +256,10 @@
     "huella": "04b1f6fe9b86b405ccf1d4bc0576a922",
     "src": "laminas/apodo-g1/L6.png",
     "grupo": "apodo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1HAbCVzzSFnV8BXR7n2GxN5MggARu_Dz2",
+    "drive_prueba": "1o0h4GzoGtJ7LAB9uUCL8z5eozDwpiaiH",
+    "liga": "https://drive.google.com/thumbnail?id=1o0h4GzoGtJ7LAB9uUCL8z5eozDwpiaiH&sz=w1200"
    },
    {
     "r": 2,
@@ -202,17 +269,25 @@
     "tambien_en": [
      "laminas/apodo-g3/L6.png",
      "laminas/apodo-g4/L6.png"
-    ]
+    ],
+    "drive_original": "1mJV40wNlKO1Ge-w6Kdp86XlPGdiIl9jv",
+    "drive_prueba": "1wcYbzSxk0OZ9O8qwGLBM5ispRvYjIJHq",
+    "liga": "https://drive.google.com/thumbnail?id=1wcYbzSxk0OZ9O8qwGLBM5ispRvYjIJHq&sz=w1200"
    },
    {
     "r": 3,
     "huella": "f1b7b1acb765b1459e80b7035d6f1303",
     "src": "laminas/apodo-g5/L6.png",
     "grupo": "apodo-g5",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1rN5JvL63WOUaqwei1kiaOqSUTAyzkt6v",
+    "drive_prueba": "1_zVnegO9wNs-Nx3qbXPP9dUFCVH9stKD",
+    "liga": "https://drive.google.com/thumbnail?id=1_zVnegO9wNs-Nx3qbXPP9dUFCVH9stKD&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1G6CmKYL3isQMHOiWrkc0jbpckJkkloBv",
+  "revision_vigente": 3
  },
  "APODO-L07": {
   "serial": "APODO-L07",
@@ -225,7 +300,10 @@
     "huella": "f615b0b6844e7549dc65afebbb845764",
     "src": "laminas/apodo-g1/L7.png",
     "grupo": "apodo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1C9L22IbBugaiifetG7EYWjrAmBb8F-gv",
+    "drive_prueba": "1XZ-JFeqcBTec6ZnOMaszHxjwL-T9euat",
+    "liga": "https://drive.google.com/thumbnail?id=1XZ-JFeqcBTec6ZnOMaszHxjwL-T9euat&sz=w1200"
    },
    {
     "r": 2,
@@ -235,10 +313,15 @@
     "tambien_en": [
      "laminas/apodo-g3/L7.png",
      "laminas/apodo-g4/L7.png"
-    ]
+    ],
+    "drive_original": "1V66uz3yDEPNxgWxeDWzD9CZlhAdfNzk7",
+    "drive_prueba": "132cupVIYIP_kTtgVdJzFIZb9B0HrhYz0",
+    "liga": "https://drive.google.com/thumbnail?id=132cupVIYIP_kTtgVdJzFIZb9B0HrhYz0&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "17LjJtD1LopMjW4CE2BEVeCYl-O1J7_HE",
+  "revision_vigente": 2
  },
  "APODO-L08": {
   "serial": "APODO-L08",
@@ -254,10 +337,15 @@
     "tambien_en": [
      "laminas/apodo-g3/L8.png",
      "laminas/apodo-g4/L8.png"
-    ]
+    ],
+    "drive_original": "1-okoHG3u63VaKC5ORhNPUX7M8ASxRLF7",
+    "drive_prueba": "1ezfyAfUdsbP9_m_DeQce8ZTPDWJR5Ty5",
+    "liga": "https://drive.google.com/thumbnail?id=1ezfyAfUdsbP9_m_DeQce8ZTPDWJR5Ty5&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1fcgQDylbzUuiuR8ULdN8PtSZVrk_I07d",
+  "revision_vigente": 1
  },
  "APODO-L09": {
   "serial": "APODO-L09",
@@ -270,24 +358,35 @@
     "huella": "94c97e71354f6645ef49de9c1ec2e6b7",
     "src": "laminas/apodo-g2/L9.png",
     "grupo": "apodo-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1ov5OZPay5984UWtpnEJw-4BhlDc95oAg",
+    "drive_prueba": "1Hbx6LrVHHFbtHrOsdzC-xfZ05ooqHZ6V",
+    "liga": "https://drive.google.com/thumbnail?id=1Hbx6LrVHHFbtHrOsdzC-xfZ05ooqHZ6V&sz=w1200"
    },
    {
     "r": 2,
     "huella": "152dbb311c4418af2abb2d97e089156f",
     "src": "laminas/apodo-g3/L9.png",
     "grupo": "apodo-g3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1ZgWl3WD-IxmcsM2fSPIu5B0YzHZNCmWe",
+    "drive_prueba": "13chwcB8xBcf7yfzmF_0c9_HIkVNywScT",
+    "liga": "https://drive.google.com/thumbnail?id=13chwcB8xBcf7yfzmF_0c9_HIkVNywScT&sz=w1200"
    },
    {
     "r": 3,
     "huella": "1bbf890a5eb2e31a50e4e6d59cbf4fa3",
     "src": "laminas/apodo-g4/L9.png",
     "grupo": "apodo-g4",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1lzG7s5SFFGNSnvonlXQywu4zo0V1YUuL",
+    "drive_prueba": "1lV0K9y2PPqZon8Jf_Z1W2oFiX6W0nQP0",
+    "liga": "https://drive.google.com/thumbnail?id=1lV0K9y2PPqZon8Jf_Z1W2oFiX6W0nQP0&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1pNHdMbvvDeRBTEEAxyFo2Q91VFxV7gLl",
+  "revision_vigente": 3
  },
  "COMPRADOR-L01": {
   "serial": "COMPRADOR-L01",
