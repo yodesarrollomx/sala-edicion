@@ -718,7 +718,11 @@ let _tSubir=null, _subiendo=false, _pendiente=false; let _ultimoEnviado='';   //
 function programarSubida(){ guardarBorrador(); if(!ENTRADO()||!DECIDE()){ estadoInicial(); return }
   pintarEstado('local','Guardando…'); clearTimeout(_tSubir); _tSubir=setTimeout(()=>{ _tSubir=null; subir() },1200) }
 async function subir(){
-  if(!ENTRADO()||!DECIDE()||(!cuentas().hoy&&!reaperturas().length)) return;
+  // 8-sep (traza de auditoría A4): al DESHACER no salía nada al Sheet — no había marcas hoy y esta guarda
+  // cortaba la subida, así que el Sheet conservaba la marca vieja y la píldora se quedaba en «Guardando…».
+  // Ahora también se sube cuando hay borrados pendientes o cuando el Sheet tiene marcas mías de hoy que ya no tengo.
+  const hayBorrados=Object.values(dec).some(d=>d&&d._borrar&&Object.keys(d._borrar).length);
+  if(!ENTRADO()||!DECIDE()||(!cuentas().hoy&&!reaperturas().length&&!hayBorrados)){ estadoInicial(); _subiendo=false; return }
   if(_subiendo){ _pendiente=true; return } _subiendo=true; _pendiente=false;
   pintarEstado('subiendo','Guardando…');
   const envio=sobre(), firmaEnvio=JSON.stringify(envio.propuestas);
@@ -747,7 +751,7 @@ async function subir(){
         <button class="listo" onclick="cerrarCapa('malaclave');abrirEntrar()">Entrar otra vez</button>`,'malaclave');
       encolar(envio); _subiendo=false; return }
     if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||'el Sheet no contestó');
-    _ultimoEnviado=firmaEnvio; guard.env={id:envio.envio_id,hora:hora()}; guardarBorrador();
+    _ultimoEnviado=firmaEnvio; Object.values(dec).forEach(d=>{ if(d) d._borrar={} }); guard.env={id:envio.envio_id,hora:hora()}; guardarBorrador();
     localStorage.setItem('sala_cola',JSON.stringify(leerLS('sala_cola',[]).filter(x=>x.fecha!==fecha)));
     pintarEstado('subido','Guardado ✓ '+guard.env.hora);
   }catch(e){ guard.ultimoError=String(e&&e.message||e);
