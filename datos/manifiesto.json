@@ -27,49 +27,21 @@
  ],
  "propuestas": [
   {
-   "id": "apodo-video-9sep-v5",
-   "titulo": "El Apodo del Terreno · video v5: revisado escena por escena, audio arreglado y a 1.10",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "Publícalo",
-     "texto": "Lo que revisé escena por escena, con el criterio de Hormozi (una idea por pantalla, gancho en los primeros segundos, concreto en vez de vago, y un solo paso siguiente) y lo que YA cambié:\n\n1. Abría afirmando. Ahora abre preguntando: «¿Sabes cómo le dicen a tu terreno?». La pregunta obliga a contestar por dentro.\n2. «El que no se vende» era tibio. Ahora «el que nadie quiere», que es el apodo que duele.\n3. Las escenas 3 y 4 decían lo mismo dos veces (el apodo se inventa / el apodo se mueve). Iban seguidas y frenaban el video. Las fundí en una.\n4. El valor era vago: «lo que de verdad puede sostener». Ahora es concreto y medible: «los metros cuadrados que la norma le permite».\n5. El cierre queda en una sola acción con el paso siguiente claro: pídele su Plan, y el primer paso es una videollamada.\n\nY lo que pediste del sonido: la voz de la escena 3 traía dos silencios a media frase (eso era el trabón); la regrabé y le quité las pausas. La velocidad bajó de 1.15 a 1.10, como pediste.\n\n— — —\n\nVa a Facebook e Instagram como reel, con el texto que ya aprobamos y la liga medible al Plan de Potencial."
-    },
-    {
-     "titulo": "Casi: dime qué escena rehago",
-     "texto": "Deja la nota con la escena y qué cambiar; lo rehago hoy mismo."
-    },
-    {
-     "titulo": "Regresa al guion anterior",
-     "texto": "Vuelvo al guion que ya conocías (afirmando, con las siete escenas) y solo dejo el audio arreglado y la velocidad 1.10."
-    }
-   ],
-   "video": "video/apodo/REEL_v5.mp4?v=8sep",
-   "de_antes": null,
-   "origen": "rehecho-de apodo-video-8sep · tu nota: «que lo revise Hormozi, escena por escena, y rehagas todo lo que te pide; en la escena 3 se traba el audio; 1.10 la velocidad»"
-  },
-  {
-   "id": "vendo-construyo-g1-41098b",
-   "titulo": "¿Vendo o construyo? · la tira (dirección + 9 láminas del guion que aprobaste)",
+   "id": "apodo-g5-dcff8d",
+   "titulo": "El Apodo del Terreno · las 6 láminas rehechas con tus notas (pregunta, apodos reales y Personalizado)",
    "tipo": "laminas",
    "laminas": [
-    "laminas/vendo-construyo-g1/L1.png",
-    "laminas/vendo-construyo-g1/L2.png",
-    "laminas/vendo-construyo-g1/L3.png",
-    "laminas/vendo-construyo-g1/L4.png",
-    "laminas/vendo-construyo-g1/L5.png",
-    "laminas/vendo-construyo-g1/L6.png",
-    "laminas/vendo-construyo-g1/L7.png",
-    "laminas/vendo-construyo-g1/L8.png",
-    "laminas/vendo-construyo-g1/L9.png",
-    "laminas/vendo-construyo-g1/L10.png",
-    "laminas/vendo-construyo-g1/L11.png"
+    "laminas/apodo-g5/L1.png",
+    "laminas/apodo-g5/L2.png",
+    "laminas/apodo-g5/L3.png",
+    "laminas/apodo-g5/L4.png",
+    "laminas/apodo-g5/L5.png",
+    "laminas/apodo-g5/L6.png"
    ],
    "opciones": [],
    "video": null,
-   "de_antes": "2026-08-29",
-   "origen": null
+   "de_antes": null,
+   "origen": "rehecha-de apodo-g3"
   },
   {
    "id": "comprador-g5-b1cf4e",
@@ -83,20 +55,6 @@
    "video": null,
    "de_antes": "2026-09-07",
    "origen": "rehecha-de comprador-g4-54595f"
-  },
-  {
-   "id": "apodo-g5-dcff8d",
-   "titulo": "El Apodo del Terreno · las 6 láminas rehechas con tus notas (pregunta, apodos reales y Personalizado)",
-   "laminas": [
-    "laminas/apodo-g5/L1.png",
-    "laminas/apodo-g5/L2.png",
-    "laminas/apodo-g5/L3.png",
-    "laminas/apodo-g5/L4.png",
-    "laminas/apodo-g5/L5.png",
-    "laminas/apodo-g5/L6.png"
-   ],
-   "video": null,
-   "origen": "rehecha-de apodo-g3"
   }
  ],
  "parrilla": [
@@ -326,78 +284,6 @@
  ],
  "decisiones": {
   "propuestas": {
-   "vendo-construyo-g1-41098b": {
-    "laminas": [
-     "si",
-     null,
-     null,
-     null,
-     null,
-     null,
-     "no",
-     null,
-     "no",
-     "no",
-     "no"
-    ],
-    "nota": "",
-    "notas": [
-     null,
-     null,
-     null,
-     null,
-     null,
-     null,
-     "no me gusto el argumento ni la imagen no se relacionan y como que n hacen gancho",
-     null,
-     "me gusta pero como que no cierra le falta algo preguntale a hormozi ",
-     "se me hace mas que compare como diferenets escenarios de diferneets propuestas , depas, bodegs, comercial casas algo asi como que s enote que etsan comparando diferentes escenarios\n",
-     "de un estatus economico mas elevadocreo yo media alta seria el estilo que estariamos dando para eta pareja\n"
-    ],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     null,
-     null,
-     null,
-     null,
-     null,
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "no me gusto el argumento ni la imagen no se relacionan y como que n hacen gancho"
-      }
-     ],
-     null,
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "me gusta pero como que no cierra le falta algo preguntale a hormozi "
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "se me hace mas que compare como diferenets escenarios de diferneets propuestas , depas, bodegs, comercial casas algo asi como que s enote que etsan comparando diferentes escenarios\n"
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "de un estatus economico mas elevadocreo yo media alta seria el estilo que estariamos dando para eta pareja\n"
-      }
-     ]
-    ]
-   },
    "apodo-video-8sep": {
     "laminas": [
      "no",
@@ -437,6 +323,24 @@
     "nota": "",
     "notas": [],
     "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ]
+    ]
+   },
+   "apodo-video-9sep-v5": {
+    "laminas": [
+     null,
+     "si"
+    ],
+    "nota": "",
+    "notas": [],
+    "firmas": [
+     null,
      [
       {
        "quien": "Alejandro",
