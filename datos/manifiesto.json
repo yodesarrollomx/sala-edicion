@@ -1,6 +1,6 @@
 {
  "_que_es": "Manifiesto de respaldo: el portal lo lee cuando el Sheet aún no está conectado. Cuando el GAS ya está en línea, esta copia queda de plan B.",
- "fecha": "2026-09-07",
+ "fecha": "2026-09-08",
  "dias": [
   "2026-08-01",
   "2026-08-04",
@@ -21,71 +21,19 @@
   "2026-09-04",
   "2026-09-05",
   "2026-09-06",
-  "2026-09-07"
+  "2026-09-07",
+  "2026-01-05"
  ],
  "propuestas": [
   {
-   "id": "motores-video-7sep",
-   "titulo": "Prueba de motores · la misma escena 7 en tres motores — ¿con cuál seguimos?",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "A · Wan (gratis, ~3 clips al día)",
-     "texto": "El que hemos usado. Sin marca de agua. Se agota rápido: un video de 7 escenas toma 2–3 días."
-    },
-    {
-     "titulo": "B · Kling (gratis, 2 clips al día)",
-     "texto": "Movimiento más natural, pero el gratis trae marca de agua «KlingAI» en la esquina; sin marca es de pago."
-    },
-    {
-     "titulo": "C · LTX en tu Mac (sin límite)",
-     "texto": "Gratis e ilimitado, 18 minutos por clip. Movimiento sutil, no deforma caras. Ideal como respaldo de noche."
-    }
-   ],
-   "video": "video/pruebas/S7_tres_motores.mp4?v=7sep",
-   "origen": "Tu petición del 7-sep: «haz la prueba del mismo video… y me presentas las 3». Los tres clips salen de la misma foto y el mismo prompt."
-  },
-  {
-   "id": "comprador-g4-54595f",
-   "titulo": "El comprador ya sabe · láminas 4, 7 y 8 reescritas con la fórmula de Hormozi (tus notas de hoy)",
-   "laminas": [
-    "laminas/comprador-g4/L1.png",
-    "laminas/comprador-g4/L2.png",
-    "laminas/comprador-g4/L3.png"
-   ],
-   "video": null,
-   "origen": "rehecha-de comprador-g3-11a28f"
-  },
-  {
-   "id": "apodo-video-7sep",
-   "titulo": "El Apodo del Terreno · video v3 listo: las 7 escenas animadas, sin máscara, con sonido (42 s) — ¿sale ya?",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "Sale ya",
-     "texto": "Publico hoy en Facebook e Instagram como reel, con este texto:\n\nA tu terreno ya le pusieron nombre: «el de la esquina». También «el baldío». Y «el que no se vende».\n\nEn cada sobremesa le inventan un apodo nuevo. El apodo se mueve con cada rumor.\n\nNinguno de esos nombres se lo puso tu terreno. Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener.\n\nPídele a tu terreno su Plan de Potencial Personalizado. El primer paso es una videollamada.\n\n+ la liga medible al Plan de Potencial (en FB en el texto, en IG en el primer comentario)."
-    },
-    {
-     "titulo": "Sale, pero cambia el texto",
-     "texto": "Dime en la nota qué cambiar del texto del post y lo publico con tu versión."
-    },
-    {
-     "titulo": "Todavía no",
-     "texto": "Lo dejo en la mesa sin publicar. Dime en la nota qué más cambiar del video."
-    }
-   ],
-   "video": "video/apodo/REEL_9x16.mp4?v=7sep-v3",
-   "origen": "v3 · tu palabra de hoy: «sale, pero espera la escena 3 animada» → ya está animada (LTX en tu Mac)"
-  },
-  {
    "id": "comprador-g5-b1cf4e",
    "titulo": "El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40",
+   "tipo": "laminas",
    "laminas": [
     "laminas/comprador-g5/L1.png",
     "laminas/comprador-g5/L2.png"
    ],
+   "opciones": [],
    "video": null,
    "origen": "rehecha-de comprador-g4-54595f"
   }
@@ -304,285 +252,7 @@
   }
  ],
  "decisiones": {
-  "propuestas": {
-   "comprador-g2-fcf0ca": {
-    "laminas": [
-     "no",
-     "si",
-     "no",
-     "no"
-    ],
-    "nota": "",
-    "notas": [
-     "no se entiend ebien la frase preguntale a hormozi como deberia de ir bien exlicado para que cumpla con los criterios y su formula",
-     null,
-     "te pedi en el cambio pasado que pusieras que es una ... comparación justa y ordenada.",
-     "creo que debes d epreguntar ahormozi como reeesribiria esta lamina otra vez para que se entienda mejor"
-    ],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "no se entiend ebien la frase preguntale a hormozi como deberia de ir bien exlicado para que cumpla con los criterios y su formula"
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "te pedi en el cambio pasado que pusieras que es una ... comparación justa y ordenada."
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "creo que debes d epreguntar ahormozi como reeesribiria esta lamina otra vez para que se entienda mejor"
-      }
-     ]
-    ]
-   },
-   "apodo-video-4sep": {
-    "laminas": [
-     "no",
-     "no",
-     "no"
-    ],
-    "nota": "",
-    "notas": [],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ]
-    ]
-   },
-   "apodo-video-7sep": {
-    "laminas": [
-     null,
-     "si",
-     null
-    ],
-    "nota": "",
-    "notas": [],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": null,
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": null,
-       "nota": ""
-      }
-     ]
-    ]
-   },
-   "comprador-g3-11a28f": {
-    "laminas": [
-     "no",
-     "no"
-    ],
-    "nota": "",
-    "notas": [
-     "estamos revisnaod dos veces la misma publicacion o que ondaPOR QUE ME HABALS D ELO MISMO!?!?!",
-     "POR QUE ME DUPKICAS COSAS A REVISAR!!!! DIOS MIO ORDENATE BIEN!"
-    ],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "estamos revisnaod dos veces la misma publicacion o que ondaPOR QUE ME HABALS D ELO MISMO!?!?!"
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "POR QUE ME DUPKICAS COSAS A REVISAR!!!! DIOS MIO ORDENATE BIEN!"
-      }
-     ]
-    ]
-   },
-   "apodo-g2-47cdf9": {
-    "laminas": [
-     "si",
-     "si",
-     "si",
-     "no",
-     "si",
-     "si",
-     "si",
-     "si",
-     "no"
-    ],
-    "nota": "",
-    "notas": [
-     null,
-     null,
-     null,
-     "no me gusta lo que repreentan esos dos señores creo que si esta bien lo mexicano pero no hace falto ser tan gentrificador ... ytmb buscaos en entorno un poco mas urbanos que refleje eso... tmb ya habiamos hablado qu ela palabra pleito daba mala imagen ... ayudame a mejorar eso y que todo quede perfecto",
-     null,
-     null,
-     null,
-     null,
-     "y pidele a terreno su PPP plan de potencial personalizado... o algo asi\n"
-    ],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "no me gusta lo que repreentan esos dos señores creo que si esta bien lo mexicano pero no hace falto ser tan gentrificador ... ytmb buscaos en entorno un poco mas urbanos que refleje eso... tmb ya habiamos hablado qu ela palabra pleito daba mala imagen ... ayudame a mejorar eso y que todo quede perfecto"
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": "y pidele a terreno su PPP plan de potencial personalizado... o algo asi\n"
-      }
-     ]
-    ],
-    "heredada": "2026-08-27"
-   },
-   "gancho-servilleta": {
-    "laminas": [
-     "no",
-     "no"
-    ],
-    "nota": "creo qu eestamos repitined conceptos y no viendo la magnitud de ejemplos que podemos explorar con lo extenso que peude ayudar a distintas situaciones un plan de potencal ",
-    "notas": [],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ]
-    ],
-    "heredada": "2026-08-27"
-   },
-   "plan-hormozi": {
-    "laminas": [
-     "si",
-     "si"
-    ],
-    "nota": "",
-    "notas": [],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ]
-    ],
-    "heredada": "2026-08-27"
-   }
-  }
+  "propuestas": {}
  },
  "historial": {
   "2026-08-01": {
@@ -2174,6 +1844,218 @@
     {
      "hora": "09:10",
      "evento": "Propuesta montada: El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8) (4 láminas)"
+    }
+   ]
+  },
+  "2026-09-07": {
+   "propuestas": [
+    {
+     "id": "motores-video-7sep",
+     "titulo": "Prueba de motores · la misma escena 7 en tres motores — ¿con cuál seguimos?",
+     "tipo": "eje",
+     "laminas": [],
+     "opciones": [
+      {
+       "titulo": "A · Wan (gratis, ~3 clips al día)",
+       "texto": "El que hemos usado. Sin marca de agua. Se agota rápido: un video de 7 escenas toma 2–3 días."
+      },
+      {
+       "titulo": "B · Kling (gratis, 2 clips al día)",
+       "texto": "Movimiento más natural, pero el gratis trae marca de agua «KlingAI» en la esquina; sin marca es de pago."
+      },
+      {
+       "titulo": "C · LTX en tu Mac (sin límite)",
+       "texto": "Gratis e ilimitado, 18 minutos por clip. Movimiento sutil, no deforma caras. Ideal como respaldo de noche."
+      }
+     ],
+     "video": "video/pruebas/S7_tres_motores.mp4?v=7sep",
+     "origen": "Tu petición del 7-sep: «haz la prueba del mismo video… y me presentas las 3». Los tres clips salen de la misma foto y el mismo prompt."
+    },
+    {
+     "id": "comprador-g4-54595f",
+     "titulo": "El comprador ya sabe · láminas 4, 7 y 8 reescritas con la fórmula de Hormozi (tus notas de hoy)",
+     "laminas": [
+      "laminas/comprador-g4/L1.png",
+      "laminas/comprador-g4/L2.png",
+      "laminas/comprador-g4/L3.png"
+     ],
+     "video": null,
+     "origen": "rehecha-de comprador-g3-11a28f"
+    },
+    {
+     "id": "apodo-video-7sep",
+     "titulo": "El Apodo del Terreno · video v3 listo: las 7 escenas animadas, sin máscara, con sonido (42 s) — ¿sale ya?",
+     "tipo": "eje",
+     "laminas": [],
+     "opciones": [
+      {
+       "titulo": "Sale ya",
+       "texto": "Publico hoy en Facebook e Instagram como reel, con este texto:\n\nA tu terreno ya le pusieron nombre: «el de la esquina». También «el baldío». Y «el que no se vende».\n\nEn cada sobremesa le inventan un apodo nuevo. El apodo se mueve con cada rumor.\n\nNinguno de esos nombres se lo puso tu terreno. Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener.\n\nPídele a tu terreno su Plan de Potencial Personalizado. El primer paso es una videollamada.\n\n+ la liga medible al Plan de Potencial (en FB en el texto, en IG en el primer comentario)."
+      },
+      {
+       "titulo": "Sale, pero cambia el texto",
+       "texto": "Dime en la nota qué cambiar del texto del post y lo publico con tu versión."
+      },
+      {
+       "titulo": "Todavía no",
+       "texto": "Lo dejo en la mesa sin publicar. Dime en la nota qué más cambiar del video."
+      }
+     ],
+     "video": "video/apodo/REEL_9x16.mp4?v=7sep-v3",
+     "origen": "v3 · tu palabra de hoy: «sale, pero espera la escena 3 animada» → ya está animada (LTX en tu Mac)"
+    },
+    {
+     "id": "comprador-g5-b1cf4e",
+     "titulo": "El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40",
+     "laminas": [
+      "laminas/comprador-g5/L1.png",
+      "laminas/comprador-g5/L2.png"
+     ],
+     "video": null,
+     "origen": "rehecha-de comprador-g4-54595f"
+    }
+   ],
+   "produccion": [
+    {
+     "pieza": "El terreno que dijo que sí · el cuento (47 s)",
+     "estado": "publicada",
+     "detalle": "FB + IG (reel) · copy «los dos bandos» · liga única fb/ig-2026-08-04 · primer comentario puesto",
+     "fecha": "2026-08-04",
+     "enlace": "https://www.instagram.com/reel/DboskQogVy1/"
+    },
+    {
+     "pieza": "El terreno que dijo que sí · carrusel",
+     "estado": "publicada",
+     "detalle": "FB + IG · liga medible activa · 4 interacciones IG al 30-jul",
+     "fecha": "2026-07-27"
+    },
+    {
+     "pieza": "La Servilleta · láminas",
+     "estado": "rehacer",
+     "detalle": "quitar «EDICIÓN POR AURUM ARQUITECTOS»",
+     "fecha": "2026-07-29"
+    }
+   ],
+   "bitacora": [
+    {
+     "hora": "17:13",
+     "evento": "Tu revisión de anoche recogida: L3 y L4 tachadas — rehechas con más gente y líneas cortas (tu nota del texto)"
+    },
+    {
+     "hora": "17:13",
+     "evento": "L1, L2, L5, L6, L7 sin marcar: vuelven HOY una única vez; lo que no se marque hoy, muere"
+    },
+    {
+     "hora": "17:13",
+     "evento": "El cuento de Pub 1 sigue en la cancha (FB+IG): primer día de medición orgánica"
+    },
+    {
+     "hora": "10:37",
+     "evento": "Propuesta montada: El Apodo del Terreno · L4 «el baldío», L5 «inventan», L9 «Personalizado» (9 láminas)"
+    },
+    {
+     "hora": "10:38",
+     "evento": "Guion montado: ¿Vendo o construyo? (9 láminas, texto para tu visto bueno)"
+    },
+    {
+     "hora": "10:50",
+     "evento": "Propuesta montada: Escena 4 · el pivote rehecho · ¿toma A, B o C? (recomiendo la B) (3 láminas)"
+    },
+    {
+     "hora": "19:27",
+     "evento": "Montada la lista «Publicaciones fáciles de explicar» (7 ideas) + el corte con el cierre corregido"
+    },
+    {
+     "hora": "21:47",
+     "evento": "Registro de peticiones al día: 16 en total, 1 en curso (la Sala cortada)"
+    },
+    {
+     "hora": "21:48",
+     "evento": "Montada la regla de la voz (¿lee la placa o la complementa?) para cerrarla en la Sala"
+    },
+    {
+     "hora": "22:39",
+     "evento": "Corregido: lo ya decidido deja de volver a la mesa (un eje se cierra con un sí)"
+    },
+    {
+     "hora": "10:48",
+     "evento": "Cerrado el ciclo: las decisiones ya viajan al día vivo; el relevo no vuelve a montar lo decidido"
+    },
+    {
+     "hora": "11:12",
+     "evento": "Motor afinado: respaldo espejo + reintentos + unión de marcas; el peor camino ya sirve la mesa correcta"
+    },
+    {
+     "hora": "11:54",
+     "evento": "Mesa reducida a 2 (solo lo nunca decidido) + corte de pantalla resuelto (centrado seguro) + iframe fresco"
+    },
+    {
+     "hora": "12:17",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste) (11 láminas)"
+    },
+    {
+     "hora": "13:13",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste) (11 láminas)"
+    },
+    {
+     "hora": "13:14",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (dirección + 9 láminas del guion que aprobaste) (11 láminas)"
+    },
+    {
+     "hora": "14:35",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · tira v2 — revisión Hormozi aplicada a tus 4 notas (11 láminas)"
+    },
+    {
+     "hora": "15:05",
+     "evento": "Propuesta montada: Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado) (4 láminas)"
+    },
+    {
+     "hora": "08:40",
+     "evento": "Cosechada tu revisión del 31-ago (se había quedado sin leer) · montadas 2 rehechas + dirección"
+    },
+    {
+     "hora": "13:01",
+     "evento": "Sala 2.1 en vivo: guardado visible, editar/reabrir, zoom, contexto, pedir /sala, 3 pantallas; puente de sesión al dominio nuevo"
+    },
+    {
+     "hora": "18:44",
+     "evento": "Sala 2.1: puente en ventana principal, Ampliar fuera de la imagen, y el borrador del aparato manda sobre el Sheet viejo (probado)"
+    },
+    {
+     "hora": "21:21",
+     "evento": "Propuesta montada: El comprador ya sabe · el guion (2 hojas) — ¿lo produzco? (2 láminas)"
+    },
+    {
+     "hora": "23:02",
+     "evento": "Propuesta montada: El comprador ya sabe · las 9 láminas del guion que aprobaste (9 láminas)"
+    },
+    {
+     "hora": "09:10",
+     "evento": "Propuesta montada: El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8) (4 láminas)"
+    },
+    {
+     "hora": "13:11",
+     "evento": "Video del Apodo rehecho: escena 3 sin choque de manos, con sonido"
+    },
+    {
+     "hora": "13:57",
+     "evento": "Propuesta montada: El comprador ya sabe · las 2 láminas que rehice con tus notas de hoy (4 y 7) (2 láminas)"
+    },
+    {
+     "hora": "14:57",
+     "evento": "Video del Apodo v2: sin máscara, escena 7 animada, escena 3 con foto nueva (acercamiento hasta que haya GPU)"
+    },
+    {
+     "hora": "17:40",
+     "evento": "Prueba de motores de video montada (escena 7 × Wan/Kling/LTX)"
+    },
+    {
+     "hora": "18:13",
+     "evento": "Propuesta montada: El comprador ya sabe · láminas 4, 7 y 8 reescritas con la fórmula de Hormozi (tus notas de hoy) (3 láminas)"
+    },
+    {
+     "hora": "22:00",
+     "evento": "Propuesta montada: El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40 (2 láminas)"
     }
    ]
   }
