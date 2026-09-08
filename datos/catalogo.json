@@ -470,45 +470,65 @@
     "huella": "e39435774fc7935c96d5e5c4351a262a",
     "src": "laminas/comprador-g1/L2.png",
     "grupo": "comprador-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1KYLsv2T8DvD9KMYQSjG7deyfniQR7ZS4",
+    "drive_prueba": "1d-fWOJzw2LLvBVDpcGBK5lvSGtd43eF1",
+    "liga": "https://drive.google.com/thumbnail?id=1d-fWOJzw2LLvBVDpcGBK5lvSGtd43eF1&sz=w1200"
    },
    {
     "r": 2,
     "huella": "04157044927e9d239ad81c730369589f",
     "src": "laminas/comprador-g2/L2.png",
     "grupo": "comprador-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1bmbummSd21JEieijC4_lmZ4XslMuv726",
+    "drive_prueba": "1ld-Lci7Mat2Pi3xFKakfbZieAn4IlCBG",
+    "liga": "https://drive.google.com/thumbnail?id=1ld-Lci7Mat2Pi3xFKakfbZieAn4IlCBG&sz=w1200"
    },
    {
     "r": 3,
     "huella": "d46eef57d25d6827d2be03838b660cf6",
     "src": "laminas/comprador-g3/L2.png",
     "grupo": "comprador-g3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1LH1z8TJ7zKBR4w7k-7MTZDH_cIjD1Yhz",
+    "drive_prueba": "10sQ-8fpryD4TesDBkLui7EHkuKUm4B-Y",
+    "liga": "https://drive.google.com/thumbnail?id=10sQ-8fpryD4TesDBkLui7EHkuKUm4B-Y&sz=w1200"
    },
    {
     "r": 4,
     "huella": "f115f6153f182917d9d4645f297eadd3",
     "src": "laminas/comprador-g4/L2.png",
     "grupo": "comprador-g4",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1rYv8sKyXeq9Oaw1q9Rf8MHAZs9hGLd2Y",
+    "drive_prueba": "18rYSvrEPWUGP0rzycBumeYNLUkza3tgo",
+    "liga": "https://drive.google.com/thumbnail?id=18rYSvrEPWUGP0rzycBumeYNLUkza3tgo&sz=w1200"
    },
    {
     "r": 5,
     "huella": "f2e5514351834fbd94d369cbabb03927",
     "src": "laminas/comprador-g5/L2.png",
     "grupo": "comprador-g5",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1S5PS_rFw2qZpD_up-5Ae6CSo6WXWHM_C",
+    "drive_prueba": "1cX6w_weSg9_1FWGV4ZmqXeX9L73t3AhX",
+    "liga": "https://drive.google.com/thumbnail?id=1cX6w_weSg9_1FWGV4ZmqXeX9L73t3AhX&sz=w1200"
    },
    {
     "r": 6,
     "huella": "dd53aeb7a19273df300dd37d844f67a8",
     "src": "laminas/comprador-guion/L2.png",
     "grupo": "comprador-guion",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1XJhV5FOuEkJNLtFfKodf7DfwbzwNBIPL",
+    "drive_prueba": "104n5touOdh83qcO_ipTTuejGgR3sOXos",
+    "liga": "https://drive.google.com/thumbnail?id=104n5touOdh83qcO_ipTTuejGgR3sOXos&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "11M_9BMsHM8a04Qrw5ajHddl_KrWRDC1k",
+  "revision_vigente": 6
  },
  "COMPRADOR-L03": {
   "serial": "COMPRADOR-L03",
@@ -521,24 +541,35 @@
     "huella": "f87a0e9f467064dfadfca496da13a655",
     "src": "laminas/comprador-g1/L3.png",
     "grupo": "comprador-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1YgukN971sxlpRAYMfO7AwrApuvlljIN-",
+    "drive_prueba": "16xwVgd6MsyTtFU5Ybim-YKxzBytgGv1G",
+    "liga": "https://drive.google.com/thumbnail?id=16xwVgd6MsyTtFU5Ybim-YKxzBytgGv1G&sz=w1200"
    },
    {
     "r": 2,
     "huella": "74fa58187151c51ff48136277d037d2f",
     "src": "laminas/comprador-g2/L3.png",
     "grupo": "comprador-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1-HFXtayAMKZCmSzPFxTYXA6QFffNGrYV",
+    "drive_prueba": "1iLBMh87qqg47tlD85lAn3WCRoa96tIjT",
+    "liga": "https://drive.google.com/thumbnail?id=1iLBMh87qqg47tlD85lAn3WCRoa96tIjT&sz=w1200"
    },
    {
     "r": 3,
     "huella": "b0a97a785e060e84113b731478398978",
     "src": "laminas/comprador-g4/L3.png",
     "grupo": "comprador-g4",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1O7XLzU2JetgyTiknCMjC33aHJof6Fhof",
+    "drive_prueba": "1S6fq9Nugek4ynd69ktiFG3uCc5qYIWbf",
+    "liga": "https://drive.google.com/thumbnail?id=1S6fq9Nugek4ynd69ktiFG3uCc5qYIWbf&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1ZEtEIlm_rktHLYEXjzfAuSWcLmvLuKJE",
+  "revision_vigente": 3
  },
  "COMPRADOR-L04": {
   "serial": "COMPRADOR-L04",
@@ -551,17 +582,25 @@
     "huella": "0c534cab30117f71d7b0b59e75182dc9",
     "src": "laminas/comprador-g1/L4.png",
     "grupo": "comprador-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1DwYYv9XHLwiQ6nGlCb4Tc3cy9gBq0fjY",
+    "drive_prueba": "1i171QtEpfsriNY-VFmY28ENijNbxsJMs",
+    "liga": "https://drive.google.com/thumbnail?id=1i171QtEpfsriNY-VFmY28ENijNbxsJMs&sz=w1200"
    },
    {
     "r": 2,
     "huella": "ba695c26b93644181f8daa8e8322588e",
     "src": "laminas/comprador-g2/L4.png",
     "grupo": "comprador-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1K3hn_-Jd4BlQzmTeCm9amdWNB-rZ2PSx",
+    "drive_prueba": "117IPWPKy6518fq8xSxsoyqjWAAkP9mBN",
+    "liga": "https://drive.google.com/thumbnail?id=117IPWPKy6518fq8xSxsoyqjWAAkP9mBN&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1gBvIvNXasCmeyC9XEl2U9gBlbGB_1q5j",
+  "revision_vigente": 2
  },
  "COMPRADOR-L05": {
   "serial": "COMPRADOR-L05",
@@ -574,10 +613,15 @@
     "huella": "e90902cc062e8ec5a6bbd989029c06e6",
     "src": "laminas/comprador-g1/L5.png",
     "grupo": "comprador-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1EFbTO3Bpw99Z9_bACcJIHLYoNDwIuY0K",
+    "drive_prueba": "1OYn9LgGHMQEE4ictzYF2Xm2sk5VpKVHr",
+    "liga": "https://drive.google.com/thumbnail?id=1OYn9LgGHMQEE4ictzYF2Xm2sk5VpKVHr&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1CfKV6lkXqyeWJMV2ez9IMmExpr3NUB7l",
+  "revision_vigente": 1
  },
  "COMPRADOR-L06": {
   "serial": "COMPRADOR-L06",
@@ -590,10 +634,15 @@
     "huella": "1ba93fba245afabd96a22e182144ff02",
     "src": "laminas/comprador-g1/L6.png",
     "grupo": "comprador-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "10Gm9giHkt03t96P0prjA1m_fyGR4NFKj",
+    "drive_prueba": "1QZiZScX9CEYwRFf0_cDv8HSqSDgj_l-R",
+    "liga": "https://drive.google.com/thumbnail?id=1QZiZScX9CEYwRFf0_cDv8HSqSDgj_l-R&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1LSy7I7N6Pe6SfOMIP6D1lCJbC5YBCltw",
+  "revision_vigente": 1
  },
  "COMPRADOR-L07": {
   "serial": "COMPRADOR-L07",
@@ -606,10 +655,15 @@
     "huella": "cfe24d3d0db63d8670714a4fd5f20964",
     "src": "laminas/comprador-g1/L7.png",
     "grupo": "comprador-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1MUComkzPyrl1i7doDzIo9jM7pUgYo4aj",
+    "drive_prueba": "1qDnr6rRht73U5rMGN-C6VpINHzRFLiCn",
+    "liga": "https://drive.google.com/thumbnail?id=1qDnr6rRht73U5rMGN-C6VpINHzRFLiCn&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1hbsR4op01xQjyrXX4jW0_DCRLryDc1LG",
+  "revision_vigente": 1
  },
  "COMPRADOR-L08": {
   "serial": "COMPRADOR-L08",
@@ -622,10 +676,15 @@
     "huella": "25de82e4eb3d262e56fd7747fbc0ccbd",
     "src": "laminas/comprador-g1/L8.png",
     "grupo": "comprador-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1Ba58Un5goC1cY1XCXNX1_HY73yvoT9Dh",
+    "drive_prueba": "1B4AHtPvEAMwyAtWtT3jxI53xDiBNPLu-",
+    "liga": "https://drive.google.com/thumbnail?id=1B4AHtPvEAMwyAtWtT3jxI53xDiBNPLu-&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1ifeXAzyC0Ez7MznrzgbS_04FxGvxoWPL",
+  "revision_vigente": 1
  },
  "COMPRADOR-L09": {
   "serial": "COMPRADOR-L09",
@@ -638,10 +697,15 @@
     "huella": "3dd845fe1f150b1b7be2765e75de4a67",
     "src": "laminas/comprador-g1/L9.png",
     "grupo": "comprador-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1UqghgRPfjrk8uHOAKE9XKWYaPh8euNid",
+    "drive_prueba": "1inCqaieOH-ZgJY3WsfdxCmObbvKvu75y",
+    "liga": "https://drive.google.com/thumbnail?id=1inCqaieOH-ZgJY3WsfdxCmObbvKvu75y&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1rIc1VlLojkGDrKMXLpzCk5L8rmIDn6vo",
+  "revision_vigente": 1
  },
  "PIVOTE-L01": {
   "serial": "PIVOTE-L01",
@@ -654,10 +718,15 @@
     "huella": "d5148b3427d6a5917e6437b00a63ee91",
     "src": "laminas/pivote-e4/L1.png",
     "grupo": "pivote-e4",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "10R8pGbhq2sfl3ocPMXC-sFwijoOfC7Ae",
+    "drive_prueba": "1RAhuteZYu2UPiZuUSCUfFw_JI3BZc6uE",
+    "liga": "https://drive.google.com/thumbnail?id=1RAhuteZYu2UPiZuUSCUfFw_JI3BZc6uE&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1-jlSJRwu4RkV8PL2ajn4it2j7wkYBUgt",
+  "revision_vigente": 1
  },
  "PIVOTE-L02": {
   "serial": "PIVOTE-L02",
@@ -670,10 +739,15 @@
     "huella": "244c2cefd7789c87d24eb1215508f903",
     "src": "laminas/pivote-e4/L2.png",
     "grupo": "pivote-e4",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1c6ZDtN4uo2AVG_uP3BVBjhADJNUSyykG",
+    "drive_prueba": "1JOPY12aKEmtoSaw9R_PpdUd6XtB7km3p",
+    "liga": "https://drive.google.com/thumbnail?id=1JOPY12aKEmtoSaw9R_PpdUd6XtB7km3p&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1tMwv5GIiUXF-HzELaViJQIEOGU2nKSdW",
+  "revision_vigente": 1
  },
  "PIVOTE-L03": {
   "serial": "PIVOTE-L03",
@@ -686,10 +760,15 @@
     "huella": "6ff9e166eecb7e63a32e4a4dbaf11ef0",
     "src": "laminas/pivote-e4/L3.png",
     "grupo": "pivote-e4",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1vQBbtvLSrOuT6eZmBNdgIOxDgw6IWqgG",
+    "drive_prueba": "1OVlQhp7Cb8x_MH-xSEahToBhrbgej2ik",
+    "liga": "https://drive.google.com/thumbnail?id=1OVlQhp7Cb8x_MH-xSEahToBhrbgej2ik&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1hKvGjSuCVztyk1Ifs13nTJ0GFZO1ViY3",
+  "revision_vigente": 1
  },
  "SERVILLETA-L01": {
   "serial": "SERVILLETA-L01",
@@ -706,24 +785,35 @@
      "laminas/servilleta-g3/L1.png",
      "laminas/servilleta-g4/L1.png",
      "laminas/servilleta-g5/L1.png"
-    ]
+    ],
+    "drive_original": "1iEJYIt69cOfnrsLFVDPy7p5yB8j1sbou",
+    "drive_prueba": "1HRhOOXGrGaofsJwUzABL7L24sV-TEcqQ",
+    "liga": "https://drive.google.com/thumbnail?id=1HRhOOXGrGaofsJwUzABL7L24sV-TEcqQ&sz=w1200"
    },
    {
     "r": 2,
     "huella": "9cee7e5b63aa47e185ce6c5da4f046f2",
     "src": "laminas/servilleta-hormozi/L1.png",
     "grupo": "servilleta-hormozi",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1l4ovXg2iiyIAYezlPlt8-ZnJXrDtSUvY",
+    "drive_prueba": "1JI-Ea68mlU5P_C_ZljqfReW4F_BxpuNw",
+    "liga": "https://drive.google.com/thumbnail?id=1JI-Ea68mlU5P_C_ZljqfReW4F_BxpuNw&sz=w1200"
    },
    {
     "r": 3,
     "huella": "004e9179927cb681c618baf6938976a8",
     "src": "laminas/servilleta-final/L1.png",
     "grupo": "servilleta-final",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1nYwLGzm9vyQ_zFdJMAiXQN1ZvuV9rCZQ",
+    "drive_prueba": "1CVnDhJ5LARFMFdx0ddPYWQjnfKtXe4Tv",
+    "liga": "https://drive.google.com/thumbnail?id=1CVnDhJ5LARFMFdx0ddPYWQjnfKtXe4Tv&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1r8UGjQL7TnpKUxvALD-hLcGoIUxJCJWm",
+  "revision_vigente": 3
  },
  "SERVILLETA-L02": {
   "serial": "SERVILLETA-L02",
@@ -738,7 +828,10 @@
     "grupo": "servilleta-g2",
     "tambien_en": [
      "laminas/servilleta-g3/L2.png"
-    ]
+    ],
+    "drive_original": "1oCDCp6MJrVxlHrkDbl1yGrzwsj1Lys_q",
+    "drive_prueba": "1zy6UI_vogoOj1ygLKy2J7C0uZwFrnYxh",
+    "liga": "https://drive.google.com/thumbnail?id=1zy6UI_vogoOj1ygLKy2J7C0uZwFrnYxh&sz=w1200"
    },
    {
     "r": 2,
@@ -747,24 +840,35 @@
     "grupo": "servilleta-g4",
     "tambien_en": [
      "laminas/servilleta-g5/L2.png"
-    ]
+    ],
+    "drive_original": "1S0rSsrCET-QnpIlU6DpC3nid1JGgaL4w",
+    "drive_prueba": "1105lcKvJAuuDVgdXGifeBT0Az3LK1Q5r",
+    "liga": "https://drive.google.com/thumbnail?id=1105lcKvJAuuDVgdXGifeBT0Az3LK1Q5r&sz=w1200"
    },
    {
     "r": 3,
     "huella": "0dc14ea00572b04164671b82589fadeb",
     "src": "laminas/servilleta-hormozi/L2.png",
     "grupo": "servilleta-hormozi",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1cA81AI5qOPbrO5FKGRQp5hX1AyuUmjv3",
+    "drive_prueba": "1NrMwkyG11NKHLUX4FmFUGI4trDaBXvXd",
+    "liga": "https://drive.google.com/thumbnail?id=1NrMwkyG11NKHLUX4FmFUGI4trDaBXvXd&sz=w1200"
    },
    {
     "r": 4,
     "huella": "7aaeee2ef9ea4b831268a478068aa7d4",
     "src": "laminas/servilleta-final/L2.png",
     "grupo": "servilleta-final",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1pKterLKYTqRHcUuJK4Y2sd8fOww4m16B",
+    "drive_prueba": "15kHHQKDNagj7CwjP19mUI1sdrLLmkrXD",
+    "liga": "https://drive.google.com/thumbnail?id=15kHHQKDNagj7CwjP19mUI1sdrLLmkrXD&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1WQJYOKW00Jr4U42g9WFsbJZrvJqyQAVL",
+  "revision_vigente": 4
  },
  "SERVILLETA-L03": {
   "serial": "SERVILLETA-L03",
@@ -779,31 +883,45 @@
     "grupo": "servilleta-g2",
     "tambien_en": [
      "laminas/servilleta-g3/L3.png"
-    ]
+    ],
+    "drive_original": "1lR9mwrrZyjEM_BzrQlN_v0d4C_1V2Spm",
+    "drive_prueba": "1JgoQnDkHmgOQ4-2KIxgwolm_Ar2LSLsz",
+    "liga": "https://drive.google.com/thumbnail?id=1JgoQnDkHmgOQ4-2KIxgwolm_Ar2LSLsz&sz=w1200"
    },
    {
     "r": 2,
     "huella": "6bb374fec6f4c58d9b1a91a072455cf0",
     "src": "laminas/servilleta-g4/L3.png",
     "grupo": "servilleta-g4",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1yVu5sNxHrSaaVZXzbCw_ISl8iJg2mTXS",
+    "drive_prueba": "1bnzazPQvjsRLfGiZEXc3at0evnN3ut4z",
+    "liga": "https://drive.google.com/thumbnail?id=1bnzazPQvjsRLfGiZEXc3at0evnN3ut4z&sz=w1200"
    },
    {
     "r": 3,
     "huella": "d42e1ee916a82299c8dc6bf297c77c7b",
     "src": "laminas/servilleta-g5/L3.png",
     "grupo": "servilleta-g5",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1ez5Uqcotl7jxnXZ8CEnIuh1BDjlV2lij",
+    "drive_prueba": "1QBnVontnKndjQWqSTTYyqiMSms1FNkpU",
+    "liga": "https://drive.google.com/thumbnail?id=1QBnVontnKndjQWqSTTYyqiMSms1FNkpU&sz=w1200"
    },
    {
     "r": 4,
     "huella": "d4c3ba338a75d55c9b598ab54a755267",
     "src": "laminas/servilleta-final/L3.png",
     "grupo": "servilleta-final",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1VXwOM8Ukq8iOYjmAMeNeEd22fQpizarh",
+    "drive_prueba": "1nthj54uwyhg67_MfMaA-wxbL-CjD7zlB",
+    "liga": "https://drive.google.com/thumbnail?id=1nthj54uwyhg67_MfMaA-wxbL-CjD7zlB&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1x49Ca4MQY8Su3IwiZVvne7cwCpS4Xxdt",
+  "revision_vigente": 4
  },
  "SERVILLETA-L04": {
   "serial": "SERVILLETA-L04",
@@ -816,14 +934,20 @@
     "huella": "d76f00d54af046d205068707f3ad76ec",
     "src": "laminas/servilleta-g2/L4.png",
     "grupo": "servilleta-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "17NQ7Mz5C99BTEebh6HTo4Z8DcnplMaXv",
+    "drive_prueba": "1EM15pGLF7Nhk3gwVKe99FzLjN5hXJvgV",
+    "liga": "https://drive.google.com/thumbnail?id=1EM15pGLF7Nhk3gwVKe99FzLjN5hXJvgV&sz=w1200"
    },
    {
     "r": 2,
     "huella": "9cb38736e6fc6415b95915783f35c51f",
     "src": "laminas/servilleta-g3/L4.png",
     "grupo": "servilleta-g3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "17y7L0gBvO3aNQMvR5MDMqz4dezS4QDlJ",
+    "drive_prueba": "1fEMNOA05zNGdoaGYrKH02h6SKSRL7kvH",
+    "liga": "https://drive.google.com/thumbnail?id=1fEMNOA05zNGdoaGYrKH02h6SKSRL7kvH&sz=w1200"
    },
    {
     "r": 3,
@@ -832,17 +956,25 @@
     "grupo": "servilleta-g4",
     "tambien_en": [
      "laminas/servilleta-g5/L4.png"
-    ]
+    ],
+    "drive_original": "14CTOXA6r5sSkF9SfTTfTWcQaLvYNrHPw",
+    "drive_prueba": "1YUmLJm_GxZ9IewkqpZSCk6__qr_TEZsx",
+    "liga": "https://drive.google.com/thumbnail?id=1YUmLJm_GxZ9IewkqpZSCk6__qr_TEZsx&sz=w1200"
    },
    {
     "r": 4,
     "huella": "d1ef9b8fa1e67d9aadb96b67576319b0",
     "src": "laminas/servilleta-final/L4.png",
     "grupo": "servilleta-final",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1DBkLzZTrlDOFRBuvy4esE9xwt-UK2gOJ",
+    "drive_prueba": "1jc8NblBGp39abbi3QWqHFSOm-hnYQ0XG",
+    "liga": "https://drive.google.com/thumbnail?id=1jc8NblBGp39abbi3QWqHFSOm-hnYQ0XG&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1enaBs1Uu1JltdrowMvjqZZGLBr88urGU",
+  "revision_vigente": 4
  },
  "SERVILLETA-L05": {
   "serial": "SERVILLETA-L05",
@@ -857,7 +989,10 @@
     "grupo": "servilleta-g2",
     "tambien_en": [
      "laminas/servilleta-g3/L5.png"
-    ]
+    ],
+    "drive_original": "1B4qaEx641eLdZJVR52IdALrkxtg11FY3",
+    "drive_prueba": "1dCZ0xLA3QQAUlJCL23hta-sks_3B9lXj",
+    "liga": "https://drive.google.com/thumbnail?id=1dCZ0xLA3QQAUlJCL23hta-sks_3B9lXj&sz=w1200"
    },
    {
     "r": 2,
@@ -866,17 +1001,25 @@
     "grupo": "servilleta-g4",
     "tambien_en": [
      "laminas/servilleta-g5/L5.png"
-    ]
+    ],
+    "drive_original": "1C7nW5mgUmBmQ3N8EifPAXmuCxG55x5a3",
+    "drive_prueba": "1Nx19ofiSN1UGX0t5Pj02lWH6Ju4tr6Dx",
+    "liga": "https://drive.google.com/thumbnail?id=1Nx19ofiSN1UGX0t5Pj02lWH6Ju4tr6Dx&sz=w1200"
    },
    {
     "r": 3,
     "huella": "16ca113d555f52a4f46c389081112218",
     "src": "laminas/servilleta-final/L5.png",
     "grupo": "servilleta-final",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1L9rJHi-uj1OX0Lp4grIHXab3OsD-Rq8U",
+    "drive_prueba": "17L8Tg9v1RPcutG3j7QG4tjh7I7rsArla",
+    "liga": "https://drive.google.com/thumbnail?id=17L8Tg9v1RPcutG3j7QG4tjh7I7rsArla&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "16775jePnI3BGGjoped0A8dL63x2CkhZj",
+  "revision_vigente": 3
  },
  "SERVILLETA-L06": {
   "serial": "SERVILLETA-L06",
@@ -889,14 +1032,20 @@
     "huella": "11ea5a374cc8a6c25ce1c66f27b698ff",
     "src": "laminas/servilleta-g2/L6.png",
     "grupo": "servilleta-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1l-iudo25qXckMlVCVXo31fATnjKxbZL_",
+    "drive_prueba": "13e10wUg3hLzXpvrrpyMh41TUinKqReQS",
+    "liga": "https://drive.google.com/thumbnail?id=13e10wUg3hLzXpvrrpyMh41TUinKqReQS&sz=w1200"
    },
    {
     "r": 2,
     "huella": "b84cea55baf401963e10a498f33ff2ad",
     "src": "laminas/servilleta-g3/L6.png",
     "grupo": "servilleta-g3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1n3-y2tB9LJYZxU1g2FkVHFySUo29mzjb",
+    "drive_prueba": "1eJ6rfrkCTgrmGtzi-pLAzr9-b_MJxSWv",
+    "liga": "https://drive.google.com/thumbnail?id=1eJ6rfrkCTgrmGtzi-pLAzr9-b_MJxSWv&sz=w1200"
    },
    {
     "r": 3,
@@ -905,17 +1054,25 @@
     "grupo": "servilleta-g4",
     "tambien_en": [
      "laminas/servilleta-g5/L6.png"
-    ]
+    ],
+    "drive_original": "1bZ-yD4vadZbSjC7NzcWjPzSQnFvnM4i-",
+    "drive_prueba": "1jdLXj6UZmwRh8XtNR_BiagGNblA2_Zes",
+    "liga": "https://drive.google.com/thumbnail?id=1jdLXj6UZmwRh8XtNR_BiagGNblA2_Zes&sz=w1200"
    },
    {
     "r": 4,
     "huella": "35319e474c4908428b38dd730ffe8c3f",
     "src": "laminas/servilleta-final/L6.png",
     "grupo": "servilleta-final",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1O8DnCpZ20GPQhUvhxvw0G30o4VDIoWo3",
+    "drive_prueba": "1nnFp4OumvcSfHy8qr0j1hGJmRQa2Liwe",
+    "liga": "https://drive.google.com/thumbnail?id=1nnFp4OumvcSfHy8qr0j1hGJmRQa2Liwe&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1hBgn0zqhpp1Oq1ibijH7FS910pyCoIT8",
+  "revision_vigente": 4
  },
  "SERVILLETA-L07": {
   "serial": "SERVILLETA-L07",
@@ -928,14 +1085,20 @@
     "huella": "5bc430ecb163deb1c29ed0d1cadb2fc7",
     "src": "laminas/servilleta-g2/L7.png",
     "grupo": "servilleta-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1R8N3aPYQJDz5iMaF_YgYjYY9KLUbT-Nl",
+    "drive_prueba": "1eqy7hy5BVtmWtEE5asLih0b4KJ8qhW87",
+    "liga": "https://drive.google.com/thumbnail?id=1eqy7hy5BVtmWtEE5asLih0b4KJ8qhW87&sz=w1200"
    },
    {
     "r": 2,
     "huella": "08401a9d3a1ec582e95babc9cc770e15",
     "src": "laminas/servilleta-g3/L7.png",
     "grupo": "servilleta-g3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1hDDgw0peaGddrSJwXC2LqcB0BPha9E2-",
+    "drive_prueba": "1__E6KqugJ1j2o_AGx0dlzRbiDnnAu_mu",
+    "liga": "https://drive.google.com/thumbnail?id=1__E6KqugJ1j2o_AGx0dlzRbiDnnAu_mu&sz=w1200"
    },
    {
     "r": 3,
@@ -944,17 +1107,25 @@
     "grupo": "servilleta-g4",
     "tambien_en": [
      "laminas/servilleta-g5/L7.png"
-    ]
+    ],
+    "drive_original": "1dKBo3PGxFEDjOYfBfd1QwfJHuLXUaWZA",
+    "drive_prueba": "1W4aivcc2Ydg7QhRWf61xBx-kM8QpC8Cr",
+    "liga": "https://drive.google.com/thumbnail?id=1W4aivcc2Ydg7QhRWf61xBx-kM8QpC8Cr&sz=w1200"
    },
    {
     "r": 4,
     "huella": "e887a5fe76ab41806e4f0c2503b450b8",
     "src": "laminas/servilleta-final/L7.png",
     "grupo": "servilleta-final",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1hpHDjNYXB1YsRI0wGYdk6GdAiICY4IsG",
+    "drive_prueba": "1l7COJcaCZ9xJgEl9OM1ZyDgkaQPDcCsq",
+    "liga": "https://drive.google.com/thumbnail?id=1l7COJcaCZ9xJgEl9OM1ZyDgkaQPDcCsq&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1ZEjY-BN1yfju8gvC8FVfV5i5KBUOR_YV",
+  "revision_vigente": 4
  },
  "SERVILLETA-L04B": {
   "serial": "SERVILLETA-L04B",
@@ -967,10 +1138,15 @@
     "huella": "7366700e0867799098dcf67f7cb63c4c",
     "src": "laminas/servilleta-g3/L4b.png",
     "grupo": "servilleta-g3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "11sWIEapRJtTtDogI05tkp35CfSEbueoO",
+    "drive_prueba": "15JiGwKONX3gk_8fT-lyTLdT9MJM4u5Vr",
+    "liga": "https://drive.google.com/thumbnail?id=15JiGwKONX3gk_8fT-lyTLdT9MJM4u5Vr&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1oj-91L_AM_1xRi-7etNG3ViVlch6VxSu",
+  "revision_vigente": 1
  },
  "SERVILLETA-L06B": {
   "serial": "SERVILLETA-L06B",
@@ -983,10 +1159,15 @@
     "huella": "56a4c1090b19f2089ca42d6fe8ed1081",
     "src": "laminas/servilleta-g3/L6b.png",
     "grupo": "servilleta-g3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1GGl3bkwU7LhNcGYYU5lKKKtvFJkF7xD1",
+    "drive_prueba": "1_MWUllrwys1RyvjbEZEttR41pr64_TZg",
+    "liga": "https://drive.google.com/thumbnail?id=1_MWUllrwys1RyvjbEZEttR41pr64_TZg&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1rw3ROYk1fBGnnK4MBg7JjVdiu9qHKy7y",
+  "revision_vigente": 1
  },
  "SERVILLETA-L07B": {
   "serial": "SERVILLETA-L07B",
@@ -999,10 +1180,15 @@
     "huella": "81dc49980a88cb2921b741f99ab8b9ab",
     "src": "laminas/servilleta-g3/L7b.png",
     "grupo": "servilleta-g3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1MT5H8OB09wZYhHizopjk5mHd02sMH9dS",
+    "drive_prueba": "1PaKNAx-iTwWa8mACSlAXNjgPUq98ZveO",
+    "liga": "https://drive.google.com/thumbnail?id=1PaKNAx-iTwWa8mACSlAXNjgPUq98ZveO&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1yk3YOiXSaLdDqfSQvD3ZFvXoGJvELlaZ",
+  "revision_vigente": 1
  },
  "TERRENO-L01": {
   "serial": "TERRENO-L01",
@@ -1015,10 +1201,15 @@
     "huella": "bdb11b8eda1b862c603dea295cccfb75",
     "src": "laminas/pub1/L1.png",
     "grupo": "pub1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1MtF05i5VtTLiccZ8oVcroqmuAW24TvCu",
+    "drive_prueba": "1VQKKfofd7i5PAkNBELGWD0fofStuIffV",
+    "liga": "https://drive.google.com/thumbnail?id=1VQKKfofd7i5PAkNBELGWD0fofStuIffV&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1hYwIoP-qDTPzFnrsAb2TaXC1EmjNdVU0",
+  "revision_vigente": 1
  },
  "TERRENO-L02": {
   "serial": "TERRENO-L02",
@@ -1031,10 +1222,15 @@
     "huella": "9d5b413ad1f3e1ecfa7a00af3b56773f",
     "src": "laminas/pub1/L2.png",
     "grupo": "pub1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1nW6byMSnNKZ461iclCj2OKMoSACQwYyJ",
+    "drive_prueba": "12MFMig1Gj1NXZbstnHDjW4vPwmyfwxm1",
+    "liga": "https://drive.google.com/thumbnail?id=12MFMig1Gj1NXZbstnHDjW4vPwmyfwxm1&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1reB46yLhFTQ5qI2FbcnkKCgXzLSTes_G",
+  "revision_vigente": 1
  },
  "TERRENO-L03": {
   "serial": "TERRENO-L03",
@@ -1047,10 +1243,15 @@
     "huella": "ede8bfecbd5c82244b5ea7eb56fe8ae5",
     "src": "laminas/pub1/L3.png",
     "grupo": "pub1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1Ud_H6iJhjiEzfzdZxlx_oKxakGc2o5QE",
+    "drive_prueba": "1JOaAPvYJP0O_jy6pbGU-tNfWuYlXFpne",
+    "liga": "https://drive.google.com/thumbnail?id=1JOaAPvYJP0O_jy6pbGU-tNfWuYlXFpne&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1C3DY73fTAn4hP9SakDr-tCt6NwFZIjdO",
+  "revision_vigente": 1
  },
  "TERRENO-L04": {
   "serial": "TERRENO-L04",
@@ -1063,10 +1264,15 @@
     "huella": "78b8be275f5936c89e90a126a295fec3",
     "src": "laminas/pub1/L4.png",
     "grupo": "pub1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "17YcvmZ-3lvzXktrdA6FFMewRB8f1StGh",
+    "drive_prueba": "1VXIUuwKn9OMlLtZwXHpPUhJXJd6Vb_qq",
+    "liga": "https://drive.google.com/thumbnail?id=1VXIUuwKn9OMlLtZwXHpPUhJXJd6Vb_qq&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1O9uV6OfVJlHg6ScPcoeM207UxmHCrHoX",
+  "revision_vigente": 1
  },
  "TERRENO-L05": {
   "serial": "TERRENO-L05",
@@ -1079,10 +1285,15 @@
     "huella": "e51a7b6c3123f515347c5aeee38de89d",
     "src": "laminas/pub1/L5.png",
     "grupo": "pub1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1alVeJpLNeW3P4RGQNLOPQ9r2BgiS8vOx",
+    "drive_prueba": "1VcUPob0tBDfAjz_Yo4cDUio1WXu0wfx5",
+    "liga": "https://drive.google.com/thumbnail?id=1VcUPob0tBDfAjz_Yo4cDUio1WXu0wfx5&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1RgZllstBljpbr2PHL0FgoLD0DmigtYiK",
+  "revision_vigente": 1
  },
  "TERRENO-L06": {
   "serial": "TERRENO-L06",
@@ -1095,10 +1306,15 @@
     "huella": "a6dede680dc25b70c259f6f1d3818240",
     "src": "laminas/pub1/L6.png",
     "grupo": "pub1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "14zXZNQK1Scnes5-4cxuPWsvVa8G-rJd_",
+    "drive_prueba": "1B1pn7QZNG8lf6IWQsdlWaUonvd9kN0ok",
+    "liga": "https://drive.google.com/thumbnail?id=1B1pn7QZNG8lf6IWQsdlWaUonvd9kN0ok&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1odXNDQlCeiwxoG0MsuE4PWplP2YbTiSA",
+  "revision_vigente": 1
  },
  "TERRENO-L07": {
   "serial": "TERRENO-L07",
@@ -1111,10 +1327,15 @@
     "huella": "9cf2ea4edaa1311ed6d6f1d5ab335b5a",
     "src": "laminas/pub1/L7.png",
     "grupo": "pub1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1gr24izUE4k0NxRTdXeGFHiRQtWe7AbeZ",
+    "drive_prueba": "1dNNxQ6ZJK-8xi0oj4nKCt4kqR5euswI1",
+    "liga": "https://drive.google.com/thumbnail?id=1dNNxQ6ZJK-8xi0oj4nKCt4kqR5euswI1&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1HvC04Weo6r7CJDRe4boRnRmsoWCC_J_t",
+  "revision_vigente": 1
  },
  "VENDO-L01": {
   "serial": "VENDO-L01",
@@ -1127,31 +1348,45 @@
     "huella": "e0bc03d132eedc29efc73a37792f299e",
     "src": "laminas/vendo-2rehechas-v3/L1.png",
     "grupo": "vendo-2rehechas-v3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1mZQ8lGHDzC6gUjbb39W5WQJvg4CzCD31",
+    "drive_prueba": "1awtI0uH09dMQkawX1I_K0opMMgPlXzVz",
+    "liga": "https://drive.google.com/thumbnail?id=1awtI0uH09dMQkawX1I_K0opMMgPlXzVz&sz=w1200"
    },
    {
     "r": 2,
     "huella": "9c884233794ec5282091692ce022b2c6",
     "src": "laminas/vendo-4rehechas/L1.png",
     "grupo": "vendo-4rehechas",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1Ieye4PHanU9vMArNhzXK-QNIxhEMkBIG",
+    "drive_prueba": "151GP4_YvUBImnbVWubBh9uaNxh-ruJKa",
+    "liga": "https://drive.google.com/thumbnail?id=151GP4_YvUBImnbVWubBh9uaNxh-ruJKa&sz=w1200"
    },
    {
     "r": 3,
     "huella": "d6d2473b6cae2d0e58a9ed3871950d98",
     "src": "laminas/vendo-construyo-g1/L1.png",
     "grupo": "vendo-construyo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1a6d0-uVzkTAzBQAn53Fn4S59y-XPL-tj",
+    "drive_prueba": "1JMAXvlpYm4JVLaOaiquW0xTc_sfW3qmt",
+    "liga": "https://drive.google.com/thumbnail?id=1JMAXvlpYm4JVLaOaiquW0xTc_sfW3qmt&sz=w1200"
    },
    {
     "r": 4,
     "huella": "38f58625dbfaad6112dda2081b073dc7",
     "src": "laminas/vendo-construyo-g2/L1.png",
     "grupo": "vendo-construyo-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1TLpErou0S97AkGiyprX_MqAos10AFG0l",
+    "drive_prueba": "1G7uPEoXRvMpqKzuWW797Bz4T17_aMGf8",
+    "liga": "https://drive.google.com/thumbnail?id=1G7uPEoXRvMpqKzuWW797Bz4T17_aMGf8&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1b4pOpFJ5lDAtp-Cr6ufM4FHC4cZmbnch",
+  "revision_vigente": 4
  },
  "VENDO-L02": {
   "serial": "VENDO-L02",
@@ -1164,31 +1399,45 @@
     "huella": "14060be965809d2581af3840c907c8b7",
     "src": "laminas/vendo-2rehechas-v3/L2.png",
     "grupo": "vendo-2rehechas-v3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1Z3XYUPwE9jo4RmwMQNVFQ6co8pvflOKy",
+    "drive_prueba": "1ZMixJI5RwireUQK6AZscJ9VmLpoqZV8S",
+    "liga": "https://drive.google.com/thumbnail?id=1ZMixJI5RwireUQK6AZscJ9VmLpoqZV8S&sz=w1200"
    },
    {
     "r": 2,
     "huella": "9a0a607b36fe00eb11b9e2f4512d3118",
     "src": "laminas/vendo-4rehechas/L2.png",
     "grupo": "vendo-4rehechas",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1qNCfu_ikp-XWglX3LtYn2DYlf-SrmK1i",
+    "drive_prueba": "1By8jvmybuAayrNCYPMwk6ATexzoySXNf",
+    "liga": "https://drive.google.com/thumbnail?id=1By8jvmybuAayrNCYPMwk6ATexzoySXNf&sz=w1200"
    },
    {
     "r": 3,
     "huella": "39287709121bb680c4814c3bdd8243e1",
     "src": "laminas/vendo-construyo-g1/L2.png",
     "grupo": "vendo-construyo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "18YwDtszOxph7zx4NJzMp9aXzuQVVuZ7p",
+    "drive_prueba": "1XI-mTwSOzngeDA-Jm94O_t0AQeCf85vt",
+    "liga": "https://drive.google.com/thumbnail?id=1XI-mTwSOzngeDA-Jm94O_t0AQeCf85vt&sz=w1200"
    },
    {
     "r": 4,
     "huella": "a5f9e4aa8d4e83162673e5cddad0b869",
     "src": "laminas/vendo-construyo-g2/L2.png",
     "grupo": "vendo-construyo-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1bVm0siZuEH3nfVoY54HUdXA4pp-fyZ7K",
+    "drive_prueba": "1RViPOTT8GAmJzOoM6mA9md7SocHxWKr-",
+    "liga": "https://drive.google.com/thumbnail?id=1RViPOTT8GAmJzOoM6mA9md7SocHxWKr-&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1duaARASkrVnJ9ekH8rHr6UJeYgJZpdrt",
+  "revision_vigente": 4
  },
  "VENDO-L03": {
   "serial": "VENDO-L03",
@@ -1201,14 +1450,20 @@
     "huella": "04ea063968be6b8fe35f4b97f8c28e5c",
     "src": "laminas/vendo-2rehechas-v3/L3.png",
     "grupo": "vendo-2rehechas-v3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "16NOKYJd19lAY2_dMpQZk6XvIDfXC7l_I",
+    "drive_prueba": "1PgT0nnEzD3LwuQov2qWqaUdb-LHPToaH",
+    "liga": "https://drive.google.com/thumbnail?id=1PgT0nnEzD3LwuQov2qWqaUdb-LHPToaH&sz=w1200"
    },
    {
     "r": 2,
     "huella": "7e2fdbf60255ba30bb94469afbdad49f",
     "src": "laminas/vendo-4rehechas/L3.png",
     "grupo": "vendo-4rehechas",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1W5Mf0dbQaSJy9I3VPtPvYLENb6paQpe5",
+    "drive_prueba": "1INesdXz95eHG57alqXhU4HXEOINiKw3w",
+    "liga": "https://drive.google.com/thumbnail?id=1INesdXz95eHG57alqXhU4HXEOINiKw3w&sz=w1200"
    },
    {
     "r": 3,
@@ -1217,10 +1472,15 @@
     "grupo": "vendo-construyo-g1",
     "tambien_en": [
      "laminas/vendo-construyo-g2/L3.png"
-    ]
+    ],
+    "drive_original": "1qt8t0xLDd6KI00PLvOOSTR1vFgWDAqLZ",
+    "drive_prueba": "1YyDQLSXkKzarkPrEHI3IoGwolJYTXBmV",
+    "liga": "https://drive.google.com/thumbnail?id=1YyDQLSXkKzarkPrEHI3IoGwolJYTXBmV&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "14JiEwVaLfSyFZIkQ2mRCRgznPS8JRSo4",
+  "revision_vigente": 3
  },
  "VENDO-L04": {
   "serial": "VENDO-L04",
@@ -1233,14 +1493,20 @@
     "huella": "1ebb85a817d2bc1acebf1d846ae9c802",
     "src": "laminas/vendo-2rehechas-v3/L4.png",
     "grupo": "vendo-2rehechas-v3",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1Z2cfUQt9na_R0chZ3LwcA0Vz2S7w2xey",
+    "drive_prueba": "1nY5yp34WHUGVUdDhnwX8NTFx1_r1t5cK",
+    "liga": "https://drive.google.com/thumbnail?id=1nY5yp34WHUGVUdDhnwX8NTFx1_r1t5cK&sz=w1200"
    },
    {
     "r": 2,
     "huella": "198dfa29edbe95a35b7d94ae5020eb6e",
     "src": "laminas/vendo-4rehechas/L4.png",
     "grupo": "vendo-4rehechas",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1xLI9S-0czC0FmfLVwJHxT4uRGIPJ3pTU",
+    "drive_prueba": "1k8wVlGFfsDfr-o_d2LxDxKAALRPFpgN2",
+    "liga": "https://drive.google.com/thumbnail?id=1k8wVlGFfsDfr-o_d2LxDxKAALRPFpgN2&sz=w1200"
    },
    {
     "r": 3,
@@ -1249,10 +1515,15 @@
     "grupo": "vendo-construyo-g1",
     "tambien_en": [
      "laminas/vendo-construyo-g2/L4.png"
-    ]
+    ],
+    "drive_original": "1nLL367vTbVJIOrWifP-a-mJL-mCI6i3z",
+    "drive_prueba": "14RiXHSx_Ahk518JPy_boQK0McfEoG7TS",
+    "liga": "https://drive.google.com/thumbnail?id=14RiXHSx_Ahk518JPy_boQK0McfEoG7TS&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1j3HZyhdo0mI17zXXPVJ3Dzf7PzhuqFvr",
+  "revision_vigente": 3
  },
  "VENDO-L10": {
   "serial": "VENDO-L10",
@@ -1311,17 +1582,25 @@
     "huella": "0817f6f7701362ad5d0f77987a427630",
     "src": "laminas/vendo-construyo-g1/L5.png",
     "grupo": "vendo-construyo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "10_vA1sdx0AaqP1IALkwUYI7Yly3YK1F-",
+    "drive_prueba": "1hyBAEElXPfSSN5s_DVH6npEWuta_7DXr",
+    "liga": "https://drive.google.com/thumbnail?id=1hyBAEElXPfSSN5s_DVH6npEWuta_7DXr&sz=w1200"
    },
    {
     "r": 2,
     "huella": "9c884233794ec5282091692ce022b2c6",
     "src": "laminas/vendo-construyo-g2/L5.png",
     "grupo": "vendo-construyo-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1TAFQ_2mZaGkK1W7Igk0CX5kFK5l3Bri0",
+    "drive_prueba": "1n1p-JPYX6angANbwLocaw5DVf0A7trDe",
+    "liga": "https://drive.google.com/thumbnail?id=1n1p-JPYX6angANbwLocaw5DVf0A7trDe&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1S-CxVLoMm_Jlwh3zjeHhu7w2oSXHyb0n",
+  "revision_vigente": 2
  },
  "VENDO-L06": {
   "serial": "VENDO-L06",
