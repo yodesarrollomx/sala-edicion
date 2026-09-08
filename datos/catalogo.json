@@ -1536,17 +1536,25 @@
     "huella": "13c034437252ced35bcc93b54e7bcc3c",
     "src": "laminas/vendo-construyo-g1/L10.png",
     "grupo": "vendo-construyo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1N5has7DtKCDhXgiLcIUFdNwYPHpwJiEH",
+    "drive_prueba": "1gqcOsL4Wc-9Xj8-rPSui2dQ2bs39t4Eb",
+    "liga": "https://drive.google.com/thumbnail?id=1gqcOsL4Wc-9Xj8-rPSui2dQ2bs39t4Eb&sz=w1200"
    },
    {
     "r": 2,
     "huella": "7e2fdbf60255ba30bb94469afbdad49f",
     "src": "laminas/vendo-construyo-g2/L10.png",
     "grupo": "vendo-construyo-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1W7FKHVNnNGVwVwN-nspzfh_-SC0j1Gar",
+    "drive_prueba": "1Rd649-PyliXadR_16OsI7yGroSitINw8",
+    "liga": "https://drive.google.com/thumbnail?id=1Rd649-PyliXadR_16OsI7yGroSitINw8&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1nt5zwEsj_hneH9v6O_VBIxYRmx7LWEgO",
+  "revision_vigente": 2
  },
  "VENDO-L11": {
   "serial": "VENDO-L11",
@@ -1559,17 +1567,25 @@
     "huella": "1e7baab8eb189799eefcd1a30c80a400",
     "src": "laminas/vendo-construyo-g1/L11.png",
     "grupo": "vendo-construyo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "14oXFa_92MVP4tlmtWgwMNkKRXJn88rp2",
+    "drive_prueba": "1aeBM4emWih_Y7n2TEExX3_dbt57REwx7",
+    "liga": "https://drive.google.com/thumbnail?id=1aeBM4emWih_Y7n2TEExX3_dbt57REwx7&sz=w1200"
    },
    {
     "r": 2,
     "huella": "198dfa29edbe95a35b7d94ae5020eb6e",
     "src": "laminas/vendo-construyo-g2/L11.png",
     "grupo": "vendo-construyo-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1AuE3WoztWyObctpxsqIxUNUgNi8lfc_P",
+    "drive_prueba": "1aLIxNP_C2W8Fg3CBuoxCkKazHCjg_oHn",
+    "liga": "https://drive.google.com/thumbnail?id=1aLIxNP_C2W8Fg3CBuoxCkKazHCjg_oHn&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1kj1zTAbo2lq17CVxKxIhltzp0vLNul1R",
+  "revision_vigente": 2
  },
  "VENDO-L05": {
   "serial": "VENDO-L05",
@@ -1613,17 +1629,25 @@
     "huella": "8e6298c96b5b90f0057886f6eb6351b8",
     "src": "laminas/vendo-construyo-g1/L6.png",
     "grupo": "vendo-construyo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1dlH7QUWYiNv_QbHrB8lTOJ30zZBN_Iw_",
+    "drive_prueba": "1LbHzS1fo-I_nMawl46jh1icGwUpyCTRp",
+    "liga": "https://drive.google.com/thumbnail?id=1LbHzS1fo-I_nMawl46jh1icGwUpyCTRp&sz=w1200"
    },
    {
     "r": 2,
     "huella": "0817f6f7701362ad5d0f77987a427630",
     "src": "laminas/vendo-construyo-g2/L6.png",
     "grupo": "vendo-construyo-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "10m1jCD5oLwa2ZNYSeB7UgWdyXXZ5mnMM",
+    "drive_prueba": "17rTVZk27sQ4OfRe6gyiwuUoyCqUM9IzU",
+    "liga": "https://drive.google.com/thumbnail?id=17rTVZk27sQ4OfRe6gyiwuUoyCqUM9IzU&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1DTjezYgxmsK42Z4R8CHK6ZQbqAzChq2p",
+  "revision_vigente": 2
  },
  "VENDO-L07": {
   "serial": "VENDO-L07",
@@ -1636,17 +1660,25 @@
     "huella": "5d7c3bbc3a68b6cc6e236838d7633337",
     "src": "laminas/vendo-construyo-g1/L7.png",
     "grupo": "vendo-construyo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1GFarOPAgxAjYfzw9_YdQ2nbuXappgGIC",
+    "drive_prueba": "1eZcHnA9WFjcK3Lnieqvx2cb_3VcmP6W3",
+    "liga": "https://drive.google.com/thumbnail?id=1eZcHnA9WFjcK3Lnieqvx2cb_3VcmP6W3&sz=w1200"
    },
    {
     "r": 2,
     "huella": "8e6298c96b5b90f0057886f6eb6351b8",
     "src": "laminas/vendo-construyo-g2/L7.png",
     "grupo": "vendo-construyo-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1iX21ItItKgEIUUFvDaQqJ5yORr2rh0TF",
+    "drive_prueba": "1HAAAqowdU2btu6upB3qDq9TSM7wyEIds",
+    "liga": "https://drive.google.com/thumbnail?id=1HAAAqowdU2btu6upB3qDq9TSM7wyEIds&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "15471T7nzkXwuOzh6mXCZVZlTRMGlb1w-",
+  "revision_vigente": 2
  },
  "VENDO-L08": {
   "serial": "VENDO-L08",
@@ -1661,10 +1693,15 @@
     "grupo": "vendo-construyo-g1",
     "tambien_en": [
      "laminas/vendo-construyo-g2/L8.png"
-    ]
+    ],
+    "drive_original": "1hJYHj1ySDuVFe7KjaAjwIZ35x0rHcVMP",
+    "drive_prueba": "1niA9PDO5omSu8GJr1OdMPGKE_TlEeRHe",
+    "liga": "https://drive.google.com/thumbnail?id=1niA9PDO5omSu8GJr1OdMPGKE_TlEeRHe&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "1fdCxQIHhzjiTZDwdwxSfbn4KDN32JMnP",
+  "revision_vigente": 1
  },
  "VENDO-L09": {
   "serial": "VENDO-L09",
@@ -1677,16 +1714,24 @@
     "huella": "e19e39d2f949ad8481acd5dea7ba2e67",
     "src": "laminas/vendo-construyo-g1/L9.png",
     "grupo": "vendo-construyo-g1",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1_okn5E3ifA_gSfM5WUw08AFr7-BqRrMN",
+    "drive_prueba": "1d5DyLYTZQM--NhtohZpB9N82ALomNFLI",
+    "liga": "https://drive.google.com/thumbnail?id=1d5DyLYTZQM--NhtohZpB9N82ALomNFLI&sz=w1200"
    },
    {
     "r": 2,
     "huella": "9a0a607b36fe00eb11b9e2f4512d3118",
     "src": "laminas/vendo-construyo-g2/L9.png",
     "grupo": "vendo-construyo-g2",
-    "tambien_en": []
+    "tambien_en": [],
+    "drive_original": "1D-1qzps9h9eCCSpONuo5bW-IfK4-v60s",
+    "drive_prueba": "1uzVVPsKIHIvhlLgejvQQ2_qb4o7DbgyM",
+    "liga": "https://drive.google.com/thumbnail?id=1uzVVPsKIHIvhlLgejvQQ2_qb4o7DbgyM&sz=w1200"
    }
   ],
-  "estado": "en revisión"
+  "estado": "en revisión",
+  "drive_carpeta": "10arNbN1C6CPWic4pttSKemeMw0h3cmIN",
+  "revision_vigente": 2
  }
 }
