@@ -199,6 +199,11 @@ html.embed .app{padding-top:8px}
   body.compacta .otra-voz.version::after{content:'▸ nota';color:var(--oro);font-size:11px;cursor:pointer} body.compacta .otra-voz.version.abierta::after{content:'▾'} }
 .otra-voz.version .fechas{display:block;font-size:12px;opacity:.8} .ver-vers{margin-top:6px;background:none;border:1px solid var(--oro);color:var(--oro);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
 .vers{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:10px} @media(max-width:640px){.vers{grid-template-columns:1fr 1fr}} .ver{text-align:center;font-size:12px} .ver img{width:100%;border-radius:10px;background:#141210;display:block;margin-bottom:6px} .ver b{display:block} .ver small{display:block;color:var(--guia)} .ver em{display:block;margin-top:4px;font-style:normal;color:var(--gris)} .ver em.mal{color:var(--no);font-weight:700} .ver em.bien{color:var(--si)} .ver.igual img{outline:2px solid var(--no)}
+/* 8-sep: el serial sobre la lámina — arriba a la izquierda, discreto y SIEMPRE visible.
+   En el pie de la carta quedaba a 926 px: fuera de pantalla. */
+.serie{position:absolute;top:12px;left:12px;z-index:3;border-radius:999px;padding:5px 11px;
+  font-size:11.5px;font-weight:600;letter-spacing:.03em;font-variant-numeric:tabular-nums;
+  background:rgba(20,18,14,.78);color:#dcbc7e;backdrop-filter:blur(4px);pointer-events:none}
 /* 8-sep: el serial de la lámina, para no volver a dudar si es la r1 o la r5 */
 .serial{color:#dcbc7e;letter-spacing:.04em;font-variant-numeric:tabular-nums}
 p.fechas{font-size:12.5px;color:var(--guia)} button.liga{background:none;border:0;color:var(--oro);text-decoration:underline;cursor:pointer;font:inherit;font-size:12.5px;padding:0}
@@ -498,7 +503,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'editor';
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='07c7b6419b';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='cfba171678';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
@@ -1056,6 +1061,7 @@ function pintarCartas(){
       const src=x.p.laminas[x.i];
       el.innerHTML=`${versionHTML(x)}${otrosHTML(x)}<div class="lienzo">
           <div class="cargando">cargando lámina…</div>
+          ${serialDe(src)?`<span class="serie">${esc(serialDe(src))}</span>`:``}
           <span class="sello si" data-si>SÍ</span><span class="sello no" data-no>NO</span>
           <img alt="${numeroReal(x)}" draggable="false">
           <button class="num-movil" type="button">${numeroReal(x)} · ampliar</button>
