@@ -548,7 +548,9 @@ window.addEventListener('popstate',()=>{ if(CAPAS.length){ const c=CAPAS[CAPAS.l
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&CAPAS.length){ e.preventDefault(); cerrarCapa(CAPAS[CAPAS.length-1].id) } });
 
 /* ══ datos (idéntico contrato: recurso=dia, respaldo en datos/manifiesto.json) ══ */
+let _ultimoErrorLlave='';
 async function traer(f,intentos,tope,sinRespaldo){
+  _ultimoErrorLlave='';
   if(ENTRADO()){
     const N=intentos||3;
     for(let i=0;i<N;i++){
@@ -560,7 +562,11 @@ async function traer(f,intentos,tope,sinRespaldo){
         if(!r.ok||!j) throw new Error('sin JSON ('+r.status+')');
         if(j.error) throw new Error(j.error);
         return j;
-      }catch(e){ if(i<N-1) await new Promise(res=>setTimeout(res,700*(i+1))) }
+      }catch(e){ const m=String(e&&e.message||e);
+        // 8-sep: una llave que el Sheet rechaza NO es «no hay señal». Antes se reintentaba en silencio y la
+        // Sala se quedaba en «Abriendo la mesa…» para siempre. Ahora se dice y se ofrece entrar otra vez.
+        if(/clave|credencial|no reconoc/i.test(m)){ _ultimoErrorLlave=m; break }
+        if(i<N-1) await new Promise(res=>setTimeout(res,700*(i+1))) }
     }
   }
   if(sinRespaldo) throw new Error('sin datos de ese día');   // el respaldo es de HOY: no sirve de sustituto
@@ -1526,10 +1532,20 @@ function aplicarDia(d){
   if(d&&!d._respaldo) _reintentando=false;
   const firma=x=>(x.propuestas||[]).map(p=>p.id+':'+((p.laminas||[]).length||(p.opciones||[]).length)).join('|');
   if(_pintado&&d&&d._respaldo){ avisarRespaldo(); return }   // con mesa armada, una copia de respaldo no la reconstruye bajo los pies del editor
+  if(!_pintado&&d&&d._respaldo&&ENTRADO()&&_ultimoErrorLlave&&!VISTA_DOC){ pintarLlaveMala(_ultimoErrorLlave); return }
   if(!_pintado&&d&&d._respaldo&&ENTRADO()&&!VISTA_DOC){ pintarEsperandoSheet(); return }   // 7-sep: con sesión NUNCA se abre una mesa de copia: decidir sobre ella borraba marcas
   if(_pintado&&D&&DECIDE()&&cuentas().hoy>0){ if(firma(D)!==firma(d)){ D.propuestas=d.propuestas.map(p=>{const v=(D.propuestas||[]).find(q=>q.id===p.id); return v||p}); }
     D.decisiones=d.decisiones; D._respaldo=false; estadoInicial(); $('#subt').textContent=pasos[idx]&&piezaDe(pasos[idx])?`Publicación: ${piezaDe(pasos[idx])}`:''; }
   else { try{ montar(d); _pintado=true }catch(e){ console.error('montar',e); $('#titulo').textContent='No pude armar la mesa'; $('#subt').textContent='Recarga la Sala. Detalle: '+String(e&&e.message||e).slice(0,90); pintarEstado('sin','Error al abrir'); } }
+}
+function pintarLlaveMala(msg){
+  clearInterval(_tFrases);
+  $('#titulo').textContent='El Sheet no reconoció tu entrada';
+  $('#subt').textContent='No es la red: es la credencial. Nada de lo que marques se perdería, pero primero hay que entrar bien.';
+  $('#zona').innerHTML=`<div class="carta"><div class="lienzo"><div class="cargando"><span>Dijo: «${esc(msg)}»<br><br>
+    <button class="listo" id="btnEntrarYa" type="button">Entrar otra vez</button></span></div></div></div>`;
+  $('#mandoWrap').hidden=true; pintarEstado('rechazado','Credencial no válida');
+  const b=$('#btnEntrarYa'); if(b) b.onclick=abrirEntrar;
 }
 function pintarEsperandoSheet(){
   clearInterval(_tFrases);
