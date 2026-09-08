@@ -132,3 +132,30 @@ Después: catálogo reconstruido, archivo de Drive rehecho y registro del Sheet 
 |---|---|---|
 | **rompe** | La guardia bloqueaba **después** de copiar las láminas y escribir el manifiesto; como `empujar()` hace `git add -A`, la basura de una pieza rechazada viajaba en el push de otra | `_deshacer(slug, pid)`: si algo bloquea, se borran los archivos y se revierte el manifiesto |
 | molesta | Con `SALA_FORZAR=1` el catálogo se saltaba en silencio y la pieza salía sin serial | ahora lo grita: «esta pieza va a la mesa SIN SERIAL» |
+
+---
+
+# Vueltas 3 a 6
+
+| Vuelta | Qué salió | Cómo quedó |
+|---|---|---|
+| 3 | **rompe** · una carpeta con slug fuera de `PIEZAS` se descartaba **en silencio** y la pieza llegaba a la mesa sin serial | avisa por pantalla y el montaje se detiene |
+| 4 | **rompe** · de las tres salidas por bloqueo, la del choque de id **no deshacía** su rastro | las tres deshacen |
+| 5 | **rompe** · el registro de «ya vistas» se escribía **antes** de la guardia: la pieza se topaba consigo misma y `regla_no_repetir_lo_visto` **bloqueaba toda publicación con tira** | se anota al final, cuando la pieza ya pasó todo |
+| 5 | **rompe** · `launch.json` y `settings.json` apuntaban a los repos en el Escritorio | 11 rutas → `~/Repos` |
+| 6 | **cero hallazgos de código** | — |
+
+La de la vuelta 5 era la peor de todas: lo que existía para impedir un duplicado impedía
+publicar, y la única salida era `SALA_FORZAR=1`, que apaga **todas** las reglas de golpe.
+
+## Lo único que queda abierto — y no lo puedo tocar yo
+
+Google Drive Desktop **sigue espejando tres carpetas** de la Mac hacia
+`direccion@aurumarquitectos.com`: **Escritorio, Documentos y Descargas**. Comprobado en su
+propia base (`mirror_sqlite.db`, `root_state=1` en las tres, escrita hoy).
+
+Mover los dos repos quitó el síntoma de hoy. La llave sigue abierta: cualquier repo, PDF de
+cliente o captura que caiga en esas tres carpetas se sube igual.
+
+**Es un ajuste de la app, en su cuenta.** Google Drive → Preferencias → *Carpetas de tu Mac* →
+quitar el espejo de Escritorio, Documentos y Descargas. Lo tiene que hacer Alejandro.
