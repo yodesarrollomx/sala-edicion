@@ -184,6 +184,9 @@ html.embed .app{padding-top:8px}
 .tl.aqui{border-color:var(--oro);box-shadow:0 0 0 3px var(--oro-suave)} .tl.aqui img{opacity:1}
 .otra-voz.version{background:var(--oro-suave)} .otra-voz.version b{color:var(--oro)}
 @media (max-width:640px){
+  /* 8-sep: con la carta apretada el pie quedaba CORTADO. Nada se esconde: lo que no cabe se desliza dentro de la carta. */
+  body.apretado2 .carta:not(.detras){overflow-y:auto;-webkit-overflow-scrolling:touch}
+  body.apretado2 .carta .lienzo{flex:0 0 auto}
   body.apretado2 .cab .fecha{display:none}
   body.apretado2 .cab #titulo{font-size:20px;line-height:1.15}
   body.apretado2 .cab{gap:2px;margin-bottom:0}
