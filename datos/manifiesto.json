@@ -38,26 +38,26 @@
    "origen": "rehecha-de comprador-g4-54595f"
   },
   {
-   "id": "apodo-video-8sep",
-   "titulo": "El Apodo del Terreno · el video ya quedó completo (42 s) — ¿lo publico?",
+   "id": "apodo-video-9sep-v5",
+   "titulo": "El Apodo del Terreno · video v5: revisado escena por escena, audio arreglado y a 1.10",
    "tipo": "eje",
    "laminas": [],
    "opciones": [
     {
-     "titulo": "Publícalo hoy",
-     "texto": "Va a Facebook e Instagram como reel, con este texto:\n\nA tu terreno ya le pusieron nombre: «el de la esquina». También «el baldío». Y «el que no se vende».\n\nEn cada sobremesa le inventan un apodo nuevo. El apodo se mueve con cada rumor.\n\nNinguno de esos nombres se lo puso tu terreno. Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener.\n\nPídele a tu terreno su Plan de Potencial Personalizado. El primer paso es una videollamada.\n\nY la liga medible al Plan de Potencial: en Facebook dentro del texto, en Instagram en el primer comentario."
+     "titulo": "Publícalo",
+     "texto": "Lo que revisé escena por escena, con el criterio de Hormozi (una idea por pantalla, gancho en los primeros segundos, concreto en vez de vago, y un solo paso siguiente) y lo que YA cambié:\n\n1. Abría afirmando. Ahora abre preguntando: «¿Sabes cómo le dicen a tu terreno?». La pregunta obliga a contestar por dentro.\n2. «El que no se vende» era tibio. Ahora «el que nadie quiere», que es el apodo que duele.\n3. Las escenas 3 y 4 decían lo mismo dos veces (el apodo se inventa / el apodo se mueve). Iban seguidas y frenaban el video. Las fundí en una.\n4. El valor era vago: «lo que de verdad puede sostener». Ahora es concreto y medible: «los metros cuadrados que la norma le permite».\n5. El cierre queda en una sola acción con el paso siguiente claro: pídele su Plan, y el primer paso es una videollamada.\n\nY lo que pediste del sonido: la voz de la escena 3 traía dos silencios a media frase (eso era el trabón); la regrabé y le quité las pausas. La velocidad bajó de 1.15 a 1.10, como pediste.\n\n— — —\n\nVa a Facebook e Instagram como reel, con el texto que ya aprobamos y la liga medible al Plan de Potencial."
     },
     {
-     "titulo": "Sale, pero cambia el texto",
-     "texto": "Dime en la nota qué cambiar del texto del post y lo publico con tu versión."
+     "titulo": "Casi: dime qué escena rehago",
+     "texto": "Deja la nota con la escena y qué cambiar; lo rehago hoy mismo."
     },
     {
-     "titulo": "Todavía no",
-     "texto": "Lo dejo sin publicar. Dime en la nota qué más cambiar del video."
+     "titulo": "Regresa al guion anterior",
+     "texto": "Vuelvo al guion que ya conocías (afirmando, con las siete escenas) y solo dejo el audio arreglado y la velocidad 1.10."
     }
    ],
-   "video": "video/apodo/REEL_9x16.mp4?v=7sep-v3",
-   "origen": "rehecho-de apodo-video-7sep · ayer dijiste «sale, pero espera la escena 3 animada»: ya está animada (LTX en tu Mac) y las 7 escenas van sin máscara. Lo monto con id nuevo porque cambiaron las opciones."
+   "video": "video/apodo/REEL_v5.mp4?v=8sep",
+   "origen": "rehecho-de apodo-video-8sep · tu nota: «que lo revise Hormozi, escena por escena, y rehagas todo lo que te pide; en la escena 3 se traba el audio; 1.10 la velocidad»"
   }
  ],
  "parrilla": [
@@ -275,6 +275,10 @@
   {
    "hora": "07:18",
    "evento": "Video del Apodo v3 remontado con id nuevo (las opciones habían cambiado bajo el mismo id)"
+  },
+  {
+   "hora": "08:51",
+   "evento": "Video del Apodo v5: revisión escena por escena aplicada, voz de la escena 3 regrabada, velocidad 1.10"
   }
  ],
  "decisiones": {
