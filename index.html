@@ -867,6 +867,8 @@ function tituloDe(pid){          // el título humano de una pieza, esté hoy en
 }
 function hidratarReaperturas(){      // lo que ya pedí hoy (del Sheet) vuelve a dec, para que el siguiente envío no lo borre
   const M=(D&&D.decisiones&&D.decisiones.propuestas)||{}; const enMesa=new Set((D.propuestas||[]).map(p=>p.id));
+  // 7-sep: sus tiras se cargan aparte para que «Mis respuestas» diga la pieza y el número REAL de lámina
+  Promise.all(Object.keys(M).filter(pid=>!enMesa.has(pid)&&!(pid in TIRAS)).map(pid=>cargarTira(pid))).then(r=>{ if(r.length) pintarPanel() }).catch(()=>{});
   const yo=(D&&D.quien)||((localStorage.getItem('sala_rol')==='editor2')?'Sayri':'Alejandro');
   for(const [pid,f] of Object.entries(M)){
     if(enMesa.has(pid)||!f||!f.firmas||dec[pid]) continue;
