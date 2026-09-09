@@ -55,6 +55,16 @@
    "video": null,
    "de_antes": "2026-09-07",
    "origen": "rehecha-de comprador-g4-54595f"
+  },
+  {
+   "id": "prueba-celdas-e1e74e",
+   "titulo": "PRUEBA de sistema · no decidir (se retira al terminar)",
+   "laminas": [
+    "laminas/prueba-celdas/L1.png",
+    "laminas/prueba-celdas/L2.png",
+    "laminas/prueba-celdas/L3.png"
+   ],
+   "video": null
   }
  ],
  "parrilla": [
@@ -280,6 +290,10 @@
   {
    "hora": "12:06",
    "evento": "Propuesta montada: El Apodo del Terreno · las 6 láminas rehechas con tus notas (pregunta, apodos reales y Personalizado) (6 láminas)"
+  },
+  {
+   "hora": "18:35",
+   "evento": "Propuesta montada: PRUEBA de sistema · no decidir (se retira al terminar) (3 láminas)"
   }
  ],
  "decisiones": {
