@@ -74,6 +74,15 @@
    ],
    "video": null,
    "origen": "rehecha-de apodo-g5-dcff8d"
+  },
+  {
+   "id": "apodo-g5c-9f7d43",
+   "titulo": "El Apodo · lámina 2: dos apodos reales en vez de una vaguedad",
+   "laminas": [
+    "laminas/apodo-g5c/L1.png"
+   ],
+   "video": null,
+   "origen": "rehecha-de apodo-g5b-c4c7be"
   }
  ],
  "parrilla": [
@@ -307,6 +316,10 @@
   {
    "hora": "19:37",
    "evento": "Propuesta montada: El Apodo del Terreno · lámina 3 rehecha: ahora sí encadena con la 1 (1 láminas)"
+  },
+  {
+   "hora": "20:28",
+   "evento": "Propuesta montada: El Apodo · lámina 2: dos apodos reales en vez de una vaguedad (1 láminas)"
   }
  ],
  "decisiones": {
