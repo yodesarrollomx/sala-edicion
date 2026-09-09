@@ -1355,26 +1355,6 @@
   "revisiones": [
    {
     "r": 1,
-    "huella": "e0bc03d132eedc29efc73a37792f299e",
-    "src": "laminas/vendo-2rehechas-v3/L1.png",
-    "grupo": "vendo-2rehechas-v3",
-    "tambien_en": [],
-    "drive_original": "1mZQ8lGHDzC6gUjbb39W5WQJvg4CzCD31",
-    "drive_prueba": "1awtI0uH09dMQkawX1I_K0opMMgPlXzVz",
-    "liga": "https://drive.google.com/thumbnail?id=1awtI0uH09dMQkawX1I_K0opMMgPlXzVz&sz=w1200"
-   },
-   {
-    "r": 2,
-    "huella": "9c884233794ec5282091692ce022b2c6",
-    "src": "laminas/vendo-4rehechas/L1.png",
-    "grupo": "vendo-4rehechas",
-    "tambien_en": [],
-    "drive_original": "1Ieye4PHanU9vMArNhzXK-QNIxhEMkBIG",
-    "drive_prueba": "151GP4_YvUBImnbVWubBh9uaNxh-ruJKa",
-    "liga": "https://drive.google.com/thumbnail?id=151GP4_YvUBImnbVWubBh9uaNxh-ruJKa&sz=w1200"
-   },
-   {
-    "r": 3,
     "huella": "d6d2473b6cae2d0e58a9ed3871950d98",
     "src": "laminas/vendo-construyo-g1/L1.png",
     "grupo": "vendo-construyo-g1",
@@ -1384,7 +1364,17 @@
     "liga": "https://drive.google.com/thumbnail?id=1JMAXvlpYm4JVLaOaiquW0xTc_sfW3qmt&sz=w1200"
    },
    {
-    "r": 4,
+    "r": 2,
+    "huella": "e0bc03d132eedc29efc73a37792f299e",
+    "src": "laminas/vendo-2rehechas-v3/L1.png",
+    "grupo": "vendo-2rehechas-v3",
+    "tambien_en": [],
+    "drive_original": "1mZQ8lGHDzC6gUjbb39W5WQJvg4CzCD31",
+    "drive_prueba": "1awtI0uH09dMQkawX1I_K0opMMgPlXzVz",
+    "liga": "https://drive.google.com/thumbnail?id=1awtI0uH09dMQkawX1I_K0opMMgPlXzVz&sz=w1200"
+   },
+   {
+    "r": 3,
     "huella": "38f58625dbfaad6112dda2081b073dc7",
     "src": "laminas/vendo-construyo-g2/L1.png",
     "grupo": "vendo-construyo-g2",
@@ -1392,148 +1382,21 @@
     "drive_original": "1TLpErou0S97AkGiyprX_MqAos10AFG0l",
     "drive_prueba": "1G7uPEoXRvMpqKzuWW797Bz4T17_aMGf8",
     "liga": "https://drive.google.com/thumbnail?id=1G7uPEoXRvMpqKzuWW797Bz4T17_aMGf8&sz=w1200"
+   },
+   {
+    "r": 4,
+    "huella": "9c884233794ec5282091692ce022b2c6",
+    "src": "laminas/vendo-4rehechas/L1.png",
+    "grupo": "vendo-4rehechas",
+    "tambien_en": [],
+    "drive_original": "1Ieye4PHanU9vMArNhzXK-QNIxhEMkBIG",
+    "drive_prueba": "151GP4_YvUBImnbVWubBh9uaNxh-ruJKa",
+    "liga": "https://drive.google.com/thumbnail?id=151GP4_YvUBImnbVWubBh9uaNxh-ruJKa&sz=w1200"
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1b4pOpFJ5lDAtp-Cr6ufM4FHC4cZmbnch",
   "revision_vigente": 4
- },
- "VENDO-L02": {
-  "serial": "VENDO-L02",
-  "pieza": "VENDO",
-  "pieza_nombre": "¿Vendo o construyo?",
-  "lamina": 2,
-  "revisiones": [
-   {
-    "r": 1,
-    "huella": "14060be965809d2581af3840c907c8b7",
-    "src": "laminas/vendo-2rehechas-v3/L2.png",
-    "grupo": "vendo-2rehechas-v3",
-    "tambien_en": [],
-    "drive_original": "1Z3XYUPwE9jo4RmwMQNVFQ6co8pvflOKy",
-    "drive_prueba": "1ZMixJI5RwireUQK6AZscJ9VmLpoqZV8S",
-    "liga": "https://drive.google.com/thumbnail?id=1ZMixJI5RwireUQK6AZscJ9VmLpoqZV8S&sz=w1200"
-   },
-   {
-    "r": 2,
-    "huella": "9a0a607b36fe00eb11b9e2f4512d3118",
-    "src": "laminas/vendo-4rehechas/L2.png",
-    "grupo": "vendo-4rehechas",
-    "tambien_en": [],
-    "drive_original": "1qNCfu_ikp-XWglX3LtYn2DYlf-SrmK1i",
-    "drive_prueba": "1By8jvmybuAayrNCYPMwk6ATexzoySXNf",
-    "liga": "https://drive.google.com/thumbnail?id=1By8jvmybuAayrNCYPMwk6ATexzoySXNf&sz=w1200"
-   },
-   {
-    "r": 3,
-    "huella": "39287709121bb680c4814c3bdd8243e1",
-    "src": "laminas/vendo-construyo-g1/L2.png",
-    "grupo": "vendo-construyo-g1",
-    "tambien_en": [],
-    "drive_original": "18YwDtszOxph7zx4NJzMp9aXzuQVVuZ7p",
-    "drive_prueba": "1XI-mTwSOzngeDA-Jm94O_t0AQeCf85vt",
-    "liga": "https://drive.google.com/thumbnail?id=1XI-mTwSOzngeDA-Jm94O_t0AQeCf85vt&sz=w1200"
-   },
-   {
-    "r": 4,
-    "huella": "a5f9e4aa8d4e83162673e5cddad0b869",
-    "src": "laminas/vendo-construyo-g2/L2.png",
-    "grupo": "vendo-construyo-g2",
-    "tambien_en": [],
-    "drive_original": "1bVm0siZuEH3nfVoY54HUdXA4pp-fyZ7K",
-    "drive_prueba": "1RViPOTT8GAmJzOoM6mA9md7SocHxWKr-",
-    "liga": "https://drive.google.com/thumbnail?id=1RViPOTT8GAmJzOoM6mA9md7SocHxWKr-&sz=w1200"
-   }
-  ],
-  "estado": "en revisión",
-  "drive_carpeta": "1duaARASkrVnJ9ekH8rHr6UJeYgJZpdrt",
-  "revision_vigente": 4
- },
- "VENDO-L03": {
-  "serial": "VENDO-L03",
-  "pieza": "VENDO",
-  "pieza_nombre": "¿Vendo o construyo?",
-  "lamina": 3,
-  "revisiones": [
-   {
-    "r": 1,
-    "huella": "04ea063968be6b8fe35f4b97f8c28e5c",
-    "src": "laminas/vendo-2rehechas-v3/L3.png",
-    "grupo": "vendo-2rehechas-v3",
-    "tambien_en": [],
-    "drive_original": "16NOKYJd19lAY2_dMpQZk6XvIDfXC7l_I",
-    "drive_prueba": "1PgT0nnEzD3LwuQov2qWqaUdb-LHPToaH",
-    "liga": "https://drive.google.com/thumbnail?id=1PgT0nnEzD3LwuQov2qWqaUdb-LHPToaH&sz=w1200"
-   },
-   {
-    "r": 2,
-    "huella": "7e2fdbf60255ba30bb94469afbdad49f",
-    "src": "laminas/vendo-4rehechas/L3.png",
-    "grupo": "vendo-4rehechas",
-    "tambien_en": [],
-    "drive_original": "1W5Mf0dbQaSJy9I3VPtPvYLENb6paQpe5",
-    "drive_prueba": "1INesdXz95eHG57alqXhU4HXEOINiKw3w",
-    "liga": "https://drive.google.com/thumbnail?id=1INesdXz95eHG57alqXhU4HXEOINiKw3w&sz=w1200"
-   },
-   {
-    "r": 3,
-    "huella": "12d1ff00d248c7283756944741c0a667",
-    "src": "laminas/vendo-construyo-g1/L3.png",
-    "grupo": "vendo-construyo-g1",
-    "tambien_en": [
-     "laminas/vendo-construyo-g2/L3.png"
-    ],
-    "drive_original": "1qt8t0xLDd6KI00PLvOOSTR1vFgWDAqLZ",
-    "drive_prueba": "1YyDQLSXkKzarkPrEHI3IoGwolJYTXBmV",
-    "liga": "https://drive.google.com/thumbnail?id=1YyDQLSXkKzarkPrEHI3IoGwolJYTXBmV&sz=w1200"
-   }
-  ],
-  "estado": "en revisión",
-  "drive_carpeta": "14JiEwVaLfSyFZIkQ2mRCRgznPS8JRSo4",
-  "revision_vigente": 3
- },
- "VENDO-L04": {
-  "serial": "VENDO-L04",
-  "pieza": "VENDO",
-  "pieza_nombre": "¿Vendo o construyo?",
-  "lamina": 4,
-  "revisiones": [
-   {
-    "r": 1,
-    "huella": "1ebb85a817d2bc1acebf1d846ae9c802",
-    "src": "laminas/vendo-2rehechas-v3/L4.png",
-    "grupo": "vendo-2rehechas-v3",
-    "tambien_en": [],
-    "drive_original": "1Z2cfUQt9na_R0chZ3LwcA0Vz2S7w2xey",
-    "drive_prueba": "1nY5yp34WHUGVUdDhnwX8NTFx1_r1t5cK",
-    "liga": "https://drive.google.com/thumbnail?id=1nY5yp34WHUGVUdDhnwX8NTFx1_r1t5cK&sz=w1200"
-   },
-   {
-    "r": 2,
-    "huella": "198dfa29edbe95a35b7d94ae5020eb6e",
-    "src": "laminas/vendo-4rehechas/L4.png",
-    "grupo": "vendo-4rehechas",
-    "tambien_en": [],
-    "drive_original": "1xLI9S-0czC0FmfLVwJHxT4uRGIPJ3pTU",
-    "drive_prueba": "1k8wVlGFfsDfr-o_d2LxDxKAALRPFpgN2",
-    "liga": "https://drive.google.com/thumbnail?id=1k8wVlGFfsDfr-o_d2LxDxKAALRPFpgN2&sz=w1200"
-   },
-   {
-    "r": 3,
-    "huella": "dca9b2c11a693dba82d9c2bf682c806e",
-    "src": "laminas/vendo-construyo-g1/L4.png",
-    "grupo": "vendo-construyo-g1",
-    "tambien_en": [
-     "laminas/vendo-construyo-g2/L4.png"
-    ],
-    "drive_original": "1nLL367vTbVJIOrWifP-a-mJL-mCI6i3z",
-    "drive_prueba": "14RiXHSx_Ahk518JPy_boQK0McfEoG7TS",
-    "liga": "https://drive.google.com/thumbnail?id=14RiXHSx_Ahk518JPy_boQK0McfEoG7TS&sz=w1200"
-   }
-  ],
-  "estado": "en revisión",
-  "drive_carpeta": "1j3HZyhdo0mI17zXXPVJ3Dzf7PzhuqFvr",
-  "revision_vigente": 3
  },
  "VENDO-L10": {
   "serial": "VENDO-L10",
@@ -1596,6 +1459,159 @@
   "estado": "en revisión",
   "drive_carpeta": "1kj1zTAbo2lq17CVxKxIhltzp0vLNul1R",
   "revision_vigente": 2
+ },
+ "VENDO-L02": {
+  "serial": "VENDO-L02",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 2,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "39287709121bb680c4814c3bdd8243e1",
+    "src": "laminas/vendo-construyo-g1/L2.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": [],
+    "drive_original": "18YwDtszOxph7zx4NJzMp9aXzuQVVuZ7p",
+    "drive_prueba": "1XI-mTwSOzngeDA-Jm94O_t0AQeCf85vt",
+    "liga": "https://drive.google.com/thumbnail?id=1XI-mTwSOzngeDA-Jm94O_t0AQeCf85vt&sz=w1200"
+   },
+   {
+    "r": 2,
+    "huella": "14060be965809d2581af3840c907c8b7",
+    "src": "laminas/vendo-2rehechas-v3/L2.png",
+    "grupo": "vendo-2rehechas-v3",
+    "tambien_en": [],
+    "drive_original": "1Z3XYUPwE9jo4RmwMQNVFQ6co8pvflOKy",
+    "drive_prueba": "1ZMixJI5RwireUQK6AZscJ9VmLpoqZV8S",
+    "liga": "https://drive.google.com/thumbnail?id=1ZMixJI5RwireUQK6AZscJ9VmLpoqZV8S&sz=w1200"
+   },
+   {
+    "r": 3,
+    "huella": "a5f9e4aa8d4e83162673e5cddad0b869",
+    "src": "laminas/vendo-construyo-g2/L2.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": [],
+    "drive_original": "1bVm0siZuEH3nfVoY54HUdXA4pp-fyZ7K",
+    "drive_prueba": "1RViPOTT8GAmJzOoM6mA9md7SocHxWKr-",
+    "liga": "https://drive.google.com/thumbnail?id=1RViPOTT8GAmJzOoM6mA9md7SocHxWKr-&sz=w1200"
+   },
+   {
+    "r": 4,
+    "huella": "9a0a607b36fe00eb11b9e2f4512d3118",
+    "src": "laminas/vendo-4rehechas/L2.png",
+    "grupo": "vendo-4rehechas",
+    "tambien_en": [],
+    "drive_original": "1qNCfu_ikp-XWglX3LtYn2DYlf-SrmK1i",
+    "drive_prueba": "1By8jvmybuAayrNCYPMwk6ATexzoySXNf",
+    "liga": "https://drive.google.com/thumbnail?id=1By8jvmybuAayrNCYPMwk6ATexzoySXNf&sz=w1200"
+   }
+  ],
+  "estado": "en revisión",
+  "drive_carpeta": "1duaARASkrVnJ9ekH8rHr6UJeYgJZpdrt",
+  "revision_vigente": 4
+ },
+ "VENDO-L03": {
+  "serial": "VENDO-L03",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 3,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "12d1ff00d248c7283756944741c0a667",
+    "src": "laminas/vendo-construyo-g1/L3.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": [],
+    "drive_original": "1qt8t0xLDd6KI00PLvOOSTR1vFgWDAqLZ",
+    "drive_prueba": "1YyDQLSXkKzarkPrEHI3IoGwolJYTXBmV",
+    "liga": "https://drive.google.com/thumbnail?id=1YyDQLSXkKzarkPrEHI3IoGwolJYTXBmV&sz=w1200"
+   },
+   {
+    "r": 2,
+    "huella": "04ea063968be6b8fe35f4b97f8c28e5c",
+    "src": "laminas/vendo-2rehechas-v3/L3.png",
+    "grupo": "vendo-2rehechas-v3",
+    "tambien_en": [],
+    "drive_original": "16NOKYJd19lAY2_dMpQZk6XvIDfXC7l_I",
+    "drive_prueba": "1PgT0nnEzD3LwuQov2qWqaUdb-LHPToaH",
+    "liga": "https://drive.google.com/thumbnail?id=1PgT0nnEzD3LwuQov2qWqaUdb-LHPToaH&sz=w1200"
+   },
+   {
+    "r": 3,
+    "huella": "12d1ff00d248c7283756944741c0a667",
+    "src": "laminas/vendo-construyo-g2/L3.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": [],
+    "drive_original": "1qt8t0xLDd6KI00PLvOOSTR1vFgWDAqLZ",
+    "drive_prueba": "1YyDQLSXkKzarkPrEHI3IoGwolJYTXBmV",
+    "liga": "https://drive.google.com/thumbnail?id=1YyDQLSXkKzarkPrEHI3IoGwolJYTXBmV&sz=w1200"
+   },
+   {
+    "r": 4,
+    "huella": "7e2fdbf60255ba30bb94469afbdad49f",
+    "src": "laminas/vendo-4rehechas/L3.png",
+    "grupo": "vendo-4rehechas",
+    "tambien_en": [],
+    "drive_original": "1W5Mf0dbQaSJy9I3VPtPvYLENb6paQpe5",
+    "drive_prueba": "1INesdXz95eHG57alqXhU4HXEOINiKw3w",
+    "liga": "https://drive.google.com/thumbnail?id=1INesdXz95eHG57alqXhU4HXEOINiKw3w&sz=w1200"
+   }
+  ],
+  "estado": "en revisión",
+  "drive_carpeta": "14JiEwVaLfSyFZIkQ2mRCRgznPS8JRSo4",
+  "revision_vigente": 4
+ },
+ "VENDO-L04": {
+  "serial": "VENDO-L04",
+  "pieza": "VENDO",
+  "pieza_nombre": "¿Vendo o construyo?",
+  "lamina": 4,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "dca9b2c11a693dba82d9c2bf682c806e",
+    "src": "laminas/vendo-construyo-g1/L4.png",
+    "grupo": "vendo-construyo-g1",
+    "tambien_en": [],
+    "drive_original": "1nLL367vTbVJIOrWifP-a-mJL-mCI6i3z",
+    "drive_prueba": "14RiXHSx_Ahk518JPy_boQK0McfEoG7TS",
+    "liga": "https://drive.google.com/thumbnail?id=14RiXHSx_Ahk518JPy_boQK0McfEoG7TS&sz=w1200"
+   },
+   {
+    "r": 2,
+    "huella": "1ebb85a817d2bc1acebf1d846ae9c802",
+    "src": "laminas/vendo-2rehechas-v3/L4.png",
+    "grupo": "vendo-2rehechas-v3",
+    "tambien_en": [],
+    "drive_original": "1Z2cfUQt9na_R0chZ3LwcA0Vz2S7w2xey",
+    "drive_prueba": "1nY5yp34WHUGVUdDhnwX8NTFx1_r1t5cK",
+    "liga": "https://drive.google.com/thumbnail?id=1nY5yp34WHUGVUdDhnwX8NTFx1_r1t5cK&sz=w1200"
+   },
+   {
+    "r": 3,
+    "huella": "dca9b2c11a693dba82d9c2bf682c806e",
+    "src": "laminas/vendo-construyo-g2/L4.png",
+    "grupo": "vendo-construyo-g2",
+    "tambien_en": [],
+    "drive_original": "1nLL367vTbVJIOrWifP-a-mJL-mCI6i3z",
+    "drive_prueba": "14RiXHSx_Ahk518JPy_boQK0McfEoG7TS",
+    "liga": "https://drive.google.com/thumbnail?id=14RiXHSx_Ahk518JPy_boQK0McfEoG7TS&sz=w1200"
+   },
+   {
+    "r": 4,
+    "huella": "198dfa29edbe95a35b7d94ae5020eb6e",
+    "src": "laminas/vendo-4rehechas/L4.png",
+    "grupo": "vendo-4rehechas",
+    "tambien_en": [],
+    "drive_original": "1xLI9S-0czC0FmfLVwJHxT4uRGIPJ3pTU",
+    "drive_prueba": "1k8wVlGFfsDfr-o_d2LxDxKAALRPFpgN2",
+    "liga": "https://drive.google.com/thumbnail?id=1k8wVlGFfsDfr-o_d2LxDxKAALRPFpgN2&sz=w1200"
+   }
+  ],
+  "estado": "en revisión",
+  "drive_carpeta": "1j3HZyhdo0mI17zXXPVJ3Dzf7PzhuqFvr",
+  "revision_vigente": 4
  },
  "VENDO-L05": {
   "serial": "VENDO-L05",

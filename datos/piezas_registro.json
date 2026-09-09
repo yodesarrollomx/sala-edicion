@@ -1,0 +1,30 @@
+{
+ "apodo": {
+  "nombre": "El Apodo del Terreno",
+  "sigla": "APODO"
+ },
+ "comprador": {
+  "nombre": "El Comprador",
+  "sigla": "COMPRADOR"
+ },
+ "pivote": {
+  "nombre": "El Pivote",
+  "sigla": "PIVOTE"
+ },
+ "pub1": {
+  "nombre": "El Terreno Dormido",
+  "sigla": "TERRENO"
+ },
+ "servilleta": {
+  "nombre": "La Servilleta",
+  "sigla": "SERVILLETA"
+ },
+ "vendo": {
+  "nombre": "¿Vendo o construyo?",
+  "sigla": "VENDO"
+ },
+ "vendo-construyo": {
+  "nombre": "¿Vendo o construyo?",
+  "sigla": "VENDO"
+ }
+}
