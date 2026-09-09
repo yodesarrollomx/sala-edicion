@@ -510,7 +510,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='41ffc70ca7';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='7d959f45fe';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -722,12 +722,17 @@ const claveBorrador=()=>'sala2-'+fecha;
 function armarPasos(sinCandado){
   pasos=[]; dec={}; lockeadas=[];
   for(const p of D.propuestas||[]){
-    const prev=sinCandado?null:marcasPrevias(p.id);
+    // 9-sep: `sinCandado` (el borrador manda) ponía prev=null y con eso se tiraban las marcas
+    // del Sheet. El borrador puede ser MÁS NUEVO, no más completo: lo que hace es candar menos
+    // (no manda a «ya decididas»), pero las marcas de la nube siguen siendo la verdad de partida.
+    const prev=marcasPrevias(p.id);
+    const noCandar=!!sinCandado;
     if(p.tipo==='eje'){
       const n=(p.opciones||[]).length;
       dec[p.id]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:(prev&&prev.nota)||'',_eje:''};   // 8-sep: la nota general que ya está en el Sheet se rehidrata; si no, el siguiente sobre la borraba
       const miaE=prev&&prev.firmas?prev.firmas.map((fs,i)=>({i,m:MIA(fs||[])})).find(z=>z.m&&z.m.marca==='si'):null;
-      if(miaE){ dec[p.id].laminas[miaE.i]='si'; dec[p.id]._eje='si'; lockeadas.push({pid:p.id,i:miaE.i,p,marca:'si',eje:true}); continue }   // un eje que ya elegí hoy no vuelve a la mesa: va a «ya decididas»
+      if(miaE&&!noCandar){ dec[p.id].laminas[miaE.i]='si'; dec[p.id]._eje='si'; lockeadas.push({pid:p.id,i:miaE.i,p,marca:'si',eje:true}); continue }
+      if(miaE){ dec[p.id].laminas[miaE.i]='si'; dec[p.id]._eje='si' }   // un eje que ya elegí hoy no vuelve a la mesa: va a «ya decididas»
       pasos.push({tipo:'eje',pid:p.id,p});
     }else{
       const n=(p.laminas||[]).length;
@@ -738,7 +743,8 @@ function armarPasos(sinCandado){
         // persona, la carta sigue en tu mesa con su nota a la vista, y Producción
         // cumple las dos. (Si el Sheet no manda firmas, se comporta como antes.)
         const mia=firmas?MIA(firmas):(prev&&prev.laminas&&(prev.laminas[i]==='si'||prev.laminas[i]==='no')?{marca:prev.laminas[i]}:null);
-        if(mia&&mia.marca){ dec[p.id].laminas[i]=mia.marca; dec[p.id].notas[i]=(mia.nota)||((prev.notas||[])[i]||''); lockeadas.push({pid:p.id,i,p,marca:mia.marca}); continue }
+        if(mia&&mia.marca){ dec[p.id].laminas[i]=mia.marca; dec[p.id].notas[i]=(mia.nota)||((prev.notas||[])[i]||'');
+          if(!noCandar){ lockeadas.push({pid:p.id,i,p,marca:mia.marca}); continue } }
         if(prev&&prev.notas&&prev.notas[i]&&!dec[p.id].notas[i]) dec[p.id].notas[i]=prev.notas[i];   // no se pierde lo ya escrito
         pasos.push({tipo:'lamina',pid:p.id,i,p,otros:firmas?OTROS(firmas):[]});
       }
@@ -751,9 +757,17 @@ function guardarBorrador(){
 function restaurarBorrador(){
   const b=leerLS(claveBorrador(),null); if(!b||!b.dec) return false;
   const firma=pasos.map(x=>x.tipo+':'+x.pid+':'+(x.i??'')).join('|');
-  if((b.pasos||[]).join('|')!==firma) return false;
+  const mismaMesa=(b.pasos||[]).join('|')===firma;
+  // 9-sep — LA CAUSA DE «ME VUELVE A PREGUNTAR LO QUE YA DECIDÍ», reproducida hoy:
+  // esto salía con `return false` cuando la mesa cambiaba (yo monté el video y la firma dejó
+  // de cuadrar). Y como `borradorManda` era true, `armarPasos` ya había ignorado las marcas
+  // del Sheet. Resultado: la lámina que él ACABABA de aprobar volvió a la mesa como pendiente,
+  // con el «sí» sano en el Sheet y sano en el borrador.
+  // Las MARCAS se fusionan siempre —van por pid e índice, no dependen del orden de la mesa—.
+  // Sólo `idx`/`hist` (dónde iba) necesitan que la mesa sea la misma.
   for(const pid of Object.keys(dec)) if(b.dec[pid]) dec[pid]={...dec[pid],...b.dec[pid]};
   for(const pid of Object.keys(b.dec)) if(!dec[pid]&&b.dec[pid]&&b.dec[pid]._reabierta) dec[pid]=b.dec[pid];
+  if(!mismaMesa){ idx=0; hist=[]; while(idx<pasos.length&&marcaDe(pasos[idx])) idx++; return true }
   idx=Math.min(b.idx||0,pasos.length); hist=b.hist||[]; guard.env=b.env||null;
   while(idx<pasos.length&&marcaDe(pasos[idx])) idx++;
   return true;
