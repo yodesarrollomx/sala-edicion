@@ -510,7 +510,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='ecc40e3af7';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='41ffc70ca7';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -671,7 +671,11 @@ async function conMarcasDeAntes(d,f){
 function normalizarDia(j){
   const porId={};
   (j.propuestas||[]).forEach(p=>{
-    if(p.opciones&&!Array.isArray(p.opciones)&&p.opciones.candidatas){ p.candidatas=p.opciones.candidatas; p.opciones=[] }
+    // 9-sep: esto ponía `p.opciones=[]` y guardaba las opciones en `p.candidatas`, que NADIE
+    // lee. Resultado: un eje montado con {candidatas:[…]} —el formato que documenta
+    // sala_publicar.py— entraba al cliente, se quedaba con cero opciones y las líneas de abajo
+    // lo DESCARTABAN por vacío. El corte del Apodo llegó al Sheet y nunca apareció en la mesa.
+    if(p.opciones&&!Array.isArray(p.opciones)&&p.opciones.candidatas){ p.opciones=p.opciones.candidatas }
     porId[p.id]=p;
   });
   const fuera=new Set();
