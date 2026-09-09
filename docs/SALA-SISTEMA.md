@@ -230,8 +230,9 @@ Herramienta: `python3 ~/yod_audit/sala_sobre.py <fecha-aislada> '<sobre>'` (solo
 34. **Nunca un `until ! pgrep -f X` en el shell** (9-sep). `pgrep -f` encuentra al PROPIO bucle
     que espera, porque el patrón está en su línea de comando: el bucle se ve a sí mismo y no sale
     jamás. Llegaron a haber **seis esperas vivas al mismo tiempo**, una de 4 h 42 min, todas
-    esperando lo mismo. Se usa `esperar.py`, que se excluye a sí mismo, tiene TOPE obligatorio y
-    un candado que impide duplicar la espera. *Reclamo textual: «¿qué rayos llevas esperando
+    esperando lo mismo. Se usa `esperar.py`. Ojo: el primer intento NO servia — el candado usaba `hash()` de Python
+    (aleatorio por proceso) y el filtro usaba `pgrep -af`, que en macOS no devuelve la linea
+    de comando. Van TRES trampas en el mismo lugar; estan en la memoria esperas-colgadas. *Reclamo textual: «¿qué rayos llevas esperando
     horas?… ¿estás duplicando esfuerzos? no sé si eres consciente de lo que haces».*
 
 ## Dónde vive cada cosa (y qué NO usamos)
