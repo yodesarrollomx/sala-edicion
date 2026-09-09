@@ -65,6 +65,15 @@
     "laminas/prueba-celdas/L3.png"
    ],
    "video": null
+  },
+  {
+   "id": "apodo-g5b-c4c7be",
+   "titulo": "El Apodo del Terreno · lámina 3 rehecha: ahora sí encadena con la 1",
+   "laminas": [
+    "laminas/apodo-g5b/L1.png"
+   ],
+   "video": null,
+   "origen": "rehecha-de apodo-g5-dcff8d"
   }
  ],
  "parrilla": [
@@ -294,6 +303,10 @@
   {
    "hora": "18:35",
    "evento": "Propuesta montada: PRUEBA de sistema · no decidir (se retira al terminar) (3 láminas)"
+  },
+  {
+   "hora": "19:37",
+   "evento": "Propuesta montada: El Apodo del Terreno · lámina 3 rehecha: ahora sí encadena con la 1 (1 láminas)"
   }
  ],
  "decisiones": {
