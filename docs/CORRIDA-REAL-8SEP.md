@@ -56,3 +56,24 @@ antes de acusar al código.
 
 ## Estado al cerrar
 Pieza de prueba retirada. Sus 7 sobres quedan en DECISIONES como registro de esta corrida.
+
+---
+
+# Vuelta 2 · 21:1x — limpia
+
+Predicción en `datos/prueba_expectativas_v2.json`, escrita antes y corregida con lo que enseñó la
+vuelta 1 (no predecir botones que no existen).
+
+| Acto | Predicho | Medido |
+|---|---|---|
+| 1 · Aprobar lámina 1 | `si · pendiente · pendiente` | ✓ |
+| 2 · Pedir cambio + nota | `si · no · pendiente` + nota | ✓ |
+| 3 · Aprobar lámina 3 | `si · no · si` · **«2 aprobadas · 1 con cambio»** | ✓ |
+| 4 · Abrir Mis respuestas | 2 secciones separadas | ✓ **4 de hoy · 25 de atraso** |
+| 5 · Cambiar la 1 desde ahí | `· no · si` + `borrar` + vuelve a la carta | ✓ |
+| 6 · Aprobarla otra vez | `si · no · si` · mismo resumen | ✓ |
+
+**5 sobres · 5 envio_id distintos · el `borrar` explícito viajó · ninguna pieza suya cambió.**
+
+**Cero desviaciones.** Los dos defectos de la vuelta 1 (el contador que sumaba el atraso y las 54
+filas) quedaron cerrados y medidos en su arreglo, no de palabra.
