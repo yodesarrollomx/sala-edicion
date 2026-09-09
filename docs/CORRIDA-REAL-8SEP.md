@@ -77,3 +77,50 @@ vuelta 1 (no predecir botones que no existen).
 
 **Cero desviaciones.** Los dos defectos de la vuelta 1 (el contador que sumaba el atraso y las 54
 filas) quedaron cerrados y medidos en su arreglo, no de palabra.
+
+---
+
+# Vuelta 3 · confirmación
+
+| Acto | Predicho | Medido |
+|---|---|---|
+| 1 · Aprobar lámina 1 | `si · ·` | ✓ |
+| 2 · Pedir cambio + nota | `si · no ·` + nota | ✓ |
+| 3 · Aprobar lámina 3 | `si · no · si` · «2 aprobadas · 1 con cambio» | ✓ |
+| 4 · Mis respuestas | 2 secciones separadas | ✓ **4 de hoy · 26 de atraso** |
+| 5 · Cambiar la 1 desde ahí | `· no · si` + `borrar` | ✓ |
+| 6 · Aprobarla otra vez | `si · no · si` | ✓ |
+| — | ninguna pieza suya cambia | ✓ |
+| — | verificador en 0 rojos | ✓ |
+
+**Los 6 estados exactos. Cero defectos nuevos.**
+
+## La única desviación, y es de mi predicción
+
+**Decía:** 5 sobres, uno por acto. **Salió:** 4.
+**Por qué real:** la Sala **agrupa** envíos cuando los actos ocurren muy seguido — el estado final
+viaja una vez en vez de dos. En las vueltas 1 y 2 cada acto tuvo su sobre porque yo hacía clics
+reales, más lentos; en la 3 los disparé por DOM, casi encimados.
+**No es un defecto:** el estado final en el Sheet es correcto y agrupar es mejor que no agrupar.
+**Estrategia:** no predecir el número de sobres. Lo que se predice y se mide es **el estado
+final**, que es lo único que decide qué se produce.
+
+## Un defecto que salió del cierre, no de los actos
+
+Al retirar las piezas de prueba dejé sus tiras apuntando a imágenes borradas: **el verificador se
+puso rojo en 6 comprobaciones**. Hizo bien. Retirar una pieza son cuatro cosas —mesa, láminas,
+tira, registro— y yo hacía una. Ahora `sala_limpiar_prueba.py` hace las cuatro y lo dice.
+
+# Cierre
+
+Tres vueltas. **Cuatro defectos reales encontrados y arreglados**, ninguno de ellos por mirar el
+código: los cuatro salieron de ejecutar en Chrome y comparar contra lo escrito antes.
+
+| # | Defecto | Estado |
+|---|---|---|
+| 1 | El contador final sumaba el atraso: «2 aprobadas · **24** con cambios» | arreglado y medido |
+| 2 | «Mis respuestas» abría con 54 filas mezcladas | separado y medido |
+| 3 | `ultimoError` no se apagaba nunca | arreglado |
+| 4 | Retirar una pieza dejaba su tira huérfana (6 rojos) | `sala_limpiar_prueba.py` |
+
+Verificador: **12 verdes · 0 rojos.**
