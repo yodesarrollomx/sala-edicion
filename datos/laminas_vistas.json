@@ -178,5 +178,41 @@
   "n": 2,
   "fecha": "2026-09-09",
   "src": "laminas/apodo-g5e/L1.png"
+ },
+ "9402bbc17cb7f134b0b486ca1cd282e0": {
+  "pieza": "apodo-g7-c7faea",
+  "n": 1,
+  "fecha": "2026-09-09",
+  "src": "laminas/apodo-g7/L1.png"
+ },
+ "742f0cae136ee45477c8f07dc8b75749": {
+  "pieza": "apodo-g7-c7faea",
+  "n": 2,
+  "fecha": "2026-09-09",
+  "src": "laminas/apodo-g7/L2.png"
+ },
+ "6902c53d4993211bb70e6a79a8e279ba": {
+  "pieza": "apodo-g7-c7faea",
+  "n": 3,
+  "fecha": "2026-09-09",
+  "src": "laminas/apodo-g7/L3.png"
+ },
+ "c044b62eb7bed800b271612478e3f8c0": {
+  "pieza": "apodo-g7-c7faea",
+  "n": 4,
+  "fecha": "2026-09-09",
+  "src": "laminas/apodo-g7/L4.png"
+ },
+ "5c43746a9fcd3d983c2a726421b45943": {
+  "pieza": "apodo-g7-c7faea",
+  "n": 5,
+  "fecha": "2026-09-09",
+  "src": "laminas/apodo-g7/L5.png"
+ },
+ "5a25ffd261b43ebf00e4aee9c74bc15c": {
+  "pieza": "apodo-g7-c7faea",
+  "n": 6,
+  "fecha": "2026-09-09",
+  "src": "laminas/apodo-g7/L6.png"
  }
 }
