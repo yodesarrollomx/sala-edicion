@@ -30,10 +30,13 @@
   {
    "id": "apodo-g5e-30addd",
    "titulo": "El Apodo · lámina 2 salida del guion 1-2-3 (no de la ocurrencia)",
+   "tipo": "laminas",
    "laminas": [
     "laminas/apodo-g5e/L1.png"
    ],
+   "opciones": [],
    "video": null,
+   "de_antes": null,
    "origen": "rehecha-de apodo-g5d-f6637a"
   }
  ],
@@ -135,74 +138,7 @@
   }
  ],
  "decisiones": {
-  "propuestas": {
-   "apodo-video-8sep": {
-    "laminas": [
-     "no",
-     "no",
-     "no"
-    ],
-    "nota": "quiero que lo revise hormzi, que de sus puntos escena por escena y que rehagas todo lo que te pide... en la escena creo 3 se traba un poco el audio, el audio por favor 1.10 la velocidad",
-    "notas": [],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ]
-    ]
-   },
-   "comprador-g5-b1cf4e": {
-    "laminas": [
-     "si"
-    ],
-    "nota": "",
-    "notas": [],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ]
-    ]
-   },
-   "apodo-video-9sep-v5": {
-    "laminas": [
-     null,
-     "si"
-    ],
-    "nota": "",
-    "notas": [],
-    "firmas": [
-     null,
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ]
-    ]
-   }
-  }
+  "propuestas": {}
  },
  "historial": {
   "2026-08-01": {
