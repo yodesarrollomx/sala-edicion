@@ -1,0 +1,80 @@
+{
+ "_que_es": "El guion del VIDEO, derivado de las 8 láminas APROBADAS. Antes vivía cableado dentro de apodo/pipeline.py: nadie podía leerlo ni corregirlo sin tocar código.",
+ "_regla": "la voz narra exactamente lo que está escrito en la lámina (28-ago)",
+ "pieza": "El Apodo del Terreno",
+ "de_la_tira": "apodo-g5e-30addd",
+ "escenas": [
+  {
+   "n": 1,
+   "id": "E1",
+   "lamina_src": "laminas/apodo-g5/L1.png",
+   "texto": "¿Ya sabes cómo le dicen a tu terreno?",
+   "quien": "ella",
+   "voz_reusable": null,
+   "escena_reusable": null
+  },
+  {
+   "n": 2,
+   "id": "E2",
+   "lamina_src": "laminas/apodo-g5e/L1.png",
+   "texto": "Los vecinos le dicen «el de la esquina».",
+   "quien": "el",
+   "voz_reusable": null,
+   "escena_reusable": null
+  },
+  {
+   "n": 3,
+   "id": "E3",
+   "lamina_src": "laminas/apodo-g5/L3.png",
+   "texto": "También le dicen «lote baldío». O «tierra de nadie».",
+   "quien": "ella",
+   "voz_reusable": null,
+   "escena_reusable": null
+  },
+  {
+   "n": 4,
+   "id": "E4",
+   "lamina_src": "laminas/apodo-g5/L4.png",
+   "texto": "En cada sobremesa le inventan un apodo nuevo.",
+   "quien": "el",
+   "voz_reusable": "S3",
+   "escena_reusable": "S3"
+  },
+  {
+   "n": 5,
+   "id": "E5",
+   "lamina_src": "laminas/apodo-g5/L5.png",
+   "texto": "El apodo se mueve con cada rumor.",
+   "quien": "ella",
+   "voz_reusable": "S4",
+   "escena_reusable": "S4"
+  },
+  {
+   "n": 6,
+   "id": "E6",
+   "lamina_src": "laminas/apodo-g3/L7.png",
+   "texto": "Ninguno de esos nombres se lo puso tu terreno.",
+   "quien": "el",
+   "voz_reusable": "S5",
+   "escena_reusable": "S5"
+  },
+  {
+   "n": 7,
+   "id": "E7",
+   "lamina_src": "laminas/apodo-g3/L8.png",
+   "texto": "Tu terreno sí tiene un nombre propio.",
+   "quien": "ella",
+   "voz_reusable": null,
+   "escena_reusable": null
+  },
+  {
+   "n": 8,
+   "id": "E8",
+   "lamina_src": "laminas/apodo-g5/L6.png",
+   "texto": "Pídele a tu terreno su Plan de Potencial Personalizado.",
+   "quien": "el",
+   "voz_reusable": "S7",
+   "escena_reusable": "S7"
+  }
+ ]
+}
