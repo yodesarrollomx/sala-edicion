@@ -510,7 +510,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='12409fe9f5';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='196fd639d6';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -574,6 +574,11 @@ async function traerCatalogo(){
    el triple y `lh3` se estrangula; medido el 8-sep.) */
 const deDrive=(id,ancho)=>`https://drive.google.com/thumbnail?id=${id}&sz=w${ancho||1200}`;
 /* Lo que se pinta: la prueba de Drive si el catálogo la conoce; si no, la ligera del repo. */
+/* 9-sep: las opciones de un eje llegan a veces como arreglo y a veces como {candidatas:[…]}.
+   Cuatro lugares las leían como arreglo a secas y con la otra forma daban CERO: la pieza del
+   video desapareció de la mesa («Nada pendiente para ti» con el video esperando en el Sheet).
+   Se lee en un solo lugar. */
+const CANDIDATAS=p=>{ const o=(p&&p.opciones)||[]; return Array.isArray(o)?o:(o.candidatas||o.opciones||[]) };
 const ligera=src=>{
   const c=_porRuta[src]; if(c&&c.prueba) return deDrive(c.prueba,1200);
   return /\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
@@ -694,7 +699,7 @@ function normalizarDia(j){
   try{ const b=JSON.parse(localStorage.getItem('sala2-'+(j.fecha||''))||'null');
     const tSheet=Date.parse(j.ultima_revision||'')||0;
     if(b&&b.dec&&(b.t||0)>tSheet) Object.keys(b.dec).forEach(pid=>{ const x=b.dec[pid]; if(x&&!x._reabierta&&(x.laminas||[]).some(m=>m==='si'||m==='no')) fuerza.add(pid) }) }catch(e){}
-  j._todas=Object.values(porId).filter(p=>!fuera.has(p.id)&&(((p.laminas||[]).length)||((p.opciones||[]).length)));   // para la vista de solo lectura
+  j._todas=Object.values(porId).filter(p=>!fuera.has(p.id)&&(((p.laminas||[]).length)||CANDIDATAS(p).length));   // para la vista de solo lectura
   j.propuestas=Object.values(porId).filter(p=>{
     if(fuera.has(p.id)) return false;
     if(fuerza.has(p.id)) return true;
@@ -703,7 +708,7 @@ function normalizarDia(j){
     // (Lo heredado de otros días sí se cierra del todo: no es de hoy.)
     if(f&&f.laminas&&!(M[p.id]&&M[p.id].heredada)&&(j.decisiones&&j.decisiones.editores||[]).length){ p._decididaHoy=true; return true }
     if(p.tipo==='eje'){
-      const n=(p.opciones||[]).length||0; if(!n) return false;
+      const n=CANDIDATAS(p).length; if(!n) return false;
       if(!f||!f.laminas) return true;
       const m=f.laminas.slice(0,n); return !(m.some(x=>x==='si')||m.filter(x=>x==='no').length>=n);
     }
@@ -727,8 +732,15 @@ function armarPasos(sinCandado){
     // (no manda a «ya decididas»), pero las marcas de la nube siguen siendo la verdad de partida.
     const prev=marcasPrevias(p.id);
     const noCandar=!!sinCandado;
-    if(p.tipo==='eje'){
-      const n=(p.opciones||[]).length;
+    // 9-sep: la pieza del video llegó con tipo «laminas» y CERO láminas, porque el que la montó
+    // no puso tipo:'eje' y el GAS pone «laminas» por omisión. El cliente buscaba tipo==='eje',
+    // caía al otro camino, hacía 0 pasos y la pieza DESAPARECÍA: «Nada pendiente para ti» con un
+    // video esperando en el Sheet. La forma manda sobre la etiqueta: si trae opciones y no trae
+    // láminas, es un eje, lo diga o no.
+    const _cand=CANDIDATAS(p);
+    const _esEje=p.tipo==='eje'||(!(p.laminas||[]).length&&_cand.length>0);
+    if(_esEje){
+      const n=_cand.length;
       dec[p.id]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:(prev&&prev.nota)||'',_eje:''};   // 8-sep: la nota general que ya está en el Sheet se rehidrata; si no, el siguiente sobre la borraba
       const miaE=prev&&prev.firmas?prev.firmas.map((fs,i)=>({i,m:MIA(fs||[])})).find(z=>z.m&&z.m.marca==='si'):null;
       if(miaE&&!noCandar){ dec[p.id].laminas[miaE.i]='si'; dec[p.id]._eje='si'; lockeadas.push({pid:p.id,i:miaE.i,p,marca:'si',eje:true}); continue }
@@ -1129,7 +1141,7 @@ function pintarCartas(){
       el.querySelectorAll('.lupa,.num-movil').forEach(b=>b.onclick=e=>{ e.stopPropagation(); abrirZoom(src) });
       dobleToque(el.querySelector('.lienzo'),()=>abrirZoom(src));
     }else{
-      const ops=(x.p.opciones||[]).map((o,j)=>`<div class="op"><h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Elegir ésta</button></div>`).join('');
+      const ops=CANDIDATAS(x.p).map((o,j)=>`<div class="op"><h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Elegir ésta</button></div>`).join('');
       el.innerHTML=`${x.p.video?`<div class="lienzo conVideo"><video src="${esc(x.p.video)}" controls playsinline preload="metadata" poster=""></video></div>`:''}
         <div class="opciones">${ops}<button class="ning" data-ning>Ninguna — dejo una nota</button></div>
         <div class="pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · elige una opción</span>
