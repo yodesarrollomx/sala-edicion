@@ -10,7 +10,6 @@
    "entiende": "Portada convertida en pregunta directa (era afirmación); abre el carrusel invitando a que el lector se responda a sí mismo.",
    "estado": "aprobada",
    "marca_previa": "si",
-   "nota_previa": "cambiar la sintaxis a una pregunta",
    "versiones": [
     {
      "v": 1,
@@ -25,27 +24,6 @@
   },
   {
    "n": 2,
-   "src": "laminas/apodo-g3/L2.png",
-   "dice": "(aprobada)",
-   "ve": "",
-   "entiende": "",
-   "estado": "aprobada",
-   "marca_previa": "si",
-   "nota_previa": "",
-   "versiones": [
-    {
-     "v": 1,
-     "fecha": "2026-09-08",
-     "src": "laminas/apodo-g3/L2.png",
-     "hash": "280a70e6",
-     "marca": ""
-    }
-   ],
-   "version": 1,
-   "fecha": "2026-09-08"
-  },
-  {
-   "n": 3,
    "src": "laminas/apodo-g5b/L1.png",
    "dice": "¿«El de la esquina»? Ése es el amable.",
    "ve": "Warm documentary photo, golden hour light, a residential street corner in Hermosillo, Sonora, with a fenced empty lot on the corner overgrown with lig",
@@ -74,14 +52,13 @@
    "fecha": "2026-09-08"
   },
   {
-   "n": 4,
+   "n": 3,
    "src": "laminas/apodo-g5/L3.png",
    "dice": "También le dicen «lote baldío». O «tierra de nadie».",
    "ve": "Warm documentary photo, golden hour light, a quiet vacant lot on the outskirts of Hermosillo, Sonora, dry grass and a few mesquite trees, soft warm su",
    "entiende": "Se quitó 'estorbe'; usa dos apodos reales documentados (lote baldío = término oficial/neutro de prensa y trámites; tierra de nadie = apodo vecinal evocador), sin cifras ni tono tétrico.",
    "estado": "aprobada",
    "marca_previa": "si",
-   "nota_previa": "no «estorba»: busca cómo le dicen de verdad",
    "versiones": [
     {
      "v": 1,
@@ -95,14 +72,13 @@
    "fecha": "2026-09-08"
   },
   {
-   "n": 5,
+   "n": 4,
    "src": "laminas/apodo-g5/L4.png",
    "dice": "En cada sobremesa le inventan un apodo nuevo",
    "ve": "Warm documentary photo, golden hour light, an extended upper-middle-class Mexican family gathered around a table after a meal on a home patio in Hermo",
    "entiende": "Corregido el verbo a plural 'inventan' (concordancia con el sujeto plural implícito de la sobremesa), como pidió Alejandro.",
    "estado": "aprobada",
    "marca_previa": "si",
-   "nota_previa": "«inventan», no «inventa»",
    "versiones": [
     {
      "v": 1,
@@ -116,14 +92,13 @@
    "fecha": "2026-09-08"
   },
   {
-   "n": 6,
+   "n": 5,
    "src": "laminas/apodo-g5/L5.png",
    "dice": "El apodo se mueve con cada rumor",
    "ve": "Warm documentary photo, golden hour light, two upper-middle-class women in their late 20s chatting animatedly on a sunny Hermosillo sidewalk or porch,",
    "entiende": "Texto sin cambio (la nota era solo de imagen); mujer de la imagen ajustada a unos 3 años más joven que la versión anterior.",
    "estado": "aprobada",
    "marca_previa": "si",
-   "nota_previa": "una mujer unos 3 años más joven",
    "versiones": [
     {
      "v": 1,
@@ -137,14 +112,13 @@
    "fecha": "2026-09-08"
   },
   {
-   "n": 7,
+   "n": 6,
    "src": "laminas/apodo-g3/L7.png",
    "dice": "Ninguno de esos nombres se lo puso tu terreno",
    "ve": "",
    "entiende": "",
    "estado": "aprobada",
    "marca_previa": "si",
-   "nota_previa": "",
    "versiones": [
     {
      "v": 1,
@@ -158,14 +132,13 @@
    "fecha": "2026-09-08"
   },
   {
-   "n": 8,
+   "n": 7,
    "src": "laminas/apodo-g3/L8.png",
    "dice": "Tu terreno sí tiene un nombre propio",
    "ve": "",
    "entiende": "",
    "estado": "aprobada",
    "marca_previa": "si",
-   "nota_previa": "",
    "versiones": [
     {
      "v": 1,
@@ -179,14 +152,13 @@
    "fecha": "2026-09-08"
   },
   {
-   "n": 9,
+   "n": 8,
    "src": "laminas/apodo-g5/L6.png",
    "dice": "Pídele a tu terreno su Plan de Potencial Personalizado",
    "ve": "Warm documentary photo, golden hour light, an upper-middle-class Mexican couple standing on their own land in Hermosillo, Sonora, looking together at ",
    "entiende": "«Personalizado» ahora con P mayúscula por ser parte de la sigla PPP (Plan de Potencial Personalizado); mantiene el desenlace condicional sin prometer plazos ni cifras.",
    "estado": "aprobada",
    "marca_previa": "si",
-   "nota_previa": "«Personalizado» con P mayúscula, es el PPP",
    "versiones": [
     {
      "v": 1,
@@ -201,11 +173,11 @@
   }
  ],
  "decidir": [
-  3
+  2
  ],
  "base": "apodo-g5-dcff8d",
  "mapa": {
-  "1": 3
+  "1": 2
  },
  "direccion": {
   "escenas": [
@@ -265,5 +237,8 @@
    }
   ],
   "promesa": "Tu terreno no es el apodo que le puso el chisme del barrio — tiene un nombre propio, y te lo va a decir su Plan de Potencial Personalizado."
- }
+ },
+ "hojas_direccion": [
+  "laminas/apodo-g3/L2.png"
+ ]
 }
