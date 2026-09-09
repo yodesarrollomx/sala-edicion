@@ -62,7 +62,7 @@ revisión. De ahí sale lo que la Mac produce ese día, y todo queda registrado 
 | `datos/tiras/<pid>.json` | La tira completa de una pieza (dice/ve/entiende, estado y nota por lámina). |
 | `datos/piezas.json` · `progreso.json` · `maquinas.json` · `metricas.json` · `expedientes/*.json` | Estado vivo que publica la Mac: etapa de cada pieza, avance con «vuelve en ~X», semáforo de centinelas, números de las publicaciones, un expediente por pieza. |
 | `laminas/<slug>/L*.png` + `.jpg` · `muestras/` · `video/` | Las láminas (el `.jpg` ligero es para la carta, el `.png` para zoom y publicación) y las escenas/voces de «Ver lo que ya salió». |
-| `index-v1.html`, `index-v2.html`, `nueva.html` | Versiones anteriores que siguen en el repo. **No son la Sala.** No editarlas creyendo que sí. |
+| ~~`index-v1.html`, `index-v2.html`, `nueva.html`~~ | **Retiradas del sitio el 8-sep-2026.** Seguían publicadas con su propia URL, en el mismo origen y compartiendo `localStorage` con la Sala buena: si un editor ya autenticado abría una por error, ese código viejo mandaba POSTs reales al backend de producción. Viven en el historial de git, que es donde deben vivir (`git show <commit>^:index-v1.html`). |
 
 **Fuera del repo (`~/yod_audit/`):** `sala_publicar.py` (sube láminas/video, monta propuestas),
 `sala_relevo_diario.py` (el relevo), `maquinas.py`, `progreso.py`, `encargos.py`. Centinelas
