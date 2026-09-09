@@ -510,7 +510,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='d4b22898ae';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='08b5125867';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -757,8 +757,14 @@ function restaurarBorrador(){
 const marcaDe=x=>x.tipo==='lamina'?dec[x.pid].laminas[x.i]:(dec[x.pid]._eje||'');
 // un «eje» es UNA decisión aunque por dentro marque varias opciones
 const cuentas=()=>{
+  // 8-sep: contaba TODO `dec`, y `dec` trae también las reaperturas heredadas de días pasados
+  // (piezas que ya no están en la mesa, cargadas para que Producción las rehaga). En la pantalla
+  // final salía «2 aprobadas · 24 con cambios» cuando él había decidido 3 láminas.
+  // Lo de HOY es lo que está en `pasos`; el atraso de reaperturas se cuenta aparte.
+  const deHoy=new Set(pasos.map(x=>x.pid));
   let si=0,no=0;
   for(const [pid,d] of Object.entries(dec)){
+    if(!deHoy.has(pid)) continue;
     if(d._eje!==undefined){ if(d._eje==='si') si++; else if(d._eje==='no') no++; continue }
     si+=d.laminas.filter(m=>m==='si').length; no+=d.laminas.filter(m=>m==='no').length;
   }
