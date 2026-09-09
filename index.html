@@ -510,7 +510,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='08b5125867';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='ecc40e3af7';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1241,29 +1241,33 @@ function filasRespuestas(compacto){
     const l=t&&(t.laminas||[]).find(z=>z.n===nReal);
     return `<div class="fila-r">${l?`<img class="th" src="${esc(ligera(l.src))}" alt="" loading="lazy">`:'<div class="th"></div>'}<div class="txt"><b>${esc((t&&t.pieza)||d._tira||tituloDe(pid))}</b><small>lámina ${nReal} · pediste cambio</small>${d.notas[i]?`<em>«${esc(d.notas[i])}»</em>`:''}</div>
       <div class="acc"><span class="chipm no">Cambio</span>${!compacto&&DECIDE()?`<button data-quitar="${esc(pid)}:${i}">Quitar</button>`:''}</div></div>` }).join('')).join('');
-  return {hoyF:hoyF+reF,lockF};
+  // 8-sep: `reF` (el atraso de reaperturas de días pasados) iba PEGADO a lo de hoy: «Mis
+  // respuestas» abría con 54 filas cuando él había decidido 4. Va aparte y con su nombre.
+  return {hoyF, lockF, reF};
 }
 function conSeguro(b,fn){ // primer toque pregunta, segundo ejecuta; se olvida a los 4 s
   b.onclick=()=>{ if(b.dataset.seguro){ fn(); return } b.dataset.seguro='1'; const t=b.textContent; b.textContent='Sí, borrar mi respuesta'; b.classList.add('seguro');
     setTimeout(()=>{ if(b.isConnected){ delete b.dataset.seguro; b.textContent=t; b.classList.remove('seguro') } },4000) };
 }
 function abrirRespuestas(){
-  const {hoyF,lockF}=filasRespuestas(false); const c=cuentas();
+  const {hoyF,lockF,reF}=filasRespuestas(false); const c=cuentas();
   const v=hoja(`<h3>Mis respuestas</h3><p>${c.hoy} de ${pasos.length} decididas hoy.${DECIDE()?' «Cambiar» regresa esa carta a la mesa.':''}${lockeadas.length?' Las de ✓ ya estaban decididas de antes.':''}</p>
     <div class="lista-r">${hoyF||'<p>Nada todavía.</p>'}</div>
-    ${lockF?`<h4 style="margin:18px 0 8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--guia)">Decididas antes</h4><div class="lista-r">${lockF}</div>`:''}`,'respuestas');
+    ${lockF?`<h4 style="margin:18px 0 8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--guia)">Decididas antes</h4><div class="lista-r">${lockF}</div>`:''}
+    ${reF?`<h4 style="margin:18px 0 8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--guia)">Esperando a Producción · de días pasados</h4><div class="lista-r">${reF}</div>`:''}`,'respuestas');
   v.querySelectorAll('[data-ir]').forEach(b=>{ const k=+b.dataset.ir; if(marcaDe(pasos[k])) conSeguro(b,()=>irA(k)); else b.onclick=()=>irA(k) });
   v.querySelectorAll('[data-reabrir]').forEach(b=>conSeguro(b,()=>reabrir(lockeadas[+b.dataset.reabrir])));
   v.querySelectorAll('[data-quitar]').forEach(b=>conSeguro(b,()=>{ const [pid,i]=b.dataset.quitar.split(':'); quitarReapertura(pid,+i) }));
 }
 function pintarPanel(){
   const p=$('#panel'); if(!p||getComputedStyle(p).display==='none') return;
-  const x=pasos[idx]; const {hoyF,lockF}=filasRespuestas(true); const c=cuentas();
+  const x=pasos[idx]; const {hoyF,lockF,reF}=filasRespuestas(true); const c=cuentas();
   p.innerHTML=`<div class="bloque"><h4>Tu revisión</h4><span class="estado ${guard.tipo}" id="pEstado"><i></i><span>${esc(guard.texto)}</span></span></div>
     ${x&&DECIDE()?`<div class="bloque"><h4>Qué estás decidiendo</h4><p class="luego2"><b>${esc(x.p.titulo||x.pid)}</b><br>${x.tipo==='lamina'?`${numeroReal(x).replace(/^l/,'L')}. <b>Aprobar</b> → queda lista. <b>Pedir cambio</b> → Producción la rehace con tu nota y vuelve a tu mesa.`:'Eliges una opción y Producción empieza con ésa.'}</p></div>`:''}
     <div class="bloque"><h4>Mis respuestas · ${c.hoy}/${pasos.length}</h4><div class="lista-r">${hoyF||'<p class="luego2">Nada todavía.</p>'}</div>
       ${pasos.length&&DECIDE()?`<button class="secund" style="margin-top:10px" id="pVer">Cambiar alguna</button>`:''}</div>
-    ${lockF?`<div class="bloque"><h4>Decididas antes</h4><div class="lista-r">${lockF}</div></div>`:''}`;
+    ${lockF?`<div class="bloque"><h4>Decididas antes</h4><div class="lista-r">${lockF}</div></div>`:''}
+    ${reF?`<div class="bloque"><h4>Esperando a Producción</h4><div class="lista-r">${reF}</div></div>`:''}`;
   const pv=$('#pVer'); if(pv) pv.onclick=abrirRespuestas;
 }
 
