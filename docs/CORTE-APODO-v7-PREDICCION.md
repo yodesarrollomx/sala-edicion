@@ -85,3 +85,43 @@ de él: es la escena donde por fin se le ve.
 UNA carta: las 6 láminas del v7 en tira, con las 2 retiradas marcadas como retiradas y el
 motivo, y los textos que cambiaron señalados. Tres opciones: aprobar y animar, cambiar algo,
 o rechazar con nota.
+
+---
+
+# Lo que MIDIÓ después (9-sep, tras ejecutar)
+
+## Lo que la predicción acertó
+| dije | salió |
+|---|---|
+| 6 escenas, el giro en la 4 de 6 | ✔ 6 láminas en la mesa, el giro es la 4 |
+| letra entre 66 y 78 px, dispersión < 12 px | ✔ **78 px en las seis**, dispersión 1 px (era 31: de 46 a 77) |
+| la lámina del giro se rehace | ✔ imagen nueva, el dueño solo en su predio |
+| no se anima ni se mezcla audio | ✔ nada de eso se tocó |
+
+## Lo que la predicción dijo mal
+**«Un texto se acorta: la 7».** No hizo falta acortar ninguno. Al medir con el módulo nuevo,
+los seis textos —el del giro y el CTA incluidos— caben completos a 78 px usando tres
+renglones. El problema nunca fue el largo del texto: era el generador forzando dos renglones.
+Cambiar el copy habría sido arreglar el síntoma en el lugar equivocado.
+
+## Lo que la predicción no vio venir
+1. **El texto que se publica no pasaba por ninguna regla.** Las 15 reglas de la guardia
+   miraban lo que el editor lee en la Sala; el caption que va a Facebook e Instagram iba
+   sin revisar. El del Apodo llevaba «el que no se vende» —vetada el 8-sep— y las dos
+   escenas retiradas. Corregido, y con dos reglas nuevas probadas contra ese error exacto.
+2. **`gas.py` mandaba `-X POST` junto con `-L`.** El /exec contesta 302 hacia
+   googleusercontent, que sólo acepta GET; `-X POST` obliga a curl a repetir POST también
+   ahí → 405 y una página de «No se encontró la página». Ése era el «404 intermitente» de
+   todo el día: parecía intermitente porque a veces Google contesta 200 sin redirect.
+3. **`retirar` marcaba la fila pero `armarDia_` no la filtraba si era de hoy.** El GAS
+   contestaba `retiradas: 2` y las dos cartas viejas seguían en la mesa. Es el duplicado
+   que más molesta, y llevaba puesto desde que existe `retirar`. GAS v57.
+4. **La primera carga tarda cerca de un minuto** en tener las 22 miniaturas: se jalan de
+   Drive. No falla ninguna, pero durante ese minuto las fichas 4, 5 y 6 se ven vacías.
+   Es un costo real de tener el archivo en Drive y hay que resolverlo (pendiente).
+
+## Un error mío en la propia auditoría
+Leí el orden de las cartas por `innerText` y concluí que la mesa empezaba en la lámina 2 —
+que es justo la queja que él ya me había hecho. Era falso: la Sala pinta la carta de atrás
+antes en el DOM, y la de encima era `k=0`, «lámina 1 de 6 · APODO-L01». Medir por texto plano
+no sirve para saber qué está encima; hay que preguntar por la clase `detras`.
