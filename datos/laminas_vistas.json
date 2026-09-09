@@ -154,5 +154,23 @@
   "n": 3,
   "fecha": "2026-09-08",
   "src": "laminas/prueba3/L3.png"
+ },
+ "3970f7fcd8a2625197a61a1463704e04": {
+  "pieza": "prueba4-90d2a0",
+  "n": 1,
+  "fecha": "2026-09-08",
+  "src": "laminas/prueba4/L1.png"
+ },
+ "2455eb2de365460627565ab893e6cdf9": {
+  "pieza": "prueba4-90d2a0",
+  "n": 2,
+  "fecha": "2026-09-08",
+  "src": "laminas/prueba4/L2.png"
+ },
+ "5444ffc06685d80bf26ef1ebaf3221b6": {
+  "pieza": "prueba4-90d2a0",
+  "n": 3,
+  "fecha": "2026-09-08",
+  "src": "laminas/prueba4/L3.png"
  }
 }

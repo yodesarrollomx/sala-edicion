@@ -1,0 +1,94 @@
+{
+ "_que_es": "Vuelta 3. Confirmación: los mismos actos deben salir idénticos y sin defectos nuevos. Predicción escrita antes de tocar el navegador.",
+ "actos": [
+  {
+   "n": 1,
+   "hago": "Aprobar lámina 1",
+   "espero": [
+    "si",
+    "",
+    ""
+   ]
+  },
+  {
+   "n": 2,
+   "hago": "Pedir cambio lámina 2 + nota",
+   "espero": [
+    "si",
+    "no",
+    ""
+   ],
+   "nota_en": 1
+  },
+  {
+   "n": 3,
+   "hago": "Aprobar lámina 3",
+   "espero": [
+    "si",
+    "no",
+    "si"
+   ],
+   "resumen": "2 aprobadas · 1 con cambio",
+   "pantalla": "Listo por hoy"
+  },
+  {
+   "n": 4,
+   "hago": "Mis respuestas",
+   "hoy": 3,
+   "secciones": [
+    "Mis respuestas",
+    "Esperando a Producción · de días pasados"
+   ]
+  },
+  {
+   "n": 5,
+   "hago": "Cambiar la 1 desde ahí",
+   "espero": [
+    "",
+    "no",
+    "si"
+   ],
+   "borrar": [
+    "0"
+   ]
+  },
+  {
+   "n": 6,
+   "hago": "Aprobarla otra vez",
+   "espero": [
+    "si",
+    "no",
+    "si"
+   ]
+  }
+ ],
+ "espero_sheet": [
+  [
+   "si",
+   "pendiente",
+   "pendiente"
+  ],
+  [
+   "si",
+   "no",
+   "pendiente"
+  ],
+  [
+   "si",
+   "no",
+   "si"
+  ],
+  [
+   "borrar",
+   "no",
+   "si"
+  ],
+  [
+   "si",
+   "no",
+   "si"
+  ]
+ ],
+ "espero_verificador": "0 rojos",
+ "espero_piezas_suyas": "ninguna cambia"
+}

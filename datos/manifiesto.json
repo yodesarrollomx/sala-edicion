@@ -112,6 +112,16 @@
     "laminas/prueba3/L3.png"
    ],
    "video": null
+  },
+  {
+   "id": "prueba4-90d2a0",
+   "titulo": "PRUEBA V3 · no decidir",
+   "laminas": [
+    "laminas/prueba4/L1.png",
+    "laminas/prueba4/L2.png",
+    "laminas/prueba4/L3.png"
+   ],
+   "video": null
   }
  ],
  "parrilla": [
@@ -373,6 +383,10 @@
   {
    "hora": "21:01",
    "evento": "Propuesta montada: PRUEBA V2 · no decidir (3 láminas)"
+  },
+  {
+   "hora": "21:12",
+   "evento": "Propuesta montada: PRUEBA V3 · no decidir (3 láminas)"
   }
  ],
  "decisiones": {
