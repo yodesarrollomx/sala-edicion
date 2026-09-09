@@ -274,3 +274,38 @@ qué hace buena a una lámina, cómo se atiende una nota, cuándo una pieza est�
 no regla. La frontera es esa: **si se puede comprobar, va en `sala_guardia.py`; si hay que
 juzgarlo, va aquí**. Añadir una regla nueva es añadir una función `regla_*` a la guardia: se
 descubren solas y cada una lleva al lado la fecha en que costó caro.
+
+## 9-sep-2026 · cuatro cosas que estaban rotas de raíz
+
+**35. El tamaño de la letra manda; el texto se acomoda.** (`tipografia.py`)
+El generador encogía la letra hasta que el texto cupiera en dos renglones: el CTA del Apodo
+salió a 46 px contra 77 px del resto, y Alejandro lo marcó como «las láminas quedaron mal los
+textos». Ahora la letra tiene piso (66 px) y se usan hasta tres renglones antes de tocarla; si
+ni así cabe, el generador lo AVISA para que un editor acorte el texto — no lo decide el código.
+El mismo error estaba escrito dos veces (make_lamina2.py y apodo/montar_v6.py); por eso ahora
+vive en un solo archivo.
+
+**36. Lo que se PUBLICA pasa por la guardia igual que lo que se ve en la Sala.**
+Las 15 reglas miraban el título y la tira. El caption que va a Facebook e Instagram no lo
+miraba nadie: el del Apodo llevaba una palabra vetada desde el día anterior y dos escenas que
+él acababa de mandar retirar. Regla nueva `caption_sin_escena_retirada`, y `_textos()` ahora
+incluye `yod_post_<pieza>.json`.
+
+**37. Una sola puerta al Sheet, y de verdad.** (`gas.py`)
+Dos fallas encadenadas:
+ · `-X POST` junto con `-L` obliga a curl a repetir POST en el redirect de Google hacia
+   googleusercontent, que sólo acepta GET → 405 y una página de «No se encontró la página».
+   Ése era el «404 intermitente»: parecía intermitente porque a veces Google contesta 200 sin
+   redirect. Se quitó el `-X`.
+ · `gas.py` se llamaba «la puerta única» y sólo la usaban tres archivos. Los otros doce
+   hablaban al /exec con urllib por su cuenta — incluido el verificador, que por eso daba el
+   día en rojo. Hoy pasan todos por ahí. `gas.leer/escribir` aceptan `rol=` para quien
+   necesita la llave de editor.
+
+**38. `retirar` no bastaba: `armarDia_` no filtraba las retiradas de HOY.** (GAS v57)
+El GAS marcaba estado='retirada' y contestaba `retiradas: 2`, pero la lectura del día sólo
+descartaba las retiradas de días previos. Montar una versión rehecha el mismo día dejaba la
+vieja Y la nueva en la mesa: el duplicado que más le molesta, con un «ok» de por medio.
+
+**Y una trampa de método:** `sala_relevo_diario.py` tiene todo su cuerpo a nivel de módulo.
+Importarlo para mirar una función corre el relevo completo. Ya lleva guarda de import.
