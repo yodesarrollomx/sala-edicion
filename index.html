@@ -510,7 +510,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='196fd639d6';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='a7b81b8ebb';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -707,8 +707,13 @@ function normalizarDia(j){
     // 7-sep: lo que YO decidí HOY no desaparece: se queda como «ya decidida» en Mis respuestas para poder Reabrir.
     // (Lo heredado de otros días sí se cierra del todo: no es de hoy.)
     if(f&&f.laminas&&!(M[p.id]&&M[p.id].heredada)&&(j.decisiones&&j.decisiones.editores||[]).length){ p._decididaHoy=true; return true }
-    if(p.tipo==='eje'){
-      const n=CANDIDATAS(p).length; if(!n) return false;
+    // 9-sep, SEGUNDO lugar con el mismo error: aquí también se preguntaba por la ETIQUETA
+    // (p.tipo==='eje') y el corte del Apodo llegó con tipo «laminas» y cero láminas, así que
+    // caía al camino de abajo, n=0 y `return false`: la pieza se tiraba antes de la mesa.
+    // La forma manda sobre la etiqueta, igual que en armarPasos.
+    const _c=CANDIDATAS(p);
+    if(p.tipo==='eje'||(!(p.laminas||[]).length&&_c.length)){
+      const n=_c.length; if(!n) return false;
       if(!f||!f.laminas) return true;
       const m=f.laminas.slice(0,n); return !(m.some(x=>x==='si')||m.filter(x=>x==='no').length>=n);
     }
