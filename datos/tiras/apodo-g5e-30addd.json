@@ -1,0 +1,269 @@
+{
+ "pieza": "El Apodo del Terreno",
+ "promesa": "Tu terreno no es el apodo que le puso el chisme del barrio — tiene un nombre propio, y te lo va a decir su Plan de Potencial Personalizado.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/apodo-g5/L1.png",
+   "dice": "¿Ya sabes cómo le dicen a tu terreno?",
+   "ve": "Warm documentary photo, golden hour light in Hermosillo, Sonora — a middle-aged upper-middle-class Mexican couple standing at the edge of their own va",
+   "entiende": "Portada convertida en pregunta directa (era afirmación); abre el carrusel invitando a que el lector se responda a sí mismo.",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g5/L1.png",
+     "hash": "da6a3adb",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-08"
+  },
+  {
+   "n": 2,
+   "src": "laminas/apodo-g5e/L1.png",
+   "dice": "Los vecinos le dicen «el de la esquina».",
+   "ve": "Warm documentary photo, golden hour light, a residential street corner in Hermosillo, Sonora, with a fenced empty lot on the corner overgrown with lig",
+   "entiende": "Reescrita como pregunta ('¿el de la esquina?') para que se sienta leída por el cliente; imagen nueva (esquina residencial con vecino), distinta de la repetida en láminas anteriores.",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "«¿Como que lo pide?» — pediste guion antes de tocar la lámina. Ya está en datos/guiones/APODO.json",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g5/L2.png",
+     "hash": "6016380a",
+     "marca": "no"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g5b/L1.png",
+     "hash": "9cf6de7b",
+     "marca": "no",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g5c/L1.png",
+     "hash": "585bce25",
+     "marca": "no",
+     "igual": false
+    },
+    {
+     "v": 4,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g5d/L1.png",
+     "hash": "afe15d64",
+     "marca": "no",
+     "igual": false
+    },
+    {
+     "v": 5,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g5e/L1.png",
+     "hash": "df8d123f",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 5,
+   "fecha": "2026-09-09"
+  },
+  {
+   "n": 3,
+   "src": "laminas/apodo-g5/L3.png",
+   "dice": "También le dicen «lote baldío». O «tierra de nadie».",
+   "ve": "Warm documentary photo, golden hour light, a quiet vacant lot on the outskirts of Hermosillo, Sonora, dry grass and a few mesquite trees, soft warm su",
+   "entiende": "Se quitó 'estorbe'; usa dos apodos reales documentados (lote baldío = término oficial/neutro de prensa y trámites; tierra de nadie = apodo vecinal evocador), sin cifras ni tono tétrico.",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g5/L3.png",
+     "hash": "bd2ca8d7",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-08"
+  },
+  {
+   "n": 4,
+   "src": "laminas/apodo-g5/L4.png",
+   "dice": "En cada sobremesa le inventan un apodo nuevo",
+   "ve": "Warm documentary photo, golden hour light, an extended upper-middle-class Mexican family gathered around a table after a meal on a home patio in Hermo",
+   "entiende": "Corregido el verbo a plural 'inventan' (concordancia con el sujeto plural implícito de la sobremesa), como pidió Alejandro.",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g5/L4.png",
+     "hash": "7d9a0898",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-08"
+  },
+  {
+   "n": 5,
+   "src": "laminas/apodo-g5/L5.png",
+   "dice": "El apodo se mueve con cada rumor",
+   "ve": "Warm documentary photo, golden hour light, two upper-middle-class women in their late 20s chatting animatedly on a sunny Hermosillo sidewalk or porch,",
+   "entiende": "Texto sin cambio (la nota era solo de imagen); mujer de la imagen ajustada a unos 3 años más joven que la versión anterior.",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g5/L5.png",
+     "hash": "d21a50d9",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-08"
+  },
+  {
+   "n": 6,
+   "src": "laminas/apodo-g3/L7.png",
+   "dice": "Ninguno de esos nombres se lo puso tu terreno",
+   "ve": "",
+   "entiende": "",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g3/L7.png",
+     "hash": "70aa2026",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-08"
+  },
+  {
+   "n": 7,
+   "src": "laminas/apodo-g3/L8.png",
+   "dice": "Tu terreno sí tiene un nombre propio",
+   "ve": "",
+   "entiende": "",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g3/L8.png",
+     "hash": "a01d6d5d",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-08"
+  },
+  {
+   "n": 8,
+   "src": "laminas/apodo-g5/L6.png",
+   "dice": "Pídele a tu terreno su Plan de Potencial Personalizado",
+   "ve": "Warm documentary photo, golden hour light, an upper-middle-class Mexican couple standing on their own land in Hermosillo, Sonora, looking together at ",
+   "entiende": "«Personalizado» ahora con P mayúscula por ser parte de la sigla PPP (Plan de Potencial Personalizado); mantiene el desenlace condicional sin prometer plazos ni cifras.",
+   "estado": "aprobada",
+   "marca_previa": "si",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/apodo-g5/L6.png",
+     "hash": "f1b7b1ac",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-08"
+  }
+ ],
+ "decidir": [
+  2
+ ],
+ "base": "apodo-g5-dcff8d",
+ "mapa": {
+  "1": 2
+ },
+ "direccion": {
+  "escenas": [
+   {
+    "n": 1,
+    "se_ve": "El terreno, luz de día abierta, sin gente todavía — plano limpio, aspiracional.",
+    "entiende": "Esto va sobre MI terreno, no sobre terrenos en general.",
+    "por_que": "Es el gancho: hay que anclar al lector en su propio predio antes de hablarle de apodos."
+   },
+   {
+    "n": 2,
+    "se_ve": "Toma aprobada por Alejandro (no se toca).",
+    "entiende": "Sigue construyendo la entrada emocional a la historia.",
+    "por_que": "Es la segunda pisada del gancho, ya validada."
+   },
+   {
+    "n": 3,
+    "se_ve": "El terreno con una referencia visual clara al barrio (una esquina real, otra imagen a la actual porque esa ya se repitió), luz de día.",
+    "entiende": "Reconoce que a su terreno también le dicen algo — 'el de la esquina' — y que eso es apenas un apodo, no lo que vale.",
+    "por_que": "Primer apodo concreto; entra en pregunta para que el lector conteste en su cabeza, no que se lo afirmemos."
+   },
+   {
+    "n": 4,
+    "se_ve": "Un terreno con maleza o pasto crecido, pero en luz día luminosa, sin aire de abandono ni tétrico — buscamos el apodo real que le dan en internet a estos terrenos (baldío, panteón de terreno, terreno fantasma o similar, el que se sienta bien).",
+    "entiende": "Ese apodo tampoco define al terreno ni le resta valor real.",
+    "por_que": "Escala la idea del apodo: hasta el que 'se ve mal' tiene uno, y tampoco es la verdad del terreno."
+   },
+   {
+    "n": 5,
+    "se_ve": "Una sobremesa real, familia o vecinos platicando, ambiente cálido de Hermosillo.",
+    "entiende": "Los apodos nacen de la plática de la gente, no de un dato real — y son varios, cambian con quien los diga (por eso 'inventan', plural).",
+    "por_que": "Muestra el origen social del apodo: rumor, no información."
+   },
+   {
+    "n": 6,
+    "se_ve": "Una mujer (unos 3 años más joven que la versión actual) contando el rumor a otra persona.",
+    "entiende": "El apodo viaja de boca en boca y se transforma cada vez.",
+    "por_que": "Refuerza que el apodo es inestable — cambia con cada quien lo repite."
+   },
+   {
+    "n": 7,
+    "se_ve": "El terreno de nuevo, ahora visto solo, sin gente alrededor, luz clara.",
+    "entiende": "Ninguno de esos nombres salió del terreno mismo — se los pusieron desde afuera.",
+    "por_que": "Es el quiebre: separa el rumor ajeno de la verdad propia del terreno, prepara la revelación."
+   },
+   {
+    "n": 8,
+    "se_ve": "El terreno con una persona real mirándolo con intención, como evaluándolo con respeto.",
+    "entiende": "El terreno tiene un nombre propio real: lo que de verdad puede sostener (uso, capacidad) — eso sí es información, no apodo.",
+    "por_que": "Es la resolución: pasa del rumor a la verdad medible del terreno."
+   },
+   {
+    "n": 9,
+    "se_ve": "Cierre luminoso con llamada a la acción clara, sin cifras ni plazos.",
+    "entiende": "Puede pedir su Plan de Potencial Personalizado (PPP) para conocer ese nombre propio.",
+    "por_que": "Es el cierre condicional del embudo: invita al siguiente paso sin prometer resultado ni tiempos."
+   }
+  ],
+  "promesa": "Tu terreno no es el apodo que le puso el chisme del barrio — tiene un nombre propio, y te lo va a decir su Plan de Potencial Personalizado."
+ },
+ "hojas_direccion": [
+  "laminas/apodo-g3/L2.png"
+ ],
+ "guion": "datos/guiones/APODO.json"
+}

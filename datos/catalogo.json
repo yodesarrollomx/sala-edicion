@@ -111,11 +111,21 @@
     "drive_original": "10nbWNRKmpAv4DRgiqibkk7NN3AQ4SUsc",
     "drive_prueba": "1gr-mr-PqsZoH8FU7fw34kvBpD76A41vr",
     "liga": "https://drive.google.com/thumbnail?id=1gr-mr-PqsZoH8FU7fw34kvBpD76A41vr&sz=w1200"
+   },
+   {
+    "r": 8,
+    "huella": "df8d123f5794f0e00f6a5acc143e2d30",
+    "src": "laminas/apodo-g5e/L1.png",
+    "grupo": "apodo-g5e",
+    "tambien_en": [],
+    "drive_original": "1DBQO18OFJoh5hlt4juAa7otm3TZsaAVv",
+    "drive_prueba": "1Yuj7uyCPeAr_QlK0N6SnExFazWmh3aDA",
+    "liga": "https://drive.google.com/thumbnail?id=1Yuj7uyCPeAr_QlK0N6SnExFazWmh3aDA&sz=w1200"
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1o2d3vHlvXRUe3UiY3bGyjv_dQMQFjFj9",
-  "revision_vigente": 7
+  "revision_vigente": 8
  },
  "APODO-L03": {
   "serial": "APODO-L03",

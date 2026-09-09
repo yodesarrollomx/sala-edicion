@@ -1,6 +1,6 @@
 {
  "_que_es": "Manifiesto de respaldo: el portal lo lee cuando el Sheet aún no está conectado. Cuando el GAS ya está en línea, esta copia queda de plan B.",
- "fecha": "2026-09-08",
+ "fecha": "2026-09-09",
  "dias": [
   "2026-08-01",
   "2026-08-04",
@@ -23,105 +23,18 @@
   "2026-09-06",
   "2026-09-07",
   "2026-01-05",
-  "2026-09-08"
+  "2026-09-08",
+  "2026-09-09"
  ],
  "propuestas": [
   {
-   "id": "apodo-g5-dcff8d",
-   "titulo": "El Apodo del Terreno · las 6 láminas rehechas con tus notas (pregunta, apodos reales y Personalizado)",
-   "tipo": "laminas",
+   "id": "apodo-g5e-30addd",
+   "titulo": "El Apodo · lámina 2 salida del guion 1-2-3 (no de la ocurrencia)",
    "laminas": [
-    "laminas/apodo-g5/L1.png",
-    "laminas/apodo-g5/L2.png",
-    "laminas/apodo-g5/L3.png",
-    "laminas/apodo-g5/L4.png",
-    "laminas/apodo-g5/L5.png",
-    "laminas/apodo-g5/L6.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "de_antes": null,
-   "origen": "rehecha-de apodo-g3"
-  },
-  {
-   "id": "comprador-g5-b1cf4e",
-   "titulo": "El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/comprador-g5/L1.png",
-    "laminas/comprador-g5/L2.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "de_antes": "2026-09-07",
-   "origen": "rehecha-de comprador-g4-54595f"
-  },
-  {
-   "id": "prueba-celdas-e1e74e",
-   "titulo": "PRUEBA de sistema · no decidir (se retira al terminar)",
-   "laminas": [
-    "laminas/prueba-celdas/L1.png",
-    "laminas/prueba-celdas/L2.png",
-    "laminas/prueba-celdas/L3.png"
-   ],
-   "video": null
-  },
-  {
-   "id": "apodo-g5b-c4c7be",
-   "titulo": "El Apodo del Terreno · lámina 3 rehecha: ahora sí encadena con la 1",
-   "laminas": [
-    "laminas/apodo-g5b/L1.png"
+    "laminas/apodo-g5e/L1.png"
    ],
    "video": null,
-   "origen": "rehecha-de apodo-g5-dcff8d"
-  },
-  {
-   "id": "apodo-g5c-9f7d43",
-   "titulo": "El Apodo · lámina 2: dos apodos reales en vez de una vaguedad",
-   "laminas": [
-    "laminas/apodo-g5c/L1.png"
-   ],
-   "video": null,
-   "origen": "rehecha-de apodo-g5b-c4c7be"
-  },
-  {
-   "id": "apodo-g5d-f6637a",
-   "titulo": "El Apodo · lámina 2: concreta y sin la palabra vetada",
-   "laminas": [
-    "laminas/apodo-g5d/L1.png"
-   ],
-   "video": null,
-   "origen": "rehecha-de apodo-g5c-9f7d43"
-  },
-  {
-   "id": "prueba2-99aa19",
-   "titulo": "PRUEBA 2 · no decidir (se retira)",
-   "laminas": [
-    "laminas/prueba2/L1.png",
-    "laminas/prueba2/L2.png",
-    "laminas/prueba2/L3.png"
-   ],
-   "video": null
-  },
-  {
-   "id": "prueba3-026a37",
-   "titulo": "PRUEBA V2 · no decidir",
-   "laminas": [
-    "laminas/prueba3/L1.png",
-    "laminas/prueba3/L2.png",
-    "laminas/prueba3/L3.png"
-   ],
-   "video": null
-  },
-  {
-   "id": "prueba4-90d2a0",
-   "titulo": "PRUEBA V3 · no decidir",
-   "laminas": [
-    "laminas/prueba4/L1.png",
-    "laminas/prueba4/L2.png",
-    "laminas/prueba4/L3.png"
-   ],
-   "video": null
+   "origen": "rehecha-de apodo-g5d-f6637a"
   }
  ],
  "parrilla": [
@@ -217,176 +130,8 @@
  ],
  "bitacora": [
   {
-   "hora": "17:13",
-   "evento": "Tu revisión de anoche recogida: L3 y L4 tachadas — rehechas con más gente y líneas cortas (tu nota del texto)"
-  },
-  {
-   "hora": "17:13",
-   "evento": "L1, L2, L5, L6, L7 sin marcar: vuelven HOY una única vez; lo que no se marque hoy, muere"
-  },
-  {
-   "hora": "17:13",
-   "evento": "El cuento de Pub 1 sigue en la cancha (FB+IG): primer día de medición orgánica"
-  },
-  {
-   "hora": "10:37",
-   "evento": "Propuesta montada: El Apodo del Terreno · L4 «el baldío», L5 «inventan», L9 «Personalizado» (9 láminas)"
-  },
-  {
-   "hora": "10:38",
-   "evento": "Guion montado: ¿Vendo o construyo? (9 láminas, texto para tu visto bueno)"
-  },
-  {
-   "hora": "10:50",
-   "evento": "Propuesta montada: Escena 4 · el pivote rehecho · ¿toma A, B o C? (recomiendo la B) (3 láminas)"
-  },
-  {
-   "hora": "19:27",
-   "evento": "Montada la lista «Publicaciones fáciles de explicar» (7 ideas) + el corte con el cierre corregido"
-  },
-  {
-   "hora": "21:47",
-   "evento": "Registro de peticiones al día: 16 en total, 1 en curso (la Sala cortada)"
-  },
-  {
-   "hora": "21:48",
-   "evento": "Montada la regla de la voz (¿lee la placa o la complementa?) para cerrarla en la Sala"
-  },
-  {
-   "hora": "22:39",
-   "evento": "Corregido: lo ya decidido deja de volver a la mesa (un eje se cierra con un sí)"
-  },
-  {
-   "hora": "10:48",
-   "evento": "Cerrado el ciclo: las decisiones ya viajan al día vivo; el relevo no vuelve a montar lo decidido"
-  },
-  {
-   "hora": "11:12",
-   "evento": "Motor afinado: respaldo espejo + reintentos + unión de marcas; el peor camino ya sirve la mesa correcta"
-  },
-  {
-   "hora": "11:54",
-   "evento": "Mesa reducida a 2 (solo lo nunca decidido) + corte de pantalla resuelto (centrado seguro) + iframe fresco"
-  },
-  {
-   "hora": "12:17",
-   "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste) (11 láminas)"
-  },
-  {
-   "hora": "13:13",
-   "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste) (11 láminas)"
-  },
-  {
-   "hora": "13:14",
-   "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (dirección + 9 láminas del guion que aprobaste) (11 láminas)"
-  },
-  {
-   "hora": "14:35",
-   "evento": "Propuesta montada: ¿Vendo o construyo? · tira v2 — revisión Hormozi aplicada a tus 4 notas (11 láminas)"
-  },
-  {
-   "hora": "15:05",
-   "evento": "Propuesta montada: Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado) (4 láminas)"
-  },
-  {
-   "hora": "08:40",
-   "evento": "Cosechada tu revisión del 31-ago (se había quedado sin leer) · montadas 2 rehechas + dirección"
-  },
-  {
-   "hora": "13:01",
-   "evento": "Sala 2.1 en vivo: guardado visible, editar/reabrir, zoom, contexto, pedir /sala, 3 pantallas; puente de sesión al dominio nuevo"
-  },
-  {
-   "hora": "18:44",
-   "evento": "Sala 2.1: puente en ventana principal, Ampliar fuera de la imagen, y el borrador del aparato manda sobre el Sheet viejo (probado)"
-  },
-  {
-   "hora": "21:21",
-   "evento": "Propuesta montada: El comprador ya sabe · el guion (2 hojas) — ¿lo produzco? (2 láminas)"
-  },
-  {
-   "hora": "23:02",
-   "evento": "Propuesta montada: El comprador ya sabe · las 9 láminas del guion que aprobaste (9 láminas)"
-  },
-  {
-   "hora": "09:10",
-   "evento": "Propuesta montada: El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8) (4 láminas)"
-  },
-  {
-   "hora": "13:11",
-   "evento": "Video del Apodo rehecho: escena 3 sin choque de manos, con sonido"
-  },
-  {
-   "hora": "13:57",
-   "evento": "Propuesta montada: El comprador ya sabe · las 2 láminas que rehice con tus notas de hoy (4 y 7) (2 láminas)"
-  },
-  {
-   "hora": "14:57",
-   "evento": "Video del Apodo v2: sin máscara, escena 7 animada, escena 3 con foto nueva (acercamiento hasta que haya GPU)"
-  },
-  {
-   "hora": "17:40",
-   "evento": "Prueba de motores de video montada (escena 7 × Wan/Kling/LTX)"
-  },
-  {
-   "hora": "18:13",
-   "evento": "Propuesta montada: El comprador ya sabe · láminas 4, 7 y 8 reescritas con la fórmula de Hormozi (tus notas de hoy) (3 láminas)"
-  },
-  {
-   "hora": "22:00",
-   "evento": "Propuesta montada: El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40 (2 láminas)"
-  },
-  {
-   "hora": "07:18",
-   "evento": "Video del Apodo v3 remontado con id nuevo (las opciones habían cambiado bajo el mismo id)"
-  },
-  {
-   "hora": "08:51",
-   "evento": "Video del Apodo v5: revisión escena por escena aplicada, voz de la escena 3 regrabada, velocidad 1.10"
-  },
-  {
-   "hora": "12:06",
-   "evento": "Propuesta montada: El Apodo del Terreno · las 6 láminas rehechas con tus notas (pregunta, apodos reales y Personalizado) (6 láminas)"
-  },
-  {
-   "hora": "18:35",
-   "evento": "Propuesta montada: PRUEBA de sistema · no decidir (se retira al terminar) (3 láminas)"
-  },
-  {
-   "hora": "19:37",
-   "evento": "Propuesta montada: El Apodo del Terreno · lámina 3 rehecha: ahora sí encadena con la 1 (1 láminas)"
-  },
-  {
-   "hora": "20:28",
-   "evento": "Propuesta montada: El Apodo · lámina 2: dos apodos reales en vez de una vaguedad (1 láminas)"
-  },
-  {
-   "hora": "20:37",
-   "evento": "Propuesta montada: El Apodo · lámina 2 sin la palabra vetada (1 láminas)"
-  },
-  {
-   "hora": "20:37",
-   "evento": "Propuesta montada: El Apodo · lámina 2: concreta y sin la palabra vetada (1 láminas)"
-  },
-  {
-   "hora": "20:38",
-   "evento": "Propuesta montada: El Apodo · lámina 2: concreta y sin la palabra vetada (1 láminas)"
-  },
-  {
-   "hora": "20:43",
-   "evento": "Propuesta montada: PRUEBA 2 · no decidir (se retira) (3 láminas)"
-  },
-  {
-   "hora": "20:43",
-   "evento": "Propuesta montada: PRUEBA 2 · no decidir (se retira) (3 láminas)"
-  },
-  {
-   "hora": "21:01",
-   "evento": "Propuesta montada: PRUEBA V2 · no decidir (3 láminas)"
-  },
-  {
-   "hora": "21:12",
-   "evento": "Propuesta montada: PRUEBA V3 · no decidir (3 láminas)"
+   "hora": "08:37",
+   "evento": "Propuesta montada: El Apodo · lámina 2 salida del guion 1-2-3 (no de la ocurrencia) (1 láminas)"
   }
  ],
  "decisiones": {
@@ -2261,6 +2006,302 @@
     {
      "hora": "22:00",
      "evento": "Propuesta montada: El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40 (2 láminas)"
+    }
+   ]
+  },
+  "2026-09-08": {
+   "propuestas": [
+    {
+     "id": "apodo-g5-dcff8d",
+     "titulo": "El Apodo del Terreno · las 6 láminas rehechas con tus notas (pregunta, apodos reales y Personalizado)",
+     "tipo": "laminas",
+     "laminas": [
+      "laminas/apodo-g5/L1.png",
+      "laminas/apodo-g5/L2.png",
+      "laminas/apodo-g5/L3.png",
+      "laminas/apodo-g5/L4.png",
+      "laminas/apodo-g5/L5.png",
+      "laminas/apodo-g5/L6.png"
+     ],
+     "opciones": [],
+     "video": null,
+     "de_antes": null,
+     "origen": "rehecha-de apodo-g3"
+    },
+    {
+     "id": "comprador-g5-b1cf4e",
+     "titulo": "El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40",
+     "tipo": "laminas",
+     "laminas": [
+      "laminas/comprador-g5/L1.png",
+      "laminas/comprador-g5/L2.png"
+     ],
+     "opciones": [],
+     "video": null,
+     "de_antes": "2026-09-07",
+     "origen": "rehecha-de comprador-g4-54595f"
+    },
+    {
+     "id": "prueba-celdas-e1e74e",
+     "titulo": "PRUEBA de sistema · no decidir (se retira al terminar)",
+     "laminas": [
+      "laminas/prueba-celdas/L1.png",
+      "laminas/prueba-celdas/L2.png",
+      "laminas/prueba-celdas/L3.png"
+     ],
+     "video": null
+    },
+    {
+     "id": "apodo-g5b-c4c7be",
+     "titulo": "El Apodo del Terreno · lámina 3 rehecha: ahora sí encadena con la 1",
+     "laminas": [
+      "laminas/apodo-g5b/L1.png"
+     ],
+     "video": null,
+     "origen": "rehecha-de apodo-g5-dcff8d"
+    },
+    {
+     "id": "apodo-g5c-9f7d43",
+     "titulo": "El Apodo · lámina 2: dos apodos reales en vez de una vaguedad",
+     "laminas": [
+      "laminas/apodo-g5c/L1.png"
+     ],
+     "video": null,
+     "origen": "rehecha-de apodo-g5b-c4c7be"
+    },
+    {
+     "id": "apodo-g5d-f6637a",
+     "titulo": "El Apodo · lámina 2: concreta y sin la palabra vetada",
+     "laminas": [
+      "laminas/apodo-g5d/L1.png"
+     ],
+     "video": null,
+     "origen": "rehecha-de apodo-g5c-9f7d43"
+    },
+    {
+     "id": "prueba2-99aa19",
+     "titulo": "PRUEBA 2 · no decidir (se retira)",
+     "laminas": [
+      "laminas/prueba2/L1.png",
+      "laminas/prueba2/L2.png",
+      "laminas/prueba2/L3.png"
+     ],
+     "video": null
+    },
+    {
+     "id": "prueba3-026a37",
+     "titulo": "PRUEBA V2 · no decidir",
+     "laminas": [
+      "laminas/prueba3/L1.png",
+      "laminas/prueba3/L2.png",
+      "laminas/prueba3/L3.png"
+     ],
+     "video": null
+    },
+    {
+     "id": "prueba4-90d2a0",
+     "titulo": "PRUEBA V3 · no decidir",
+     "laminas": [
+      "laminas/prueba4/L1.png",
+      "laminas/prueba4/L2.png",
+      "laminas/prueba4/L3.png"
+     ],
+     "video": null
+    }
+   ],
+   "produccion": [
+    {
+     "pieza": "El terreno que dijo que sí · el cuento (47 s)",
+     "estado": "publicada",
+     "detalle": "FB + IG (reel) · copy «los dos bandos» · liga única fb/ig-2026-08-04 · primer comentario puesto",
+     "fecha": "2026-08-04",
+     "enlace": "https://www.instagram.com/reel/DboskQogVy1/"
+    },
+    {
+     "pieza": "El terreno que dijo que sí · carrusel",
+     "estado": "publicada",
+     "detalle": "FB + IG · liga medible activa · 4 interacciones IG al 30-jul",
+     "fecha": "2026-07-27"
+    },
+    {
+     "pieza": "La Servilleta · láminas",
+     "estado": "rehacer",
+     "detalle": "quitar «EDICIÓN POR AURUM ARQUITECTOS»",
+     "fecha": "2026-07-29"
+    }
+   ],
+   "bitacora": [
+    {
+     "hora": "17:13",
+     "evento": "Tu revisión de anoche recogida: L3 y L4 tachadas — rehechas con más gente y líneas cortas (tu nota del texto)"
+    },
+    {
+     "hora": "17:13",
+     "evento": "L1, L2, L5, L6, L7 sin marcar: vuelven HOY una única vez; lo que no se marque hoy, muere"
+    },
+    {
+     "hora": "17:13",
+     "evento": "El cuento de Pub 1 sigue en la cancha (FB+IG): primer día de medición orgánica"
+    },
+    {
+     "hora": "10:37",
+     "evento": "Propuesta montada: El Apodo del Terreno · L4 «el baldío», L5 «inventan», L9 «Personalizado» (9 láminas)"
+    },
+    {
+     "hora": "10:38",
+     "evento": "Guion montado: ¿Vendo o construyo? (9 láminas, texto para tu visto bueno)"
+    },
+    {
+     "hora": "10:50",
+     "evento": "Propuesta montada: Escena 4 · el pivote rehecho · ¿toma A, B o C? (recomiendo la B) (3 láminas)"
+    },
+    {
+     "hora": "19:27",
+     "evento": "Montada la lista «Publicaciones fáciles de explicar» (7 ideas) + el corte con el cierre corregido"
+    },
+    {
+     "hora": "21:47",
+     "evento": "Registro de peticiones al día: 16 en total, 1 en curso (la Sala cortada)"
+    },
+    {
+     "hora": "21:48",
+     "evento": "Montada la regla de la voz (¿lee la placa o la complementa?) para cerrarla en la Sala"
+    },
+    {
+     "hora": "22:39",
+     "evento": "Corregido: lo ya decidido deja de volver a la mesa (un eje se cierra con un sí)"
+    },
+    {
+     "hora": "10:48",
+     "evento": "Cerrado el ciclo: las decisiones ya viajan al día vivo; el relevo no vuelve a montar lo decidido"
+    },
+    {
+     "hora": "11:12",
+     "evento": "Motor afinado: respaldo espejo + reintentos + unión de marcas; el peor camino ya sirve la mesa correcta"
+    },
+    {
+     "hora": "11:54",
+     "evento": "Mesa reducida a 2 (solo lo nunca decidido) + corte de pantalla resuelto (centrado seguro) + iframe fresco"
+    },
+    {
+     "hora": "12:17",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste) (11 láminas)"
+    },
+    {
+     "hora": "13:13",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (9 láminas del guion que aprobaste) (11 láminas)"
+    },
+    {
+     "hora": "13:14",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · la tira (dirección + 9 láminas del guion que aprobaste) (11 láminas)"
+    },
+    {
+     "hora": "14:35",
+     "evento": "Propuesta montada: ¿Vendo o construyo? · tira v2 — revisión Hormozi aplicada a tus 4 notas (11 láminas)"
+    },
+    {
+     "hora": "15:05",
+     "evento": "Propuesta montada: Vendo o construyo · SOLO las 4 rehechas (las 7 que aprobaste están bajo candado) (4 láminas)"
+    },
+    {
+     "hora": "08:40",
+     "evento": "Cosechada tu revisión del 31-ago (se había quedado sin leer) · montadas 2 rehechas + dirección"
+    },
+    {
+     "hora": "13:01",
+     "evento": "Sala 2.1 en vivo: guardado visible, editar/reabrir, zoom, contexto, pedir /sala, 3 pantallas; puente de sesión al dominio nuevo"
+    },
+    {
+     "hora": "18:44",
+     "evento": "Sala 2.1: puente en ventana principal, Ampliar fuera de la imagen, y el borrador del aparato manda sobre el Sheet viejo (probado)"
+    },
+    {
+     "hora": "21:21",
+     "evento": "Propuesta montada: El comprador ya sabe · el guion (2 hojas) — ¿lo produzco? (2 láminas)"
+    },
+    {
+     "hora": "23:02",
+     "evento": "Propuesta montada: El comprador ya sabe · las 9 láminas del guion que aprobaste (9 láminas)"
+    },
+    {
+     "hora": "09:10",
+     "evento": "Propuesta montada: El comprador ya sabe · las 4 láminas que rehice con tus notas (4, 6, 7 y 8) (4 láminas)"
+    },
+    {
+     "hora": "13:11",
+     "evento": "Video del Apodo rehecho: escena 3 sin choque de manos, con sonido"
+    },
+    {
+     "hora": "13:57",
+     "evento": "Propuesta montada: El comprador ya sabe · las 2 láminas que rehice con tus notas de hoy (4 y 7) (2 láminas)"
+    },
+    {
+     "hora": "14:57",
+     "evento": "Video del Apodo v2: sin máscara, escena 7 animada, escena 3 con foto nueva (acercamiento hasta que haya GPU)"
+    },
+    {
+     "hora": "17:40",
+     "evento": "Prueba de motores de video montada (escena 7 × Wan/Kling/LTX)"
+    },
+    {
+     "hora": "18:13",
+     "evento": "Propuesta montada: El comprador ya sabe · láminas 4, 7 y 8 reescritas con la fórmula de Hormozi (tus notas de hoy) (3 láminas)"
+    },
+    {
+     "hora": "22:00",
+     "evento": "Propuesta montada: El comprador ya sabe · lámina 4 (frase nueva) y lámina 7 (comparación esquemática) con tus notas de las 18:40 (2 láminas)"
+    },
+    {
+     "hora": "07:18",
+     "evento": "Video del Apodo v3 remontado con id nuevo (las opciones habían cambiado bajo el mismo id)"
+    },
+    {
+     "hora": "08:51",
+     "evento": "Video del Apodo v5: revisión escena por escena aplicada, voz de la escena 3 regrabada, velocidad 1.10"
+    },
+    {
+     "hora": "12:06",
+     "evento": "Propuesta montada: El Apodo del Terreno · las 6 láminas rehechas con tus notas (pregunta, apodos reales y Personalizado) (6 láminas)"
+    },
+    {
+     "hora": "18:35",
+     "evento": "Propuesta montada: PRUEBA de sistema · no decidir (se retira al terminar) (3 láminas)"
+    },
+    {
+     "hora": "19:37",
+     "evento": "Propuesta montada: El Apodo del Terreno · lámina 3 rehecha: ahora sí encadena con la 1 (1 láminas)"
+    },
+    {
+     "hora": "20:28",
+     "evento": "Propuesta montada: El Apodo · lámina 2: dos apodos reales en vez de una vaguedad (1 láminas)"
+    },
+    {
+     "hora": "20:37",
+     "evento": "Propuesta montada: El Apodo · lámina 2 sin la palabra vetada (1 láminas)"
+    },
+    {
+     "hora": "20:37",
+     "evento": "Propuesta montada: El Apodo · lámina 2: concreta y sin la palabra vetada (1 láminas)"
+    },
+    {
+     "hora": "20:38",
+     "evento": "Propuesta montada: El Apodo · lámina 2: concreta y sin la palabra vetada (1 láminas)"
+    },
+    {
+     "hora": "20:43",
+     "evento": "Propuesta montada: PRUEBA 2 · no decidir (se retira) (3 láminas)"
+    },
+    {
+     "hora": "20:43",
+     "evento": "Propuesta montada: PRUEBA 2 · no decidir (se retira) (3 láminas)"
+    },
+    {
+     "hora": "21:01",
+     "evento": "Propuesta montada: PRUEBA V2 · no decidir (3 láminas)"
+    },
+    {
+     "hora": "21:12",
+     "evento": "Propuesta montada: PRUEBA V3 · no decidir (3 láminas)"
     }
    ]
   }

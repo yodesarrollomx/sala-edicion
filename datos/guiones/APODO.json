@@ -1,0 +1,27 @@
+{
+  "_que_es": "El guion de El Apodo del Terreno, en DATOS. Antes vivía dentro de apodo/pipeline.py y dentro de las tiras, así que nadie podía leerlo ni corregirlo sin tocar código. Alejandro, 9-sep: «antes de tocar la lámina, arma un buen guion para la lámina 1 (ya existe), lámina 2 (créalo con continuidad a la primera) y que la 3 (ya existe)... la lámina 2 tiene también poder encajar en lo que se dice en ésta, así que conecta bien».",
+  "pieza": "El Apodo del Terreno",
+  "promesa": "Que el dueño sienta que su terreno lleva años cargando nombres ajenos — y que hay uno solo que sí es suyo: lo que la tierra puede sostener.",
+  "arco": [
+    {"n": 1, "estado": "existe · aprobada",
+     "dice": "¿Ya sabes cómo le dicen a tu terreno?",
+     "funcion": "Pregunta directa al dueño. Abre con algo que reconoce en un segundo.",
+     "deja_abierto": "Una pregunta sin contestar: ¿cómo le dicen?"},
+    {"n": 2, "estado": "por hacer",
+     "tiene_que": [
+       "CONTESTAR la pregunta de la 1 — no repetirla ni rodearla",
+       "NOMBRAR el primer apodo, concreto, entre comillas",
+       "Decir QUIÉN lo dice: el apodo no sale de la nada, sale de la banqueta",
+       "Dejar la puerta para que la 3 pueda decir «También…»"],
+     "no_puede": [
+       "Empezar afirmando lo que la 1 ya preguntó",
+       "Usar un adjetivo vago en vez de un nombre («el amable», «el bonito»)",
+       "Usar «pleito» ni ninguna palabra vetada (datos/vetados.json)",
+       "Decir «También»: todavía no se ha dicho nada"]},
+    {"n": 3, "estado": "existe · aprobada",
+     "dice": "También le dicen «lote baldío». O «tierra de nadie».",
+     "exige_de_la_2": "Que la 2 ya haya nombrado un apodo. Sin eso, «También» no tiene a qué referirse — que es justo lo que él marcó."}
+  ],
+  "texto_propuesto_para_la_2": "Los vecinos le dicen «el de la esquina».",
+  "por_que_ese": "Contesta la pregunta de la 1 con un nombre, no con un adjetivo. Dice quién lo dice (los vecinos), que es de dónde nace un apodo de verdad. Y deja a la 3 su «También» bien parado. Sin palabras vetadas, sin promesa, sin cifra."
+}
