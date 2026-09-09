@@ -217,6 +217,16 @@ Herramienta: `python3 ~/yod_audit/sala_sobre.py <fecha-aislada> '<sobre>'` (solo
     estás deteriorando el sistema». Corolario: **un eje de video no va a la mesa mientras haya
     láminas abiertas** — preguntarle antes de tiempo es lo que produce el retrabajo.
 
+32. **Las marcas del Sheet nunca se tiran** (9-sep). Al montar una pieza nueva la firma del
+    borrador dejaba de cuadrar, `restaurarBorrador` salía con `false`, y `armarPasos` —con
+    `borradorManda`— ya había puesto `prev=null`. Resultado: **lo recién aprobado volvía a la
+    mesa como pendiente**, con el «sí» sano en el Sheet Y en el borrador. Ahora las marcas se
+    fusionan siempre (van por pid e índice); sólo el «dónde ibas» depende de la firma.
+    *Ésta es la causa de la queja que se repitió seis veces.*
+33. **Un eje con `opciones.candidatas` conserva sus opciones** (9-sep). El cliente las movía a
+    `p.candidatas` —que nadie lee— y dejaba `opciones=[]`, así que el filtro de más abajo
+    descartaba la pieza por vacía: el corte llegó al Sheet y **nunca apareció en la mesa**.
+
 ## Dónde vive cada cosa (y qué NO usamos)
 
 | Cosa | Dónde | Peso típico |
