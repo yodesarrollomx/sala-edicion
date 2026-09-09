@@ -580,7 +580,7 @@ function doPost(e) {
   }
 
   if (d.accion === 'proponer') {                            // la Mac monta el dia
-    if (rol !== 'agente' && rol !== 'editor') return json({ error: 'solo el agente propone' });
+    if (rol !== 'agente' && rol !== 'editor' && rol !== 'editor2') return json({ error: 'solo el agente propone' });
     var hpr = hoja('PROPUESTAS');
     (d.propuestas || []).forEach(function (p) {
       hpr.appendRow([d.fecha || hoy(), p.id, p.titulo, p.tipo || 'laminas',
@@ -592,7 +592,7 @@ function doPost(e) {
   }
 
   if (d.accion === 'parrilla') {                            // la Mac actualiza un hueco
-    if (rol !== 'agente' && rol !== 'editor') return json({ error: 'solo el agente' });
+    if (rol !== 'agente' && rol !== 'editor' && rol !== 'editor2') return json({ error: 'solo el agente' });
     var hpa = hoja('PARRILLA'), dt = hpa.getDataRange().getValues(), f2 = -1;
     for (var k = 1; k < dt.length; k++) if (fechaDe(dt[k][0]) === d.dia) { f2 = k + 1; break; }
     var v = [d.dia, d.pieza || '', d.gate || '', d.desde || hoy(), '', ''];
@@ -602,7 +602,7 @@ function doPost(e) {
   }
 
   if (d.accion === 'produccion') {                          // la Mac reporta avances
-    if (rol !== 'agente' && rol !== 'editor') return json({ error: 'solo el agente' });
+    if (rol !== 'agente' && rol !== 'editor' && rol !== 'editor2') return json({ error: 'solo el agente' });
     hoja('PRODUCCION').appendRow([d.fecha || hoy(), d.pieza || '', d.estado || '',
                                   d.detalle || '', d.enlace || '']);
     bitacora('Producción: ' + (d.pieza || '') + ' → ' + (d.estado || ''), d.detalle || '');

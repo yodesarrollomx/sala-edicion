@@ -416,9 +416,16 @@ html.cargando #actualizando{display:flex}
   .pie .cual{font-size:12.5px}
 }
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+/* 8-sep (auditoría): barra ANCHA, no una píldora chica — para que a quien nunca entró no le
+   quede duda de que nada de lo que toque aquí se guarda. Se esconde sola en cuanto hay sesión
+   (mismo lugar donde ya se decide eso: pintarEstado()). */
+.barra-sin-entrar{position:sticky;top:0;left:0;right:0;z-index:25;display:flex;align-items:center;
+  justify-content:center;gap:8px;text-align:center;background:var(--no-suave);color:var(--no);
+  border-bottom:1px solid var(--no);font-weight:600;font-size:13.5px;line-height:1.35;padding:10px 16px}
 </style></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
 
+<div class="barra-sin-entrar" id="barraSinEntrar" hidden>No has entrado. Nada de lo que toques aquí se guarda.</div>
 <nav class="puertas" id="puertas" aria-label="Secciones">
   <button data-v="hoy" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="m8 13 3 3 5-6"/></svg>Hoy<span class="punto"></span></button>
   <button data-v="pub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>Publicaciones<span class="punto"></span></button>
@@ -500,12 +507,16 @@ const GAS=()=>localStorage.getItem('sala_gas')||GAS_DEF;
 const CLAVE=()=>_llaveViva||localStorage.getItem('pyod_clave_v1')||localStorage.getItem('sala_clave')||'';   // 5-sep: la sesión del OS manda; 8-sep: si otra llave resultó ser la buena, esa manda
 let _llaveViva='';
 const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage.getItem('sala_clave')].filter(Boolean))];   // se PRUEBAN todas; nunca se borra ninguna
-const ROL=()=>localStorage.getItem('sala_rol')||'editor';
+const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
 const SELLO_SALA='cc29130916';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
-const DECIDE=()=>VISTA_DOC||ROL()==='editor'||ROL()==='editor2';
+// 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
+// `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
+// aquí) nunca se decide, aunque el rol diga editor; así Aprobar, Pedir cambio y el arrastre quedan
+// de verdad apagados para quien nunca entró.
+const DECIDE=()=>VISTA_DOC||(ENTRADO()&&(ROL()==='editor'||ROL()==='editor2'));
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
 const OTROS=fs=>(fs||[]).filter(f=>f.quien!==YO()&&(f.marca||f.nota));
 const MIA=fs=>(fs||[]).find(f=>f.quien===YO()&&f.marca);
@@ -761,6 +772,7 @@ function pintarEstado(tipo,texto){
   const fg=$('#finGuardado'); if(fg) fg.textContent=texto;
   const p=$('#pEstado'); if(p){ p.className='estado '+tipo; p.querySelector('span').textContent=texto }
   $('#btnEntrar').hidden=ENTRADO();
+  const bse=$('#barraSinEntrar'); if(bse) bse.hidden=ENTRADO();   // 8-sep: la barra ancha solo vive mientras no hay sesión
   const br=$('#btnReintentar'); if(br) br.hidden=!(tipo==='cola'||tipo==='sin'&&leerLS('sala_cola',[]).length);
   avisarPuerta('aj',!ENTRADO());
 }
@@ -1521,8 +1533,9 @@ function pintarAjustes(){
   const rd=$('#ajRonda'); if(rd) rd.onclick=()=>mandarProduccion('ENCARGO · corre la sala',$('#ajMsg').value.trim()||'Corre la sala.',false);
   pintarRecados();
 }
-/* Diagnóstico de un toque: lee, escribe una prueba y enseña la respuesta cruda.
-   Nació el 4-sep porque 4 decisiones se quedaron en cola sin que nadie supiera por qué. */
+/* Diagnóstico de un toque: SOLO LEE (recurso=dia) y enseña la respuesta cruda.
+   Nació el 4-sep porque 4 decisiones se quedaron en cola sin que nadie supiera por qué.
+   8-sep: antes de verdad escribía una fila de prueba en DECISIONES — un botón de "probar" no debe guardar nada. */
 async function diagnostico(){
   const c=$('#ajDiagRes'); const li=[];
   const pon=()=>{ c.innerHTML=li.map(x=>`<div class="maq ${x[0]}"><b><i></i>${esc(x[1])}</b><small>${esc(x[2])}</small></div>`).join('') };
@@ -1530,18 +1543,20 @@ async function diagnostico(){
   li.length=0;
   li.push(['bien','Entrada', ENTRADO()?('sí · '+(PORLLAVE_OS()?'con tu cuenta del YOD OS':'con la liga de la Sala')):'NO has entrado']);
   li.push([ENTRADO()?'bien':'mal','Rol que dices tener', ROL()]); pon();
+  let rolSheet=null;
   try{
     const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(CLAVE()));
     const j=await leerJSON(r);
-    li.push([j&&j.rol?'bien':'mal','Leer del Sheet', j&&j.rol?('te reconoce como '+j.rol+(j.quien?' ('+j.quien+')':'')):('respondió: '+JSON.stringify(j).slice(0,120))]);
+    rolSheet=(j&&j.rol)||null;
+    li.push([rolSheet?'bien':'mal','Leer del Sheet', rolSheet?('te reconoce como '+rolSheet+(j.quien?' ('+j.quien+')':'')):('respondió: '+JSON.stringify(j).slice(0,120))]);
   }catch(e){ li.push(['mal','Leer del Sheet','no contestó: '+(e.message||e)]) }
   pon();
-  try{
-    const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({accion:'decidir',clave:CLAVE(),fecha:fecha,envio_id:'prueba-'+uuid(),ts:Date.now(),quien:ROL(),propuestas:{}})});
-    const j=await leerJSON(r);
-    li.push([j&&j.ok?'bien':'mal','Escribir en el Sheet', j&&j.ok?'sí puede guardar':('lo rechazó: '+((j&&j.error)||JSON.stringify(j)).slice(0,140))]);
-  }catch(e){ li.push(['mal','Escribir en el Sheet','no contestó: '+(e.message||e)]) }
+  // 8-sep (auditoría): este botón decía «Probar mi conexión», pero de verdad mandaba un accion:'decidir'
+  // — el GAS lo escribía como fila normal en DECISIONES y dejaba línea en BITACORA. Un botón de PROBAR
+  // no debe escribir nada real; si el Sheet ya contestó tu rol arriba, de ahí se sabe si podrías guardar.
+  const puedeEscribir=rolSheet==='editor'||rolSheet==='editor2';
+  li.push([rolSheet?(puedeEscribir?'bien':'mal'):'duda','Escribir en el Sheet',
+    rolSheet?(puedeEscribir?'sí podrías guardar (tu rol es '+rolSheet+')':'tu rol es de solo lectura: no podrías guardar'):'no se pudo saber sin leer primero']);
   const q=leerLS('sala_cola',[]);
   li.push([q.length?'duda':'bien','Pendiente por subir', q.length?(q.length+' envío(s) esperando'):'nada']);
   pon();
@@ -1723,6 +1738,7 @@ async function vigilarVersion(){
 }
 setInterval(vigilarVersion,600000);
 (async function(){
+  $('#barraSinEntrar').hidden=ENTRADO();   // 8-sep: se decide de una vez, sin esperar al Sheet (ENTRADO() solo mira este aparato)
   abrirGuia(false); ajustarZona(); setTimeout(vigilarVersion,4000);            // la bienvenida no espera al Sheet
   cargarExpedientes(); subirCola();
   // 5-sep (Alejandro): «prefiero una animación mientras carga que estar viendo algo pasado».
