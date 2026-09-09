@@ -51,6 +51,20 @@
    "video": "video/apodo/REEL_v6.mp4?v=9sep",
    "de_antes": null,
    "origen": "las 8 láminas quedaron aprobadas hoy · compuerta abierta"
+  },
+  {
+   "id": "apodo-g7-c7faea",
+   "titulo": "El Apodo · sin lo repetitivo y con los textos parejos (6 láminas)",
+   "laminas": [
+    "laminas/apodo-g7/L1.png",
+    "laminas/apodo-g7/L2.png",
+    "laminas/apodo-g7/L3.png",
+    "laminas/apodo-g7/L4.png",
+    "laminas/apodo-g7/L5.png",
+    "laminas/apodo-g7/L6.png"
+   ],
+   "video": null,
+   "origen": "rehecha-de apodo-video-9sep-v6"
   }
  ],
  "parrilla": [
@@ -148,6 +162,10 @@
   {
    "hora": "08:37",
    "evento": "Propuesta montada: El Apodo · lámina 2 salida del guion 1-2-3 (no de la ocurrencia) (1 láminas)"
+  },
+  {
+   "hora": "14:45",
+   "evento": "Propuesta montada: El Apodo · sin lo repetitivo y con los textos parejos (6 láminas) (6 láminas)"
   }
  ],
  "decisiones": {

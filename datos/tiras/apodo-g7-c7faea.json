@@ -1,0 +1,213 @@
+{
+ "pieza": "El Apodo del Terreno",
+ "pieza_slug": "apodo",
+ "promesa": "Que el dueño sienta que su terreno lleva años cargando nombres ajenos — y que hay uno solo que sí es suyo: lo que la tierra puede sostener.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/apodo-g7/L1.png",
+   "dice": "¿Ya sabes cómo le dicen a tu terreno?",
+   "ve": "",
+   "entiende": "Sólo cambió el tamaño de la letra (ya estaba bien: 77px). Imagen y texto, intactos.",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "«las láminas quedaron mal los textos» · «no llegamos al punto rápido»",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g5/L1.png",
+     "hash": "da6a3adb",
+     "marca": "no"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L1.png",
+     "hash": "9402bbc1",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-09"
+  },
+  {
+   "n": 2,
+   "src": "laminas/apodo-g7/L2.png",
+   "dice": "Los vecinos le dicen «el de la esquina».",
+   "ve": "",
+   "entiende": "La que aprobaste. El texto es EL MISMO; la letra pasó de 46px a 78px — era la más chica de la tira después del cierre.",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "«las láminas quedaron mal los textos» · «no llegamos al punto rápido»",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g5e/L1.png",
+     "hash": "df8d123f",
+     "marca": "no"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L2.png",
+     "hash": "742f0cae",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-09"
+  },
+  {
+   "n": 3,
+   "src": "laminas/apodo-g7/L3.png",
+   "dice": "También le dicen «lote baldío». O «tierra de nadie».",
+   "ve": "",
+   "entiende": "Mismo texto. La letra pasó de 69px a 78px y ya no parte «lote/baldío» a media palabra.",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "«las láminas quedaron mal los textos» · «no llegamos al punto rápido»",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g5/L3.png",
+     "hash": "bd2ca8d7",
+     "marca": "no"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L3.png",
+     "hash": "6902c53d",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-09"
+  },
+  {
+   "n": 4,
+   "src": "laminas/apodo-g7/L4.png",
+   "dice": "Ninguno de esos nombres se lo puso tu terreno.",
+   "ve": "",
+   "entiende": "Mismo texto (le faltaba el punto final y ya lo tiene). La letra pasó de 76px a 78px.",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "«las láminas quedaron mal los textos» · «no llegamos al punto rápido»",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g3/L7.png",
+     "hash": "70aa2026",
+     "marca": "no"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L4.png",
+     "hash": "c044b62e",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-09"
+  },
+  {
+   "n": 5,
+   "src": "laminas/apodo-g7/L5.png",
+   "dice": "Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener.",
+   "ve": "",
+   "entiende": "IMAGEN NUEVA. Antes era una ciudad grande con un tripié: ni es tu terreno ni es lo que dice el texto. Ahora es el dueño solo en su predio, en la luz del amanecer — la primera vez en toda la pieza que nadie está hablando de él. La letra pasó de 46px a 78px.",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "«las láminas quedaron mal los textos» · «no llegamos al punto rápido»",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g3/L8.png",
+     "hash": "a01d6d5d",
+     "marca": "no"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L5.png",
+     "hash": "5c43746a",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-09"
+  },
+  {
+   "n": 6,
+   "src": "laminas/apodo-g7/L6.png",
+   "dice": "Pídele a tu terreno su Plan de Potencial Personalizado",
+   "ve": "",
+   "entiende": "El CIERRE. Mismo texto. La letra pasó de 55px a 78px: era la más chica de las ocho y es la que tiene que convertir.",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "«las láminas quedaron mal los textos» · «no llegamos al punto rápido»",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g5/L6.png",
+     "hash": "f1b7b1ac",
+     "marca": "no"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L6.png",
+     "hash": "5a25ffd2",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-09"
+  }
+ ],
+ "decidir": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6
+ ],
+ "mapa": {
+  "1": 1,
+  "2": 2,
+  "3": 3,
+  "4": 4,
+  "5": 5,
+  "6": 6
+ },
+ "base": "apodo-video-9sep-v6",
+ "retiradas": [
+  {
+   "era_escena": 4,
+   "dice": "En cada sobremesa le inventan un apodo nuevo",
+   "src": "laminas/apodo-g5/L4.png",
+   "por_que": "Tercera vez seguida que se dice «le inventan apodos». La 2 y la 3 ya nombraron apodos concretos, entre comillas; ésta lo comenta otra vez sin nombre nuevo."
+  },
+  {
+   "era_escena": 5,
+   "dice": "El apodo se mueve con cada rumor",
+   "src": "laminas/apodo-g5/L5.png",
+   "por_que": "Cuarta vez. Con estas dos fuera, el giro llega en la escena 4 de 6 en vez de la 6 de 8: del segundo ~26 al segundo ~15."
+  }
+ ],
+ "guion": "datos/guiones/APODO-VIDEO.json"
+}

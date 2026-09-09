@@ -28,11 +28,21 @@
     "drive_original": "1Qf1s6Ut7xUeSqk4s_cEKcpY3ATgnB0XQ",
     "drive_prueba": "1Idr0r6z73GlvgkeN1_THTedbWvPuUeVq",
     "liga": "https://drive.google.com/thumbnail?id=1Idr0r6z73GlvgkeN1_THTedbWvPuUeVq&sz=w1200"
+   },
+   {
+    "r": 3,
+    "huella": "9402bbc17cb7f134b0b486ca1cd282e0",
+    "src": "laminas/apodo-g7/L1.png",
+    "grupo": "apodo-g7",
+    "tambien_en": [],
+    "drive_original": "1EMRqY64l3UWu97hTzXsVfkeYQM_AvT2C",
+    "drive_prueba": "1rr1CP1K2ybisWTBTVVIVnek3RHjEy-XS",
+    "liga": "https://drive.google.com/thumbnail?id=1rr1CP1K2ybisWTBTVVIVnek3RHjEy-XS&sz=w1200"
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1OHrbcQYe3L2UuTfPSIeGGXeHs0nlZ5pr",
-  "revision_vigente": 2
+  "revision_vigente": 3
  },
  "APODO-L02": {
   "serial": "APODO-L02",
@@ -121,11 +131,21 @@
     "drive_original": "1DBQO18OFJoh5hlt4juAa7otm3TZsaAVv",
     "drive_prueba": "1Yuj7uyCPeAr_QlK0N6SnExFazWmh3aDA",
     "liga": "https://drive.google.com/thumbnail?id=1Yuj7uyCPeAr_QlK0N6SnExFazWmh3aDA&sz=w1200"
+   },
+   {
+    "r": 9,
+    "huella": "742f0cae136ee45477c8f07dc8b75749",
+    "src": "laminas/apodo-g7/L2.png",
+    "grupo": "apodo-g7",
+    "tambien_en": [],
+    "drive_original": "1ITBAD7vrFYcVKJlpXzOBjYyk5GZSdU2H",
+    "drive_prueba": "1DzWqWl6aVJzN6ioKgEcN9lhu8DA73thC",
+    "liga": "https://drive.google.com/thumbnail?id=1DzWqWl6aVJzN6ioKgEcN9lhu8DA73thC&sz=w1200"
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1o2d3vHlvXRUe3UiY3bGyjv_dQMQFjFj9",
-  "revision_vigente": 8
+  "revision_vigente": 9
  },
  "APODO-L03": {
   "serial": "APODO-L03",
@@ -165,11 +185,21 @@
     "drive_original": "1ukIPnTnZZXs2wqxDZ8bK5aqH-6e2nP4o",
     "drive_prueba": "1xk7yHKQdBJ11Ydzwm2I2CmioZpC6gwHJ",
     "liga": "https://drive.google.com/thumbnail?id=1xk7yHKQdBJ11Ydzwm2I2CmioZpC6gwHJ&sz=w1200"
+   },
+   {
+    "r": 4,
+    "huella": "6902c53d4993211bb70e6a79a8e279ba",
+    "src": "laminas/apodo-g7/L3.png",
+    "grupo": "apodo-g7",
+    "tambien_en": [],
+    "drive_original": "1izaioMb-Dj1TJYE8qCw0ZpNmgEMXdAjq",
+    "drive_prueba": "1LwxIsDog1Csa2DolYQ-MzX1tWHPfJNig",
+    "liga": "https://drive.google.com/thumbnail?id=1LwxIsDog1Csa2DolYQ-MzX1tWHPfJNig&sz=w1200"
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1Rd1EK-gURmtnE6i-5o-heeGahMbBiBKh",
-  "revision_vigente": 3
+  "revision_vigente": 4
  },
  "APODO-L04": {
   "serial": "APODO-L04",
@@ -200,11 +230,21 @@
     "drive_original": "1TPKWV2dXR16_xM2XCKEg62cdN8GolfOu",
     "drive_prueba": "15Z331zMBm0fwADM9T4dJwxqGxY_J-oc7",
     "liga": "https://drive.google.com/thumbnail?id=15Z331zMBm0fwADM9T4dJwxqGxY_J-oc7&sz=w1200"
+   },
+   {
+    "r": 3,
+    "huella": "c044b62eb7bed800b271612478e3f8c0",
+    "src": "laminas/apodo-g7/L4.png",
+    "grupo": "apodo-g7",
+    "tambien_en": [],
+    "drive_original": "1AX1IQYEjTpxpAqKPHQ-qxS5_fz0wWjn4",
+    "drive_prueba": "12imdxXMYX0JM3zgAFV46x83mKMAlTa6H",
+    "liga": "https://drive.google.com/thumbnail?id=12imdxXMYX0JM3zgAFV46x83mKMAlTa6H&sz=w1200"
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1XL4FB6WNzUcqAjVfu73M5RGSbtStvqlr",
-  "revision_vigente": 2
+  "revision_vigente": 3
  },
  "APODO-L05": {
   "serial": "APODO-L05",
@@ -244,11 +284,18 @@
     "drive_original": "1L-6QqRmcrHucTwygrgixg_Bf2OcEvYg-",
     "drive_prueba": "12gtVemW934_W7gDJqg1QMphbQaAeLqIF",
     "liga": "https://drive.google.com/thumbnail?id=12gtVemW934_W7gDJqg1QMphbQaAeLqIF&sz=w1200"
+   },
+   {
+    "r": 4,
+    "huella": "5c43746a9fcd3d983c2a726421b45943",
+    "src": "laminas/apodo-g7/L5.png",
+    "grupo": "apodo-g7",
+    "tambien_en": []
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1AGKE-Jqjj4oGRiNdonn1IwXGAffQ9sgP",
-  "revision_vigente": 3
+  "revision_vigente": 4
  },
  "APODO-L06": {
   "serial": "APODO-L06",
@@ -278,11 +325,18 @@
     "drive_original": "1mJV40wNlKO1Ge-w6Kdp86XlPGdiIl9jv",
     "drive_prueba": "1wcYbzSxk0OZ9O8qwGLBM5ispRvYjIJHq",
     "liga": "https://drive.google.com/thumbnail?id=1wcYbzSxk0OZ9O8qwGLBM5ispRvYjIJHq&sz=w1200"
+   },
+   {
+    "r": 3,
+    "huella": "5a25ffd261b43ebf00e4aee9c74bc15c",
+    "src": "laminas/apodo-g7/L6.png",
+    "grupo": "apodo-g7",
+    "tambien_en": []
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1G6CmKYL3isQMHOiWrkc0jbpckJkkloBv",
-  "revision_vigente": 2
+  "revision_vigente": 3
  },
  "APODO-L07": {
   "serial": "APODO-L07",

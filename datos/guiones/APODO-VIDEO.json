@@ -1,81 +1,145 @@
 {
- "_que_es": "El guion del VIDEO, derivado de las 8 láminas APROBADAS. Antes vivía cableado dentro de apodo/pipeline.py: nadie podía leerlo ni corregirlo sin tocar código.",
+ "_que_es": "Guion del VIDEO de El Apodo, v7. Sale de la nota con la que Alejandro rechazó el v6 (9-sep).",
  "_regla": "la voz narra exactamente lo que está escrito en la lámina (28-ago)",
  "pieza": "El Apodo del Terreno",
- "de_la_tira": "apodo-g5e-30addd",
+ "de_la_tira": "apodo-g7",
+ "_retiradas": [
+  {
+   "era": "E4",
+   "texto": "En cada sobremesa le inventan un apodo nuevo",
+   "por_que": "tercera vez seguida que se dice «le inventan apodos». La 2 y la 3 ya nombraron apodos concretos, entre comillas. Ésta lo comenta otra vez sin nombre nuevo."
+  },
+  {
+   "era": "E5",
+   "texto": "El apodo se mueve con cada rumor",
+   "por_que": "cuarta vez. Con la 4 y la 5 fuera, el giro llega en la escena 4 de 6 en vez de la 6 de 8."
+  }
+ ],
+ "_voces": {
+  "_por_que": "Alejandro, 9-sep: «las voces no sabes interpretar quién es narrador y quién es voz de algún vecino». Tenía razón y la causa estaba en este guion: el v6 alternaba ella/él escena por escena sin ninguna razón, así que sonaban DOS narradores turnándose. Se corrige aquí, en el dato.",
+  "narrador": {
+   "quien": "ella",
+   "voz": "Aoede",
+   "regla": "es la MISMA en toda la pieza, de principio a fin"
+  },
+  "vecino": {
+   "quien": "el",
+   "voz": "Algenib",
+   "regla": "sólo habla lo que va entre comillas: es la banqueta, no el narrador"
+  }
+ },
  "escenas": [
   {
    "n": 1,
    "id": "E1",
-   "lamina_src": "laminas/apodo-g5/L1.png",
+   "lamina_src": "laminas/apodo-g7/L1.png",
    "texto": "¿Ya sabes cómo le dicen a tu terreno?",
-   "quien": "ella",
+   "partes": [
+    {
+     "rol": "narrador",
+     "dice": "¿Ya sabes cómo le dicen a tu terreno?"
+    }
+   ],
+   "intencion": "pregunta de verdad, no leída: sube al final. Él ya lo había pedido en otra lámina («si le damos entonación de pregunta se siente más leído por el cliente»).",
    "voz_reusable": null,
    "escena_reusable": null
   },
   {
    "n": 2,
    "id": "E2",
-   "lamina_src": "laminas/apodo-g5e/L1.png",
+   "lamina_src": "laminas/apodo-g7/L2.png",
    "texto": "Los vecinos le dicen «el de la esquina».",
-   "quien": "el",
+   "partes": [
+    {
+     "rol": "narrador",
+     "dice": "Los vecinos le dicen"
+    },
+    {
+     "rol": "vecino",
+     "dice": "«el de la esquina»."
+    }
+   ],
+   "intencion": "la cita en tono de banqueta, suelto, como quien señala con la barbilla.",
    "voz_reusable": null,
    "escena_reusable": null
   },
   {
    "n": 3,
    "id": "E3",
-   "lamina_src": "laminas/apodo-g5/L3.png",
+   "lamina_src": "laminas/apodo-g7/L3.png",
    "texto": "También le dicen «lote baldío». O «tierra de nadie».",
-   "quien": "ella",
+   "partes": [
+    {
+     "rol": "narrador",
+     "dice": "También le dicen"
+    },
+    {
+     "rol": "vecino",
+     "dice": "«lote baldío»."
+    },
+    {
+     "rol": "narrador",
+     "dice": "O"
+    },
+    {
+     "rol": "vecino",
+     "dice": "«tierra de nadie»."
+    }
+   ],
+   "intencion": "las dos citas con el mismo tono casual; entre ellas el narrador casi no pesa.",
    "voz_reusable": null,
    "escena_reusable": null
   },
   {
    "n": 4,
    "id": "E4",
-   "lamina_src": "laminas/apodo-g5/L4.png",
-   "texto": "En cada sobremesa le inventan un apodo nuevo",
-   "quien": "el",
-   "voz_reusable": "S3",
-   "escena_reusable": "S3"
+   "lamina_src": "laminas/apodo-g7/L4.png",
+   "texto": "Ninguno de esos nombres se lo puso tu terreno.",
+   "partes": [
+    {
+     "rol": "narrador",
+     "dice": "Ninguno de esos nombres se lo puso tu terreno."
+    }
+   ],
+   "intencion": "EL GIRO. Firme y más lento que todo lo anterior; aquí se para la conversación de la banqueta.",
+   "voz_reusable": null,
+   "escena_reusable": null
   },
   {
    "n": 5,
    "id": "E5",
-   "lamina_src": "laminas/apodo-g5/L5.png",
-   "texto": "El apodo se mueve con cada rumor",
-   "quien": "ella",
-   "voz_reusable": "S4",
-   "escena_reusable": "S4"
+   "lamina_src": "laminas/apodo-g7/L5.png",
+   "texto": "Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener.",
+   "partes": [
+    {
+     "rol": "narrador",
+     "dice": "Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener."
+    }
+   ],
+   "intencion": "cálida. Es la promesa de la pieza; la pausa cae en los dos puntos.",
+   "voz_reusable": null,
+   "escena_reusable": null
   },
   {
    "n": 6,
    "id": "E6",
-   "lamina_src": "laminas/apodo-g3/L7.png",
-   "texto": "Ninguno de esos nombres se lo puso tu terreno",
-   "quien": "el",
-   "voz_reusable": "S5",
-   "escena_reusable": "S5"
-  },
-  {
-   "n": 7,
-   "id": "E7",
-   "lamina_src": "laminas/apodo-g3/L8.png",
-   "texto": "Tu terreno sí tiene un nombre propio",
-   "quien": "ella",
-   "voz_reusable": null,
-   "escena_reusable": null,
-   "_nota": "la tira traía el texto truncado; la voz tiene que narrar lo que se LEE en la lámina (regla del 28-ago)"
-  },
-  {
-   "n": 8,
-   "id": "E8",
-   "lamina_src": "laminas/apodo-g5/L6.png",
+   "lamina_src": "laminas/apodo-g7/L6.png",
    "texto": "Pídele a tu terreno su Plan de Potencial Personalizado",
-   "quien": "el",
-   "voz_reusable": "S7",
-   "escena_reusable": "S7"
+   "partes": [
+    {
+     "rol": "narrador",
+     "dice": "Pídele a tu terreno su Plan de Potencial Personalizado."
+    }
+   ],
+   "intencion": "clara y directa, sin adorno. Es lo único que tiene que quedarse grabado.",
+   "voz_reusable": null,
+   "escena_reusable": null
   }
- ]
+ ],
+ "_sonido_pendiente": {
+  "_que_dijo": "«los audios de fondo entran y salen y se corta el audio y se siente raro, está muy alto el ruido de fondo»",
+  "_causa_encontrada": "en montar_v6.py el ambiente se monta POR ESCENA (volume=0.55, con afade in y afade out en cada una): ocho entradas y ocho salidas en 40 s. Encima corre una segunda capa, cama.wav, al 0.10 global. Dos fondos empalmados que aparecen y desaparecen.",
+  "_arreglo": "una sola pista continua a lo largo de todo el corte, sin fade por escena, a nivel bajo y con ducking bajo la voz. Se hace en la etapa de audio, DESPUÉS de que él apruebe estas 6 láminas — su orden textual.",
+  "_estado": "pendiente · no se toca hoy"
+ }
 }
