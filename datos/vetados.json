@@ -1,0 +1,14 @@
+{
+  "_que_es": "Palabras y giros que Alejandro ya rechazó. La guardia BLOQUEA el montaje si vuelven. Se agrega uno cada vez que rechaza algo, con la fecha y sus palabras — no se borra ninguno.",
+  "_por_que": "8-sep-2026, textual: «estás hablando del pleito cuando hemos dicho infinidad de veces que esa palabra no; para eso son las revisiones históricas de cada una de las láminas, van varias veces que me haces lo mismo». Tenía razón: los textos rechazados no se guardaban en ningún lado, así que nada podía impedir que yo los reciclara de una versión muerta.",
+  "global": [
+    {"palabra": "pleito", "desde": "2026-09-08", "dijo": "hemos dicho infinidad de veces que esa palabra no"},
+    {"palabra": "estorba", "desde": "2026-09-08", "dijo": "ni creo que un terreno estorbe"},
+    {"palabra": "estorbo", "desde": "2026-09-08", "dijo": "ni creo que un terreno estorbe"},
+    {"palabra": "gratis", "desde": "2026-08-04", "dijo": "regla de la casa"}
+  ],
+  "APODO": [
+    {"palabra": "el que no se vende", "desde": "2026-09-08", "dijo": "busca cómo le dicen realmente a algunos terrenos en internet — los inventados no"},
+    {"palabra": "le inventa ", "desde": "2026-09-08", "dijo": "inventan… no inventa"}
+  ]
+}
