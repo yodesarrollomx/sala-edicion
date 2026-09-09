@@ -102,6 +102,16 @@
     "laminas/prueba2/L3.png"
    ],
    "video": null
+  },
+  {
+   "id": "prueba3-026a37",
+   "titulo": "PRUEBA V2 · no decidir",
+   "laminas": [
+    "laminas/prueba3/L1.png",
+    "laminas/prueba3/L2.png",
+    "laminas/prueba3/L3.png"
+   ],
+   "video": null
   }
  ],
  "parrilla": [
@@ -359,6 +369,10 @@
   {
    "hora": "20:43",
    "evento": "Propuesta montada: PRUEBA 2 · no decidir (se retira) (3 láminas)"
+  },
+  {
+   "hora": "21:01",
+   "evento": "Propuesta montada: PRUEBA V2 · no decidir (3 láminas)"
   }
  ],
  "decisiones": {

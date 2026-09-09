@@ -708,6 +708,69 @@
   "drive_carpeta": "1hKvGjSuCVztyk1Ifs13nTJ0GFZO1ViY3",
   "revision_vigente": 1
  },
+ "PRUEBA3-L01": {
+  "serial": "PRUEBA3-L01",
+  "pieza": "PRUEBA3",
+  "pieza_nombre": "Prueba de sistema v2",
+  "lamina": 1,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "dc53ca4a8a09cc907081ef6e12e6c156",
+    "src": "laminas/prueba3/L1.png",
+    "grupo": "prueba3",
+    "tambien_en": [],
+    "drive_original": "1kcgBCElGQc1rM_LyZkbiyldySCubAKti",
+    "drive_prueba": "1dRjGuWTFfrn1UxTgwaF_fc1efxzFicUX",
+    "liga": "https://drive.google.com/thumbnail?id=1dRjGuWTFfrn1UxTgwaF_fc1efxzFicUX&sz=w1200"
+   }
+  ],
+  "estado": "en revisión",
+  "revision_vigente": 1,
+  "drive_carpeta": "1kcoLkeCMOh5grsfRGoLWGfN2d8fJpuDE"
+ },
+ "PRUEBA3-L02": {
+  "serial": "PRUEBA3-L02",
+  "pieza": "PRUEBA3",
+  "pieza_nombre": "Prueba de sistema v2",
+  "lamina": 2,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "6ad2b2b2a5619ee6886328e073cc0d8c",
+    "src": "laminas/prueba3/L2.png",
+    "grupo": "prueba3",
+    "tambien_en": [],
+    "drive_original": "12-S5T2z4m_IucvAp1dco4LPHmF-enEb_",
+    "drive_prueba": "11JD82xVU5wTI_fKGl9J732-LFp41zjFj",
+    "liga": "https://drive.google.com/thumbnail?id=11JD82xVU5wTI_fKGl9J732-LFp41zjFj&sz=w1200"
+   }
+  ],
+  "estado": "en revisión",
+  "revision_vigente": 1,
+  "drive_carpeta": "1CVNh8b2jj2SEHwZr405aJ5T6YKCRJx85"
+ },
+ "PRUEBA3-L03": {
+  "serial": "PRUEBA3-L03",
+  "pieza": "PRUEBA3",
+  "pieza_nombre": "Prueba de sistema v2",
+  "lamina": 3,
+  "revisiones": [
+   {
+    "r": 1,
+    "huella": "2f161dd1a7b54e5e9676ff1390d3b7d4",
+    "src": "laminas/prueba3/L3.png",
+    "grupo": "prueba3",
+    "tambien_en": [],
+    "drive_original": "1ku40UO8o9Sa1LpWsyqXy_ISVd_vGQy8Z",
+    "drive_prueba": "1DaaFBvjjMXqE6J-aOt3HUUwkGE1aXNLq",
+    "liga": "https://drive.google.com/thumbnail?id=1DaaFBvjjMXqE6J-aOt3HUUwkGE1aXNLq&sz=w1200"
+   }
+  ],
+  "estado": "en revisión",
+  "revision_vigente": 1,
+  "drive_carpeta": "1JcdgKZqkvb2e2BX1qfczsgK5Z5CuIHGr"
+ },
  "SERVILLETA-L01": {
   "serial": "SERVILLETA-L01",
   "pieza": "SERVILLETA",

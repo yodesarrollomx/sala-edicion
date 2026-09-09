@@ -1,0 +1,80 @@
+{
+ "_que_es": "Vuelta 2. Predicción escrita ANTES de tocar el navegador, corregida con lo que la vuelta 1 enseñó (no predecir botones que no existen).",
+ "actos": [
+  {
+   "n": 1,
+   "hago": "Aprobar lámina 1",
+   "espero_borrador": [
+    "si",
+    "",
+    ""
+   ],
+   "espero_sheet": [
+    "si",
+    "pendiente",
+    "pendiente"
+   ]
+  },
+  {
+   "n": 2,
+   "hago": "Pedir cambio lámina 2 + nota",
+   "espero_borrador": [
+    "si",
+    "no",
+    ""
+   ],
+   "espero_nota_en": 1
+  },
+  {
+   "n": 3,
+   "hago": "Aprobar lámina 3",
+   "espero_borrador": [
+    "si",
+    "no",
+    "si"
+   ],
+   "espero_pantalla_final": true,
+   "espero_resumen": "2 aprobadas · 1 con cambio"
+  },
+  {
+   "n": 4,
+   "hago": "Abrir Mis respuestas",
+   "espero_sec_hoy": 3,
+   "espero_sec_atraso": ">0",
+   "espero_secciones": [
+    "Mis respuestas",
+    "Esperando a Producción · de días pasados"
+   ]
+  },
+  {
+   "n": 5,
+   "hago": "Cambiar la lámina 1 desde Mis respuestas",
+   "espero_borrador": [
+    "",
+    "no",
+    "si"
+   ],
+   "espero_borrar": [
+    "0"
+   ],
+   "espero_vuelve_a_carta": 0
+  },
+  {
+   "n": 6,
+   "hago": "Aprobar otra vez la lámina 1",
+   "espero_borrador": [
+    "si",
+    "no",
+    "si"
+   ],
+   "espero_resumen": "2 aprobadas · 1 con cambio"
+  }
+ ],
+ "invariantes": [
+  "ninguna marca ni nota suya cambia",
+  "un envio_id por acto",
+  "índice base 0",
+  "el cambio desde Mis respuestas escribe «borrar»",
+  "ninguna imagen sale del repo si Drive la tiene"
+ ]
+}

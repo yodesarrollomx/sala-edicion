@@ -11,6 +11,11 @@
   "nombre": "El Pivote",
   "sigla": "PIVOTE"
  },
+ "prueba3": {
+  "alta": "temporal",
+  "nombre": "Prueba de sistema v2",
+  "sigla": "PRUEBA3"
+ },
  "pub1": {
   "nombre": "El Terreno Dormido",
   "sigla": "TERRENO"
