@@ -62,10 +62,11 @@
    "n": 7,
    "id": "E7",
    "lamina_src": "laminas/apodo-g3/L8.png",
-   "texto": "Tu terreno sí tiene un nombre propio.",
+   "texto": "Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener.",
    "quien": "ella",
    "voz_reusable": null,
-   "escena_reusable": null
+   "escena_reusable": null,
+   "_nota": "la tira traía el texto truncado; la voz tiene que narrar lo que se LEE en la lámina (regla del 28-ago)"
   },
   {
    "n": 8,
