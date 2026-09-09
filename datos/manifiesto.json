@@ -92,6 +92,16 @@
    ],
    "video": null,
    "origen": "rehecha-de apodo-g5c-9f7d43"
+  },
+  {
+   "id": "prueba2-99aa19",
+   "titulo": "PRUEBA 2 · no decidir (se retira)",
+   "laminas": [
+    "laminas/prueba2/L1.png",
+    "laminas/prueba2/L2.png",
+    "laminas/prueba2/L3.png"
+   ],
+   "video": null
   }
  ],
  "parrilla": [
@@ -341,6 +351,14 @@
   {
    "hora": "20:38",
    "evento": "Propuesta montada: El Apodo · lámina 2: concreta y sin la palabra vetada (1 láminas)"
+  },
+  {
+   "hora": "20:43",
+   "evento": "Propuesta montada: PRUEBA 2 · no decidir (se retira) (3 láminas)"
+  },
+  {
+   "hora": "20:43",
+   "evento": "Propuesta montada: PRUEBA 2 · no decidir (se retira) (3 láminas)"
   }
  ],
  "decisiones": {

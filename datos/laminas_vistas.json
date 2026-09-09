@@ -118,5 +118,23 @@
   "n": 2,
   "fecha": "2026-09-08",
   "src": "laminas/apodo-g5d/L1.png"
+ },
+ "777344ef857c6a357f4ed18214b843a3": {
+  "pieza": "prueba2-99aa19",
+  "n": 1,
+  "fecha": "2026-09-08",
+  "src": "laminas/prueba2/L1.png"
+ },
+ "fd5a74d105e0ea9604a5a99ce9130145": {
+  "pieza": "prueba2-99aa19",
+  "n": 2,
+  "fecha": "2026-09-08",
+  "src": "laminas/prueba2/L2.png"
+ },
+ "d2eddac66c3ef6b3237e6316c53bfc75": {
+  "pieza": "prueba2-99aa19",
+  "n": 3,
+  "fecha": "2026-09-08",
+  "src": "laminas/prueba2/L3.png"
  }
 }

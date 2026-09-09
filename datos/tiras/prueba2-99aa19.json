@@ -1,0 +1,70 @@
+{
+ "pieza": "Prueba de sistema",
+ "promesa": "prueba",
+ "decidir": [
+  1,
+  2,
+  3
+ ],
+ "mapa": {
+  "1": 1,
+  "2": 2,
+  "3": 3
+ },
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/prueba2/L1.png",
+   "dice": "texto de prueba 1",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/prueba2/L1.png",
+     "hash": "777344ef",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-08"
+  },
+  {
+   "n": 2,
+   "src": "laminas/prueba2/L2.png",
+   "dice": "texto de prueba 2",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/prueba2/L2.png",
+     "hash": "fd5a74d1",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-08"
+  },
+  {
+   "n": 3,
+   "src": "laminas/prueba2/L3.png",
+   "dice": "texto de prueba 3",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-08",
+     "src": "laminas/prueba2/L3.png",
+     "hash": "d2eddac6",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-08"
+  }
+ ]
+}
