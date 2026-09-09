@@ -28,16 +28,29 @@
  ],
  "propuestas": [
   {
-   "id": "apodo-g5e-30addd",
-   "titulo": "El Apodo · lámina 2 salida del guion 1-2-3 (no de la ocurrencia)",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/apodo-g5e/L1.png"
-   ],
-   "opciones": [],
-   "video": null,
+   "id": "apodo-video-9sep-v6",
+   "titulo": "El Apodo · el corte completo, 8 escenas, del guion que aprobaste",
+   "tipo": "eje",
+   "laminas": [],
+   "opciones": {
+    "candidatas": [
+     {
+      "titulo": "Publícalo",
+      "texto": "Así queda. Sale a Facebook e Instagram."
+     },
+     {
+      "titulo": "Casi: dime qué escena rehago",
+      "texto": "Deja la nota diciendo el NÚMERO de escena y qué cambiar. Sin eso no puedo producir nada — el sistema lo bloquea."
+     },
+     {
+      "titulo": "La escena 7 rehazla animada",
+      "texto": "Esa va con acercamiento lento porque el motor de video falló 3 veces. Si la quieres animada de verdad, lo reintento cuando el motor libere cuota."
+     }
+    ]
+   },
+   "video": "video/apodo/REEL_v6.mp4?v=9sep",
    "de_antes": null,
-   "origen": "rehecha-de apodo-g5d-f6637a"
+   "origen": "las 8 láminas quedaron aprobadas hoy · compuerta abierta"
   }
  ],
  "parrilla": [
@@ -138,7 +151,24 @@
   }
  ],
  "decisiones": {
-  "propuestas": {}
+  "propuestas": {
+   "apodo-g5e-30addd": {
+    "laminas": [
+     "si"
+    ],
+    "nota": "",
+    "notas": [],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ]
+    ]
+   }
+  }
  },
  "historial": {
   "2026-08-01": {
