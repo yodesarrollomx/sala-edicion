@@ -210,6 +210,13 @@ Herramienta: `python3 ~/yod_audit/sala_sobre.py <fecha-aislada> '<sobre>'` (solo
     montaje, `_deshacer()` borra las láminas copiadas y revierte el manifiesto. *Por qué:*
     `empujar()` hace `git add -A` y la basura de una pieza rechazada viajaba en el push siguiente.
 
+31. **El video se JUNTA sólo con todas las láminas aprobadas** (8-sep). Animar una escena suelta
+    se puede si esa lámina ya está aprobada; **juntar el corte con una lámina abierta, no**.
+    → `sala_compuerta.py`, exigido desde `apodo/montar_v2.py`. *Por qué, textual:* «luego andas
+    cambiando videos completos porque aún no terminabas de aprobar todas las láminas… así es como
+    estás deteriorando el sistema». Corolario: **un eje de video no va a la mesa mientras haya
+    láminas abiertas** — preguntarle antes de tiempo es lo que produce el retrabajo.
+
 ## Dónde vive cada cosa (y qué NO usamos)
 
 | Cosa | Dónde | Peso típico |
