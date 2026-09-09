@@ -126,6 +126,84 @@ Y los bloqueos deben seguir siendo **uno solo**: el del video sin nota.
 
 ---
 
-# COMPARACIÓN · se llena DESPUÉS de correr
+# COMPARACIÓN · lo predicho contra lo que pasó
 
-*(vacío hasta que la prueba corra)*
+Corrida el 8-sep-2026, 18:37–18:39, en el Chrome de Alejandro, con su sesión real.
+**5 sobres · 20 filas** en la pieza de prueba.
+
+## Lo que salió EXACTO
+
+| Predicción | Resultado |
+|---|---|
+| `lamina` en base 0 | ✓ `0, 1, 2` |
+| `quien` = el rol, no el nombre | ✓ `editor` |
+| Acto 1 → `si, pendiente, pendiente` | ✓ idéntico |
+| Acto 2 → `si, no+nota, pendiente` | ✓ idéntico |
+| Acto 3 → `si, no+nota, si` | ✓ idéntico |
+| **Acto 4 (deshacer) → marca `borrar`** | ✓ **`marca=borrar`**, no `pendiente` |
+| Acto 5 → `si, no+nota, no+nota` | ✓ idéntico |
+| Cada sobre repite las marcas anteriores | ✓ los 5 |
+| Un `envio_id` distinto por acto | ✓ 5 distintos |
+| La nota en `nota_propuesta`, no en `nota_dia` | ✓ |
+| `guardado` en hora de Hermosillo | ✓ 18:37–18:39, sin desfase |
+| Fusión final `["si","no","no"]` + las 2 notas | ✓ idéntico |
+| **Las 3 piezas reales intactas** | ✓ video `[null,"si"]` · apodo-g5 `null` · comprador `["si"]` |
+
+La invariante 11 («pendiente nunca borra») se sostuvo: las piezas reales viajaron como
+`pendiente` en los 5 sobres y no perdieron nada.
+
+## Lo que NO salió como decía el renglón
+
+### 1. El `prop_id` que predije estaba mal
+**Decía:** `prueba-celdas-3e54c4`. **Salió:** `prueba-celdas-e1e74e`.
+**Por qué real:** el id es `slug + sha1(carpeta)`, y en macOS `/tmp` es un enlace a `/private/tmp`.
+Yo calculé el sha1 de `/tmp/prueba_celdas`; el publicador usó la ruta resuelta.
+**Estrategia:** el id no debe depender de una ruta del sistema de archivos — dos rutas al mismo
+lugar dan ids distintos, y una carpeta movida cambia el id de una pieza que ya existe. Debe salir
+del **contenido** (huella de las láminas) o del slug + fecha. Mientras tanto, `sala_supuesto.py`
+debe imprimir el `prop_id` real antes de montar, no después.
+
+### 2. Mi auditor estaba ciego: leía `prop_id` y el GAS devuelve `prop`
+**Decía:** las filas se filtran por `prop_id`. **Salió:** 0 filas, y llegué a escribir que el
+Sheet estaba vacío cuando tenía las 20 filas.
+**Por qué real:** `recurso=envios` renombra el campo a `prop` (línea 395 del Code.gs). Mi script
+pedía `f.get('prop_id')` y siempre daba vacío — **sin fallar**, que es lo peor: un auditor que
+devuelve «no hay nada» cuando no sabe leer.
+**Estrategia:** que el lector **truene** si el campo que espera no existe, en vez de devolver
+vacío. Un `KeyError` es información; un vacío silencioso es una mentira.
+
+### 3. La Sala mostraba «Último intento de guardado: Failed to fetch» con todo bien guardado
+**Decía:** nada — no lo había previsto.
+**Por qué real:** `guard.ultimoError` se escribe cuando un envío falla y **no se limpiaba nunca**.
+Un tropiezo de red de horas antes dejaba el aviso puesto para siempre, aunque los 5 sobres de esta
+prueba hubieran entrado bien. Una alarma que no se apaga deja de ser alarma: enseña a ignorarla.
+**Estrategia:** aplicado ya — se limpia en cuanto un guardado sirve. Y la regla general: **todo
+indicador de error necesita su condición de apagado escrita junto a la de encendido.**
+
+### 4. El borrador local arrastra piezas ya retiradas
+**Decía:** nada.
+**Por qué real:** `sala2-2026-09-08` conserva `apodo-g1-c5fa4c`, `apodo-g3`, `apodo-video-8sep` y
+`vendo-construyo-g1-41098b` marcadas `_reabierta`, y sus marcas viajan en cada sobre. Hoy no hace
+daño (el Sheet las ignora porque están retiradas) pero engorda cada envío y es la clase de resto
+que un día resucita algo.
+**Estrategia:** al recibir el día, podar del borrador toda pieza que ya no esté viva, dejando
+constancia en la bitácora de qué se podó. **No aplicado todavía** — quiero medirlo antes de tocar
+la fusión, que es la pieza más delicada del sistema.
+
+## Qué se hizo con la pieza de prueba
+
+Se retira de la mesa al terminar. Sus filas quedan en DECISIONES como registro de esta prueba.
+
+
+### 5. El deshacedor revertía archivos compartidos y casi tira el catálogo
+**Decía:** nada. Salió de un accidente mío durante esta misma prueba.
+**Qué pasó:** lancé por error `sala_publicar.py --pub /dev/null`. La guardia lo detuvo bien, pero
+`_deshacer()` hacía `git checkout --` sobre `datos/manifiesto.json`, `datos/catalogo.json` y
+`datos/laminas_vistas.json`. Esos archivos son **compartidos**: revertirlos enteros tira el
+trabajo sin commitear de todo lo demás. Estuvo a un pelo de borrar los 115 ids de Drive recién
+subidos.
+**Por qué real:** confundí «deshacer lo que hizo esta corrida» con «devolver estos archivos a su
+último commit». No es lo mismo, y la diferencia es el trabajo de otro.
+**Estrategia:** aplicado — el deshacedor ya no revierte ningún archivo entero. Quita la carpeta
+de la pieza, su tira, y **sólo su entrada** del manifiesto. Regla general: **un rollback nunca
+puede tocar más de lo que su propia corrida escribió.**
