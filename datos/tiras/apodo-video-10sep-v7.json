@@ -1,0 +1,46 @@
+{
+ "pieza": "El Apodo del Terreno",
+ "pieza_slug": "apodo",
+ "promesa": "Que el dueño sienta que su terreno lleva años cargando nombres ajenos — y que hay uno solo que sí es suyo: lo que la tierra puede sostener.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/apodo-g7/L1.png",
+   "dice": "¿Ya sabes cómo le dicen a tu terreno?",
+   "estado": "aprobada"
+  },
+  {
+   "n": 2,
+   "src": "laminas/apodo-g7/L2.png",
+   "dice": "Los vecinos le dicen «el de la esquina».",
+   "estado": "aprobada"
+  },
+  {
+   "n": 3,
+   "src": "laminas/apodo-g7/L3.png",
+   "dice": "También le dicen «lote baldío». O «tierra de nadie».",
+   "estado": "aprobada"
+  },
+  {
+   "n": 4,
+   "src": "laminas/apodo-g7/L4.png",
+   "dice": "Ninguno de esos nombres se lo puso tu terreno.",
+   "estado": "aprobada"
+  },
+  {
+   "n": 5,
+   "src": "laminas/apodo-g7/L5.png",
+   "dice": "Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener.",
+   "estado": "aprobada"
+  },
+  {
+   "n": 6,
+   "src": "laminas/apodo-g7/L6.png",
+   "dice": "Pídele a tu terreno su Plan de Potencial Personalizado",
+   "estado": "aprobada"
+  }
+ ],
+ "decidir": [],
+ "guion": "datos/guiones/APODO-VIDEO.json",
+ "nota": "Las 6 láminas de esta tira están aprobadas. Éste es el corte animado: 6 escenas, la voz dice exactamente lo que se lee en cada una."
+}
