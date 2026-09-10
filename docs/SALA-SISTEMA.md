@@ -309,3 +309,29 @@ vieja Y la nueva en la mesa: el duplicado que más le molesta, con un «ok» de 
 
 **Y una trampa de método:** `sala_relevo_diario.py` tiene todo su cuerpo a nivel de módulo.
 Importarlo para mirar una función corre el relevo completo. Ya lleva guarda de import.
+
+## 10-sep-2026 · el silencio que sonaba a nada
+
+**39. Un filtro con entrada en loop puede detenerse ANTES de lo pedido — sin avisar.**
+`sidechaincompress` con su señal principal en `-stream_loop -1` cortaba entre 1 y 5 segundos
+antes de la duración pedida con `-t`. El corte del Apodo v7 salió con **los últimos 2 segundos
+en silencio digital total** (-120 dBFS, no un fundido) porque el fondo se apagaba de golpe y
+lo único que quedaba ahí (la voz) también estaba en silencio en ese tramo.
+
+Se midió, no se adivinó: aislar cada etapa del filtro (fondo solo, fondo con ducking, mezcla
+final) hasta encontrar en cuál exactamente aparecía el corte a cero.
+
+**La cura, reusable en cualquier mezcla de audio de la Sala:** renderizar con MARGEN de sobra
+más allá de lo que hace falta, materializar a un archivo real, y RECIÉN ENTONCES recortar a
+la duración exacta. El faltante se come el margen, nunca el contenido real. El montador ahora
+mide la duración real de lo que generó y truena si ni con margen alcanzó — nunca sirve silencio
+donde debería sonar algo.
+
+**40. La compuerta puede decir «sí» sin haber comprobado nada.** Cuando una pieza ya se aprobó
+por completo, el Sheet la retira de la mesa del día siguiente — con razón, ya no hay nada que
+decidir. Pero `estado_laminas` devolvía `{}` para esa pieza (no la encontraba en la mesa de
+hoy), y una lista de faltantes VACÍA se leía como «todo aprobado»: un sí por accidente, no por
+verificación. Pasó el 10-sep con `apodo-g7-c7faea` — resultó ser cierto, pero no porque se
+hubiera comprobado. Ahora, si la pieza no está en la mesa, se busca su tira más reciente y se
+leen sus marcas en `decisiones.propuestas` (que el Sheet conserva con `heredada`); y si de
+plano no se encuentra ninguna pieza, la compuerta dice NO en vez de decir sí por defecto.
