@@ -24,7 +24,8 @@
   "2026-09-07",
   "2026-01-05",
   "2026-09-08",
-  "2026-09-09"
+  "2026-09-09",
+  "2026-09-10"
  ],
  "propuestas": [],
  "parrilla": [
@@ -129,7 +130,40 @@
   }
  ],
  "decisiones": {
-  "propuestas": {}
+  "propuestas": {
+   "apodo-video-10sep-v7": {
+    "laminas": [
+     "no",
+     "no",
+     "no"
+    ],
+    "nota": "La toma 1 se repite el audio y el video se va para atrás… la toma 3 creo que a la de que le dicen el baldío está bien el\nApodo que sigue no se escucha bien y está de más quítalo nos quedamos con los apodos de la esquina y el baldío… luego en la lámina de loq yen puede sostener no me gusta lo de sostener, debemos de poner algo como lo que tu terreno puede llegar a ser… y a lo último donde dice pídele su plan de potencial personalizado y descubramos juntos su nombre real.",
+    "notas": [],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": ""
+      }
+     ]
+    ]
+   }
+  }
  },
  "historial": {
   "2026-08-01": {
