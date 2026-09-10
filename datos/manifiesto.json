@@ -26,25 +26,7 @@
   "2026-09-08",
   "2026-09-09"
  ],
- "propuestas": [
-  {
-   "id": "apodo-g7-c7faea",
-   "titulo": "El Apodo · sin lo repetitivo y con los textos parejos (6 láminas)",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/apodo-g7/L1.png",
-    "laminas/apodo-g7/L2.png",
-    "laminas/apodo-g7/L3.png",
-    "laminas/apodo-g7/L4.png",
-    "laminas/apodo-g7/L5.png",
-    "laminas/apodo-g7/L6.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "de_antes": null,
-   "origen": "rehecha-de apodo-video-9sep-v6"
-  }
- ],
+ "propuestas": [],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -147,7 +129,64 @@
   }
  ],
  "decisiones": {
-  "propuestas": {}
+  "propuestas": {
+   "apodo-g7-c7faea": {
+    "laminas": [
+     "si",
+     "si",
+     "si",
+     "si",
+     "si",
+     "si"
+    ],
+    "nota": "",
+    "notas": [],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ]
+    ]
+   }
+  }
  },
  "historial": {
   "2026-08-01": {
