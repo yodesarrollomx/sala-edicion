@@ -1,6 +1,6 @@
 {
  "_que_es": "Manifiesto de respaldo: el portal lo lee cuando el Sheet aún no está conectado. Cuando el GAS ya está en línea, esta copia queda de plan B.",
- "fecha": "2026-09-10",
+ "fecha": "2026-09-11",
  "dias": [
   "2026-08-01",
   "2026-08-04",
@@ -161,7 +161,8 @@
        "nota": ""
       }
      ]
-    ]
+    ],
+    "heredada": "2026-09-10"
    }
   }
  },
@@ -2267,6 +2268,40 @@
    ]
   },
   "2026-09-09": {
+   "propuestas": [],
+   "produccion": [
+    {
+     "pieza": "El terreno que dijo que sí · el cuento (47 s)",
+     "estado": "publicada",
+     "detalle": "FB + IG (reel) · copy «los dos bandos» · liga única fb/ig-2026-08-04 · primer comentario puesto",
+     "fecha": "2026-08-04",
+     "enlace": "https://www.instagram.com/reel/DboskQogVy1/"
+    },
+    {
+     "pieza": "El terreno que dijo que sí · carrusel",
+     "estado": "publicada",
+     "detalle": "FB + IG · liga medible activa · 4 interacciones IG al 30-jul",
+     "fecha": "2026-07-27"
+    },
+    {
+     "pieza": "La Servilleta · láminas",
+     "estado": "rehacer",
+     "detalle": "quitar «EDICIÓN POR AURUM ARQUITECTOS»",
+     "fecha": "2026-07-29"
+    }
+   ],
+   "bitacora": [
+    {
+     "hora": "08:37",
+     "evento": "Propuesta montada: El Apodo · lámina 2 salida del guion 1-2-3 (no de la ocurrencia) (1 láminas)"
+    },
+    {
+     "hora": "14:45",
+     "evento": "Propuesta montada: El Apodo · sin lo repetitivo y con los textos parejos (6 láminas) (6 láminas)"
+    }
+   ]
+  },
+  "2026-09-10": {
    "propuestas": [],
    "produccion": [
     {
