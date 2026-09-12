@@ -366,3 +366,14 @@ copy que el sistema escribe. La regla «Personalizado con P mayúscula» la disp
 propia nota («…su plan de potencial personalizado…», dictada en minúsculas). Corregirle la
 cita para que pasara la regla habría sido ponerle palabras en la boca; se excluyó `nota_previa`
 de las reglas de estilo de copy — se sigue mostrando igual en la Sala.
+
+## 12-sep-2026 (tarde) · el contador mentía después de usar «Ir»
+
+**45. El contador de «Faltan N decisiones» sólo miraba desde donde estaba parado, no toda la mesa.**
+`irA(k)` —el botón «Ir» de «Mis respuestas», hecho a propósito para saltar a cualquier tarjeta
+pendiente sin decidir las de en medio— mueve `idx` directo a `k`. Pero el contador calculaba
+`pasos.filter((x,k)=>k>=idx&&...)`: sólo contaba lo que quedaba DESDE `idx` hacia adelante.
+Saltar a la última lámina pendiente (índice 3 de 4) hizo que «Faltan 3 decisiones» se convirtiera
+en «Falta 1 decisión» de golpe, sin que se hubiera decidido nada — verificado contra el Sheet:
+cero marcas guardadas. `cuentas()` (el contador de aprobadas/con cambios) ya lo hacía bien, contando
+todo `pasos` sin filtrar por `idx`; el contador de arriba no seguía la misma regla. Ahora sí.

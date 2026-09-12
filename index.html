@@ -510,7 +510,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='7079cf576f';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='820e4bd2a4';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1124,7 +1124,8 @@ function pintarCartas(){
   const z=$('#zona');
   if(!pasos.length){ pintarVacio(); return }
   if(idx>=pasos.length){ pintarFin(); return }
-  const r=pasos.filter((x,k)=>k>=idx&&!marcaDe(x)).length||1; const x0=pasos[idx];   // cuenta solo lo que falta de verdad
+  // 12-sep: irA() (el botón «Ir» de «Mis respuestas») mueve `idx` a cualquier posición sin decidir nada antes — con `k>=idx` el contador sólo miraba desde ahí en adelante y "olvidaba" las cartas de atrás que seguían sin decidir. Ahora cuenta TODO `pasos` sin marca, sin importar dónde esté idx.
+  const r=pasos.filter(x=>!marcaDe(x)).length||1; const x0=pasos[idx];   // cuenta TODO lo que falta de verdad
   $('#titulo').innerHTML=r===1?`Falta <b>1 decisión</b>`:`Faltan <b>${r} decisiones</b>`;
   $('#subt').textContent=piezaDe(x0)?`Publicación: ${piezaDe(x0)}`:'';
   z.innerHTML='';
