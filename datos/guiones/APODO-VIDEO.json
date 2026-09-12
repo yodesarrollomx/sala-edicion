@@ -66,8 +66,8 @@
   {
    "n": 3,
    "id": "E3",
-   "lamina_src": "laminas/apodo-g7/L3.png",
-   "texto": "También le dicen «lote baldío». O «tierra de nadie».",
+   "lamina_src": "laminas/apodo-g8/L3.png",
+   "texto": "También le dicen «lote baldío».",
    "partes": [
     {
      "rol": "narrador",
@@ -76,17 +76,9 @@
     {
      "rol": "vecino",
      "dice": "«lote baldío»."
-    },
-    {
-     "rol": "narrador",
-     "dice": "O"
-    },
-    {
-     "rol": "vecino",
-     "dice": "«tierra de nadie»."
     }
    ],
-   "intencion": "las dos citas con el mismo tono casual; entre ellas el narrador casi no pesa.",
+   "intencion": "la cita en tono casual, como quien señala con la barbilla — igual que la 2.",
    "voz_reusable": null,
    "escena_reusable": null
   },
@@ -108,30 +100,30 @@
   {
    "n": 5,
    "id": "E5",
-   "lamina_src": "laminas/apodo-g7/L5.png",
-   "texto": "Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener.",
+   "lamina_src": "laminas/apodo-g8/L5.png",
+   "texto": "Tu terreno sí tiene un nombre propio: lo que puede llegar a ser.",
    "partes": [
     {
      "rol": "narrador",
-     "dice": "Tu terreno sí tiene un nombre propio: lo que de verdad puede sostener."
+     "dice": "Tu terreno sí tiene un nombre propio: lo que puede llegar a ser."
     }
    ],
-   "intencion": "cálida. Es la promesa de la pieza; la pausa cae en los dos puntos.",
+   "intencion": "cálida. Es la promesa de la pieza; la pausa cae en los dos puntos. «Puede llegar a ser» mira hacia adelante, no describe lo que ya es.",
    "voz_reusable": null,
    "escena_reusable": null
   },
   {
    "n": 6,
    "id": "E6",
-   "lamina_src": "laminas/apodo-g7/L6.png",
-   "texto": "Pídele a tu terreno su Plan de Potencial Personalizado",
+   "lamina_src": "laminas/apodo-g8/L6.png",
+   "texto": "Pídele a tu terreno su Plan de Potencial Personalizado y descubramos juntos su nombre real.",
    "partes": [
     {
      "rol": "narrador",
-     "dice": "Pídele a tu terreno su Plan de Potencial Personalizado."
+     "dice": "Pídele a tu terreno su Plan de Potencial Personalizado, y descubramos juntos su nombre real."
     }
    ],
-   "intencion": "clara y directa, sin adorno. Es lo único que tiene que quedarse grabado.",
+   "intencion": "clara y cálida. Cierra el círculo: el «nombre real» conecta con la 4 y la 5. Es lo único que tiene que quedarse grabado.",
    "voz_reusable": null,
    "escena_reusable": null
   }
@@ -141,5 +133,15 @@
   "_causa_encontrada": "en montar_v6.py el ambiente se monta POR ESCENA (volume=0.55, con afade in y afade out en cada una): ocho entradas y ocho salidas en 40 s. Encima corre una segunda capa, cama.wav, al 0.10 global. Dos fondos empalmados que aparecen y desaparecen.",
   "_arreglo": "una sola pista continua a lo largo de todo el corte, sin fade por escena, a nivel bajo y con ducking bajo la voz. Se hace en la etapa de audio, DESPUÉS de que él apruebe estas 6 láminas — su orden textual.",
   "_estado": "pendiente · no se toca hoy"
+ },
+ "_cambios_v8": {
+  "_por_que": "11-sep: rechazó el corte v7 con nota. Tres pedidos de texto (no de imagen): quitar «tierra de nadie» de la 3, cambiar «sostener» en la 5, y alargar el CTA de la 6. Su nota completa vive en datos/tiras/apodo-g8-3e58a2.json.",
+  "E3": "se quitó «O «tierra de nadie».» — dijo que ese apodo no se escucha bien y está de más; se queda con «la esquina» y «el baldío».",
+  "E5": "«lo que de verdad puede sostener» → «lo que puede llegar a ser» — no le gustaba «sostener».",
+  "E6": "se le agregó «y descubramos juntos su nombre real» al CTA — su pedido textual, cierra el círculo con la 4 y la 5.",
+  "_estado": "PENDIENTE de su aprobación (apodo-g8-3e58a2, láminas 3/5/6). No se anima ni se corta hasta que diga que sí — la compuerta lo exige."
+ },
+ "_arreglos_tecnicos_v8": {
+  "E1": "la voz salía diciendo la frase DOS VECES (bug de Gemini TTS, no del guion) y el video hacía un zoom que se revertía a la mitad («se va para atrás», tal cual lo describió). Se regrabó la voz (ahora 2.8s, antes 7.5s) y se reanimó la escena con un prompt que prohíbe explícitamente el zoom. El texto de la 1 NO cambió."
  }
 }

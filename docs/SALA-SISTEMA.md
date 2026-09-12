@@ -335,3 +335,34 @@ verificación. Pasó el 10-sep con `apodo-g7-c7faea` — resultó ser cierto, pe
 hubiera comprobado. Ahora, si la pieza no está en la mesa, se busca su tira más reciente y se
 leen sus marcas en `decisiones.propuestas` (que el Sheet conserva con `heredada`); y si de
 plano no se encuentra ninguna pieza, la compuerta dice NO en vez de decir sí por defecto.
+
+## 12-sep-2026 · cuatro fallas más, encontradas al atender su rechazo del video
+
+**41. Retocar una lámina YA texteada podía dejar un fantasma del texto viejo.** (`retipo.py`)
+Cuando el texto NUEVO usa menos renglones que el viejo, el degradado se volvía opaco más
+abajo que antes —dependía de cuántos renglones trajera el texto de HOY— y un resto del texto
+anterior, justo arriba de la zona opaca, se colaba a medio pintar. Se vio en vivo al acortar
+la lámina 3 (de 3 a 2 renglones): «También le dicen» fantasma sobre el texto nuevo. Ahora la
+franja se vuelve opaca a una distancia FIJA de su borde superior, sin importar el texto de hoy.
+
+**42. `tipografia._repartir` no partía de verdad en más de 3 renglones.** Pedir 4 ó 5 renglones
+daba exactamente el mismo resultado que pedir 3 — el código para n>3 estaba escrito igual al
+de n=3. Se generalizó con combinaciones de cortes: funciona para cualquier n razonable (los
+textos de una lámina son cortos). Lo destapó el CTA de la 6, que sólo cupo a tamaño completo
+usando 4 renglones.
+
+**43. La compuerta podía confundir las 3 marcas de un EJE con 6 marcas de LÁMINA.**
+El respaldo del 10-sep (invariante 40) buscaba la tira más reciente de la familia cuando la
+pieza no estaba en la mesa — pero si la tira más reciente resultaba ser la de un EJE DE VIDEO
+(3 opciones, `decidir: []`, sólo de contexto), sus 3 marcas de «qué opción elegiste» se leían
+como si fueran 6 marcas de «qué lámina aprobaste»: sus tres «no» se convirtieron en «láminas
+1, 2 y 3 sin aprobar», bloqueando animar la lámina 1 que en realidad SÍ estaba aprobada. Ahora
+el respaldo exige `decidir` no vacío y que el número de marcas cuadre exacto con el número de
+láminas de esa tira; si no, sigue buscando en la tira anterior.
+
+**44. Una regla de estilo no se le aplica a SUS PROPIAS PALABRAS.** `nota_previa` en una tira
+es su frase, citada tal cual para que el editor recuerde por qué se rehizo una lámina — no es
+copy que el sistema escribe. La regla «Personalizado con P mayúscula» la disparaba contra su
+propia nota («…su plan de potencial personalizado…», dictada en minúsculas). Corregirle la
+cita para que pasara la regla habría sido words in his mouth; se excluyó `nota_previa` de las
+reglas de estilo de copy — se sigue mostrando igual en la Sala.
