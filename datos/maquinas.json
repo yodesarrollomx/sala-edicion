@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-12 08:29",
+ "actualizado": "2026-09-12 08:59",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -62,7 +62,7 @@
    "hace": "Recoge lo que pides con «Pedir nueva ronda» o «Enviar mensaje», te avisa en la Mac y deja escrito en la Sala que ya se tomó.",
    "evita": "Que pidas una ronda y nadie se entere: antes el recado se quedaba dormido en el Sheet.",
    "cuando": "cada 15 minutos",
-   "corrio": "hace 13 min",
+   "corrio": "hace 10 min",
    "dijo": "sin encargos pendientes",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 2 horas",
+   "corrio": "hace 30 min",
    "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -84,7 +84,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 12 horas",
+   "corrio": "hace 28 min",
    "dijo": "escrito en /Users/a./yod_audit/metricas/historial.jsonl",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -106,7 +106,7 @@
    "hace": "Levanta la copia de la Sala en esta Mac, para trabajar sin internet.",
    "evita": "quedarte sin Sala si se cae GitHub",
    "cuando": "siempre encendida",
-   "corrio": "hace 41 horas",
+   "corrio": "hace 42 horas",
    "dijo": "  Sala de Edición · http://localhost:8711  (2026-09-10T15:25:19-07:00)",
    "salud": "bien",
    "porque": "es un servidor: está encendido ahora mismo"
