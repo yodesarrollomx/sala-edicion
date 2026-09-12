@@ -549,7 +549,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='41748b93f3';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='adc8770145';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1752,8 +1752,10 @@ async function traerCola(){
   try{
     const r=await fetch(GAS()+'?recurso=cola&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'});
     const j=await leerJSON(r);
-    if(!r.ok||!j||j.ok!==true||!Array.isArray(j.filas)) throw new Error((j&&j.error)||'sin la hoja COLA');
-    COLA=j.filas;
+    // 12-sep: el GAS devuelve la lista como `cola` (y `cuantos`); el árbol la esperaba como `filas`. Se aceptan las dos.
+    const _filas=Array.isArray(j&&j.filas)?j.filas:(Array.isArray(j&&j.cola)?j.cola:null);
+    if(!r.ok||!j||j.ok!==true||!_filas) throw new Error((j&&j.error)||'sin la hoja COLA');
+    COLA=_filas;
   }catch(e){ COLA=null; COLA_ERR=true }
 }
 function colorPunto(estado){
