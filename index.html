@@ -510,7 +510,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='820e4bd2a4';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='226723f273';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1147,12 +1147,15 @@ function pintarCartas(){
       el.querySelectorAll('.lupa,.num-movil').forEach(b=>b.onclick=e=>{ e.stopPropagation(); abrirZoom(src) });
       dobleToque(el.querySelector('.lienzo'),()=>abrirZoom(src));
     }else{
-      const ops=CANDIDATAS(x.p).map((o,j)=>`<div class="op"><h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Elegir ésta</button></div>`).join('');
+      // 12-sep (plan de raíz): una opción puede traer `src` — una candidata de LÁMINA, no sólo texto.
+      // Así un «no» produce 2–3 imágenes y él elige una, en vez de una sola rehecha a ciegas.
+      const ops=CANDIDATAS(x.p).map((o,j)=>`<div class="op">${o.src?`<img src="${esc(o.src)}" alt="" loading="lazy" style="width:100%;border-radius:10px;display:block;margin-bottom:8px;cursor:zoom-in" data-amp="${esc(o.src)}">`:''}<h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Elegir ésta</button></div>`).join('');
       el.innerHTML=`${x.p.video?`<div class="lienzo conVideo"><video src="${esc(x.p.video)}" controls playsinline preload="metadata" poster=""></video></div>`:''}
         <div class="opciones">${ops}<button class="ning" data-ning>Ninguna — dejo una nota</button></div>
         <div class="pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · elige una opción</span>
           ${x.p.video?`<a class="abrir-video" href="${esc(x.p.video)}" target="_blank" rel="noopener">Abrirlo en pantalla completa ↗</a>`:''}${luegoDe(x)}</div>`;
       el.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{ const j=+b.dataset.op, d0=dec[x.pid]; d0._borrar=d0._borrar||{}; d0.laminas.forEach((m,i)=>{ if(m&&i!==j) d0._borrar[i]=1 }); delete d0._borrar[j]; d0.laminas[j]='si'; d0._eje='si'; avanzar('si') });
+      el.querySelectorAll('[data-amp]').forEach(im=>im.onclick=()=>{ if(typeof ampliar==='function') ampliar(im.dataset.amp); else window.open(im.dataset.amp,'_blank') });
       el.querySelector('[data-ning]').onclick=()=>pedirNota(nota=>{ dec[x.pid].laminas=dec[x.pid].laminas.map(()=>'no'); dec[x.pid].nota=nota; dec[x.pid]._eje='no'; dec[x.pid]._borrar={}; avanzar('no') });
     }
     z.appendChild(el);

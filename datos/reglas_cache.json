@@ -14,7 +14,9 @@
   "prospectos_por_rechazo": 2,
   "productor_cada_min": 20,
   "productor_silencio_desde": 23,
-  "productor_silencio_hasta": 7
+  "productor_silencio_hasta": 7,
+  "productor_ejecuta_etapas": "",
+  "productor_piezas": "apodo"
  },
  "motores": [
   {
@@ -81,5 +83,5 @@
    "nota": "gratis con tope diario; a veces repite la frase"
   }
  ],
- "traido": "2026-09-12 13:36"
+ "traido": "2026-09-12 13:46"
 }
