@@ -377,3 +377,32 @@ Saltar a la última lámina pendiente (índice 3 de 4) hizo que «Faltan 3 decis
 en «Falta 1 decisión» de golpe, sin que se hubiera decidido nada — verificado contra el Sheet:
 cero marcas guardadas. `cuentas()` (el contador de aprobadas/con cambios) ya lo hacía bien, contando
 todo `pasos` sin filtrar por `idx`; el contador de arriba no seguía la misma regla. Ahora sí.
+
+## Simulacro (12-sep-2026): probar las invariantes sin tocar el día vivo
+
+`sala_simulacro.py` es la versión repetible del «Recorrido real contra el Sheet» de la sección 3:
+un solo comando corre 12 casos contra un DÍA AISLADO (nunca el vivo — `assert fecha < 2026-06-01`,
+igual que `sala_sobre.py`), imprime ✓/✗ con un dato medido por caso, y al terminar retira del Sheet
+todo lo que él mismo montó.
+
+```
+python3 ~/yod_audit/sala_simulacro.py                    # usa el día de prueba por defecto (2026-05-20)
+python3 ~/yod_audit/sala_simulacro.py --fecha 2026-04-10  # otro día aislado
+```
+
+Qué cubre cada caso: (1) proponer la misma pieza dos veces no duplica la fila; (2) retirar la saca
+de la mesa; (3) dos editores en conflicto — el «no» manda, con las dos firmas; (4) reabrir una
+lámina ya aprobada con nota; (5) un envío «todo pendiente» nunca borra una marca real anterior;
+(6) un eje decidido no se vuelve a preguntar aunque se retire de la mesa; (7) `sala_publicar.py`
+aborta si el mismo id llega con contenido distinto (md5), probado en una carpeta temporal, sin
+llegar al GAS; (8) `gas.py` distingue un error de RED (puerto que no contesta) de un error QUE
+CONTESTA EL SHEET (`{"error": "..."}` desde un servidor de prueba local); (9) `voces_v7.py`
+descarta un audio sintético más largo que el tope y vuelve a pedirlo, sin llamar a Gemini; (10)
+`sala_compuerta.puede_juntar` nunca da «sí» por accidente ni con `pid=None` ni con una lámina
+sin aprobar, usando un día simulado (`monkeypatch` de `sala_compuerta._dia`); (11) `tipografia.ajustar`
+acomoda un texto corto sin avisar y AVISA cuando un texto no cabe ni al piso; (12) confirma que
+`montar_v7.py` trae el chequeo que truena si el fondo de audio sale más corto que el corte (sin
+generar video).
+
+Sale con código 0 sólo si los 12 casos dieron ✓. Si algo falla, la tabla final dice exactamente
+cuál — nunca «pasó en general».
