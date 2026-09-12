@@ -486,3 +486,25 @@ log en `~/yod_audit/sala/productor.log`. Ese 1200 está **congelado en el plist*
 regla en el Sheet NO lo mueve, hay que reescribir el plist entero y `bootout` + `bootstrap`
 (nunca `sed` sobre un plist cargado). Y como siempre: no cuenta como instalado hasta que el log
 existe — el de hoy apareció a las 13:43 con su corrida completa.
+
+## 12-sep-2026 (noche) · el run del plan de raíz — lo que cambió además de lo de los agentes
+
+**56. Una opción de eje puede traer imagen.** `opciones.candidatas[].src` se pinta en la carta;
+así un «no» produce 2–3 candidatas de LÁMINA y él elige, en vez de una sola rehecha a ciegas.
+Hoy: `apodo-g9-l3` (2 tomas) y `apodo-g9-l5` (2 tomas) a partir de la nota de Sayri.
+
+**57. Las reglas se editan sin abrir el Sheet.** `accion=regla {set:{nombre:valor}}` (solo agente,
+`rolDe(d.clave)`; el primer intento usaba una variable `rol` que en `doPost` no existe y rechazaba
+a todos). Con eso se encendió `productor_ejecuta_etapas = escena,voz` desde código, no a mano.
+
+**58. Un timeout de Gemini también se reintenta.** La voz 6 falló dos veces con «read operation
+timed out» y `voces_v7` sólo reintentaba `HTTPError`; ahora cubre `URLError`/`TimeoutError`.
+
+**59. El eje del 28-ago se volvía a preguntar.** `ganchos-casos` se decidió (opción 4) y nunca se
+retiró; el relevo lo traía cada día y hoy Sayri lo volvió a contestar. Retirado con motivo: el
+caso 4 se publicó el 2-sep. Regla: un eje cumplido se retira en el mismo run que lo cumple.
+
+**Pendiente honesto del run:** el productor todavía corre los scripts POR PIEZA (animar/voces
+enteros, idempotentes por escena), no por ítem; `prospectos` no tiene generador automático
+(hoy se hicieron a mano con recetas mflux); el intervalo del launchd no lee la regla; el espejo
+público `gas/Code.gs` sigue atrasado.
