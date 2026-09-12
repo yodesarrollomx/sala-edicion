@@ -570,3 +570,108 @@ el mismo sobre. Sin `candidatas`, la carta queda exactamente como antes.
 Nota: esto es distinto de las candidatas de un **eje** (`p.opciones[].src`, ya existían desde el
 12-sep de la madrugada — invariante 56, arriba): ahí la opción vive en la propuesta completa; aquí
 vive dentro de una lámina concreta de la tira, y sólo se ve mientras esa lámina está en tu mesa.
+
+## 12-sep-2026 (tarde) · dos compuertas y cero duplicados
+
+Su reclamo, textual, y es el que ordena todo lo de abajo:
+
+> «estuve editando la misma publicación en varias etapas… no quiero cosas a medias ni andarte
+> picando… quiero algo automático como una industria de producción… que no me dejes duplicados»
+
+El recibo: al **Apodo** se le preguntó **seis veces** — g5, g5e, g7, g8, los ejes `apodo-g9-l3` y
+`apodo-g9-l5`, y `apodo-g10-l3`. Nadie duplicaba a propósito: proponer no sabía nada de lo ya
+propuesto, y cada «no» a una lámina se contestaba con una carta nueva y chiquita.
+
+**60. Una pieza, una carta viva.** (`sala_mesa.py`, regla `una_carta_por_pieza=1`, y la puerta
+del propio GAS en `accion=proponer`.) Antes de proponer cualquier cosa de una familia (el slug
+de la pieza: «apodo»):
+ 1. se lee la mesa **del Sheet**, no de la memoria;
+ 2. toda carta viva de esa familia que ya esté **decidida** —o que esta propuesta sustituye— se
+    **retira** en el mismo run;
+ 3. si queda una carta viva **sin decidir**, no se propone otra: el trabajo se encola con
+    `bloqueado_por=<pid>` y espera al editor.
+El punto 3 es el que de verdad le quita el «andarte picando»: mientras tenga UNA pregunta abierta
+de una pieza, el sistema no le pone una segunda encima aunque tenga material listo. Qué cuenta
+como «decidida» se copió textual de `cerrada_` del GAS, no se adivinó: si los dos lados contestan
+distinto, el duplicado vuelve por la puerta de atrás. Y la garantía no depende del cliente:
+`accion=proponer` acepta `familia` y retira ahí mismo toda carta viva de esa familia que no venga
+en el envío.
+
+**61. COMPUERTA 1 · la pieza entra como UNA carta con la tira completa, y las candidatas van
+DENTRO.** (`sala_tira.py`.) Las seis láminas siempre, en orden, como lo va a ver el público.
+Cuando una recibe «no», sus candidatas no se van a otra carta: se montan dentro de esa lámina.
+Contrato, que es lo que este lado garantiza y lo que la Sala pinta:
+
+```
+laminas[i] = { "n": 3, "src": "laminas/apodo-g8/L1.png", "dice": "…",
+               "estado": "abierta" | "aprobada" | "rehecha",
+               "nota_previa": "…",                  ← SUS palabras, citadas (invariante 44)
+               "candidatas": [ { "src": "laminas/apodo-p3-2026-09-12/L3-1.jpg",
+                                 "titulo": "Toma 1", "texto": "…" } ] }
+decidir = [3]      ← una lámina con candidatas SIEMPRE está aquí; una sin ellas, nunca
+mapa    = {"1":1, "2":2, …}   ← índice de la carta → número real de escena
+```
+El `src` de la lámina es la foto vigente, la que se anima; una candidata sólo se vuelve `src`
+cuando **él** la elige — aquí no se elige nada. El pid es `<pieza>-tira-<fecha>`: estable dentro
+del día, así que re-montar reemplaza la fila en vez de apilar otra. **COMPUERTA 2:** el corte, un
+eje (`apodo/proponer_corte.py`), retirando el eje anterior que se **busca** en la mesa, no se
+recuerda de memoria. Ninguna otra pregunta viaja con él.
+
+**62. Un ítem queda obsoleto sólo si cambió su FOTO, no su texto.** Hoy el productor marcó `E6`
+obsoleta y volvió a animarla. No hacía falta: `apodo-g8` son las láminas de `g7` **retexteadas**
+con `retipo.py`. Se midió, no se supuso — los tres recortes dan md5 idéntico al de g7
+(`4cc6122b`, `38f84960`, `32253b35`). Al clip sólo entra foto (`recortes_v7`); el texto lo pone el
+montaje. Entonces la versión de una escena es el **md5 del recorte**, y cambiarle el texto a una
+lámina ya no cuesta 17 minutos de Mac. La **voz** sigue versionada por el texto, a propósito y
+escrito en el código: es alguien leyendo esa frase en voz alta, y una voz diciendo lo que la
+lámina ya no dice es peor que regrabarla.
+
+**63. La hoja PROMPTS: un «no» genera candidatas solo.** (`sala_prospectos.py`, hoja
+`PROMPTS: pieza · lamina · prompt_base · acento · notas`, creada por `accion=hojas`.) El prompt de
+una candidata es `prompt_base` + las **palabras clave de la nota del rechazo** — la nota es el dato
+más caro que hay: si dijo «se ve rural, tendría que verse un lote baldío en ciudad», la candidata
+que no lo traiga nace muerta. N imágenes con semillas distintas y **reproducibles** (la candidata
+k de la lámina n siempre nace de la misma semilla), `.jpg` ligero al repo, y una fila en COLA por
+candidata con su hash. `accion=prompts` es idempotente y **no pisa** lo que ya esté escrito: en
+cuanto Alejandro o Sayri corrijan un prompt en el Sheet, esa corrección manda para siempre.
+
+**64. Por ítem, no por pieza.** `animar_v7.py --solo N` y `voces_v7.py --solo N`. Antes el
+productor llamaba el script entero para atender un solo ítem: idempotente sí, pero recorría las
+seis y el log hablaba de escenas que nadie pidió. Y `animar_v7` traía escrita la ruta
+`laminas/apodo-g7/L{n}.png` para las seis cuando 3, 5 y 6 ya vivían en `apodo-g8`: animaba la foto
+vieja y nadie tenía cómo enterarse. Ahora la lámina de cada escena la resuelve
+`apodo/laminas_vigentes.py` desde la **tira vigente del Sheet**.
+
+**65. El launchd lee la regla al instalar.** (`instalar_productor.py`.) El `StartInterval` estaba
+congelado en 1200 y coincidía con `productor_cada_min` **por casualidad**; un número editable que
+nadie lee es un adorno. Ahora el plist se escribe a partir de la regla, con `bootout` + `bootstrap`
+(nunca `sed` sobre un plist cargado) y comprobando que el log se movió: si no se movió, sale con
+error y lo dice — no cuenta como instalado.
+
+### Tres fallas encontradas al construir lo de arriba
+
+**66. El respaldo de la compuerta descartaba la tira BUENA y contestaba que sí.** Tercer bug del
+mismo respaldo (van los invariantes 40 y 43, y éste es el peor). Exigía
+`len(marcas) == len(tira.laminas)`. Pero una tira de rehechas trae la pieza **completa** (6
+láminas, para el contexto) y sólo **pregunta** por las que cambiaron (`decidir:[3,5,6]`, 3 marcas):
+el tamaño no cuadraba, `apodo-g8` se descartaba, y el respaldo se iba a `apodo-g7` con sus seis
+«sí» del 9-sep y contestaba **«se puede juntar el corte»** con las láminas 3 y 5 rechazadas hoy.
+Se destapó justo al retirar la carta decidida —la mejora de un lado destapó el hueco del otro—.
+Lo que tiene que cuadrar es el número de **preguntas** (`decidir`), no el de láminas.
+
+**67. Ningún eje decidido se retiraba solo, y la causa era una línea.** `cerrada_` calculaba
+`(p.opciones || []).length`, pero un eje moderno guarda sus opciones como **objeto**
+(`{candidatas:[…]}`) y `.length` de un objeto es `undefined`: `n` salía 0 y la función contestaba
+`false` **siempre**. Ésa es la raíz del invariante 59 («el eje del 28-ago se volvía a preguntar»),
+que se había parchado retirándolo a mano.
+
+**68. Un trabajo ENCOLADO no es un producto.** El productor contaba como «ya hay candidatas» las
+filas de COLA en estado `pendiente`. Las 4 filas encoladas hoy para las láminas 3 y 5 hacían creer
+que había tomas cuando en disco no había ninguna, y por eso nunca se generaban. Sólo `corriendo` y
+`hecho` cuentan. Del mismo par: `sala_productor.PIEZAS['apodo']['corte']` apuntaba a
+`_CORTES/APODO_v8.mp4`, una carpeta que **nunca existió** — el corte real sale en
+`REEL_APODO_v7.mp4`, así que el productor jamás pudo comprobar que el corte estuviera hecho.
+
+**Y una de método:** `--simular` retiraba cartas de verdad (la puerta de familia no miraba la
+bandera). Un simulacro que toca el Sheet deja de servir para lo único que sirve: correrlo con
+confianza antes de un run real. Ya no toca nada.
