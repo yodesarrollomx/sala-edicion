@@ -195,11 +195,21 @@
     "drive_original": "1izaioMb-Dj1TJYE8qCw0ZpNmgEMXdAjq",
     "drive_prueba": "1LwxIsDog1Csa2DolYQ-MzX1tWHPfJNig",
     "liga": "https://drive.google.com/thumbnail?id=1LwxIsDog1Csa2DolYQ-MzX1tWHPfJNig&sz=w1200"
+   },
+   {
+    "r": 5,
+    "huella": "96eb6d2172d875a722d6b563fd44550d",
+    "src": "laminas/apodo-g8/L1.png",
+    "grupo": "apodo-g8",
+    "tambien_en": [],
+    "drive_original": "1aWrz2zQxUfieh5jWKv4_qIchxUe_2GNf",
+    "drive_prueba": "1ejkRfrQC0cmbQv6VJJjLzL4cGj3iXAmj",
+    "liga": "https://drive.google.com/thumbnail?id=1ejkRfrQC0cmbQv6VJJjLzL4cGj3iXAmj&sz=w1200"
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1Rd1EK-gURmtnE6i-5o-heeGahMbBiBKh",
-  "revision_vigente": 4
+  "revision_vigente": 5
  },
  "APODO-L04": {
   "serial": "APODO-L04",
@@ -294,11 +304,21 @@
     "drive_original": "1gaRIfjP4O0dzei_3AxZHrwSxa5s_41I_",
     "drive_prueba": "15t6cEFjtQKoDDvV2Yo3pFX3LDFb0vPv6",
     "liga": "https://drive.google.com/thumbnail?id=15t6cEFjtQKoDDvV2Yo3pFX3LDFb0vPv6&sz=w1200"
+   },
+   {
+    "r": 5,
+    "huella": "bc30416b1b68885891f84094a595775d",
+    "src": "laminas/apodo-g8/L2.png",
+    "grupo": "apodo-g8",
+    "tambien_en": [],
+    "drive_original": "1WPhTALxG1l3QFsVxyKZtsR9Auz3KpZLc",
+    "drive_prueba": "1LJzMJYylOIKZAIg9q-XdgG7_C1n6XxUc",
+    "liga": "https://drive.google.com/thumbnail?id=1LJzMJYylOIKZAIg9q-XdgG7_C1n6XxUc&sz=w1200"
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1AGKE-Jqjj4oGRiNdonn1IwXGAffQ9sgP",
-  "revision_vigente": 4
+  "revision_vigente": 5
  },
  "APODO-L06": {
   "serial": "APODO-L06",
@@ -338,11 +358,21 @@
     "drive_original": "1c8UKC4U8U-YqM8S1CLLmq63WBBImJ1Ch",
     "drive_prueba": "1hDhXj_tiu8kT9MlrDiVz1FMZJ7b40ZXk",
     "liga": "https://drive.google.com/thumbnail?id=1hDhXj_tiu8kT9MlrDiVz1FMZJ7b40ZXk&sz=w1200"
+   },
+   {
+    "r": 4,
+    "huella": "88e1482b102fecb2036375a29848d65b",
+    "src": "laminas/apodo-g8/L3.png",
+    "grupo": "apodo-g8",
+    "tambien_en": [],
+    "drive_original": "1gPl5zexeVxvKslEXDHHM6qurfDW2-tuX",
+    "drive_prueba": "1vcyn-A_LQSoWJWXYHrWM7ISBInqSaUMh",
+    "liga": "https://drive.google.com/thumbnail?id=1vcyn-A_LQSoWJWXYHrWM7ISBInqSaUMh&sz=w1200"
    }
   ],
   "estado": "en revisión",
   "drive_carpeta": "1G6CmKYL3isQMHOiWrkc0jbpckJkkloBv",
-  "revision_vigente": 3
+  "revision_vigente": 4
  },
  "APODO-L07": {
   "serial": "APODO-L07",

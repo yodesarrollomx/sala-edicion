@@ -54,6 +54,17 @@
    "video": null,
    "de_antes": "2026-08-30",
    "origen": "tu nota: «estamos repitiendo conceptos y no viendo la magnitud de ejemplos»"
+  },
+  {
+   "id": "apodo-g8-3e58a2",
+   "titulo": "El Apodo · 3 textos ajustados a tu nota",
+   "laminas": [
+    "laminas/apodo-g8/L1.png",
+    "laminas/apodo-g8/L2.png",
+    "laminas/apodo-g8/L3.png"
+   ],
+   "video": null,
+   "origen": "rehecha-de apodo-video-10sep-v7"
   }
  ],
  "parrilla": [
@@ -155,6 +166,10 @@
   {
    "hora": "14:45",
    "evento": "Propuesta montada: El Apodo · sin lo repetitivo y con los textos parejos (6 láminas) (6 láminas)"
+  },
+  {
+   "hora": "08:19",
+   "evento": "Propuesta montada: El Apodo · 3 textos ajustados a tu nota (3 láminas)"
   }
  ],
  "decisiones": {

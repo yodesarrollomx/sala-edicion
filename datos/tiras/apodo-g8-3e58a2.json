@@ -1,0 +1,152 @@
+{
+ "pieza": "El Apodo del Terreno",
+ "pieza_slug": "apodo",
+ "promesa": "Que el dueño sienta que su terreno lleva años cargando nombres ajenos — y que hay uno solo que sí es suyo: lo que puede llegar a ser.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/apodo-g7/L1.png",
+   "dice": "¿Ya sabes cómo le dicen a tu terreno?",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L1.png",
+     "hash": "9402bbc1",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-12"
+  },
+  {
+   "n": 2,
+   "src": "laminas/apodo-g7/L2.png",
+   "dice": "Los vecinos le dicen «el de la esquina».",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L2.png",
+     "hash": "742f0cae",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-12"
+  },
+  {
+   "n": 3,
+   "src": "laminas/apodo-g8/L1.png",
+   "dice": "También le dicen «lote baldío».",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "«la toma 3 creo que a la de que le dicen el baldío está bien, el Apodo que sigue no se escucha bien y está de más, quítalo, nos quedamos con los apodos de la esquina y el baldío… luego en la lámina de lo que puede sostener no me gusta lo de sostener, debemos de poner algo como lo que tu terreno puede llegar a ser… y a lo último donde dice pídele su plan de potencial personalizado y descubramos juntos su nombre real»",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L3.png",
+     "hash": "6902c53d",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L1.png",
+     "hash": "96eb6d21",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-12"
+  },
+  {
+   "n": 4,
+   "src": "laminas/apodo-g7/L4.png",
+   "dice": "Ninguno de esos nombres se lo puso tu terreno.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L4.png",
+     "hash": "c044b62e",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "fecha": "2026-09-12"
+  },
+  {
+   "n": 5,
+   "src": "laminas/apodo-g8/L2.png",
+   "dice": "Tu terreno sí tiene un nombre propio: lo que puede llegar a ser.",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "«la toma 3 creo que a la de que le dicen el baldío está bien, el Apodo que sigue no se escucha bien y está de más, quítalo, nos quedamos con los apodos de la esquina y el baldío… luego en la lámina de lo que puede sostener no me gusta lo de sostener, debemos de poner algo como lo que tu terreno puede llegar a ser… y a lo último donde dice pídele su plan de potencial personalizado y descubramos juntos su nombre real»",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L5.png",
+     "hash": "5c43746a",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L2.png",
+     "hash": "bc30416b",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-12"
+  },
+  {
+   "n": 6,
+   "src": "laminas/apodo-g8/L3.png",
+   "dice": "Pídele a tu terreno su Plan de Potencial Personalizado y descubramos juntos su nombre real.",
+   "estado": "rehecha",
+   "marca_previa": "no",
+   "nota_previa": "«la toma 3 creo que a la de que le dicen el baldío está bien, el Apodo que sigue no se escucha bien y está de más, quítalo, nos quedamos con los apodos de la esquina y el baldío… luego en la lámina de lo que puede sostener no me gusta lo de sostener, debemos de poner algo como lo que tu terreno puede llegar a ser… y a lo último donde dice pídele su plan de potencial personalizado y descubramos juntos su nombre real»",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L6.png",
+     "hash": "5a25ffd2",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L3.png",
+     "hash": "88e1482b",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "fecha": "2026-09-12"
+  }
+ ],
+ "decidir": [
+  3,
+  5,
+  6
+ ],
+ "base": "apodo-video-10sep-v7",
+ "guion": "datos/guiones/APODO-VIDEO.json",
+ "nota": "Rechazaste el corte anterior con nota. Aquí sólo los 3 textos que pediste cambiar; las otras 3 láminas no se tocaron.",
+ "mapa": {
+  "1": 3,
+  "2": 5,
+  "3": 6
+ }
+}

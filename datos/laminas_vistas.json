@@ -214,5 +214,23 @@
   "n": 6,
   "fecha": "2026-09-09",
   "src": "laminas/apodo-g7/L6.png"
+ },
+ "96eb6d2172d875a722d6b563fd44550d": {
+  "pieza": "apodo-g8-3e58a2",
+  "n": 3,
+  "fecha": "2026-09-12",
+  "src": "laminas/apodo-g8/L1.png"
+ },
+ "bc30416b1b68885891f84094a595775d": {
+  "pieza": "apodo-g8-3e58a2",
+  "n": 5,
+  "fecha": "2026-09-12",
+  "src": "laminas/apodo-g8/L2.png"
+ },
+ "88e1482b102fecb2036375a29848d65b": {
+  "pieza": "apodo-g8-3e58a2",
+  "n": 6,
+  "fecha": "2026-09-12",
+  "src": "laminas/apodo-g8/L3.png"
  }
 }
