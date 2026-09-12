@@ -549,7 +549,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='adc8770145';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='6862a6c9c8';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -880,7 +880,12 @@ function estadoInicial(){
   if(guard.env) return pintarEstado('subido','Guardado ✓ '+guard.env.hora);
   if(leerLS('sala_cola',[]).length) return pintarEstado('cola','Se guarda al volver la señal');
   const yaHoy=lockeadas.length+reaperturas().reduce((a,[,d])=>a+d.laminas.filter(m=>m==='no').length,0);
-  return pintarEstado(c.hoy?'local':'', c.hoy?'Guardando…':(yaHoy?`Hoy decidiste ${yaHoy} · guardado en el Sheet`:'Nada decidido aún'));
+  // 12-sep (auditoría): al abrir con sesión, si no hay un envío EN CURSO (_subiendo/_tSubir) ni cola
+  // pendiente, lo que hay en `dec` ya viene del Sheet o de un borrador recién fusionado — no hay
+  // nada que subir. Antes esto decía «Guardando…» para siempre porque `c.hoy` cuenta marcas en
+  // `pasos` (lo decidido), no envíos sin confirmar; sin `guard.env` (sesión nueva) se quedaba pegado.
+  if(!_subiendo&&!_tSubir) return pintarEstado('', (c.hoy||yaHoy)?`Hoy decidiste ${c.hoy+yaHoy} · guardado en el Sheet`:'Nada decidido aún');
+  return pintarEstado('local','Guardando…');
 }
 
 /* ══ envío — sobre idéntico al de siempre ══ */
@@ -1765,27 +1770,88 @@ function colorPunto(estado){
   if(/fallo|error|rechaz/.test(e)) return 'rojo';
   return 'gris';
 }
-function grupoCola(pieza){
-  const g={prospectos:[],escena:[],voz:[],corte:[]};
-  (COLA||[]).forEach(f=>{ if(f.pieza===pieza&&g[f.etapa]) g[f.etapa].push(f) });
-  return g;
+// 12-sep (corrección tras ver el árbol en su Chrome): «El Apodo del Terreno» (tiras/piezas.json,
+// nombre bonito) y «apodo» (la COLA, que sólo conoce el slug) salían como DOS árboles. Se une por
+// slug: sin acentos, en minúsculas, sólo [a-z0-9-]. `pieza_slug` si la tira lo trae; si no, el
+// prefijo antes del primer guión del id de la tira (p. ej. `apodo-g8-3e58a2` → `apodo`).
+function normSlug(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') }
+function slugDeTira(t,pid){ return normSlug((t&&t.pieza_slug)||String(pid||'').split('-')[0]) }
+function prettyDeSlug(slug,t){
+  if(t&&t.pieza) return t.pieza;
+  const pz=Object.keys(PZ).find(n=>normSlug(n)===slug||normSlug(n).split('-').includes(slug)||slug.split('-').includes(normSlug(n).split('-')[0]));
+  if(pz) return pz;
+  return slug.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
 }
-async function nombresDePiezas(){
-  const nombres=new Set(Object.keys(PZ));
-  (COLA||[]).forEach(f=>{ if(f.pieza) nombres.add(f.pieza) });
+// una lámina puede tener una `candidata` de la tira (Entrega B, ya elegida por marca 'si')
+// o haber sido «elegida» a través de un EJE aparte cuya opción trae `src===lamina.src` (invariante
+// 56): en ambos casos cuenta como decidida, aunque la tira siga diciendo `estado!=='aprobada'`.
+function ejeEligioLamina(l){
+  const props=(D&&(D._todas||D.propuestas))||[];
+  for(const p of props){
+    if(p.tipo!=='eje') continue;
+    const cands=CANDIDATAS(p); const j=cands.findIndex(c=>c&&c.src&&l.src&&c.src===l.src); if(j<0) continue;
+    const f=((D.decisiones||{}).propuestas||{})[p.id]; if(!f) continue;
+    if(f.laminas&&f.laminas[j]==='si') return true;
+    if(f.firmas&&f.firmas[j]&&(f.firmas[j]||[]).some(x=>x.marca==='si')) return true;
+  }
+  return false;
+}
+// la marca real de una lámina: por ÍNDICE de `decidir` (mapa de la tira → número real), en
+// `D.decisiones.propuestas[pid]`, igual que ya lee `marcaTira` para la mesa de Hoy.
+function marcaDeLamina(t,l){
+  if(l.estado==='aprobada') return 'si';
+  const pid=Object.keys(TIRAS).find(k=>TIRAS[k]===t); if(!pid) return '';
+  const M=mapaDe(t); const k=Object.keys(M).find(q=>+M[q]===l.n); if(k===undefined) return '';
+  const i=+k-1; const f=((D&&D.decisiones&&D.decisiones.propuestas)||{})[pid]; if(!f) return '';
+  if(f.firmas&&f.firmas[i]){ const fs=f.firmas[i]||[]; if(fs.some(x=>x.marca==='si')) return 'si'; if(fs.some(x=>x.marca==='no')) return 'no'; return '' }
+  return (f.laminas||[])[i]||'';
+}
+// null = cerrada (aprobada, marcada sí, o elegida vía eje). {tipo:'no'|'pend',n} = sigue abierta.
+function laminaAbierta(t,l){
+  if(marcaDeLamina(t,l)==='si') return null;
+  if(ejeEligioLamina(l)) return null;
+  return {tipo:marcaDeLamina(t,l)==='no'?'no':'pend', n:l.n};
+}
+function evidenciaSrc(f){
+  const e=f&&f.evidencia; if(!e) return '';
+  if(typeof e==='object') return e.ruta||e.src||e.path||'';
+  if(typeof e==='string'&&/\.(png|jpe?g|webp)(\?|$)/i.test(e)) return e;
+  return '';
+}
+async function armarPiezas(){
   if(TIRAS_HAY===null){ try{ TIRAS_HAY=await (await fetch('datos/tiras/index.json?v='+Date.now())).json() }catch(e){ TIRAS_HAY=[] } }
   await Promise.all((TIRAS_HAY||[]).map(cargarTira));
-  Object.values(TIRAS).forEach(t=>{ if(t&&t.pieza) nombres.add(t.pieza) });
-  return [...nombres];
+  const piezas={};   // slug -> {slug,nombre,tira,filas}
+  const pon=slug=>{ if(!piezas[slug]) piezas[slug]={slug,nombre:'',tira:null,filas:{prospectos:[],escena:[],voz:[],corte:[]}}; return piezas[slug] };
+  for(const pid of Object.keys(TIRAS)){
+    const t=TIRAS[pid]; if(!t) continue;
+    const slug=slugDeTira(t,pid); const z=pon(slug);
+    z.tira=t; z.nombre=prettyDeSlug(slug,t);   // la tira más reciente en el índice manda como «la vigente»
+  }
+  for(const f of (COLA||[])){
+    if(!f||!f.pieza) continue;
+    const slug=normSlug(f.pieza); const z=pon(slug);
+    if(!z.nombre) z.nombre=prettyDeSlug(slug,z.tira);
+    if(z.filas[f.etapa]) z.filas[f.etapa].push(f);
+  }
+  for(const nombre of Object.keys(PZ)){
+    // una pieza de piezas.json sin tira ni cola (todavía en idea) también se anuncia
+    const slug=Object.values(piezas).find(z=>z.nombre===nombre)?.slug || normSlug(nombre);
+    const z=pon(slug); if(!z.nombre) z.nombre=nombre;
+  }
+  return Object.values(piezas);
 }
-function tiraDePieza(nombre){ return Object.values(TIRAS).find(t=>t&&t.pieza===nombre)||null }
-function ramaLaminas(t){
+function ramaLaminas(t,prospectos){
   if(!t||!(t.laminas||[]).length) return '';
+  const porLamina={}; (prospectos||[]).forEach(f=>{ const n=parseInt(String(f.item||'').split('-')[0],10); if(!n&&n!==0) return; (porLamina[n]=porLamina[n]||[]).push(f) });
   const hojas=t.laminas.map(l=>{
-    const ok=l.estado==='aprobada', cambio=l.estado==='rehecha';
-    const col=ok?'verde':cambio?'oro':'gris';
-    const txt=ok?`Lámina ${l.n} · aprobada`:cambio?`Lámina ${l.n} · rehecha, esperando tu sí`:`Lámina ${l.n} · pendiente`;
-    const sub=(Array.isArray(l.candidatas)&&l.candidatas.length)?`<div class="prod-subhojas">${l.candidatas.map((c,k)=>`<div class="prod-hoja" title="candidata ${k+1}${c.titulo?': '+esc(c.titulo):''}"><span class="prod-punto gris"></span>${c.src?`<img src="${esc(ligera(c.src))}" alt="" loading="lazy">`:''}<span class="tt">cand. ${k+1}</span></div>`).join('')}</div>`:'';
+    const ab=laminaAbierta(t,l);
+    const col=!ab?'verde':'oro';
+    const txt=!ab?`Lámina ${l.n} · aprobada`:(ab.tipo==='no'?`Lámina ${l.n} · pidió cambio`:`Lámina ${l.n} · esperando tu sí`);
+    const deLaTira=(Array.isArray(l.candidatas)?l.candidatas:[]).map((c,k)=>({src:c.src,tt:c.titulo||('candidata '+(k+1)),col:'gris'}));
+    const deLaCola=(porLamina[l.n]||[]).map(f=>({src:evidenciaSrc(f),tt:`candidata ${(String(f.item||'').split('-')[1]||'')} · ${f.estado||'pendiente'}`,col:colorPunto(f.estado)}));
+    const todas=[...deLaTira,...deLaCola];
+    const sub=todas.length?`<div class="prod-subhojas">${todas.map(c=>`<div class="prod-hoja" title="${esc(c.tt)}"><span class="prod-punto ${c.col}"></span>${c.src?`<img src="${esc(ligera(c.src))}" alt="" loading="lazy">`:''}<span class="tt">${esc(c.tt.split(' · ')[0])}</span></div>`).join('')}</div>`:'';
     return `<div class="prod-hoja" title="${esc(txt)}"><span class="prod-punto ${col}"></span>${l.src?`<img src="${esc(ligera(l.src))}" alt="" loading="lazy">`:''}<span class="tt">L${l.n} · v${l.version||1}</span></div>${sub}`;
   }).join('');
   return `<div class="prod-rama"><b>Láminas</b><div class="prod-hojas">${hojas}</div></div>`;
@@ -1800,8 +1866,12 @@ function ramaEtapaCola(nombreRama,filas){
   return `<div class="prod-rama"><b>${esc(nombreRama)}</b><div class="prod-hojas">${hojas}</div></div>`;
 }
 function quefaltaPara(t,g,publicada){
-  const pend=t&&(t.laminas||[]).find(l=>l.estado!=='aprobada');
-  if(pend) return `esperando tu sí en la lámina ${pend.n}`;
+  if(t){
+    for(const l of (t.laminas||[])){
+      const ab=laminaAbierta(t,l);
+      if(ab) return ab.tipo==='no'?`pidió cambio en la lámina ${ab.n}`:`esperando tu sí en la lámina ${ab.n}`;
+    }
+  }
   const escFalta=(g.escena||[]).find(f=>!/hecho/i.test(f.estado||''));
   if(escFalta) return `la fábrica está en ${escFalta.item||'una escena'}`;
   const vozFalta=(g.voz||[]).find(f=>!/hecho/i.test(f.estado||''));
@@ -1816,19 +1886,18 @@ async function pintarProduccion(){
   const c=$('#prodArbol'), av=$('#prodAviso'); if(!c) return;
   c.innerHTML='<p style="color:var(--guia);font-size:13px">Cargando…</p>';
   await traerCola();
-  const nombres=await nombresDePiezas();
+  const piezas=await armarPiezas();
   av.textContent=COLA_ERR?'Sin la hoja COLA · mostrando solo las tiras':'';
-  if(!nombres.length){ c.innerHTML='<p class="nota-pie">Nada en producción todavía.</p>'; return }
-  c.innerHTML=nombres.map(nombre=>{
-    const t=tiraDePieza(nombre), g=grupoCola(nombre);
+  if(!piezas.length){ c.innerHTML='<p class="nota-pie">Nada en producción todavía.</p>'; return }
+  c.innerHTML=piezas.map(z=>{
+    const t=z.tira, g=z.filas, nombre=z.nombre||z.slug;
     const publicada=(PZ[nombre]&&PZ[nombre].estado==='publicada');
-    const vaEn=t&&(t.laminas||[]).some(l=>l.estado!=='aprobada')?'láminas':
+    const vaEn=t&&(t.laminas||[]).some(l=>laminaAbierta(t,l))?'láminas':
       ((g.escena||[]).length?'escena':((g.voz||[]).length?'voz':((g.corte||[]).length?'corte':(publicada?'publicada':'guion'))));
     return `<div class="prod-pieza"><div class="cab-pieza"><h3>${esc(nombre)}</h3><span class="va-en">va en ${esc(vaEn)}</span></div>
       <div class="prod-falta">Qué falta: ${esc(quefaltaPara(t,g,publicada))}</div>
       <div class="prod-ramas">
-        ${ramaEtapaCola('Guion',g.prospectos)}
-        ${ramaLaminas(t)}
+        ${t?ramaLaminas(t,g.prospectos):ramaEtapaCola('Candidatas',g.prospectos)}
         ${ramaEtapaCola('Escenas',g.escena)}
         ${ramaEtapaCola('Voces',g.voz)}
         ${ramaEtapaCola('Corte',g.corte)}
