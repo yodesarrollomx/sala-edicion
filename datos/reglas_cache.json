@@ -15,8 +15,9 @@
   "productor_cada_min": 20,
   "productor_silencio_desde": 23,
   "productor_silencio_hasta": 7,
-  "productor_ejecuta_etapas": "escena,voz",
-  "productor_piezas": "apodo"
+  "productor_ejecuta_etapas": "escena,voz,corte,prospectos",
+  "productor_piezas": "apodo",
+  "una_carta_por_pieza": 1
  },
  "motores": [
   {
@@ -83,5 +84,5 @@
    "nota": "gratis con tope diario; a veces repite la frase"
   }
  ],
- "traido": "2026-09-12 15:07"
+ "traido": "2026-09-12 15:21"
 }
