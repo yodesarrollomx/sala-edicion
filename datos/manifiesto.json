@@ -28,49 +28,7 @@
   "2026-09-10",
   "2026-09-12"
  ],
- "propuestas": [
-  {
-   "id": "ganchos-casos",
-   "titulo": "La magnitud del Plan de Potencial · ¿qué caso abrimos?",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": [
-    {
-     "titulo": "1 · La herencia que nadie mueve",
-     "texto": "«Se heredaron un terreno. Y una discusión de quince años.» Tres hermanos, cero acuerdos — porque nadie tiene el dato."
-    },
-    {
-     "titulo": "2 · El predial que no duerme",
-     "texto": "«Tu terreno cobra cada año. ¿Y qué te ha dado a cambio?» Lleva años pagando por algo que no produce."
-    },
-    {
-     "titulo": "3 · La oferta que llegó de la nada",
-     "texto": "«El que te quiere comprar ya hizo su análisis. ¿Y tú?» Nadie decide con menos información que el comprador."
-    },
-    {
-     "titulo": "4 · ¿Vendo o construyo?",
-     "texto": "«Vender o construir. Llevas años en esa pregunta.» El Plan no responde por él: le pone enfrente lo que su suelo aguanta."
-    }
-   ],
-   "video": null,
-   "de_antes": null,
-   "origen": "tu nota: «estamos repitiendo conceptos y no viendo la magnitud de ejemplos»"
-  },
-  {
-   "id": "apodo-g8-3e58a2",
-   "titulo": "El Apodo · 3 textos ajustados a tu nota",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/apodo-g8/L1.png",
-    "laminas/apodo-g8/L2.png",
-    "laminas/apodo-g8/L3.png"
-   ],
-   "opciones": [],
-   "video": null,
-   "de_antes": null,
-   "origen": "rehecha-de apodo-video-10sep-v7"
-  }
- ],
+ "propuestas": [],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -177,7 +135,65 @@
   }
  ],
  "decisiones": {
-  "propuestas": {}
+  "propuestas": {
+   "ganchos-casos": {
+    "laminas": [
+     null,
+     null,
+     null,
+     "si"
+    ],
+    "nota": "",
+    "notas": [],
+    "firmas": [
+     null,
+     null,
+     null,
+     [
+      {
+       "quien": "Sayri",
+       "marca": "si",
+       "nota": ""
+      }
+     ]
+    ]
+   },
+   "apodo-g8-3e58a2": {
+    "laminas": [
+     "no",
+     "no",
+     "si"
+    ],
+    "nota": "",
+    "notas": [
+     "La imagen no cuadra con el texto. Se ve un lugar rural. Tendría que verse un lote baldío en ciudad.",
+     "La imagen se ve demasiado rural. Tendría que ser más de lote baldío en la ciudad."
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Sayri",
+       "marca": "no",
+       "nota": "La imagen no cuadra con el texto. Se ve un lugar rural. Tendría que verse un lote baldío en ciudad."
+      }
+     ],
+     [
+      {
+       "quien": "Sayri",
+       "marca": "no",
+       "nota": "La imagen se ve demasiado rural. Tendría que ser más de lote baldío en la ciudad."
+      }
+     ],
+     [
+      {
+       "quien": "Sayri",
+       "marca": "si",
+       "nota": ""
+      }
+     ]
+    ]
+   }
+  }
  },
  "historial": {
   "2026-08-01": {
