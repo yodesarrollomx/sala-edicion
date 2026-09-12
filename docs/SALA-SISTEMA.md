@@ -406,3 +406,83 @@ generar video).
 
 Sale con código 0 sólo si los 12 casos dieron ✓. Si algo falla, la tabla final dice exactamente
 cuál — nunca «pasó en general».
+
+## 12-sep-2026 (tarde) · el plan «de raíz»: COLA, REGLAS, MOTORES y el productor
+
+Hasta hoy la producción era una fila india: lámina → «sí» → animar → voz → corte → «sí». Una
+lámina sin decidir detenía todo lo demás, y cuando el editor por fin decidía, alguien tenía que
+acordarse de qué seguía. Alejandro lo pidió al revés: *que cada etapa tenga varios prospectos
+corriendo solos y que lo aprobado en una rama dispare la siguiente sin esperar a las demás*, y
+*todo configurable en Sheets, nada hardcodeado* (`docs/PLAN-RAIZ.md`).
+
+**46. Los números de producción viven en la hoja REGLAS, no en el código.** Columnas
+`nombre · valor · descripcion`. `sala_reglas.regla(nombre, default)` los lee; si el Sheet no
+contesta usa el caché y, si tampoco hay, el default de fábrica — pero deja escrito en `ORIGEN`
+de dónde salió cada valor, para que ningún reporte pueda decir «esto lo puso Alejandro» cuando
+en realidad es el default. Las 15 reglas sembradas: los tres de tipografía, `cabecera_px`, los
+cuatro de audio, los tres del candado de duración de voz, `prospectos_por_rechazo`, y los tres
+del productor (`productor_cada_min`, `productor_silencio_desde/hasta`).
+
+**47. La cascada de motores vive en la hoja MOTORES.** Columnas
+`etapa · motor · encendido · tope_dia · costo · orden · nota`. Apagar `ltx_local` o encender
+`minimax` es cambiar un 1 por un 0 en el Sheet: no se toca código ni se redespliega nada.
+`sala_reglas.motores(etapa)` devuelve sólo los encendidos, ya ordenados por `orden`. Un
+`tope_dia` > 0 se cuenta contra los trabajos de esa etapa que hoy quedaron en `hecho` o
+`corriendo` en la COLA — un trabajo empezado ya gastó la cuota aunque no haya terminado.
+
+**48. Un trabajo es una fila de COLA, y su `id` es su identidad: `pieza:etapa:item:version`.**
+`version` es el md5 del INSUMO — la lámina para una escena, el texto del guion para una voz —,
+nunca un consecutivo. De ahí salen las dos propiedades que importan: correr el productor diez
+veces seguidas no repite nada (ese id ya está `hecho`), y cuando una lámina se rehace su md5
+cambia, el id cambia, y la salida vieja queda detectada como obsoleta sola. Así se supo hoy,
+sin lista a mano, que `E6.mp4` del Apodo ya no sirve: su lámina 6 se rehizo en g8.
+Estados: `pendiente → corriendo → hecho | fallo`, con `evidencia` (md5 de la salida, segundos,
+motor, código de salida) en la misma fila y una línea en BITÁCORA por la acción `produccion`,
+que ya existía — no hace falta republicar el GAS para dejar rastro.
+
+**49. `accion:'hojas'` es idempotente y NUNCA devuelve nada a los valores de fábrica.** Crea
+REGLAS, MOTORES y COLA si faltan, y de las filas por defecto agrega sólo las que no estén (por
+`nombre` en REGLAS, por `etapa+motor` en MOTORES). Alejandro edita esos números a mano: correrlo
+dos veces no puede pisarle un cambio ni duplicarle un renglón. `accion:'cola'` acepta
+`op:'upsert'` (crea o reemplaza por id, conservando el `creado` original) y `op:'estado'`, que
+sólo mueve estado/motor/evidencia de una fila que YA existe — nunca inventa un trabajo.
+
+**50. Las columnas `id` e `item` de COLA están forzadas a texto.** Mordida en vivo hoy: el item
+de una candidata es `3-1` y la hoja lo guardó como la fecha 1-mar-2026. Con eso el productor no
+reconocía sus propias candidatas y las volvía a encolar en cada pasada. `accion:'hojas'`
+reaplica `setNumberFormat('@')` a esas dos columnas cada vez que corre.
+
+**51. La compuerta se abre RAMA POR RAMA, no «todo o nada».** `sala_productor.planear()` lee el
+estado real de cada lámina con `sala_compuerta` (que es quien sabe leerlo del Sheet, con sus dos
+bugs ya corregidos del 10 y el 12-sep) y, por cada lámina:
+`si` → abre su escena y su voz aunque sus hermanas sigan abiertas; `no` → abre
+`prospectos_por_rechazo` candidatas, y sólo si no existen ya candidatas para ESA lámina en ESA
+versión; `pendiente` → no hace nada, porque eso le toca al editor. El corte sigue siendo la única
+compuerta de todo-o-nada: `puede_juntar` (todas aprobadas) **y** escena y voz vigentes de todas.
+
+**52. Sin evidencia previa, la fecha del archivo es la única prueba — y para las voces no
+sirve.** La primera vez que corre el productor la COLA está vacía y hay productos en disco de
+antes. Para una escena, la prueba es que el `.mp4` sea más nuevo que su `.png`. Para una voz no:
+el guion es UN archivo con TODAS las escenas, así que editar la 6 lo «envejece» para las seis y
+mandaría a regrabar cuatro voces buenas. La tira sí lo dice lámina por lámina: la marcada
+`rehecha` cambió de texto, la `aprobada` se arrastró igual. Ese es el criterio de arranque.
+
+**53. Nunca dos productores a la vez: candado de archivo con md5, jamás `hash()`.** El candado
+(`~/yod_audit/sala/productor.lock`) guarda pid + `hashlib.md5` del propio comando. `hash()` de
+Python es aleatorio entre procesos: un candado así no cierra nada. Tampoco se usa `pgrep -f`,
+que se encuentra a sí mismo. Si el archivo quedó de un proceso muerto (la Mac se durmió a media
+corrida) se detecta con `os.kill(pid, 0)` y se recupera; y al soltarlo sólo se borra el propio,
+nunca el de otro. `--simular` no toma candado a propósito: no debe estorbarle a uno real.
+
+**54. El productor ENCOLA; ejecutar cuesta y lo enciende Alejandro desde el Sheet.** La regla
+`productor_ejecuta_etapas` (vacía de fábrica) lista qué etapas corre de verdad. Vacía, el
+productor abre las compuertas, escribe la COLA y reporta, sin gastar los 17 minutos de Mac que
+cuesta una escena. Encolar no destruye nada; por eso el estado de fábrica es el seguro.
+El horario quieto (`productor_silencio_desde/hasta`, 23→7) sí lo respeta siempre, y cruza la
+medianoche bien.
+
+**55. `mx.yodesarrollo.productor` corre `--una-vez` cada 1200 s** (= `productor_cada_min` × 60),
+log en `~/yod_audit/sala/productor.log`. Ese 1200 está **congelado en el plist**: cambiar la
+regla en el Sheet NO lo mueve, hay que reescribir el plist entero y `bootout` + `bootstrap`
+(nunca `sed` sobre un plist cargado). Y como siempre: no cuenta como instalado hasta que el log
+existe — el de hoy apareció a las 13:43 con su corrida completa.
