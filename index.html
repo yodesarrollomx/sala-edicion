@@ -82,8 +82,35 @@ html.embed .app{padding-top:8px}
   .cab{grid-area:cab} .mazo{grid-area:mazo}
   .panel-lateral{display:block;grid-area:panel;position:sticky;top:70px;max-height:calc(100vh - 90px);overflow:auto;
     background:var(--tarjeta);border:1px solid var(--linea);border-radius:20px;padding:20px;box-shadow:var(--sombra)}
-  #vPub,#vAj{max-width:760px;margin:0 auto}
+  #vPub,#vAj,#vProd{max-width:760px;margin:0 auto}
 }
+
+/* ── árbol de Producción (12-sep) ── */
+.prod-pieza{border:1px solid var(--linea);background:var(--tarjeta);border-radius:16px;padding:14px 16px;margin-bottom:14px;max-width:100%;overflow:hidden}
+.prod-pieza .cab-pieza{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.prod-pieza h3{font-family:var(--serif);font-weight:400;font-size:20px;margin:0}
+.prod-pieza .va-en{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--guia);white-space:nowrap}
+.prod-falta{background:var(--oro-suave);color:var(--oro);border-radius:10px;padding:8px 12px;font-size:13px;margin:8px 0;font-weight:600}
+.prod-rama{margin:10px 0 0 0}
+.prod-rama>b{font-size:11px;letter-spacing:.08em;color:var(--guia);text-transform:uppercase;display:block;margin-bottom:6px}
+.prod-hojas{display:flex;flex-wrap:wrap;gap:8px;padding-left:14px;border-left:2px solid var(--linea);max-width:100%}
+.prod-hoja{position:relative;display:flex;align-items:center;gap:8px;border:1px solid var(--linea);border-radius:12px;padding:6px 10px 6px 6px;background:var(--fondo);font-size:12.5px;max-width:100%}
+.prod-hoja img{width:34px;height:34px;object-fit:cover;border-radius:8px;flex:none;max-width:34px}
+.prod-punto{width:9px;height:9px;border-radius:50%;flex:none}
+.prod-punto.verde{background:var(--si)} .prod-punto.oro{background:var(--oro)} .prod-punto.gris{background:var(--linea2)} .prod-punto.rojo{background:var(--no)}
+.prod-hoja .tt{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prod-subhojas{display:flex;gap:6px;margin:6px 0 0 20px;flex-wrap:wrap;width:100%}
+@media (max-width:640px){
+  .prod-hojas{flex-direction:column;align-items:stretch}
+  .prod-hoja{max-width:100%}
+  .prod-hoja .tt{max-width:none;white-space:normal}
+}
+/* candidatas de una lámina, dentro de la carta de Hoy (Entrega B) */
+.cand-fila{display:flex;gap:8px;overflow-x:auto;padding:8px 12px;border-top:1px solid var(--linea);flex:none}
+.cand-item{flex:none;width:88px;text-align:center;font-size:11.5px}
+.cand-item img{width:88px;height:64px;object-fit:cover;border-radius:10px;background:#141210;display:block;margin-bottom:4px;cursor:zoom-in}
+.cand-item b{display:block;font-size:11px;color:var(--gris);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cand-item button{width:100%;border:1px solid var(--oro);background:var(--oro-suave);color:var(--oro);border-radius:999px;padding:4px 0;font-size:11px;font-weight:600;min-height:30px;margin-top:2px}
 
 /* ── cabecera de Hoy ── */
 .cab{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;margin-bottom:4px}
@@ -473,6 +500,17 @@ html.cargando #actualizando{display:flex}
     <div id="expIn" hidden></div>
   </section>
 
+  <!-- ④ PRODUCCIÓN: árbol en tiempo real de dónde va cada pieza -->
+  <section class="vista" id="vProd">
+    <h2 class="titulo-v">Producción</h2>
+    <p class="bajada-v">Un árbol por pieza: guion · láminas · escenas · voces · corte · publicada.</p>
+    <div class="fila-estado" style="justify-content:center;margin-bottom:14px">
+      <button class="secund" id="prodActualizar" style="width:auto;padding:8px 16px;min-height:40px">Actualizar</button>
+      <span id="prodAviso" style="font-size:12.5px;color:var(--guia);margin-left:8px"></span>
+    </div>
+    <div id="prodArbol"></div>
+  </section>
+
   <!-- ③ AJUSTES: quién soy, cómo se usa, Producción, automáticos -->
   <section class="vista" id="vAj">
     <h2 class="titulo-v">Ajustes</h2>
@@ -511,7 +549,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='226723f273';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='41748b93f3';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -596,7 +634,7 @@ function irVista(v){
   document.body.dataset.vista=v;
   document.querySelectorAll('#puertas button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   window.scrollTo(0,0);
-  if(v==='pub'){ pintarPublicaciones() } if(v==='aj'){ pintarAjustes() } if(v==='hoy'){ pintarPanel() }
+  if(v==='pub'){ pintarPublicaciones() } if(v==='aj'){ pintarAjustes() } if(v==='hoy'){ pintarPanel() } if(v==='prod'){ pintarProduccion() }
 }
 document.querySelectorAll('#puertas button').forEach(b=>b.onclick=()=>{ cerrarCapas(); irVista(b.dataset.v) });
 function avisarPuerta(v,on){ const b=document.querySelector(`#puertas button[data-v="${v}"]`); if(b) b.classList.toggle('avisa',!!on) }
@@ -1135,6 +1173,12 @@ function pintarCartas(){
     el.className='carta'+(k>idx?' detras':''); el.dataset.k=k;
     if(x.tipo==='lamina'){
       const src=x.p.laminas[x.i];
+      // ENTREGA B (12-sep): si la lámina de la tira trae candidatas propias ([{src,titulo,texto}]),
+      // se pintan DENTRO de la carta como una fila de miniaturas con botón «Ésta» — elegir una
+      // marca «sí» a esta lámina y deja `[toma elegida: k]` en su nota, mismo camino que Aprobar.
+      const _tC=tiraDe(x), _lC=_tC?laminaTira(_tC,src,nLamina(x)):null;
+      const _cands=(_lC&&Array.isArray(_lC.candidatas))?_lC.candidatas:[];
+      const candHTML=_cands.length?`<div class="cand-fila">${_cands.map((o,k)=>`<div class="cand-item"><img src="${esc(ligera(o.src||''))}" alt="" loading="lazy" data-amp="${esc(o.src||'')}">${o.titulo?`<b>${esc(o.titulo)}</b>`:''}<button type="button" data-cand="${k}">Ésta</button></div>`).join('')}</div>`:'';
       el.innerHTML=`${versionHTML(x)}${otrosHTML(x)}<div class="lienzo">
           <div class="cargando">cargando lámina…</div>
           ${serialDe(src)?`<span class="serie">${esc(serialDe(src))}</span>`:``}
@@ -1142,11 +1186,15 @@ function pintarCartas(){
           <img alt="${numeroReal(x)}" draggable="false">
           <button class="num-movil" type="button">${numeroReal(x)} · ampliar</button>
         </div>
+        ${candHTML}
         <div class="pie pie-lamina"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · ${numeroReal(x)}${serialDe(src)?` · <b class="serial">${esc(serialDe(src))}</b>`:``}</span>
           <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button></div>${luegoDe(x)}</div>`;
       montarImagen(el,src);
       el.querySelectorAll('.lupa,.num-movil').forEach(b=>b.onclick=e=>{ e.stopPropagation(); abrirZoom(src) });
       dobleToque(el.querySelector('.lienzo'),()=>abrirZoom(src));
+      el.querySelectorAll('[data-cand]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); const k=+b.dataset.cand;
+        dec[x.pid].laminas[x.i]='si'; dec[x.pid].notas[x.i]='[toma elegida: '+k+']'; if(dec[x.pid]._borrar) delete dec[x.pid]._borrar[x.i]; avanzar('si') });
+      el.querySelectorAll('.cand-item img[data-amp]').forEach(im=>im.onclick=e=>{ e.stopPropagation(); if(im.dataset.amp) abrirZoom(im.dataset.amp) });
     }else{
       // 12-sep (plan de raíz): una opción puede traer `src` — una candidata de LÁMINA, no sólo texto.
       // Así un «no» produce 2–3 imágenes y él elige una, en vez de una sola rehecha a ciegas.
@@ -1689,6 +1737,104 @@ function abrirGuia(forzar){
   abrirCapa('guia',()=>{ t.remove(); localStorage.setItem('sala_guia','1') },t,t);
 }
 
+/* ══ ENTREGA A (12-sep): árbol de Producción ═══════════════════════════════════════
+   Reclamo textual de Alejandro: «quiero ver en tiempo real dónde va cada cosa cuando
+   se está trabajando… como árbol de posibilidades… algo más fácil de llevar».
+   Fuentes: recurso=cola (etapas prospectos·escena·voz·corte, una fila por ítem),
+   datos/tiras/<pid>.json (láminas con versión y candidatas) y datos/piezas.json (PZ,
+   ya cargado por cargarExpedientes). Si `recurso=cola` falla, el árbol se pinta solo
+   con tiras y un aviso — nunca pantalla negra. Se relee sola cada 60 s (solo datos,
+   nunca el estado de un botón) y con el botón «Actualizar». ══ */
+let COLA=null, COLA_ERR=false;
+async function traerCola(){
+  COLA_ERR=false;
+  if(!ENTRADO()){ COLA=null; COLA_ERR=true; return }
+  try{
+    const r=await fetch(GAS()+'?recurso=cola&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'});
+    const j=await leerJSON(r);
+    if(!r.ok||!j||j.ok!==true||!Array.isArray(j.filas)) throw new Error((j&&j.error)||'sin la hoja COLA');
+    COLA=j.filas;
+  }catch(e){ COLA=null; COLA_ERR=true }
+}
+function colorPunto(estado){
+  const e=String(estado||'').toLowerCase();
+  if(/hecho|aprobada|listo/.test(e)) return 'verde';
+  if(/corriendo|en tu mesa|proceso/.test(e)) return 'oro';
+  if(/fallo|error|rechaz/.test(e)) return 'rojo';
+  return 'gris';
+}
+function grupoCola(pieza){
+  const g={prospectos:[],escena:[],voz:[],corte:[]};
+  (COLA||[]).forEach(f=>{ if(f.pieza===pieza&&g[f.etapa]) g[f.etapa].push(f) });
+  return g;
+}
+async function nombresDePiezas(){
+  const nombres=new Set(Object.keys(PZ));
+  (COLA||[]).forEach(f=>{ if(f.pieza) nombres.add(f.pieza) });
+  if(TIRAS_HAY===null){ try{ TIRAS_HAY=await (await fetch('datos/tiras/index.json?v='+Date.now())).json() }catch(e){ TIRAS_HAY=[] } }
+  await Promise.all((TIRAS_HAY||[]).map(cargarTira));
+  Object.values(TIRAS).forEach(t=>{ if(t&&t.pieza) nombres.add(t.pieza) });
+  return [...nombres];
+}
+function tiraDePieza(nombre){ return Object.values(TIRAS).find(t=>t&&t.pieza===nombre)||null }
+function ramaLaminas(t){
+  if(!t||!(t.laminas||[]).length) return '';
+  const hojas=t.laminas.map(l=>{
+    const ok=l.estado==='aprobada', cambio=l.estado==='rehecha';
+    const col=ok?'verde':cambio?'oro':'gris';
+    const txt=ok?`Lámina ${l.n} · aprobada`:cambio?`Lámina ${l.n} · rehecha, esperando tu sí`:`Lámina ${l.n} · pendiente`;
+    const sub=(Array.isArray(l.candidatas)&&l.candidatas.length)?`<div class="prod-subhojas">${l.candidatas.map((c,k)=>`<div class="prod-hoja" title="candidata ${k+1}${c.titulo?': '+esc(c.titulo):''}"><span class="prod-punto gris"></span>${c.src?`<img src="${esc(ligera(c.src))}" alt="" loading="lazy">`:''}<span class="tt">cand. ${k+1}</span></div>`).join('')}</div>`:'';
+    return `<div class="prod-hoja" title="${esc(txt)}"><span class="prod-punto ${col}"></span>${l.src?`<img src="${esc(ligera(l.src))}" alt="" loading="lazy">`:''}<span class="tt">L${l.n} · v${l.version||1}</span></div>${sub}`;
+  }).join('');
+  return `<div class="prod-rama"><b>Láminas</b><div class="prod-hojas">${hojas}</div></div>`;
+}
+function ramaEtapaCola(nombreRama,filas){
+  if(!(filas||[]).length) return '';
+  const hojas=filas.map(f=>{
+    const col=colorPunto(f.estado);
+    const txt=`${f.item||f.id||''} · ${f.estado||'pendiente'}${f.motor?(' · '+f.motor):''}${f.actualizado?(' · '+f.actualizado):''}${f.bloqueado_por?(' · bloqueado por '+f.bloqueado_por):''}`;
+    return `<div class="prod-hoja" title="${esc(txt)}"><span class="prod-punto ${col}"></span><span class="tt">${esc(f.item||f.id||'')}</span></div>`;
+  }).join('');
+  return `<div class="prod-rama"><b>${esc(nombreRama)}</b><div class="prod-hojas">${hojas}</div></div>`;
+}
+function quefaltaPara(t,g,publicada){
+  const pend=t&&(t.laminas||[]).find(l=>l.estado!=='aprobada');
+  if(pend) return `esperando tu sí en la lámina ${pend.n}`;
+  const escFalta=(g.escena||[]).find(f=>!/hecho/i.test(f.estado||''));
+  if(escFalta) return `la fábrica está en ${escFalta.item||'una escena'}`;
+  const vozFalta=(g.voz||[]).find(f=>!/hecho/i.test(f.estado||''));
+  if(vozFalta) return `la fábrica está en ${vozFalta.item||'una voz'}`;
+  const corteFalta=(g.corte||[]).find(f=>!/hecho/i.test(f.estado||''));
+  if(corteFalta) return `la fábrica está en ${corteFalta.item||'el corte'}`;
+  if(publicada) return 'ya está publicada';
+  if((g.corte||[]).length) return 'corte en tu mesa';
+  return 'esperando la fábrica';
+}
+async function pintarProduccion(){
+  const c=$('#prodArbol'), av=$('#prodAviso'); if(!c) return;
+  c.innerHTML='<p style="color:var(--guia);font-size:13px">Cargando…</p>';
+  await traerCola();
+  const nombres=await nombresDePiezas();
+  av.textContent=COLA_ERR?'Sin la hoja COLA · mostrando solo las tiras':'';
+  if(!nombres.length){ c.innerHTML='<p class="nota-pie">Nada en producción todavía.</p>'; return }
+  c.innerHTML=nombres.map(nombre=>{
+    const t=tiraDePieza(nombre), g=grupoCola(nombre);
+    const publicada=(PZ[nombre]&&PZ[nombre].estado==='publicada');
+    const vaEn=t&&(t.laminas||[]).some(l=>l.estado!=='aprobada')?'láminas':
+      ((g.escena||[]).length?'escena':((g.voz||[]).length?'voz':((g.corte||[]).length?'corte':(publicada?'publicada':'guion'))));
+    return `<div class="prod-pieza"><div class="cab-pieza"><h3>${esc(nombre)}</h3><span class="va-en">va en ${esc(vaEn)}</span></div>
+      <div class="prod-falta">Qué falta: ${esc(quefaltaPara(t,g,publicada))}</div>
+      <div class="prod-ramas">
+        ${ramaEtapaCola('Guion',g.prospectos)}
+        ${ramaLaminas(t)}
+        ${ramaEtapaCola('Escenas',g.escena)}
+        ${ramaEtapaCola('Voces',g.voz)}
+        ${ramaEtapaCola('Corte',g.corte)}
+        ${publicada?`<div class="prod-rama"><b>Publicada</b><div class="prod-hojas"><div class="prod-hoja"><span class="prod-punto verde"></span><span class="tt">Ya salió</span></div></div></div>`:''}
+      </div></div>`;
+  }).join('');
+}
+
 /* ══ arranque ══ */
 function pintarFecha(f){ try{ $('#fechaTxt').textContent=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}) }catch(e){ $('#fechaTxt').textContent=f } }
 let _pintado=false, _tFrases=null, _reintentando=false;
@@ -1824,6 +1970,8 @@ $('#verresp').onclick=abrirRespuestas; $('#btnEntrar').onclick=abrirEntrar;
 $('#btnReintentar').onclick=async()=>{ pintarEstado('subiendo','Reintentando…'); await subirCola(); await subir(); };
 document.addEventListener('keydown',e=>{ if(CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
   if(e.key==='ArrowRight') decidir('si'); if(e.key==='ArrowLeft') decidir('no') });
+const _bProdAct=$('#prodActualizar'); if(_bProdAct) _bProdAct.onclick=()=>pintarProduccion();
+setInterval(()=>{ if(document.body.dataset.vista==='prod') pintarProduccion() },60000);   // solo relee datos; nunca el estado de un botón
 window.addEventListener('online',subirCola);
 setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subirCola() },60000);   // sin tocar nada, sube solo
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); _tSubir=null; subir() } } });

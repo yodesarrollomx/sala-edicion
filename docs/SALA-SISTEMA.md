@@ -508,3 +508,65 @@ caso 4 se publicó el 2-sep. Regla: un eje cumplido se retira en el mismo run qu
 enteros, idempotentes por escena), no por ítem; `prospectos` no tiene generador automático
 (hoy se hicieron a mano con recetas mflux); el intervalo del launchd no lee la regla; el espejo
 público `gas/Code.gs` sigue atrasado.
+
+## Árbol de producción (12-sep-2026, pestaña «Producción»)
+
+Reclamo textual de Alejandro: «quiero ver en tiempo real dónde va cada cosa cuando se está
+trabajando… como árbol de posibilidades… algo más fácil de llevar». Cuarta puerta, junto a
+Hoy · Publicaciones · Ajustes.
+
+**Qué lee** (`pintarProduccion()` en `index.html`, solo lectura, nunca decide nada):
+
+| Fuente | Para qué |
+|---|---|
+| `GAS()+'?recurso=cola&clave='+CLAVE()` | Filas de la fábrica: `{id,pieza,etapa,item,motor,estado,prioridad,bloqueado_por,evidencia,pidio,creado,actualizado}`. Etapas: `prospectos` (rama Guion) · `escena` (Escenas) · `voz` (Voces) · `corte` (Corte). |
+| `datos/tiras/index.json` + `datos/tiras/<pid>.json` | La rama Láminas: cada `l` con `n`, `src`, `version`, `estado` (`aprobada`/`rehecha`/pendiente) y, si trae `candidatas:[{src,titulo,texto}]`, una sub-hoja por candidata. |
+| `datos/piezas.json` (ya cargado por `cargarExpedientes` en `PZ`) | La rama Publicada cuando `PZ[pieza].estado==='publicada'`. |
+
+Las piezas del árbol son la unión de: claves de `PZ`, el campo `pieza` de cada fila de la cola, y
+`tira.pieza` de cada tira cargada (`nombresDePiezas()`). Sin esa unión una pieza que sólo vive en
+la cola (aún sin tira) o sólo en la tira (aún sin fila en cola) no aparecería.
+
+**Cómo se pinta:** un `.prod-pieza` por pieza, con «va en `<etapa>`» arriba y una línea fija
+**«Qué falta»** (`quefaltaPara()`) derivada así, en orden:
+1. Si hay una lámina de la tira con `estado!=='aprobada'` → *«esperando tu sí en la lámina N»*.
+2. Si no, si hay un ítem de `escena`/`voz`/`corte` sin `hecho` en su estado → *«la fábrica está en
+   `<item>`»*.
+3. Si todo lo anterior está limpio y la pieza está publicada → *«ya está publicada»*; si hay corte
+   sin pendientes → *«corte en tu mesa»*; si no hay nada aún → *«esperando la fábrica»*.
+
+Debajo, una rama por etapa (`ramaEtapaCola` para Guion/Escenas/Voces/Corte, `ramaLaminas` para
+Láminas) con una «hoja» por ítem: punto de color + miniatura (si hay `src`) + texto corto; el
+`title` del elemento lleva la evidencia completa (motor, hora, `bloqueado_por`) para tocar/pasar
+el cursor, tal como pide la entrega.
+
+**Qué significa cada color** (`colorPunto()` para la cola; para láminas es directo):
+- **Verde** — hecho / aprobada / listo.
+- **Oro** — corriendo, o «en tu mesa» (una lámina rehecha esperando tu sí).
+- **Gris** — pendiente, aún no empieza.
+- **Rojo** — falló.
+
+**Si `recurso=cola` no contesta** (`COLA_ERR=true`): el árbol se arma igual, solo con las tiras
+(rama Láminas) y las ramas de cola quedan vacías; arriba se lee «Sin la hoja COLA · mostrando
+solo las tiras». Nunca pantalla negra — invariante nueva, misma familia que la 12 (nunca una mesa
+de respaldo silenciosa).
+
+**Se refresca sola cada 60 s** (`setInterval(...,60000)`, solo relee datos, invariante 1: ningún
+botón depende de un temporizador) y con el botón «Actualizar» (`#prodActualizar`).
+
+**Móvil:** una columna (`@media (max-width:640px){ .prod-hojas{flex-direction:column} }`), sin
+desborde horizontal (`max-width:100%` en `.prod-pieza`/`.prod-hoja`, imágenes ya acotadas por la
+regla global `img{max-width:100%}`).
+
+### Candidatas de lámina en la carta de «Hoy» (Entrega B)
+
+Si la lámina de la tira que se está decidiendo trae `candidatas:[{src,titulo,texto}]`, se pintan
+DENTRO de la carta (`.cand-fila`, entre el lienzo y el pie) como una fila de miniaturas con botón
+«Ésta» por candidata. Elegir una hace exactamente lo mismo que Aprobar esa lámina: marca
+`dec[pid].laminas[i]='si'`, escribe `[toma elegida: k]` en `dec[pid].notas[i]` y llama a
+`avanzar('si')` — mismo camino que usan hoy «Aprobar»/«Pedir cambio», así que viaja al Sheet con
+el mismo sobre. Sin `candidatas`, la carta queda exactamente como antes.
+
+Nota: esto es distinto de las candidatas de un **eje** (`p.opciones[].src`, ya existían desde el
+12-sep de la madrugada — invariante 56, arriba): ahí la opción vive en la propuesta completa; aquí
+vive dentro de una lámina concreta de la tira, y sólo se ve mientras esa lámina está en tu mesa.
