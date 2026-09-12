@@ -26,9 +26,39 @@
   "2026-09-08",
   "2026-09-09",
   "2026-09-10",
-  "2026-09-12"
+  "2026-09-12",
+  "2026-05-20"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "apodo-g10-l3",
+   "titulo": "El Apodo · lámina 3 · tres textos que enganchen (imagen en ciudad)",
+   "tipo": "eje",
+   "laminas": [],
+   "opciones": {
+    "candidatas": [
+     {
+      "titulo": "A · pregunta",
+      "texto": "¿«Lote baldío»? Así le dicen al tuyo.",
+      "src": "laminas/apodo-g10/L3a.jpg"
+     },
+     {
+      "titulo": "B · el nombre puesto",
+      "texto": "Al tuyo ya le pusieron nombre: «lote baldío».",
+      "src": "laminas/apodo-g10/L3b.jpg"
+     },
+     {
+      "titulo": "C · uno más en la cuadra",
+      "texto": "Y en la cuadra, uno más: «lote baldío».",
+      "src": "laminas/apodo-g10/L3c.jpg"
+     }
+    ]
+   },
+   "video": null,
+   "de_antes": null,
+   "origen": "rehecha-de apodo-g9-l3 · tú: «El texto no engancha. La imagen no cuadra con el texto» · Sayri: «lote baldío en ciudad»"
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -136,28 +166,6 @@
  ],
  "decisiones": {
   "propuestas": {
-   "ganchos-casos": {
-    "laminas": [
-     null,
-     null,
-     null,
-     "si"
-    ],
-    "nota": "",
-    "notas": [],
-    "firmas": [
-     null,
-     null,
-     null,
-     [
-      {
-       "quien": "Sayri",
-       "marca": "si",
-       "nota": ""
-      }
-     ]
-    ]
-   },
    "apodo-g8-3e58a2": {
     "laminas": [
      "no",
@@ -175,6 +183,11 @@
        "quien": "Sayri",
        "marca": "no",
        "nota": "La imagen no cuadra con el texto. Se ve un lugar rural. Tendría que verse un lote baldío en ciudad."
+      },
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
       }
      ],
      [
@@ -182,11 +195,21 @@
        "quien": "Sayri",
        "marca": "no",
        "nota": "La imagen se ve demasiado rural. Tendría que ser más de lote baldío en la ciudad."
+      },
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
       }
      ],
      [
       {
        "quien": "Sayri",
+       "marca": "si",
+       "nota": ""
+      },
+      {
+       "quien": "Alejandro",
        "marca": "si",
        "nota": ""
       }
