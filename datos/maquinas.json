@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-12 11:29",
+ "actualizado": "2026-09-12 11:59",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 2 horas",
+   "corrio": "hace 22 min",
    "dijo": "montaje v2 hecho",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -40,7 +40,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30",
-   "corrio": "hace 9 min",
+   "corrio": "hace 29 min",
    "dijo": "}",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "Recoge lo que pides con «Pedir nueva ronda» o «Enviar mensaje», te avisa en la Mac y deja escrito en la Sala que ya se tomó.",
    "evita": "Que pidas una ronda y nadie se entere: antes el recado se quedaba dormido en el Sheet.",
    "cuando": "cada 15 minutos",
-   "corrio": "hace 13 min",
+   "corrio": "hace 10 min",
    "dijo": "sin encargos pendientes",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -106,7 +106,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 2 horas",
+   "corrio": "hace 3 horas",
    "dijo": "expedientes.py ·   La Servilleta: 20 hitos · publicada",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -117,7 +117,7 @@
    "hace": "Levanta la copia de la Sala en esta Mac, para trabajar sin internet.",
    "evita": "quedarte sin Sala si se cae GitHub",
    "cuando": "siempre encendida",
-   "corrio": "hace 44 horas",
+   "corrio": "hace 45 horas",
    "dijo": "  Sala de Edición · http://localhost:8711  (2026-09-10T15:25:19-07:00)",
    "salud": "bien",
    "porque": "es un servidor: está encendido ahora mismo"
