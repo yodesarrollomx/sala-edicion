@@ -25,7 +25,8 @@
   "2026-01-05",
   "2026-09-08",
   "2026-09-09",
-  "2026-09-10"
+  "2026-09-10",
+  "2026-09-12"
  ],
  "propuestas": [
   {
@@ -52,18 +53,21 @@
     }
    ],
    "video": null,
-   "de_antes": "2026-08-30",
+   "de_antes": null,
    "origen": "tu nota: «estamos repitiendo conceptos y no viendo la magnitud de ejemplos»"
   },
   {
    "id": "apodo-g8-3e58a2",
    "titulo": "El Apodo · 3 textos ajustados a tu nota",
+   "tipo": "laminas",
    "laminas": [
     "laminas/apodo-g8/L1.png",
     "laminas/apodo-g8/L2.png",
     "laminas/apodo-g8/L3.png"
    ],
+   "opciones": [],
    "video": null,
+   "de_antes": null,
    "origen": "rehecha-de apodo-video-10sep-v7"
   }
  ],
@@ -173,41 +177,7 @@
   }
  ],
  "decisiones": {
-  "propuestas": {
-   "apodo-video-10sep-v7": {
-    "laminas": [
-     "no",
-     "no",
-     "no"
-    ],
-    "nota": "La toma 1 se repite el audio y el video se va para atrás… la toma 3 creo que a la de que le dicen el baldío está bien el\nApodo que sigue no se escucha bien y está de más quítalo nos quedamos con los apodos de la esquina y el baldío… luego en la lámina de loq yen puede sostener no me gusta lo de sostener, debemos de poner algo como lo que tu terreno puede llegar a ser… y a lo último donde dice pídele su plan de potencial personalizado y descubramos juntos su nombre real.",
-    "notas": [],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "no",
-       "nota": ""
-      }
-     ]
-    ],
-    "heredada": "2026-09-10"
-   }
-  }
+  "propuestas": {}
  },
  "historial": {
   "2026-08-01": {
