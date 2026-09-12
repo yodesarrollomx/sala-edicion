@@ -364,5 +364,5 @@ láminas de esa tira; si no, sigue buscando en la tira anterior.
 es su frase, citada tal cual para que el editor recuerde por qué se rehizo una lámina — no es
 copy que el sistema escribe. La regla «Personalizado con P mayúscula» la disparaba contra su
 propia nota («…su plan de potencial personalizado…», dictada en minúsculas). Corregirle la
-cita para que pasara la regla habría sido words in his mouth; se excluyó `nota_previa` de las
-reglas de estilo de copy — se sigue mostrando igual en la Sala.
+cita para que pasara la regla habría sido ponerle palabras en la boca; se excluyó `nota_previa`
+de las reglas de estilo de copy — se sigue mostrando igual en la Sala.
