@@ -12,7 +12,7 @@
   "voz_tope_base": 1.3,
   "voz_tope_factor": 1.7,
   "prospectos_por_rechazo": 2,
-  "productor_cada_min": 20,
+  "productor_cada_min": 25,
   "productor_silencio_desde": 23,
   "productor_silencio_hasta": 7,
   "productor_ejecuta_etapas": "escena,voz,corte,prospectos",
