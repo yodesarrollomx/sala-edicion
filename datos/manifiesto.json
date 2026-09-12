@@ -1,6 +1,6 @@
 {
  "_que_es": "Manifiesto de respaldo: el portal lo lee cuando el Sheet aún no está conectado. Cuando el GAS ya está en línea, esta copia queda de plan B.",
- "fecha": "2026-09-11",
+ "fecha": "2026-09-12",
  "dias": [
   "2026-08-01",
   "2026-08-04",
@@ -27,7 +27,35 @@
   "2026-09-09",
   "2026-09-10"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "ganchos-casos",
+   "titulo": "La magnitud del Plan de Potencial · ¿qué caso abrimos?",
+   "tipo": "eje",
+   "laminas": [],
+   "opciones": [
+    {
+     "titulo": "1 · La herencia que nadie mueve",
+     "texto": "«Se heredaron un terreno. Y una discusión de quince años.» Tres hermanos, cero acuerdos — porque nadie tiene el dato."
+    },
+    {
+     "titulo": "2 · El predial que no duerme",
+     "texto": "«Tu terreno cobra cada año. ¿Y qué te ha dado a cambio?» Lleva años pagando por algo que no produce."
+    },
+    {
+     "titulo": "3 · La oferta que llegó de la nada",
+     "texto": "«El que te quiere comprar ya hizo su análisis. ¿Y tú?» Nadie decide con menos información que el comprador."
+    },
+    {
+     "titulo": "4 · ¿Vendo o construyo?",
+     "texto": "«Vender o construir. Llevas años en esa pregunta.» El Plan no responde por él: le pone enfrente lo que su suelo aguanta."
+    }
+   ],
+   "video": null,
+   "de_antes": "2026-08-30",
+   "origen": "tu nota: «estamos repitiendo conceptos y no viendo la magnitud de ejemplos»"
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -2302,6 +2330,40 @@
    ]
   },
   "2026-09-10": {
+   "propuestas": [],
+   "produccion": [
+    {
+     "pieza": "El terreno que dijo que sí · el cuento (47 s)",
+     "estado": "publicada",
+     "detalle": "FB + IG (reel) · copy «los dos bandos» · liga única fb/ig-2026-08-04 · primer comentario puesto",
+     "fecha": "2026-08-04",
+     "enlace": "https://www.instagram.com/reel/DboskQogVy1/"
+    },
+    {
+     "pieza": "El terreno que dijo que sí · carrusel",
+     "estado": "publicada",
+     "detalle": "FB + IG · liga medible activa · 4 interacciones IG al 30-jul",
+     "fecha": "2026-07-27"
+    },
+    {
+     "pieza": "La Servilleta · láminas",
+     "estado": "rehacer",
+     "detalle": "quitar «EDICIÓN POR AURUM ARQUITECTOS»",
+     "fecha": "2026-07-29"
+    }
+   ],
+   "bitacora": [
+    {
+     "hora": "08:37",
+     "evento": "Propuesta montada: El Apodo · lámina 2 salida del guion 1-2-3 (no de la ocurrencia) (1 láminas)"
+    },
+    {
+     "hora": "14:45",
+     "evento": "Propuesta montada: El Apodo · sin lo repetitivo y con los textos parejos (6 láminas) (6 láminas)"
+    }
+   ]
+  },
+  "2026-09-11": {
    "propuestas": [],
    "produccion": [
     {
