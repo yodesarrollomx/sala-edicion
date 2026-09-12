@@ -1,0 +1,85 @@
+{
+ "reglas": {
+  "tipografia_piso": 66,
+  "tipografia_techo": 78,
+  "tipografia_max_renglones": 3,
+  "cabecera_px": 122,
+  "audio_margen_s": 6,
+  "audio_cola_s": 2.2,
+  "audio_xfade_s": 0.28,
+  "fondo_volumen": 0.14,
+  "voz_tope_seg_por_palabra": 0.62,
+  "voz_tope_base": 1.3,
+  "voz_tope_factor": 1.7,
+  "prospectos_por_rechazo": 2,
+  "productor_cada_min": 20,
+  "productor_silencio_desde": 23,
+  "productor_silencio_hasta": 7
+ },
+ "motores": [
+  {
+   "etapa": "imagen",
+   "motor": "mflux",
+   "encendido": "1",
+   "tope_dia": 0,
+   "costo": "0",
+   "orden": 1,
+   "nota": "local en la Mac, gratis, ~6.5 min por lámina"
+  },
+  {
+   "etapa": "escena",
+   "motor": "wan_hf",
+   "encendido": "1",
+   "tope_dia": 0,
+   "costo": "0",
+   "orden": 1,
+   "nota": "nube gratis, intermitente; se intenta primero"
+  },
+  {
+   "etapa": "escena",
+   "motor": "ltx_local",
+   "encendido": "1",
+   "tope_dia": 0,
+   "costo": "0",
+   "orden": 2,
+   "nota": "local, ~17 min por escena; respaldo de wan_hf"
+  },
+  {
+   "etapa": "escena",
+   "motor": "pollinations",
+   "encendido": "0",
+   "tope_dia": 0,
+   "costo": "pago",
+   "orden": 3,
+   "nota": "apagado: 402, sin saldo"
+  },
+  {
+   "etapa": "escena",
+   "motor": "minimax",
+   "encendido": "0",
+   "tope_dia": 0,
+   "costo": "pago",
+   "orden": 4,
+   "nota": "apagado: saldo 0"
+  },
+  {
+   "etapa": "escena",
+   "motor": "gemini",
+   "encendido": "0",
+   "tope_dia": 0,
+   "costo": "cuota",
+   "orden": 5,
+   "nota": "apagado: se reserva la cuota para las voces"
+  },
+  {
+   "etapa": "voz",
+   "motor": "gemini_tts",
+   "encendido": "1",
+   "tope_dia": 12,
+   "costo": "0",
+   "orden": 1,
+   "nota": "gratis con tope diario; a veces repite la frase"
+  }
+ ],
+ "traido": "2026-09-12 13:26"
+}
