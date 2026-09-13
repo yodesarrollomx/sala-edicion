@@ -27,9 +27,24 @@
   "2026-09-09",
   "2026-09-10",
   "2026-09-12",
-  "2026-05-20"
+  "2026-05-20",
+  "2026-09-13"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "apodo-tira-2026-09-13",
+   "titulo": "El Apodo · elige la toma de la 3 y la 5",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/apodo-g8/L1.png",
+    "laminas/apodo-g8/L2.png"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "tira completa · compuerta 1"
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
