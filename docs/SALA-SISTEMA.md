@@ -707,3 +707,31 @@ baldío en ciudad» y «pon algo como lo que puede llegar a ser» sí producen.
 foto: volvió a rechazar las tres por la imagen. La receta vieja listaba calle, banqueta, coche y
 postes — el lote quedaba de fondo. La nueva pone el lote como sujeto, encuadrado por las paredes
 ciegas de las dos casas vecinas.
+
+## 13-sep-2026 · alarma, no temporizador
+
+Alejandro: «creo que estás poniendo un temporizador en vez de poner una alarma o schedule».
+Era cierto en dos capas: en el chat yo lanzaba el trabajo con `nohup` y encima un bucle
+`until … sleep 20` vigilándolo; y en la Mac había CINCO centinelas (cierre, apodo, máquinas,
+productor, encargos) con su propio reloj, preguntándole lo mismo al Sheet a destiempo — el
+productor arrancaba cada 20 min aunque no hubiera pasado nada.
+
+**74. Un solo reloj: el vigía.** `sala_vigia.py` (launchd, 5 min) hace UNA lectura del día y
+compara una huella de lo que importa: propuestas en la mesa + marcas + notas. La bitácora, las
+métricas y la hora no cuentan — cambian solas y despertarían a la fábrica sin razón. Si la
+huella cambió, escribe `sala/.novedad`.
+
+**75. Todo lo pesado despierta por alarma.** El productor pasó de `StartInterval` a `WatchPaths`
+sobre `sala/.novedad`: lo despierta el kernel en el instante en que hay algo que hacer, y si no
+hay novedad no corre. Probado: tocar el archivo levantó el productor en menos de 10 s.
+
+**76. La alarma se pierde si el job está ocupado — por eso hay red.** launchd NO lanza una
+segunda instancia de un job que ya corre, así que un aviso que llega a media corrida se pierde.
+El plist lleva `WatchPaths` (rápido) **y** `StartInterval 1800` (red). Alarma para reaccionar,
+reloj para no perder nada.
+
+**77. Quien termina el trabajo toca la alarma.** `sala_prospectos` escribe `.novedad` al acabar
+sus candidatas: el productor las monta en segundos. Cadena de alarmas, cero vigilantes.
+
+**Pendiente:** los otros cuatro centinelas siguen con reloj propio. Son livianos (leen y
+reportan), pero deberían colgarse del mismo vigía.
