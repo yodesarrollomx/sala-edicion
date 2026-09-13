@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-12 18:01",
+ "actualizado": "2026-09-13 06:40",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -17,10 +17,10 @@
   },
   {
    "pieza": "El Apodo del Terreno",
-   "estado": "te espera",
+   "estado": "en camino",
    "etapa": "video",
-   "siguiente": "1 decisión(es) tuyas en la mesa: El Apodo · lámina 3 · tres textos que enganchen (imagen en ciudad)",
-   "espera": "tú"
+   "siguiente": "El video está armado y esperando tu palabra en la mesa.",
+   "espera": "yo"
   },
   {
    "pieza": "El comprador ya sabe",
