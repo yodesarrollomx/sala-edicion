@@ -1203,7 +1203,7 @@ function pintarCartas(){
     }else{
       // 12-sep (plan de raíz): una opción puede traer `src` — una candidata de LÁMINA, no sólo texto.
       // Así un «no» produce 2–3 imágenes y él elige una, en vez de una sola rehecha a ciegas.
-      const ops=CANDIDATAS(x.p).map((o,j)=>`<div class="op">${o.src?`<img src="${esc(o.src)}" alt="" loading="lazy" style="width:100%;max-height:230px;object-fit:cover;object-position:center 30%;border-radius:10px;display:block;margin-bottom:8px;cursor:zoom-in" data-amp="${esc(o.src)}">`:''}<h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Elegir ésta</button></div>`).join('');
+      const ops=CANDIDATAS(x.p).map((o,j)=>`<div class="op">${o.src?`<img src="${esc(o.src)}" alt="" style="width:100%;max-height:230px;object-fit:cover;object-position:center 30%;border-radius:10px;display:block;margin-bottom:8px;cursor:zoom-in" data-amp="${esc(o.src)}">`:''}<h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Elegir ésta</button></div>`).join('');
       el.innerHTML=`${x.p.video?`<div class="lienzo conVideo"><video src="${esc(x.p.video)}" controls playsinline preload="metadata" poster=""></video></div>`:''}
         <div class="opciones">${ops}<button class="ning" data-ning>Ninguna — dejo una nota</button></div>
         <div class="pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · elige una opción</span>
@@ -1823,13 +1823,27 @@ async function armarPiezas(){
   await Promise.all((TIRAS_HAY||[]).map(cargarTira));
   const piezas={};   // slug -> {slug,nombre,tira,filas}
   const pon=slug=>{ if(!piezas[slug]) piezas[slug]={slug,nombre:'',tira:null,filas:{prospectos:[],escena:[],voz:[],corte:[]}}; return piezas[slug] };
+  // 12-sep: la tira VIGENTE por familia — no todas. Antes mezclaba la g5 (8 láminas) con la g8
+  // (6) y el árbol del Apodo salía con L1..L8. Manda la tira de la carta viva en la mesa; si no
+  // hay carta viva, la de fecha más reciente (láminas/versiones). Las demás son historial.
+  const vivos=new Set(((D&&D.propuestas)||[]).map(p=>String(p.id)));
+  const fechaDeTira=t=>{ let m=''; for(const l of (t.laminas||[])){ for(const v of (l.versiones||[])) if(v.fecha>m) m=v.fecha; if((l.fecha||'')>m) m=l.fecha } return m };
   for(const pid of Object.keys(TIRAS)){
     const t=TIRAS[pid]; if(!t) continue;
     const slug=slugDeTira(t,pid); const z=pon(slug);
-    z.tira=t; z.nombre=prettyDeSlug(slug,t);   // la tira más reciente en el índice manda como «la vigente»
+    const gana = !z.tira || (vivos.has(pid)&&!vivos.has(z._pid)) || (!vivos.has(z._pid)&&fechaDeTira(t)>=fechaDeTira(z.tira));
+    if(gana){ z.tira=t; z._pid=pid; z.nombre=prettyDeSlug(slug,t) }
   }
+  // 12-sep: la COLA trae dos filas por ítem cuando cambió la huella (id pieza:etapa:item:hash):
+  // se pinta UNA por pieza:etapa:item, la más reciente (o la hecha), y nunca las «barrida».
+  const ultima={};
   for(const f of (COLA||[])){
-    if(!f||!f.pieza) continue;
+    if(!f||!f.pieza||/^barrida/i.test(f.estado||'')) continue;
+    const k=[normSlug(f.pieza),f.etapa,f.item].join(':'); const a=ultima[k];
+    const mejor=!a || (/hecho/i.test(f.estado||'')&&!/hecho/i.test(a.estado||'')) || ((f.actualizado||'')>(a.actualizado||'') && !( /hecho/i.test(a.estado||'')&&!/hecho/i.test(f.estado||'') ));
+    if(mejor) ultima[k]=f;
+  }
+  for(const f of Object.values(ultima)){
     const slug=normSlug(f.pieza); const z=pon(slug);
     if(!z.nombre) z.nombre=prettyDeSlug(slug,z.tira);
     if(z.filas[f.etapa]) z.filas[f.etapa].push(f);
@@ -1866,6 +1880,17 @@ function ramaEtapaCola(nombreRama,filas){
   return `<div class="prod-rama"><b>${esc(nombreRama)}</b><div class="prod-hojas">${hojas}</div></div>`;
 }
 function quefaltaPara(t,g,publicada){
+  // 12-sep: si hay un EJE vivo de esta familia sobre una lámina (prospectos/textos), eso es lo
+  // que falta — no «esperando tu sí en la lámina 2» mientras la carta real pregunta por la 3.
+  const slugT=t?slugDeTira(t,'')
+                :'';
+  for(const p of ((D&&D.propuestas)||[])){
+    const esEje=p.tipo==='eje'||(!(p.laminas||[]).length&&CANDIDATAS(p).length);
+    if(!esEje||!slugT||normSlug(String(p.id).split('-')[0])!==slugT) continue;
+    const m=String(p.titulo||'').match(/l[aá]mina\s+(\d+)/i)||String(p.origen||'').match(/l[aá]mina\s+(\d+)/i);
+    if(m) return `elige una opción para la lámina ${m[1]}`;
+    if(p.video) return 'corte en tu mesa';
+  }
   if(t){
     for(const l of (t.laminas||[])){
       const ab=laminaAbierta(t,l);
