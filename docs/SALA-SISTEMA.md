@@ -686,3 +686,24 @@ Producción. **70.** Una `<img loading="lazy">` dentro de `.opciones` (overflow:
 disparaba: las candidatas del eje salían en blanco; sin lazy y acotadas a 230 px.
 **Pendiente:** barrer en la hoja COLA las filas con huella vieja (estado `barrida`) desde el
 productor; hoy sólo las oculta la Sala.
+
+## 13-sep-2026 · la fábrica no debe girar en falso
+
+**71. Si cambia la receta, se borra la foto cacheada.** `make_lamina2` reusa
+`concept/<out>_src.png` si existe («skip src»). Al corregir el `prompt_base` en la hoja PROMPTS
+tras un rechazo, la candidata volvió a salir con la MISMA foto en 0 s. Ahora `sala_prospectos`
+guarda la huella del prompt junto al src (`<src>.prompt`): si el prompt cambió, borra el src y
+genera de verdad; si es el mismo, sigue siendo reproducible y gratis.
+
+**72. Una nota que no dice QUÉ ver no dispara producción.** «La imagen no cuadra con el texto»
+dice que está mal, no qué poner. Si la nota no trae ninguna palabra pintable **y** la receta de
+la hoja no ha cambiado desde lo que él rechazó, la fábrica se detiene y pide que se corrija el
+`prompt_base` — en vez de generar tres tomas nuevas casi iguales y volvérselas a preguntar.
+Probado contra sus notas reales: «no cuadra»/«no engancha» paran; «tendría que verse un lote
+baldío en ciudad» y «pon algo como lo que puede llegar a ser» sí producen.
+
+**73. Cuando el rechazo es por imagen, lo que se corrige es la receta, no el texto.** El 12-sep
+él dijo «el texto no engancha, la imagen no cuadra» y se le montaron tres TEXTOS sobre la misma
+foto: volvió a rechazar las tres por la imagen. La receta vieja listaba calle, banqueta, coche y
+postes — el lote quedaba de fondo. La nueva pone el lote como sujeto, encuadrado por las paredes
+ciegas de las dos casas vecinas.
