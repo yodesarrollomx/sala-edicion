@@ -675,3 +675,14 @@ que había tomas cuando en disco no había ninguna, y por eso nunca se generaban
 **Y una de método:** `--simular` retiraba cartas de verdad (la puerta de familia no miraba la
 bandera). Un simulacro que toca el Sheet deja de servir para lo único que sirve: correrlo con
 confianza antes de un run real. Ya no toca nada.
+
+## 12-sep-2026 (cierre) · lo que se vio en su Chrome y se corrigió en el momento
+**66. El árbol usa UNA tira por familia (la de la carta viva, o la más reciente).** Mezclar todas
+pintaba L1..L8 del Apodo. **67.** La COLA se pinta deduplicada por pieza:etapa:item (el productor
+deja dos ids por ítem cuando cambia la huella; las filas `barrida` no se pintan). **68.** «Qué falta»
+reconoce el eje vivo de la familia («elige una opción para la lámina 3»). **69.** En escritorio,
+`#vHoy{display:grid}` no llevaba `body[data-vista="hoy"]`: Hoy se quedaba visible debajo de
+Producción. **70.** Una `<img loading="lazy">` dentro de `.opciones` (overflow:auto) no se
+disparaba: las candidatas del eje salían en blanco; sin lazy y acotadas a 230 px.
+**Pendiente:** barrer en la hoja COLA las filas con huella vieja (estado `barrida`) desde el
+productor; hoy sólo las oculta la Sala.
