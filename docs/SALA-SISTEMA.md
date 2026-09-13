@@ -735,3 +735,27 @@ sus candidatas: el productor las monta en segundos. Cadena de alarmas, cero vigi
 
 **Pendiente:** los otros cuatro centinelas siguen con reloj propio. Son livianos (leen y
 reportan), pero deberían colgarse del mismo vigía.
+
+## 13-sep-2026 · el sí falso que sí llegó a su mesa
+
+**78. La compuerta no salta de tira buscando un sí.** Montó el corte del video con la lámina 3
+que él había rechazado. Dos causas encadenadas: la tira vigente se elegía por FECHA DEL ARCHIVO
+(cualquier proceso que la tocara cambiaba quién manda), y se exigía que su pid estuviera en las
+decisiones de HOY — pero una pieza retirada deja de heredar sus marcas al día siguiente, así que
+la tira buena «desaparecía» y el respaldo seguía bajando hasta una tira del 9-sep con seis «sí».
+Ahora manda la MESA (la tira de una propuesta viva; si no hay, la de fecha interna más reciente)
+y, si la tira vigente no tiene marcas, sus láminas por decidir cuentan como NO APROBADAS. Ante
+la duda, NO. Es la cuarta falla de este mismo respaldo (40, 43, la de Opus y ésta): el patrón
+siempre fue el mismo — buscar en otro lado cuando aquí no hay dato.
+
+**79. Lo decidido se sella en la tira.** `sala_sellar.py` escribe en la tira lo que el Sheet ya
+confirmó (sí → `aprobada` y fuera de `decidir`; no → `rehecha` con quién lo dijo y su nota). Así
+la verdad no se evapora cuando el Sheet deja de heredar, y la fábrica no se para de más: al
+sellar el 12-sep, las láminas 1, 2, 4 y 6 volvieron a contar como aprobadas y quedaron sólo la
+3 y la 5, que es la realidad.
+
+**80. Las tareas de espera se bloquean en la puerta.** Tres tareas «en ejecución» de 23 h, 23 h y
+17 h que no iban a terminar nunca: un `until ! pgrep -f "…"` que se encontraba a sí mismo y un
+`until curl | grep` esperando un texto que nunca se publicó. La regla ya estaba escrita y volví
+a caer, así que ahora es un hook de PreToolUse (`hook_sin_esperas.py`): bloquea cualquier bucle
+de espera sin tope y cualquier `pgrep -f` dentro de un `until`.
