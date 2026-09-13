@@ -165,58 +165,7 @@
   }
  ],
  "decisiones": {
-  "propuestas": {
-   "apodo-g8-3e58a2": {
-    "laminas": [
-     "no",
-     "no",
-     "si"
-    ],
-    "nota": "",
-    "notas": [
-     "La imagen no cuadra con el texto. Se ve un lugar rural. Tendría que verse un lote baldío en ciudad.",
-     "La imagen se ve demasiado rural. Tendría que ser más de lote baldío en la ciudad."
-    ],
-    "firmas": [
-     [
-      {
-       "quien": "Sayri",
-       "marca": "no",
-       "nota": "La imagen no cuadra con el texto. Se ve un lugar rural. Tendría que verse un lote baldío en ciudad."
-      },
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Sayri",
-       "marca": "no",
-       "nota": "La imagen se ve demasiado rural. Tendría que ser más de lote baldío en la ciudad."
-      },
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ],
-     [
-      {
-       "quien": "Sayri",
-       "marca": "si",
-       "nota": ""
-      },
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ]
-    ]
-   }
-  }
+  "propuestas": {}
  },
  "historial": {
   "2026-08-01": {
