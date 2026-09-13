@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-12 18:30",
+ "actualizado": "2026-09-12 19:00",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 49 min",
+   "corrio": "hace 1 horas",
    "dijo": "montaje v2 hecho",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -40,7 +40,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30",
-   "corrio": "hace 59 min",
+   "corrio": "hace 1 horas",
    "dijo": "}",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -51,10 +51,10 @@
    "hace": "Rehace el corte completo (voces, escenas, mezcla, reel vertical) cuando algo cambió.",
    "evita": "tener que rearmar el video a mano cada vez que se corrige una pieza",
    "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
-   "corrio": "hace 15 días",
+   "corrio": "hace 16 días",
    "dijo": "voces completas; el corte se re-armó",
    "salud": "duda",
-   "porque": "lleva 15 días sin correr — puede que ya terminó su trabajo"
+   "porque": "lleva 16 días sin correr — puede que ya terminó su trabajo"
   },
   {
    "id": "mx.yodesarrollo.cuento",
@@ -73,7 +73,7 @@
    "hace": "Recoge lo que pides con «Pedir nueva ronda» o «Enviar mensaje», te avisa en la Mac y deja escrito en la Sala que ya se tomó.",
    "evita": "Que pidas una ronda y nadie se entere: antes el recado se quedaba dormido en el Sheet.",
    "cuando": "cada 15 minutos",
-   "corrio": "hace 6 min",
+   "corrio": "hace 4 min",
    "dijo": "sin encargos pendientes",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -85,7 +85,7 @@
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
    "corrio": "hace 30 min",
-   "dijo": "máquinas: publicado",
+   "dijo": "subprocess.CalledProcessError: Command '['git', '-C', '/Users/a./sala-edicion', 'push', '-q']' returned non-zero exit st",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -106,8 +106,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 20 minutos",
-   "corrio": "hace 17 min",
-   "dijo": "18:13:08 productor · listo",
+   "corrio": "hace 3 min",
+   "dijo": "18:57:04 productor · listo",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -117,7 +117,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 28 min",
+   "corrio": "hace 58 min",
    "dijo": "expedientes.py ·   La Servilleta: 20 hitos · publicada",
    "salud": "bien",
    "porque": "corriendo en su horario"
