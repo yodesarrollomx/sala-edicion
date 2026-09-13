@@ -1,0 +1,45 @@
+{
+ "pieza": "El Apodo del Terreno",
+ "pieza_slug": "apodo",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "",
+   "dice": "",
+   "estado": "aprobada"
+  },
+  {
+   "n": 2,
+   "src": "",
+   "dice": "",
+   "estado": "aprobada"
+  },
+  {
+   "n": 3,
+   "src": "",
+   "dice": "",
+   "estado": "aprobada"
+  },
+  {
+   "n": 4,
+   "src": "",
+   "dice": "",
+   "estado": "aprobada"
+  },
+  {
+   "n": 5,
+   "src": "",
+   "dice": "",
+   "estado": "aprobada"
+  },
+  {
+   "n": 6,
+   "src": "",
+   "dice": "",
+   "estado": "aprobada"
+  }
+ ],
+ "decidir": [],
+ "de": "apodo-g7-c7faea",
+ "nota": "El corte completo. Sólo falta elegir el cierre."
+}
