@@ -1,6 +1,6 @@
 {
  "_que_es": "Manifiesto de respaldo: el portal lo lee cuando el Sheet aún no está conectado. Cuando el GAS ya está en línea, esta copia queda de plan B.",
- "fecha": "2026-09-12",
+ "fecha": "2026-09-13",
  "dias": [
   "2026-08-01",
   "2026-08-04",
@@ -29,36 +29,7 @@
   "2026-09-12",
   "2026-05-20"
  ],
- "propuestas": [
-  {
-   "id": "apodo-g10-l3",
-   "titulo": "El Apodo · lámina 3 · tres textos que enganchen (imagen en ciudad)",
-   "tipo": "eje",
-   "laminas": [],
-   "opciones": {
-    "candidatas": [
-     {
-      "titulo": "A · pregunta",
-      "texto": "¿«Lote baldío»? Así le dicen al tuyo.",
-      "src": "laminas/apodo-g10/L3a.jpg"
-     },
-     {
-      "titulo": "B · el nombre puesto",
-      "texto": "Al tuyo ya le pusieron nombre: «lote baldío».",
-      "src": "laminas/apodo-g10/L3b.jpg"
-     },
-     {
-      "titulo": "C · uno más en la cuadra",
-      "texto": "Y en la cuadra, uno más: «lote baldío».",
-      "src": "laminas/apodo-g10/L3c.jpg"
-     }
-    ]
-   },
-   "video": null,
-   "de_antes": null,
-   "origen": "rehecha-de apodo-g9-l3 · tú: «El texto no engancha. La imagen no cuadra con el texto» · Sayri: «lote baldío en ciudad»"
-  }
- ],
+ "propuestas": [],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -2367,6 +2338,73 @@
     {
      "hora": "14:45",
      "evento": "Propuesta montada: El Apodo · sin lo repetitivo y con los textos parejos (6 láminas) (6 láminas)"
+    }
+   ]
+  },
+  "2026-09-12": {
+   "propuestas": [
+    {
+     "id": "apodo-g10-l3",
+     "titulo": "El Apodo · lámina 3 · tres textos que enganchen (imagen en ciudad)",
+     "tipo": "eje",
+     "laminas": [],
+     "opciones": {
+      "candidatas": [
+       {
+        "titulo": "A · pregunta",
+        "texto": "¿«Lote baldío»? Así le dicen al tuyo.",
+        "src": "laminas/apodo-g10/L3a.jpg"
+       },
+       {
+        "titulo": "B · el nombre puesto",
+        "texto": "Al tuyo ya le pusieron nombre: «lote baldío».",
+        "src": "laminas/apodo-g10/L3b.jpg"
+       },
+       {
+        "titulo": "C · uno más en la cuadra",
+        "texto": "Y en la cuadra, uno más: «lote baldío».",
+        "src": "laminas/apodo-g10/L3c.jpg"
+       }
+      ]
+     },
+     "video": null,
+     "de_antes": null,
+     "origen": "rehecha-de apodo-g9-l3 · tú: «El texto no engancha. La imagen no cuadra con el texto» · Sayri: «lote baldío en ciudad»"
+    }
+   ],
+   "produccion": [
+    {
+     "pieza": "El terreno que dijo que sí · el cuento (47 s)",
+     "estado": "publicada",
+     "detalle": "FB + IG (reel) · copy «los dos bandos» · liga única fb/ig-2026-08-04 · primer comentario puesto",
+     "fecha": "2026-08-04",
+     "enlace": "https://www.instagram.com/reel/DboskQogVy1/"
+    },
+    {
+     "pieza": "El terreno que dijo que sí · carrusel",
+     "estado": "publicada",
+     "detalle": "FB + IG · liga medible activa · 4 interacciones IG al 30-jul",
+     "fecha": "2026-07-27"
+    },
+    {
+     "pieza": "La Servilleta · láminas",
+     "estado": "rehacer",
+     "detalle": "quitar «EDICIÓN POR AURUM ARQUITECTOS»",
+     "fecha": "2026-07-29"
+    }
+   ],
+   "bitacora": [
+    {
+     "hora": "08:37",
+     "evento": "Propuesta montada: El Apodo · lámina 2 salida del guion 1-2-3 (no de la ocurrencia) (1 láminas)"
+    },
+    {
+     "hora": "14:45",
+     "evento": "Propuesta montada: El Apodo · sin lo repetitivo y con los textos parejos (6 láminas) (6 láminas)"
+    },
+    {
+     "hora": "08:19",
+     "evento": "Propuesta montada: El Apodo · 3 textos ajustados a tu nota (3 láminas)"
     }
    ]
   }
