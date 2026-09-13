@@ -1,11 +1,11 @@
 {
- "actualizado": "2026-09-13 06:40",
+ "actualizado": "2026-09-13 09:01",
  "piezas": [
   {
    "pieza": "La Servilleta",
-   "estado": "publicada",
+   "estado": "en camino",
    "etapa": "publicada",
-   "siguiente": "Publicada el 29-ago en FB e IG. Métricas cada 12 h.",
+   "siguiente": "En producción.",
    "espera": "yo"
   },
   {
@@ -17,10 +17,10 @@
   },
   {
    "pieza": "El Apodo del Terreno",
-   "estado": "en camino",
+   "estado": "te espera",
    "etapa": "video",
-   "siguiente": "El video está armado y esperando tu palabra en la mesa.",
-   "espera": "yo"
+   "siguiente": "2 decisión(es) tuyas en la mesa: El Apodo · elige la toma de la 3 y la 5",
+   "espera": "tú"
   },
   {
    "pieza": "El comprador ya sabe",
