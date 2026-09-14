@@ -2632,6 +2632,12 @@
    "pedido": "Árbol conectado al embudo: qué se mide como éxito, qué está publicado, KPIs por fruto contra los mejores, para cortar o ajustar a tiempo",
    "estado": "cumplida",
    "evidencia": "Hoja PUBLICADAS (verdad de lo publicado) + sala_embudo.py (2×/día) → datos/embudo.json + CONTROL; veredictos con varas en REGLAS (kpi_*). El Árbol pinta KPIs, veredicto y el mejor del formato por publicación. Invariantes 85–88."
+  },
+  {
+   "fecha": "2026-09-14",
+   "pedido": "«Me estás volviendo a mandar lo mismo y desacomodado… estás trabajando mucho con tu capacidad sin dejar las cosas sistémicas»",
+   "estado": "cumplida",
+   "evidencia": "Auditado el historial completo (2,550 marcas del 1 al 14-sep). Dos fallas reales: (1) repregunté las láminas 3 y 5 ya aprobadas por una regla mía equivocada — retirada, ahora un sí es un sí y si no escoge toma escoge el sistema y lo informa; (2) monté la lámina 6 donde iba la 3 y un archivo inexistente donde iba la 5, por confiar en el nombre del archivo — ahora manda el catálogo por md5 (sala_verdad.py), sala_tira aborta si la carta está descuadrada, y el verificador lo revisa solo (12 verdes/0 rojos). Invariantes 90-92."
   }
  ],
  "conexion": {
