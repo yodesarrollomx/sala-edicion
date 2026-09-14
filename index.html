@@ -619,7 +619,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='f00ad3d607';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='f23a875179';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2099,7 +2099,7 @@ function fichaPublicacion(clave){
   const versiones=t?`<h4>Versiones de sus láminas</h4><div class="arb-vers">${(t.laminas||[]).map(l=>{ const vs=versionesDeLamina(t,l); return `<div class="arb-ver"><img src="${esc(ligera(l.src))}" alt="" loading="lazy"><b>L${l.n}</b><small>${vs.length} versión(es)</small></div>` }).join('')}</div>`:'';
   const serie=(c.historia.IG||[]).length?c.historia.IG:(c.historia.FB||[]);
   hoja(`<div class="arb-ficha"><div class="arb-ficha-img">${c.cover?`<img src="${esc(c.cover)}" alt="">`:''}</div>
-    <h3>${esc(c.pieza||c.titulo)}</h3><p class="arb-sub">${esc(c.formato)} · publicada ${esc(fechaBonita?fechaBonita(c.fecha):c.fecha)} · ${c.dias} días${c.pieza?' · hecha en la Sala':' · publicada fuera de la Sala'}</p>
+    <h3>${esc(c.pieza||c.titulo)}</h3><p class="arb-sub">${esc(c.formato)} · publicada ${esc(fechaBonita?fechaBonita(c.fecha):c.fecha)}${c.pieza?' · hecha en la Sala':' · publicada fuera de la Sala'}</p>
     ${c.pieza?'':`<p class="arb-sub">«${esc(c.titulo)}»</p>`}
     <span class="arb-vered ${esc(c.color)}"><i></i>${esc(c.veredicto)}</span><p class="arb-razon">${esc(c.razon)}</p>
     <table class="arb-tabla"><tr><th></th><th>alcance</th><th>vistas</th><th>interacc.</th><th>guardados</th><th>% inter.</th></tr>
