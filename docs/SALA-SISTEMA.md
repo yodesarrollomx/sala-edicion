@@ -829,3 +829,23 @@ que se sature». Lo que quedó:
     *Por qué importa más de lo que parece:* una carta descuadrada no es un error cosmético — le hace
     decidir sobre una lámina distinta de la que cree estar viendo, y esa decisión entra al Sheet como
     verdad. Es el único tipo de falla que corrompe el historial.
+93. **«Hecho» en un parpadeo es una alarma, no un éxito** (14-sep). `animar_v7` contestaba «ya estaba»
+    en 0.2 s porque miraba si el `.mp4` existe, no si la FOTO cambió: con las tomas nuevas de la 3 y
+    la 5 el corte se habría armado con las escenas viejas y la COLA lo habría apuntado como hecho.
+    Dos capas: (a) cada herramienta pesada sella **con qué insumo** produjo (`E<n>.mp4.foto` = md5 del
+    recorte) y rehace si difiere, la llame quien la llame — sin depender de que alguien acuerde pasar
+    `--rehacer`; (b) el productor avisa cuando un trabajo de escena/voz/corte/prospectos se declara
+    hecho en menos de 3 s. La (b) es la red: caza también las que todavía no conozco.
+94. **El encuadre del video vive en el guion, no en el código** (`ancla` por escena, 0 izq · 0.5 centro ·
+    1 der). La lámina es 4:5 y el clip 9:16, así que el recorte siempre tira franjas laterales: con la
+    toma nueva de la 5 —el señor a la derecha, dentro de su lote— el centro le cortaba media cara.
+    *Cuidado con el redondeo:* `int()` trunca como el `//2` de siempre; con `round()` el recorte se
+    movía un píxel en las escenas de ancho impar y eso cambia el md5 — dejé «obsoletas» tres escenas
+    que nadie había tocado. **Un cambio de encuadre sólo debe afectar a la escena que se reencuadró.**
+95. **Un chequeo que miente se vuelve ruido.** El chequeo «nada ya decidido sigue preguntándose» marcó
+    en rojo la carta del corte, que es un EJE (pregunta el cierre, no láminas). Un verificador con
+    falsos positivos se ignora, y entonces no sirve para nada: se afinó para mirar sólo cartas de láminas.
+96. **Dos credenciales, un mensaje honesto.** Si no hay `sala_clave` propia, la Sala usa la del YOD OS
+    (regla «una sola llave»). El 14-sep la del OS estaba caducada y la de la Sala seguía válida, pero la
+    pantalla decía sólo «clave incorrecta» y parecía que todo estaba cerrado. Ahora distingue el caso y
+    dice qué hacer: abrir con la liga del correo del día.
