@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-14 13:05",
+ "actualizado": "2026-09-14 13:35",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 13 min",
+   "corrio": "hace 43 min",
    "dijo": "montaje v2 hecho",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -40,7 +40,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30",
-   "corrio": "hace 14 min",
+   "corrio": "hace 4 min",
    "dijo": "}",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -62,7 +62,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 6 horas",
+   "corrio": "hace 7 horas",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "Recoge lo que pides con «Pedir nueva ronda» o «Enviar mensaje», te avisa en la Mac y deja escrito en la Sala que ya se tomó.",
    "evita": "Que pidas una ronda y nadie se entere: antes el recado se quedaba dormido en el Sheet.",
    "cuando": "cada 15 minutos",
-   "corrio": "hace 53 min",
+   "corrio": "hace 11 min",
    "dijo": "sin encargos pendientes",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -84,7 +84,7 @@
    "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 1 horas",
+   "corrio": "hace 30 min",
    "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -95,8 +95,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 1 min",
-   "dijo": "1/3 Sincronizando clon del board…",
+   "corrio": "hace 23 min",
+   "dijo": "13:11:46 embudo · repo empujado",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -106,8 +106,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 10 min",
-   "dijo": "12:54:29 productor · listo",
+   "corrio": "hace 1 min",
+   "dijo": "13:34:42 productor · en vivo",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -117,7 +117,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 1 horas",
+   "corrio": "hace 2 horas",
    "dijo": "expedientes.py ·   La Servilleta: 19 hitos · en camino",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -128,7 +128,7 @@
    "hace": "Levanta la copia de la Sala en esta Mac, para trabajar sin internet.",
    "evita": "quedarte sin Sala si se cae GitHub",
    "cuando": "siempre encendida",
-   "corrio": "hace 1 min",
+   "corrio": "hace 30 min",
    "dijo": "  Sala de Edición · http://localhost:8711  (2026-09-14T13:04:58-07:00)",
    "salud": "bien",
    "porque": "es un servidor: está encendido ahora mismo"
@@ -150,8 +150,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 5 minutos",
-   "corrio": "hace 49 min",
-   "dijo": "12:15:04 vigía · sin novedad",
+   "corrio": "hace 1 min",
+   "dijo": "13:33:54 vigía · sin novedad",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
