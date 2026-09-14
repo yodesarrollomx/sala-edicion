@@ -7,7 +7,7 @@
   "audio_margen_s": 6,
   "audio_cola_s": 2.2,
   "audio_xfade_s": 0.28,
-  "fondo_volumen": 0.14,
+  "fondo_volumen": 0.09,
   "voz_tope_seg_por_palabra": 0.62,
   "voz_tope_base": 1.3,
   "voz_tope_factor": 1.7,
@@ -21,7 +21,9 @@
   "kpi_dias_prueba": 7,
   "kpi_ventana_dias": 120,
   "kpi_min_alcance_para_er": 20,
-  "kpi_piso_pct_mediana": 50
+  "kpi_piso_pct_mediana": 50,
+  "voz_velocidad": 1.25,
+  "animacion_estiramiento_max": 1.15
  },
  "motores": [
   {
@@ -88,5 +90,5 @@
    "nota": "gratis con tope diario; a veces repite la frase"
   }
  ],
- "traido": "2026-09-14 15:19"
+ "traido": "2026-09-14 15:28"
 }
