@@ -1,20 +1,20 @@
 {
  "_que_es": "Embudo por publicación: KPIs de Meta, «los mejores» del mismo formato y un veredicto con las varas de REGLAS.",
- "generado": "2026-09-14 09:55",
+ "generado": "2026-09-14 10:03",
  "corpus": {
-  "generado": "2026-09-09 07:22",
-  "posts": 67,
+  "generado": "2026-09-14 10:02",
+  "posts": 71,
   "semana": {
    "actual": {
-    "posts": 3,
-    "reach": 27,
-    "interacciones": 4,
+    "posts": 6,
+    "reach": 239,
+    "interacciones": 32,
     "guardados": 0
    },
    "anterior": {
-    "posts": 6,
-    "reach": 307,
-    "interacciones": 20,
+    "posts": 3,
+    "reach": 61,
+    "interacciones": 7,
     "guardados": 0
    }
   },
@@ -31,8 +31,8 @@
   {
    "titulo": "Diseñar para una marca es distinto a diseñar una casa.",
    "formato": "Carrusel",
-   "alcance": 232,
-   "er": 6.03,
+   "alcance": 238,
+   "er": 5.88,
    "fecha": "2026-08-27",
    "permalink": "https://www.instagram.com/p/DcjrECakyvR/",
    "cuenta": "Aurum Arquitectos"
@@ -40,20 +40,20 @@
   {
    "titulo": "La familia de Casa Zara es de las que reciben seguido y disfrutan tener gente en",
    "formato": "Reel",
-   "alcance": 214,
-   "er": 2.8,
+   "alcance": 219,
+   "er": 3.2,
    "fecha": "2026-06-04",
    "permalink": "https://www.instagram.com/reel/DZLWqaXyQhm/",
    "cuenta": "Aurum Arquitectos"
   },
   {
-   "titulo": "¿Qué es el Plan Potencial Personalizado?",
-   "formato": "Reel",
-   "alcance": 176,
-   "er": 9.66,
-   "fecha": "2026-06-28",
-   "permalink": "https://www.instagram.com/reel/DaIzYVsswLw/",
-   "cuenta": "Yo Desarrollo"
+   "titulo": "Esta roca es parte del cerro y estaba en el terreno desde antes del proyecto. Po",
+   "formato": "Image",
+   "alcance": 185,
+   "er": 11.35,
+   "fecha": "2026-09-09",
+   "permalink": "https://www.instagram.com/p/DdEbX_ojC2D/",
+   "cuenta": "Aurum Arquitectos"
   }
  ],
  "piezas": [
@@ -163,13 +163,13 @@
     "n": 2,
     "formato": "Carrusel",
     "ventana_dias": 120,
-    "mediana_alcance": 41.0,
-    "mediana_er": 9.12,
+    "mediana_alcance": 42.5,
+    "mediana_er": 9.81,
     "mejor": {
      "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
      "permalink": "https://www.instagram.com/p/DYmx9a1nAFv/",
-     "alcance": 62,
-     "er": 3.23,
+     "alcance": 65,
+     "er": 4.62,
      "fecha": "2026-05-21",
      "cuenta": "Yo Desarrollo",
      "tipo": "Carrusel"
@@ -177,7 +177,7 @@
    },
    "veredicto": "cortar o cambiar de forma",
    "color": "rojo",
-   "razon": "alcance 14: menos de la mitad de la mediana (41) de su formato"
+   "razon": "alcance 14: menos de la mitad de la mediana (42.5) de su formato"
   }
  ]
 }
