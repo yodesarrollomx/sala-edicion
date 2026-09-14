@@ -759,3 +759,23 @@ sellar el 12-sep, las láminas 1, 2, 4 y 6 volvieron a contar como aprobadas y q
 `until curl | grep` esperando un texto que nunca se publicó. La regla ya estaba escrita y volví
 a caer, así que ahora es un hook de PreToolUse (`hook_sin_esperas.py`): bloquea cualquier bucle
 de espera sin tope y cualquier `pgrep -f` dentro de un `until`.
+
+## 14-sep-2026 · el árbol de publicaciones
+
+Alejandro: «quiero un árbol de publicaciones, algo visual: el tronco es vender el PPP, de ahí 5 temas (las
+fortalezas del PPP), de ahí las ramas de las publicaciones, ver las ediciones, y el fruto terminado solamente
+cuando esté terminado el video». Lo que quedó:
+
+81. **Los nodos viven en la hoja ARBOL** (`nivel` tronco|tema|pieza · `id` · `padre` · `titulo` · `bajada` · `orden`).
+    Editable a mano: colgar una pieza de otro tema es cambiarle el `padre`. `sala_arbol.py --sembrar` sólo AGREGA lo que
+    falta (nunca pisa lo editado) y baja `datos/arbol.json` como respaldo para la Sala sin sesión.
+82. **La puerta «Árbol»** pinta tronco → temas → piezas → brotes (una chip por lámina: verde aprobada, oro en su mesa,
+    rojo pidió cambio, y `·vN` cuando hay versiones) → barras de escenas/voces/corte → **fruto**. El fruto (el video) sólo
+    se muestra si el corte está hecho en la COLA **y ninguna lámina sigue abierta**, o la pieza está publicada. Un corte
+    hecho con láminas abiertas es un corte que se va a retirar (pasó el 13-sep): no es fruto.
+83. **Un «no» sellado vale como marca al día siguiente.** `sala_sellar.py` deja `estado:'rehecha'+marca_previa:'no'` en la
+    tira; la compuerta (`estado_laminas`, respaldo sin mesa) y el árbol lo leen como «no». Antes, al cambiar el día, los dos
+    rechazos del 13-sep se volvían «pendiente» y la fábrica se quedaba quieta con dos rechazos firmados.
+84. **La huella de los prospectos lleva la receta.** `sala_productor.py` versiona los prospectos con md5(lámina + prompt_base
+    de PROMPTS + texto de la lámina). Antes era sólo la lámina rechazada (que no cambia): corregir la receta en la hoja no
+    producía nada («ya hay 1 candidata hecha para esta versión»).
