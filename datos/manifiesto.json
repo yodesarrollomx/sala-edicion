@@ -2611,6 +2611,12 @@
    "pedido": "Árbol de publicaciones visual: tronco (vender PPP) → 5 temas → publicaciones → ediciones → fruto sólo con el video terminado",
    "estado": "cumplida",
    "evidencia": "Puerta «Árbol» en la Sala; nodos en la hoja ARBOL (editable) con respaldo datos/arbol.json; verificado en su Chrome 14-sep: 1 tronco, 5 temas, 6 piezas colgadas, brotes por lámina con versión, fruto sólo con corte hecho sin láminas abiertas. Invariantes 81–84 en SALA-SISTEMA.md."
+  },
+  {
+   "fecha": "2026-09-14",
+   "pedido": "Árbol conectado al embudo: qué se mide como éxito, qué está publicado, KPIs por fruto contra los mejores, para cortar o ajustar a tiempo",
+   "estado": "cumplida",
+   "evidencia": "Hoja PUBLICADAS (verdad de lo publicado) + sala_embudo.py (2×/día) → datos/embudo.json + CONTROL; veredictos con varas en REGLAS (kpi_*). El Árbol pinta KPIs, veredicto y el mejor del formato por publicación. Invariantes 85–88."
   }
  ],
  "conexion": {

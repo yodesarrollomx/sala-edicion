@@ -779,3 +779,21 @@ cuando esté terminado el video». Lo que quedó:
 84. **La huella de los prospectos lleva la receta.** `sala_productor.py` versiona los prospectos con md5(lámina + prompt_base
     de PROMPTS + texto de la lámina). Antes era sólo la lámina rechazada (que no cambia): corregir la receta en la hoja no
     producía nada («ya hay 1 candidata hecha para esta versión»).
+
+## 14-sep-2026 · el árbol conectado al embudo
+
+Alejandro: «quiero saber qué se tiene que estar midiendo como éxito y qué está ya publicado, para que no caigas en
+errores… KPIs de los logros de cada fruto… comparando contra los mejores… ir cortando y quitando en vez de esperar a
+que se sature». Lo que quedó:
+
+85. **La verdad de «publicada» es la hoja PUBLICADAS** (`pieza, red, id_post, permalink, campana, utm, formato, estado`).
+    Sin id de Meta no hay medición. Si una pieza está ahí y la Sala la tiene «en camino» (o al revés), el Árbol lo grita
+    con una franja: se corrige en `piezas.json` o en la hoja, nunca se tapa.
+86. **`sala_embudo.py` mide dos veces al día** (centinela `mx.yodesarrollo.metricas`, detrás de `registrar.py`): KPIs de Meta
+    por publicación, «los mejores» del **mismo formato y la misma cuenta** (Yo Desarrollo; Aurum sólo como aprendizaje) en
+    la ventana de REGLAS, leads por utm, y un veredicto. Escribe `datos/embudo.json` y una fila por pieza en CONTROL.
+87. **Las varas viven en REGLAS**: `kpi_dias_prueba` (7), `kpi_ventana_dias` (120), `kpi_min_alcance_para_er` (20),
+    `kpi_piso_pct_mediana` (50). Veredictos: *en prueba* · *entre los mejores* (≥80 % del mejor) · *arriba de la mediana* ·
+    *por debajo, ajustar* · *cortar o cambiar de forma* (< piso % de la mediana). Cambiar la vara es cambiar una celda.
+88. **El fruto lleva su cosecha**: en el Árbol cada publicación muestra alcance, vistas, interacciones, guardados, leads,
+    el veredicto en color, la razón en llano y la liga al mejor de su formato para compararse.
