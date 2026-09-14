@@ -133,6 +133,19 @@ html.embed .app{padding-top:8px}
 .arb-fruto video{width:100%;display:block;max-height:220px}
 .arb-fruto-cap{font-size:11px;color:var(--si);padding:4px 8px;background:var(--tarjeta);font-weight:600}
 .arb-fruto-no{margin:8px 0 0;font-size:11px;color:var(--guia);border:1px dashed var(--linea2);border-radius:10px;padding:6px 8px}
+.arb-kpis{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 0}
+.arb-kpi{font-size:10.5px;border:1px solid var(--linea);border-radius:8px;padding:2px 6px;background:var(--fondo)} .arb-kpi b{font-size:12px;margin-right:3px}
+.arb-vered{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;border-radius:999px;padding:3px 9px;margin:6px 0 0;border:1px solid var(--linea)}
+.arb-vered i{width:8px;height:8px;border-radius:50%}
+.arb-vered.verde{color:var(--si)} .arb-vered.verde i{background:var(--si)} .arb-vered.oro{color:var(--oro)} .arb-vered.oro i{background:var(--oro)} .arb-vered.rojo{color:var(--no)} .arb-vered.rojo i{background:var(--no)} .arb-vered.gris{color:var(--guia)} .arb-vered.gris i{background:var(--linea2)}
+.arb-razon{font-size:11px;color:var(--guia);margin:3px 0 0;line-height:1.35}
+.arb-razon a{color:inherit}
+.arb-ojo{font-size:11px;color:var(--oro);background:var(--oro-suave);border-radius:8px;padding:4px 8px;margin:6px 0 0}
+.arb-embudo{border:1px solid var(--linea);background:var(--tarjeta);border-radius:14px;padding:10px 14px;margin:0 auto 14px;max-width:760px;font-size:12.5px}
+.arb-embudo h5{margin:0 0 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--guia);font-weight:600}
+.arb-embudo .fila{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline}
+.arb-embudo .fila b{font-size:16px;font-family:var(--serif);font-weight:400}
+.arb-embudo ol{margin:4px 0 0;padding-left:18px;color:var(--guia)} .arb-embudo ol a{color:inherit}
 .arb-leyenda{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:11.5px;color:var(--guia);margin:0 0 14px}
 @media (max-width:640px){ .arb-temas{grid-template-columns:1fr} .arb-temas::before{display:none} .arb-tema::before{display:none} }
 /* candidatas de una lámina, dentro de la carta de Hoy (Entrega B) */
@@ -592,7 +605,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='fbae889ed2';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='ecd771248c';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1979,7 +1992,9 @@ async function pintarProduccion(){
    temas, de ahí las ramas de las publicaciones, ver las ediciones, y el fruto terminado solamente
    cuando esté terminado el video». Los nodos (tronco/temas/piezas) vienen de la hoja ARBOL del
    Sheet (editable), con datos/arbol.json de respaldo; las versiones salen de las tiras y la COLA. */
-let ARBOL=null;
+let ARBOL=null, EMBUDO=null;
+async function traerEmbudo(){ try{ EMBUDO=await (await fetch('datos/embudo.json?v='+Date.now())).json() }catch(e){ EMBUDO=null } }
+function embudoDe(nombre){ return ((EMBUDO&&EMBUDO.piezas)||[]).find(z=>z.pieza===nombre||normSlug(z.pieza)===normSlug(nombre)) }
 async function traerArbol(){
   if(ENTRADO()){
     try{ const r=await fetch(GAS()+'?recurso=arbol&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'});
@@ -1993,6 +2008,16 @@ function versionesDeLamina(t,l){
     // un «no» sellado en la tira (sala_sellar.py) cuenta como rojo aunque la marca ya no esté en el día de hoy
     if(ultima) col=!ab?'verde':((ab.tipo==='no'||(l.estado==='rehecha'&&l.marca_previa==='no'))?'rojo':'oro');
     return {v:v.v||(i+1),col,src:v.src||''} });
+}
+function kpisHtml(nombre){
+  // el embudo conectado al fruto (14-sep): qué logró, contra los mejores de su formato, y el veredicto
+  const e=embudoDe(nombre); if(!e) return '';
+  const k=e.kpis||{}; const n=v=>(v===null||v===undefined)?'–':String(v);
+  const chips=[[k.reach,'alcance'],[k.views,'vistas'],[k.interacciones,'interacc.'],[k.guardados,'guardados'],[e.leads,'leads']]
+    .map(([v,t])=>`<span class="arb-kpi"><b>${n(v)}</b>${t}</span>`).join('');
+  const m=e.mejores||{}; const mejor=m.mejor?`<a href="${esc(m.mejor.permalink||'#')}" target="_blank" rel="noopener">el mejor ${esc((m.formato||'').toLowerCase())}: «${esc(m.mejor.titulo||'')}» (${m.mejor.alcance})</a>`:'';
+  return `<div class="arb-kpis">${chips}</div><span class="arb-vered ${esc(e.color||'gris')}"><i></i>${esc(e.veredicto||'')}</span>
+    <p class="arb-razon">${esc(e.razon||'')}${mejor?' · '+mejor:''} · ${esc(String(e.dias))} días publicada</p>`;
 }
 function frutoDe(z,publicada){
   // el fruto sólo cuando el video está TERMINADO: corte hecho en la COLA o pieza publicada
@@ -2012,19 +2037,22 @@ function barraEtapa(nombre,filas){
   return `<span class="arb-etapa" title="${esc(nombre+': '+h+' de '+n)}">${esc(nombre)} <b><i style="width:${Math.round(100*h/n)}%"></i></b> ${h}/${n}</span>`;
 }
 function piezaArbol(z){
-  const publicada=(PZ[z.nombre]&&PZ[z.nombre].estado==='publicada'); const t=z.tira;
+  const enMeta=!!embudoDe(z.nombre);                      // la verdad de «publicada» la da la hoja PUBLICADAS (ids de Meta)
+  const publicada=enMeta||(PZ[z.nombre]&&PZ[z.nombre].estado==='publicada'); const t=z.tira;
+  const ojo=enMeta&&PZ[z.nombre]&&PZ[z.nombre].estado!=='publicada'?`<div class="arb-ojo">Publicada según Meta desde ${esc(embudoDe(z.nombre).campana||'')}, pero la Sala la tiene «${esc(PZ[z.nombre].estado)}»: corrígelo en piezas.json o en PUBLICADAS.</div>`
+           :(!enMeta&&PZ[z.nombre]&&PZ[z.nombre].estado==='publicada'?`<div class="arb-ojo">La Sala la marca publicada pero no está en la hoja PUBLICADAS: sin ids de Meta no se puede medir.</div>`:'');
   const brotes=t?(t.laminas||[]).map(l=>{ const vs=versionesDeLamina(t,l); const u=vs[vs.length-1];
       return `<span class="arb-brote ${u.col}" title="Lámina ${l.n} · ${vs.length} versión(es)"><i></i>L${l.n}${vs.length>1?`<span class="v">·v${u.v}</span>`:''}</span>` }).join('')
     :'<span class="arb-brote gris"><i></i>sin láminas todavía</span>';
   const etapas=[barraEtapa('escenas',z.filas.escena),barraEtapa('voces',z.filas.voz),barraEtapa('corte',z.filas.corte)].join('');
   const vaEn=t&&(t.laminas||[]).some(l=>laminaAbierta(t,l))?'láminas':((z.filas.corte||[]).length?'corte':((z.filas.voz||[]).length?'voz':((z.filas.escena||[]).length?'escena':(publicada?'publicada':'guion'))));
   return `<div class="arb-pieza"><div class="nom" data-exp="${esc(z.nombre)}">${esc(z.nombre)}<small>${esc(publicada?'publicada':vaEn)}</small></div>
-    <div class="arb-brotes">${brotes}</div>${etapas?`<div class="arb-etapas">${etapas}</div>`:''}${frutoDe(z,publicada)}</div>`;
+    <div class="arb-brotes">${brotes}</div>${etapas?`<div class="arb-etapas">${etapas}</div>`:''}${frutoDe(z,publicada)}${kpisHtml(z.nombre)}${ojo}</div>`;
 }
 async function pintarArbol(){
   const c=$('#arbol'), av=$('#arbAviso'); if(!c) return;
   c.innerHTML='<p style="color:var(--guia);font-size:13px;text-align:center">Cargando el árbol…</p>';
-  await Promise.all([traerArbol(),traerCola()]);
+  await Promise.all([traerArbol(),traerCola(),traerEmbudo()]);
   const piezas=await armarPiezas();
   const N=ARBOL.nodos||[]; const tronco=N.find(n=>n.nivel==='tronco')||{titulo:'Vender el Plan de Potencial',bajada:''};
   const temas=N.filter(n=>n.nivel==='tema').sort((a,b)=>(a.orden||99)-(b.orden||99));
@@ -2041,7 +2069,11 @@ async function pintarArbol(){
   }).join('');
   const sueltas=piezas.filter(z=>!colgadas.has(z.slug));
   const sueltasHtml=sueltas.length?`<div class="arb-tema" style="border-style:dashed"><h4>Sin tema todavía</h4><p class="baj">Cuélgalas de un tema en la hoja ARBOL (nivel pieza · padre = id del tema).</p>${sueltas.map(piezaArbol).join('')}</div>`:'';
-  c.innerHTML=`<div class="arb-tronco"><h3>${esc(tronco.titulo)}</h3><p>${esc(tronco.bajada||'')}</p></div><div class="arb-tallo"></div><div class="arb-temas">${temasHtml}${sueltasHtml}</div>`;
+  const E=EMBUDO||{}; const sem=(E.corpus||{}).semana||{}; const sa=sem.actual||{}, sp=sem.anterior||{};
+  const embudoHtml=E.generado?`<div class="arb-embudo"><h5>El embudo · medido ${esc(E.generado)} · vara: los mejores de ${esc((E.varas||{}).cuenta||'')} en ${esc(String((E.varas||{}).kpi_ventana_dias||''))} días</h5>
+      <div class="fila"><span><b>${esc(String(sa.reach??'–'))}</b> alcance esta semana (${esc(String(sa.posts??'–'))} pub.)</span><span><b>${esc(String(sp.reach??'–'))}</b> la anterior (${esc(String(sp.posts??'–'))})</span><span><b>${(E.piezas||[]).reduce((a,z)=>a+(z.leads||0),0)}</b> leads con utm${(E.corpus||{}).leads_utm_activo?'':' · <em>la medición de leads por utm aún no ha recibido ninguno</em>'}</span></div>
+      ${(E.aprendizaje||[]).length?`<ol>${E.aprendizaje.map(a=>`<li>${esc(a.formato||'')} · <a href="${esc(a.permalink||'#')}" target="_blank" rel="noopener">«${esc(a.titulo||'')}»</a> · ${esc(String(a.alcance))} de alcance${a.cuenta&&a.cuenta!==(E.varas||{}).cuenta?` (${esc(a.cuenta)})`:''}</li>`).join('')}</ol>`:''}</div>`:'';
+  c.innerHTML=embudoHtml+`<div class="arb-tronco"><h3>${esc(tronco.titulo)}</h3><p>${esc(tronco.bajada||'')}</p></div><div class="arb-tallo"></div><div class="arb-temas">${temasHtml}${sueltasHtml}</div>`;
   c.querySelectorAll('.arb-pieza .nom[data-exp]').forEach(el=>el.onclick=()=>{ irVista('pub'); if(typeof abrirExp==='function') abrirExp(el.dataset.exp) });
 }
 const _bArb=$('#arbActualizar'); if(_bArb) _bArb.onclick=()=>pintarArbol();
