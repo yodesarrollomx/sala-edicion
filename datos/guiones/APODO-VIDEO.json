@@ -66,7 +66,7 @@
   {
    "n": 3,
    "id": "E3",
-   "lamina_src": "laminas/apodo-g8/L3.png",
+   "lamina_src": "laminas/apodo-e2026-09-14/L3.png",
    "texto": "En la colonia le dicen «el baldío». Como si fuera un descuido y no un patrimonio.",
    "partes": [
     {
@@ -86,7 +86,8 @@
    "voz_reusable": null,
    "escena_reusable": null,
    "texto_previo_13sep": "También le dicen «lote baldío».",
-   "por_que_14sep": "Alejandro 13-sep: «El texto no engancha, más nivel medio alto». Se le habla al dueño de colonia media-alta: el apodo viene de la colonia (no de «los vecinos» otra vez) y el remate nombra lo que él sí siente que tiene: un patrimonio, no un descuido."
+   "por_que_14sep": "Alejandro 13-sep: «El texto no engancha, más nivel medio alto». Se le habla al dueño de colonia media-alta: el apodo viene de la colonia (no de «los vecinos» otra vez) y el remate nombra lo que él sí siente que tiene: un patrimonio, no un descuido.",
+   "lamina_src_previa": "laminas/apodo-g8/L3.png"
   },
   {
    "n": 4,
@@ -106,7 +107,7 @@
   {
    "n": 5,
    "id": "E5",
-   "lamina_src": "laminas/apodo-g8/L5.png",
+   "lamina_src": "laminas/apodo-e2026-09-14/L5.png",
    "texto": "Tu terreno sí tiene un nombre propio: lo que puede llegar a ser.",
    "partes": [
     {
@@ -116,7 +117,8 @@
    ],
    "intencion": "cálida. Es la promesa de la pieza; la pausa cae en los dos puntos. «Puede llegar a ser» mira hacia adelante, no describe lo que ya es.",
    "voz_reusable": null,
-   "escena_reusable": null
+   "escena_reusable": null,
+   "lamina_src_previa": "laminas/apodo-g8/L5.png"
   },
   {
    "n": 6,
