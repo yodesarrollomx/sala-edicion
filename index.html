@@ -1290,6 +1290,11 @@ function pintarCartas(){
   const esLam=pasos[idx].tipo==='lamina';
   $('#mando').hidden=!esLam;                 // en una carta de opciones se elige arriba…
   $('#mandoWrap').hidden=!esLam&&!hist.length;   // …pero «Deshacer» sigue disponible
+  // 14-sep: si la carta trae tomas (candidatas), aprobar SIN elegir una es un «sí» ambiguo que la fábrica no
+  // puede ejecutar (pasó hoy: animó la foto vieja). Con candidatas, Aprobar se esconde: se elige con «Ésta».
+  try{ const _x=pasos[idx]; const _t=_x&&_x.tipo==='lamina'?tiraDe(_x):null; const _l=_t?laminaTira(_t,_x.p.laminas[_x.i],nLamina(_x)):null;
+    const _conTomas=!!(_l&&Array.isArray(_l.candidatas)&&_l.candidatas.length); $('#btnSi').hidden=_conTomas;
+    const _pt=$('#pistaTeclas'); if(_pt) _pt.textContent=_conTomas?'Elige una toma con «Ésta» · ← Pedir cambio':'Teclas: ← Pedir cambio · → Aprobar'; }catch(e){}
   $('#deshacer').hidden=hist.length===0; $('#pistaTeclas').hidden=false;
   pintarCtx(pasos[idx]); pintarBolas(); pintarPanel(); pintarTira(pasos[idx]);   // la tira sigue a la carta
 }
@@ -2246,7 +2251,7 @@ $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 $('#deshacer').onclick=()=>{ if(!candadoLibre()||!hist.length) return; irA(hist.pop()) };
 $('#verresp').onclick=abrirRespuestas; $('#btnEntrar').onclick=abrirEntrar;
 $('#btnReintentar').onclick=async()=>{ pintarEstado('subiendo','Reintentando…'); await subirCola(); await subir(); };
-document.addEventListener('keydown',e=>{ if(CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
+document.addEventListener('keydown',e=>{ if(CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.key==='ArrowRight'&&$('#btnSi')&&$('#btnSi').hidden) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
   if(e.key==='ArrowRight') decidir('si'); if(e.key==='ArrowLeft') decidir('no') });
 const _bProdAct=$('#prodActualizar'); if(_bProdAct) _bProdAct.onclick=()=>pintarProduccion();
 setInterval(()=>{ if(document.body.dataset.vista==='prod') pintarProduccion() },60000);   // solo relee datos; nunca el estado de un botón
