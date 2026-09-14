@@ -797,3 +797,11 @@ que se sature». Lo que quedó:
     *por debajo, ajustar* · *cortar o cambiar de forma* (< piso % de la mediana). Cambiar la vara es cambiar una celda.
 88. **El fruto lleva su cosecha**: en el Árbol cada publicación muestra alcance, vistas, interacciones, guardados, leads,
     el veredicto en color, la razón en llano y la liga al mejor de su formato para compararse.
+89. **El Árbol es un dashboard de tarjetas, sólo Yo Desarrollo** (14-sep, tarde). `sala_embudo.py` arma `catalogo`: TODO lo
+    publicado en la página de Yo Desarrollo (IG+FB del corpus del aurum-board, filtrado por cuenta; Aurum NUNCA entra ni
+    como aprendizaje), una entrada por publicación con portada (`aurum-board/covers/`), KPIs por red, historia
+    (`metrics_history.jsonl`, desde la primera medición) y veredicto. Cada tarjeta = un fruto (portada, formato, alcance/
+    vistas/interacciones/leads, veredicto) o una pieza en producción (última lámina, en qué va, brotes por lámina).
+    Clic en un fruto = ficha: métricas IG/FB, leads, curva desde la primera medición, el mejor de su formato, versiones
+    de sus láminas si la hizo la Sala, ligas a IG/FB y la **clave** de Meta. Lo publicado fuera de la Sala cae en «sin tema
+    todavía»; se cuelga de un tema con una fila en ARBOL (nivel pieza · id = esa clave · padre = id del tema).
