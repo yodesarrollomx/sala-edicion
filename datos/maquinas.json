@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-14 10:29",
+ "actualizado": "2026-09-14 10:59",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 13 min",
+   "corrio": "hace 43 min",
    "dijo": "montaje v2 hecho",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -40,7 +40,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30",
-   "corrio": "hace 28 min",
+   "corrio": "hace 27 min",
    "dijo": "}",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "Recoge lo que pides con «Pedir nueva ronda» o «Enviar mensaje», te avisa en la Mac y deja escrito en la Sala que ya se tomó.",
    "evita": "Que pidas una ronda y nadie se entere: antes el recado se quedaba dormido en el Sheet.",
    "cuando": "cada 15 minutos",
-   "corrio": "hace 15 min",
+   "corrio": "hace 10 min",
    "dijo": "sin encargos pendientes",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -95,7 +95,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 25 min",
+   "corrio": "hace 55 min",
    "dijo": "10:03:12 embudo · repo empujado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -106,8 +106,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 3 min",
-   "dijo": "10:25:57 productor · listo",
+   "corrio": "hace 15 min",
+   "dijo": "10:43:09 productor · listo",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -117,7 +117,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 1 horas",
+   "corrio": "hace 2 horas",
    "dijo": "expedientes.py ·   La Servilleta: 19 hitos · en camino",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -150,8 +150,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 5 minutos",
-   "corrio": "hace 5 min",
-   "dijo": "10:23:48 vigía · NOVEDAD en el Sheet · despierto a la fábrica",
+   "corrio": "hace 1 min",
+   "dijo": "10:57:20 vigía · sin novedad",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
