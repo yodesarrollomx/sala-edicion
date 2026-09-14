@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-14 14:35",
+ "actualizado": "2026-09-14 15:05",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,8 +18,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 2 horas",
-   "dijo": "montaje v2 hecho",
+   "corrio": "hace 1 min",
+   "dijo": "montada v2 S7 11.0s",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -73,7 +73,7 @@
    "hace": "Recoge lo que pides con «Pedir nueva ronda» o «Enviar mensaje», te avisa en la Mac y deja escrito en la Sala que ya se tomó.",
    "evita": "Que pidas una ronda y nadie se entere: antes el recado se quedaba dormido en el Sheet.",
    "cuando": "cada 15 minutos",
-   "corrio": "hace 5 min",
+   "corrio": "hace 2 min",
    "dijo": "sin encargos pendientes",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -95,7 +95,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:30, 20:30",
-   "corrio": "hace 1 horas",
+   "corrio": "hace 2 horas",
    "dijo": "13:11:46 embudo · repo empujado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -106,8 +106,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 8 min",
-   "dijo": "14:26:25   CORRO  apodo:escena:2:0c620f8b · motor wan_hf · /Library/Developer/CommandLineTools/usr/bin/python3 /Users/a.",
+   "corrio": "hace 6 min",
+   "dijo": "14:59:03 productor · listo",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -117,7 +117,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 3 horas",
+   "corrio": "hace 2 min",
    "dijo": "expedientes.py ·   La Servilleta: 19 hitos · en camino",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -150,8 +150,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 5 minutos",
-   "corrio": "hace 1 min",
-   "dijo": "14:34:48 vigía · sin novedad",
+   "corrio": "hace 2 min",
+   "dijo": "15:02:28 vigía · sin novedad",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -161,7 +161,7 @@
    "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
    "evita": "enterarte por un tercero de que un tablero estaba abierto",
    "cuando": "a las 6:45",
-   "corrio": "hace 7 horas",
+   "corrio": "hace 8 horas",
    "dijo": "==============================================================================",
    "salud": "bien",
    "porque": "corriendo en su horario"
