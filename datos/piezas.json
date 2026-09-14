@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-14 12:01",
+ "actualizado": "2026-09-14 15:02",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -10,17 +10,17 @@
   },
   {
    "pieza": "¿Vendo o construyo?",
-   "estado": "publicada",
+   "estado": "en camino",
    "etapa": "publicada",
-   "siguiente": "Publicada el 2-sep como carrusel en FB e IG.",
+   "siguiente": "En producción.",
    "espera": "yo"
   },
   {
    "pieza": "El Apodo del Terreno",
-   "estado": "te espera",
+   "estado": "en camino",
    "etapa": "video",
-   "siguiente": "2 decisión(es) tuyas en la mesa: El Apodo · elige la toma de la 3 y de la 5 (aprobaste sin escoger cuál)",
-   "espera": "tú"
+   "siguiente": "El video está armado y esperando tu palabra en la mesa.",
+   "espera": "yo"
   },
   {
    "pieza": "El comprador ya sabe",
