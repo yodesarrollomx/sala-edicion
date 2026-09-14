@@ -38,8 +38,8 @@
   {
    "n": 3,
    "src": "laminas/apodo-g8/L1.png",
-   "dice": "También le dicen «lote baldío».",
-   "estado": "abierta",
+   "dice": "En la colonia le dicen «el baldío». Como si fuera un descuido y no un patrimonio.",
+   "estado": "rehecha",
    "versiones": [
     {
      "v": 1,
@@ -58,7 +58,7 @@
     }
    ],
    "version": 2,
-   "nota_previa": "Alejandro: «La imagen no cuadra con el texto» · Sayri: «tendría que verse un lote baldío en ciudad»",
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no enganchamas nivel medio alto",
    "candidatas": [
     {
      "src": "laminas/apodo-p3-2026-09-12/L3-1.jpg",
@@ -75,7 +75,8 @@
      "titulo": "C",
      "texto": "El lote con el árbol seco al fondo."
     }
-   ]
+   ],
+   "marca_previa": "no"
   },
   {
    "n": 4,
@@ -97,7 +98,7 @@
    "n": 5,
    "src": "laminas/apodo-g8/L2.png",
    "dice": "Tu terreno sí tiene un nombre propio: lo que puede llegar a ser.",
-   "estado": "abierta",
+   "estado": "rehecha",
    "versiones": [
     {
      "v": 1,
@@ -116,7 +117,7 @@
     }
    ],
    "version": 2,
-   "nota_previa": "Sayri: «La imagen se ve demasiado rural. Tendría que ser más de lote baldío en la ciudad»",
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto más entorno urbano clase media alta",
    "candidatas": [
     {
      "src": "laminas/apodo-p5-2026-09-13/L5-1.jpg",
@@ -128,7 +129,8 @@
      "titulo": "B",
      "texto": "Él más adentro, la cuadra abriéndose atrás."
     }
-   ]
+   ],
+   "marca_previa": "no"
   },
   {
    "n": 6,

@@ -1,0 +1,126 @@
+{
+ "_que_es": "Respaldo de la hoja ARBOL del Sheet. El Sheet manda; esto sirve sin sesión o sin señal.",
+ "actualizado": "2026-09-14 09:32",
+ "nodos": [
+  {
+   "nivel": "tronco",
+   "id": "ppp",
+   "padre": "",
+   "titulo": "Vender el Plan de Potencial",
+   "bajada": "Todo desemboca en la primera videollamada; ahí se ve si el caso da para un Plan de Potencial.",
+   "orden": 99,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "tema",
+   "id": "dato",
+   "padre": "ppp",
+   "titulo": "El potencial se calcula, no se opina",
+   "bajada": "Dato contra sobremesa: lo que el terreno puede sostener no se adivina.",
+   "orden": 1,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "tema",
+   "id": "nombre",
+   "padre": "ppp",
+   "titulo": "Tu terreno tiene un nombre propio",
+   "bajada": "Lo que puede llegar a ser, no el apodo que le pusieron otros.",
+   "orden": 2,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "tema",
+   "id": "tuyo",
+   "padre": "ppp",
+   "titulo": "Sigue a tu nombre",
+   "bajada": "Sin venderlo, sin malbaratarlo, sin deuda: el análisis es tuyo aunque nunca trabajes con nosotros.",
+   "orden": 3,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "tema",
+   "id": "carga",
+   "padre": "ppp",
+   "titulo": "Sin cargar la obra tú solo",
+   "bajada": "Cotizó construir y se asustó: hay un camino por partes y por etapas.",
+   "orden": 4,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "tema",
+   "id": "llamada",
+   "padre": "ppp",
+   "titulo": "La primera videollamada no cuesta",
+   "bajada": "Así se ve saber: el entregable como prueba, y el paso siguiente sin esfuerzo.",
+   "orden": 5,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "servilleta",
+   "padre": "dato",
+   "titulo": "La Servilleta",
+   "bajada": "",
+   "orden": 1,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "apodo",
+   "padre": "nombre",
+   "titulo": "El Apodo del Terreno",
+   "bajada": "",
+   "orden": 1,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "pub1",
+   "padre": "nombre",
+   "titulo": "El Terreno Dormido",
+   "bajada": "",
+   "orden": 2,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "comprador",
+   "padre": "tuyo",
+   "titulo": "El Comprador",
+   "bajada": "",
+   "orden": 1,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "vendo-construyo",
+   "padre": "carga",
+   "titulo": "¿Vendo o construyo?",
+   "bajada": "",
+   "orden": 1,
+   "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "pivote",
+   "padre": "llamada",
+   "titulo": "El Pivote",
+   "bajada": "",
+   "orden": 1,
+   "estado": "",
+   "nota": ""
+  }
+ ]
+}

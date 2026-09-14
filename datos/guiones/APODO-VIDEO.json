@@ -67,20 +67,26 @@
    "n": 3,
    "id": "E3",
    "lamina_src": "laminas/apodo-g8/L3.png",
-   "texto": "También le dicen «lote baldío».",
+   "texto": "En la colonia le dicen «el baldío». Como si fuera un descuido y no un patrimonio.",
    "partes": [
     {
      "rol": "narrador",
-     "dice": "También le dicen"
+     "dice": "En la colonia le dicen"
     },
     {
      "rol": "vecino",
-     "dice": "«lote baldío»."
+     "dice": "«el baldío»."
+    },
+    {
+     "rol": "narrador",
+     "dice": "Como si fuera un descuido y no un patrimonio."
     }
    ],
    "intencion": "la cita en tono casual, como quien señala con la barbilla — igual que la 2.",
    "voz_reusable": null,
-   "escena_reusable": null
+   "escena_reusable": null,
+   "texto_previo_13sep": "También le dicen «lote baldío».",
+   "por_que_14sep": "Alejandro 13-sep: «El texto no engancha, más nivel medio alto». Se le habla al dueño de colonia media-alta: el apodo viene de la colonia (no de «los vecinos» otra vez) y el remate nombra lo que él sí siente que tiene: un patrimonio, no un descuido."
   },
   {
    "n": 4,

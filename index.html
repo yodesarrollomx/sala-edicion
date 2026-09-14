@@ -72,7 +72,7 @@ a{color:var(--oro)}
 /* ── armazón ── */
 .app{max-width:560px;margin:0 auto;padding:16px 16px calc(var(--nav) + env(safe-area-inset-bottom));min-height:100dvh}
 html.embed .app{padding-top:8px}
-.vista{display:none} body[data-vista="hoy"] #vHoy,body[data-vista="pub"] #vPub,body[data-vista="aj"] #vAj,body[data-vista="prod"] #vProd{display:block}
+.vista{display:none} body[data-vista="hoy"] #vHoy,body[data-vista="pub"] #vPub,body[data-vista="aj"] #vAj,body[data-vista="prod"] #vProd,body[data-vista="arbol"] #vArbol{display:block}
 .panel-lateral{display:none}
 @media (min-width:640px){ .app{max-width:640px;padding-left:22px;padding-right:22px} }
 @media (min-width:960px){
@@ -82,7 +82,7 @@ html.embed .app{padding-top:8px}
   .cab{grid-area:cab} .mazo{grid-area:mazo}
   .panel-lateral{display:block;grid-area:panel;position:sticky;top:70px;max-height:calc(100vh - 90px);overflow:auto;
     background:var(--tarjeta);border:1px solid var(--linea);border-radius:20px;padding:20px;box-shadow:var(--sombra)}
-  #vPub,#vAj,#vProd{max-width:760px;margin:0 auto}
+  #vPub,#vAj,#vProd{max-width:760px;margin:0 auto} #vArbol{max-width:1180px;margin:0 auto}
 }
 
 /* ── árbol de Producción (12-sep) ── */
@@ -105,6 +105,36 @@ html.embed .app{padding-top:8px}
   .prod-hoja{max-width:100%}
   .prod-hoja .tt{max-width:none;white-space:normal}
 }
+/* ── el árbol de publicaciones (14-sep) ── */
+.arb-tronco{border:2px solid var(--oro);background:var(--tarjeta);border-radius:18px;padding:16px 20px;text-align:center;max-width:560px;margin:0 auto}
+.arb-tronco h3{font-family:var(--serif);font-weight:400;font-size:24px;margin:0 0 4px}
+.arb-tronco p{margin:0;color:var(--guia);font-size:13px}
+.arb-tallo{width:2px;height:26px;background:var(--linea2);margin:0 auto}
+.arb-temas{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;position:relative;padding-top:14px}
+.arb-temas::before{content:"";position:absolute;left:10%;right:10%;top:0;height:2px;background:var(--linea2)}
+.arb-tema{position:relative;border:1px solid var(--linea);background:var(--tarjeta);border-radius:16px;padding:12px 14px;min-width:0}
+.arb-tema::before{content:"";position:absolute;left:50%;top:-14px;width:2px;height:14px;background:var(--linea2)}
+.arb-tema h4{font-family:var(--serif);font-weight:400;font-size:17px;margin:0 0 2px;line-height:1.2}
+.arb-tema .baj{font-size:12px;color:var(--guia);margin:0 0 10px;line-height:1.35}
+.arb-tema .vacio{font-size:12px;color:var(--guia);border:1px dashed var(--linea2);border-radius:10px;padding:8px;text-align:center}
+.arb-pieza{border-left:2px solid var(--linea2);padding:6px 0 6px 10px;margin:6px 0}
+.arb-pieza .nom{font-weight:600;font-size:13.5px;display:flex;justify-content:space-between;gap:6px;align-items:baseline;cursor:pointer}
+.arb-pieza .nom small{font-weight:400;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--guia);white-space:nowrap}
+.arb-brotes{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 0}
+.arb-brote{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;border:1px solid var(--linea);border-radius:999px;padding:2px 7px 2px 4px;background:var(--fondo)}
+.arb-brote i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.arb-brote.verde i{background:var(--si)} .arb-brote.oro i{background:var(--oro)} .arb-brote.rojo i{background:var(--no)} .arb-brote.gris i{background:var(--linea2)}
+.arb-brote .v{color:var(--guia)}
+.arb-etapas{display:flex;gap:6px;margin:6px 0 0;flex-wrap:wrap}
+.arb-etapa{font-size:10.5px;color:var(--guia);display:inline-flex;align-items:center;gap:4px}
+.arb-etapa b{display:inline-block;width:44px;height:5px;border-radius:3px;background:var(--linea);position:relative;overflow:hidden}
+.arb-etapa b i{position:absolute;left:0;top:0;bottom:0;background:var(--si)}
+.arb-fruto{margin:8px 0 0;border-radius:12px;overflow:hidden;border:1px solid var(--si);background:#000}
+.arb-fruto video{width:100%;display:block;max-height:220px}
+.arb-fruto-cap{font-size:11px;color:var(--si);padding:4px 8px;background:var(--tarjeta);font-weight:600}
+.arb-fruto-no{margin:8px 0 0;font-size:11px;color:var(--guia);border:1px dashed var(--linea2);border-radius:10px;padding:6px 8px}
+.arb-leyenda{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:11.5px;color:var(--guia);margin:0 0 14px}
+@media (max-width:640px){ .arb-temas{grid-template-columns:1fr} .arb-temas::before{display:none} .arb-tema::before{display:none} }
 /* candidatas de una lámina, dentro de la carta de Hoy (Entrega B) */
 .cand-fila{display:flex;gap:8px;overflow-x:auto;padding:8px 12px;border-top:1px solid var(--linea);flex:none}
 .cand-item{flex:none;width:88px;text-align:center;font-size:11.5px}
@@ -458,6 +488,7 @@ html.cargando #actualizando{display:flex}
   <button data-v="pub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>Publicaciones<span class="punto"></span></button>
   <button data-v="aj"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes<span class="punto"></span></button>
   <button data-v="prod"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="12" r="2.4"/><path d="M6 8.4V15.6M6 12h7a3 3 0 0 0 3-3"/></svg>Producción<span class="punto"></span></button>
+  <button data-v="arbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7M12 15c-4 0-7-2.5-7-6a5 5 0 0 1 7-4.6A5 5 0 0 1 19 9c0 3.5-3 6-7 6z"/><path d="M12 15l-3-3M12 12l3-3"/></svg>Árbol<span class="punto"></span></button>
 </nav>
 
 <div class="app">
@@ -511,6 +542,18 @@ html.cargando #actualizando{display:flex}
     <div id="prodArbol"></div>
   </section>
 
+  <!-- ⑤ ÁRBOL: del tronco (vender PPP) a los temas, las publicaciones, sus versiones y el fruto -->
+  <section class="vista" id="vArbol">
+    <h2 class="titulo-v">Árbol de publicaciones</h2>
+    <p class="bajada-v">Del tronco a los temas, de cada tema a sus publicaciones, y de cada publicación a sus versiones. El fruto aparece sólo cuando el video está terminado.</p>
+    <div class="fila-estado" style="justify-content:center;margin-bottom:10px">
+      <button class="secund" id="arbActualizar" style="width:auto;padding:8px 16px;min-height:40px">Actualizar</button>
+      <span id="arbAviso" style="font-size:12.5px;color:var(--guia);margin-left:8px"></span>
+    </div>
+    <div class="arb-leyenda"><span><i class="prod-punto verde" style="display:inline-block"></i> aprobada</span><span><i class="prod-punto oro" style="display:inline-block"></i> en tu mesa</span><span><i class="prod-punto rojo" style="display:inline-block"></i> pediste cambio</span><span><i class="prod-punto gris" style="display:inline-block"></i> versión anterior</span></div>
+    <div id="arbol"></div>
+  </section>
+
   <!-- ③ AJUSTES: quién soy, cómo se usa, Producción, automáticos -->
   <section class="vista" id="vAj">
     <h2 class="titulo-v">Ajustes</h2>
@@ -549,7 +592,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='5719305ba4';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='16bce62f28';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -634,7 +677,7 @@ function irVista(v){
   document.body.dataset.vista=v;
   document.querySelectorAll('#puertas button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   window.scrollTo(0,0);
-  if(v==='pub'){ pintarPublicaciones() } if(v==='aj'){ pintarAjustes() } if(v==='hoy'){ pintarPanel() } if(v==='prod'){ pintarProduccion() }
+  if(v==='pub'){ pintarPublicaciones() } if(v==='aj'){ pintarAjustes() } if(v==='hoy'){ pintarPanel() } if(v==='prod'){ pintarProduccion() } if(v==='arbol'){ pintarArbol() }
 }
 document.querySelectorAll('#puertas button').forEach(b=>b.onclick=()=>{ cerrarCapas(); irVista(b.dataset.v) });
 function avisarPuerta(v,on){ const b=document.querySelector(`#puertas button[data-v="${v}"]`); if(b) b.classList.toggle('avisa',!!on) }
@@ -1930,6 +1973,74 @@ async function pintarProduccion(){
       </div></div>`;
   }).join('');
 }
+
+/* ══ el árbol de publicaciones (14-sep) ══
+   Alejandro: «quiero un árbol de publicaciones, algo visual: el tronco es vender el PPP, de ahí 5
+   temas, de ahí las ramas de las publicaciones, ver las ediciones, y el fruto terminado solamente
+   cuando esté terminado el video». Los nodos (tronco/temas/piezas) vienen de la hoja ARBOL del
+   Sheet (editable), con datos/arbol.json de respaldo; las versiones salen de las tiras y la COLA. */
+let ARBOL=null;
+async function traerArbol(){
+  if(ENTRADO()){
+    try{ const r=await fetch(GAS()+'?recurso=arbol&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'});
+      const j=await leerJSON(r); if(r.ok&&j&&j.ok===true&&Array.isArray(j.nodos)&&j.nodos.length){ ARBOL={nodos:j.nodos,fuente:'sheet'}; return } }catch(e){}
+  }
+  try{ const j=await (await fetch('datos/arbol.json?v='+Date.now())).json(); ARBOL={nodos:j.nodos||[],fuente:'respaldo'} }catch(e){ ARBOL={nodos:[],fuente:'nada'} }
+}
+function versionesDeLamina(t,l){
+  const ab=laminaAbierta(t,l); const vs=(l.versiones||[]).length?l.versiones:[{v:l.version||1,src:l.src}];
+  return vs.map((v,i)=>{ const ultima=i===vs.length-1; let col='gris';
+    if(ultima) col=!ab?'verde':(ab.tipo==='no'?'rojo':'oro');
+    return {v:v.v||(i+1),col,src:v.src||''} });
+}
+function frutoDe(z,publicada){
+  // el fruto sólo cuando el video está TERMINADO: corte hecho en la COLA o pieza publicada
+  const corteHecho=(z.filas.corte||[]).find(f=>/hecho/i.test(f.estado||''));
+  const g=PROG[z.nombre]||{}; const m=(g.muestras||[]).find(x=>x.tipo==='video'&&/video|corte|armado/i.test(x.que||''));
+  if(!(corteHecho||publicada)) return `<div class="arb-fruto-no">fruto por madurar · ${esc(quefaltaPara(z.tira,z.filas,publicada))}</div>`;
+  const src=m?m.src:(corteHecho?evidenciaVideo(corteHecho):'');
+  return src?`<div class="arb-fruto"><video src="${esc(src)}" controls playsinline preload="metadata"></video><div class="arb-fruto-cap">${publicada?'Publicada':'Video terminado'}</div></div>`
+            :`<div class="arb-fruto-no" style="border-style:solid;color:var(--si)">${publicada?'publicada':'video terminado'} · sin archivo a la mano</div>`;
+}
+function evidenciaVideo(f){ const e=f&&f.evidencia; if(!e) return ''; if(typeof e==='object') return e.ruta||e.src||''; return /\.mp4(\?|$)/i.test(e)?e:'' }
+function barraEtapa(nombre,filas){
+  if(!(filas||[]).length) return '';
+  const h=filas.filter(f=>/hecho/i.test(f.estado||'')).length, n=filas.length;
+  return `<span class="arb-etapa" title="${esc(nombre+': '+h+' de '+n)}">${esc(nombre)} <b><i style="width:${Math.round(100*h/n)}%"></i></b> ${h}/${n}</span>`;
+}
+function piezaArbol(z){
+  const publicada=(PZ[z.nombre]&&PZ[z.nombre].estado==='publicada'); const t=z.tira;
+  const brotes=t?(t.laminas||[]).map(l=>{ const vs=versionesDeLamina(t,l); const u=vs[vs.length-1];
+      return `<span class="arb-brote ${u.col}" title="Lámina ${l.n} · ${vs.length} versión(es)"><i></i>L${l.n}${vs.length>1?`<span class="v">·v${u.v}</span>`:''}</span>` }).join('')
+    :'<span class="arb-brote gris"><i></i>sin láminas todavía</span>';
+  const etapas=[barraEtapa('escenas',z.filas.escena),barraEtapa('voces',z.filas.voz),barraEtapa('corte',z.filas.corte)].join('');
+  const vaEn=t&&(t.laminas||[]).some(l=>laminaAbierta(t,l))?'láminas':((z.filas.corte||[]).length?'corte':((z.filas.voz||[]).length?'voz':((z.filas.escena||[]).length?'escena':(publicada?'publicada':'guion'))));
+  return `<div class="arb-pieza"><div class="nom" data-exp="${esc(z.nombre)}">${esc(z.nombre)}<small>${esc(publicada?'publicada':vaEn)}</small></div>
+    <div class="arb-brotes">${brotes}</div>${etapas?`<div class="arb-etapas">${etapas}</div>`:''}${frutoDe(z,publicada)}</div>`;
+}
+async function pintarArbol(){
+  const c=$('#arbol'), av=$('#arbAviso'); if(!c) return;
+  c.innerHTML='<p style="color:var(--guia);font-size:13px;text-align:center">Cargando el árbol…</p>';
+  await Promise.all([traerArbol(),traerCola()]);
+  const piezas=await armarPiezas();
+  const N=ARBOL.nodos||[]; const tronco=N.find(n=>n.nivel==='tronco')||{titulo:'Vender el Plan de Potencial',bajada:''};
+  const temas=N.filter(n=>n.nivel==='tema').sort((a,b)=>(a.orden||99)-(b.orden||99));
+  const nodoPieza=N.filter(n=>n.nivel==='pieza');
+  av.textContent=(ARBOL.fuente==='sheet'?'':(ARBOL.fuente==='respaldo'?'Temas desde la copia (sin sesión o sin señal)':'Sin temas: se pintan sólo las piezas'))+(COLA_ERR?' · sin la hoja COLA':'');
+  const porSlug={}; piezas.forEach(z=>{ porSlug[z.slug]=z });
+  const colgadas=new Set();
+  const dePieza=id=>{ const z=porSlug[id]||Object.values(porSlug).find(z=>z.slug.split('-')[0]===id.split('-')[0]); if(z) colgadas.add(z.slug); return z };
+  const temasHtml=temas.map(tm=>{
+    const hijos=nodoPieza.filter(n=>n.padre===tm.id).sort((a,b)=>(a.orden||99)-(b.orden||99));
+    const cuerpo=hijos.map(n=>{ const z=dePieza(n.id); return z?piezaArbol(z):`<div class="arb-pieza"><div class="nom">${esc(n.titulo||n.id)}<small>idea</small></div><div class="arb-brotes"><span class="arb-brote gris"><i></i>sin láminas todavía</span></div></div>` }).join('');
+    return `<div class="arb-tema"><h4>${esc(tm.titulo)}</h4><p class="baj">${esc(tm.bajada||'')}</p>${cuerpo||'<div class="vacio">rama sin publicaciones · cuélgale una en la hoja ARBOL</div>'}</div>`;
+  }).join('');
+  const sueltas=piezas.filter(z=>!colgadas.has(z.slug));
+  const sueltasHtml=sueltas.length?`<div class="arb-tema" style="border-style:dashed"><h4>Sin tema todavía</h4><p class="baj">Cuélgalas de un tema en la hoja ARBOL (nivel pieza · padre = id del tema).</p>${sueltas.map(piezaArbol).join('')}</div>`:'';
+  c.innerHTML=`<div class="arb-tronco"><h3>${esc(tronco.titulo)}</h3><p>${esc(tronco.bajada||'')}</p></div><div class="arb-tallo"></div><div class="arb-temas">${temasHtml}${sueltasHtml}</div>`;
+  c.querySelectorAll('.arb-pieza .nom[data-exp]').forEach(el=>el.onclick=()=>{ irVista('pub'); if(typeof abrirExp==='function') abrirExp(el.dataset.exp) });
+}
+const _bArb=$('#arbActualizar'); if(_bArb) _bArb.onclick=()=>pintarArbol();
 
 /* ══ arranque ══ */
 function pintarFecha(f){ try{ $('#fechaTxt').textContent=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}) }catch(e){ $('#fechaTxt').textContent=f } }
