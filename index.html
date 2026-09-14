@@ -146,6 +146,20 @@ html.embed .app{padding-top:8px}
 .arb-embudo .fila{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline}
 .arb-embudo .fila b{font-size:16px;font-family:var(--serif);font-weight:400}
 .arb-embudo ol{margin:4px 0 0;padding-left:18px;color:var(--guia)} .arb-embudo ol a{color:inherit}
+.arb-cards{display:flex;flex-direction:column;gap:10px}
+.arb-card{display:flex;gap:10px;border:1px solid var(--linea);border-radius:12px;background:var(--fondo);overflow:hidden;cursor:pointer;min-width:0}
+.arb-card:hover{border-color:var(--oro)}
+.arb-img{position:relative;flex:none;width:96px;min-height:96px;background:var(--tarjeta);display:flex;align-items:center;justify-content:center;color:var(--guia);font-size:10.5px;text-align:center}
+.arb-img img{width:96px;height:100%;object-fit:cover;display:block;max-width:96px}
+.arb-fmt{position:absolute;left:4px;bottom:4px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;background:rgba(0,0,0,.65);color:#fff;border-radius:6px;padding:2px 5px}
+.arb-cuerpo{padding:8px 10px 8px 0;min-width:0;flex:1}
+.arb-tit{font-weight:600;font-size:13.5px;line-height:1.25} .arb-sub{font-size:11px;color:var(--guia);margin:2px 0 0;line-height:1.35}
+.arb-tema.suelta{border-style:dashed;grid-column:1/-1} .arb-tema.suelta .arb-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.arb-ficha h3{font-family:var(--serif);font-weight:400;font-size:22px;margin:10px 0 2px} .arb-ficha h4{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--guia);margin:14px 0 6px}
+.arb-ficha-img img{width:100%;max-height:300px;object-fit:cover;border-radius:12px;display:block}
+.arb-tabla{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0 0} .arb-tabla th{font-weight:600;color:var(--guia);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;text-align:right;padding:4px} .arb-tabla td{padding:5px 4px;text-align:right;border-top:1px solid var(--linea)} .arb-tabla td:first-child,.arb-tabla th:first-child{text-align:left}
+.arb-spark{width:100%;height:48px;display:block} .arb-ficha small{font-size:11px;color:var(--guia)}
+.arb-vers{display:flex;gap:8px;overflow-x:auto} .arb-ver{flex:none;width:70px;text-align:center;font-size:11px} .arb-ver img{width:70px;height:70px;object-fit:cover;border-radius:8px;display:block} .arb-ver small{color:var(--guia);display:block}
 .arb-leyenda{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:11.5px;color:var(--guia);margin:0 0 14px}
 @media (max-width:640px){ .arb-temas{grid-template-columns:1fr} .arb-temas::before{display:none} .arb-tema::before{display:none} }
 /* candidatas de una lámina, dentro de la carta de Hoy (Entrega B) */
@@ -605,7 +619,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='ecd771248c';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='f00ad3d607';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1988,13 +2002,13 @@ async function pintarProduccion(){
 }
 
 /* ══ el árbol de publicaciones (14-sep) ══
-   Alejandro: «quiero un árbol de publicaciones, algo visual: el tronco es vender el PPP, de ahí 5
-   temas, de ahí las ramas de las publicaciones, ver las ediciones, y el fruto terminado solamente
-   cuando esté terminado el video». Los nodos (tronco/temas/piezas) vienen de la hoja ARBOL del
-   Sheet (editable), con datos/arbol.json de respaldo; las versiones salen de las tiras y la COLA. */
+   Alejandro: «el tronco es vender el PPP, de ahí 5 temas, de ahí las publicaciones, ver las ediciones y el
+   fruto sólo cuando el video esté terminado» y, esa misma tarde: «más resumido, más visual, como un dashboard
+   con su imagen y todo; SOLO Yo Desarrollo (nada de Aurum); integra toda foto, lámina o video que se ejecutó en
+   nuestra página aunque no lo haya hecho la Sala; y al dar clic a cada fruto, métricas desde la primera versión».
+   Fuentes: hoja ARBOL (temas y qué cuelga de cuál) · tiras+COLA (versiones) · datos/embudo.json (catálogo de
+   TODO lo publicado en la página de Yo Desarrollo, con portada, KPIs, historia y veredicto). */
 let ARBOL=null, EMBUDO=null;
-async function traerEmbudo(){ try{ EMBUDO=await (await fetch('datos/embudo.json?v='+Date.now())).json() }catch(e){ EMBUDO=null } }
-function embudoDe(nombre){ return ((EMBUDO&&EMBUDO.piezas)||[]).find(z=>z.pieza===nombre||normSlug(z.pieza)===normSlug(nombre)) }
 async function traerArbol(){
   if(ENTRADO()){
     try{ const r=await fetch(GAS()+'?recurso=arbol&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'});
@@ -2002,52 +2016,35 @@ async function traerArbol(){
   }
   try{ const j=await (await fetch('datos/arbol.json?v='+Date.now())).json(); ARBOL={nodos:j.nodos||[],fuente:'respaldo'} }catch(e){ ARBOL={nodos:[],fuente:'nada'} }
 }
+async function traerEmbudo(){ try{ EMBUDO=await (await fetch('datos/embudo.json?v='+Date.now())).json() }catch(e){ EMBUDO=null } }
+function catalogoDe(nombre){ return ((EMBUDO&&EMBUDO.catalogo)||[]).find(c=>c.pieza&&(c.pieza===nombre||normSlug(c.pieza)===normSlug(nombre))) }
+function embudoDe(nombre){ return ((EMBUDO&&EMBUDO.piezas)||[]).find(z=>z.pieza===nombre||normSlug(z.pieza)===normSlug(nombre)) }
+const N_=v=>(v===null||v===undefined||v==='')?'–':String(v);
 function versionesDeLamina(t,l){
   const ab=laminaAbierta(t,l); const vs=(l.versiones||[]).length?l.versiones:[{v:l.version||1,src:l.src}];
   return vs.map((v,i)=>{ const ultima=i===vs.length-1; let col='gris';
-    // un «no» sellado en la tira (sala_sellar.py) cuenta como rojo aunque la marca ya no esté en el día de hoy
     if(ultima) col=!ab?'verde':((ab.tipo==='no'||(l.estado==='rehecha'&&l.marca_previa==='no'))?'rojo':'oro');
     return {v:v.v||(i+1),col,src:v.src||''} });
 }
-function kpisHtml(nombre){
-  // el embudo conectado al fruto (14-sep): qué logró, contra los mejores de su formato, y el veredicto
-  const e=embudoDe(nombre); if(!e) return '';
-  const k=e.kpis||{}; const n=v=>(v===null||v===undefined)?'–':String(v);
-  const chips=[[k.reach,'alcance'],[k.views,'vistas'],[k.interacciones,'interacc.'],[k.guardados,'guardados'],[e.leads,'leads']]
-    .map(([v,t])=>`<span class="arb-kpi"><b>${n(v)}</b>${t}</span>`).join('');
-  const m=e.mejores||{}; const mejor=m.mejor?`<a href="${esc(m.mejor.permalink||'#')}" target="_blank" rel="noopener">el mejor ${esc((m.formato||'').toLowerCase())}: «${esc(m.mejor.titulo||'')}» (${m.mejor.alcance})</a>`:'';
-  return `<div class="arb-kpis">${chips}</div><span class="arb-vered ${esc(e.color||'gris')}"><i></i>${esc(e.veredicto||'')}</span>
-    <p class="arb-razon">${esc(e.razon||'')}${mejor?' · '+mejor:''} · ${esc(String(e.dias))} días publicada</p>`;
-}
-function frutoDe(z,publicada){
-  // el fruto sólo cuando el video está TERMINADO: corte hecho en la COLA o pieza publicada
-  const corteHecho=(z.filas.corte||[]).find(f=>/hecho/i.test(f.estado||''));
-  const g=PROG[z.nombre]||{}; const m=(g.muestras||[]).find(x=>x.tipo==='video'&&/video|corte|armado/i.test(x.que||''));
-  // un corte «hecho» con láminas todavía abiertas es un corte que se va a retirar (13-sep pasó): no es fruto
-  const abiertas=z.tira&&(z.tira.laminas||[]).some(l=>laminaAbierta(z.tira,l));
-  if(!((corteHecho&&!abiertas)||publicada)) return `<div class="arb-fruto-no">fruto por madurar · ${esc(quefaltaPara(z.tira,z.filas,publicada))}</div>`;
-  const src=m?m.src:(corteHecho?evidenciaVideo(corteHecho):'');
-  return src?`<div class="arb-fruto"><video src="${esc(src)}" controls playsinline preload="metadata"></video><div class="arb-fruto-cap">${publicada?'Publicada':'Video terminado'}</div></div>`
-            :`<div class="arb-fruto-no" style="border-style:solid;color:var(--si)">${publicada?'publicada':'video terminado'} · sin archivo a la mano</div>`;
-}
 function evidenciaVideo(f){ const e=f&&f.evidencia; if(!e) return ''; if(typeof e==='object') return e.ruta||e.src||''; return /\.mp4(\?|$)/i.test(e)?e:'' }
-function barraEtapa(nombre,filas){
-  if(!(filas||[]).length) return '';
-  const h=filas.filter(f=>/hecho/i.test(f.estado||'')).length, n=filas.length;
-  return `<span class="arb-etapa" title="${esc(nombre+': '+h+' de '+n)}">${esc(nombre)} <b><i style="width:${Math.round(100*h/n)}%"></i></b> ${h}/${n}</span>`;
+function vaEnDe(z,publicada){ const t=z.tira; return t&&(t.laminas||[]).some(l=>laminaAbierta(t,l))?'láminas':((z.filas.corte||[]).length?'corte':((z.filas.voz||[]).length?'voz':((z.filas.escena||[]).length?'escena':(publicada?'publicada':'guion')))) }
+function kpiChips(k,leads){
+  return `<div class="arb-kpis">${[[k.reach,'alcance'],[k.views,'vistas'],[k.interacciones,'interacc.'],[leads,'leads']].map(([v,t])=>`<span class="arb-kpi"><b>${N_(v)}</b>${t}</span>`).join('')}</div>`;
 }
-function piezaArbol(z){
-  const enMeta=!!embudoDe(z.nombre);                      // la verdad de «publicada» la da la hoja PUBLICADAS (ids de Meta)
-  const publicada=enMeta||(PZ[z.nombre]&&PZ[z.nombre].estado==='publicada'); const t=z.tira;
-  const ojo=enMeta&&PZ[z.nombre]&&PZ[z.nombre].estado!=='publicada'?`<div class="arb-ojo">Publicada según Meta desde ${esc(embudoDe(z.nombre).campana||'')}, pero la Sala la tiene «${esc(PZ[z.nombre].estado)}»: corrígelo en piezas.json o en PUBLICADAS.</div>`
-           :(!enMeta&&PZ[z.nombre]&&PZ[z.nombre].estado==='publicada'?`<div class="arb-ojo">La Sala la marca publicada pero no está en la hoja PUBLICADAS: sin ids de Meta no se puede medir.</div>`:'');
-  const brotes=t?(t.laminas||[]).map(l=>{ const vs=versionesDeLamina(t,l); const u=vs[vs.length-1];
-      return `<span class="arb-brote ${u.col}" title="Lámina ${l.n} · ${vs.length} versión(es)"><i></i>L${l.n}${vs.length>1?`<span class="v">·v${u.v}</span>`:''}</span>` }).join('')
-    :'<span class="arb-brote gris"><i></i>sin láminas todavía</span>';
-  const etapas=[barraEtapa('escenas',z.filas.escena),barraEtapa('voces',z.filas.voz),barraEtapa('corte',z.filas.corte)].join('');
-  const vaEn=t&&(t.laminas||[]).some(l=>laminaAbierta(t,l))?'láminas':((z.filas.corte||[]).length?'corte':((z.filas.voz||[]).length?'voz':((z.filas.escena||[]).length?'escena':(publicada?'publicada':'guion'))));
-  return `<div class="arb-pieza"><div class="nom" data-exp="${esc(z.nombre)}">${esc(z.nombre)}<small>${esc(publicada?'publicada':vaEn)}</small></div>
-    <div class="arb-brotes">${brotes}</div>${etapas?`<div class="arb-etapas">${etapas}</div>`:''}${frutoDe(z,publicada)}${kpisHtml(z.nombre)}${ojo}</div>`;
+/* una tarjeta = una publicación (fruto) o una pieza en producción */
+function tarjetaPublicada(c){
+  const e=c.pieza?embudoDe(c.pieza):null;
+  return `<div class="arb-card" data-ficha="${esc(c.clave)}"><div class="arb-img">${c.cover?`<img src="${esc(c.cover)}" alt="" loading="lazy">`:'<span>sin portada</span>'}<span class="arb-fmt">${esc(c.formato||'')}</span></div>
+    <div class="arb-cuerpo"><div class="arb-tit">${esc(c.pieza||c.titulo||'')}</div><div class="arb-sub">${esc(fechaBonita?fechaBonita(c.fecha):c.fecha)}${c.pieza?' · hecha en la Sala':''}</div>
+    ${kpiChips(c.kpis.IG||{},e?e.leads:null)}<span class="arb-vered ${esc(c.color)}"><i></i>${esc(c.veredicto)}</span></div></div>`;
+}
+function tarjetaEnProduccion(z){
+  const t=z.tira; const img=t&&(t.laminas||[]).find(l=>l.src); const publicada=(PZ[z.nombre]&&PZ[z.nombre].estado==='publicada');
+  const brotes=t?(t.laminas||[]).map(l=>{ const vs=versionesDeLamina(t,l); const u=vs[vs.length-1]; return `<span class="arb-brote ${u.col}" title="Lámina ${l.n} · ${vs.length} versión(es)"><i></i>L${l.n}${vs.length>1?`<span class="v">·v${u.v}</span>`:''}</span>` }).join(''):'';
+  const ojo=publicada?`<div class="arb-ojo">La Sala la marca publicada pero no está en la hoja PUBLICADAS: sin ids de Meta no se mide.</div>`:'';
+  return `<div class="arb-card produccion" data-pieza="${esc(z.nombre)}"><div class="arb-img">${img?`<img src="${esc(ligera(img.src))}" alt="" loading="lazy">`:'<span>sin láminas todavía</span>'}<span class="arb-fmt">${esc(vaEnDe(z,publicada))}</span></div>
+    <div class="arb-cuerpo"><div class="arb-tit">${esc(z.nombre)}</div><div class="arb-sub">${esc(quefaltaPara(t,z.filas,publicada))}</div>
+    ${brotes?`<div class="arb-brotes">${brotes}</div>`:''}<span class="arb-vered gris"><i></i>fruto por madurar</span>${ojo}</div></div>`;
 }
 async function pintarArbol(){
   const c=$('#arbol'), av=$('#arbAviso'); if(!c) return;
@@ -2057,24 +2054,62 @@ async function pintarArbol(){
   const N=ARBOL.nodos||[]; const tronco=N.find(n=>n.nivel==='tronco')||{titulo:'Vender el Plan de Potencial',bajada:''};
   const temas=N.filter(n=>n.nivel==='tema').sort((a,b)=>(a.orden||99)-(b.orden||99));
   const nodoPieza=N.filter(n=>n.nivel==='pieza');
-  av.textContent=(ARBOL.fuente==='sheet'?'':(ARBOL.fuente==='respaldo'?'Temas desde la copia (sin sesión o sin señal)':'Sin temas: se pintan sólo las piezas'))+(COLA_ERR?' · sin la hoja COLA':'');
+  av.textContent=(ARBOL.fuente==='sheet'?'':(ARBOL.fuente==='respaldo'?'Temas desde la copia (sin sesión o sin señal)':'Sin temas: se pintan sólo las piezas'))+(COLA_ERR?' · sin la hoja COLA':'')+(EMBUDO?'':' · sin datos del embudo');
+  const CAT=(EMBUDO&&EMBUDO.catalogo)||[];
+  const usadasCat=new Set(), usadasPz=new Set();
   const porSlug={}; piezas.forEach(z=>{ porSlug[z.slug]=z });
-  const colgadas=new Set();
-  // la pieza del Sheet se busca por id (slug de la COLA/tira) o por su título (piezas.json: «La Servilleta» → la-servilleta)
-  const dePieza=n=>{ const id=n.id, tt=normSlug(n.titulo||''); const z=porSlug[id]||Object.values(porSlug).find(z=>z.slug===tt||z.slug.split('-').includes(id)||z.slug.endsWith('-'+id)||(tt&&normSlug(z.nombre)===tt)); if(z) colgadas.add(z.slug); return z };
+  // ¿qué cuelga de un nodo «pieza» del Sheet? una publicación del catálogo (id = clave de Meta, o el nombre de la pieza) o una pieza en producción
+  const tarjetaDe=n=>{
+    const id=String(n.id||'').trim(), tt=normSlug(n.titulo||'');
+    let cpub=CAT.find(x=>x.clave===id)||CAT.find(x=>x.pieza&&(normSlug(x.pieza)===tt||x.pieza===n.titulo||normSlug(x.pieza).split('-').includes(id)));
+    const z=porSlug[id]||Object.values(porSlug).find(z=>z.slug===tt||z.slug.split('-').includes(id)||z.slug.endsWith('-'+id)||(tt&&normSlug(z.nombre)===tt));
+    if(!cpub&&z) cpub=CAT.find(x=>x.pieza&&normSlug(x.pieza)===normSlug(z.nombre));
+    if(cpub){ usadasCat.add(cpub.clave); if(z) usadasPz.add(z.slug); return tarjetaPublicada(cpub) }
+    if(z){ usadasPz.add(z.slug); return tarjetaEnProduccion(z) }
+    return `<div class="arb-card idea"><div class="arb-img"><span>idea</span></div><div class="arb-cuerpo"><div class="arb-tit">${esc(n.titulo||id)}</div><div class="arb-sub">sin láminas todavía</div></div></div>`;
+  };
   const temasHtml=temas.map(tm=>{
     const hijos=nodoPieza.filter(n=>n.padre===tm.id).sort((a,b)=>(a.orden||99)-(b.orden||99));
-    const cuerpo=hijos.map(n=>{ const z=dePieza(n); return z?piezaArbol(z):`<div class="arb-pieza"><div class="nom">${esc(n.titulo||n.id)}<small>idea</small></div><div class="arb-brotes"><span class="arb-brote gris"><i></i>sin láminas todavía</span></div></div>` }).join('');
-    return `<div class="arb-tema"><h4>${esc(tm.titulo)}</h4><p class="baj">${esc(tm.bajada||'')}</p>${cuerpo||'<div class="vacio">rama sin publicaciones · cuélgale una en la hoja ARBOL</div>'}</div>`;
+    const cuerpo=hijos.map(tarjetaDe).join('');
+    return `<div class="arb-tema"><h4>${esc(tm.titulo)}</h4><p class="baj">${esc(tm.bajada||'')}</p><div class="arb-cards">${cuerpo||'<div class="vacio">rama sin publicaciones · cuélgale una en la hoja ARBOL</div>'}</div></div>`;
   }).join('');
-  const sueltas=piezas.filter(z=>!colgadas.has(z.slug));
-  const sueltasHtml=sueltas.length?`<div class="arb-tema" style="border-style:dashed"><h4>Sin tema todavía</h4><p class="baj">Cuélgalas de un tema en la hoja ARBOL (nivel pieza · padre = id del tema).</p>${sueltas.map(piezaArbol).join('')}</div>`:'';
+  // lo publicado en la página que NO cuelga de ningún tema todavía (lo hizo la Sala o no) + piezas sueltas
+  const sueltasCat=CAT.filter(x=>!usadasCat.has(x.clave)); const sueltasPz=piezas.filter(z=>!usadasPz.has(z.slug)&&!CAT.find(x=>x.pieza&&normSlug(x.pieza)===normSlug(z.nombre)));
+  const sueltasHtml=(sueltasCat.length||sueltasPz.length)?`<div class="arb-tema suelta"><h4>Publicado en la página · sin tema todavía</h4><p class="baj">${sueltasCat.length} publicación(es) de Yo Desarrollo medidas en el embudo. Para colgarlas de un tema: fila en la hoja ARBOL (nivel «pieza», id = la clave que ves en su ficha, padre = id del tema).</p><div class="arb-cards">${sueltasPz.map(tarjetaEnProduccion).join('')}${sueltasCat.map(tarjetaPublicada).join('')}</div></div>`:'';
   const E=EMBUDO||{}; const sem=(E.corpus||{}).semana||{}; const sa=sem.actual||{}, sp=sem.anterior||{};
-  const embudoHtml=E.generado?`<div class="arb-embudo"><h5>El embudo · medido ${esc(E.generado)} · vara: los mejores de ${esc((E.varas||{}).cuenta||'')} en ${esc(String((E.varas||{}).kpi_ventana_dias||''))} días</h5>
-      <div class="fila"><span><b>${esc(String(sa.reach??'–'))}</b> alcance esta semana (${esc(String(sa.posts??'–'))} pub.)</span><span><b>${esc(String(sp.reach??'–'))}</b> la anterior (${esc(String(sp.posts??'–'))})</span><span><b>${(E.piezas||[]).reduce((a,z)=>a+(z.leads||0),0)}</b> leads con utm${(E.corpus||{}).leads_utm_activo?'':' · <em>la medición de leads por utm aún no ha recibido ninguno</em>'}</span></div>
-      ${(E.aprendizaje||[]).length?`<ol>${E.aprendizaje.map(a=>`<li>${esc(a.formato||'')} · <a href="${esc(a.permalink||'#')}" target="_blank" rel="noopener">«${esc(a.titulo||'')}»</a> · ${esc(String(a.alcance))} de alcance${a.cuenta&&a.cuenta!==(E.varas||{}).cuenta?` (${esc(a.cuenta)})`:''}</li>`).join('')}</ol>`:''}</div>`:'';
+  const embudoHtml=E.generado?`<div class="arb-embudo"><h5>El embudo de Yo Desarrollo · medido ${esc(E.generado)} · vara: los mejores en ${esc(String((E.varas||{}).kpi_ventana_dias||''))} días</h5>
+      <div class="fila"><span><b>${esc(N_(sa.reach))}</b> alcance esta semana (${esc(N_(sa.posts))} pub.)</span><span><b>${esc(N_(sp.reach))}</b> la anterior (${esc(N_(sp.posts))})</span><span><b>${CAT.length}</b> publicaciones medidas</span><span><b>${(E.piezas||[]).reduce((a,z)=>a+(z.leads||0),0)}</b> leads con utm${(E.corpus||{}).leads_utm_activo?'':' · <em>nunca ha entrado uno</em>'}</span></div>
+      ${(E.aprendizaje||[]).length?`<ol>${E.aprendizaje.map(a=>`<li>${esc(a.formato||'')} · <a href="${esc(a.permalink||'#')}" target="_blank" rel="noopener">«${esc(a.titulo||'')}»</a> · ${esc(String(a.alcance))} de alcance</li>`).join('')}</ol>`:''}</div>`:'';
   c.innerHTML=embudoHtml+`<div class="arb-tronco"><h3>${esc(tronco.titulo)}</h3><p>${esc(tronco.bajada||'')}</p></div><div class="arb-tallo"></div><div class="arb-temas">${temasHtml}${sueltasHtml}</div>`;
-  c.querySelectorAll('.arb-pieza .nom[data-exp]').forEach(el=>el.onclick=()=>{ irVista('pub'); if(typeof abrirExp==='function') abrirExp(el.dataset.exp) });
+  c.querySelectorAll('.arb-card[data-ficha]').forEach(el=>el.onclick=()=>fichaPublicacion(el.dataset.ficha));
+  c.querySelectorAll('.arb-card[data-pieza]').forEach(el=>el.onclick=()=>{ irVista('pub'); if(typeof abrirExp==='function') abrirExp(el.dataset.pieza) });
+}
+/* la ficha de un fruto: métricas desde la primera medición, versiones, el mejor de su formato */
+function sparkline(serie,campo){
+  const pts=(serie||[]).filter(x=>typeof x[campo]==='number'); if(pts.length<2) return '';
+  const max=Math.max(...pts.map(x=>x[campo]))||1, W=260,H=48;
+  const d=pts.map((x,i)=>`${(i*(W-4)/(pts.length-1)+2).toFixed(1)},${(H-2-(x[campo]/max)*(H-6)).toFixed(1)}`).join(' ');
+  return `<svg class="arb-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><polyline points="${d}" fill="none" stroke="var(--oro)" stroke-width="2"/></svg>
+    <small>${esc(campo==='reach'?'alcance':campo)} · de ${esc((pts[0].t||'').slice(0,10))} (${pts[0][campo]}) a ${esc((pts[pts.length-1].t||'').slice(0,10))} (${pts[pts.length-1][campo]}) · ${pts.length} mediciones</small>`;
+}
+function fichaPublicacion(clave){
+  const c=((EMBUDO&&EMBUDO.catalogo)||[]).find(x=>x.clave===clave); if(!c) return;
+  const e=c.pieza?embudoDe(c.pieza):null; const k=c.kpis.IG||{}, f=c.kpis.FB||{}; const m=c.mejores||{};
+  const t=c.pieza?Object.values(TIRAS).find(t=>t&&t.pieza===c.pieza):null;
+  const versiones=t?`<h4>Versiones de sus láminas</h4><div class="arb-vers">${(t.laminas||[]).map(l=>{ const vs=versionesDeLamina(t,l); return `<div class="arb-ver"><img src="${esc(ligera(l.src))}" alt="" loading="lazy"><b>L${l.n}</b><small>${vs.length} versión(es)</small></div>` }).join('')}</div>`:'';
+  const serie=(c.historia.IG||[]).length?c.historia.IG:(c.historia.FB||[]);
+  hoja(`<div class="arb-ficha"><div class="arb-ficha-img">${c.cover?`<img src="${esc(c.cover)}" alt="">`:''}</div>
+    <h3>${esc(c.pieza||c.titulo)}</h3><p class="arb-sub">${esc(c.formato)} · publicada ${esc(fechaBonita?fechaBonita(c.fecha):c.fecha)} · ${c.dias} días${c.pieza?' · hecha en la Sala':' · publicada fuera de la Sala'}</p>
+    ${c.pieza?'':`<p class="arb-sub">«${esc(c.titulo)}»</p>`}
+    <span class="arb-vered ${esc(c.color)}"><i></i>${esc(c.veredicto)}</span><p class="arb-razon">${esc(c.razon)}</p>
+    <table class="arb-tabla"><tr><th></th><th>alcance</th><th>vistas</th><th>interacc.</th><th>guardados</th><th>% inter.</th></tr>
+      <tr><td>Instagram</td><td>${N_(k.reach)}</td><td>${N_(k.views)}</td><td>${N_(k.interacciones)}</td><td>${N_(k.guardados)}</td><td>${N_(k.er)}</td></tr>
+      <tr><td>Facebook</td><td>n/d</td><td>${N_(f.views)}</td><td>${N_(f.interacciones)}</td><td>–</td><td>–</td></tr>
+      ${e?`<tr><td>Leads con utm</td><td colspan="5">${N_(e.leads)} lead(s) · ${N_(e.citas)} cita(s)</td></tr>`:''}</table>
+    ${serie.length>=2?`<h4>Desde la primera medición</h4>${sparkline(serie,'reach')||sparkline(serie,'views')}`:'<p class="arb-sub">Historia: una sola medición todavía; el centinela mide dos veces al día desde hoy.</p>'}
+    ${m.mejor?`<h4>Contra el mejor ${esc((m.formato||'').toLowerCase())} de Yo Desarrollo</h4><p class="arb-sub"><a href="${esc(m.mejor.permalink||'#')}" target="_blank" rel="noopener">«${esc(m.mejor.titulo)}»</a> · ${m.mejor.alcance} de alcance · ${N_(m.mejor.er)} % · mediana del formato ${N_(m.mediana_alcance)} (${m.n} publicaciones)</p>`:''}
+    ${versiones}
+    <p class="arb-sub">${c.permalinks.IG?`<a href="${esc(c.permalinks.IG)}" target="_blank" rel="noopener">Abrir en Instagram ↗</a> · `:''}${c.permalinks.FB?`<a href="${esc(c.permalinks.FB)}" target="_blank" rel="noopener">Abrir en Facebook ↗</a> · `:''}clave: <code>${esc(c.clave)}</code></p></div>`,'ficha-'+clave);
 }
 const _bArb=$('#arbActualizar'); if(_bArb) _bArb.onclick=()=>pintarArbol();
 

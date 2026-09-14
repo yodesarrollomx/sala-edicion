@@ -1,6 +1,6 @@
 {
  "_que_es": "Embudo por publicación: KPIs de Meta, «los mejores» del mismo formato y un veredicto con las varas de REGLAS.",
- "generado": "2026-09-14 10:03",
+ "generado": "2026-09-14 10:26",
  "corpus": {
   "generado": "2026-09-14 10:02",
   "posts": 71,
@@ -29,31 +29,31 @@
  },
  "aprendizaje": [
   {
-   "titulo": "Diseñar para una marca es distinto a diseñar una casa.",
-   "formato": "Carrusel",
-   "alcance": 238,
-   "er": 5.88,
-   "fecha": "2026-08-27",
-   "permalink": "https://www.instagram.com/p/DcjrECakyvR/",
-   "cuenta": "Aurum Arquitectos"
-  },
-  {
-   "titulo": "La familia de Casa Zara es de las que reciben seguido y disfrutan tener gente en",
+   "titulo": "¿Qué es el Plan Potencial Personalizado?",
    "formato": "Reel",
-   "alcance": 219,
-   "er": 3.2,
-   "fecha": "2026-06-04",
-   "permalink": "https://www.instagram.com/reel/DZLWqaXyQhm/",
-   "cuenta": "Aurum Arquitectos"
+   "alcance": 176,
+   "er": 9.66,
+   "fecha": "2026-06-28",
+   "permalink": "https://www.instagram.com/reel/DaIzYVsswLw/",
+   "cuenta": "Yo Desarrollo"
   },
   {
-   "titulo": "Esta roca es parte del cerro y estaba en el terreno desde antes del proyecto. Po",
-   "formato": "Image",
-   "alcance": 185,
-   "er": 11.35,
-   "fecha": "2026-09-09",
-   "permalink": "https://www.instagram.com/p/DdEbX_ojC2D/",
-   "cuenta": "Aurum Arquitectos"
+   "titulo": "No dejes tu idea de desarrollo en el olvido, en Yodesarrollo estudiamos la viali",
+   "formato": "Reel",
+   "alcance": 157,
+   "er": 9.55,
+   "fecha": "2026-07-02",
+   "permalink": "https://www.instagram.com/reel/DaTh_VeMOr1/",
+   "cuenta": "Yo Desarrollo"
+  },
+  {
+   "titulo": "Bienvenidos a YoDesarollo 🏠",
+   "formato": "Reel",
+   "alcance": 136,
+   "er": 11.03,
+   "fecha": "2026-06-26",
+   "permalink": "https://www.instagram.com/reel/DaECMuOsXer/",
+   "cuenta": "Yo Desarrollo"
   }
  ],
  "piezas": [
@@ -116,7 +116,28 @@
    },
    "veredicto": "cortar o cambiar de forma",
    "color": "rojo",
-   "razon": "alcance 63: menos de la mitad de la mediana (135) de su formato"
+   "razon": "alcance 63: menos de la mitad de la mediana (135) de su formato",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18440830471121351.jpg",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 63,
+      "views": 70,
+      "interacciones": 4
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   },
+   "clave": "18440830471121351",
+   "titulo": "Casi toda familia tiene un terreno"
   },
   {
    "pieza": "¿Vendo o construyo?",
@@ -177,7 +198,2740 @@
    },
    "veredicto": "cortar o cambiar de forma",
    "color": "rojo",
-   "razon": "alcance 14: menos de la mitad de la mediana (42.5) de su formato"
+   "razon": "alcance 14: menos de la mitad de la mediana (42.5) de su formato",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18114808762751480.jpg",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 14,
+      "views": null,
+      "interacciones": 2
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   },
+   "clave": "18114808762751480",
+   "titulo": "No es que no te decidas."
+  }
+ ],
+ "catalogo": [
+  {
+   "clave": "18114808762751480",
+   "titulo": "No es que no te decidas.",
+   "fecha": "2026-09-02",
+   "dias": 12,
+   "formato": "Carrusel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18114808762751480.jpg",
+   "pieza": "¿Vendo o construyo?",
+   "permalinks": {
+    "IG": "https://www.instagram.com/p/Dc0Ao2ZDqM4/",
+    "FB": "https://www.facebook.com/1051195277418476/posts/1106450158559654"
+   },
+   "kpis": {
+    "IG": {
+     "reach": 14,
+     "views": null,
+     "interacciones": 2,
+     "guardados": 0,
+     "er": 14.29
+    },
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 2,
+    "formato": "Carrusel",
+    "ventana_dias": 120,
+    "mediana_alcance": 42.5,
+    "mediana_er": 9.81,
+    "mejor": {
+     "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
+     "permalink": "https://www.instagram.com/p/DYmx9a1nAFv/",
+     "alcance": 65,
+     "er": 4.62,
+     "fecha": "2026-05-21",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Carrusel"
+    }
+   },
+   "veredicto": "cortar o cambiar de forma",
+   "color": "rojo",
+   "razon": "alcance 14: menos de la mitad de la mediana (42.5) de su formato",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 14,
+      "views": null,
+      "interacciones": 2
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "18440830471121351",
+   "titulo": "Casi toda familia tiene un terreno",
+   "fecha": "2026-08-29",
+   "dias": 16,
+   "formato": "Reel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18440830471121351.jpg",
+   "pieza": "La Servilleta",
+   "permalinks": {
+    "IG": "https://www.instagram.com/reel/DcpTY8kiRb2/",
+    "FB": "https://www.facebook.com/reel/1048401544642901/"
+   },
+   "kpis": {
+    "IG": {
+     "reach": 63,
+     "views": 70,
+     "interacciones": 4,
+     "guardados": 0,
+     "er": 6.35
+    },
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 7,
+    "formato": "Reel",
+    "ventana_dias": 120,
+    "mediana_alcance": 135,
+    "mediana_er": 6.82,
+    "mejor": {
+     "titulo": "¿Qué es el Plan Potencial Personalizado?",
+     "permalink": "https://www.instagram.com/reel/DaIzYVsswLw/",
+     "alcance": 176,
+     "er": 9.66,
+     "fecha": "2026-06-28",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Reel"
+    }
+   },
+   "veredicto": "cortar o cambiar de forma",
+   "color": "rojo",
+   "razon": "alcance 63: menos de la mitad de la mediana (135) de su formato",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 63,
+      "views": 70,
+      "interacciones": 4
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "17966634474135230",
+   "titulo": "En cada familia con terreno hay dos bandos: el del «¿y si sí?» y el del «¿y si no?».",
+   "fecha": "2026-08-04",
+   "dias": 41,
+   "formato": "Reel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/17966634474135230.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/reel/DboskQogVy1/",
+    "FB": "https://www.facebook.com/reel/1588337312682045/"
+   },
+   "kpis": {
+    "IG": {
+     "reach": 135,
+     "views": 161,
+     "interacciones": 5,
+     "guardados": 0,
+     "er": 3.7
+    },
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 7,
+    "formato": "Reel",
+    "ventana_dias": 120,
+    "mediana_alcance": 135,
+    "mediana_er": 6.82,
+    "mejor": {
+     "titulo": "¿Qué es el Plan Potencial Personalizado?",
+     "permalink": "https://www.instagram.com/reel/DaIzYVsswLw/",
+     "alcance": 176,
+     "er": 9.66,
+     "fecha": "2026-06-28",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Reel"
+    }
+   },
+   "veredicto": "arriba de la mediana",
+   "color": "verde",
+   "razon": "alcance 135 contra mediana 135 de 7 reels",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 135,
+      "views": 161,
+      "interacciones": 5
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "18107732636047488",
+   "titulo": "Si ya te ofrecieron por tu terreno, tuviste razón en no contestar de inmediato.",
+   "fecha": "2026-07-27",
+   "dias": 49,
+   "formato": "Carrusel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18107732636047488.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/p/DbT1Al6Gdfc/",
+    "FB": null
+   },
+   "kpis": {
+    "IG": {
+     "reach": 15,
+     "views": null,
+     "interacciones": 4,
+     "guardados": 0,
+     "er": 26.67
+    },
+    "FB": {}
+   },
+   "mejores": {
+    "n": 2,
+    "formato": "Carrusel",
+    "ventana_dias": 120,
+    "mediana_alcance": 42.5,
+    "mediana_er": 9.81,
+    "mejor": {
+     "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
+     "permalink": "https://www.instagram.com/p/DYmx9a1nAFv/",
+     "alcance": 65,
+     "er": 4.62,
+     "fecha": "2026-05-21",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Carrusel"
+    }
+   },
+   "veredicto": "cortar o cambiar de forma",
+   "color": "rojo",
+   "razon": "alcance 15: menos de la mitad de la mediana (42.5) de su formato",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 4,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 4,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 6,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 11,
+      "views": null,
+      "interacciones": 4
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 11,
+      "views": null,
+      "interacciones": 4
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 11,
+      "views": null,
+      "interacciones": 4
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 15,
+      "views": null,
+      "interacciones": 4
+     }
+    ],
+    "FB": []
+   }
+  },
+  {
+   "clave": "103075448823440_1074294318441905",
+   "titulo": "Si alguien ya te ofreció por tu terreno, tuviste razón en no contestar de inmediato.",
+   "fecha": "2026-07-27",
+   "dias": 49,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_1074294318441905.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/1074294318441905"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "17889525945569175",
+   "titulo": "No dejes tu idea de desarrollo en el olvido, en Yodesarrollo estudiamos la vialidad de tu ",
+   "fecha": "2026-07-02",
+   "dias": 74,
+   "formato": "Reel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/17889525945569175.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/reel/DaTh_VeMOr1/",
+    "FB": "https://www.facebook.com/reel/991143690411878/"
+   },
+   "kpis": {
+    "IG": {
+     "reach": 157,
+     "views": 223,
+     "interacciones": 15,
+     "guardados": 0,
+     "er": 9.55
+    },
+    "FB": {
+     "views": 13,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 7,
+    "formato": "Reel",
+    "ventana_dias": 120,
+    "mediana_alcance": 135,
+    "mediana_er": 6.82,
+    "mejor": {
+     "titulo": "¿Qué es el Plan Potencial Personalizado?",
+     "permalink": "https://www.instagram.com/reel/DaIzYVsswLw/",
+     "alcance": 176,
+     "er": 9.66,
+     "fecha": "2026-06-28",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Reel"
+    }
+   },
+   "veredicto": "entre los mejores",
+   "color": "verde",
+   "razon": "alcance 157 · el mejor del formato llegó a 176",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 156,
+      "views": 217,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 156,
+      "views": 217,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 156,
+      "views": 217,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 156,
+      "views": 219,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 156,
+      "views": 219,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 156,
+      "views": 220,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 157,
+      "views": 223,
+      "interacciones": 15
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 10,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 10,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 10,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 10,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 10,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 10,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 13,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "18071719469352654",
+   "titulo": "¿Qué es el Plan Potencial Personalizado?",
+   "fecha": "2026-06-28",
+   "dias": 78,
+   "formato": "Reel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18071719469352654.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/reel/DaIzYVsswLw/",
+    "FB": "https://www.facebook.com/reel/1405116274864839/"
+   },
+   "kpis": {
+    "IG": {
+     "reach": 176,
+     "views": 224,
+     "interacciones": 17,
+     "guardados": 0,
+     "er": 9.66
+    },
+    "FB": {
+     "views": 63,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 7,
+    "formato": "Reel",
+    "ventana_dias": 120,
+    "mediana_alcance": 135,
+    "mediana_er": 6.82,
+    "mejor": {
+     "titulo": "¿Qué es el Plan Potencial Personalizado?",
+     "permalink": "https://www.instagram.com/reel/DaIzYVsswLw/",
+     "alcance": 176,
+     "er": 9.66,
+     "fecha": "2026-06-28",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Reel"
+    }
+   },
+   "veredicto": "entre los mejores",
+   "color": "verde",
+   "razon": "alcance 176 · el mejor del formato llegó a 176",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 171,
+      "views": 218,
+      "interacciones": 17
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 171,
+      "views": 218,
+      "interacciones": 17
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 171,
+      "views": 218,
+      "interacciones": 17
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 171,
+      "views": 218,
+      "interacciones": 17
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 171,
+      "views": 218,
+      "interacciones": 17
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 171,
+      "views": 219,
+      "interacciones": 17
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 176,
+      "views": 224,
+      "interacciones": 17
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 62,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 62,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 62,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 62,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 62,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 63,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 63,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "18018117722892425",
+   "titulo": "Bienvenidos a YoDesarollo 🏠",
+   "fecha": "2026-06-26",
+   "dias": 80,
+   "formato": "Reel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18018117722892425.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/reel/DaECMuOsXer/",
+    "FB": "https://www.facebook.com/reel/1036354295635543/"
+   },
+   "kpis": {
+    "IG": {
+     "reach": 136,
+     "views": 232,
+     "interacciones": 15,
+     "guardados": 0,
+     "er": 11.03
+    },
+    "FB": {
+     "views": 64,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 7,
+    "formato": "Reel",
+    "ventana_dias": 120,
+    "mediana_alcance": 135,
+    "mediana_er": 6.82,
+    "mejor": {
+     "titulo": "¿Qué es el Plan Potencial Personalizado?",
+     "permalink": "https://www.instagram.com/reel/DaIzYVsswLw/",
+     "alcance": 176,
+     "er": 9.66,
+     "fecha": "2026-06-28",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Reel"
+    }
+   },
+   "veredicto": "arriba de la mediana",
+   "color": "verde",
+   "razon": "alcance 136 contra mediana 135 de 7 reels",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 133,
+      "views": 227,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 133,
+      "views": 227,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 133,
+      "views": 227,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 133,
+      "views": 227,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 133,
+      "views": 227,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 133,
+      "views": 227,
+      "interacciones": 15
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 136,
+      "views": 232,
+      "interacciones": 15
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 64,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 64,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 64,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 64,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 64,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 64,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 64,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "18133908502570382",
+   "titulo": "Tu terreno baldío te cobra predial cada año y nunca te ha devuelto un solo peso.",
+   "fecha": "2026-06-20",
+   "dias": 86,
+   "formato": "Carrusel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18133908502570382.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/p/DZ0ad4UgQt0/",
+    "FB": "https://www.facebook.com/reel/1781011099726192/"
+   },
+   "kpis": {
+    "IG": {
+     "reach": 20,
+     "views": null,
+     "interacciones": 3,
+     "guardados": 0,
+     "er": 15.0
+    },
+    "FB": {
+     "views": 6,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 2,
+    "formato": "Carrusel",
+    "ventana_dias": 120,
+    "mediana_alcance": 42.5,
+    "mediana_er": 9.81,
+    "mejor": {
+     "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
+     "permalink": "https://www.instagram.com/p/DYmx9a1nAFv/",
+     "alcance": 65,
+     "er": 4.62,
+     "fecha": "2026-05-21",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Carrusel"
+    }
+   },
+   "veredicto": "cortar o cambiar de forma",
+   "color": "rojo",
+   "razon": "alcance 20: menos de la mitad de la mediana (42.5) de su formato",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 19,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 19,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 19,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 19,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 19,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 19,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 20,
+      "views": null,
+      "interacciones": 3
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 6,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 6,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 6,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 6,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 6,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 6,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 6,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "18116567470831363",
+   "titulo": "Cuando el inmueble se convierte en arte: eso es un INMOBILIARTE. ",
+   "fecha": "2026-06-02",
+   "dias": 104,
+   "formato": "Reel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18116567470831363.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/reel/DZGFUOIsm8L/",
+    "FB": "https://www.facebook.com/reel/1322193596552116/"
+   },
+   "kpis": {
+    "IG": {
+     "reach": 103,
+     "views": 135,
+     "interacciones": 3,
+     "guardados": 1,
+     "er": 2.91
+    },
+    "FB": {
+     "views": 32,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 7,
+    "formato": "Reel",
+    "ventana_dias": 120,
+    "mediana_alcance": 135,
+    "mediana_er": 6.82,
+    "mejor": {
+     "titulo": "¿Qué es el Plan Potencial Personalizado?",
+     "permalink": "https://www.instagram.com/reel/DaIzYVsswLw/",
+     "alcance": 176,
+     "er": 9.66,
+     "fecha": "2026-06-28",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Reel"
+    }
+   },
+   "veredicto": "por debajo · ajustar",
+   "color": "oro",
+   "razon": "alcance 103 contra mediana 135: cambia gancho, imagen o formato antes de repetirlo",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 101,
+      "views": 134,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 101,
+      "views": 134,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 101,
+      "views": 134,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 101,
+      "views": 134,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 101,
+      "views": 134,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 101,
+      "views": 134,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 103,
+      "views": 135,
+      "interacciones": 3
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 32,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 32,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 32,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 32,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 32,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 32,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 32,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "17891387412494707",
+   "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
+   "fecha": "2026-05-21",
+   "dias": 116,
+   "formato": "Carrusel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/17891387412494707.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/p/DYmx9a1nAFv/",
+    "FB": null
+   },
+   "kpis": {
+    "IG": {
+     "reach": 65,
+     "views": null,
+     "interacciones": 3,
+     "guardados": 0,
+     "er": 4.62
+    },
+    "FB": {}
+   },
+   "mejores": {
+    "n": 2,
+    "formato": "Carrusel",
+    "ventana_dias": 120,
+    "mediana_alcance": 42.5,
+    "mediana_er": 9.81,
+    "mejor": {
+     "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
+     "permalink": "https://www.instagram.com/p/DYmx9a1nAFv/",
+     "alcance": 65,
+     "er": 4.62,
+     "fecha": "2026-05-21",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Carrusel"
+    }
+   },
+   "veredicto": "entre los mejores",
+   "color": "verde",
+   "razon": "alcance 65 · el mejor del formato llegó a 65",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 56,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 56,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 56,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 56,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 56,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 56,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 65,
+      "views": null,
+      "interacciones": 3
+     }
+    ],
+    "FB": []
+   }
+  },
+  {
+   "clave": "103075448823440_275555734908743",
+   "titulo": "¿Está buscando una oportunidad para invertir su dinero y comprar su hogar de ensueño?",
+   "fecha": "2023-05-17",
+   "dias": 1216,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_275555734908743.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/275555734908743"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_274481031682880",
+   "titulo": "¡Desconecta del mundo y encuentra la armonía perfecta en Altozano Residencial! Practica yo",
+   "fecha": "2023-05-15",
+   "dias": 1218,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_274481031682880.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/274481031682880"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_272159698581680",
+   "titulo": "Buscas una casa en venta en tu estado pero no sabes por dónde empezar? ",
+   "fecha": "2023-05-11",
+   "dias": 1222,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_272159698581680.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/272159698581680"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_271623005302016",
+   "titulo": "No te conformes con una casa que no cumple con tus necesidades. ",
+   "fecha": "2023-05-10",
+   "dias": 1223,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_271623005302016.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/271623005302016"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_268259332305050",
+   "titulo": "No pierdas la oportunidad de invertir en propiedades con alto potencial de plusvalía. ",
+   "fecha": "2023-05-04",
+   "dias": 1229,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_268259332305050.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/268259332305050"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_267566629040987",
+   "titulo": "Disfruta de la serenidad que ofrece un hogar frente al lago en Altozano Residencial. Despi",
+   "fecha": "2023-05-03",
+   "dias": 1230,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_267566629040987.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/267566629040987"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_266409285823388",
+   "titulo": "¡Descubre una nueva forma de invertir y hacer crecer tu dinero! Nuestros proyectos inmobil",
+   "fecha": "2023-05-01",
+   "dias": 1232,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_266409285823388.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/266409285823388"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_264669542664029",
+   "titulo": "¿Estás pensando en comprar una casa? Asegúrate de tomar una decisión informada que se adap",
+   "fecha": "2023-04-28",
+   "dias": 1235,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_264669542664029.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/264669542664029"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_262592929538357",
+   "titulo": "Si estás buscando una inversión segura y rentable, ¡Altozano Residencial es la respuesta! ",
+   "fecha": "2023-04-24",
+   "dias": 1239,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_262592929538357.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/262592929538357"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_255985726865744",
+   "titulo": "Alcanza tus metas financieras 📈",
+   "fecha": "2023-04-12",
+   "dias": 1251,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_255985726865744.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/255985726865744"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_254960616968255",
+   "titulo": "¿Cuál es tu razón para invertir en Hermosillo? ",
+   "fecha": "2023-04-10",
+   "dias": 1253,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_254960616968255.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/254960616968255"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_251738410623809",
+   "titulo": "¡Conozca el nuevo Hermosillo! ",
+   "fecha": "2023-04-04",
+   "dias": 1259,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_251738410623809.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/251738410623809"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "17932843610536698",
+   "titulo": "¿Estás buscando comprar una propiedad? Si es así, te recomendamos encarecidamente que te a",
+   "fecha": "2023-04-03",
+   "dias": 1260,
+   "formato": "Carrusel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/17932843610536698.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/p/CqlmP1ctL1V/",
+    "FB": "https://www.facebook.com/1051195277418476/posts/251227080674942"
+   },
+   "kpis": {
+    "IG": {
+     "reach": 13,
+     "views": null,
+     "interacciones": 2,
+     "guardados": 0,
+     "er": 15.38
+    },
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 2,
+    "formato": "Carrusel",
+    "ventana_dias": 120,
+    "mediana_alcance": 42.5,
+    "mediana_er": 9.81,
+    "mejor": {
+     "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
+     "permalink": "https://www.instagram.com/p/DYmx9a1nAFv/",
+     "alcance": 65,
+     "er": 4.62,
+     "fecha": "2026-05-21",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Carrusel"
+    }
+   },
+   "veredicto": "cortar o cambiar de forma",
+   "color": "rojo",
+   "razon": "alcance 13: menos de la mitad de la mediana (42.5) de su formato",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 12,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 12,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 12,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 12,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 12,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 12,
+      "views": null,
+      "interacciones": 2
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 13,
+      "views": null,
+      "interacciones": 2
+     }
+    ],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_248078110989839",
+   "titulo": "¡Ven y conoce al modelo Alyssa en Altozano Residencial! Disfruta de una hermosa vista y un",
+   "fecha": "2023-03-28",
+   "dias": 1266,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_248078110989839.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/248078110989839"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "103075448823440_244399718024345",
+   "titulo": "¡Bienvenido al residencial de tus sueños! Aquí encontrarás opciones para todas las necesid",
+   "fecha": "2023-03-21",
+   "dias": 1273,
+   "formato": "Fotos",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/103075448823440_244399718024345.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": null,
+    "FB": "https://www.facebook.com/1051195277418476/posts/244399718024345"
+   },
+   "kpis": {
+    "IG": {},
+    "FB": {
+     "views": 0,
+     "interacciones": 0
+    }
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Fotos"
+   },
+   "veredicto": "sin medición",
+   "color": "gris",
+   "razon": "Meta no dio alcance para este post",
+   "historia": {
+    "IG": [],
+    "FB": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     }
+    ]
+   }
+  },
+  {
+   "clave": "17960256176344515",
+   "titulo": "En palabras sencillas el crowdfunding varias personas forman un fondo para cumplir con su ",
+   "fecha": "2023-02-21",
+   "dias": 1301,
+   "formato": "Carrusel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/17960256176344515.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/p/Co8BqEBJVFY/",
+    "FB": null
+   },
+   "kpis": {
+    "IG": {
+     "reach": 10,
+     "views": null,
+     "interacciones": 5,
+     "guardados": 2,
+     "er": 50.0
+    },
+    "FB": {}
+   },
+   "mejores": {
+    "n": 2,
+    "formato": "Carrusel",
+    "ventana_dias": 120,
+    "mediana_alcance": 42.5,
+    "mediana_er": 9.81,
+    "mejor": {
+     "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
+     "permalink": "https://www.instagram.com/p/DYmx9a1nAFv/",
+     "alcance": 65,
+     "er": 4.62,
+     "fecha": "2026-05-21",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Carrusel"
+    }
+   },
+   "veredicto": "cortar o cambiar de forma",
+   "color": "rojo",
+   "razon": "alcance 10: menos de la mitad de la mediana (42.5) de su formato",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 8,
+      "views": null,
+      "interacciones": 5
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 8,
+      "views": null,
+      "interacciones": 5
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 8,
+      "views": null,
+      "interacciones": 5
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 8,
+      "views": null,
+      "interacciones": 5
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 8,
+      "views": null,
+      "interacciones": 5
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 8,
+      "views": null,
+      "interacciones": 5
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 10,
+      "views": null,
+      "interacciones": 5
+     }
+    ],
+    "FB": []
+   }
+  },
+  {
+   "clave": "18231053002196386",
+   "titulo": "Los inversionistas saben que nunca es demasiado pronto para empezar a preparar tu retiro.",
+   "fecha": "2022-11-10",
+   "dias": 1404,
+   "formato": "Image",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18231053002196386.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/p/Cky3qitJNWx/",
+    "FB": null
+   },
+   "kpis": {
+    "IG": {
+     "reach": 30,
+     "views": null,
+     "interacciones": 3,
+     "guardados": 0,
+     "er": 10.0
+    },
+    "FB": {}
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Image",
+    "ventana_dias": 120
+   },
+   "veredicto": "sin vara",
+   "color": "gris",
+   "razon": "no hay publicaciones del mismo formato en la ventana",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 27,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 27,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 27,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 27,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 27,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 27,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 30,
+      "views": null,
+      "interacciones": 3
+     }
+    ],
+    "FB": []
+   }
+  },
+  {
+   "clave": "18095815288307290",
+   "titulo": "¿Sabías que invertir en desarrollos inmobiliarios puede convertirse en una gran alternativ",
+   "fecha": "2022-11-08",
+   "dias": 1406,
+   "formato": "Carrusel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18095815288307290.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/p/CktYj5ANPGg/",
+    "FB": null
+   },
+   "kpis": {
+    "IG": {
+     "reach": 31,
+     "views": null,
+     "interacciones": 1,
+     "guardados": 0,
+     "er": 3.23
+    },
+    "FB": {}
+   },
+   "mejores": {
+    "n": 2,
+    "formato": "Carrusel",
+    "ventana_dias": 120,
+    "mediana_alcance": 42.5,
+    "mediana_er": 9.81,
+    "mejor": {
+     "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
+     "permalink": "https://www.instagram.com/p/DYmx9a1nAFv/",
+     "alcance": 65,
+     "er": 4.62,
+     "fecha": "2026-05-21",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Carrusel"
+    }
+   },
+   "veredicto": "por debajo · ajustar",
+   "color": "oro",
+   "razon": "alcance 31 contra mediana 42.5: cambia gancho, imagen o formato antes de repetirlo",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 28,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 28,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 28,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 28,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 28,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 28,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 31,
+      "views": null,
+      "interacciones": 1
+     }
+    ],
+    "FB": []
+   }
+  },
+  {
+   "clave": "18057868579309362",
+   "titulo": "🏡 Casa Aria es un proyecto de casa innovador en donde el diseño, la naturaleza y la tranqu",
+   "fecha": "2022-04-29",
+   "dias": 1599,
+   "formato": "Carrusel",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18057868579309362.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/p/Cc8XsmYLLXl/",
+    "FB": null
+   },
+   "kpis": {
+    "IG": {
+     "reach": 8,
+     "views": null,
+     "interacciones": 1,
+     "guardados": 0,
+     "er": 12.5
+    },
+    "FB": {}
+   },
+   "mejores": {
+    "n": 2,
+    "formato": "Carrusel",
+    "ventana_dias": 120,
+    "mediana_alcance": 42.5,
+    "mediana_er": 9.81,
+    "mejor": {
+     "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
+     "permalink": "https://www.instagram.com/p/DYmx9a1nAFv/",
+     "alcance": 65,
+     "er": 4.62,
+     "fecha": "2026-05-21",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Carrusel"
+    }
+   },
+   "veredicto": "cortar o cambiar de forma",
+   "color": "rojo",
+   "razon": "alcance 8: menos de la mitad de la mediana (42.5) de su formato",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 7,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 7,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 7,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 7,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 7,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 7,
+      "views": null,
+      "interacciones": 1
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 8,
+      "views": null,
+      "interacciones": 1
+     }
+    ],
+    "FB": []
+   }
+  },
+  {
+   "clave": "17891175533549925",
+   "titulo": "🏗 Comprar una casa o terreno suele ser de suma importancia para tomar la decisión financie",
+   "fecha": "2022-04-25",
+   "dias": 1603,
+   "formato": "Image",
+   "cover": "https://yodesarrollomx.github.io/aurum-board/covers/17891175533549925.jpg",
+   "pieza": null,
+   "permalinks": {
+    "IG": "https://www.instagram.com/p/CcyKtScLKF_/",
+    "FB": null
+   },
+   "kpis": {
+    "IG": {
+     "reach": 34,
+     "views": null,
+     "interacciones": 0,
+     "guardados": 0,
+     "er": 0.0
+    },
+    "FB": {}
+   },
+   "mejores": {
+    "n": 0,
+    "formato": "Image",
+    "ventana_dias": 120
+   },
+   "veredicto": "sin vara",
+   "color": "gris",
+   "razon": "no hay publicaciones del mismo formato en la ventana",
+   "historia": {
+    "IG": [
+     {
+      "t": "2026-07-27 14:39",
+      "reach": 34,
+      "views": null,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 14:50",
+      "reach": 34,
+      "views": null,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-27 16:04",
+      "reach": 34,
+      "views": null,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:11",
+      "reach": 34,
+      "views": null,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-29 16:15",
+      "reach": 34,
+      "views": null,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-07-30 12:29",
+      "reach": 34,
+      "views": null,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 10:02",
+      "reach": 34,
+      "views": null,
+      "interacciones": 0
+     }
+    ],
+    "FB": []
+   }
   }
  ]
 }
