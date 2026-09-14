@@ -805,3 +805,10 @@ que se sature». Lo que quedó:
     Clic en un fruto = ficha: métricas IG/FB, leads, curva desde la primera medición, el mejor de su formato, versiones
     de sus láminas si la hizo la Sala, ligas a IG/FB y la **clave** de Meta. Lo publicado fuera de la Sala cae en «sin tema
     todavía»; se cuelga de un tema con una fila en ARBOL (nivel pieza · id = esa clave · padre = id del tema).
+90. **Un «sí» sobre una lámina con tomas sólo vale si dice cuál** (14-sep, en vivo). Alejandro dio «Aprobar» a la 3 y la 5
+    con dos tomas cada una sin tocar «Ésta»; el Sheet guardó `si` sin `[toma elegida: k]`, la compuerta lo contó como
+    aprobada y la fábrica iba a animar la foto vieja. Ahora: (a) con tomas en la carta, **Aprobar se esconde** — se
+    elige con «Ésta» (la flecha → tampoco aprueba); (b) la compuerta (`_marca_valida`) trata ese «sí» como pendiente;
+    (c) `sala_sellar.py` vuelve **oficial** la toma elegida (`laminas/<slug>-e<fecha>/Ln.png`, `versiones[]`, `lamina_src`
+    del guion) y el productor sella ANTES de planear; (d) la carta se vuelve a montar con sufijo (`-toma`) para no chocar
+    con la ya marcada.
