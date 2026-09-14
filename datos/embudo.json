@@ -1,0 +1,183 @@
+{
+ "_que_es": "Embudo por publicación: KPIs de Meta, «los mejores» del mismo formato y un veredicto con las varas de REGLAS.",
+ "generado": "2026-09-14 09:55",
+ "corpus": {
+  "generado": "2026-09-09 07:22",
+  "posts": 67,
+  "semana": {
+   "actual": {
+    "posts": 3,
+    "reach": 27,
+    "interacciones": 4,
+    "guardados": 0
+   },
+   "anterior": {
+    "posts": 6,
+    "reach": 307,
+    "interacciones": 20,
+    "guardados": 0
+   }
+  },
+  "leads_utm_activo": false
+ },
+ "varas": {
+  "kpi_dias_prueba": 7,
+  "kpi_ventana_dias": 120,
+  "kpi_min_alcance_para_er": 20,
+  "kpi_piso_pct_mediana": 50,
+  "cuenta": "Yo Desarrollo"
+ },
+ "aprendizaje": [
+  {
+   "titulo": "Diseñar para una marca es distinto a diseñar una casa.",
+   "formato": "Carrusel",
+   "alcance": 232,
+   "er": 6.03,
+   "fecha": "2026-08-27",
+   "permalink": "https://www.instagram.com/p/DcjrECakyvR/",
+   "cuenta": "Aurum Arquitectos"
+  },
+  {
+   "titulo": "La familia de Casa Zara es de las que reciben seguido y disfrutan tener gente en",
+   "formato": "Reel",
+   "alcance": 214,
+   "er": 2.8,
+   "fecha": "2026-06-04",
+   "permalink": "https://www.instagram.com/reel/DZLWqaXyQhm/",
+   "cuenta": "Aurum Arquitectos"
+  },
+  {
+   "titulo": "¿Qué es el Plan Potencial Personalizado?",
+   "formato": "Reel",
+   "alcance": 176,
+   "er": 9.66,
+   "fecha": "2026-06-28",
+   "permalink": "https://www.instagram.com/reel/DaIzYVsswLw/",
+   "cuenta": "Yo Desarrollo"
+  }
+ ],
+ "piezas": [
+  {
+   "pieza": "La Servilleta",
+   "campana": "2026-08-29",
+   "utm": "servilleta",
+   "formato": "Reel",
+   "redes": {
+    "IG": {
+     "permalink": "https://www.instagram.com/reel/DcpTY8kiRb2/",
+     "id_post": "18440830471121351",
+     "kpis": {
+      "views": 70,
+      "reach": 63,
+      "likes": 3,
+      "comments": 1,
+      "shares": 0,
+      "interacciones": 4,
+      "guardados": 0,
+      "er": 6.35
+     }
+    },
+    "FB": {
+     "permalink": "https://www.facebook.com/reel/1048401544642901/",
+     "id_post": "1048401544642901",
+     "kpis": {
+      "error": "HTTP Error 400: Bad Request"
+     }
+    }
+   },
+   "leads": 0,
+   "citas": 0,
+   "dias": 16,
+   "kpis": {
+    "views": 70,
+    "reach": 63,
+    "likes": 3,
+    "comments": 1,
+    "shares": 0,
+    "interacciones": 4,
+    "guardados": 0,
+    "er": 6.35
+   },
+   "mejores": {
+    "n": 7,
+    "formato": "Reel",
+    "ventana_dias": 120,
+    "mediana_alcance": 135,
+    "mediana_er": 6.82,
+    "mejor": {
+     "titulo": "¿Qué es el Plan Potencial Personalizado?",
+     "permalink": "https://www.instagram.com/reel/DaIzYVsswLw/",
+     "alcance": 176,
+     "er": 9.66,
+     "fecha": "2026-06-28",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Reel"
+    }
+   },
+   "veredicto": "cortar o cambiar de forma",
+   "color": "rojo",
+   "razon": "alcance 63: menos de la mitad de la mediana (135) de su formato"
+  },
+  {
+   "pieza": "¿Vendo o construyo?",
+   "campana": "2026-09-02",
+   "utm": "vendo-construyo",
+   "formato": "Carrusel",
+   "redes": {
+    "IG": {
+     "permalink": "https://www.instagram.com/p/Dc0Ao2ZDqM4/",
+     "id_post": "18114808762751480",
+     "kpis": {
+      "views": 45,
+      "reach": 14,
+      "likes": 1,
+      "comments": 1,
+      "shares": 0,
+      "interacciones": 2,
+      "guardados": 0,
+      "er": null
+     }
+    },
+    "FB": {
+     "permalink": "",
+     "id_post": "103075448823440_1106450158559654",
+     "kpis": {
+      "error": "HTTP Error 400: Bad Request"
+     }
+    }
+   },
+   "leads": 0,
+   "citas": 0,
+   "dias": 12,
+   "kpis": {
+    "views": 45,
+    "reach": 14,
+    "likes": 1,
+    "comments": 1,
+    "shares": 0,
+    "interacciones": 2,
+    "guardados": 0,
+    "er": null
+   },
+   "mejores": {
+    "n": 2,
+    "formato": "Carrusel",
+    "ventana_dias": 120,
+    "mediana_alcance": 41.0,
+    "mediana_er": 9.12,
+    "mejor": {
+     "titulo": "¿Y si tu casa terminara siendo un elefante blanco? 🐘",
+     "permalink": "https://www.instagram.com/p/DYmx9a1nAFv/",
+     "alcance": 62,
+     "er": 3.23,
+     "fecha": "2026-05-21",
+     "cuenta": "Yo Desarrollo",
+     "tipo": "Carrusel"
+    }
+   },
+   "veredicto": "cortar o cambiar de forma",
+   "color": "rojo",
+   "razon": "alcance 14: menos de la mitad de la mediana (41) de su formato"
+  }
+ ]
+}
