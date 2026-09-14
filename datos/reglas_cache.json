@@ -23,7 +23,8 @@
   "kpi_min_alcance_para_er": 20,
   "kpi_piso_pct_mediana": 50,
   "voz_velocidad": 1.25,
-  "animacion_estiramiento_max": 1.15
+  "animacion_estiramiento_max": 1.15,
+  "animacion_lamina_entera": 1
  },
  "motores": [
   {
@@ -90,5 +91,5 @@
    "nota": "gratis con tope diario; a veces repite la frase"
   }
  ],
- "traido": "2026-09-14 15:28"
+ "traido": "2026-09-14 15:40"
 }
