@@ -849,3 +849,17 @@ que se sature». Lo que quedó:
     (regla «una sola llave»). El 14-sep la del OS estaba caducada y la de la Sala seguía válida, pero la
     pantalla decía sólo «clave incorrecta» y parecía que todo estaba cerrado. Ahora distingue el caso y
     dice qué hacer: abrir con la liga del correo del día.
+
+## 14-sep-2026 (noche) · varias publicaciones a la vez, escenas de 5 s, voz Kokoro
+97. **La mesa lleva varias familias a la vez.** «Trabajas muy lineal… quiero avanzar en distintas
+    publicaciones al mismo tiempo». La regla «una carta por pieza» sigue; lo que cambia es que cada
+    pasada monta la compuerta siguiente de CADA pieza (Apodo: tomas · Comprador: caption · …). El
+    Árbol es donde se ve el conjunto.
+98. **Escenas de 5 s fijos** (`escena_segundos`, `escena_aire_s`): el texto se escribe para caber
+    (`sala_cupo.py`: cupo = (5−1)·1.25 / `voz_seg_por_palabra`, menos 0.34 s por cambio de voz). Con
+    Kokoro caben ~16 palabras; con Gemini 9. El clip de ~5 s ya no se estira.
+99. **Voz Kokoro local** (`voz_motor=kokoro`, `voz_narrador`, `voz_vecino`; `.venv_tts` Python 3.12 con
+    `uv`, sin tocar el Python del sistema). Él escuchó 5 motores en la Sala y eligió Kokoro. Un eje
+    con `.mp3` trae reproductor (antes se pintaba como foto).
+100. **Se anima la lámina entera** (`animacion_lamina_entera=1`): el recorte viejo tiraba el 48 % del
+    ancho («zoom in»). El montador escala sin recortar y repinta la tipografía encima.
