@@ -1,0 +1,929 @@
+{
+ "_que_es": "Material local por pieza (versiones, láminas, captions, videos) · la Sala controla también lo que no ha publicado.",
+ "generado": "2026-09-14 21:44",
+ "piezas": {
+  "El Letrero Acostado": {
+   "carpeta": "Semana PPP/Pub 3 - El Letrero Acostado",
+   "versiones": {
+    "V1": [
+     "Semana PPP/Pub 3 - El Letrero Acostado/V1/pub3_V1.png",
+     "Semana PPP/Pub 3 - El Letrero Acostado/V1/pub3_bk.png"
+    ],
+    "VAR": [
+     "Semana PPP/Pub 3 - El Letrero Acostado/VAR/pub3_c1.png"
+    ],
+    "V2": [
+     "Semana PPP/Pub 3 - El Letrero Acostado/V2/pub3_V2.png",
+     "Semana PPP/Pub 3 - El Letrero Acostado/V2/pub3_bk.png"
+    ],
+    "V3": [
+     "Semana PPP/Pub 3 - El Letrero Acostado/V3/pub3_V3.png"
+    ]
+   },
+   "captions": [],
+   "videos": [],
+   "docs": []
+  },
+  "La Mesa Vacia": {
+   "carpeta": "La Mesa Vacia",
+   "versiones": {
+    "Video": [
+     "La Mesa Vacia/Video/chk_E3.png",
+     "La Mesa Vacia/Video/chk_E4.png",
+     "La Mesa Vacia/Video/e7_base.png",
+     "La Mesa Vacia/Video/frame_1.png",
+     "La Mesa Vacia/Video/frame_4.png",
+     "La Mesa Vacia/Video/frame_7.png",
+     "La Mesa Vacia/Video/mov_a.png",
+     "La Mesa Vacia/Video/mov_b.png",
+     "La Mesa Vacia/Video/ref_E1_720x1280.png",
+     "La Mesa Vacia/Video/ref_E1_BULEVAR_a.png",
+     "La Mesa Vacia/Video/ref_E1_BULEVAR_b.png",
+     "La Mesa Vacia/Video/ref_E1_RESIDENCIAL_c.png",
+     "La Mesa Vacia/Video/ref_E1_RESIDENCIAL_d.png",
+     "La Mesa Vacia/Video/ref_E1_URBANO.png",
+     "La Mesa Vacia/Video/ref_E1_URBANO_720x1280.png",
+     "La Mesa Vacia/Video/ref_E1_URBANO_v2.png",
+     "La Mesa Vacia/Video/ref_E1_URBANO_v2_720x1280.png",
+     "La Mesa Vacia/Video/ref_E1_URBANO_v3.png",
+     "La Mesa Vacia/Video/ref_E1_URBANO_v3_720x1280.png",
+     "La Mesa Vacia/Video/ref_E2_720x1280.png"
+    ],
+    "Lamina 7": [
+     "La Mesa Vacia/Lamina 7/MV-L7-V1.png",
+     "La Mesa Vacia/Lamina 7/MV-L7-V2.png",
+     "La Mesa Vacia/Lamina 7/MV3-L7-V1.png",
+     "La Mesa Vacia/Lamina 7/MV3-L7-V2.png"
+    ],
+    "Lamina 1": [
+     "La Mesa Vacia/Lamina 1/MV-L1-V1.png",
+     "La Mesa Vacia/Lamina 1/MV-L1-V2.png",
+     "La Mesa Vacia/Lamina 1/MV-L1-V3.png",
+     "La Mesa Vacia/Lamina 1/MV-L1-V4.png",
+     "La Mesa Vacia/Lamina 1/MV-L1-V5.png",
+     "La Mesa Vacia/Lamina 1/MV3-L1-ALT.png",
+     "La Mesa Vacia/Lamina 1/MV3-L1-V1.png",
+     "La Mesa Vacia/Lamina 1/MV3-L1-V2.png"
+    ],
+    "Lamina 6": [
+     "La Mesa Vacia/Lamina 6/MV-L6-V1.png",
+     "La Mesa Vacia/Lamina 6/MV3-L6-V1.png",
+     "La Mesa Vacia/Lamina 6/MV3-L6-V2.png"
+    ],
+    "Lamina 3": [
+     "La Mesa Vacia/Lamina 3/MV-L3-V1.png",
+     "La Mesa Vacia/Lamina 3/MV3-L3-V1.png",
+     "La Mesa Vacia/Lamina 3/MV3-L3-V2.png"
+    ],
+    "Lamina 4": [
+     "La Mesa Vacia/Lamina 4/MV-L4-V1.png",
+     "La Mesa Vacia/Lamina 4/MV-L4-V2.png",
+     "La Mesa Vacia/Lamina 4/MV3-L4-V1.png",
+     "La Mesa Vacia/Lamina 4/MV3-L4-V2.png"
+    ],
+    "Lamina 5": [
+     "La Mesa Vacia/Lamina 5/MV-L5-V1.png",
+     "La Mesa Vacia/Lamina 5/MV-L5-V2.png",
+     "La Mesa Vacia/Lamina 5/MV3-L5-V1.png",
+     "La Mesa Vacia/Lamina 5/MV3-L5-V2.png"
+    ],
+    "Lamina 2": [
+     "La Mesa Vacia/Lamina 2/MV-L2-V1.png",
+     "La Mesa Vacia/Lamina 2/MV-L2-V2.png",
+     "La Mesa Vacia/Lamina 2/MV3-L2-V1.png",
+     "La Mesa Vacia/Lamina 2/MV3-L2-V2.png"
+    ]
+   },
+   "captions": [
+    "La Mesa Vacia/CAPTIONS.md"
+   ],
+   "videos": [
+    "La Mesa Vacia/Video/PELICULA_MIGUEL_V4.mp4",
+    "La Mesa Vacia/Video/PELICULA_MIGUEL_V5.mp4",
+    "La Mesa Vacia/Video/sora_E5_raw.mp4",
+    "La Mesa Vacia/Video/E3_v5.mp4",
+    "La Mesa Vacia/Video/PELICULA_MIGUEL_V7.mp4",
+    "La Mesa Vacia/Video/PELICULA_MIGUEL_V6.mp4",
+    "La Mesa Vacia/Video/E6_final.mp4",
+    "La Mesa Vacia/Video/E1_v5.mp4",
+    "La Mesa Vacia/Video/PELICULA_MIGUEL_V2.mp4",
+    "La Mesa Vacia/Video/PELICULA_MIGUEL_V3.mp4",
+    "La Mesa Vacia/Video/E1_test.mp4",
+    "La Mesa Vacia/Video/sora_E4_raw.mp4",
+    "La Mesa Vacia/Video/E5_v5.mp4",
+    "La Mesa Vacia/Video/REEL_MIGUEL_V1.mp4",
+    "La Mesa Vacia/Video/sora_E6_raw.mp4",
+    "La Mesa Vacia/Video/E7_final.mp4",
+    "La Mesa Vacia/Video/E1_final.mp4",
+    "La Mesa Vacia/Video/E7_v5.mp4",
+    "La Mesa Vacia/Video/E2_v5.mp4",
+    "La Mesa Vacia/Video/E4_final.mp4",
+    "La Mesa Vacia/Video/sora_E2_raw.mp4",
+    "La Mesa Vacia/Video/E6_sora_test.mp4",
+    "La Mesa Vacia/Video/sora_E3_raw.mp4",
+    "La Mesa Vacia/Video/PELICULA_MIGUEL_FUNDIDOS.mp4",
+    "La Mesa Vacia/Video/E2_final.mp4",
+    "La Mesa Vacia/Video/sora_E1_raw.mp4",
+    "La Mesa Vacia/Video/E4_v5.mp4",
+    "La Mesa Vacia/Video/E5_final.mp4",
+    "La Mesa Vacia/Video/piloto_vidu_E1.mp4",
+    "La Mesa Vacia/Video/E6_v5.mp4",
+    "La Mesa Vacia/Video/E3_final.mp4",
+    "La Mesa Vacia/Video/piloto_hailuo_E1.mp4"
+   ],
+   "docs": [
+    "La Mesa Vacia/GUION_VIDEO.md"
+   ]
+  },
+  "Mes PPP": {
+   "carpeta": "Mes PPP",
+   "versiones": {},
+   "captions": [],
+   "videos": [],
+   "docs": []
+  },
+  "La Recamara Cerrada": {
+   "carpeta": "Semana PPP/Pub 1 - La Recamara Cerrada",
+   "versiones": {
+    "V1": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/V1/pub1_V1.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/V1/pub1_bk.png"
+    ],
+    "COPY_C": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/COPY_C/pub1_bk.png"
+    ],
+    "_DIALOGO": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_DIALOGO/L1/clean_L1_pub1L1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_DIALOGO/L2/clean_pub1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_DIALOGO/L3/L3_terracerias_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_DIALOGO/L4/L3fixA_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_DIALOGO/L5/L3fixB_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_DIALOGO/L6/L6_terminado_bk.png"
+    ],
+    "COPY_B": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/COPY_B/pub1_bk.png"
+    ],
+    "VAR": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/VAR/pub1_c1.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/VAR/pub1_c2.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/VAR/pub1_c3.png"
+    ],
+    "_LAMINAS_FINALES": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_LAMINAS_FINALES/L1.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_LAMINAS_FINALES/L2.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_LAMINAS_FINALES/L3.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_LAMINAS_FINALES/L4.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_LAMINAS_FINALES/L5.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_LAMINAS_FINALES/L6.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_LAMINAS_FINALES/L7.png"
+    ],
+    "_VIDEO": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES/R1_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES/R2_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES/R3_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES/R4_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES/R5_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES/R6_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES/R7_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES2/R1_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES2/R2_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES2/R3_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES2/R4_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES2/R5_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES2/R6_recorte.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_RECORTES2/R7_recorte.png"
+    ],
+    "V2": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/V2/pub1_V2.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/V2/pub1_bk.png"
+    ],
+    "_YOD": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_YOD/Y1.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_YOD/Y2.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_YOD/Y3.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_YOD/Y4.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_YOD/Y5.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_YOD/Y6.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_YOD/Y7.png"
+    ],
+    "_CUADRADAS": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CUADRADAS/C1.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CUADRADAS/C2.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CUADRADAS/C3.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CUADRADAS/C4.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CUADRADAS/C5.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CUADRADAS/C6.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CUADRADAS/C7.png"
+    ],
+    "V3": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/V3/pub1_V3.png"
+    ],
+    "_C3C4": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_C3C4/A/C3/L3_terracerias_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_C3C4/A/C4/L3fixA_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_C3C4/B/C3/L3_terracerias_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_C3C4/B/C4/L3fixA_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_C3C4/C/C3/L3_terracerias_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_C3C4/C/C4/L3fixA_bk.png"
+    ],
+    "_MIX": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MIX/M1/R1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MIX/M2/R2_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MIX/M3/R3_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MIX/M4/R4_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MIX/M5/R5_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MIX/M6/R6_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MIX/M6v/R6v_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MIX/M7/R7_bk.png"
+    ],
+    "_MARCA": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MARCA/M1.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MARCA/M2.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MARCA/M3.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MARCA/M4.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MARCA/M5.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MARCA/M6.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MARCA/M7.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_MARCA/R2b_src_holder.png"
+    ],
+    "_ARCO": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO/L1_pub1L1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO/L3_obra_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO/L3_terracerias_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO/L3fixA_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO/L3fixB_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO/L6_terminado_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO/clean_L1_pub1L1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO/clean_pub1_bk.png"
+    ],
+    "_ARCO_TEST": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO_TEST/L1a/pub1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO_TEST/L1b/pub1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO_TEST/L1c/pub1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_ARCO_TEST/L2/pub1_bk.png"
+    ],
+    "COPY_A": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/COPY_A/pub1_bk.png"
+    ],
+    "_RECAST55": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_RECAST55/R1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_RECAST55/R2_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_RECAST55/R3_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_RECAST55/R4_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_RECAST55/R5_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_RECAST55/R6_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_RECAST55/R6v_limpia_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_RECAST55/R7_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_RECAST55/R7_bk_FALLIDA.png"
+    ],
+    "_PELICULA": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_PELICULA/C1/clean_L1_pub1L1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_PELICULA/C2/clean_pub1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_PELICULA/C3/L3_terracerias_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_PELICULA/C4/L3fixA_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_PELICULA/C5/L3fixB_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_PELICULA/C6/L6_terminado_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_PELICULA/C7/C7_nieta_bk.png"
+    ],
+    "_FINAL55": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_FINAL55/F1/R1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_FINAL55/F2/R2_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_FINAL55/F3/R3_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_FINAL55/F4/R4_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_FINAL55/F5/R5_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_FINAL55/F6/R6_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_FINAL55/F7/R7_bk.png"
+    ],
+    "_CINE": [
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CINE/C1/clean_L1_pub1L1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CINE/C2/clean_pub1_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CINE/C3/L3_terracerias_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CINE/C4/L3fixA_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CINE/C5/L3fixB_bk.png",
+     "Semana PPP/Pub 1 - La Recamara Cerrada/_CINE/C6/L6_terminado_bk.png"
+    ]
+   },
+   "captions": [
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_PUBLICAR/CAPTIONS.md",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_PUBLICAR/CAPTIONS_HORMOZI.md",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_PUBLICAR/CAPTIONS_FINALES.md",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_PUBLICAR/captions_finales_pub1.json",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_PUBLICAR/CAPTIONS_3.md",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_PUBLICAR/CAPTIONS_5_EJEMPLOS.md",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_PUBLICAR/CAPTIONS_v5.md"
+   ],
+   "videos": [
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/PELICULA_parcial_5de7.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/PELICULA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/video_output_0_static-lockedoff-camera-no-camera_42_768x608x65_0.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS/R5_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS/R2_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS/R4_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS/R1_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS/R3_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS_CUENTO/R1_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS_CUENTO/PUBLICACION.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS_CUENTO/R4_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS_CUENTO/R2_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS_CUENTO/R5_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS_CUENTO/R3_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS_CUENTO/AVANCE_CUENTO_5_ESCENAS.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS2/R5_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS2/R2_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS2/R7_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS2/R4_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS2/R1_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS2/R6_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ESCENAS2/R3_ESCENA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS2/R3_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS2/R6_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS2/R5_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS2/R2_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS2/R1_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS2/R4_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS/R1_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS/PUBLICACION.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS/PUBLICACION_velocidad_normal.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS/R4_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS/R7_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS/R2_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS/R5_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS/R3_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_EDITADAS/R6_EDITADA.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/L1_49/L1_ESCENA_4.7s.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/L1_49/L1_ESCENA_con_voz.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/L1_parallax/L1_parallax_4.7s.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS/R3_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS/R5_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS/R2_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS/R1_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_ANIMADOS/R4_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/FINAL/pub1_lamina3_obra_LOOP_1080x1350.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/_PRUEBA_MOV/R1_animado.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/corto/video_output_0_lockedoff-tripod-shot-a-middle-aged_42_768x608x33_0.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/L1_prueba/L1_lento_4.7s.mp4",
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/L1_prueba/L1_pingpong_1080x1350.mp4"
+   ],
+   "docs": [
+    "Semana PPP/Pub 1 - La Recamara Cerrada/_VIDEO/guion.json"
+   ]
+  },
+  "La Servilleta": {
+   "carpeta": "Semana PPP/Pub 2 - La Servilleta",
+   "versiones": {
+    "V1": [
+     "Semana PPP/Pub 2 - La Servilleta/V1/pub2_V1.png",
+     "Semana PPP/Pub 2 - La Servilleta/V1/pub2_bk.png"
+    ],
+    "_CONCEPTOS": [
+     "Semana PPP/Pub 2 - La Servilleta/_CONCEPTOS/mesa_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_CONCEPTOS/reliquia_bk.png"
+    ],
+    "_RELIQUIA": [
+     "Semana PPP/Pub 2 - La Servilleta/_RELIQUIA/reliquia_v1_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_RELIQUIA/reliquia_v2_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_RELIQUIA/reliquia_v3_bk.png"
+    ],
+    "_G2": [
+     "Semana PPP/Pub 2 - La Servilleta/_G2/FINAL_YOD/L1.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/FINAL_YOD/L2.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/FINAL_YOD/L3.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/FINAL_YOD/L4.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/FINAL_YOD/L5.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/FINAL_YOD/L6.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/FINAL_YOD/L7.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S1_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S2_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S2_g4.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S3_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S3_g4.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S3_g5.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S4_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S4_g3.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S4_g3b.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S5_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S5_g4.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S6_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_G2/S6_g3.png"
+    ],
+    "VAR": [
+     "Semana PPP/Pub 2 - La Servilleta/VAR/pub2_c1.png",
+     "Semana PPP/Pub 2 - La Servilleta/VAR/pub2_c2.png",
+     "Semana PPP/Pub 2 - La Servilleta/VAR/pub2_c3.png"
+    ],
+    "_VIDEO": [
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/TARJETAS/D1.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/TARJETAS/D2.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_CAPAS_H/H1.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_CAPAS_H/H2.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_CAPAS_H/H3.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_CAPAS_H/H4.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_CAPAS_H/H5.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_CAPAS_H/H6.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/capa1.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/capa2.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/capa3.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/capa4.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/capa5.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/capa6.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/capa7.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/capa1.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/capa2.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/capa3.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/capa4.png",
+     "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/capa5.png"
+    ],
+    "V2": [
+     "Semana PPP/Pub 2 - La Servilleta/V2/pub2_V2.png",
+     "Semana PPP/Pub 2 - La Servilleta/V2/pub2_bk.png"
+    ],
+    "V3": [
+     "Semana PPP/Pub 2 - La Servilleta/V3/pub2_V3.png"
+    ],
+    "V2R": [
+     "Semana PPP/Pub 2 - La Servilleta/V2R/pub2r_bk.png"
+    ],
+    "_ARCO1": [
+     "Semana PPP/Pub 2 - La Servilleta/_ARCO1/L2_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_ARCO1/L3_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_ARCO1/L4_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_ARCO1/L5_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_ARCO1/L6_bk.png",
+     "Semana PPP/Pub 2 - La Servilleta/_ARCO1/L7_bk.png"
+    ]
+   },
+   "captions": [
+    "Semana PPP/Pub 2 - La Servilleta/_PUBLICAR/copy_servilleta_hormozi.txt",
+    "Semana PPP/Pub 2 - La Servilleta/_PUBLICAR/copy_servilleta.txt"
+   ],
+   "videos": [
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/REEL_HORMOZI.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/S2_FULL.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/REEL_SERVILLETA.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/CORTE_HORMOZI.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/PELICULA_SERVILLETA.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_ESCENAS/S1_animado.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/N5.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/N4.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/N6.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/N3.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/N2.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/N1.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/H6.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/H5.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/H4.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/H1.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/H3.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/H2.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE_H/pegado.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_ESCENAS_FULL/P4_animado.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_ESCENAS_FULL/S6_animado.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_ESCENAS_FULL/S3_animado.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_ESCENAS_FULL/S5_animado.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_ESCENAS_FULL/S7_animado.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_ESCENAS_FULL/S4_animado.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_ESCENAS_FULL/S1_animado.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/E1.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/E2.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/E3.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/E7.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/E6.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/E4.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_MONTAJE/E5.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_EDITADAS/S1_ESCENA.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_EDITADAS/S2_ESCENA.mp4",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/_PIVOTE/anim/P4_animado.mp4"
+   ],
+   "docs": [
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/guion.json",
+    "Semana PPP/Pub 2 - La Servilleta/_VIDEO/guion_hormozi.json"
+   ]
+  },
+  "El Apodo del Terreno": {
+   "carpeta": "Semana PPP/Pub 3 - El Apodo del Terreno",
+   "versiones": {
+    "_VIDEO": [
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/capa_S1.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/capa_S2.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/capa_S3.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/capa_S4.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/capa_S5.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/capa_S6.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/capa_S7.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES/S1_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES/S2_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES/S3_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES/S4_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES/S5_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES/S6_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES/S7_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES_V6/E1_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES_V6/E2_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES_V6/E3_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES_V6/E7_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES_V7/E1_recorte.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_RECORTES_V7/E2_recorte.png"
+    ],
+    "_G8": [
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G8/L3.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G8/L5.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G8/L6.png"
+    ],
+    "_G1": [
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A1.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A2.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A2_g3.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A3.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A4.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A5.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A5_g2.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A6.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A6_g2.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A7.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A7_g2.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/A7_g3.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/DIRECCION/D1.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G1/DIRECCION/D2.png"
+    ],
+    "_G7": [
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G7/L1.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G7/L2.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G7/L3.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G7/L4.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G7/L5.png",
+     "Semana PPP/Pub 3 - El Apodo del Terreno/_G7/L6.png"
+    ]
+   },
+   "captions": [],
+   "videos": [
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_VERSIONES_1.10.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/CORTE_APODO_v5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/REEL_APODO.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/REEL_APODO_v5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/CORTE_APODO.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/CORTE_APODO_v6.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/REEL_APODO_v7.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/REEL_APODO_v6.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/CORTE_APODO_v7.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS/S3_seed7.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS/S6_animado.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS/S3_animado.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS/S5_animado.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS/S2_animado.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS/S7_animado.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS/S4_animado.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS/S1_animado.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS/_v1/S3_animado_chocan.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS/_v1/S7_planB_zoom.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7_conCabecera/E1.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7_conCabecera/E2.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7_conCabecera/E3.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7_conCabecera/E4.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7_conCabecera/E5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7/E1.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7/E2.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7/E3.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7/E6.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7/E4.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7/E5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6/E1.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6/E2.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6/E3.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6/E7_push.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6/E7.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6/E6.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6/E4.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6/E5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6/E8.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V7_viejas/E5_rural.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S5_v5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S7_v5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S3_v5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S1_v5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S4.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S6.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S7.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S3.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S2.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S6_v5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S1.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE/S2_v5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_v/apodo_v4_audio_110.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_v/reel_v4_audio_110.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V6/E1.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V6/E2.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V6/E3.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V6/E7.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V6/E6.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V6/E4.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V6/E5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V6/E8.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V7/E1.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V7/E2.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V7/E3.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V7/E6.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V7/E4.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V7/E5.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_MONTAJE_V7/_sinfondo.mov",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6_raw/E2_animado.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6_raw/E1_animado.mp4",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/_ESCENAS_V6_raw/E3_animado.mp4"
+   ],
+   "docs": [
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/guion.json",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/guion_v5.json",
+    "Semana PPP/Pub 3 - El Apodo del Terreno/_VIDEO/guion_oficial.json"
+   ]
+  },
+  "Vendo o construyo": {
+   "carpeta": "Semana PPP/Pub 3 - Vendo o construyo",
+   "versiones": {
+    "_PUBLICAR": [
+     "Semana PPP/Pub 3 - Vendo o construyo/_PUBLICAR/L1.png",
+     "Semana PPP/Pub 3 - Vendo o construyo/_PUBLICAR/L2.png",
+     "Semana PPP/Pub 3 - Vendo o construyo/_PUBLICAR/L3.png",
+     "Semana PPP/Pub 3 - Vendo o construyo/_PUBLICAR/L4.png",
+     "Semana PPP/Pub 3 - Vendo o construyo/_PUBLICAR/L5.png",
+     "Semana PPP/Pub 3 - Vendo o construyo/_PUBLICAR/L6.png",
+     "Semana PPP/Pub 3 - Vendo o construyo/_PUBLICAR/L7.png",
+     "Semana PPP/Pub 3 - Vendo o construyo/_PUBLICAR/L8.png",
+     "Semana PPP/Pub 3 - Vendo o construyo/_PUBLICAR/L9.png"
+    ]
+   },
+   "captions": [
+    "Semana PPP/Pub 3 - Vendo o construyo/_PUBLICAR/copy_B_empate.txt"
+   ],
+   "videos": [],
+   "docs": []
+  },
+  "El comprador ya sabe": {
+   "carpeta": "Semana PPP/Pub 4 - El comprador ya sabe",
+   "versiones": {
+    "_DIRECCION": [
+     "Semana PPP/Pub 4 - El comprador ya sabe/_DIRECCION/D1.png",
+     "Semana PPP/Pub 4 - El comprador ya sabe/_DIRECCION/D2.png"
+    ],
+    "_PUBLICAR_v2": [
+     "Semana PPP/Pub 4 - El comprador ya sabe/_PUBLICAR_v2/L4.png",
+     "Semana PPP/Pub 4 - El comprador ya sabe/_PUBLICAR_v2/L6.png",
+     "Semana PPP/Pub 4 - El comprador ya sabe/_PUBLICAR_v2/L7.png",
+     "Semana PPP/Pub 4 - El comprador ya sabe/_PUBLICAR_v2/L8.png"
+    ]
+   },
+   "captions": [],
+   "videos": [],
+   "docs": [
+    "Semana PPP/Pub 4 - El comprador ya sabe/guion_v1.json"
+   ]
+  },
+  "La Obra que No Empezo": {
+   "carpeta": "Semana PPP/Pub 4 - La Obra que No Empezo",
+   "versiones": {
+    "V1": [
+     "Semana PPP/Pub 4 - La Obra que No Empezo/V1/pub4_V1.png",
+     "Semana PPP/Pub 4 - La Obra que No Empezo/V1/pub4_bk.png"
+    ],
+    "VAR": [
+     "Semana PPP/Pub 4 - La Obra que No Empezo/VAR/pub4_c1.png"
+    ],
+    "V2": [
+     "Semana PPP/Pub 4 - La Obra que No Empezo/V2/pub4_V2.png",
+     "Semana PPP/Pub 4 - La Obra que No Empezo/V2/pub4_bk.png"
+    ],
+    "RESCOLDO": [
+     "Semana PPP/Pub 4 - La Obra que No Empezo/RESCOLDO/rescoldo_casco.png"
+    ]
+   },
+   "captions": [],
+   "videos": [],
+   "docs": []
+  },
+  "Las 48 Horas": {
+   "carpeta": "Semana PPP/Pub 5 - Las 48 Horas",
+   "versiones": {
+    "V1": [
+     "Semana PPP/Pub 5 - Las 48 Horas/V1/pub5_V1.png",
+     "Semana PPP/Pub 5 - Las 48 Horas/V1/pub5_bk.png"
+    ],
+    "VAR": [
+     "Semana PPP/Pub 5 - Las 48 Horas/VAR/pub5_c1.png"
+    ],
+    "V2": [
+     "Semana PPP/Pub 5 - Las 48 Horas/V2/pub5_V2.png",
+     "Semana PPP/Pub 5 - Las 48 Horas/V2/pub5_bk.png"
+    ]
+   },
+   "captions": [],
+   "videos": [],
+   "docs": []
+  },
+  "El Nombre No Se Mueve": {
+   "carpeta": "Semana PPP/Pub 7 - El Nombre No Se Mueve",
+   "versiones": {
+    "V1": [
+     "Semana PPP/Pub 7 - El Nombre No Se Mueve/V1/pub7_V1.png",
+     "Semana PPP/Pub 7 - El Nombre No Se Mueve/V1/pub7_bk.png"
+    ],
+    "VAR": [
+     "Semana PPP/Pub 7 - El Nombre No Se Mueve/VAR/pub7_c1.png"
+    ],
+    "V2": [
+     "Semana PPP/Pub 7 - El Nombre No Se Mueve/V2/pub7_V2.png",
+     "Semana PPP/Pub 7 - El Nombre No Se Mueve/V2/pub7_bk.png"
+    ],
+    "V3": [
+     "Semana PPP/Pub 7 - El Nombre No Se Mueve/V3/pub7_V3.png"
+    ],
+    "V2R": [
+     "Semana PPP/Pub 7 - El Nombre No Se Mueve/V2R/pub7r_bk.png"
+    ],
+    "RESCOLDO": [
+     "Semana PPP/Pub 7 - El Nombre No Se Mueve/RESCOLDO/rescoldo_llave.png",
+     "Semana PPP/Pub 7 - El Nombre No Se Mueve/RESCOLDO/rescoldo_llave_intimo.png"
+    ]
+   },
+   "captions": [],
+   "videos": [],
+   "docs": []
+  },
+  "Terreno Dormido": {
+   "carpeta": "Terreno Dormido",
+   "versiones": {
+    "(raíz)": [
+     "Terreno Dormido/STORYBOARD.png"
+    ],
+    "finales": [
+     "Terreno Dormido/finales/Lamina 1.png",
+     "Terreno Dormido/finales/Lamina 2.png",
+     "Terreno Dormido/finales/Lamina 3.png",
+     "Terreno Dormido/finales/Lamina 4.png",
+     "Terreno Dormido/finales/Lamina 5.png",
+     "Terreno Dormido/finales/Lamina 6.png",
+     "Terreno Dormido/finales/Lamina 7.png"
+    ],
+    "Lamina 7": [
+     "Terreno Dormido/Lamina 7/A1_bote.png",
+     "Terreno Dormido/Lamina 7/A2_bote.png",
+     "Terreno Dormido/Lamina 7/A3_bote.png",
+     "Terreno Dormido/Lamina 7/A4_renacer.png",
+     "Terreno Dormido/Lamina 7/A5_solobase.png",
+     "Terreno Dormido/Lamina 7/B1_casa.png",
+     "Terreno Dormido/Lamina 7/B2_casa.png",
+     "Terreno Dormido/Lamina 7/B3_casa.png",
+     "Terreno Dormido/Lamina 7/C1_basura.png",
+     "Terreno Dormido/Lamina 7/FINAL.png",
+     "Terreno Dormido/Lamina 7/L7_amanece.png",
+     "Terreno Dormido/Lamina 7/L7_barragan.png",
+     "Terreno Dormido/Lamina 7/L7_barragan_HD.png",
+     "Terreno Dormido/Lamina 7/L7_casapadre.png",
+     "Terreno Dormido/Lamina 7/L7_dia.png",
+     "Terreno Dormido/Lamina 7/L7_dia2.png",
+     "Terreno Dormido/Lamina 7/L7_dia3.png",
+     "Terreno Dormido/Lamina 7/L7_dia_HD.png",
+     "Terreno Dormido/Lamina 7/L7_facade.png",
+     "Terreno Dormido/Lamina 7/L7_op1_hogar.png"
+    ],
+    "Lamina 1": [
+     "Terreno Dormido/Lamina 1/FINAL.png",
+     "Terreno Dormido/Lamina 1/L1_HD.png",
+     "Terreno Dormido/Lamina 1/L1_HD2.png",
+     "Terreno Dormido/Lamina 1/L1_HD3.png",
+     "Terreno Dormido/Lamina 1/L1_HD4.png",
+     "Terreno Dormido/Lamina 1/L1copy.png",
+     "Terreno Dormido/Lamina 1/V1.png",
+     "Terreno Dormido/Lamina 1/V10.png",
+     "Terreno Dormido/Lamina 1/V11.png",
+     "Terreno Dormido/Lamina 1/V12.png",
+     "Terreno Dormido/Lamina 1/V13.png",
+     "Terreno Dormido/Lamina 1/V14.png",
+     "Terreno Dormido/Lamina 1/V15.png",
+     "Terreno Dormido/Lamina 1/V16.png",
+     "Terreno Dormido/Lamina 1/V17.png",
+     "Terreno Dormido/Lamina 1/V18.png",
+     "Terreno Dormido/Lamina 1/V19.png",
+     "Terreno Dormido/Lamina 1/V2.png",
+     "Terreno Dormido/Lamina 1/V20.png",
+     "Terreno Dormido/Lamina 1/V21.png"
+    ],
+    "Lamina 6": [
+     "Terreno Dormido/Lamina 6/D1.png",
+     "Terreno Dormido/Lamina 6/D2.png",
+     "Terreno Dormido/Lamina 6/D2b.png",
+     "Terreno Dormido/Lamina 6/D2c.png",
+     "Terreno Dormido/Lamina 6/D2d.png",
+     "Terreno Dormido/Lamina 6/D2e.png",
+     "Terreno Dormido/Lamina 6/D2f.png",
+     "Terreno Dormido/Lamina 6/D2g.png",
+     "Terreno Dormido/Lamina 6/D2h.png",
+     "Terreno Dormido/Lamina 6/D2i.png",
+     "Terreno Dormido/Lamina 6/D3.png",
+     "Terreno Dormido/Lamina 6/D4.png",
+     "Terreno Dormido/Lamina 6/D5.png",
+     "Terreno Dormido/Lamina 6/FINAL.png",
+     "Terreno Dormido/Lamina 6/L6copy.png",
+     "Terreno Dormido/Lamina 6/M1_bastidor.png",
+     "Terreno Dormido/Lamina 6/M2_dosmanos.png",
+     "Terreno Dormido/Lamina 6/M3_lacre.png",
+     "Terreno Dormido/Lamina 6/M4_faro.png",
+     "Terreno Dormido/Lamina 6/M5_bokeh.png"
+    ],
+    "Lamina 3": [
+     "Terreno Dormido/Lamina 3/FINAL.png",
+     "Terreno Dormido/Lamina 3/L3_HD.png",
+     "Terreno Dormido/Lamina 3/L3_caminos.png",
+     "Terreno Dormido/Lamina 3/L3_luz.png",
+     "Terreno Dormido/Lamina 3/L3_luz2.png",
+     "Terreno Dormido/Lamina 3/L3_poetica.png",
+     "Terreno Dormido/Lamina 3/L3_poetica_HD.png",
+     "Terreno Dormido/Lamina 3/L3r1_puertas.png",
+     "Terreno Dormido/Lamina 3/L3r2_cuerdas.png",
+     "Terreno Dormido/Lamina 3/L3r3_sombras.png",
+     "Terreno Dormido/Lamina 3/V1.png",
+     "Terreno Dormido/Lamina 3/V10.png",
+     "Terreno Dormido/Lamina 3/V10_HD.png",
+     "Terreno Dormido/Lamina 3/V10_HD2.png",
+     "Terreno Dormido/Lamina 3/V11.png",
+     "Terreno Dormido/Lamina 3/V12.png",
+     "Terreno Dormido/Lamina 3/V13.png",
+     "Terreno Dormido/Lamina 3/V14.png",
+     "Terreno Dormido/Lamina 3/V15.png",
+     "Terreno Dormido/Lamina 3/V16.png"
+    ],
+    "Lamina 4": [
+     "Terreno Dormido/Lamina 4/FINAL.png",
+     "Terreno Dormido/Lamina 4/L4copy.png",
+     "Terreno Dormido/Lamina 4/V1.png",
+     "Terreno Dormido/Lamina 4/V10.png",
+     "Terreno Dormido/Lamina 4/V11.png",
+     "Terreno Dormido/Lamina 4/V12.png",
+     "Terreno Dormido/Lamina 4/V13.png",
+     "Terreno Dormido/Lamina 4/V14.png",
+     "Terreno Dormido/Lamina 4/V15.png",
+     "Terreno Dormido/Lamina 4/V16.png",
+     "Terreno Dormido/Lamina 4/V16_HD.png",
+     "Terreno Dormido/Lamina 4/V16_HD2.png",
+     "Terreno Dormido/Lamina 4/V17.png",
+     "Terreno Dormido/Lamina 4/V18.png",
+     "Terreno Dormido/Lamina 4/V19.png",
+     "Terreno Dormido/Lamina 4/V19_HD.png",
+     "Terreno Dormido/Lamina 4/V2.png",
+     "Terreno Dormido/Lamina 4/V20.png",
+     "Terreno Dormido/Lamina 4/V21.png",
+     "Terreno Dormido/Lamina 4/V22.png"
+    ],
+    "Lamina 5": [
+     "Terreno Dormido/Lamina 5/B1.png",
+     "Terreno Dormido/Lamina 5/B2.png",
+     "Terreno Dormido/Lamina 5/B3.png",
+     "Terreno Dormido/Lamina 5/B4.png",
+     "Terreno Dormido/Lamina 5/B5.png",
+     "Terreno Dormido/Lamina 5/B6.png",
+     "Terreno Dormido/Lamina 5/B7.png",
+     "Terreno Dormido/Lamina 5/C1.png",
+     "Terreno Dormido/Lamina 5/C1_HD.png",
+     "Terreno Dormido/Lamina 5/C2.png",
+     "Terreno Dormido/Lamina 5/C3.png",
+     "Terreno Dormido/Lamina 5/C4.png",
+     "Terreno Dormido/Lamina 5/C5.png",
+     "Terreno Dormido/Lamina 5/FINAL.png",
+     "Terreno Dormido/Lamina 5/L5copy.png",
+     "Terreno Dormido/Lamina 5/Op1.png",
+     "Terreno Dormido/Lamina 5/Op2.png",
+     "Terreno Dormido/Lamina 5/Op3.png",
+     "Terreno Dormido/Lamina 5/V1.png",
+     "Terreno Dormido/Lamina 5/V2.png"
+    ],
+    "Lamina 2": [
+     "Terreno Dormido/Lamina 2/FINAL.png",
+     "Terreno Dormido/Lamina 2/L2_HD.png",
+     "Terreno Dormido/Lamina 2/L2_HD2.png",
+     "Terreno Dormido/Lamina 2/L2_HDb.png",
+     "Terreno Dormido/Lamina 2/L2_agita.png",
+     "Terreno Dormido/Lamina 2/L2copy.png",
+     "Terreno Dormido/Lamina 2/V1.png",
+     "Terreno Dormido/Lamina 2/V10.png",
+     "Terreno Dormido/Lamina 2/V11.png",
+     "Terreno Dormido/Lamina 2/V12.png",
+     "Terreno Dormido/Lamina 2/V13.png",
+     "Terreno Dormido/Lamina 2/V14.png",
+     "Terreno Dormido/Lamina 2/V15.png",
+     "Terreno Dormido/Lamina 2/V16.png",
+     "Terreno Dormido/Lamina 2/V17.png",
+     "Terreno Dormido/Lamina 2/V18.png",
+     "Terreno Dormido/Lamina 2/V19.png",
+     "Terreno Dormido/Lamina 2/V2.png",
+     "Terreno Dormido/Lamina 2/V3.png",
+     "Terreno Dormido/Lamina 2/V4.png"
+    ]
+   },
+   "captions": [],
+   "videos": [
+    "Terreno Dormido/finales/Terreno_Dormido_video.mp4",
+    "Terreno Dormido/finales/Terreno_Dormido.mov",
+    "Terreno Dormido/finales/Terreno_Dormido_v2.mp4"
+   ],
+   "docs": []
+  }
+ }
+}

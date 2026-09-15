@@ -1,6 +1,6 @@
 {
  "_que_es": "Respaldo de la hoja ARBOL del Sheet. El Sheet manda; esto sirve sin sesión o sin señal.",
- "actualizado": "2026-09-14 09:32",
+ "actualizado": "2026-09-14 21:45",
  "nodos": [
   {
    "nivel": "tronco",
@@ -120,6 +120,106 @@
    "bajada": "",
    "orden": 1,
    "estado": "",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "recamara",
+   "padre": "carga",
+   "titulo": "La Recámara Cerrada",
+   "bajada": "",
+   "orden": 1,
+   "estado": "en producción · V1-V3 + copies en la Mac, sin publicar",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "letrero",
+   "padre": "tuyo",
+   "titulo": "El Letrero Acostado",
+   "bajada": "",
+   "orden": 2,
+   "estado": "en producción · lámina V1-V3 y carrusel saga en la Mac",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "asi-se-ve-saber",
+   "padre": "llamada",
+   "titulo": "REEL · Así Se Ve Saber",
+   "bajada": "",
+   "orden": 2,
+   "estado": "plan (Mes PPP)",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "obra",
+   "padre": "carga",
+   "titulo": "La Obra que No Empezó",
+   "bajada": "",
+   "orden": 2,
+   "estado": "en producción · V1-V2 en la Mac",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "48-horas",
+   "padre": "llamada",
+   "titulo": "Las 48 Horas",
+   "bajada": "",
+   "orden": 3,
+   "estado": "en producción · V1-V2 en la Mac",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "nombre-no-se-mueve",
+   "padre": "tuyo",
+   "titulo": "El Nombre No Se Mueve",
+   "bajada": "",
+   "orden": 3,
+   "estado": "en producción · V1-V3 en la Mac",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "mesa-vacia",
+   "padre": "dato",
+   "titulo": "La Mesa Vacía",
+   "bajada": "",
+   "orden": 2,
+   "estado": "en producción · 7 láminas + video en la Mac",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "prueba-social",
+   "padre": "llamada",
+   "titulo": "Prueba social · el entregable real",
+   "bajada": "",
+   "orden": 4,
+   "estado": "plan (Mes PPP)",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "miramar",
+   "padre": "carga",
+   "titulo": "Historia Miramar",
+   "bajada": "",
+   "orden": 3,
+   "estado": "plan (Mes PPP)",
+   "nota": ""
+  },
+  {
+   "nivel": "pieza",
+   "id": "recap",
+   "padre": "llamada",
+   "titulo": "REEL · cierre de mes",
+   "bajada": "",
+   "orden": 5,
+   "estado": "plan (Mes PPP)",
    "nota": ""
   }
  ]

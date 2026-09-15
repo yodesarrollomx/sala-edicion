@@ -159,6 +159,7 @@ html.embed .app{padding-top:8px}
 .arb-ficha-img img{width:100%;max-height:300px;object-fit:cover;border-radius:12px;display:block}
 .arb-tabla{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0 0} .arb-tabla th{font-weight:600;color:var(--guia);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;text-align:right;padding:4px} .arb-tabla td{padding:5px 4px;text-align:right;border-top:1px solid var(--linea)} .arb-tabla td:first-child,.arb-tabla th:first-child{text-align:left}
 .arb-spark{width:100%;height:48px;display:block} .arb-ficha small{font-size:11px;color:var(--guia)}
+.arb-cap{font-size:12.5px;line-height:1.5;white-space:pre-wrap;border-left:2px solid var(--linea2);padding-left:10px;margin:8px 0 0;color:var(--texto,inherit)}
 .arb-vers{display:flex;gap:8px;overflow-x:auto} .arb-ver{flex:none;width:70px;text-align:center;font-size:11px} .arb-ver img{width:70px;height:70px;object-fit:cover;border-radius:8px;display:block} .arb-ver small{color:var(--guia);display:block}
 .arb-leyenda{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:11.5px;color:var(--guia);margin:0 0 14px}
 @media (max-width:640px){ .arb-temas{grid-template-columns:1fr} .arb-temas::before{display:none} .arb-tema::before{display:none} }
@@ -619,7 +620,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='b17f688f07';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='31c3931a0c';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2033,7 +2034,13 @@ async function traerArbol(){
   }
   try{ const j=await (await fetch('datos/arbol.json?v='+Date.now())).json(); ARBOL={nodos:j.nodos||[],fuente:'respaldo'} }catch(e){ ARBOL={nodos:[],fuente:'nada'} }
 }
-async function traerEmbudo(){ try{ EMBUDO=await (await fetch('datos/embudo.json?v='+Date.now())).json() }catch(e){ EMBUDO=null } }
+let PUBLI=null, MATERIAL=null;
+async function traerEmbudo(){ try{ EMBUDO=await (await fetch('datos/embudo.json?v='+Date.now())).json() }catch(e){ EMBUDO=null }
+  // 14-sep: el inventario de TODO lo publicado (caption completo, todas las imágenes bajadas al repo) y el material local por pieza
+  try{ PUBLI=await (await fetch('datos/publicadas.json?v='+Date.now())).json() }catch(e){ PUBLI=null }
+  try{ MATERIAL=await (await fetch('datos/material.json?v='+Date.now())).json() }catch(e){ MATERIAL=null } }
+function publiDe(clave){ return ((PUBLI&&PUBLI.publicaciones)||[]).find(p=>p.clave===clave) }
+function materialDe(nombre){ const M=(MATERIAL&&MATERIAL.piezas)||{}; const k=Object.keys(M).find(n=>normSlug(n)===normSlug(nombre)||normSlug(nombre).includes(normSlug(n))||normSlug(n).includes(normSlug(nombre).split('-')[1]||'#')); return k?{nombre:k,...M[k]}:null }
 function catalogoDe(nombre){ return ((EMBUDO&&EMBUDO.catalogo)||[]).find(c=>c.pieza&&(c.pieza===nombre||normSlug(c.pieza)===normSlug(nombre))) }
 function embudoDe(nombre){ return ((EMBUDO&&EMBUDO.piezas)||[]).find(z=>z.pieza===nombre||normSlug(z.pieza)===normSlug(nombre)) }
 const N_=v=>(v===null||v===undefined||v==='')?'–':String(v);
@@ -2083,7 +2090,11 @@ async function pintarArbol(){
     if(!cpub&&z) cpub=CAT.find(x=>x.pieza&&normSlug(x.pieza)===normSlug(z.nombre));
     if(cpub){ usadasCat.add(cpub.clave); if(z) usadasPz.add(z.slug); return tarjetaPublicada(cpub) }
     if(z){ usadasPz.add(z.slug); return tarjetaEnProduccion(z) }
-    return `<div class="arb-card idea"><div class="arb-img"><span>idea</span></div><div class="arb-cuerpo"><div class="arb-tit">${esc(n.titulo||id)}</div><div class="arb-sub">sin láminas todavía</div></div></div>`;
+    const mat=materialDe(n.titulo||id); const vs=mat?Object.keys(mat.versiones||{}).filter(v=>!v.startsWith('_')&&v!=='(raíz)'):[];
+    const img=mat&&vs.length?((mat.versiones[vs[vs.length-1]]||[])[0]||''):'';
+    return `<div class="arb-card idea"><div class="arb-img">${mat?'<span>en la Mac</span>':'<span>idea</span>'}<span class="arb-fmt">${esc(n.estado?n.estado.split('·')[0].trim():'idea')}</span></div>
+      <div class="arb-cuerpo"><div class="arb-tit">${esc(n.titulo||id)}</div><div class="arb-sub">${esc(n.estado||'sin láminas todavía')}</div>
+      ${mat?`<div class="arb-brotes">${vs.map(v=>`<span class="arb-brote gris"><i></i>${esc(v)} · ${(mat.versiones[v]||[]).length}</span>`).join('')}${mat.videos&&mat.videos.length?`<span class="arb-brote gris"><i></i>${mat.videos.length} video(s)</span>`:''}</div>`:''}</div></div>`;
   };
   const temasHtml=temas.map(tm=>{
     const hijos=nodoPieza.filter(n=>n.padre===tm.id).sort((a,b)=>(a.orden||99)-(b.orden||99));
@@ -2125,6 +2136,9 @@ function fichaPublicacion(clave){
       ${e?`<tr><td>Leads con utm</td><td colspan="5">${N_(e.leads)} lead(s) · ${N_(e.citas)} cita(s)</td></tr>`:''}</table>
     ${serie.length>=2?`<h4>Desde la primera medición</h4>${sparkline(serie,'reach')||sparkline(serie,'views')}`:'<p class="arb-sub">Historia: una sola medición todavía; el centinela mide dos veces al día desde hoy.</p>'}
     ${m.mejor?`<h4>Contra el mejor ${esc((m.formato||'').toLowerCase())} de Yo Desarrollo</h4><p class="arb-sub"><a href="${esc(m.mejor.permalink||'#')}" target="_blank" rel="noopener">«${esc(m.mejor.titulo)}»</a> · ${m.mejor.alcance} de alcance · ${N_(m.mejor.er)} % · mediana del formato ${N_(m.mediana_alcance)} (${m.n} publicaciones)</p>`:''}
+    ${(()=>{ const q=publiDe(c.clave)||((PUBLI&&PUBLI.publicaciones)||[]).find(p=>p.fecha===c.fecha&&p.red==='IG'); if(!q) return '';
+        return `<h4>Lo que se publicó</h4>${(q.imagenes||[]).length?`<div class="arb-vers">${q.imagenes.map((im,i)=>`<div class="arb-ver"><img src="${esc(im)}" alt="" loading="lazy"><b>${i+1}</b></div>`).join('')}</div>`:''}
+        <p class="arb-cap">${esc(q.caption||'').replace(/\n/g,' · ')}</p>` })()}
     ${versiones}
     <p class="arb-sub">${c.permalinks.IG?`<a href="${esc(c.permalinks.IG)}" target="_blank" rel="noopener">Abrir en Instagram ↗</a> · `:''}${c.permalinks.FB?`<a href="${esc(c.permalinks.FB)}" target="_blank" rel="noopener">Abrir en Facebook ↗</a> · `:''}clave: <code>${esc(c.clave)}</code></p></div>`,'ficha-'+clave);
 }

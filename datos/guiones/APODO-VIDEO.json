@@ -32,7 +32,7 @@
   {
    "n": 1,
    "id": "E1",
-   "lamina_src": "laminas/apodo-g7/L1.png",
+   "lamina_src": "laminas/apodo-e2026-09-14/L1.png",
    "texto": "¿Ya sabes cómo le dicen a tu terreno?",
    "partes": [
     {
@@ -42,7 +42,8 @@
    ],
    "intencion": "pregunta de verdad, no leída: sube al final. Él ya lo había pedido en otra lámina («si le damos entonación de pregunta se siente más leído por el cliente»).",
    "voz_reusable": null,
-   "escena_reusable": null
+   "escena_reusable": null,
+   "lamina_src_previa": "laminas/apodo-g7/L1.png"
   },
   {
    "n": 2,
@@ -93,7 +94,7 @@
   {
    "n": 4,
    "id": "E4",
-   "lamina_src": "laminas/apodo-g7/L4.png",
+   "lamina_src": "laminas/apodo-e2026-09-14/L4.png",
    "texto": "Ninguno de esos nombres se lo puso tu terreno.",
    "partes": [
     {
@@ -103,7 +104,8 @@
    ],
    "intencion": "EL GIRO. Firme y más lento que todo lo anterior; aquí se para la conversación de la banqueta.",
    "voz_reusable": null,
-   "escena_reusable": null
+   "escena_reusable": null,
+   "lamina_src_previa": "laminas/apodo-g7/L4.png"
   },
   {
    "n": 5,

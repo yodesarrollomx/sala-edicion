@@ -5,9 +5,9 @@
  "laminas": [
   {
    "n": 1,
-   "src": "laminas/apodo-g7/L1.png",
+   "src": "laminas/apodo-e2026-09-14/L1.png",
    "dice": "¿Ya sabes cómo le dicen a tu terreno?",
-   "estado": "abierta",
+   "estado": "aprobada",
    "versiones": [
     {
      "v": 1,
@@ -15,27 +15,27 @@
      "src": "laminas/apodo-g7/L1.png",
      "hash": "9402bbc1",
      "marca": ""
-    }
-   ],
-   "version": 1,
-   "candidatas": [
-    {
-     "src": "laminas/apodo-p1-2026-09-14/L1-1.jpg",
-     "titulo": "Toma 1",
-     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
     },
     {
-     "src": "laminas/apodo-p1-2026-09-14/L1-2.jpg",
-     "titulo": "Toma 2",
-     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
+     "v": 2,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L1.png",
+     "hash": "6ec6be33",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
     }
-   ]
+   ],
+   "version": 2,
+   "fecha": "2026-09-14",
+   "toma_elegida": "Toma 2",
+   "aprobada_por": "Alejandro",
+   "aprobada_el": "2026-09-14"
   },
   {
    "n": 2,
    "src": "laminas/apodo-g7/L2.png",
    "dice": "Los vecinos le dicen «el de la esquina».",
-   "estado": "abierta",
+   "estado": "rehecha",
    "versiones": [
     {
      "v": 1,
@@ -57,7 +57,9 @@
      "titulo": "Toma 2",
      "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
     }
-   ]
+   ],
+   "marca_previa": "no",
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no engancha. Más luminosa"
   },
   {
    "n": 3,
@@ -94,9 +96,9 @@
   },
   {
    "n": 4,
-   "src": "laminas/apodo-g7/L4.png",
+   "src": "laminas/apodo-e2026-09-14/L4.png",
    "dice": "Ninguno de esos nombres se lo puso tu terreno.",
-   "estado": "abierta",
+   "estado": "aprobada",
    "versiones": [
     {
      "v": 1,
@@ -104,21 +106,21 @@
      "src": "laminas/apodo-g7/L4.png",
      "hash": "c044b62e",
      "marca": ""
-    }
-   ],
-   "version": 1,
-   "candidatas": [
-    {
-     "src": "laminas/apodo-p4-2026-09-14/L4-1.jpg",
-     "titulo": "Toma 1",
-     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
     },
     {
-     "src": "laminas/apodo-p4-2026-09-14/L4-2.jpg",
-     "titulo": "Toma 2",
-     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
+     "v": 2,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L4.png",
+     "hash": "269fb20b",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
     }
-   ]
+   ],
+   "version": 2,
+   "fecha": "2026-09-14",
+   "toma_elegida": "Toma 2",
+   "aprobada_por": "Alejandro",
+   "aprobada_el": "2026-09-14"
   },
   {
    "n": 5,
@@ -157,7 +159,7 @@
    "n": 6,
    "src": "laminas/apodo-g8/L3.png",
    "dice": "Pídele a tu terreno su Plan de Potencial Personalizado y descubramos juntos su nombre real.",
-   "estado": "abierta",
+   "estado": "rehecha",
    "versiones": [
     {
      "v": 1,
@@ -176,7 +178,7 @@
     }
    ],
    "version": 2,
-   "nota_previa": "«la toma 3 creo que a la de que le dicen el baldío está bien, el Apodo que sigue no se escucha bien y está de más, quítalo, nos quedamos con los apodos de la esquina y el baldío… luego en la lámina de lo que puede sostener no me gusta lo de sostener, debemos de poner algo como lo que tu terreno puede llegar a ser… y a lo último donde dice pídele su plan de potencial personalizado y descubramos juntos su nombre real»",
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago... creo que debe de ser la misma pareja que estaba en ottras laminas... tmb deberia de tener un plan o un folder n tanto un plano... estamos prometiendo analisis y plan de ptencial no un proyecto aun",
    "candidatas": [
     {
      "src": "laminas/apodo-p6-2026-09-14/L6-1.jpg",
@@ -188,20 +190,17 @@
      "titulo": "Toma 2",
      "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
     }
-   ]
+   ],
+   "marca_previa": "no"
   }
  ],
  "decidir": [
-  1,
   2,
-  4,
   6
  ],
  "mapa": {
-  "1": 1,
-  "2": 2,
-  "3": 4,
-  "4": 6
+  "1": 2,
+  "2": 6
  },
  "base": "apodo-video-10sep-v7",
  "guion": "datos/guiones/APODO-VIDEO.json",
