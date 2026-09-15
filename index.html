@@ -164,33 +164,61 @@ html.embed .app{padding-top:8px}
 .arb-leyenda{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:11.5px;color:var(--guia);margin:0 0 14px}
 @media (max-width:640px){ .arb-temas{grid-template-columns:1fr} .arb-temas::before{display:none} .arb-tema::before{display:none} }
 
-/* ── el árbol mínimo (14-sep noche) ── */
-#vArbol{max-width:560px}
-.tronco-cab{text-align:center;margin:0 0 6px} .tronco-cab h3{font-family:var(--serif);font-weight:400;font-size:22px;margin:0} .tronco-cab p{margin:2px 0 0;font-size:12px;color:var(--guia)}
-.arbol-v{position:relative;padding:14px 0 10px}
-.arbol-v .tronco{position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:linear-gradient(var(--linea2),var(--oro));border-radius:2px}
-.rama{position:relative;width:calc(50% - 18px);margin:0 0 22px;padding-top:2px}
-.rama.izq{margin-right:auto;text-align:right} .rama.der{margin-left:auto;text-align:left}
-.rama::before{content:"";position:absolute;top:14px;width:18px;height:2px;background:var(--linea2)} .rama.izq::before{right:-18px} .rama.der::before{left:-18px}
-.rama.raiz{width:100%;text-align:center;border-top:1px dashed var(--linea2);padding-top:14px} .rama.raiz::before{display:none}
-.rama-tit{font-family:var(--serif);font-weight:400;font-size:15px;margin:0 0 8px;line-height:1.2}
-.frutos{display:flex;flex-wrap:wrap;gap:10px 8px} .rama.izq .frutos{justify-content:flex-end} .rama.raiz .frutos{justify-content:center}
-.fruto{background:none;border:0;padding:0;width:68px;cursor:pointer;color:inherit;font:inherit;text-align:center}
-.fr-img{display:block;width:56px;height:56px;border-radius:50%;margin:0 auto 4px;overflow:hidden;border:3px solid var(--linea2);background:var(--tarjeta)}
-.fr-img img{width:100%;height:100%;object-fit:cover;display:block} .fr-img i{display:block;width:100%;height:100%;background:radial-gradient(circle at 40% 35%,var(--linea2),transparent 70%)}
-.fruto.verde .fr-img{border-color:var(--si)} .fruto.oro .fr-img{border-color:var(--oro)} .fruto.rojo .fr-img{border-color:var(--no)} .fruto.verde-crudo .fr-img{border-color:var(--si);border-style:dashed} .fruto.semilla .fr-img{border-style:dotted;width:40px;height:40px}
-.fr-nom{display:block;font-size:10.5px;line-height:1.15;color:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fr-num{display:block;font-size:10px;color:var(--guia);margin-top:1px}
-.fr-vacio{font-size:11px;color:var(--guia)} .ver-mas{margin-top:8px;background:none;border:1px solid var(--linea);color:var(--guia);border-radius:999px;padding:4px 12px;font-size:11px;cursor:pointer}
+/* ── EL ÁRBOL VIVO (15-sep) ── */
+#vArbol{max-width:620px}
+.tronco-cab{text-align:center;margin:0 0 4px} .tronco-cab h3{font-family:var(--serif);font-weight:400;font-size:23px;margin:0} .tronco-cab p{margin:3px 0 0;font-size:12px;color:var(--guia)}
+.late{color:var(--oro)} .late::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--oro);margin-right:5px;animation:late 1.6s ease-in-out infinite}
+@keyframes late{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+.arbol-v{position:relative;padding:16px 0 4px}
+.arbol-v .tronco{position:absolute;left:50%;top:0;bottom:22px;width:4px;margin-left:-2px;border-radius:3px;
+  background:linear-gradient(180deg,var(--linea2),var(--oro) 65%,var(--oro))}
+.rama{position:relative;width:calc(50% - 6px);margin:0 0 26px}
+.rama.izq{margin-right:auto} .rama.der{margin-left:auto}
+.rama-tit{font-family:var(--serif);font-weight:400;font-size:14.5px;line-height:1.2;margin:0 0 6px;color:var(--guia)}
+.rama.izq .rama-tit{text-align:right;padding-right:14px} .rama.der .rama-tit{padding-left:14px}
+/* el ramal: el palo sale del tronco y adelgaza hacia la punta; los frutos se ordenan por avance */
+.ramal{position:relative;min-height:84px;display:flex;align-items:flex-start}
+.ramal .palo{position:absolute;top:30px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--oro),var(--linea2))}
+.rama.izq .ramal{flex-direction:row-reverse} .rama.izq .palo{right:-6px;left:4px;background:linear-gradient(270deg,var(--oro),var(--linea2))}
+.rama.der .palo{left:-6px;right:4px}
+.frutos{display:flex;flex-wrap:wrap;gap:2px;padding:0 2px;width:100%}
+.rama.izq .frutos{justify-content:flex-end} .rama.der .frutos{justify-content:flex-start}
+/* la POSICIÓN es el estado: lo terminado se va a la punta y se aprieta */
+.fruto{background:none;border:0;padding:0;width:74px;cursor:pointer;color:inherit;font:inherit;text-align:center;
+  order:calc(100 - var(--pos,0) * 100);margin-left:calc(var(--pos,0) * -6px);margin-right:calc(var(--pos,0) * -6px);
+  transition:transform .18s}
+.rama.izq .fruto{order:calc(var(--pos,0) * 100)}
+.fruto:hover{transform:translateY(-3px)} .fruto:active{transform:scale(.96)}
+.fr-bola{position:relative;display:block;width:70px;height:70px;margin:0 auto 3px}
+.anillo{position:absolute;inset:0;width:70px;height:70px;transform:rotate(-90deg)}
+.gajo{stroke:var(--linea2);opacity:.45;transition:stroke .3s,opacity .3s}
+.gajo.on{stroke:var(--si);opacity:1}
+.gajo.run{stroke:var(--oro);opacity:1;animation:gaj 1.4s ease-in-out infinite}
+@keyframes gaj{0%,100%{opacity:.4}50%{opacity:1}}
+.fr-foto{position:absolute;inset:9px;border-radius:50%;overflow:hidden;background:var(--tarjeta);display:block}
+.fr-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.fruto.listo .fr-foto{box-shadow:0 0 0 2px var(--si),0 4px 16px rgba(0,0,0,.45)}
+.fruto.vivo .fr-bola::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--oro);opacity:.35;animation:onda 1.9s ease-out infinite}
+@keyframes onda{0%{transform:scale(.92);opacity:.5}100%{transform:scale(1.18);opacity:0}}
+.chispa{position:absolute;right:2px;top:2px;width:9px;height:9px;border-radius:50%;background:var(--oro);box-shadow:0 0 8px var(--oro);animation:late 1.3s ease-in-out infinite}
+.fr-nom{display:block;font-size:10px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fr-num{display:block;font-size:9.5px;color:var(--guia);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fruto.listo .fr-num{color:var(--si)}
+.fr-vacio{font-size:11px;color:var(--guia);padding-top:26px}
+.rama.raiz{width:100%;text-align:center;border-top:1px dashed var(--linea2);padding-top:14px;margin-top:6px}
+.rama.raiz .rama-tit{text-align:center;padding:0} .rama.raiz .frutos{justify-content:center}
+.ver-mas{margin-top:8px;background:none;border:1px solid var(--linea);color:var(--guia);border-radius:999px;padding:4px 12px;font-size:11px;cursor:pointer}
+.como-leer{margin:16px auto 0;max-width:460px;border:1px solid var(--linea);border-radius:14px;padding:12px 14px;font-size:12.5px;line-height:1.45}
+.como-leer b{font-size:12px} .como-leer p{margin:6px 0 0;color:var(--guia)} .como-leer p b{color:inherit}
 .arb-pie{text-align:center;margin:18px 0 6px} .arb-pie a{color:var(--linea2);text-decoration:none;font-size:26px;line-height:1;padding:0 14px} .arb-pie a:hover{color:var(--oro)}
 .edita{background:none;border:0;color:var(--guia);cursor:pointer;font-size:12px;padding:0 4px} .edita:hover{color:var(--oro)}
 .ed{display:block;margin:8px 0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--guia)} .ed input,.ed textarea,.ed select{display:block;width:100%;margin-top:4px;background:var(--fondo);color:inherit;border:1px solid var(--linea);border-radius:10px;padding:9px;font:inherit;text-transform:none;letter-spacing:0}
-.como-leer{margin:14px auto 0;max-width:420px;border:1px solid var(--linea);border-radius:14px;padding:12px 14px;font-size:12.5px;line-height:1.45} .como-leer b{font-size:12px} .como-leer p{margin:6px 0 0;color:var(--guia)} .como-leer p b{color:inherit} .como-leer .pt{display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--linea2);vertical-align:middle;margin-right:4px}
 .ideas-cab{margin:22px 0 8px} .ideas-cab b{font-family:var(--serif);font-weight:400;font-size:19px} .ideas-cab p{margin:2px 0 0;font-size:12px;color:var(--guia)}
 .ideas-premisa{margin:10px 0 0} .ideas-premisa>b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--guia);margin:0 0 6px}
 .idea{display:flex;gap:10px;align-items:center;border:1px solid var(--linea);border-radius:12px;padding:9px 12px;margin:0 0 6px;background:var(--tarjeta)} .idea>div:first-child{flex:1;min-width:0} .idea-tit{font-weight:600;font-size:13.5px} .idea small{color:var(--guia);font-size:11px} .idea p{margin:2px 0 0;font-size:12px;color:var(--guia);line-height:1.35}
 .idea-btns{display:flex;gap:6px;flex:none} .idea-btns button{border:1px solid var(--oro);background:var(--oro-suave);color:var(--oro);border-radius:999px;padding:6px 12px;font:inherit;font-size:12px;cursor:pointer} .idea-btns button.q{border-color:var(--linea);background:none;color:var(--guia)} .idea.elegida{border-color:var(--si)} .idea-ok{font-size:11px;color:var(--si);flex:none}
-.arb-leyenda{text-align:center;font-size:10.5px;color:var(--guia);margin:6px 0 0} .arb-leyenda .pt{display:inline-block;width:9px;height:9px;border-radius:50%;border:2px solid var(--linea2);margin:0 3px 0 10px;vertical-align:middle} .pt.verde{border-color:var(--si)} .pt.oro{border-color:var(--oro)} .pt.rojo{border-color:var(--no)} .pt.verde-crudo{border-color:var(--si);border-style:dashed} .pt.semilla{border-style:dotted}
+@media (max-width:430px){ .fruto{width:66px} .fr-bola{width:62px;height:62px} .anillo{width:62px;height:62px} .rama-tit{font-size:13px} }
+@media (prefers-reduced-motion:reduce){ .late::before,.gajo.run,.fruto.vivo .fr-bola::after,.chispa{animation:none} }
 .dos{display:flex;gap:14px;margin:8px 0} .dos div{flex:1;text-align:center;border:1px solid var(--linea);border-radius:12px;padding:8px 4px} .dos b{display:block;font-family:var(--serif);font-weight:400;font-size:22px} .dos span{font-size:10.5px;color:var(--guia)}
 .pasos{margin:12px 0 0;border-left:2px solid var(--linea2);padding-left:14px} .paso{position:relative;margin:0 0 12px} .paso i{position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--linea2)} .paso.hecho i{background:var(--si)} .paso.proceso i{background:var(--oro)} .paso.falta i{background:transparent;border:2px solid var(--linea2)} .paso b{font-size:13px} .paso small{display:block;font-size:11.5px;color:var(--guia);line-height:1.35} .arb-ver.abierta img{outline:2px solid var(--oro)}
 /* candidatas de una lámina, dentro de la carta de Hoy (Entrega B) */
@@ -651,7 +679,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='0c0a524f88';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='29eef3f2af';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2096,63 +2124,139 @@ function vaEnDe(z,publicada){ const t=z.tira; return t&&(t.laminas||[]).some(l=>
 function kpiChips(k,leads){
   return `<div class="arb-kpis">${[[k.reach,'alcance'],[k.views,'vistas'],[k.interacciones,'interacc.'],[leads,'leads']].map(([v,t])=>`<span class="arb-kpi"><b>${N_(v)}</b>${t}</span>`).join('')}</div>`;
 }
-/* ══ EL ÁRBOL, versión mínima (14-sep, noche). Alejandro: «al entrar podamos ver el árbol, más
-   gráfico como árbol, sin tanto número; una o dos métricas; en click al fruto entramos a otro árbol
-   con el antes, el después y lo que falta; muy sencillo y minimalista, fácil de ver desde un iPhone».
-   Tronco vertical al centro; cada tema es una rama; cada publicación es un fruto redondo con su
-   portada y UNA línea de dos números (alcance · interacciones). Todo lo demás vive en la ficha. */
-function frutoPub(c){ const k=c.kpis.IG||{}; const e=c.pieza?embudoDe(c.pieza):null; const leads=e&&e.leads?` · ${e.leads} lead`:'';
-  return `<button class="fruto ${esc(c.color||'gris')}" data-ficha="${esc(c.clave)}" title="${esc(c.pieza||c.titulo||'')}">
-    <span class="fr-img">${c.cover&&String(c.cover).trim()?`<img src="${esc(c.cover)}" alt="" loading="lazy">`:''}</span>
-    <span class="fr-nom">${esc((c.pieza||c.titulo||'').slice(0,26))}</span>
-    <span class="fr-num">${N_(k.reach)} · ${N_(k.interacciones)}${leads}</span></button>`; }
-function frutoProd(z){ const t=z.tira; const img=t&&(t.laminas||[]).find(l=>l.src&&String(l.src).trim()); const abiertas=t?(t.laminas||[]).filter(l=>laminaAbierta(t,l)).length:0;
-  const va=vaEnDe(z,false); const viva=((D&&D.propuestas)||[]).some(p=>normSlug(String(p.id).split('-')[0])===z.slug.split('-')[0]); const txt=(abiertas&&viva)?`${abiertas} por decidir`:(abiertas?'en producción':va);
-  return `<button class="fruto verde-crudo" data-pieza="${esc(z.nombre)}" title="${esc(z.nombre)}"><span class="fr-img">${img?`<img src="${esc(img.src)}" alt="" loading="lazy">`:''}</span>
-    <span class="fr-nom">${esc(z.nombre.slice(0,26))}</span><span class="fr-num">${esc(txt)}</span></button>`; }
-function frutoIdea(n){ const mat=materialDe(n.titulo||n.id); const est=(n.estado||'idea').split('·')[0].trim();
-  return `<button class="fruto semilla" data-idea="${esc(n.id)}" title="${esc(n.titulo||n.id)}"><span class="fr-img"><i></i></span><span class="fr-nom">${esc((n.titulo||n.id).slice(0,26))}</span><span class="fr-num">${esc(mat?'en la Mac':est)}</span></button>`; }
+/* ══ EL ÁRBOL VIVO (15-sep) ══════════════════════════════════════════════════════════════
+   Alejandro, textual: «en el árbol, donde tienes la publicación y que tiene unos puntitos verdes
+   alrededor… ¿por qué no me muestras que está en proceso: la lámina, el copy, el video? cada uno
+   un puntito verde según dónde va. Si ya están todos, pues está listo para salir… los que están
+   terminados en la rama, que se vayan hasta el borde de la rama y estén más juntos, y los nuevos
+   que están saliendo en producción, cerca… que sea multi trabajo, que vaya corriendo mucho».
+
+   Cómo se lee, sin leyenda:
+   · Cada publicación es un fruto redondo con su foto. Alrededor, un ANILLO partido en tantos
+     gajos como etapas tenga esa pieza (una lámina lleva 4; un reel, 7). Gajo encendido = etapa
+     terminada. Anillo completo = lista para salir.
+   · La POSICIÓN sobre la rama es el estado: lo que apenas arranca sale junto al tronco y lo
+     terminado se va a la punta, apretado. No hay que leer nada para saber quién va adelante.
+   · Lo que la fábrica está produciendo AHORA late. Si laten tres frutos en tres ramas, se ve de
+     un golpe que hay tres trabajos corriendo.
+   ══════════════════════════════════════════════════════════════════════════════════════════ */
+const ETAPAS = {
+  lamina:   [['guion','guion'],['laminas','imagen'],['copy','copy'],['publicada','sale']],
+  carrusel: [['guion','guion'],['laminas','láminas'],['copy','copy'],['publicada','sale']],
+  reel:     [['guion','guion'],['laminas','láminas'],['voz','voz'],['escenas','escenas'],['corte','corte'],['copy','copy'],['publicada','sale']],
+};
+function etapasDe(formato){ const f=String(formato||'').toLowerCase();
+  return f.includes('reel')||f.includes('video')?ETAPAS.reel:(f.includes('carrusel')?ETAPAS.carrusel:ETAPAS.lamina) }
+/* el anillo: un gajo por etapa. `hechas` es un Set con las etapas listas; `corriendo` la que late */
+function anillo(etapas,hechas,corriendo,r=30){
+  const n=etapas.length, C=2*Math.PI*r, hueco=n>5?7:9, largo=C/n-hueco;
+  return `<svg class="anillo" viewBox="0 0 ${(r+5)*2} ${(r+5)*2}" aria-hidden="true">${etapas.map(([k],i)=>{
+    const off=C*(1-i/n)-hueco/2, on=hechas.has(k), run=corriendo===k;
+    return `<circle cx="${r+5}" cy="${r+5}" r="${r}" fill="none" stroke-width="4" stroke-linecap="round"
+      class="gajo${on?' on':''}${run?' run':''}" stroke-dasharray="${largo.toFixed(2)} ${(C-largo).toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}"/>`}).join('')}</svg>`;
+}
+function fruto({clave,pieza,nombre,cover,etapas,hechas,corriendo,pos,numeros,titulo,extra}){
+  const listo=hechas.size>=etapas.length, faltan=etapas.length-hechas.size;
+  return `<button class="fruto${listo?' listo':''}${corriendo?' vivo':''}" style="--pos:${pos}" ${clave?`data-ficha="${esc(clave)}"`:''}${pieza?` data-pieza="${esc(pieza)}"`:''}${extra||''} title="${esc(titulo||nombre)}">
+    <span class="fr-bola">${anillo(etapas,hechas,corriendo)}<span class="fr-foto">${cover?`<img src="${esc(cover)}" alt="" loading="lazy">`:''}</span>${corriendo?'<i class="chispa"></i>':''}</span>
+    <span class="fr-nom">${esc(String(nombre||'').slice(0,22))}</span>
+    <span class="fr-num">${esc(numeros|| (listo?'lista para salir':`faltan ${faltan}`))}</span></button>`;
+}
+/* qué etapas tiene hechas una pieza en producción, leyendo tira + COLA */
+function hechasDe(z,publicada){
+  const t=z.tira, g=z.filas||{}, h=new Set();
+  if(t) h.add('guion');
+  if(t&&(t.laminas||[]).length&&!(t.laminas||[]).some(l=>laminaAbierta(t,l))) h.add('laminas');
+  const todo=(f)=>(f||[]).length&&f.every(x=>/hecho/i.test(x.estado||''));
+  if(todo(g.voz)) h.add('voz'); if(todo(g.escena)) h.add('escenas'); if(todo(g.corte)) h.add('corte');
+  if(publicada){ h.add('copy'); h.add('publicada'); h.add('laminas'); h.add('guion') }
+  return h;
+}
+function corriendoDe(z){
+  const g=z.filas||{}; const vivo=(f)=>(f||[]).some(x=>/corriendo|proceso/i.test(x.estado||''));
+  if(vivo(g.prospectos)) return 'laminas'; if(vivo(g.voz)) return 'voz';
+  if(vivo(g.escena)) return 'escenas'; if(vivo(g.corte)) return 'corte'; return '';
+}
+function frutoPub(c){
+  const k=c.kpis.IG||{}, e=c.pieza?embudoDe(c.pieza):null;
+  const et=etapasDe(c.formato), h=new Set(et.map(x=>x[0]));   // publicada = todo hecho
+  const n=`${k.reach==null?'–':k.reach} · ${k.interacciones==null?'–':k.interacciones}${e&&e.leads?` · ${e.leads}♦`:''}`;
+  return fruto({clave:c.clave,nombre:c.pieza||c.titulo,cover:c.cover,etapas:et,hechas:h,corriendo:'',pos:1,numeros:n,
+    titulo:`${c.pieza||c.titulo} · ${c.veredicto||''}`});
+}
+function frutoProd(z,fila){
+  const t=z.tira, publicada=(PZ[z.nombre]&&PZ[z.nombre].estado==='publicada');
+  const img=t&&(t.laminas||[]).find(l=>l.src&&String(l.src).trim());
+  const et=etapasDe((fila&&fila.formato)||(t&&t.laminas&&t.laminas.length>3?'Carrusel':'Reel'));
+  const h=hechasDe(z,publicada), run=corriendoDe(z);
+  const abiertas=t?(t.laminas||[]).filter(l=>laminaAbierta(t,l)).length:0;
+  const viva=((D&&D.propuestas)||[]).some(p=>normSlug(String(p.id).split('-')[0])===z.slug.split('-')[0]);
+  return fruto({pieza:z.nombre,nombre:z.nombre,cover:img?ligera(img.src):'',etapas:et,hechas:h,corriendo:run,
+    pos:h.size/et.length, numeros:(abiertas&&viva)?`${abiertas} por decidir`:(run?'produciendo…':`faltan ${et.length-h.size}`),
+    titulo:`${z.nombre} · ${et.filter(x=>!h.has(x[0])).map(x=>x[1]).join(', ')||'lista'}`});
+}
+function frutoFabrica(f){         // pieza de la hoja FABRICA sin tira todavía: el brote más nuevo
+  const et=etapasDe(f.formato), h=new Set();
+  return fruto({pieza:f.pieza,nombre:f.pieza,cover:'',etapas:et,hechas:h,corriendo:'',pos:0,
+    numeros:'por arrancar',titulo:`${f.pieza} · ${f.nota||''}`,extra:` data-fab="${esc(f.slug)}"`});
+}
 function vaEnDe(z,publicada){ const t=z.tira; return t&&(t.laminas||[]).some(l=>laminaAbierta(t,l))?'láminas':((z.filas.corte||[]).length?'corte':((z.filas.voz||[]).length?'voz':((z.filas.escena||[]).length?'escena':(publicada?'publicada':'guion')))) }
+let FABRICA=null;
+async function traerFabrica(){
+  if(ENTRADO()){ try{ const r=await fetch(GAS()+'?recurso=fabrica&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'});
+    const j=await leerJSON(r); if(r.ok&&j&&j.ok&&Array.isArray(j.fabrica)){ FABRICA=j.fabrica; return } }catch(e){} }
+  FABRICA=[];
+}
 let _arbolT=0;
 async function pintarArbol(forzar){
   const c=$('#arbol'), av=$('#arbAviso'); if(!c) return;
-  // 15-sep: «al volver se vuelve a abrir el árbol y eso tarda». El árbol se pinta una vez y se queda; se recarga sólo con «Actualizar» o cada 3 min.
   if(!forzar&&c.querySelector('.fruto')&&Date.now()-_arbolT<180000) return; _arbolT=Date.now();
   c.innerHTML='<p style="color:var(--guia);font-size:13px;text-align:center">Cargando el árbol…</p>';
-  await Promise.all([traerArbol(),traerCola(),traerEmbudo()]);
+  await Promise.all([traerArbol(),traerCola(),traerEmbudo(),traerFabrica()]);
   const piezas=await armarPiezas();
   const N=ARBOL.nodos||[]; const tronco=N.find(n=>n.nivel==='tronco')||{titulo:'Vender el Plan de Potencial'};
-  const temas=N.filter(n=>n.nivel==='tema'&&!/cortada/i.test(n.estado||'')).sort((a,b)=>(a.orden||99)-(b.orden||99)); const nodoPieza=N.filter(n=>n.nivel==='pieza');
+  const temas=N.filter(n=>n.nivel==='tema'&&!/cortada/i.test(n.estado||'')).sort((a,b)=>(a.orden||99)-(b.orden||99));
+  const nodoPieza=N.filter(n=>n.nivel==='pieza');
   av.textContent=(ARBOL.fuente==='sheet'?'':'temas desde la copia')+(COLA_ERR?' · sin COLA':'');
-  const CAT=(EMBUDO&&EMBUDO.catalogo)||[]; const porSlug={}; piezas.forEach(z=>{ porSlug[z.slug]=z }); const usC=new Set(), usP=new Set();
+  const CAT=(EMBUDO&&EMBUDO.catalogo)||[]; const porSlug={}; piezas.forEach(z=>{ porSlug[z.slug]=z });
+  const FAB={}; (FABRICA||[]).forEach(f=>{ FAB[f.slug]=f });
+  const usC=new Set(), usP=new Set(), usF=new Set();
   const frutoDe=n=>{ const id=String(n.id||'').trim(), tt=normSlug(n.titulo||'');
-    let cp=CAT.find(x=>x.clave===id)||CAT.find(x=>x.pieza&&(normSlug(x.pieza)===tt||x.pieza===n.titulo||normSlug(x.pieza).split('-').includes(id)));
-    const z=porSlug[id]||Object.values(porSlug).find(z=>z.slug===tt||z.slug.split('-').includes(id)||z.slug.endsWith('-'+id)||(tt&&normSlug(z.nombre)===tt));
+    let cp=CAT.find(x=>x.clave===id)||CAT.find(x=>x.pieza&&(normSlug(x.pieza)===tt||x.pieza===n.titulo));
+    const z=porSlug[id]||Object.values(porSlug).find(z=>z.slug===tt||z.slug.split('-').includes(id)||(tt&&normSlug(z.nombre)===tt));
     if(!cp&&z) cp=CAT.find(x=>x.pieza&&normSlug(x.pieza)===normSlug(z.nombre));
     if(cp){ usC.add(cp.clave); if(z) usP.add(z.slug); return frutoPub(cp) }
-    if(z){ usP.add(z.slug); return frutoProd(z) }
-    return ''; };   // 15-sep, chinche: «hasta que esté algo aprobado lo metemos al árbol»: lo del plan no cuelga; va en Ideas
+    if(z){ usP.add(z.slug); return frutoProd(z,FAB[id]) }
+    if(FAB[id]&&FAB[id].activa){ usF.add(id); return frutoFabrica(FAB[id]) }
+    return ''; };
   const ramas=temas.map((tm,i)=>{ const hijos=nodoPieza.filter(n=>n.padre===tm.id).sort((a,b)=>(a.orden||99)-(b.orden||99));
-    return `<section class="rama ${i%2?'der':'izq'}"><h4 class="rama-tit">${esc(tm.titulo)}${DECIDE()?` <button class="edita" data-edita="${esc(tm.id)}" title="Editar esta rama">✎</button>`:''}</h4><div class="frutos">${hijos.map(frutoDe).join('')||'<span class="fr-vacio">sin publicaciones</span>'}</div></section>`; }).join('');
-  const sueltas=CAT.filter(x=>!usC.has(x.clave)); const sueltasP=piezas.filter(z=>!usP.has(z.slug)&&!CAT.find(x=>x.pieza&&normSlug(x.pieza)===normSlug(z.nombre)));
-  const raiz=(sueltas.length||sueltasP.length)?`<section class="rama raiz"><h4 class="rama-tit">Publicado antes de la Sala · ${sueltas.length}</h4><div class="frutos chicos" id="raizFrutos">${sueltasP.map(frutoProd).join('')}${sueltas.slice(0,8).map(frutoPub).join('')}</div>${sueltas.length>8?`<button class="ver-mas" id="raizMas">ver ${sueltas.length-8} más</button>`:''}</section>`:'';
+    const fs=hijos.map(frutoDe).filter(Boolean);
+    return `<section class="rama ${i%2?'der':'izq'}"><h4 class="rama-tit">${esc(tm.titulo)}${DECIDE()?` <button class="edita" data-edita="${esc(tm.id)}" title="Editar esta premisa">✎</button>`:''}</h4>
+      <div class="ramal"><i class="palo"></i><div class="frutos">${fs.join('')||'<span class="fr-vacio">rama sin fruto</span>'}</div></div></section>`; }).join('');
+  const sueltas=CAT.filter(x=>!usC.has(x.clave));
+  const raiz=sueltas.length?`<section class="rama raiz"><h4 class="rama-tit">Publicado antes de la Sala · ${sueltas.length}</h4><div class="frutos chicos" id="raizFrutos">${sueltas.slice(0,8).map(frutoPub).join('')}</div>${sueltas.length>8?`<button class="ver-mas" id="raizMas">ver ${sueltas.length-8} más</button>`:''}</section>`:'';
   const sem=((EMBUDO||{}).corpus||{}).semana||{}; const sa=sem.actual||{};
-  c.innerHTML=`<div class="tronco-cab"><h3>${esc(tronco.titulo)}</h3><p>${esc(N_(sa.reach))} de alcance esta semana · ${esc(N_(sa.posts))} publicaciones</p></div><div class="arbol-v"><i class="tronco"></i>${ramas}${raiz}</div>
-    <div class="como-leer"><b>Cómo leer el árbol</b>
-      <p><i class="pt verde"></i> <b>aro verde</b>: ya salió y está creciendo (alcance arriba de lo normal para su formato)</p>
-      <p><i class="pt oro"></i> <b>aro ámbar</b>: ya salió, pero flojo — ajustar antes de repetirlo</p>
-      <p><i class="pt rojo"></i> <b>aro rojo</b>: ya salió y no funcionó — cortar o cambiar de forma</p>
-      <p><i class="pt verde-crudo"></i> <b>aro punteado</b>: en producción, todavía no sale</p>
-      <p>Debajo de cada fruto: <b>alcance · interacciones</b>. Toca el fruto y ves todo lo demás.</p>
-      <p>Cada rama es una <b>premisa</b> (lo que estamos afirmando del PPP). Se editan con ✎, se cortan si no dan fruto, y hay hasta cinco vivas.</p></div>
+  const enMarcha=piezas.filter(z=>corriendoDe(z)).length;
+  c.innerHTML=`<div class="tronco-cab"><h3>${esc(tronco.titulo)}</h3><p>${esc(sa.reach==null?'–':String(sa.reach))} de alcance esta semana${enMarcha?` · <b class="late">${enMarcha} en producción ahora</b>`:''}</p></div>
+    <div class="arbol-v"><i class="tronco"></i>${ramas}${raiz}</div>
+    <div class="como-leer"><b>Cómo se lee</b>
+      <p>Cada publicación trae un <b>anillo</b>: un gajo por etapa (guion · láminas · voz · escenas · corte · copy · sale). Gajo encendido = etapa terminada. <b>Anillo completo = lista para salir.</b></p>
+      <p>Van colocadas por avance: lo que <b>apenas arranca sale junto al tronco</b> y lo <b>terminado se va a la punta</b>.</p>
+      <p>Lo que <b class="late">late</b> es lo que la fábrica está produciendo en este momento.</p></div>
     <div id="ideas"></div>`;
   pintarIdeas(temas);
   c.querySelectorAll('[data-ficha]').forEach(el=>el.onclick=()=>fichaPublicacion(el.dataset.ficha));
   c.querySelectorAll('[data-pieza]').forEach(el=>el.onclick=()=>fichaPieza(el.dataset.pieza));
-  c.querySelectorAll('[data-idea]').forEach(el=>el.onclick=()=>fichaIdea(el.dataset.idea));
+  c.querySelectorAll('[data-fab]').forEach(el=>el.onclick=()=>fichaFabrica(el.dataset.fab));
   c.querySelectorAll('[data-edita]').forEach(el=>el.onclick=(e)=>{ e.stopPropagation(); editarNodo(el.dataset.edita) });
   const su=(D&&D.sheet_url)||''; const pie=$('#arbPie'); if(pie) pie.innerHTML=su?`<a href="${esc(su)}" target="_blank" rel="noopener" title="El Sheet donde vive todo esto">·</a>`:'';
   const vm=$('#raizMas'); if(vm) vm.onclick=()=>{ $('#raizFrutos').insertAdjacentHTML('beforeend',sueltas.slice(8).map(frutoPub).join('')); vm.remove(); c.querySelectorAll('[data-ficha]').forEach(el=>el.onclick=()=>fichaPublicacion(el.dataset.ficha)) };
+}
+function fichaFabrica(slug){
+  const f=(FABRICA||[]).find(x=>x.slug===slug); if(!f) return; const et=etapasDe(f.formato);
+  hoja(`<div class="arb-ficha"><h3>${esc(f.pieza)}</h3><p class="arb-sub">${esc(f.formato)} · ${esc(f.nota||'')}</p>
+    <div class="pasos">${et.map(([k,n])=>pasoHTML(n,'falta','')).join('')}</div>
+    <p class="arb-sub">La fábrica la toma en la próxima pasada: le arma la tira con el material que ya está en tu Mac.</p></div>`,'fab-'+slug);
 }
 /* ══ El segundo árbol: una publicación por dentro — antes, después y lo que falta ══ */
 function pasoHTML(nombre,estado,cuerpo){ return `<div class="paso ${estado}"><i></i><div><b>${esc(nombre)}</b>${cuerpo||''}</div></div>` }
