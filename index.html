@@ -641,7 +641,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='08f388c324';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='f8f49e0b97';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2163,6 +2163,32 @@ const _bArb=$('#arbActualizar'); if(_bArb) _bArb.onclick=()=>pintarArbol();
 // el Árbol es la puerta de entrada (14-sep noche): se pinta al abrir, y Hoy avisa cuántas decisiones esperan
 if(document.body.dataset.vista==='arbol'){ pintarArbol(); }
 setInterval(()=>{ try{ const c=cuentas(); avisarPuerta('hoy', !!(c&&c.hoy>0)); const b=document.querySelector('#puertas button[data-v="hoy"] .punto'); if(b) b.textContent=c&&c.hoy>0?c.hoy:''; }catch(e){} },1500);
+
+/* ══ LA CHINCHE dentro de la Sala (15-sep) ══
+   Alejandro: «tengo una chinche en YOD OS pero no aplica dentro de la Sala ni de lo que sale en la
+   pantalla; quiero seleccionar también dentro de la ventana pop-up… así puedo marcarte detalles más
+   exactos». Decisión: la Chinche VIVE en la Sala (no la del tablero de afuera). Por qué: (1) el OS
+   la muestra en un iframe y `elementFromPoint` no cruza al iframe — la de afuera nunca podrá señalar
+   adentro; (2) los pop-ups (`hoja()`) son parte de este documento, así que aquí sí se pican;
+   (3) la Sala sabe QUÉ tiene enfrente (pieza, lámina, carta, fruto) y lo clava como dato exacto;
+   (4) cada chinche sale al Sheet como «ENCARGO · chinche» y /sala la cosecha sin esperar un zip.
+   El script es el mismo del portal (mismo origen): una sola Chinche, no dos. */
+function chincheContexto(){
+  const v=document.body.dataset.vista||''; const x=(typeof pasos!=='undefined'&&pasos[idx])||null;
+  const capa=document.querySelector('.velo .hoja'); const fichaTit=capa&&capa.querySelector('h3')?capa.querySelector('h3').textContent:'';
+  return { vista:v, popup:capa?(fichaTit||'abierto'):'', carta:x?{pid:x.pid,tipo:x.tipo,lamina:x.tipo==='lamina'?nLamina(x):null,pieza:piezaDe(x)}:null };
+}
+function chincheClavada(ch){
+  const c=chincheContexto();
+  const det=JSON.stringify({id:ch.id,texto:ch.texto,tipo:ch.tipo,vista:c.vista,popup:c.popup,carta:c.carta,
+    elemento:ch.elemento?{css:ch.elemento.css,texto:ch.elemento.texto,seccion:ch.elemento.seccion}:null,url:ch.url});
+  try{ mandarProduccion('ENCARGO · chinche · '+(c.carta&&c.carta.pieza?c.carta.pieza:(c.popup||c.vista)), det, false) }catch(e){}
+}
+(function(){ const s=document.createElement('script'); s.src='/yod-portal/chinche.js?v=sala1';
+  s.onload=()=>{ try{ window.YODChinche&&YODChinche.init({pantalla:'sala', vista:()=>chincheContexto().vista,
+      seccion:()=>{ const c=chincheContexto(); return c.popup?('pop-up: '+c.popup):(c.carta?('carta '+c.carta.pid+(c.carta.lamina?' · lámina '+c.carta.lamina:'')):c.vista) },
+      valores:()=>chincheContexto(), alClavar:chincheClavada}) }catch(e){ console.warn('chinche',e) } };
+  document.head.appendChild(s) })();
 
 /* ══ arranque ══ */
 function pintarFecha(f){ try{ $('#fechaTxt').textContent=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}) }catch(e){ $('#fechaTxt').textContent=f } }
