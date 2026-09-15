@@ -194,6 +194,7 @@ html.embed .app{padding-top:8px}
 .dos{display:flex;gap:14px;margin:8px 0} .dos div{flex:1;text-align:center;border:1px solid var(--linea);border-radius:12px;padding:8px 4px} .dos b{display:block;font-family:var(--serif);font-weight:400;font-size:22px} .dos span{font-size:10.5px;color:var(--guia)}
 .pasos{margin:12px 0 0;border-left:2px solid var(--linea2);padding-left:14px} .paso{position:relative;margin:0 0 12px} .paso i{position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--linea2)} .paso.hecho i{background:var(--si)} .paso.proceso i{background:var(--oro)} .paso.falta i{background:transparent;border:2px solid var(--linea2)} .paso b{font-size:13px} .paso small{display:block;font-size:11.5px;color:var(--guia);line-height:1.35} .arb-ver.abierta img{outline:2px solid var(--oro)}
 /* candidatas de una lámina, dentro de la carta de Hoy (Entrega B) */
+.eje-enc{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--linea);border-radius:12px;padding:10px 12px;margin:0 12px 10px;background:var(--fondo)} .eje-enc img{width:84px;border-radius:8px;flex:none;cursor:zoom-in} .eje-enc b{font-size:12px} .eje-enc p{margin:3px 0 0;font-size:12.5px;line-height:1.4;color:var(--guia)}
 .cand-fila{display:flex;gap:8px;overflow-x:auto;padding:8px 12px;border-top:1px solid var(--linea);flex:none}
 .cand-item{flex:none;width:88px;text-align:center;font-size:11.5px}
 .cand-item img{width:88px;height:64px;object-fit:cover;border-radius:10px;background:#141210;display:block;margin-bottom:4px;cursor:zoom-in}
@@ -650,7 +651,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='e85e4e522c';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='e63a5359f8';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1317,7 +1318,16 @@ function pintarCartas(){
           : m==='video' ? `<video src="${esc(o.src)}" controls playsinline preload="metadata" style="width:100%;max-height:300px;border-radius:10px;display:block;margin-bottom:8px"></video>`
           : `<img src="${esc(o.src)}" alt="" style="width:100%;max-height:230px;object-fit:cover;object-position:center 30%;border-radius:10px;display:block;margin-bottom:8px;cursor:zoom-in" data-amp="${esc(o.src)}">`;
         return `<div class="op">${vista}<h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Elegir ésta</button></div>` }).join('');
+      // 15-sep, su reclamo textual: «no me está mostrando mucho ni para qué ni imágenes; no me dejó claro
+      // qué tenía que decidir ni para qué». Una carta de eje ahora SIEMPRE abre diciendo qué se decide y
+      // para qué sirve (`porque`), y si la decisión es sobre una imagen, la imagen de referencia va arriba
+      // (`referencia`): lo que hay hoy, para comparar contra las opciones. Invariante 8 llevado al eje.
+      // el GAS sólo transporta `opciones` en la fila del eje: `porque` y `referencia` viajan ahí dentro.
+      const _o=(x.p.opciones&&!Array.isArray(x.p.opciones))?x.p.opciones:{}; const _pq=x.p.porque||_o.porque, _rf=x.p.referencia||_o.referencia;
+      const _enc = (_pq||_rf) ? `<div class="eje-enc">${_rf?`<img src="${esc(ligera(_rf))}" alt="lo que hay hoy" data-amp="${esc(_rf)}">`:''}
+          <div><b>¿Qué decides aquí?</b><p>${esc(_pq||'')}</p></div></div>` : '';
       el.innerHTML=`${x.p.video?`<div class="lienzo conVideo"><video src="${esc(x.p.video)}" controls playsinline preload="metadata" poster=""></video></div>`:''}
+        ${_enc}
         <div class="opciones">${ops}<button class="ning" data-ning>Ninguna — dejo una nota</button></div>
         <div class="pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · elige una opción</span>
           ${x.p.video?`<a class="abrir-video" href="${esc(x.p.video)}" target="_blank" rel="noopener">Abrirlo en pantalla completa ↗</a>`:''}${luegoDe(x)}</div>`;
