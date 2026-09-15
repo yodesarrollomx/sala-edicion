@@ -1,0 +1,190 @@
+{
+ "pieza": "El Apodo del Terreno",
+ "pieza_slug": "apodo",
+ "promesa": "Que el dueño sienta que su terreno lleva años cargando nombres ajenos — y que hay uno solo que sí es suyo: lo que puede llegar a ser.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/apodo-e2026-09-14/L1.png",
+   "dice": "¿Ya sabes cómo le dicen a tu terreno?",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L1.png",
+     "hash": "9402bbc1",
+     "marca": ""
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L1.png",
+     "hash": "6ec6be33",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 2
+  },
+  {
+   "n": 2,
+   "src": "laminas/apodo-g7/L2.png",
+   "dice": "Los vecinos le dicen «el de la esquina».",
+   "estado": "abierta",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L2.png",
+     "hash": "742f0cae",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "nota_previa": "Tu nota del 15-sep: «la imagen no se ve un terreno en esquina como lo dice la lamina». Era cierto: en las cuatro anteriores no habia esquina y ni siquiera habia baldio. La receta arrancaba describiendo la colonia y el modelo pintaba eso; ahora arranca por el terreno de la esquina, igual que en la 3 y la 5 que si aprobaste. Aqui va SOLO la lamina 2, sin mezclarla con la 6.",
+   "candidatas": [
+    {
+     "src": "laminas/apodo-p2-2026-09-15/L2-1.jpg",
+     "titulo": "Toma 1",
+     "texto": "El baldio de la esquina de frente, con las dos calles cruzando detras."
+    },
+    {
+     "src": "laminas/apodo-p2-2026-09-15/L2-2.jpg",
+     "titulo": "Toma 2",
+     "texto": "Mas abierta: se ve la casa de la esquina de enfrente y el cruce completo."
+    },
+    {
+     "src": "laminas/apodo-p2-2026-09-15/L2-3.jpg",
+     "titulo": "Toma 3",
+     "texto": "Desde un poco mas alto; el cruce y el paso de peatones se leen claros."
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "src": "laminas/apodo-e2026-09-14/L3.png",
+   "dice": "En la colonia le dicen «el baldío». Un descuido, no un patrimonio.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L3.png",
+     "hash": "6902c53d",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L1.png",
+     "hash": "96eb6d21",
+     "marca": "",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L3.png",
+     "hash": "0ab02c96",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 3,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no enganchamas nivel medio alto"
+  },
+  {
+   "n": 4,
+   "src": "laminas/apodo-e2026-09-14/L4.png",
+   "dice": "Ninguno de esos nombres se lo puso tu terreno.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L4.png",
+     "hash": "c044b62e",
+     "marca": ""
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L4.png",
+     "hash": "269fb20b",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 2
+  },
+  {
+   "n": 5,
+   "src": "laminas/apodo-e2026-09-14/L5.png",
+   "dice": "Tu terreno sí tiene un nombre propio: lo que puede llegar a ser.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L5.png",
+     "hash": "5c43746a",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L2.png",
+     "hash": "bc30416b",
+     "marca": "",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L5.png",
+     "hash": "79c1ed61",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 3,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto más entorno urbano clase media alta"
+  },
+  {
+   "n": 6,
+   "src": "laminas/apodo-g8/L3.png",
+   "dice": "Pídele a tu terreno su Plan de Potencial Personalizado y descubramos juntos su nombre real.",
+   "estado": "abierta",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L6.png",
+     "hash": "5a25ffd2",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L3.png",
+     "hash": "88e1482b",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago... creo que debe de ser la misma pareja que estaba en ottras laminas... tmb deberia de tener un plan o un folder n tanto un plano... estamos prometiendo analisis y plan de ptencial no un proyecto aun"
+  }
+ ],
+ "decidir": [
+  2
+ ],
+ "mapa": {
+  "1": 2
+ },
+ "base": "apodo-video-10sep-v7",
+ "guion": "datos/guiones/APODO-VIDEO.json",
+ "titulo": "El Apodo · lamina 2: elige la toma del terreno en esquina",
+ "nota": "Aquí está la pieza completa. Sólo las láminas marcadas piden respuesta: dentro de cada una vienen las tomas para que elijas."
+}
