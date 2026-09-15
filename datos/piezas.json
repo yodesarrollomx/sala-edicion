@@ -24,9 +24,9 @@
   },
   {
    "pieza": "El comprador ya sabe",
-   "estado": "en camino",
-   "etapa": "láminas",
-   "siguiente": "En producción.",
+   "estado": "publicada",
+   "etapa": "publicada",
+   "siguiente": "Publicada el 14-sep. Ahora se mide.",
    "espera": "yo"
   }
  ]
