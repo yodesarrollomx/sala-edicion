@@ -1,6 +1,6 @@
 {
  "_que_es": "Respaldo de la hoja IDEAS. El Sheet manda.",
- "actualizado": "2026-09-15 07:50",
+ "actualizado": "2026-09-15 07:57",
  "ideas": [
   {
    "premisa": "dato",
@@ -101,6 +101,156 @@
    "estado": "elegida",
    "creada": "2026-09-14",
    "nota": ""
+  },
+  {
+   "premisa": "dato",
+   "id": "dato-servilleta-3",
+   "titulo": "La servilleta contra el estudio",
+   "bajada": "Lado a lado: lo que se garabatea en una sobremesa y lo que dice un análisis.",
+   "formato": "Carrusel",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "dato",
+   "id": "dato-tres-opiniones",
+   "titulo": "Tres opiniones, tres números distintos",
+   "bajada": "El mismo terreno según el tío, el vecino y la norma.",
+   "formato": "Carrusel",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "dato",
+   "id": "dato-que-permite",
+   "titulo": "¿Cuántos m² permite tu calle?",
+   "bajada": "La norma ya decidió qué cabe; casi nadie la ha leído.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "nombre",
+   "id": "nombre-apodos",
+   "titulo": "Los cinco apodos de un terreno",
+   "bajada": "El de la esquina, el baldío, el de la herencia… ninguno se lo puso él.",
+   "formato": "Carrusel",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "nombre",
+   "id": "nombre-antes-despues",
+   "titulo": "Lo que puede llegar a ser",
+   "bajada": "Un lote y, al lado, lo que la norma permite en ese mismo lote.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "nombre",
+   "id": "nombre-vecinos",
+   "titulo": "Lo que dicen los vecinos",
+   "bajada": "Voces de la cuadra sobre el lote vacío de enfrente.",
+   "formato": "Reel",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "tuyo",
+   "id": "tuyo-sigue-nombre",
+   "titulo": "Sigue a tu nombre",
+   "bajada": "Qué NO cambia cuando pides un Plan de Potencial.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "tuyo",
+   "id": "tuyo-sin-deuda",
+   "titulo": "Sin deuda, sin traspaso",
+   "bajada": "Las dos preguntas que todos hacen, contestadas en una lámina.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "tuyo",
+   "id": "tuyo-oferta-cálculo",
+   "titulo": "Su oferta es un cálculo",
+   "bajada": "Segunda parte de El comprador: de dónde sale el número que te ofrecen.",
+   "formato": "Carrusel",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "carga",
+   "id": "carga-por-etapas",
+   "titulo": "Por partes, no de golpe",
+   "bajada": "Construir no es todo o nada: qué significa por etapas.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "carga",
+   "id": "carga-quien-hace-que",
+   "titulo": "¿Quién hace qué?",
+   "bajada": "La familia pone el terreno; el equipo, lo demás. Roles en una lámina.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "carga",
+   "id": "carga-cotizacion-susto",
+   "titulo": "La cotización que asustó",
+   "bajada": "Qué le pasó al que pidió presupuesto sin saber qué podía construir.",
+   "formato": "Reel",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "llamada",
+   "id": "llamada-que-pasa",
+   "titulo": "Qué pasa en la videollamada",
+   "bajada": "Los cinco minutos: qué se pregunta y qué se ve.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "llamada",
+   "id": "llamada-entregable",
+   "titulo": "Así se ve el entregable",
+   "bajada": "Una página real de un Plan de Potencial, anonimizada.",
+   "formato": "Carrusel",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
+  },
+  {
+   "premisa": "llamada",
+   "id": "llamada-no-cuesta",
+   "titulo": "La primera no cuesta",
+   "bajada": "Lo único que prometemos de entrada, dicho sin adornos.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-15",
+   "nota": "refresco 15-sep"
   }
  ]
 }
