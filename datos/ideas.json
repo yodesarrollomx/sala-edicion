@@ -1,6 +1,6 @@
 {
  "_que_es": "Respaldo de la hoja IDEAS. El Sheet manda.",
- "actualizado": "2026-09-15 00:05",
+ "actualizado": "2026-09-15 00:24",
  "ideas": [
   {
    "premisa": "dato",
@@ -38,7 +38,7 @@
    "titulo": "El Nombre No Se Mueve",
    "bajada": "Tu terreno sigue a tu nombre aunque hagas un plan: el miedo a perderlo, desmontado.",
    "formato": "Lámina",
-   "estado": "propuesta",
+   "estado": "descartada",
    "creada": "2026-09-14",
    "nota": ""
   },
@@ -48,7 +48,7 @@
    "titulo": "El Letrero Acostado",
    "bajada": "Las ofertas de apuro: por qué el letrero acostado atrae al comprador equivocado. Saga en la Mac.",
    "formato": "Carrusel",
-   "estado": "propuesta",
+   "estado": "descartada",
    "creada": "2026-09-14",
    "nota": ""
   },
