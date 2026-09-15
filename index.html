@@ -651,7 +651,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='e63a5359f8';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='0c0a524f88';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2270,7 +2270,22 @@ async function pintarIdeas(temas){
   const grupos=temas.map(tm=>{ const li=I.filter(i=>i.premisa===tm.id&&!/descartada|en_produccion/.test(i.estado||''));
     return li.length?`<div class="ideas-premisa"><b>${esc(tm.titulo)}</b>${li.map(i=>`<div class="idea ${esc(i.estado||'')}"><div><span class="idea-tit">${esc(i.titulo)}</span> <small>${esc(i.formato||'')}</small><p>${esc(i.bajada||'')}</p></div>
       ${DECIDE()?(i.estado==='elegida'?`<span class="idea-ok">elegida · entra en la próxima sala</span>`:`<div class="idea-btns"><button data-idea="${esc(i.id)}" data-est="elegida">Elegir</button><button data-idea="${esc(i.id)}" data-est="descartada" class="q">×</button></div>`):''}</div>`).join('')}</div>`:'' }).join('');
-  c.innerHTML=`<div class="ideas-cab"><b>Ideas para las próximas publicaciones</b><p>Las refresco yo por premisa. Elige una o varias y en la siguiente sala entran a producción con su guion.</p></div>${grupos||'<p class="arb-sub">Sin ideas todavía.</p>'}${DECIDE()?`<button class="ver-mas" id="nuevaPremisa">+ nueva premisa</button>`:''}`;
+  // 15-sep, su chinche: «no me estás poniendo nuevas premisas para seleccionar y que empiece a crecer el
+  // árbol con nuevas ramas». Las premisas candidatas se proponen aquí y, al elegir una, nace la rama.
+  const cands=((ARBOL&&ARBOL.nodos)||[]).filter(n=>n.nivel==='premisa_candidata'&&n.estado==='candidata');
+  const vivas=((ARBOL&&ARBOL.nodos)||[]).filter(n=>n.nivel==='tema'&&!/cortada/i.test(n.estado||'')).length;
+  const candHTML=cands.length?`<div class="ideas-cab" style="margin-top:22px"><b>Premisas nuevas que propongo</b><p>Si eliges una, nace una rama del árbol (hay ${vivas} vivas de 5).</p></div>
+    ${cands.map(n=>`<div class="idea"><div><span class="idea-tit">${esc(n.titulo)}</span><p>${esc(n.bajada||'')}</p></div>
+      ${DECIDE()?`<div class="idea-btns"><button data-prem="${esc(n.id)}" data-est="viva">Abrir rama</button><button data-prem="${esc(n.id)}" data-est="descartada" class="q">×</button></div>`:''}</div>`).join('')}`:'';
+  c.innerHTML=`<div class="ideas-cab"><b>Ideas para las próximas publicaciones</b><p>Las refresco yo por premisa. Elige una o varias y en la siguiente sala entran a producción con su guion.</p></div>${grupos||'<p class="arb-sub">Sin ideas todavía.</p>'}${candHTML}${DECIDE()?`<button class="ver-mas" id="nuevaPremisa">+ nueva premisa mía</button>`:''}`;
+  c.querySelectorAll('[data-prem]').forEach(b=>b.onclick=async()=>{ const n=cands.find(x=>x.id===b.dataset.prem); if(!n) return;
+    if(b.dataset.est==='viva'&&vivas>=5){ alert('Ya hay cinco premisas vivas. Corta una antes de abrir otra.'); return }
+    b.disabled=true;
+    try{ await guardarNodo(b.dataset.est==='viva'
+      ? {nivel:'tema',id:n.id.replace(/^cand-/,''),padre:'ppp',titulo:n.titulo,bajada:n.bajada,orden:vivas+1,estado:'viva',nota:'nació de una premisa candidata'}
+      : {...n,estado:'descartada'});
+      if(b.dataset.est==='viva') await guardarNodo({...n,estado:'abierta'});
+    }catch(e){ b.disabled=false; alert('No se guardó: '+String(e.message||e).slice(0,60)) } });
   c.querySelectorAll('[data-idea]').forEach(b=>b.onclick=async()=>{ const i=I.find(x=>x.id===b.dataset.idea); if(!i) return; b.disabled=true;
     try{ const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({accion:'ideas',clave:CLAVE(),forzar:1,filas:[{...i,estado:b.dataset.est}]})}); const j=await leerJSON(r); if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||''); i.estado=b.dataset.est; pintarIdeas(temas) }catch(e){ b.disabled=false; alert('No se guardó: '+String(e.message||e).slice(0,60)) } });
   const np=$('#nuevaPremisa'); if(np) np.onclick=nuevaPremisa;
