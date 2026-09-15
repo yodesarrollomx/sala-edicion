@@ -5,23 +5,13 @@
  "laminas": [
   {
    "n": 1,
-   "src": "laminas/mesa-vacia-g1/L1.png",
+   "src": "laminas/mesa-vacia-e2026-09-15/L1.png",
    "dice": "En tu familia hay un terreno del que todos opinan y nadie decide.",
-   "estado": "abierta",
+   "estado": "aprobada",
    "versiones": [],
    "version": 1,
-   "candidatas": [
-    {
-     "src": "laminas/mesa-vacia-p1-2026-09-15/L1-1.jpg",
-     "titulo": "Toma 1 · MV3-L1-ALT",
-     "texto": "otra versión de la misma lámina (en la Mac)"
-    },
-    {
-     "src": "laminas/mesa-vacia-p1-2026-09-15/L1-2.jpg",
-     "titulo": "Toma 2 · MV3-L1-V1",
-     "texto": "otra versión de la misma lámina (en la Mac)"
-    }
-   ]
+   "toma_elegida": "Toma 1",
+   "aprobada_el": "2026-09-15"
   },
   {
    "n": 2,
@@ -115,7 +105,6 @@
   }
  ],
  "decidir": [
-  1,
   2,
   3,
   4,
@@ -124,13 +113,12 @@
   7
  ],
  "mapa": {
-  "1": 1,
-  "2": 2,
-  "3": 3,
-  "4": 4,
-  "5": 5,
-  "6": 6,
-  "7": 7
+  "1": 2,
+  "2": 3,
+  "3": 4,
+  "4": 5,
+  "5": 6,
+  "6": 7
  },
  "base": "",
  "guion": "",
