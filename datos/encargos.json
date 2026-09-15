@@ -1,12 +1,6 @@
 {
- "actualizado": "2026-09-15 07:02",
+ "actualizado": "2026-09-15 07:19",
  "encargos": [
-  {
-   "que": "{\"id\": \"CHN-20260914-2313-5cbd\", \"texto\": \"no me está llevando a nada… me estás proponiendo cosas que no tenemos aún… hasta que esté algo aprobado lo metemos al árbol… debajo del árbol varias ideas de",
-   "estado": "en curso",
-   "cuando": "2026-09-14",
-   "tomado": "23:44"
-  },
   {
    "que": "{\"id\": \"CHN-20260914-2308-b410\", \"texto\": \"quiero poder editar estas ¿premisas? ¿directrices de marketing?… poder elegir… editar la rama o cortar la rama y quitarla porque después de muchos frutos nin",
    "estado": "en curso",
@@ -30,6 +24,12 @@
    "estado": "en curso",
    "cuando": "2026-09-15",
    "tomado": "00:05"
+  },
+  {
+   "que": "{\"id\":\"CHN-20260915-0714-582a\",\"texto\":\"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambien inclute nuevas cuando menos siempre 3 nuevas ideas bien pensadas de cada una de nuestras vias o ramas principales...\",\"tipo\":\"\",\"vista\":\"arbol\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"div#ideas\",\"texto\":\"Ideas para las próximas publicaciones Las refresco yo por premisa. Elige una o varias y en la siguiente sala entran a producción con su guion. SIN CARGAR LA OBR\",\"seccion\":\"Vender el Plan de Potencial\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789481109336\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-15",
+   "tomado": "07:19"
   }
  ]
 }
