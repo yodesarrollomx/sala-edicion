@@ -620,7 +620,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='31c3931a0c';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='1c24d2c6e4';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2058,12 +2058,12 @@ function kpiChips(k,leads){
 /* una tarjeta = una publicación (fruto) o una pieza en producción */
 function tarjetaPublicada(c){
   const e=c.pieza?embudoDe(c.pieza):null;
-  return `<div class="arb-card" data-ficha="${esc(c.clave)}"><div class="arb-img">${c.cover?`<img src="${esc(c.cover)}" alt="" loading="lazy">`:'<span>sin portada</span>'}<span class="arb-fmt">${esc(c.formato||'')}</span></div>
+  return `<div class="arb-card" data-ficha="${esc(c.clave)}"><div class="arb-img">${c.cover&&String(c.cover).trim()?`<img src="${esc(c.cover)}" alt="" loading="lazy">`:'<span>sin portada</span>'}<span class="arb-fmt">${esc(c.formato||'')}</span></div>
     <div class="arb-cuerpo"><div class="arb-tit">${esc(c.pieza||c.titulo||'')}</div><div class="arb-sub">${esc(fechaBonita?fechaBonita(c.fecha):c.fecha)}${c.pieza?' · hecha en la Sala':''}</div>
     ${kpiChips(c.kpis.IG||{},e?e.leads:null)}<span class="arb-vered ${esc(c.color)}"><i></i>${esc(c.veredicto)}</span></div></div>`;
 }
 function tarjetaEnProduccion(z){
-  const t=z.tira; const img=t&&(t.laminas||[]).find(l=>l.src); const publicada=(PZ[z.nombre]&&PZ[z.nombre].estado==='publicada');
+  const t=z.tira; const img=t&&(t.laminas||[]).find(l=>l.src&&String(l.src).trim()); const publicada=(PZ[z.nombre]&&PZ[z.nombre].estado==='publicada');
   const brotes=t?(t.laminas||[]).map(l=>{ const vs=versionesDeLamina(t,l); const u=vs[vs.length-1]; return `<span class="arb-brote ${u.col}" title="Lámina ${l.n} · ${vs.length} versión(es)"><i></i>L${l.n}${vs.length>1?`<span class="v">·v${u.v}</span>`:''}</span>` }).join(''):'';
   const ojo=publicada?`<div class="arb-ojo">La Sala la marca publicada pero no está en la hoja PUBLICADAS: sin ids de Meta no se mide.</div>`:'';
   return `<div class="arb-card produccion" data-pieza="${esc(z.nombre)}"><div class="arb-img">${img?`<img src="${esc(ligera(img.src))}" alt="" loading="lazy">`:'<span>sin láminas todavía</span>'}<span class="arb-fmt">${esc(vaEnDe(z,publicada))}</span></div>

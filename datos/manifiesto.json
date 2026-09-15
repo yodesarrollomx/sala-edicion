@@ -2624,6 +2624,12 @@
    "pedido": "«Me estás volviendo a mandar lo mismo y desacomodado… estás trabajando mucho con tu capacidad sin dejar las cosas sistémicas»",
    "estado": "cumplida",
    "evidencia": "Auditado el historial completo (2,550 marcas del 1 al 14-sep). Dos fallas reales: (1) repregunté las láminas 3 y 5 ya aprobadas por una regla mía equivocada — retirada, ahora un sí es un sí y si no escoge toma escoge el sistema y lo informa; (2) monté la lámina 6 donde iba la 3 y un archivo inexistente donde iba la 5, por confiar en el nombre del archivo — ahora manda el catálogo por md5 (sala_verdad.py), sala_tira aborta si la carta está descuadrada, y el verificador lo revisa solo (12 verdes/0 rojos). Invariantes 90-92."
+  },
+  {
+   "fecha": "2026-09-14",
+   "pedido": "Avanzar multifactorial; extraer TODO lo publicado hasta las entrañas; dejar la Sala como debe ser para el control; escenas de 5 s; voz Kokoro; luego /sala",
+   "estado": "cumplida",
+   "evidencia": "Inventario completo (121 publicaciones, 258 imágenes, captions) en repo + hoja PUBLICADAS; material local por pieza (material.json); ARBOL con las 16 piezas del plan; Árbol con ficha real (caption + imágenes); mesa multi-pieza (Apodo tomas · Comprador caption→publicar); Kokoro por regla, 6 voces regrabadas; escenas de 5 s + cupo (sala_cupo.py); invariantes 97-101. Verificado en su Chrome."
   }
  ],
  "conexion": {
