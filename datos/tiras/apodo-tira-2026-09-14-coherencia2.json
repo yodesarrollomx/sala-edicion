@@ -1,0 +1,199 @@
+{
+ "pieza": "El Apodo del Terreno",
+ "pieza_slug": "apodo",
+ "promesa": "Que el dueño sienta que su terreno lleva años cargando nombres ajenos — y que hay uno solo que sí es suyo: lo que puede llegar a ser.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/apodo-e2026-09-14/L1.png",
+   "dice": "¿Ya sabes cómo le dicen a tu terreno?",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L1.png",
+     "hash": "9402bbc1",
+     "marca": ""
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L1.png",
+     "hash": "6ec6be33",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 2
+  },
+  {
+   "n": 2,
+   "src": "laminas/apodo-g7/L2.png",
+   "dice": "Los vecinos le dicen «el de la esquina».",
+   "estado": "abierta",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L2.png",
+     "hash": "742f0cae",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no engancha. Más luminosa",
+   "candidatas": [
+    {
+     "src": "laminas/apodo-p2-2026-09-14/L2-3.jpg",
+     "titulo": "Toma 3",
+     "texto": "otra composición (las dos primeras no gustaron)"
+    },
+    {
+     "src": "laminas/apodo-p2-2026-09-14/L2-4.jpg",
+     "titulo": "Toma 4",
+     "texto": "otra composición (las dos primeras no gustaron)"
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "src": "laminas/apodo-e2026-09-14/L3.png",
+   "dice": "En la colonia le dicen «el baldío». Un descuido, no un patrimonio.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L3.png",
+     "hash": "6902c53d",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L1.png",
+     "hash": "96eb6d21",
+     "marca": "",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L3.png",
+     "hash": "0ab02c96",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 3,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no enganchamas nivel medio alto"
+  },
+  {
+   "n": 4,
+   "src": "laminas/apodo-e2026-09-14/L4.png",
+   "dice": "Ninguno de esos nombres se lo puso tu terreno.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L4.png",
+     "hash": "c044b62e",
+     "marca": ""
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L4.png",
+     "hash": "269fb20b",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 2
+  },
+  {
+   "n": 5,
+   "src": "laminas/apodo-e2026-09-14/L5.png",
+   "dice": "Tu terreno sí tiene un nombre propio: lo que puede llegar a ser.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L5.png",
+     "hash": "5c43746a",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L2.png",
+     "hash": "bc30416b",
+     "marca": "",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L5.png",
+     "hash": "79c1ed61",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 3,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto más entorno urbano clase media alta"
+  },
+  {
+   "n": 6,
+   "src": "laminas/apodo-g8/L3.png",
+   "dice": "Pídele a tu terreno su Plan de Potencial Personalizado y descubramos juntos su nombre real.",
+   "estado": "abierta",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L6.png",
+     "hash": "5a25ffd2",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L3.png",
+     "hash": "88e1482b",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago... creo que debe de ser la misma pareja que estaba en ottras laminas... tmb deberia de tener un plan o un folder n tanto un plano... estamos prometiendo analisis y plan de ptencial no un proyecto aun",
+   "candidatas": [
+    {
+     "src": "laminas/apodo-p6-2026-09-14/L6-3.jpg",
+     "titulo": "Toma 3",
+     "texto": "otra composición (las dos primeras no gustaron)"
+    },
+    {
+     "src": "laminas/apodo-p6-2026-09-14/L6-4.jpg",
+     "titulo": "Toma 4",
+     "texto": "otra composición (las dos primeras no gustaron)"
+    }
+   ]
+  }
+ ],
+ "decidir": [
+  2,
+  6
+ ],
+ "mapa": {
+  "1": 2,
+  "2": 6
+ },
+ "base": "apodo-video-10sep-v7",
+ "guion": "datos/guiones/APODO-VIDEO.json",
+ "titulo": "El Apodo · otras dos tomas para la 2 y la 6",
+ "nota": "Aquí está la pieza completa. Sólo las láminas marcadas piden respuesta: dentro de cada una vienen las tomas para que elijas."
+}
