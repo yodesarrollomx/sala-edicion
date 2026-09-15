@@ -197,13 +197,13 @@ html.embed .app{padding-top:8px}
 @keyframes gaj{0%,100%{opacity:.4}50%{opacity:1}}
 .fr-foto{position:absolute;inset:9px;border-radius:50%;overflow:hidden;background:var(--tarjeta);display:block}
 .fr-foto img{width:100%;height:100%;object-fit:cover;display:block}
-.fruto.listo .fr-foto{box-shadow:0 0 0 2px var(--si),0 4px 16px rgba(0,0,0,.45)}
+.fruto.madura .fr-foto{box-shadow:0 0 0 2px var(--si),0 4px 16px rgba(0,0,0,.45)}
 .fruto.vivo .fr-bola::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--oro);opacity:.35;animation:onda 1.9s ease-out infinite}
 @keyframes onda{0%{transform:scale(.92);opacity:.5}100%{transform:scale(1.18);opacity:0}}
 .chispa{position:absolute;right:2px;top:2px;width:9px;height:9px;border-radius:50%;background:var(--oro);box-shadow:0 0 8px var(--oro);animation:late 1.3s ease-in-out infinite}
 .fr-nom{display:block;font-size:10px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fr-num{display:block;font-size:9.5px;color:var(--guia);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fruto.listo .fr-num{color:var(--si)}
+.fruto.madura .fr-num{color:var(--si)}
 .fr-vacio{font-size:11px;color:var(--guia);padding-top:26px}
 .rama.raiz{width:100%;text-align:center;border-top:1px dashed var(--linea2);padding-top:14px;margin-top:6px}
 .rama.raiz .rama-tit{text-align:center;padding:0} .rama.raiz .frutos{justify-content:center}
@@ -679,7 +679,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='29eef3f2af';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='f8acddcfa9';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2156,11 +2156,11 @@ function anillo(etapas,hechas,corriendo,r=30){
       class="gajo${on?' on':''}${run?' run':''}" stroke-dasharray="${largo.toFixed(2)} ${(C-largo).toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}"/>`}).join('')}</svg>`;
 }
 function fruto({clave,pieza,nombre,cover,etapas,hechas,corriendo,pos,numeros,titulo,extra}){
-  const listo=hechas.size>=etapas.length, faltan=etapas.length-hechas.size;
-  return `<button class="fruto${listo?' listo':''}${corriendo?' vivo':''}" style="--pos:${pos}" ${clave?`data-ficha="${esc(clave)}"`:''}${pieza?` data-pieza="${esc(pieza)}"`:''}${extra||''} title="${esc(titulo||nombre)}">
+  const madura=hechas.size>=etapas.length, faltan=etapas.length-hechas.size;
+  return `<button class="fruto${madura?' madura':''}${corriendo?' vivo':''}" style="--pos:${pos}" ${clave?`data-ficha="${esc(clave)}"`:''}${pieza?` data-pieza="${esc(pieza)}"`:''}${extra||''} title="${esc(titulo||nombre)}">
     <span class="fr-bola">${anillo(etapas,hechas,corriendo)}<span class="fr-foto">${cover?`<img src="${esc(cover)}" alt="" loading="lazy">`:''}</span>${corriendo?'<i class="chispa"></i>':''}</span>
     <span class="fr-nom">${esc(String(nombre||'').slice(0,22))}</span>
-    <span class="fr-num">${esc(numeros|| (listo?'lista para salir':`faltan ${faltan}`))}</span></button>`;
+    <span class="fr-num">${esc(numeros|| (madura?'lista para salir':`faltan ${faltan}`))}</span></button>`;
 }
 /* qué etapas tiene hechas una pieza en producción, leyendo tira + COLA */
 function hechasDe(z,publicada){
