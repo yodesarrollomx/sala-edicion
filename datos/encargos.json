@@ -1,17 +1,35 @@
 {
- "actualizado": "2026-09-14 23:07",
+ "actualizado": "2026-09-14 23:25",
  "encargos": [
-  {
-   "que": "PRUEBA — comprobando que el botón de «Las máquinas» escribe en el Sheet. Se puede borrar.",
-   "estado": "cumplida",
-   "cuando": "2026-08-28",
-   "tomado": ""
-  },
   {
    "que": "Corre la sala.",
    "estado": "cumplida",
    "cuando": "2026-09-03",
    "tomado": ""
+  },
+  {
+   "que": "{\"id\": \"CHN-20260914-2307-2292\", \"texto\": \"aquí no se está mostrando la miniatura… las rayas verdes significan los procesos que ya están terminados… explícame en leyendas sencillas al lado del árbol lo que significa todo\", \"vista\": \"arbol\", \"recuperada\": \"de IndexedDB de su Chrome: el envío al Sheet tronaba fuera de Ajustes (arreglado 15-sep)\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-14",
+   "tomado": "23:24"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260914-2306-c2ca\", \"texto\": \"no entiendo cuál es el sistema de reconocimiento de patrón visual… ésta ya está terminada pero la abro y me manda a editar… o cómo debería de ser\", \"vista\": \"arbol\", \"recuperada\": \"de IndexedDB de su Chrome: el envío al Sheet tronaba fuera de Ajustes (arreglado 15-sep)\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-14",
+   "tomado": "23:24"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260914-2308-b410\", \"texto\": \"quiero poder editar estas ¿premisas? ¿directrices de marketing?… poder elegir… editar la rama o cortar la rama y quitarla porque después de muchos frutos ninguno fue dulce… crear otra rama nueva, sólo hasta 5 vertientes\", \"vista\": \"arbol\", \"recuperada\": \"de IndexedDB de su Chrome: el envío al Sheet tronaba fuera de Ajustes (arreglado 15-sep)\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-12",
+   "tomado": "23:24"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260914-2313-5cbd\", \"texto\": \"no me está llevando a nada… me estás proponiendo cosas que no tenemos aún… hasta que esté algo aprobado lo metemos al árbol… debajo del árbol varias ideas de publicación por tema que vayas refrescando; si selecciono una o varias las subimos en la siguiente sala a producción\", \"vista\": \"arbol\", \"recuperada\": \"de IndexedDB de su Chrome: el envío al Sheet tronaba fuera de Ajustes (arreglado 15-sep)\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-11",
+   "tomado": "23:25"
   }
  ]
 }
