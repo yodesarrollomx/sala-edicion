@@ -1,6 +1,6 @@
 {
  "_que_es": "Manifiesto de respaldo: el portal lo lee cuando el Sheet aún no está conectado. Cuando el GAS ya está en línea, esta copia queda de plan B.",
- "fecha": "2026-09-14",
+ "fecha": "2026-09-15",
  "dias": [
   "2026-08-01",
   "2026-08-04",
@@ -29,9 +29,58 @@
   "2026-09-12",
   "2026-05-20",
   "2026-09-13",
-  "2026-09-14"
+  "2026-09-14",
+  "2026-09-15"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "mesa-vacia-tira-2026-09-15",
+   "titulo": "La Mesa Vacía · las 7 láminas (idea que elegiste)",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/mesa-vacia-g1/L1.png",
+    "laminas/mesa-vacia-g1/L2.png",
+    "laminas/mesa-vacia-g1/L3.png",
+    "laminas/mesa-vacia-g1/L4.png",
+    "laminas/mesa-vacia-g1/L5.png",
+    "laminas/mesa-vacia-g1/L6.png",
+    "laminas/mesa-vacia-g1/L7.png"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "idea elegida en el árbol · tira completa"
+  },
+  {
+   "id": "apodo-direccion-2-6-2026-09-15",
+   "titulo": "El Apodo · láminas 2 y 6: ¿hacia dónde? (4 tomas dijeron no, sin nota)",
+   "tipo": "eje",
+   "laminas": [],
+   "opciones": {
+    "candidatas": [
+     {
+      "titulo": "A · el lote solo, sin gente",
+      "texto": "Sólo el lote y las casas vecinas; nadie en cuadro."
+     },
+     {
+      "titulo": "B · más cerca, un detalle",
+      "texto": "La reja, la esquina, el pasto seco: un detalle que cuente la historia."
+     },
+     {
+      "titulo": "C · como la 3 y la 5",
+      "texto": "Mismo encuadre frontal que las aprobadas, para que la pieza se vea pareja."
+     },
+     {
+      "titulo": "D · dime tú (pide cambio y escribe)",
+      "texto": "Pide cambio en esta carta y escribe qué quieres ver: eso manda."
+     }
+    ]
+   },
+   "video": null,
+   "de_antes": null,
+   "origen": "dos rondas de tomas rechazadas sin nota"
+  }
+ ],
  "parrilla": [
   {
    "fecha": "2026-08-01",
@@ -2426,6 +2475,44 @@
      "origen": "tira completa · compuerta 1"
     }
    ],
+   "produccion": [
+    {
+     "pieza": "El terreno que dijo que sí · el cuento (47 s)",
+     "estado": "publicada",
+     "detalle": "FB + IG (reel) · copy «los dos bandos» · liga única fb/ig-2026-08-04 · primer comentario puesto",
+     "fecha": "2026-08-04",
+     "enlace": "https://www.instagram.com/reel/DboskQogVy1/"
+    },
+    {
+     "pieza": "El terreno que dijo que sí · carrusel",
+     "estado": "publicada",
+     "detalle": "FB + IG · liga medible activa · 4 interacciones IG al 30-jul",
+     "fecha": "2026-07-27"
+    },
+    {
+     "pieza": "La Servilleta · láminas",
+     "estado": "rehacer",
+     "detalle": "quitar «EDICIÓN POR AURUM ARQUITECTOS»",
+     "fecha": "2026-07-29"
+    }
+   ],
+   "bitacora": [
+    {
+     "hora": "08:37",
+     "evento": "Propuesta montada: El Apodo · lámina 2 salida del guion 1-2-3 (no de la ocurrencia) (1 láminas)"
+    },
+    {
+     "hora": "14:45",
+     "evento": "Propuesta montada: El Apodo · sin lo repetitivo y con los textos parejos (6 láminas) (6 láminas)"
+    },
+    {
+     "hora": "08:19",
+     "evento": "Propuesta montada: El Apodo · 3 textos ajustados a tu nota (3 láminas)"
+    }
+   ]
+  },
+  "2026-09-14": {
+   "propuestas": [],
    "produccion": [
     {
      "pieza": "El terreno que dijo que sí · el cuento (47 s)",
