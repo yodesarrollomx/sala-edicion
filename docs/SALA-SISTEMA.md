@@ -883,3 +883,14 @@ que se sature». Lo que quedó:
     entra a producción en la siguiente /sala con su guion. Leyenda en llano junto al árbol («aro verde: ya salió y
     crece…»). Y la causa de que sus chinches no llegaran: `mandarProduccion` tronaba fuera de Ajustes (`#ajAviso`
     nulo) antes del fetch — se recuperaron de su IndexedDB y se registraron.
+104. **Un eje dice qué se decide, para qué, y lo enseña** (15-sep). Su reclamo: *«no me está mostrando mucho ni
+    para qué ni imágenes… no me dejó claro qué tenía que decidir ni para qué ni de qué estilo»* — había montado un
+    eje de 4 opciones de TEXTO sobre una decisión visual, violando el invariante 8. Ahora la carta de eje abre con
+    `opciones.porque` (qué se decide y para qué, en llano) y `opciones.referencia` (la imagen de lo que hay hoy,
+    para comparar). Sin eso, un eje visual no se monta. El chequeo de tiras del verificador ya no acusa a los ejes.
+105. **La primera lámina manda el mundo visual de la pieza** (15-sep). Su nota en La Mesa Vacía: *«todas tienen que
+    parecerse obviamente a la primera lámina que terminemos aprobando»*. Se produce la 1 sola, con tomas; cuando la
+    aprueba, las otras se hacen a su semejanza. El mundo de referencia de Yo Desarrollo es hoy el de las láminas del
+    Apodo aprobadas el 14-sep (colonia media-alta de Hermosillo).
+106. **Premisas candidatas e ideas siempre frescas** (chinche 15-sep). Cada revisión propone ≥3 ideas nuevas por rama
+    viva y premisas candidatas (`nivel: premisa_candidata` en ARBOL); al elegir una con «Abrir rama», nace el tema.
