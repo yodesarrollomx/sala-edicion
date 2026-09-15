@@ -863,3 +863,10 @@ que se sature». Lo que quedó:
     con `.mp3` trae reproductor (antes se pintaba como foto).
 100. **Se anima la lámina entera** (`animacion_lamina_entera=1`): el recorte viejo tiraba el 48 % del
     ancho («zoom in»). El montador escala sin recortar y repinta la tipografía encima.
+101. **El inventario de lo publicado vive en el repo** (`sala_inventario.py` → `datos/publicadas.json` +
+    `publicadas/<clave>/NN.jpg`): 121 publicaciones de Yo Desarrollo (17 IG · 104 FB, desde 2021), caption
+    completo y las 258 imágenes bajadas a 1080 px porque las ligas del CDN caducan. La hoja PUBLICADAS
+    tiene una fila por post (las del inventario llevan nota «inventario…» y NO entran al embudo por
+    pieza). `sala_material.py` → `datos/material.json` inventaría lo que hay EN LA MAC por pieza
+    (V1/V2/FINAL, captions, videos): la Sala controla también lo que no ha publicado. ARBOL: 22 nodos
+    (1 tronco · 5 temas · 16 piezas: las 12 del Mes PPP + las de la Sala).
