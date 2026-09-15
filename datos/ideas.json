@@ -1,6 +1,6 @@
 {
  "_que_es": "Respaldo de la hoja IDEAS. El Sheet manda.",
- "actualizado": "2026-09-15 07:57",
+ "actualizado": "2026-09-15 09:13",
  "ideas": [
   {
    "premisa": "dato",
@@ -68,7 +68,7 @@
    "titulo": "La Obra que No Empezó",
    "bajada": "Cotizó construir y se asustó: hay un camino por partes. V1-V2 en la Mac.",
    "formato": "Lámina",
-   "estado": "elegida",
+   "estado": "en_produccion",
    "creada": "2026-09-14",
    "nota": ""
   },
@@ -78,7 +78,7 @@
    "titulo": "La Recámara Cerrada",
    "bajada": "La casa que se quedó grande puede mantenerse sola. Copies y láminas en la Mac.",
    "formato": "Lámina",
-   "estado": "elegida",
+   "estado": "en_produccion",
    "creada": "2026-09-14",
    "nota": ""
   },
@@ -88,7 +88,7 @@
    "titulo": "Las 48 Horas",
    "bajada": "Qué pasa en la primera videollamada y por qué no cuesta.",
    "formato": "Lámina",
-   "estado": "elegida",
+   "estado": "en_produccion",
    "creada": "2026-09-14",
    "nota": ""
   },
@@ -98,7 +98,7 @@
    "titulo": "REEL · Así Se Ve Saber",
    "bajada": "El entregable real como prueba: así se ve tener el dato.",
    "formato": "Reel",
-   "estado": "elegida",
+   "estado": "en_produccion",
    "creada": "2026-09-14",
    "nota": ""
   },

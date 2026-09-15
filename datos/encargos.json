@@ -1,33 +1,33 @@
 {
- "actualizado": "2026-09-15 07:57",
+ "actualizado": "2026-09-15 09:13",
  "encargos": [
   {
    "que": "{\"id\": \"CHN-20260914-2306-c2ca\", \"texto\": \"no entiendo cuál es el sistema de reconocimiento de patrón visual… ésta ya está terminada pero la abro y me manda a editar… o cómo debería de ser\", \"vista\": ",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-14",
    "tomado": "23:45"
   },
   {
    "que": "{\"id\": \"CHN-20260914-2307-2292\", \"texto\": \"aquí no se está mostrando la miniatura… las rayas verdes significan los procesos que ya están terminados… explícame en leyendas sencillas al lado del árbol l",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-14",
    "tomado": "23:45"
   },
   {
    "que": "4 chinches del 14-sep atendidas: sólo lo real cuelga del árbol · leyenda en llano · premisas (editar/cortar/nueva ≤5) · Ideas por premisa · envío de chinches arreglado (tronaba fuera de Ajustes). Veri",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-15",
    "tomado": "00:05"
   },
   {
    "que": "{\"id\":\"CHN-20260915-0714-582a\",\"texto\":\"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambien inclute nuevas cuando menos siempre 3 nuevas ideas bien pensadas de cada una de nuestras vias o ramas principales...\",\"tipo\":\"\",\"vista\":\"arbol\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"div#ideas\",\"texto\":\"Ideas para las próximas publicaciones Las refresco yo por premisa. Elige una o varias y en la siguiente sala entran a producción con su guion. SIN CARGAR LA OBR\",\"seccion\":\"Vender el Plan de Potencial\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789481109336\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-15",
    "tomado": "07:19"
   },
   {
    "que": "{\"id\":\"CHN-20260915-0714-582a\",\"texto\":\"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambi",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-15",
    "tomado": "07:57"
   }
