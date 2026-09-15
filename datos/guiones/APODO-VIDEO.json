@@ -67,7 +67,7 @@
    "n": 3,
    "id": "E3",
    "lamina_src": "laminas/apodo-e2026-09-14/L3.png",
-   "texto": "En la colonia le dicen «el baldío». Como si fuera un descuido y no un patrimonio.",
+   "texto": "En la colonia le dicen «el baldío». Un descuido, no un patrimonio.",
    "partes": [
     {
      "rol": "narrador",
@@ -79,7 +79,7 @@
     },
     {
      "rol": "narrador",
-     "dice": "Como si fuera un descuido y no un patrimonio."
+     "dice": "Un descuido, no un patrimonio."
     }
    ],
    "intencion": "la cita en tono casual, como quien señala con la barbilla — igual que la 2.",
@@ -87,7 +87,8 @@
    "escena_reusable": null,
    "texto_previo_13sep": "También le dicen «lote baldío».",
    "por_que_14sep": "Alejandro 13-sep: «El texto no engancha, más nivel medio alto». Se le habla al dueño de colonia media-alta: el apodo viene de la colonia (no de «los vecinos» otra vez) y el remate nombra lo que él sí siente que tiene: un patrimonio, no un descuido.",
-   "lamina_src_previa": "laminas/apodo-g8/L3.png"
+   "lamina_src_previa": "laminas/apodo-g8/L3.png",
+   "recorte_14sep": "16→12 palabras para caber en 5 s con Kokoro (cupo 14 con dos cambios de voz)"
   },
   {
    "n": 4,
