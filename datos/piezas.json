@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-14 18:02",
+ "actualizado": "2026-09-15 06:20",
  "piezas": [
   {
    "pieza": "La Servilleta",
@@ -17,16 +17,16 @@
   },
   {
    "pieza": "El Apodo del Terreno",
-   "estado": "en camino",
+   "estado": "te espera",
    "etapa": "video",
-   "siguiente": "El video está armado y esperando tu palabra en la mesa.",
-   "espera": "yo"
+   "siguiente": "1 decisión(es) tuyas en la mesa: El Apodo · láminas 2 y 6: ¿hacia dónde? (4 tomas dijeron no, sin nota)",
+   "espera": "tú"
   },
   {
    "pieza": "El comprador ya sabe",
    "estado": "publicada",
-   "etapa": "publicada",
-   "siguiente": "Publicada el 14-sep. Ahora se mide.",
+   "etapa": "láminas",
+   "siguiente": "Publicada. 9 láminas + caption C · IG 17902882161572071 · FB 103075448823440_1116841064187230 · ligas utm comprador",
    "espera": "yo"
   }
  ]
