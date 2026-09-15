@@ -1,0 +1,106 @@
+{
+ "_que_es": "Respaldo de la hoja IDEAS. El Sheet manda.",
+ "actualizado": "2026-09-14 23:26",
+ "ideas": [
+  {
+   "premisa": "dato",
+   "id": "servilleta-v2",
+   "titulo": "La Servilleta · segunda vuelta",
+   "bajada": "El mismo argumento (se calcula, no se opina) contado desde la sobremesa de una familia distinta.",
+   "formato": "Reel",
+   "estado": "propuesta",
+   "creada": "2026-09-14",
+   "nota": ""
+  },
+  {
+   "premisa": "dato",
+   "id": "mesa-vacia",
+   "titulo": "La Mesa Vacía",
+   "bajada": "Todos opinan, nadie decide: el dato neutral destraba. 7 láminas ya en la Mac.",
+   "formato": "Carrusel",
+   "estado": "propuesta",
+   "creada": "2026-09-14",
+   "nota": ""
+  },
+  {
+   "premisa": "nombre",
+   "id": "terreno-dormido-2",
+   "titulo": "El Terreno Dormido · el regreso",
+   "bajada": "Qué le pasó al terreno que llevaba años dormido cuando alguien le pidió su nombre.",
+   "formato": "Reel",
+   "estado": "propuesta",
+   "creada": "2026-09-14",
+   "nota": ""
+  },
+  {
+   "premisa": "nombre",
+   "id": "nombre-no-se-mueve",
+   "titulo": "El Nombre No Se Mueve",
+   "bajada": "Tu terreno sigue a tu nombre aunque hagas un plan: el miedo a perderlo, desmontado.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-14",
+   "nota": ""
+  },
+  {
+   "premisa": "tuyo",
+   "id": "letrero-acostado",
+   "titulo": "El Letrero Acostado",
+   "bajada": "Las ofertas de apuro: por qué el letrero acostado atrae al comprador equivocado. Saga en la Mac.",
+   "formato": "Carrusel",
+   "estado": "propuesta",
+   "creada": "2026-09-14",
+   "nota": ""
+  },
+  {
+   "premisa": "tuyo",
+   "id": "comprador-2",
+   "titulo": "El comprador ya sabe · lo que siguió",
+   "bajada": "Qué cambió cuando el dueño llegó con su terreno medido a la mesa.",
+   "formato": "Reel",
+   "estado": "propuesta",
+   "creada": "2026-09-14",
+   "nota": ""
+  },
+  {
+   "premisa": "carga",
+   "id": "obra-no-empezo",
+   "titulo": "La Obra que No Empezó",
+   "bajada": "Cotizó construir y se asustó: hay un camino por partes. V1-V2 en la Mac.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-14",
+   "nota": ""
+  },
+  {
+   "premisa": "carga",
+   "id": "recamara-cerrada",
+   "titulo": "La Recámara Cerrada",
+   "bajada": "La casa que se quedó grande puede mantenerse sola. Copies y láminas en la Mac.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-14",
+   "nota": ""
+  },
+  {
+   "premisa": "llamada",
+   "id": "48-horas",
+   "titulo": "Las 48 Horas",
+   "bajada": "Qué pasa en la primera videollamada y por qué no cuesta.",
+   "formato": "Lámina",
+   "estado": "propuesta",
+   "creada": "2026-09-14",
+   "nota": ""
+  },
+  {
+   "premisa": "llamada",
+   "id": "asi-se-ve-saber",
+   "titulo": "REEL · Así Se Ve Saber",
+   "bajada": "El entregable real como prueba: así se ve tener el dato.",
+   "formato": "Reel",
+   "estado": "propuesta",
+   "creada": "2026-09-14",
+   "nota": ""
+  }
+ ]
+}

@@ -185,6 +185,11 @@ html.embed .app{padding-top:8px}
 .arb-pie{text-align:center;margin:18px 0 6px} .arb-pie a{color:var(--linea2);text-decoration:none;font-size:26px;line-height:1;padding:0 14px} .arb-pie a:hover{color:var(--oro)}
 .edita{background:none;border:0;color:var(--guia);cursor:pointer;font-size:12px;padding:0 4px} .edita:hover{color:var(--oro)}
 .ed{display:block;margin:8px 0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--guia)} .ed input,.ed textarea,.ed select{display:block;width:100%;margin-top:4px;background:var(--fondo);color:inherit;border:1px solid var(--linea);border-radius:10px;padding:9px;font:inherit;text-transform:none;letter-spacing:0}
+.como-leer{margin:14px auto 0;max-width:420px;border:1px solid var(--linea);border-radius:14px;padding:12px 14px;font-size:12.5px;line-height:1.45} .como-leer b{font-size:12px} .como-leer p{margin:6px 0 0;color:var(--guia)} .como-leer p b{color:inherit} .como-leer .pt{display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--linea2);vertical-align:middle;margin-right:4px}
+.ideas-cab{margin:22px 0 8px} .ideas-cab b{font-family:var(--serif);font-weight:400;font-size:19px} .ideas-cab p{margin:2px 0 0;font-size:12px;color:var(--guia)}
+.ideas-premisa{margin:10px 0 0} .ideas-premisa>b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--guia);margin:0 0 6px}
+.idea{display:flex;gap:10px;align-items:center;border:1px solid var(--linea);border-radius:12px;padding:9px 12px;margin:0 0 6px;background:var(--tarjeta)} .idea>div:first-child{flex:1;min-width:0} .idea-tit{font-weight:600;font-size:13.5px} .idea small{color:var(--guia);font-size:11px} .idea p{margin:2px 0 0;font-size:12px;color:var(--guia);line-height:1.35}
+.idea-btns{display:flex;gap:6px;flex:none} .idea-btns button{border:1px solid var(--oro);background:var(--oro-suave);color:var(--oro);border-radius:999px;padding:6px 12px;font:inherit;font-size:12px;cursor:pointer} .idea-btns button.q{border-color:var(--linea);background:none;color:var(--guia)} .idea.elegida{border-color:var(--si)} .idea-ok{font-size:11px;color:var(--si);flex:none}
 .arb-leyenda{text-align:center;font-size:10.5px;color:var(--guia);margin:6px 0 0} .arb-leyenda .pt{display:inline-block;width:9px;height:9px;border-radius:50%;border:2px solid var(--linea2);margin:0 3px 0 10px;vertical-align:middle} .pt.verde{border-color:var(--si)} .pt.oro{border-color:var(--oro)} .pt.rojo{border-color:var(--no)} .pt.verde-crudo{border-color:var(--si);border-style:dashed} .pt.semilla{border-style:dotted}
 .dos{display:flex;gap:14px;margin:8px 0} .dos div{flex:1;text-align:center;border:1px solid var(--linea);border-radius:12px;padding:8px 4px} .dos b{display:block;font-family:var(--serif);font-weight:400;font-size:22px} .dos span{font-size:10.5px;color:var(--guia)}
 .pasos{margin:12px 0 0;border-left:2px solid var(--linea2);padding-left:14px} .paso{position:relative;margin:0 0 12px} .paso i{position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--linea2)} .paso.hecho i{background:var(--si)} .paso.proceso i{background:var(--oro)} .paso.falta i{background:transparent;border:2px solid var(--linea2)} .paso b{font-size:13px} .paso small{display:block;font-size:11.5px;color:var(--guia);line-height:1.35} .arb-ver.abierta img{outline:2px solid var(--oro)}
@@ -645,7 +650,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='1bab32bcd0';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='f605199190';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1806,7 +1811,8 @@ async function pintarRecados(){
   }catch(e){}
 }
 async function mandarProduccion(pieza,txt,esMensaje){
-  const av=$('#ajAviso'); if(esMensaje&&!txt){ av.textContent='Escribe el mensaje primero.'; return }
+  // 15-sep: fuera de Ajustes no existe #ajAviso y esto tronaba ANTES del fetch: 4 chinches suyas se quedaron en su Chrome sin llegar al Sheet.
+  const av=$('#ajAviso')||{set textContent(v){}, get textContent(){return ''}}; if(esMensaje&&!txt){ av.textContent='Escribe el mensaje primero.'; return }
   const envio={accion:'produccion',clave:CLAVE(),fecha,pieza,estado:'pendiente',detalle:txt,enlace:''};
   if(!ENTRADO()){ encolar(envio); av.textContent='Quedó anotado aquí; sube cuando entres.'; return }
   av.textContent='Anotando…';
@@ -2092,7 +2098,7 @@ function frutoPub(c){ const k=c.kpis.IG||{}; const e=c.pieza?embudoDe(c.pieza):n
     <span class="fr-num">${N_(k.reach)} · ${N_(k.interacciones)}${leads}</span></button>`; }
 function frutoProd(z){ const t=z.tira; const img=t&&(t.laminas||[]).find(l=>l.src&&String(l.src).trim()); const abiertas=t?(t.laminas||[]).filter(l=>laminaAbierta(t,l)).length:0;
   const va=vaEnDe(z,false); const viva=((D&&D.propuestas)||[]).some(p=>normSlug(String(p.id).split('-')[0])===z.slug.split('-')[0]); const txt=(abiertas&&viva)?`${abiertas} por decidir`:(abiertas?'en producción':va);
-  return `<button class="fruto verde-crudo" data-pieza="${esc(z.nombre)}" title="${esc(z.nombre)}"><span class="fr-img">${img?`<img src="${esc(ligera(img.src))}" alt="" loading="lazy">`:''}</span>
+  return `<button class="fruto verde-crudo" data-pieza="${esc(z.nombre)}" title="${esc(z.nombre)}"><span class="fr-img">${img?`<img src="${esc(img.src)}" alt="" loading="lazy">`:''}</span>
     <span class="fr-nom">${esc(z.nombre.slice(0,26))}</span><span class="fr-num">${esc(txt)}</span></button>`; }
 function frutoIdea(n){ const mat=materialDe(n.titulo||n.id); const est=(n.estado||'idea').split('·')[0].trim();
   return `<button class="fruto semilla" data-idea="${esc(n.id)}" title="${esc(n.titulo||n.id)}"><span class="fr-img"><i></i></span><span class="fr-nom">${esc((n.titulo||n.id).slice(0,26))}</span><span class="fr-num">${esc(mat?'en la Mac':est)}</span></button>`; }
@@ -2106,7 +2112,7 @@ async function pintarArbol(forzar){
   await Promise.all([traerArbol(),traerCola(),traerEmbudo()]);
   const piezas=await armarPiezas();
   const N=ARBOL.nodos||[]; const tronco=N.find(n=>n.nivel==='tronco')||{titulo:'Vender el Plan de Potencial'};
-  const temas=N.filter(n=>n.nivel==='tema').sort((a,b)=>(a.orden||99)-(b.orden||99)); const nodoPieza=N.filter(n=>n.nivel==='pieza');
+  const temas=N.filter(n=>n.nivel==='tema'&&!/cortada/i.test(n.estado||'')).sort((a,b)=>(a.orden||99)-(b.orden||99)); const nodoPieza=N.filter(n=>n.nivel==='pieza');
   av.textContent=(ARBOL.fuente==='sheet'?'':'temas desde la copia')+(COLA_ERR?' · sin COLA':'');
   const CAT=(EMBUDO&&EMBUDO.catalogo)||[]; const porSlug={}; piezas.forEach(z=>{ porSlug[z.slug]=z }); const usC=new Set(), usP=new Set();
   const frutoDe=n=>{ const id=String(n.id||'').trim(), tt=normSlug(n.titulo||'');
@@ -2115,14 +2121,22 @@ async function pintarArbol(forzar){
     if(!cp&&z) cp=CAT.find(x=>x.pieza&&normSlug(x.pieza)===normSlug(z.nombre));
     if(cp){ usC.add(cp.clave); if(z) usP.add(z.slug); return frutoPub(cp) }
     if(z){ usP.add(z.slug); return frutoProd(z) }
-    return frutoIdea(n); };
+    return ''; };   // 15-sep, chinche: «hasta que esté algo aprobado lo metemos al árbol»: lo del plan no cuelga; va en Ideas
   const ramas=temas.map((tm,i)=>{ const hijos=nodoPieza.filter(n=>n.padre===tm.id).sort((a,b)=>(a.orden||99)-(b.orden||99));
     return `<section class="rama ${i%2?'der':'izq'}"><h4 class="rama-tit">${esc(tm.titulo)}${DECIDE()?` <button class="edita" data-edita="${esc(tm.id)}" title="Editar esta rama">✎</button>`:''}</h4><div class="frutos">${hijos.map(frutoDe).join('')||'<span class="fr-vacio">sin publicaciones</span>'}</div></section>`; }).join('');
   const sueltas=CAT.filter(x=>!usC.has(x.clave)); const sueltasP=piezas.filter(z=>!usP.has(z.slug)&&!CAT.find(x=>x.pieza&&normSlug(x.pieza)===normSlug(z.nombre)));
   const raiz=(sueltas.length||sueltasP.length)?`<section class="rama raiz"><h4 class="rama-tit">Publicado antes de la Sala · ${sueltas.length}</h4><div class="frutos chicos" id="raizFrutos">${sueltasP.map(frutoProd).join('')}${sueltas.slice(0,8).map(frutoPub).join('')}</div>${sueltas.length>8?`<button class="ver-mas" id="raizMas">ver ${sueltas.length-8} más</button>`:''}</section>`:'';
   const sem=((EMBUDO||{}).corpus||{}).semana||{}; const sa=sem.actual||{};
   c.innerHTML=`<div class="tronco-cab"><h3>${esc(tronco.titulo)}</h3><p>${esc(N_(sa.reach))} de alcance esta semana · ${esc(N_(sa.posts))} publicaciones</p></div><div class="arbol-v"><i class="tronco"></i>${ramas}${raiz}</div>
-    <p class="arb-leyenda"><i class="pt verde"></i>creciendo <i class="pt oro"></i>ajustar <i class="pt rojo"></i>cortar <i class="pt verde-crudo"></i>en producción <i class="pt semilla"></i>por hacer</p>`;
+    <div class="como-leer"><b>Cómo leer el árbol</b>
+      <p><i class="pt verde"></i> <b>aro verde</b>: ya salió y está creciendo (alcance arriba de lo normal para su formato)</p>
+      <p><i class="pt oro"></i> <b>aro ámbar</b>: ya salió, pero flojo — ajustar antes de repetirlo</p>
+      <p><i class="pt rojo"></i> <b>aro rojo</b>: ya salió y no funcionó — cortar o cambiar de forma</p>
+      <p><i class="pt verde-crudo"></i> <b>aro punteado</b>: en producción, todavía no sale</p>
+      <p>Debajo de cada fruto: <b>alcance · interacciones</b>. Toca el fruto y ves todo lo demás.</p>
+      <p>Cada rama es una <b>premisa</b> (lo que estamos afirmando del PPP). Se editan con ✎, se cortan si no dan fruto, y hay hasta cinco vivas.</p></div>
+    <div id="ideas"></div>`;
+  pintarIdeas(temas);
   c.querySelectorAll('[data-ficha]').forEach(el=>el.onclick=()=>fichaPublicacion(el.dataset.ficha));
   c.querySelectorAll('[data-pieza]').forEach(el=>el.onclick=()=>fichaPieza(el.dataset.pieza));
   c.querySelectorAll('[data-idea]').forEach(el=>el.onclick=()=>fichaIdea(el.dataset.idea));
@@ -2147,7 +2161,7 @@ function fichaPublicacion(clave){
       ${pasoHTML('Siguiente',c.color==='rojo'?'falta':'hecho',`<small>${c.color==='rojo'?'cambiar de forma o cortar':c.color==='oro'?'ajustar gancho o imagen antes de repetir':'seguir por aquí'}</small>`)}
     </div>
     <p class="arb-sub">${c.permalinks.IG?`<a href="${esc(c.permalinks.IG)}" target="_blank" rel="noopener">Abrir en Instagram ↗</a> · `:''}${c.permalinks.FB?`<a href="${esc(c.permalinks.FB)}" target="_blank" rel="noopener">Facebook ↗</a> · `:''}<code>${esc(c.clave)}</code></p>
-    ${DECIDE()?`<button class="secund" onclick="editarNodo(${JSON.stringify(nodoDePub(c))})">✎ Editar esta publicación</button>`:''}</div>`,'ficha-'+clave);
+    ${DECIDE()?`<button class="secund" onclick="editarNodo(${JSON.stringify(nodoDePub(c))})">✎ Sugerir un cambio</button>`:''}</div>`,'ficha-'+clave);
 }
 async function fichaPieza(nombre){
   const piezas=await armarPiezas(); const z=piezas.find(p=>p.nombre===nombre); if(!z) return; const t=z.tira; const g=z.filas;
@@ -2209,19 +2223,44 @@ function nodoDePieza(nombre){ const N=(ARBOL&&ARBOL.nodos)||[]; const n=N.find(x
 async function editarNodo(ref){
   const N=(ARBOL&&ARBOL.nodos)||[]; const n=typeof ref==='string'?N.find(x=>x.id===ref):ref; if(!n) return;
   const temas=N.filter(x=>x.nivel==='tema');
-  hoja(`<div class="arb-ficha"><h3>✎ ${esc(n.titulo||n.id)}</h3><p class="arb-sub">${esc(n.nivel==='tema'?'rama (tema)':n.nivel==='tronco'?'tronco':'publicación')} · fila «${esc(n.id)}» de la hoja ARBOL</p>
+  hoja(`<div class="arb-ficha"><h3>✎ ${esc(n.titulo||n.id)}</h3><p class="arb-sub">${esc(n.nivel==='tema'?'premisa (una rama del árbol)':n.nivel==='tronco'?'tronco':'publicación')} · fila «${esc(n.id)}» de la hoja ARBOL</p>
     <label class="ed">Título<input id="edTit" value="${esc(n.titulo||'')}"></label>
     <label class="ed">Guía / bajada<textarea id="edBaj" rows="2">${esc(n.bajada||'')}</textarea></label>
     ${n.nivel==='pieza'?`<label class="ed">Rama<select id="edPad">${temas.map(t=>`<option value="${esc(t.id)}" ${t.id===n.padre?'selected':''}>${esc(t.titulo)}</option>`).join('')}</select></label>
     <label class="ed">Estado<input id="edEst" value="${esc(n.estado||'')}" placeholder="plan · en producción · publicada"></label>`:''}
     <label class="ed">Qué quiero que cambie (llega a Producción)<textarea id="edNota" rows="3" placeholder="Escribe lo que sea: texto, imagen, orden, tono…"></textarea></label>
-    <button class="listo" id="edOk">Guardar</button><p class="arb-sub" id="edAv"></p></div>`,'edita-'+n.id);
+    <button class="listo" id="edOk">Guardar</button>${n.nivel==='tema'?`<button class="secund" id="edCortar">Cortar esta premisa (dejó de dar fruto)</button>`:''}<p class="arb-sub" id="edAv"></p></div>`,'edita-'+n.id);
+  const bc=$('#edCortar'); if(bc) bc.onclick=async()=>{ if(!confirm('¿Cortar la premisa «'+(n.titulo||n.id)+'»? Sus frutos se quedan en el historial; la rama deja de verse.')) return; await guardarNodo({...n,estado:'cortada'}); };
   $('#edOk').onclick=async()=>{ const av=$('#edAv'); av.textContent='Guardando…';
     const fila={nivel:n.nivel||'pieza',id:n.id,padre:n.nivel==='pieza'?$('#edPad').value:(n.padre||''),titulo:$('#edTit').value.trim(),bajada:$('#edBaj').value.trim(),orden:n.orden||99,estado:n.nivel==='pieza'?$('#edEst').value.trim():(n.estado||''),nota:n.nota||''};
     try{ const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({accion:'arbol',clave:CLAVE(),forzar:1,filas:[fila]})}); const j=await leerJSON(r); if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||'no guardó');
       const nota=$('#edNota').value.trim(); if(nota) await mandarProduccion('ENCARGO · edición · '+(fila.titulo||n.id), JSON.stringify({nodo:n.id,titulo:fila.titulo,nota}), false);
       av.textContent='Guardado en el Sheet'+(nota?' · tu nota ya está en Producción':''); ARBOL=null; setTimeout(()=>{ cerrarCapas(); pintarArbol(true) },700);
     }catch(e){ av.textContent='No se guardó: '+String(e.message||e).slice(0,80) } };
+}
+
+async function guardarNodo(fila){
+  const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({accion:'arbol',clave:CLAVE(),forzar:1,filas:[fila]})}); const j=await leerJSON(r);
+  if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||'no guardó'); ARBOL=null; cerrarCapas(); pintarArbol(true); return j; }
+async function nuevaPremisa(){
+  const N=(ARBOL&&ARBOL.nodos)||[]; const vivas=N.filter(n=>n.nivel==='tema'&&!/cortada/i.test(n.estado||'')); if(vivas.length>=5){ alert('Ya hay cinco premisas vivas. Corta una antes de abrir otra.'); return }
+  const t=prompt('Nueva premisa (lo que afirmamos del PPP):'); if(!t) return; const b=prompt('Una línea que la explique:')||'';
+  const id=normSlug(t).slice(0,24)||('premisa-'+Date.now()); await guardarNodo({nivel:'tema',id,padre:'ppp',titulo:t,bajada:b,orden:vivas.length+1,estado:'viva',nota:''}); }
+/* ══ IDEAS debajo del árbol (15-sep, chinche de Alejandro): «varias ideas de publicación por tema que vayas
+   refrescando; si selecciono una o varias las subimos en la siguiente sala a producción». Hoja IDEAS. */
+let IDEAS=null;
+async function traerIdeas(){
+  if(ENTRADO()){ try{ const r=await fetch(GAS()+'?recurso=ideas&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'}); const j=await leerJSON(r); if(r.ok&&j&&j.ok&&Array.isArray(j.ideas)){ IDEAS=j.ideas; return } }catch(e){} }
+  try{ IDEAS=(await (await fetch('datos/ideas.json?v='+Date.now())).json()).ideas||[] }catch(e){ IDEAS=[] } }
+async function pintarIdeas(temas){
+  const c=$('#ideas'); if(!c) return; await traerIdeas(); const I=IDEAS||[];
+  const grupos=temas.map(tm=>{ const li=I.filter(i=>i.premisa===tm.id&&!/descartada|en_produccion/.test(i.estado||''));
+    return li.length?`<div class="ideas-premisa"><b>${esc(tm.titulo)}</b>${li.map(i=>`<div class="idea ${esc(i.estado||'')}"><div><span class="idea-tit">${esc(i.titulo)}</span> <small>${esc(i.formato||'')}</small><p>${esc(i.bajada||'')}</p></div>
+      ${DECIDE()?(i.estado==='elegida'?`<span class="idea-ok">elegida · entra en la próxima sala</span>`:`<div class="idea-btns"><button data-idea="${esc(i.id)}" data-est="elegida">Elegir</button><button data-idea="${esc(i.id)}" data-est="descartada" class="q">×</button></div>`):''}</div>`).join('')}</div>`:'' }).join('');
+  c.innerHTML=`<div class="ideas-cab"><b>Ideas para las próximas publicaciones</b><p>Las refresco yo por premisa. Elige una o varias y en la siguiente sala entran a producción con su guion.</p></div>${grupos||'<p class="arb-sub">Sin ideas todavía.</p>'}${DECIDE()?`<button class="ver-mas" id="nuevaPremisa">+ nueva premisa</button>`:''}`;
+  c.querySelectorAll('[data-idea]').forEach(b=>b.onclick=async()=>{ const i=I.find(x=>x.id===b.dataset.idea); if(!i) return; b.disabled=true;
+    try{ const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({accion:'ideas',clave:CLAVE(),forzar:1,filas:[{...i,estado:b.dataset.est}]})}); const j=await leerJSON(r); if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||''); i.estado=b.dataset.est; pintarIdeas(temas) }catch(e){ b.disabled=false; alert('No se guardó: '+String(e.message||e).slice(0,60)) } });
+  const np=$('#nuevaPremisa'); if(np) np.onclick=nuevaPremisa;
 }
 
 /* ══ arranque ══ */
