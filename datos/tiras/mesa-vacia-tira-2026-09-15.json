@@ -1,0 +1,139 @@
+{
+ "pieza": "La Mesa Vacía",
+ "pieza_slug": "mesa-vacia",
+ "promesa": "Toda familia tiene un terreno esperando. Lo que falta no es dinero ni acuerdo: es un Miguel.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/mesa-vacia-g1/L1.png",
+   "dice": "En tu familia hay un terreno del que todos opinan y nadie decide.",
+   "estado": "abierta",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-p1-2026-09-15/L1-1.jpg",
+     "titulo": "Toma 1 · MV3-L1-ALT",
+     "texto": "otra versión de la misma lámina (en la Mac)"
+    },
+    {
+     "src": "laminas/mesa-vacia-p1-2026-09-15/L1-2.jpg",
+     "titulo": "Toma 2 · MV3-L1-V1",
+     "texto": "otra versión de la misma lámina (en la Mac)"
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "src": "laminas/mesa-vacia-g1/L2.png",
+   "dice": "Quedó intestado. Y el tiempo no espera papeles.",
+   "estado": "abierta",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-p2-2026-09-15/L2-1.jpg",
+     "titulo": "Toma 1 · MV3-L2-V1",
+     "texto": "otra versión de la misma lámina (en la Mac)"
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "src": "laminas/mesa-vacia-g1/L3.png",
+   "dice": "Un día, Miguel se sentó en la cabecera.",
+   "estado": "abierta",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-p3-2026-09-15/L3-1.jpg",
+     "titulo": "Toma 1 · MV3-L3-V1",
+     "texto": "otra versión de la misma lámina (en la Mac)"
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "src": "laminas/mesa-vacia-g1/L4.png",
+   "dice": "No tenía que saberlo todo. Tenía que sentar a los que saben.",
+   "estado": "abierta",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-p4-2026-09-15/L4-1.jpg",
+     "titulo": "Toma 1 · MV3-L4-V1",
+     "texto": "otra versión de la misma lámina (en la Mac)"
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "src": "laminas/mesa-vacia-g1/L5.png",
+   "dice": "La familia pone el terreno. El equipo, todo lo demás.",
+   "estado": "abierta",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-p5-2026-09-15/L5-1.jpg",
+     "titulo": "Toma 1 · MV3-L5-V1",
+     "texto": "otra versión de la misma lámina (en la Mac)"
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "src": "laminas/mesa-vacia-g1/L6.png",
+   "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
+   "estado": "abierta",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-p6-2026-09-15/L6-1.jpg",
+     "titulo": "Toma 1 · MV3-L6-V1",
+     "texto": "otra versión de la misma lámina (en la Mac)"
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "src": "laminas/mesa-vacia-g1/L7.png",
+   "dice": "Esta silla es la tuya.",
+   "estado": "abierta",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-p7-2026-09-15/L7-1.jpg",
+     "titulo": "Toma 1 · MV3-L7-V1",
+     "texto": "otra versión de la misma lámina (en la Mac)"
+    }
+   ]
+  }
+ ],
+ "decidir": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7
+ ],
+ "mapa": {
+  "1": 1,
+  "2": 2,
+  "3": 3,
+  "4": 4,
+  "5": 5,
+  "6": 6,
+  "7": 7
+ },
+ "base": "",
+ "guion": "",
+ "titulo": "La Mesa Vacía · las 7 láminas (idea que elegiste)",
+ "nota": "Elegiste esta idea en el árbol. Aquí está la saga completa en su versión más reciente; donde hay más de una toma, elige. OJO: el caption viejo decía «gratis»; se reescribe sin esa palabra antes de publicar."
+}
