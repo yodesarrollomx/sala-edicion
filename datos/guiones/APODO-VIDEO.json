@@ -48,7 +48,7 @@
   {
    "n": 2,
    "id": "E2",
-   "lamina_src": "laminas/apodo-g7/L2.png",
+   "lamina_src": "laminas/apodo-e2026-09-15/L2.png",
    "texto": "Los vecinos le dicen «el de la esquina».",
    "partes": [
     {
@@ -62,7 +62,8 @@
    ],
    "intencion": "la cita en tono de banqueta, suelto, como quien señala con la barbilla.",
    "voz_reusable": null,
-   "escena_reusable": null
+   "escena_reusable": null,
+   "lamina_src_previa": "laminas/apodo-g7/L2.png"
   },
   {
    "n": 3,
