@@ -1,18 +1,6 @@
 {
- "actualizado": "2026-09-15 09:32",
+ "actualizado": "2026-09-15 10:08",
  "encargos": [
-  {
-   "que": "{\"id\": \"CHN-20260914-2307-2292\", \"texto\": \"aquí no se está mostrando la miniatura… las rayas verdes significan los procesos que ya están terminados… explícame en leyendas sencillas al lado del árbol l",
-   "estado": "cumplida",
-   "cuando": "2026-09-14",
-   "tomado": "23:45"
-  },
-  {
-   "que": "4 chinches del 14-sep atendidas: sólo lo real cuelga del árbol · leyenda en llano · premisas (editar/cortar/nueva ≤5) · Ideas por premisa · envío de chinches arreglado (tronaba fuera de Ajustes). Veri",
-   "estado": "cumplida",
-   "cuando": "2026-09-15",
-   "tomado": "00:05"
-  },
   {
    "que": "{\"id\":\"CHN-20260915-0714-582a\",\"texto\":\"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambien inclute nuevas cuando menos siempre 3 nuevas ideas bien pensadas de cada una de nuestras vias o ramas principales...\",\"tipo\":\"\",\"vista\":\"arbol\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"div#ideas\",\"texto\":\"Ideas para las próximas publicaciones Las refresco yo por premisa. Elige una o varias y en la siguiente sala entran a producción con su guion. SIN CARGAR LA OBR\",\"seccion\":\"Vender el Plan de Potencial\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789481109336\"}",
    "estado": "cumplida",
@@ -30,6 +18,18 @@
    "estado": "en curso",
    "cuando": "2026-09-15",
    "tomado": "09:32"
+  },
+  {
+   "que": "{\"id\":\"CHN-20260915-0931-6fd8\",\"texto\":\"no me aparecen como nuevas las que aporbamos en la corrida pasada de las ideas de la suevas producciones aprobadas... al parecer si pusisye nuevas ideas en la parte de abajo pero las que seleccionamos como aprobadas no estan ahora en el arbol como en produccion de la primera etapa quiero ver eso... tmb la metodologia donde etsmaos mostrando esto quiero que se veamas como un arbo y que seamos mas practicos en mostrar las publciaiocnes mas ameno mas como si fuera una app para egeneracon z\",\"tipo\":\"\",\"vista\":\"arbol\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"section#vArbol\",\"texto\":\"Árbol de publicaciones Toca un fruto para verlo por dentro: qué se hizo, qué salió y qué falta. Actualizar Vender el Plan de Potencial 253 de alcance esta seman\",\"seccion\":\"Árbol de publicaciones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789489017577\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-15",
+   "tomado": "10:08"
+  },
+  {
+   "que": "{\"id\":\"CHN-20260915-0921-7f77\",\"texto\":\"por ejemplo no me ests trayendo a la mesa ls propuestas de nuevos temas de publciaciones que fui escogiendo en etapas pasadas... quiro que se vayan integrando a",
+   "estado": "en curso",
+   "cuando": "2026-09-15",
+   "tomado": "10:08"
   }
  ]
 }
