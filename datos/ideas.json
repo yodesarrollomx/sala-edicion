@@ -1,6 +1,6 @@
 {
  "_que_es": "Respaldo de la hoja IDEAS. El Sheet manda.",
- "actualizado": "2026-09-14 23:44",
+ "actualizado": "2026-09-15 00:05",
  "ideas": [
   {
    "premisa": "dato",
@@ -8,7 +8,7 @@
    "titulo": "La Servilleta · segunda vuelta",
    "bajada": "El mismo argumento (se calcula, no se opina) contado desde la sobremesa de una familia distinta.",
    "formato": "Reel",
-   "estado": "propuesta",
+   "estado": "descartada",
    "creada": "2026-09-14",
    "nota": ""
   },
@@ -18,7 +18,7 @@
    "titulo": "La Mesa Vacía",
    "bajada": "Todos opinan, nadie decide: el dato neutral destraba. 7 láminas ya en la Mac.",
    "formato": "Carrusel",
-   "estado": "propuesta",
+   "estado": "elegida",
    "creada": "2026-09-14",
    "nota": ""
   },
@@ -28,7 +28,7 @@
    "titulo": "El Terreno Dormido · el regreso",
    "bajada": "Qué le pasó al terreno que llevaba años dormido cuando alguien le pidió su nombre.",
    "formato": "Reel",
-   "estado": "propuesta",
+   "estado": "descartada",
    "creada": "2026-09-14",
    "nota": ""
   },

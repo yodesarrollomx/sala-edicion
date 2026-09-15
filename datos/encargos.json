@@ -1,12 +1,6 @@
 {
- "actualizado": "2026-09-14 23:45",
+ "actualizado": "2026-09-15 00:05",
  "encargos": [
-  {
-   "que": "4 chinches del 14-sep atendidas: sólo lo real cuelga del árbol · leyenda en llano · premisas (editar/cortar/nueva ≤5) · Ideas por premisa · envío de chinches arreglado (tronaba fuera de Ajustes). Verificado en su Chrome.",
-   "estado": "en curso",
-   "cuando": "2026-09-14",
-   "tomado": "23:44"
-  },
   {
    "que": "{\"id\": \"CHN-20260914-2313-5cbd\", \"texto\": \"no me está llevando a nada… me estás proponiendo cosas que no tenemos aún… hasta que esté algo aprobado lo metemos al árbol… debajo del árbol varias ideas de",
    "estado": "en curso",
@@ -30,6 +24,12 @@
    "estado": "en curso",
    "cuando": "2026-09-14",
    "tomado": "23:45"
+  },
+  {
+   "que": "4 chinches del 14-sep atendidas: sólo lo real cuelga del árbol · leyenda en llano · premisas (editar/cortar/nueva ≤5) · Ideas por premisa · envío de chinches arreglado (tronaba fuera de Ajustes). Veri",
+   "estado": "en curso",
+   "cuando": "2026-09-15",
+   "tomado": "00:05"
   }
  ]
 }
