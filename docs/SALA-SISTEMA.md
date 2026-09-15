@@ -870,3 +870,9 @@ que se sature». Lo que quedó:
     pieza). `sala_material.py` → `datos/material.json` inventaría lo que hay EN LA MAC por pieza
     (V1/V2/FINAL, captions, videos): la Sala controla también lo que no ha publicado. ARBOL: 22 nodos
     (1 tronco · 5 temas · 16 piezas: las 12 del Mes PPP + las de la Sala).
+102. **Todo lo del árbol se edita desde el árbol** (15-sep). ✎ en cada rama y «Editar esta publicación» en cada
+    ficha: título, guía, rama y estado van a la hoja ARBOL por el GAS (`accion:arbol`, editores desde v67);
+    el cuadro «qué quiero que cambie» sale como `ENCARGO · edición · <pieza>` y /sala lo cosecha. El árbol se
+    pinta una vez y se queda (caché 3 min; «Actualizar» fuerza): volver de un pop-up no recarga. Abajo del
+    árbol, un punto discreto lleva al Sheet (`sheet_url` sólo para editores). El aviso de «Hoy» usa el mismo
+    conteo que el título de Hoy (`pasos` sin marca): ya no dice «1» cuando Hoy dice «nada pendiente».
