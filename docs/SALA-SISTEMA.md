@@ -876,3 +876,10 @@ que se sature». Lo que quedó:
     pinta una vez y se queda (caché 3 min; «Actualizar» fuerza): volver de un pop-up no recarga. Abajo del
     árbol, un punto discreto lleva al Sheet (`sheet_url` sólo para editores). El aviso de «Hoy» usa el mismo
     conteo que el título de Hoy (`pasos` sin marca): ya no dice «1» cuando Hoy dice «nada pendiente».
+103. **Del árbol cuelga sólo lo real; las ideas van abajo** (15-sep, cuatro chinches suyas). Las ramas son
+    **premisas** (lo que afirmamos del PPP): se editan con ✎, se **cortan** cuando dejan de dar fruto (`estado:
+    cortada` en ARBOL; sus frutos quedan en el historial) y hay **hasta cinco vivas** («+ nueva premisa»). Debajo
+    del árbol, **Ideas** por premisa (hoja IDEAS): el agente las refresca, él elige o descarta, y una idea elegida
+    entra a producción en la siguiente /sala con su guion. Leyenda en llano junto al árbol («aro verde: ya salió y
+    crece…»). Y la causa de que sus chinches no llegaran: `mandarProduccion` tronaba fuera de Ajustes (`#ajAviso`
+    nulo) antes del fetch — se recuperaron de su IndexedDB y se registraron.
