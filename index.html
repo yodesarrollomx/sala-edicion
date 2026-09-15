@@ -600,7 +600,6 @@ html.cargando #actualizando{display:flex}
       <button class="secund" id="arbActualizar" style="width:auto;padding:8px 16px;min-height:40px">Actualizar</button>
       <span id="arbAviso" style="font-size:12.5px;color:var(--guia);margin-left:8px"></span>
     </div>
-    <div class="arb-leyenda"><span><i class="prod-punto verde" style="display:inline-block"></i> aprobada</span><span><i class="prod-punto oro" style="display:inline-block"></i> en tu mesa</span><span><i class="prod-punto rojo" style="display:inline-block"></i> pediste cambio</span><span><i class="prod-punto gris" style="display:inline-block"></i> versión anterior</span></div>
     <div id="arbol"></div>
   </section>
 
@@ -642,7 +641,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='299f714327';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='08f388c324';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
