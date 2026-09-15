@@ -1,12 +1,6 @@
 {
- "actualizado": "2026-09-15 10:08",
+ "actualizado": "2026-09-15 10:25",
  "encargos": [
-  {
-   "que": "{\"id\":\"CHN-20260915-0714-582a\",\"texto\":\"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambien inclute nuevas cuando menos siempre 3 nuevas ideas bien pensadas de cada una de nuestras vias o ramas principales...\",\"tipo\":\"\",\"vista\":\"arbol\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"div#ideas\",\"texto\":\"Ideas para las próximas publicaciones Las refresco yo por premisa. Elige una o varias y en la siguiente sala entran a producción con su guion. SIN CARGAR LA OBR\",\"seccion\":\"Vender el Plan de Potencial\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789481109336\"}",
-   "estado": "cumplida",
-   "cuando": "2026-09-15",
-   "tomado": "07:19"
-  },
   {
    "que": "{\"id\":\"CHN-20260915-0714-582a\",\"texto\":\"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambi",
    "estado": "cumplida",
@@ -30,6 +24,12 @@
    "estado": "en curso",
    "cuando": "2026-09-15",
    "tomado": "10:08"
+  },
+  {
+   "que": "{\"id\":\"CHN-20260915-0931-6fd8\",\"texto\":\"no me aparecen como nuevas las que aporbamos en la corrida pasada de las ideas de la suevas producciones aprobadas... al parecer si pusisye nuevas ideas en la p",
+   "estado": "en curso",
+   "cuando": "2026-09-15",
+   "tomado": "10:25"
   }
  ]
 }
