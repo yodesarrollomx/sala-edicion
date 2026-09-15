@@ -27,7 +27,10 @@
   "animacion_lamina_entera": 1,
   "escena_segundos": 5,
   "escena_aire_s": 1,
-  "voz_seg_por_palabra": 0.52
+  "voz_seg_por_palabra": 0.3,
+  "voz_motor": "kokoro",
+  "voz_narrador": "em_alex",
+  "voz_vecino": "em_santa"
  },
  "motores": [
   {
@@ -94,5 +97,5 @@
    "nota": "gratis con tope diario; a veces repite la frase"
   }
  ],
- "traido": "2026-09-14 20:59"
+ "traido": "2026-09-14 21:17"
 }

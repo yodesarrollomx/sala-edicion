@@ -1,0 +1,210 @@
+{
+ "pieza": "El Apodo del Terreno",
+ "pieza_slug": "apodo",
+ "promesa": "Que el dueño sienta que su terreno lleva años cargando nombres ajenos — y que hay uno solo que sí es suyo: lo que puede llegar a ser.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/apodo-g7/L1.png",
+   "dice": "¿Ya sabes cómo le dicen a tu terreno?",
+   "estado": "abierta",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L1.png",
+     "hash": "9402bbc1",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/apodo-p1-2026-09-14/L1-1.jpg",
+     "titulo": "Toma 1",
+     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
+    },
+    {
+     "src": "laminas/apodo-p1-2026-09-14/L1-2.jpg",
+     "titulo": "Toma 2",
+     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "src": "laminas/apodo-g7/L2.png",
+   "dice": "Los vecinos le dicen «el de la esquina».",
+   "estado": "abierta",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L2.png",
+     "hash": "742f0cae",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/apodo-p2-2026-09-14/L2-1.jpg",
+     "titulo": "Toma 1",
+     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
+    },
+    {
+     "src": "laminas/apodo-p2-2026-09-14/L2-2.jpg",
+     "titulo": "Toma 2",
+     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "src": "laminas/apodo-e2026-09-14/L3.png",
+   "dice": "En la colonia le dicen «el baldío». Como si fuera un descuido y no un patrimonio.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L3.png",
+     "hash": "6902c53d",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L1.png",
+     "hash": "96eb6d21",
+     "marca": "",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L3.png",
+     "hash": "0ab02c96",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 3,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no enganchamas nivel medio alto"
+  },
+  {
+   "n": 4,
+   "src": "laminas/apodo-g7/L4.png",
+   "dice": "Ninguno de esos nombres se lo puso tu terreno.",
+   "estado": "abierta",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L4.png",
+     "hash": "c044b62e",
+     "marca": ""
+    }
+   ],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/apodo-p4-2026-09-14/L4-1.jpg",
+     "titulo": "Toma 1",
+     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
+    },
+    {
+     "src": "laminas/apodo-p4-2026-09-14/L4-2.jpg",
+     "titulo": "Toma 2",
+     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "src": "laminas/apodo-e2026-09-14/L5.png",
+   "dice": "Tu terreno sí tiene un nombre propio: lo que puede llegar a ser.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L5.png",
+     "hash": "5c43746a",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L2.png",
+     "hash": "bc30416b",
+     "marca": "",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L5.png",
+     "hash": "79c1ed61",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 3,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto más entorno urbano clase media alta"
+  },
+  {
+   "n": 6,
+   "src": "laminas/apodo-g8/L3.png",
+   "dice": "Pídele a tu terreno su Plan de Potencial Personalizado y descubramos juntos su nombre real.",
+   "estado": "abierta",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L6.png",
+     "hash": "5a25ffd2",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L3.png",
+     "hash": "88e1482b",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "nota_previa": "«la toma 3 creo que a la de que le dicen el baldío está bien, el Apodo que sigue no se escucha bien y está de más, quítalo, nos quedamos con los apodos de la esquina y el baldío… luego en la lámina de lo que puede sostener no me gusta lo de sostener, debemos de poner algo como lo que tu terreno puede llegar a ser… y a lo último donde dice pídele su plan de potencial personalizado y descubramos juntos su nombre real»",
+   "candidatas": [
+    {
+     "src": "laminas/apodo-p6-2026-09-14/L6-1.jpg",
+     "titulo": "Toma 1",
+     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
+    },
+    {
+     "src": "laminas/apodo-p6-2026-09-14/L6-2.jpg",
+     "titulo": "Toma 2",
+     "texto": "colonia media-alta, mismo mundo que la 3 y la 5"
+    }
+   ]
+  }
+ ],
+ "decidir": [
+  1,
+  2,
+  4,
+  6
+ ],
+ "mapa": {
+  "1": 1,
+  "2": 2,
+  "3": 4,
+  "4": 6
+ },
+ "base": "apodo-video-10sep-v7",
+ "guion": "datos/guiones/APODO-VIDEO.json",
+ "titulo": "El Apodo · elige la toma de la 1, 2, 4 y 6 (mismo mundo que la 3 y la 5)",
+ "nota": "Aquí está la pieza completa. Sólo las láminas marcadas piden respuesta: dentro de cada una vienen las tomas para que elijas."
+}
