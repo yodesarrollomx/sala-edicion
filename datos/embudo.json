@@ -1,20 +1,20 @@
 {
  "_que_es": "Embudo por publicación: KPIs de Meta, «los mejores» del mismo formato y un veredicto con las varas de REGLAS.",
- "generado": "2026-09-14 13:11",
+ "generado": "2026-09-14 20:32",
  "corpus": {
-  "generado": "2026-09-14 11:30",
+  "generado": "2026-09-14 20:32",
   "posts": 71,
   "semana": {
    "actual": {
     "posts": 6,
-    "reach": 243,
-    "interacciones": 35,
+    "reach": 249,
+    "interacciones": 36,
     "guardados": 0
    },
    "anterior": {
     "posts": 3,
-    "reach": 61,
-    "interacciones": 7,
+    "reach": 62,
+    "interacciones": 8,
     "guardados": 0
    }
   },
@@ -125,11 +125,23 @@
       "reach": 63,
       "views": 70,
       "interacciones": 4
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 63,
+      "views": 70,
+      "interacciones": 4
      }
     ],
     "FB": [
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -149,12 +161,12 @@
      "permalink": "https://www.instagram.com/p/Dc0Ao2ZDqM4/",
      "id_post": "18114808762751480",
      "kpis": {
-      "views": 45,
-      "reach": 14,
-      "likes": 1,
+      "views": 46,
+      "reach": 15,
+      "likes": 2,
       "comments": 1,
       "shares": 0,
-      "interacciones": 2,
+      "interacciones": 3,
       "guardados": 0,
       "er": null
      }
@@ -171,12 +183,12 @@
    "citas": 0,
    "dias": 12,
    "kpis": {
-    "views": 45,
-    "reach": 14,
-    "likes": 1,
+    "views": 46,
+    "reach": 15,
+    "likes": 2,
     "comments": 1,
     "shares": 0,
-    "interacciones": 2,
+    "interacciones": 3,
     "guardados": 0,
     "er": null
    },
@@ -198,7 +210,7 @@
    },
    "veredicto": "cortar o cambiar de forma",
    "color": "rojo",
-   "razon": "alcance 14: menos de la mitad de la mediana (42.5) de su formato",
+   "razon": "alcance 15: menos de la mitad de la mediana (42.5) de su formato",
    "cover": "https://yodesarrollomx.github.io/aurum-board/covers/18114808762751480.jpg",
    "historia": {
     "IG": [
@@ -207,11 +219,23 @@
       "reach": 14,
       "views": null,
       "interacciones": 2
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 15,
+      "views": null,
+      "interacciones": 3
      }
     ],
     "FB": [
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -237,11 +261,11 @@
    },
    "kpis": {
     "IG": {
-     "reach": 14,
+     "reach": 15,
      "views": null,
-     "interacciones": 2,
+     "interacciones": 3,
      "guardados": 0,
-     "er": 14.29
+     "er": 20.0
     },
     "FB": {
      "views": 0,
@@ -266,7 +290,7 @@
    },
    "veredicto": "cortar o cambiar de forma",
    "color": "rojo",
-   "razon": "alcance 14: menos de la mitad de la mediana (42.5) de su formato",
+   "razon": "alcance 15: menos de la mitad de la mediana (42.5) de su formato",
    "historia": {
     "IG": [
      {
@@ -274,11 +298,23 @@
       "reach": 14,
       "views": null,
       "interacciones": 2
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 15,
+      "views": null,
+      "interacciones": 3
      }
     ],
     "FB": [
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -337,11 +373,23 @@
       "reach": 63,
       "views": 70,
       "interacciones": 4
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 63,
+      "views": 70,
+      "interacciones": 4
      }
     ],
     "FB": [
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -400,11 +448,23 @@
       "reach": 135,
       "views": 161,
       "interacciones": 5
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 135,
+      "views": 161,
+      "interacciones": 5
      }
     ],
     "FB": [
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -496,6 +556,12 @@
       "reach": 15,
       "views": null,
       "interacciones": 4
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 15,
+      "views": null,
+      "interacciones": 4
      }
     ],
     "FB": []
@@ -568,6 +634,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -662,6 +734,12 @@
       "reach": 157,
       "views": 223,
       "interacciones": 15
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 157,
+      "views": 223,
+      "interacciones": 15
      }
     ],
     "FB": [
@@ -703,6 +781,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 13,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 13,
       "interacciones": 0
@@ -797,6 +881,12 @@
       "reach": 176,
       "views": 224,
       "interacciones": 17
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 176,
+      "views": 224,
+      "interacciones": 17
      }
     ],
     "FB": [
@@ -838,6 +928,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 63,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 63,
       "interacciones": 0
@@ -932,6 +1028,12 @@
       "reach": 136,
       "views": 232,
       "interacciones": 15
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 136,
+      "views": 232,
+      "interacciones": 15
      }
     ],
     "FB": [
@@ -973,6 +1075,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 64,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 64,
       "interacciones": 0
@@ -1067,6 +1175,12 @@
       "reach": 20,
       "views": null,
       "interacciones": 3
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 20,
+      "views": null,
+      "interacciones": 3
      }
     ],
     "FB": [
@@ -1108,6 +1222,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 6,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 6,
       "interacciones": 0
@@ -1202,6 +1322,12 @@
       "reach": 103,
       "views": 135,
       "interacciones": 3
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 103,
+      "views": 135,
+      "interacciones": 3
      }
     ],
     "FB": [
@@ -1243,6 +1369,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 32,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 32,
       "interacciones": 0
@@ -1334,6 +1466,12 @@
       "reach": 65,
       "views": null,
       "interacciones": 3
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 65,
+      "views": null,
+      "interacciones": 3
      }
     ],
     "FB": []
@@ -1406,6 +1544,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -1483,6 +1627,12 @@
       "reach": null,
       "views": 0,
       "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
      }
     ]
    }
@@ -1554,6 +1704,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -1631,6 +1787,12 @@
       "reach": null,
       "views": 0,
       "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
      }
     ]
    }
@@ -1702,6 +1864,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -1779,6 +1947,12 @@
       "reach": null,
       "views": 0,
       "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
      }
     ]
    }
@@ -1850,6 +2024,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -1927,6 +2107,12 @@
       "reach": null,
       "views": 0,
       "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
      }
     ]
    }
@@ -1998,6 +2184,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -2075,6 +2267,12 @@
       "reach": null,
       "views": 0,
       "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
      }
     ]
    }
@@ -2149,6 +2347,12 @@
       "reach": null,
       "views": 0,
       "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
      }
     ]
    }
@@ -2220,6 +2424,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -2314,6 +2524,12 @@
       "reach": 13,
       "views": null,
       "interacciones": 2
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 13,
+      "views": null,
+      "interacciones": 2
      }
     ],
     "FB": [
@@ -2355,6 +2571,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -2432,6 +2654,12 @@
       "reach": null,
       "views": 0,
       "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
      }
     ]
    }
@@ -2503,6 +2731,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": null,
+      "views": 0,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": null,
       "views": 0,
       "interacciones": 0
@@ -2594,6 +2828,12 @@
       "reach": 10,
       "views": null,
       "interacciones": 5
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 10,
+      "views": null,
+      "interacciones": 5
      }
     ],
     "FB": []
@@ -2669,6 +2909,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": 30,
+      "views": null,
+      "interacciones": 3
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": 30,
       "views": null,
       "interacciones": 3
@@ -2761,6 +3007,12 @@
       "reach": 31,
       "views": null,
       "interacciones": 1
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 31,
+      "views": null,
+      "interacciones": 1
      }
     ],
     "FB": []
@@ -2850,6 +3102,12 @@
       "reach": 8,
       "views": null,
       "interacciones": 1
+     },
+     {
+      "t": "2026-09-14 20:32",
+      "reach": 8,
+      "views": null,
+      "interacciones": 1
      }
     ],
     "FB": []
@@ -2925,6 +3183,12 @@
      },
      {
       "t": "2026-09-14 10:02",
+      "reach": 34,
+      "views": null,
+      "interacciones": 0
+     },
+     {
+      "t": "2026-09-14 20:32",
       "reach": 34,
       "views": null,
       "interacciones": 0
