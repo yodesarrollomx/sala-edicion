@@ -650,7 +650,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='f605199190';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='e85e4e522c';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2206,8 +2206,11 @@ function chincheClavada(ch){
   const c=chincheContexto();
   const det=JSON.stringify({id:ch.id,texto:ch.texto,tipo:ch.tipo,vista:c.vista,popup:c.popup,carta:c.carta,
     elemento:ch.elemento?{css:ch.elemento.css,texto:ch.elemento.texto,seccion:ch.elemento.seccion}:null,url:ch.url});
-  try{ mandarProduccion('ENCARGO · chinche · '+(c.carta&&c.carta.pieza?c.carta.pieza:(c.popup||c.vista)), det, false) }catch(e){}
+  try{ mandarProduccion('ENCARGO · chinche · '+(c.carta&&c.carta.pieza?c.carta.pieza:(c.popup||c.vista)), det, false).then(()=>chincheMandada(ch.id)) }catch(e){}
 }
+// 15-sep: «quita las alertas de chinches». Una chinche que ya llegó al Sheet se marca «mandada» en la base local
+// de la Chinche (misma que usa el portal): baja de la pastilla y queda en gris al fondo de la pila, como las del OS.
+function chincheMandada(id){ try{ const r=indexedDB.open('yodChinche'); r.onsuccess=()=>{ const db=r.result; const tx=db.transaction('chinches','readwrite'); const st=tx.objectStore('chinches'); const g=st.get(id); g.onsuccess=()=>{ const c=g.result; if(!c) return; c.estado='mandada'; c.mandada=new Date().toISOString(); st.put(c); }; tx.oncomplete=()=>{ try{ const n=Math.max(0,(parseInt(localStorage.getItem('yod_chinche_n')||'0',10)||0)-1); localStorage.setItem('yod_chinche_n',String(n)); const p=document.querySelector('button[aria-label="Pendientes de cambio"]'); if(p) p.textContent=n?'📌'+n:'📌'; }catch(e){} } } }catch(e){} }
 (function(){ const s=document.createElement('script'); s.src='/yod-portal/chinche.js?v=sala1';
   s.onload=()=>{ try{ window.YODChinche&&YODChinche.init({pantalla:'sala', vista:()=>chincheContexto().vista,
       seccion:()=>{ const c=chincheContexto(); return c.popup?('pop-up: '+c.popup):(c.carta?('carta '+c.carta.pid+(c.carta.lamina?' · lámina '+c.carta.lamina:'')):c.vista) },
