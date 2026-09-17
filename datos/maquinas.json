@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-15 20:06",
+ "actualizado": "2026-09-17 14:06",
  "maquinas": [
   {
    "id": "com.yod.pintarron.server",
@@ -18,7 +18,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 120 minutos",
-   "corrio": "hace 3 horas",
+   "corrio": "hace 45 horas",
    "dijo": "montaje v2 hecho",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -40,7 +40,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "a las 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30, 8:00, 8:30, 9:00, 9:30, 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30, 14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30",
-   "corrio": "hace 2 horas",
+   "corrio": "hace 44 horas",
    "dijo": "}",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -51,10 +51,10 @@
    "hace": "Rehace el corte completo (voces, escenas, mezcla, reel vertical) cuando algo cambió.",
    "evita": "tener que rearmar el video a mano cada vez que se corrige una pieza",
    "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
-   "corrio": "hace 19 días",
+   "corrio": "hace 20 días",
    "dijo": "voces completas; el corte se re-armó",
    "salud": "duda",
-   "porque": "lleva 19 días sin correr — puede que ya terminó su trabajo"
+   "porque": "lleva 20 días sin correr — puede que ya terminó su trabajo"
   },
   {
    "id": "mx.yodesarrollo.cuento",
@@ -62,7 +62,7 @@
    "hace": "Termina la pieza del cuento cuando reabre la cuota de voz.",
    "evita": "lo mismo que el de arriba, pero para esa pieza",
    "cuando": "a las 5:30, 6:45",
-   "corrio": "hace 13 horas",
+   "corrio": "hace 2 días",
    "dijo": "  el cuento ya esta hecho; nada que hacer",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -73,7 +73,7 @@
    "hace": "Recoge lo que pides con «Pedir nueva ronda» o «Enviar mensaje», te avisa en la Mac y deja escrito en la Sala que ya se tomó.",
    "evita": "Que pidas una ronda y nadie se entere: antes el recado se quedaba dormido en el Sheet.",
    "cuando": "cada 15 minutos",
-   "corrio": "hace 52 min",
+   "corrio": "hace 43 horas",
    "dijo": "sin encargos pendientes",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -84,7 +84,7 @@
    "hace": "Cada media hora revisa a las demás y publica lo que estás leyendo.",
    "evita": "no tener manera de saber si algo corre de verdad",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 47 min",
+   "corrio": "hace 42 horas",
    "dijo": "máquinas: publicado",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -106,7 +106,7 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 30 minutos",
-   "corrio": "hace 46 min",
+   "corrio": "hace 43 horas",
    "dijo": "19:20:22 productor · listo",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -117,7 +117,7 @@
    "hace": "Cada mañana revisa si la Sala amaneció sin nada que decidir. Si tú dejaste propuestas sin resolver, las vuelve a montar en el día de hoy con el mismo número.",
    "evita": "que abras la Sala y esté vacía aunque quedara trabajo tuyo pendiente",
    "cuando": "a las 6:00, 9:00, 12:00, 15:00, 18:00",
-   "corrio": "hace 1 horas",
+   "corrio": "hace 43 horas",
    "dijo": "expedientes.py ·   La Servilleta: 19 hitos · en camino",
    "salud": "bien",
    "porque": "corriendo en su horario"
@@ -129,7 +129,7 @@
    "evita": "quedarte sin Sala si se cae GitHub",
    "cuando": "siempre encendida",
    "corrio": "hace 1 min",
-   "dijo": "  Sala de Edición · http://localhost:8711  (2026-09-15T20:06:52-07:00)",
+   "dijo": "  Sala de Edición · http://localhost:8711  (2026-09-17T14:06:54-07:00)",
    "salud": "bien",
    "porque": "es un servidor: está encendido ahora mismo"
   },
@@ -139,10 +139,10 @@
    "hace": "Anima las escenas que faltan en cuanto reabre la cuota de GPU. Cuando ya están las siete, se apaga sola.",
    "evita": "quedarte a media animación porque se acabó la cuota gratis del día",
    "cuando": "a las 5:30, 6:45, 10:45, 12:00, 14:00, 16:00",
-   "corrio": "hace 30 días",
+   "corrio": "hace 32 días",
    "dijo": "  hechos: 2  ·  pendientes: 0",
    "salud": "duda",
-   "porque": "lleva 30 días sin correr — puede que ya terminó su trabajo"
+   "porque": "lleva 32 días sin correr — puede que ya terminó su trabajo"
   },
   {
    "id": "mx.yodesarrollo.vigia",
@@ -150,8 +150,8 @@
    "hace": "(sin descripción todavía)",
    "evita": "",
    "cuando": "cada 5 minutos",
-   "corrio": "hace 45 min",
-   "dijo": "19:21:16 vigía · sin novedad",
+   "corrio": "hace 42 horas",
+   "dijo": "20:07:11 vigía · sin novedad",
    "salud": "bien",
    "porque": "corriendo en su horario"
   },
@@ -161,7 +161,7 @@
    "hace": "Corre 111 revisiones sobre los tableros: qué quedó abierto sin credencial, qué liga se cayó, qué dato se congeló.",
    "evita": "enterarte por un tercero de que un tablero estaba abierto",
    "cuando": "a las 6:45",
-   "corrio": "hace 13 horas",
+   "corrio": "hace 2 días",
    "dijo": "==============================================================================",
    "salud": "bien",
    "porque": "corriendo en su horario"
