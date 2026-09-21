@@ -894,3 +894,59 @@ que se sature». Lo que quedó:
     Apodo aprobadas el 14-sep (colonia media-alta de Hermosillo).
 106. **Premisas candidatas e ideas siempre frescas** (chinche 15-sep). Cada revisión propone ≥3 ideas nuevas por rama
     viva y premisas candidatas (`nivel: premisa_candidata` en ARBOL); al elegir una con «Abrir rama», nace el tema.
+
+## 21-sep-2026 · el ciclo deja de depender de que la Mac esté despierta
+
+**Síntoma.** El ciclo diario vivía entero en `~/yod_audit/`, disparado por `launchd`. Una Mac
+dormida, cerrada o de viaje era una Sala sin respaldo espejo y una COLA que no avanzaba,
+**sin que nadie se enterara**: no hay alarma en algo que simplemente no corrió. El 5-sep el
+relevo de las 6:00 no corrió y la mesa amaneció apoyada en el relevo virtual del GAS; funcionó
+de milagro, no por diseño.
+
+**Causa raíz.** Dos dependencias escondidas en el mismo lugar. La primera, que el único reloj
+del sistema fuera un plist en una computadora personal. La segunda, más silenciosa: **las
+reglas del repo se exigían con un hook `pre-push` de esa misma Mac**. Un push desde la web,
+desde el teléfono o desde cualquier otra máquina no corre hooks — así que el sello de versión,
+que existe justo para que «los arreglos lleguen», sólo se revisaba si el push salía de un
+lugar concreto.
+
+**Corrección.** La orquestación —lo que es HTTPS y no cómputo— se mudó a GitHub Actions
+(`nube/`, `.github/workflows/`, manual en `nube/README.md`). La producción pesada se quedó
+donde estaba, porque un runner no tiene GPU y porque no le toca (invariante 54).
+
+**Candados.** Cada regla que el movimiento ponía en riesgo quedó como código que bloquea, no
+como prosa que se lee:
+
+| Regla | Cómo se cuida ahora |
+|---|---|
+| INVIOLABLE 2 · cero claves en un repo público | secrets de Actions + `::add-mask::` + `redactar()`; `verificar.py` falla si un workflow con `pull_request` toca un secret o si alguno lo imprime |
+| INVIOLABLE 3 · el agente no decide | `sala_cliente.post()` rechaza `decidir` **antes de la red**; `verificar.py` lo comprueba con un `ast` (no un grep: el cliente tiene que poder explicar la prohibición sin activarla) |
+| INVIOLABLE 1 · el repo es espejo del GAS | `verificar.py` falla si un workflow menciona `clasp` o `create-deployment` |
+| INVIOLABLE 4 · «no contestó» no es «no hay nada» | el relevo sale con 2 (sin respuesta) o 3 (sin marcas) y **no commitea**; el paso de guardado está condicionado al código 0 |
+| INVIOLABLE 10 · PASO 0 | el productor lee `manifiesto.peticiones` **antes de la red** y, con una abierta, no abre ninguna compuerta |
+| INVIOLABLE 24 · nadie publica sin sellar | el hook `pre-push` se volvió `nube/sellar_sala.py --revisar` dentro de `verificar.yml`, que corre en **cada** push venga de donde venga |
+| Invariante 53 · nunca dos productores | `concurrency:` en el workflow, que es el candado que sí existe en un runner efímero |
+| Invariante 51 · rama por rama | `sala_productor.planear()`, probado con un día de mentira: L1 «sí» abre su escena y su voz mientras L2 y L3 siguen abiertas, y el corte no se abre hasta que las tres son «sí» |
+
+**Tres cosas que se descubrieron al construirlo, y que valen más que el código:**
+
+**60. El sello estaba bien, y el algoritmo se pudo reconstruir exacto.** `SELLO_SALA` es el
+md5 del propio `index.html` con el VALOR del sello vaciado, primeros 10 caracteres. Se
+confirmó porque la implementación nueva calcula `f8acddcfa9`, que es justo lo que el archivo
+ya traía. Vaciar el valor —y no quitar la línea— es lo que lo hace converger: si se hasheara
+el archivo con el sello dentro, cada sellada cambiaría la entrada y el sello nunca se
+estabilizaría.
+
+**61. Un commit hecho por un workflow NO dispara otros workflows.** GitHub lo bloquea para
+que un workflow no se llame a sí mismo en bucle. Se descubrió antes de encenderlo, no después:
+sin corregirlo, el relevo habría guardado el respaldo en `main` y **nunca habría llegado a la
+Sala en vivo** — el «los arreglos no llegaban» otra vez, por una puerta nueva. El relevo y el
+semáforo llaman a `publicar.yml` a mano (`gh workflow run`) después de commitear.
+
+**62. Ninguna tira del repo tiene `versiones[]`.** El manual lo da por hecho (invariante 6,
+«cada versión, su carpeta, con fecha y md5») y el verificador iba a exigirlo; se revisaron las
+22 tiras y **ninguna** lo trae. O el campo vive sólo en el publicador de la Mac y nunca aterriza
+en el repo, o dejó de escribirse en algún momento. La prueba no se puso —un candado que falla
+el 100 % de las veces no es un candado, es un estorbo que se acaba desactivando—, pero queda
+anotado aquí porque significa que **el comparador de versiones no tiene de dónde leer** para
+estas 22 piezas. Es una pregunta abierta para Alejandro, no una afirmación.

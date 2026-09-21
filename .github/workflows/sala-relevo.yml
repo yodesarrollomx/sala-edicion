@@ -1,0 +1,113 @@
+# El relevo diario. Antes: launchd en la Mac (mx.yodesarrollo.relevo) a las 6, 9, 12, 15 y
+# 18 h. Si la Mac se dormía, la Sala se quedaba sin respaldo espejo y nadie se enteraba.
+#
+# Cron en UTC-7 fijo (America/Hermosillo, sin horario de verano), igual que el vigía de
+# yod-portal. Aviso honesto: los crons de Actions se retrasan de 5 a 30+ min en horas pico.
+# El único horario que tiene que ser exacto —el correo de las 7:00— lo manda Google desde el
+# propio Apps Script, no nosotros.
+name: Relevo de la Sala
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # 06:00 Hermosillo
+    - cron: '0 16 * * *'   # 09:00
+    - cron: '0 19 * * *'   # 12:00
+    - cron: '0 22 * * *'   # 15:00
+    - cron: '0 1 * * *'    # 18:00 (del día anterior en UTC)
+  workflow_dispatch:
+    inputs:
+      simular:
+        description: 'Sólo decir qué haría, sin escribir'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+# Invariante 53 trasladada: en un runner efímero no hay candado de archivo. Dos relevos a la
+# vez se pisarían al commitear. No se cancela el que va: se espera.
+concurrency:
+  group: sala-relevo
+  cancel-in-progress: false
+
+jobs:
+  relevo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cosechar el día y rehacer el respaldo espejo
+        id: relevo
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: |
+          set +e
+          python3 sala_relevo.py ${{ inputs.simular && '--simular' || '' }} 2>&1 | tee ../relevo.log
+          codigo=${PIPESTATUS[0]}
+          echo "codigo=$codigo" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Guardar el respaldo (sólo si cambió y sólo si el Sheet contestó)
+        id: guardar
+        if: steps.relevo.outputs.codigo == '0' && !inputs.simular
+        run: |
+          # INVIOLABLE 4: si el relevo salió con 2 (no contestó) o 3 (sin marcas), este paso
+          # no corre y el respaldo viejo se queda. Un respaldo vacío es peor que uno viejo.
+          git config user.name "Relevo de la Sala"
+          git config user.email "noreply@yodesarrollo.mx"
+          if git diff --quiet -- datos/manifiesto.json; then
+            echo "el respaldo no cambió: nada que guardar"
+            echo "hubo=no" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git add datos/manifiesto.json
+          git commit -m "relevo: respaldo espejo del día"
+          git push
+          echo "hubo=si" >> "$GITHUB_OUTPUT"
+
+      - name: Mandar el cambio a producción
+        if: steps.guardar.outputs.hubo == 'si'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Un commit hecho con GITHUB_TOKEN NO dispara otros workflows: GitHub lo bloquea
+          # para que un workflow no se llame a sí mismo en bucle. Sin esta línea, el respaldo
+          # se guardaría en main y NUNCA llegaría a la Sala en vivo — el arreglo «no llegaría»,
+          # que es justo la falla que el sello de versión existe para delatar.
+          gh workflow run publicar.yml --ref main
+
+      - name: Avisar si algo falló
+        if: steps.relevo.outputs.codigo != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create "atencion" --color "D93F0B" \
+            --description "Algo del ciclo de la Sala necesita una mirada" --force
+          titulo="🔎 Vigía · Sala de Edición"
+          numero=$(gh issue list --search "in:title \"$titulo\"" --state open \
+                   --json number,title --jq ".[] | select(.title==\"$titulo\") | .number" | head -n1)
+          if [ -z "$numero" ]; then
+            numero=$(gh issue create --title "$titulo" \
+              --body "Bitácora del ciclo de la Sala en la nube. Cada falla agrega un comentario." \
+              --label "atencion" | grep -oE '[0-9]+$')
+          fi
+          {
+            echo "## 🔴 El relevo salió con código ${{ steps.relevo.outputs.codigo }} — $(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo
+            echo "Código 2 = el Sheet no contestó · código 3 = contestó sin marcas."
+            echo "En los dos casos **no se tocó el respaldo espejo**: «no contestó» nunca es «no hay nada»."
+            echo
+            echo '```'
+            cat relevo.log
+            echo '```'
+          } > comentario.md
+          gh issue comment "$numero" --body-file comentario.md
+          gh issue edit "$numero" --add-label "atencion"
+          exit 1

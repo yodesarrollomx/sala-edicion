@@ -1,0 +1,78 @@
+# El productor. Antes: launchd (mx.yodesarrollo.productor) cada 1 200 s en la Mac.
+#
+# Aquí corre cada hora, no cada 20 min, y a propósito: los crons de Actions no son puntuales,
+# y encolar de más no adelanta nada — la COLA es idempotente por id, así que diez pasadas
+# dejan lo mismo que una.
+#
+# Lo que este workflow NO puede hacer es ejecutar una etapa: no hay GPU en un runner. Tampoco
+# debe (invariante 54: el productor encola; ejecutar lo enciende Alejandro desde el Sheet).
+# Aquí ese seguro es además físico.
+name: Productor de la Sala
+
+on:
+  schedule:
+    - cron: '30 * * * *'
+  workflow_dispatch:
+    inputs:
+      simular:
+        description: 'Sólo decir qué encolaría'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+# Invariante 53: nunca dos productores a la vez.
+concurrency:
+  group: sala-productor
+  cancel-in-progress: false
+
+jobs:
+  productor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Abrir compuertas y encolar
+        id: productor
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: |
+          set +e
+          python3 sala_productor.py ${{ inputs.simular && '--simular' || '' }} 2>&1 | tee ../productor.log
+          echo "codigo=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Avisar si algo falló
+        if: steps.productor.outputs.codigo != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create "atencion" --color "D93F0B" \
+            --description "Algo del ciclo de la Sala necesita una mirada" --force
+          titulo="🔎 Vigía · Sala de Edición"
+          numero=$(gh issue list --search "in:title \"$titulo\"" --state open \
+                   --json number,title --jq ".[] | select(.title==\"$titulo\") | .number" | head -n1)
+          if [ -z "$numero" ]; then
+            numero=$(gh issue create --title "$titulo" \
+              --body "Bitácora del ciclo de la Sala en la nube." --label "atencion" \
+              | grep -oE '[0-9]+$')
+          fi
+          {
+            echo "## 🔴 El productor salió con código ${{ steps.productor.outputs.codigo }} — $(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo
+            echo "No se encoló nada."
+            echo
+            echo '```'
+            cat productor.log
+            echo '```'
+          } > comentario.md
+          gh issue comment "$numero" --body-file comentario.md
+          gh issue edit "$numero" --add-label "atencion"
+          exit 1
