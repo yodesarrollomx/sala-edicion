@@ -950,3 +950,68 @@ en el repo, o dejó de escribirse en algún momento. La prueba no se puso —un 
 el 100 % de las veces no es un candado, es un estorbo que se acaba desactivando—, pero queda
 anotado aquí porque significa que **el comparador de versiones no tiene de dónde leer** para
 estas 22 piezas. Es una pregunta abierta para Alejandro, no una afirmación.
+
+## 21-sep-2026 (ampliación el mismo día) · Drive nativo y ejecutar de verdad, no sólo encolar
+
+**Síntoma.** La primera versión del ciclo en la nube (más arriba en este mismo día) tenía un
+defecto real: no tocaba Drive. `sala_productor.huella_insumo()` le sacaba md5 al archivo del
+REPO para identificar cada lámina, cuando la identidad canónica es el SERIAL + la huella del
+CATÁLOGO (invariante 27 y 29) — derivar identidad de una ruta del repo es justo lo que
+corrompió 8 seriales el 8-sep. Y además, se había dicho que la producción no cabía en la nube
+por falta de GPU, lo cual es cierto para `mflux` y `ltx_local` pero NO para `wan_hf`
+(API de HuggingFace), `gemini_tts`/Kokoro (API / CPU) ni el corte (ffmpeg, CPU pura).
+
+**Corrección.**
+
+- `nube/sala_drive.py` — cuenta de servicio, tres operaciones (subir/bajar/asegurar_carpeta),
+  probadas de verdad contra un Drive simulado en memoria con credenciales RSA propias (nunca
+  las de Google). `nube/sala_catalogo.py` da la identidad canónica; `sala_productor.py` se
+  corrigió para usarla primero, con el md5 del repo como respaldo DECLARADO, nunca silencioso.
+- `nube/sala_motores.py` lee la cascada real de MOTORES, respeta `tope_dia` (contando
+  `hecho` Y `corriendo` de HOY, regla 47 textual) y **salta siempre** los motores locales
+  (`mflux`, `ltx_local`) sin tocarlos en el Sheet — la Mac los sigue necesitando.
+- Tres motores nuevos en `nube/motores/`: `voz_kokoro.py` (el que Alejandro eligió a oído el
+  14-sep — CPU, pesos cacheados), `voz_gemini.py` (el respaldo, probado contra el endpoint
+  REAL de Google con una clave falsa) y `escena_wan_hf.py` (el menos probado de los tres: la
+  red del entorno donde se escribió esto bloquea huggingface.co por completo).
+- `nube/sala_guion.py` — la pieza que faltaba para que la voz sepa QUÉ decir: lee
+  `datos/guiones/<PIEZA>-VIDEO.json` (`escenas[].partes[].{rol,dice}`, confirmado contra el
+  único ejemplo real del repo, `APODO-VIDEO.json`) y reparte narrador/vecino según
+  `voz_narrador`/`voz_vecino` de REGLAS.
+- `nube/sala_montador.py` — el corte, reconstruido desde el manual (no desde
+  `apodo/montar_v2.py`, que sólo vive en la Mac). Probado de verdad con ffmpeg real: escena de
+  640×480 cubriendo 1080×1920 sin franjas (nunca `pad` — ésa fue la falla del 7-sep), audio
+  con `audio_margen_s`/`audio_cola_s`/`audio_xfade_s`, y se niega a armar un corte si a una
+  lámina le falta su escena o su voz en la COLA.
+- `nube/sala_ejecutor.py` — el orquestador: PASO 0 (peticiones abiertas), el seguro de
+  `nube_ejecuta_etapas` (vacía de fábrica, invariante 54 intacta), horario quieto, tope de
+  minutos por corrida, y marca cada trabajo `corriendo` ANTES de ejecutar y `hecho`/`fallo`/
+  `pendiente` después — un motor intermitente nunca se marca `fallo`, se queda `pendiente`
+  para el siguiente intento o para la Mac.
+
+**Tres hallazgos de construir esto, más importantes que el código:**
+
+**63. `accion:'regla'` del GAS real SOBREESCRIBE, no sólo agrega** (a diferencia de
+`accion:'hojas'`, que sí sólo agrega lo que falte y lo dice en su propio comentario). Sembrar
+los números nuevos de esta fase a ciegas, en cada corrida, le habría pisado a Alejandro
+cualquier ajuste que hiciera a mano la próxima vez que el sembrador corriera. `nube/
+sembrar_reglas_nube.py` lee `recurso=reglas` primero y sólo manda las llaves que de verdad
+faltan (no existen, o existen vacías) — la comprobación de «ya existe» tuvo que vivir del lado
+de la nube, porque el GAS no la ofrece para esta acción.
+
+**64. El corte no puede asumir que el archivo sigue ahí.** Cada lámina puede haber producido
+su escena y su voz en una invocación distinta del workflow (o en la Mac). El montador busca
+cada una por su id EXACTO en la COLA (`pieza:etapa:item:huella` — la misma huella con la que
+`sala_productor` la abrió) y las baja de Drive si no están ya en el disco del runner actual.
+Si la huella de una lámina cambió (se rehizo) y el corte trae la vieja, simplemente no
+encuentra el trabajo — nunca monta una versión que ya no es la vigente.
+
+**65. `escena_wan_hf.py` no adivina un modelo de HuggingFace.** La hoja MOTORES sólo dice el
+NOMBRE `wan_hf`; ningún lugar del repo dice CUÁL modelo de HuggingFace es. Inventar uno habría
+sido peor que no tener el motor: la REGLA `escena_wan_hf_modelo` nace vacía a propósito, y sin
+ella el trabajo se queda `pendiente` en vez de intentar una llamada a ciegas.
+
+**Pendiente para Alejandro (no se afirma resuelto):** escuchar una voz real de Kokoro antes de
+encender `escena` o `corte` (`nube/README.md`, «Cómo probarlo»); confirmar el modelo de
+HuggingFace para `escena_wan_hf_modelo`; y comparar el primer corte real de la nube contra el
+último de la Mac antes de que cualquiera se publique.

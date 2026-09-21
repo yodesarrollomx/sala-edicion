@@ -64,35 +64,44 @@ revisión. De ahí sale lo que la Mac produce ese día, y todo queda registrado 
 | `laminas/<slug>/L*.png` + `.jpg` · `muestras/` · `video/` | Las láminas (el `.jpg` ligero es para la carta, el `.png` para zoom y publicación) y las escenas/voces de «Ver lo que ya salió». |
 | ~~`index-v1.html`, `index-v2.html`, `nueva.html`~~ | **Retiradas del sitio el 8-sep-2026.** Seguían publicadas con su propia URL, en el mismo origen y compartiendo `localStorage` con la Sala buena: si un editor ya autenticado abría una por error, ese código viejo mandaba POSTs reales al backend de producción. Viven en el historial de git, que es donde deben vivir (`git show <commit>^:index-v1.html`). |
 
-## El ciclo en la nube (21-sep-2026)
+## El ciclo en la nube (21-sep-2026, ampliado el mismo día)
 
 `~/yod_audit/` ya no es la única casa del ciclo. La orquestación diaria —cosechar el día,
-rehacer el respaldo espejo, abrir compuertas y encolar— corre también en **GitHub Actions**,
-contra el mismo `/exec`. Manual de arranque y de prueba: `nube/README.md`.
+rehacer el respaldo espejo, abrir compuertas, encolar, y ahora también EJECUTAR lo que no
+necesita GPU— corre en **GitHub Actions**, contra el mismo `/exec` y el mismo Drive de
+siempre. Manual de arranque y de prueba: `nube/README.md`.
 
 | Antes (Mac + launchd) | Ahora (Actions) |
 |---|---|
 | `sala_relevo_diario.py`, 6/9/12/15/18 h | `.github/workflows/sala-relevo.yml` |
 | `sala_productor.py --planear`, cada 1 200 s | `.github/workflows/sala-productor.yml`, cada hora |
+| escena/voz/corte, siempre en la Mac | `.github/workflows/sala-ejecutor.yml`, cada 2 h (seguro: `nube_ejecuta_etapas` vacía) |
+| subir a Drive, siempre desde la Mac | `nube/sala_drive.py` (cuenta de servicio) — la Mac lo sigue haciendo también |
 | semáforo de centinelas de `launchd` | `.github/workflows/sala-maquinas.yml` (lee la API de Actions) |
 | hook `pre-push` del sello | `nube/verificar.py`, exigido en cada push y cada PR |
 | (no existía) | `.github/workflows/publicar.yml`: push a `main` → verificar → Pages |
 
-Cuatro cosas que no cambian y que conviene tener presentes al tocar esto:
+Cinco cosas que no cambian y que conviene tener presentes al tocar esto:
 
 - **La nube entra como `agente` y punto.** `nube/sala_cliente.py` se niega a mandar
   `accion:'decidir'` **antes de la red**, y `verificar.py` lo comprueba con un `ast` en cada
   push. Decidir es de los editores (INVIOLABLE 3).
 - **Las llaves viven en secrets de Actions**, nunca en el repo, y ningún workflow que se
   dispare en `pull_request` las recibe. Eso también es una prueba, no una costumbre.
-- **La nube no ejecuta etapas de producción**: no hay GPU en un runner y, sobre todo, no le
-  toca (invariante 54). Encola y reporta.
+- **La identidad de una lámina es su catálogo, no su nombre de archivo**
+  (`nube/sala_catalogo.py`, invariante 29). Un candado en `verificar.py` exige que toda
+  función `huella_*`/`identidad_*` de `nube/` pase por el catálogo antes de caer a un hash de
+  archivo — es el defecto real que tenía la primera versión de esto, ya corregido.
+- **La nube SÍ ejecuta escena (wan_hf), voz (Kokoro/Gemini) y corte (ffmpeg)** — son API o
+  CPU, no GPU. Lo que sigue siendo sólo de la Mac es lo que de verdad necesita GPU local:
+  `mflux` (imagen) y `ltx_local` (respaldo de escena). El seguro de la invariante 54 sigue
+  intacto: `nube_ejecuta_etapas` nace vacía; sin encenderla a mano, nada se ejecuta.
 - **Los crons de Actions se retrasan y se apagan solos** a los 60 días sin actividad en el
   repo. Los commits del ciclo lo mantienen despierto; el semáforo lo delata si no.
 
-Lo que sigue siendo de la Mac: la producción pesada (escenas, voces, cortes), el publicador
-de láminas, y `progreso.json` / `piezas.json` / `metricas.json`, que se arman de archivos
-locales y de las métricas de Instagram.
+Lo que sigue siendo sólo de la Mac: `mflux`/`ltx_local` (necesitan GPU local de verdad), el
+publicador de láminas, y `progreso.json` / `piezas.json` / `metricas.json`, que se arman de
+archivos locales y de las métricas de Instagram.
 
 **Fuera del repo (`~/yod_audit/`):** `sala_publicar.py` (sube láminas/video, monta propuestas),
 `sala_relevo_diario.py` (el relevo), `maquinas.py`, `progreso.py`, `encargos.py`. Centinelas

@@ -56,11 +56,15 @@ def prueba_sin_claves():
         (re.compile(r"clave\s*[:=]\s*['\"][A-Za-z0-9]{8,}['\"]"), 'una clave literal'),
         (re.compile(r"clave_agente\s*[:=]\s*['\"][^'\"…]{6,}['\"]"), 'la clave del agente'),
     ]
-    for rel in ('gas/Code.gs', 'nube/sala_cliente.py', 'nube/verificar.py'):
-        p = RAIZ / rel
+    archivos = [RAIZ / 'gas' / 'Code.gs']
+    archivos += sorted((RAIZ / 'nube').glob('*.py'))
+    if (RAIZ / 'nube' / 'motores').is_dir():
+        archivos += sorted((RAIZ / 'nube' / 'motores').glob('*.py'))
+    for p in archivos:
         if not p.exists():
             continue
         texto = p.read_text(encoding='utf-8', errors='replace')
+        rel = str(p.relative_to(RAIZ))
         for patron, que in sospechosos:
             for m in patron.finditer(texto):
                 if '…' in m.group(0) or 'os.environ' in m.group(0):
@@ -102,7 +106,10 @@ def prueba_workflows_no_deciden():
     def literal(nodo):
         return nodo.value if isinstance(nodo, ast.Constant) and isinstance(nodo.value, str) else None
 
-    for p in sorted((RAIZ / 'nube').glob('*.py')):
+    archivos_py = sorted((RAIZ / 'nube').glob('*.py'))
+    if (RAIZ / 'nube' / 'motores').is_dir():
+        archivos_py += sorted((RAIZ / 'nube' / 'motores').glob('*.py'))
+    for p in archivos_py:
         try:
             arbol = ast.parse(p.read_text(encoding='utf-8'))
         except SyntaxError as e:
@@ -243,6 +250,51 @@ def prueba_tiras_sanas():
             falla('INVIOLABLE 6 · la carta nunca llega sola',
                   '%s tiene «laminas» que no es lista' % p.name, 'revisa el publicador')
     nota('tiras revisadas: %d' % n)
+
+
+def prueba_drive_logica():
+    """La lógica de `sala_drive.py` (subir/bajar/asegurar_carpeta, idempotencia, manejo de
+    errores) contra una cuenta de servicio de mentira y un Drive simulado en memoria — sin
+    red, sin secrets. No prueba la conexión REAL a Google (eso es la sonda de Drive, que sólo
+    puede correr con `GDRIVE_SA_JSON` de verdad en el workflow), pero sí prueba que el código
+    hace exactamente lo que dice antes de que eso le cueste una llamada real a la API."""
+    sys.path.insert(0, str(RAIZ / 'nube'))
+    import pruebas_drive_offline
+    fallas_drive, _ = pruebas_drive_offline.revisar()
+    for f in fallas_drive:
+        falla('sala_drive.py · lógica sin red', f, 'corre python3 nube/pruebas_drive_offline.py')
+
+
+def prueba_identidad_pasa_por_catalogo():
+    """Invariante 29 — «el número de lámina lo dice la TIRA, no el nombre del archivo».
+    Derivar identidad de una ruta del repo es justo lo que corrompió 8 seriales el 8-sep;
+    fue también el defecto real de la Fase 1: `huella_insumo()` le sacaba md5 al archivo del
+    repo sin pasar antes por el catálogo (serial + huella), que es la fuente de verdad.
+
+    Candado estructural, no de prosa: toda función que se llame `huella_*` o `identidad_*`
+    en `nube/` (la convención que usa el propio código para «esto identifica un trabajo») debe
+    mencionar `sala_catalogo` en alguna parte de su cuerpo. Si alguien agrega un motor nuevo
+    que arma su propio id a partir de un nombre de archivo sin tocar el catálogo primero, esto
+    lo atrapa — no adivina CADA violación posible, pero sí exactamente la que ya pasó."""
+    import ast
+
+    for p in sorted((RAIZ / 'nube').glob('*.py')) + sorted((RAIZ / 'nube' / 'motores').glob('*.py')
+                                                            if (RAIZ / 'nube' / 'motores').is_dir() else []):
+        try:
+            arbol = ast.parse(p.read_text(encoding='utf-8'))
+        except SyntaxError:
+            continue                                 # ya lo reporta otra prueba
+        for nodo in ast.walk(arbol):
+            if not isinstance(nodo, ast.FunctionDef):
+                continue
+            if not (nodo.name.startswith('huella_') or nodo.name.startswith('identidad_')):
+                continue
+            cuerpo = ast.dump(nodo)
+            if 'catalogo' not in cuerpo and 'sala_catalogo' not in cuerpo:
+                falla('invariante 29 · identidad por catálogo, no por archivo',
+                      '%s::%s() no menciona el catálogo en absoluto' % (p.name, nodo.name),
+                      'toda función huella_*/identidad_* debe consultar sala_catalogo antes '
+                      'de caer a un hash de archivo — el md5 del repo es respaldo, no fuente')
 
 
 # --------------------------------------------------------------- el corredor

@@ -28,6 +28,7 @@ import json
 import pathlib
 import sys
 
+import sala_catalogo as catalogo
 import sala_cliente as sala
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
@@ -66,18 +67,30 @@ def en_silencio(desde, hasta, hora):
     return hora >= desde or hora < hasta
 
 
-def huella_insumo(lam):
-    """La `version` del id. Si la lámina vive en el repo, es el md5 del archivo: cuando se
-    rehace, cambia, el id cambia, y la salida vieja queda detectada como obsoleta sola. Si no
-    está en el repo (vive en Drive), se usa lo que la identifica en la tira."""
+def huella_insumo(lam, cat=None):
+    """La `version` del id. INVARIANTE 29: el número de lámina lo dice la TIRA, no el nombre
+    del archivo, y la identidad de una lámina es su SERIAL + huella del CATÁLOGO — derivarla
+    de una ruta del repo es justo lo que corrompió 8 seriales el 8-sep.
+
+    Orden de preferencia, cada uno declarado en la evidencia del trabajo:
+      1. catálogo (`sala_catalogo.huella_de`) — la fuente de verdad, Drive + Sheet.
+      2. md5 del archivo en el repo — SÓLO si el catálogo no conoce esa ruta todavía (una
+         lámina recién montada que aún no pasó por `accion:catalogar`). Declarado como
+         respaldo, nunca como si fuera la identidad canónica.
+      3. hash de `{src, dice}` de la tira — si ni el archivo existe (la imagen vive sólo en
+         Drive y el catálogo tampoco la conoce todavía).
+    """
     src = str((lam or {}).get('src') or '')
     if src:
+        d = catalogo.huella_de(src, cat)
+        if d:
+            return d['huella'][:8], 'catalogo:' + d['serial']
         p = RAIZ / src.lstrip('/')
         if p.is_file():
-            return hashlib.md5(p.read_bytes()).hexdigest()[:8], 'archivo'
+            return hashlib.md5(p.read_bytes()).hexdigest()[:8], 'archivo-sin-catalogar'
     semilla = json.dumps({'src': src, 'dice': (lam or {}).get('dice', '')},
                          sort_keys=True, ensure_ascii=False)
-    return hashlib.md5(semilla.encode('utf-8')).hexdigest()[:8], 'tira'
+    return hashlib.md5(semilla.encode('utf-8')).hexdigest()[:8], 'tira-sin-imagen'
 
 
 def marcas_de(dia, pid):
@@ -85,8 +98,9 @@ def marcas_de(dia, pid):
     return ((dec.get(pid) or {}).get('laminas')) or []
 
 
-def planear(dia, cola, reglas):
-    """Devuelve (trabajos_nuevos, bitácora_de_lo_decidido)."""
+def planear(dia, cola, reglas, cat=None):
+    """Devuelve (trabajos_nuevos, bitácora_de_lo_decidido). `cat` es el catálogo ya cargado
+    (sala_catalogo.cargar()) — se pasa una vez para no releerlo por cada lámina."""
     piezas_txt, _ = regla(reglas, 'productor_piezas')
     vigiladas = [x.strip() for x in str(piezas_txt or '').split(',') if x.strip()]
     prospectos = entero(regla(reglas, 'prospectos_por_rechazo')[0], 2)
@@ -108,7 +122,7 @@ def planear(dia, cola, reglas):
         for i, lam in enumerate(laminas):
             marca = str(marcas[i]) if i < len(marcas) else ''
             estados.append(marca or 'pendiente')
-            ver, de_donde = huella_insumo(lam if isinstance(lam, dict) else {})
+            ver, de_donde = huella_insumo(lam if isinstance(lam, dict) else {}, cat)
             item = str(i + 1)
 
             if marca == 'si':
@@ -141,13 +155,22 @@ def planear(dia, cola, reglas):
         todas_si = bool(estados) and all(e == 'si' for e in estados)
         if todas_si:
             ver_pieza = hashlib.md5(
-                json.dumps([huella_insumo(l if isinstance(l, dict) else {})[0]
+                json.dumps([huella_insumo(l if isinstance(l, dict) else {}, cat)[0]
                             for l in laminas], sort_keys=True).encode()).hexdigest()[:8]
             tid = '%s:corte:completo:%s' % (familia, ver_pieza)
             if tid not in ya:
+                # El corte se ensambla en un runner distinto (o mucho después) del que abrió
+                # escena/voz de cada lámina — nunca se puede asumir que `.producido/` local
+                # sigue ahí. Por eso la evidencia lleva TODO lo que el montador necesita para
+                # reconstruir, sin volver a preguntarle al día: la lista de láminas con su
+                # `item` y su huella (la misma `ver` que ya identifica sus trabajos de escena
+                # y voz en la COLA).
+                lam_ev = [{'item': str(i + 1),
+                          'huella': huella_insumo(l if isinstance(l, dict) else {}, cat)[0]}
+                         for i, l in enumerate(laminas)]
                 nuevos.append({'id': tid, 'pieza': familia, 'etapa': 'corte', 'item': 'completo',
                                'estado': 'pendiente', 'prioridad': 7, 'pidio': 'productor-nube',
-                               'evidencia': {'de': pid, 'laminas': len(laminas)}})
+                               'evidencia': {'de': pid, 'laminas': lam_ev}})
                 diario.append('abre el corte de %s (las %d láminas aprobadas)' % (pid, len(laminas)))
         elif estados:
             abiertas = [i + 1 for i, e in enumerate(estados) if e != 'si']
@@ -212,7 +235,20 @@ def main():
         sala.avisar('  No se encola nada. «No contestó» no es «no hay nada» (INVIOLABLE 4).')
         return 2
 
-    nuevos, diario = planear(dia, cola, reglas)
+    try:
+        cat = catalogo.cargar()
+    except sala.SalaError as e:
+        # El catálogo (Sheet + respaldo del repo) fallaron los DOS. No es lo mismo que una
+        # lámina que el catálogo simplemente no conoce todavía (eso ya lo maneja
+        # huella_insumo con su respaldo declarado) — esto es no tener con qué verificar NADA,
+        # así que no se encola con identidades adivinadas.
+        sala.avisar('✗ no pude leer el catálogo (ni Sheet ni respaldo): %s' % e)
+        sala.avisar('  No se encola nada: sin catálogo, la identidad de cada trabajo se '
+                    'basaría en puro nombre de archivo (invariante 29 — así se corrompieron '
+                    '8 seriales el 8-sep).')
+        return 2
+
+    nuevos, diario = planear(dia, cola, reglas, cat)
     sala.avisar('día %s · %d propuesta(s) · COLA con %d trabajo(s)'
                 % (dia.get('fecha'), len(dia.get('propuestas') or []), len(cola)))
     for linea in diario:
