@@ -53,11 +53,22 @@ def _clave():
     return k
 
 
+# Todos los secrets que puede llegar a ver un script de nube/ — no sólo los de la Sala.
+# Fase A/B añadieron Drive, HuggingFace y Gemini; sus claves merecen la MISMA protección que
+# SALA_CLAVE_AGENTE desde el primer día, no una añadida después de que algo se filtrara.
+# (Hallazgo de una auto-revisión de seguridad el 21-sep: redactar() y enmascarar_en_actions()
+# sólo conocían las dos primeras — un error futuro que imprimiera GEMINI_API_KEY, por
+# ejemplo la URL de voz_gemini.py con su `?key=` armada a mano, no se habría tachado en el
+# log de un repo PÚBLICO.)
+VARIABLES_SECRETAS = ('SALA_CLAVE_AGENTE', 'SALA_GAS_EXEC', 'GDRIVE_SA_JSON',
+                      'HF_TOKEN', 'GEMINI_API_KEY')
+
+
 def redactar(texto):
-    """Tacha la clave y la liga de cualquier texto antes de imprimirlo."""
+    """Tacha cualquier secret conocido de un texto antes de imprimirlo."""
     t = str(texto)
-    for secreto in (os.environ.get('SALA_CLAVE_AGENTE', ''), os.environ.get('SALA_GAS_EXEC', '')):
-        s = (secreto or '').strip()
+    for var in VARIABLES_SECRETAS:
+        s = os.environ.get(var, '').strip()
         if len(s) >= 6:
             t = t.replace(s, '«tachado»')
             t = t.replace(urllib.parse.quote(s, safe=''), '«tachado»')
@@ -71,10 +82,11 @@ def avisar(*partes):
 
 def enmascarar_en_actions():
     """Le dice a Actions que tache estos valores en TODO el log, incluso el que no pase
-    por avisar(). Se llama al arrancar cualquier script de la nube."""
+    por avisar() — un traceback crudo de una librería, por ejemplo. Se llama al arrancar
+    cualquier script de la nube."""
     if not os.environ.get('GITHUB_ACTIONS'):
         return
-    for var in ('SALA_CLAVE_AGENTE', 'SALA_GAS_EXEC'):
+    for var in VARIABLES_SECRETAS:
         v = os.environ.get(var, '').strip()
         if len(v) >= 6:
             print('::add-mask::' + v, flush=True)
@@ -144,6 +156,21 @@ def post(accion, **campos):
     cuerpo = {'accion': accion, 'clave': _clave()}
     cuerpo.update(campos)
     return _pedir(_exec_url(), json.dumps(cuerpo), 'POST accion=' + accion)
+
+
+def slug_seguro(texto, si_vacio='x'):
+    """Un `pieza`/`item` de COLA convertido a nombre de archivo seguro.
+
+    Por qué existe: `familia` e `item` llegan de filas de COLA que, en el flujo normal,
+    escribe nuestro propio productor — pero COLA es una hoja que cualquiera con la clave del
+    agente puede escribir (`accion:'cola'`), y los motores los usan tal cual para nombrar
+    archivos locales (`nube/motores/*.py`, `sala_montador.py`). Si esa clave se filtrara
+    algún día (el mismo escenario que `redactar()` existe para prevenir), una fila con
+    `pieza:'../../../tmp/algo'` no debe poder escribir fuera de la carpeta de salida. Se
+    queda sólo con letras, números, guion y guion bajo — nada de `/`, `.` ni espacios."""
+    limpio = ''.join(c if c.isalnum() or c in '-_' else '_' for c in str(texto))
+    limpio = limpio.strip('_.')
+    return limpio or si_vacio
 
 
 def hoy_hermosillo():

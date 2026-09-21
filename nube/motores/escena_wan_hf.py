@@ -99,7 +99,8 @@ def producir(trabajo, reglas, cat, salida_dir):
     if 'json' in tipo.lower():
         raise MotorError('wan_hf devolvió JSON en vez de video: %s' % cuerpo[:200].decode('utf-8', 'replace'))
 
-    destino = pathlib.Path(salida_dir) / ('%s-L%s-escena.mp4' % (familia, item))
+    destino = pathlib.Path(salida_dir) / ('%s-L%s-escena.mp4'
+                                          % (sala.slug_seguro(familia), sala.slug_seguro(item)))
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_bytes(cuerpo)
     return destino

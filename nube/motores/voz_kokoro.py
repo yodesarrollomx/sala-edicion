@@ -28,6 +28,7 @@ import wave
 
 import numpy as np
 
+import sala_cliente as sala
 import sala_guion as guion
 from motores._comun import MotorError
 
@@ -106,6 +107,7 @@ def producir(trabajo, reglas, cat, salida_dir):
     for t in tramos[1:]:
         completo = np.concatenate([completo, silencio, t])
 
-    destino = pathlib.Path(salida_dir) / ('%s-L%s-voz.wav' % (familia, item))
+    destino = pathlib.Path(salida_dir) / ('%s-L%s-voz.wav'
+                                          % (sala.slug_seguro(familia), sala.slug_seguro(item)))
     _escribir_wav(destino, completo, sr_final)
     return destino

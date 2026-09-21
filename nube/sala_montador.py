@@ -80,7 +80,7 @@ def _bajar_de_drive(job, sufijo, destino_dir):
     if not fid:
         raise MontadorError('el trabajo %s está "hecho" pero no tiene ni ruta local ni '
                             'drive_id en su evidencia — no hay de dónde tomarlo' % job.get('id'))
-    destino = pathlib.Path(destino_dir) / ('%s%s' % (job['id'].replace(':', '_'), sufijo))
+    destino = pathlib.Path(destino_dir) / ('%s%s' % (sala.slug_seguro(job.get('id')), sufijo))
     drive.bajar(fid, destino)
     return destino
 
@@ -134,7 +134,7 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
                 capture_output=True, text=True).stdout.strip() or 0)
 
             escena_local = _bajar_de_drive(j_escena, '.mp4', tmp)
-            escena_cuadro = pathlib.Path(tmp) / ('%s-cuadro.mp4' % item)
+            escena_cuadro = pathlib.Path(tmp) / ('%s-cuadro.mp4' % sala.slug_seguro(item))
             _escena_a_cuadro(escena_local, escena_cuadro, dur + cola_audio)
 
             tramos.append({'video': escena_cuadro, 'audio': voz_local})
@@ -169,7 +169,7 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
             % (salida_voces, margen, int(margen * 1000), int(margen * 1000)))
         filtro = ';'.join(filtro_partes)
 
-        salida = pathlib.Path(salida_dir) / ('%s-corte.mp4' % familia)
+        salida = pathlib.Path(salida_dir) / ('%s-corte.mp4' % sala.slug_seguro(familia))
         salida.parent.mkdir(parents=True, exist_ok=True)
         _correr(['ffmpeg', '-y', '-i', str(video_unido), *entradas_audio,
                 '-filter_complex', filtro, '-map', '0:v', '-map', '[audiofinal]',

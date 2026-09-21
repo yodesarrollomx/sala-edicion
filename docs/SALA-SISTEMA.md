@@ -1015,3 +1015,27 @@ ella el trabajo se queda `pendiente` en vez de intentar una llamada a ciegas.
 encender `escena` o `corte` (`nube/README.md`, «Cómo probarlo»); confirmar el modelo de
 HuggingFace para `escena_wan_hf_modelo`; y comparar el primer corte real de la nube contra el
 último de la Mac antes de que cualquiera se publique.
+
+## 21-sep-2026 (misma tarde) · auto-revisión de seguridad antes de encender nada
+
+Antes de que este código toque un secret real, una revisión propia del diff encontró dos
+cosas que arreglar — ninguna explotada, las dos reales:
+
+**66. `redactar()` y `enmascarar_en_actions()` sólo conocían dos secrets de cinco.** Se
+escribieron para `SALA_CLAVE_AGENTE`/`SALA_GAS_EXEC` en la Fase 1 y nunca se ampliaron al
+agregar `GDRIVE_SA_JSON`, `HF_TOKEN` y `GEMINI_API_KEY` en la Fase 2. `voz_gemini.py` arma su
+URL con la clave en la query string (`?key=...`); sin esta corrección, un error de una
+librería que incluyera esa URL completa habría llegado sin tachar a un log de un repo
+PÚBLICO. Las cinco viven ahora en una sola lista (`VARIABLES_SECRETAS`, `sala_cliente.py`) que
+las dos funciones comparten — agregar un secret nuevo el día de mañana es una línea, no dos
+lugares que recordar.
+
+**67. `familia`/`item` de una fila de COLA se usaban tal cual para nombrar archivos locales.**
+En el flujo normal siempre son un slug simple (`apodo`, `3`) porque los escribe nuestro propio
+productor — pero COLA es una hoja que cualquiera con la clave del agente puede escribir, y si
+esa clave se filtrara (el escenario que el hallazgo 66 tapa), una fila con
+`pieza:'../../../tmp/algo'` habría podido escribir fuera de la carpeta de salida del runner.
+`sala_cliente.slug_seguro()` se queda sólo con letras, números, `-` y `_`; se aplica en los
+cuatro lugares donde un motor o el montador arman un nombre de archivo. Probado con
+`../../../etc/passwd` de verdad: queda confinado, sin `/` ni `..`, y el caso normal
+(`apodo:voz:1:aaa11111`) sigue viéndose igual de legible que antes.

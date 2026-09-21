@@ -115,6 +115,7 @@ def producir(trabajo, reglas, cat, salida_dir):
     voz = guion.voz_de(reglas, rol, g)
     resp = _pedir(texto, voz)
     pcm, sr = _decodificar_pcm(resp)
-    destino = pathlib.Path(salida_dir) / ('%s-L%s-voz.wav' % (familia, item))
+    destino = pathlib.Path(salida_dir) / ('%s-L%s-voz.wav'
+                                          % (sala.slug_seguro(familia), sala.slug_seguro(item)))
     _escribir_wav(destino, pcm, sr)
     return destino
