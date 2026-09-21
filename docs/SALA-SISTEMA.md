@@ -1039,3 +1039,20 @@ esa clave se filtrara (el escenario que el hallazgo 66 tapa), una fila con
 cuatro lugares donde un motor o el montador arman un nombre de archivo. Probado con
 `../../../etc/passwd` de verdad: queda confinado, sin `/` ni `..`, y el caso normal
 (`apodo:voz:1:aaa11111`) sigue viéndose igual de legible que antes.
+
+## 21-sep-2026 (misma tarde) · dos correcciones de una revisión de correctitud propia
+
+Sin nada nuevo que pedir del usuario, usé el tiempo en revisar casos límite que no se habían
+estresado todavía. Dos hallazgos:
+
+**68. `sala_ejecutor.py` no ordenaba por `prioridad`.** `--limite` cortaba la lista en el
+orden que devolviera el Sheet (casi siempre orden de inserción), no por importancia. Con la
+COLA llena, un `corte` (prioridad 7 — termina una pieza entera) podía quedarse dos horas
+detrás de varios `prospecto` (prioridad 3 — abren candidatas de una lámina rechazada) sólo por
+haber llegado después. Ahora se ordena por prioridad descendente antes de aplicar `--limite`;
+probado con una COLA mixta: el corte sale primero aunque llegó al final de la lista.
+
+**69. El montador sólo se había probado con 1 y 2 láminas.** El filtro de audio de ffmpeg se
+arma en un bucle (`adelay` por pista + `concat`); un desfase de índices ahí es justo el tipo de
+falla que aparece con 3+ entradas y no con 1 ó 2. Probado con tres láminas de tamaños y
+duraciones de audio distintas: resolución correcta, audio presente, sin errores de filtro.

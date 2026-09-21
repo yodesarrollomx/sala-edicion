@@ -191,6 +191,12 @@ def main():
 
     pendientes = [t for t in cola if str(t.get('estado')) == 'pendiente'
                   and str(t.get('etapa')) in habilitadas]
+    # Sin esto, --limite cortaba en el orden que devolviera el Sheet — casi siempre orden de
+    # inserción, no de importancia. Con la COLA llena, un corte (prioridad 7: termina una
+    # pieza entera) podía quedarse dos horas detrás de varios prospectos (prioridad 3: abren
+    # candidatas de una lámina rechazada) sólo por haber llegado después. Mayor prioridad
+    # primero; a igual prioridad, se respeta el orden en que ya venían (sort estable).
+    pendientes.sort(key=lambda t: -entero(t.get('prioridad'), 5))
     sala.avisar('COLA: %d trabajo(s) pendiente(s) en %s (de %d totales)'
                % (len(pendientes), sorted(habilitadas), len(cola)))
 
