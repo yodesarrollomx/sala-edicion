@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-22 02:16",
+  "actualizado": "2026-09-22 07:48",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -172,7 +172,7 @@
       "hace": "Sube la Sala a GitHub Pages cuando el verificador pasa.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-22T03:46:38Z",
+      "corrio": "2026-09-22T09:16:26Z",
       "dijo": "Publicar la Sala",
       "salud": "bien",
       "porque": "su última corrida salió bien hace 5 h"
@@ -183,7 +183,7 @@
       "hace": "Escribe este mismo tablero de salud.",
       "evita": "quedarse sin saber si los demás corrieron",
       "cuando": "cada 2 h",
-      "corrio": "2026-09-22T09:16:06Z",
+      "corrio": "2026-09-22T14:48:31Z",
       "dijo": "Semáforo de la Sala",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
@@ -194,7 +194,7 @@
       "hace": "Abre las compuertas de lo aprobado y lo anota en la COLA.",
       "evita": "que un «sí» de la mesa no dispare nada",
       "cuando": "cada hora",
-      "corrio": "2026-09-22T08:45:34Z",
+      "corrio": "2026-09-22T14:39:38Z",
       "dijo": "Productor de la Sala",
       "salud": "bien",
       "porque": "su última corrida salió bien hace 0 h"
@@ -208,7 +208,7 @@
       "corrio": "2026-09-22T03:47:32Z",
       "dijo": "Relevo de la Sala",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 5 h"
+      "porque": "su última corrida salió bien hace 11 h"
     },
     {
       "id": "nube:verificar.yml",
@@ -219,7 +219,7 @@
       "corrio": "2026-09-22T03:28:26Z",
       "dijo": "Merge pull request #2 from yodesarrollomx/claude/sonda-timeout",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 5 h"
+      "porque": "su última corrida salió bien hace 11 h"
     }
   ]
 }
