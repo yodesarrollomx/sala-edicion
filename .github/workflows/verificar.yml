@@ -1,0 +1,34 @@
+# Por qué existe: las reglas del repo vivían en prosa (CLAUDE.md, docs/SALA-SISTEMA.md) y en
+# un hook pre-push de la Mac. Un push desde la web, desde el teléfono o desde un runner NO
+# corre hooks: en cuanto el ciclo dejó la Mac, las reglas se quedaron sin quien las exigiera.
+# Aquí vuelven a tener dientes.
+#
+# Este workflow NO recibe secrets a propósito: corre en pull requests, donde hacer POST a un
+# /exec «para probar» está prohibido (hay backends que escriben). Todas sus pruebas son de
+# red cero.
+name: Verificar la Sala
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Librerías que la prueba de sala_drive.py necesita para importar
+        # No hace falta credencial real: prueba_drive_logica() genera su propia
+        # cuenta de servicio de mentira (RSA propio) y nunca toca la red — pero
+        # sí necesita poder IMPORTAR google-auth para construirla.
+        run: pip install --quiet google-auth requests
+      - name: Reglas del repo, sello de versión e integridad de los datos
+        run: python3 nube/verificar.py

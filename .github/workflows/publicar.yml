@@ -1,0 +1,63 @@
+# Por qué existe: «que cuando guarde el avance se mande a producción en automático».
+# Guardar = push a main. De ahí a la Sala en vivo, sin que nadie se acuerde de nada.
+#
+# Pero con compuerta: si el verificador falla, NO se publica y el sitio vivo se queda en la
+# última versión buena. Antes no existía esa red — un index.html roto llegaba a producción en
+# cuanto tocaba main, porque Pages servía la rama directo.
+#
+# OJO, un clic manual una sola vez: Settings → Pages → Source = «GitHub Actions».
+# Mientras esté en «Deploy from a branch», este workflow corre y no sirve de nada.
+name: Publicar la Sala
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Dos publicaciones a la vez se pisan. La última en entrar es la que vale, pero la de en
+# medio no se cancela: que termine y la siguiente la reemplace.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Librerías que la prueba de sala_drive.py necesita para importar
+        run: pip install --quiet google-auth requests
+      - name: La compuerta — nada roto llega a producción
+        run: python3 nube/verificar.py
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: despliegue
+        uses: actions/deploy-pages@v4
+
+      - name: Comprobar que la Sala en vivo contesta
+        run: |
+          # No se canta victoria sin curl: Pages tarda en propagar y ha servido la raíz
+          # cacheada antes (es el origen del sello de versión).
+          for i in 1 2 3 4 5; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+                   "https://yodesarrollomx.github.io/sala-edicion/")
+            echo "intento $i: HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 15
+          done
+          echo "::warning::la Sala no contestó 200 tras publicar; revísala a mano"

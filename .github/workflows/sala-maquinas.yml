@@ -1,0 +1,61 @@
+# El semáforo de centinelas. En la Mac leía launchd; aquí lee la API de Actions, porque en la
+# nube los centinelas SON los workflows. Escribe datos/maquinas.json, que es lo que pinta la
+# franja «Las máquinas» dentro de la Sala.
+#
+# Efecto lateral buscado: este commit periódico mantiene el repo con actividad. GitHub apaga
+# solos los crons de un repo que lleva 60 días quieto — y apagarlos sin avisar es exactamente
+# la falla que este sistema no puede permitirse.
+name: Semáforo de la Sala
+
+on:
+  schedule:
+    - cron: '15 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: sala-maquinas
+  cancel-in-progress: false
+
+jobs:
+  maquinas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Leer la salud de los centinelas
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 nube/sala_maquinas.py
+
+      - name: Guardar el semáforo si cambió
+        id: guardar
+        run: |
+          git config user.name "Semáforo de la Sala"
+          git config user.email "noreply@yodesarrollo.mx"
+          if git diff --quiet -- datos/maquinas.json; then
+            echo "el semáforo no cambió"
+            echo "hubo=no" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git add datos/maquinas.json
+          git commit -m "semáforo: salud de los centinelas de la nube"
+          git push
+          echo "hubo=si" >> "$GITHUB_OUTPUT"
+
+      - name: Mandar el cambio a producción
+        if: steps.guardar.outputs.hubo == 'si'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Un commit hecho con GITHUB_TOKEN NO dispara otros workflows: GitHub lo bloquea
+          # para que un workflow no se llame a sí mismo en bucle. Sin esta línea, el respaldo
+          # se guardaría en main y NUNCA llegaría a la Sala en vivo — el arreglo «no llegaría»,
+          # que es justo la falla que el sello de versión existe para delatar.
+          gh workflow run publicar.yml --ref main

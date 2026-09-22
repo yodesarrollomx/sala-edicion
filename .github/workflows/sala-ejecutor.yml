@@ -1,0 +1,115 @@
+# El ejecutor: produce de verdad — escena (wan_hf), voz (Kokoro local / Gemini de respaldo) y
+# corte (ffmpeg). Es lo que la Fase 1 dejó sin construir a propósito: la invariante 54 exige
+# que ejecutar lo encienda Alejandro, y el seguro sigue puesto — `nube_ejecuta_etapas` nace
+# VACÍA en el Sheet. Sin esa REGLA con algo adentro, este workflow corre y no hace nada.
+#
+# Lo que SÍ puede ejecutar: escena y voz son APIs (HuggingFace, Gemini) o CPU pura (Kokoro);
+# el corte es ffmpeg, CPU pura, ya instalado en el runner. Nada de esto necesita GPU.
+name: Ejecutor de la Sala
+
+on:
+  schedule:
+    - cron: '20 */2 * * *'
+  workflow_dispatch:
+    inputs:
+      simular:
+        description: 'Sólo decir qué ejecutaría, sin ejecutar nada'
+        type: boolean
+        default: false
+      ignorar_silencio:
+        description: 'Ignorar el horario quieto (sólo para pruebas a mano)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+# Invariante 53: nunca dos ejecutores a la vez.
+concurrency:
+  group: sala-ejecutor
+  cancel-in-progress: false
+
+jobs:
+  ejecutor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: ffmpeg (el corte)
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+
+      - name: Librerías de Python (Drive, HTTP, Kokoro)
+        run: pip install --quiet google-auth requests kokoro-onnx numpy
+
+      - name: Caché de los pesos de Kokoro (~300 MB, se descargan una vez)
+        id: cache-kokoro
+        uses: actions/cache@v4
+        with:
+          path: nube/.cache/kokoro
+          key: kokoro-v1.0
+
+      - name: Descargar los pesos de Kokoro si no están en caché
+        if: steps.cache-kokoro.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p nube/.cache/kokoro
+          curl -fL -o nube/.cache/kokoro/kokoro-v1.0.onnx \
+            https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/kokoro-v1.0.onnx
+          curl -fL -o nube/.cache/kokoro/voices-v1.0.bin \
+            https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/voices-v1.0.bin
+
+      - name: Sembrar las REGLAS nuevas (sólo lo que falte, nunca pisa lo editado)
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: python3 sembrar_reglas_nube.py
+
+      - name: Ejecutar los trabajos pendientes
+        id: ejecutor
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          KOKORO_MODEL_PATH: ${{ github.workspace }}/nube/.cache/kokoro/kokoro-v1.0.onnx
+          KOKORO_VOICES_PATH: ${{ github.workspace }}/nube/.cache/kokoro/voices-v1.0.bin
+        run: |
+          set +e
+          python3 sala_ejecutor.py \
+            ${{ inputs.simular && '--simular' || '' }} \
+            ${{ inputs.ignorar_silencio && '--ignorar-silencio' || '' }} \
+            2>&1 | tee ../ejecutor.log
+          echo "codigo=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Avisar si algo falló de verdad (no un simple «nada que hacer»)
+        if: steps.ejecutor.outputs.codigo != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create "atencion" --color "D93F0B" \
+            --description "Algo del ciclo de la Sala necesita una mirada" --force
+          titulo="🔎 Vigía · Sala de Edición"
+          numero=$(gh issue list --search "in:title \"$titulo\"" --state open \
+                   --json number,title --jq ".[] | select(.title==\"$titulo\") | .number" | head -n1)
+          if [ -z "$numero" ]; then
+            numero=$(gh issue create --title "$titulo" \
+              --body "Bitácora del ciclo de la Sala en la nube." --label "atencion" \
+              | grep -oE '[0-9]+$')
+          fi
+          {
+            echo "## 🔴 El ejecutor salió con código ${{ steps.ejecutor.outputs.codigo }} — $(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo
+            echo '```'
+            cat ejecutor.log
+            echo '```'
+          } > comentario.md
+          gh issue comment "$numero" --body-file comentario.md
+          gh issue edit "$numero" --add-label "atencion"
+          exit 1

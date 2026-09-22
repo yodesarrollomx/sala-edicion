@@ -1,0 +1,35 @@
+# Por qué existe: todo el ciclo de la nube se escribió leyendo gas/Code.gs, que es un ESPEJO
+# del Apps Script y puede ir atrás del editor (lo dice CLAUDE.md, «Por confirmar»). Antes de
+# que un cron escriba en el Sheet de producción, esto comprueba contra el /exec VIVO que las
+# llaves están donde las esperamos.
+#
+# Sólo hace GET. A mano, nunca en automático. Lo que sube como artifact es la FORMA de la
+# respuesta —llaves y tipos—, nunca el contenido: el repo es público.
+name: Sonda de la Sala (sólo lee)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sonda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Preguntarle al /exec vivo
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: python3 sonda.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sonda-forma
+          path: nube/sonda-forma.json
+          if-no-files-found: ignore

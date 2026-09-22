@@ -894,3 +894,165 @@ que se sature». Lo que quedó:
     Apodo aprobadas el 14-sep (colonia media-alta de Hermosillo).
 106. **Premisas candidatas e ideas siempre frescas** (chinche 15-sep). Cada revisión propone ≥3 ideas nuevas por rama
     viva y premisas candidatas (`nivel: premisa_candidata` en ARBOL); al elegir una con «Abrir rama», nace el tema.
+
+## 21-sep-2026 · el ciclo deja de depender de que la Mac esté despierta
+
+**Síntoma.** El ciclo diario vivía entero en `~/yod_audit/`, disparado por `launchd`. Una Mac
+dormida, cerrada o de viaje era una Sala sin respaldo espejo y una COLA que no avanzaba,
+**sin que nadie se enterara**: no hay alarma en algo que simplemente no corrió. El 5-sep el
+relevo de las 6:00 no corrió y la mesa amaneció apoyada en el relevo virtual del GAS; funcionó
+de milagro, no por diseño.
+
+**Causa raíz.** Dos dependencias escondidas en el mismo lugar. La primera, que el único reloj
+del sistema fuera un plist en una computadora personal. La segunda, más silenciosa: **las
+reglas del repo se exigían con un hook `pre-push` de esa misma Mac**. Un push desde la web,
+desde el teléfono o desde cualquier otra máquina no corre hooks — así que el sello de versión,
+que existe justo para que «los arreglos lleguen», sólo se revisaba si el push salía de un
+lugar concreto.
+
+**Corrección.** La orquestación —lo que es HTTPS y no cómputo— se mudó a GitHub Actions
+(`nube/`, `.github/workflows/`, manual en `nube/README.md`). La producción pesada se quedó
+donde estaba, porque un runner no tiene GPU y porque no le toca (invariante 54).
+
+**Candados.** Cada regla que el movimiento ponía en riesgo quedó como código que bloquea, no
+como prosa que se lee:
+
+| Regla | Cómo se cuida ahora |
+|---|---|
+| INVIOLABLE 2 · cero claves en un repo público | secrets de Actions + `::add-mask::` + `redactar()`; `verificar.py` falla si un workflow con `pull_request` toca un secret o si alguno lo imprime |
+| INVIOLABLE 3 · el agente no decide | `sala_cliente.post()` rechaza `decidir` **antes de la red**; `verificar.py` lo comprueba con un `ast` (no un grep: el cliente tiene que poder explicar la prohibición sin activarla) |
+| INVIOLABLE 1 · el repo es espejo del GAS | `verificar.py` falla si un workflow menciona `clasp` o `create-deployment` |
+| INVIOLABLE 4 · «no contestó» no es «no hay nada» | el relevo sale con 2 (sin respuesta) o 3 (sin marcas) y **no commitea**; el paso de guardado está condicionado al código 0 |
+| INVIOLABLE 10 · PASO 0 | el productor lee `manifiesto.peticiones` **antes de la red** y, con una abierta, no abre ninguna compuerta |
+| INVIOLABLE 24 · nadie publica sin sellar | el hook `pre-push` se volvió `nube/sellar_sala.py --revisar` dentro de `verificar.yml`, que corre en **cada** push venga de donde venga |
+| Invariante 53 · nunca dos productores | `concurrency:` en el workflow, que es el candado que sí existe en un runner efímero |
+| Invariante 51 · rama por rama | `sala_productor.planear()`, probado con un día de mentira: L1 «sí» abre su escena y su voz mientras L2 y L3 siguen abiertas, y el corte no se abre hasta que las tres son «sí» |
+
+**Tres cosas que se descubrieron al construirlo, y que valen más que el código:**
+
+**60. El sello estaba bien, y el algoritmo se pudo reconstruir exacto.** `SELLO_SALA` es el
+md5 del propio `index.html` con el VALOR del sello vaciado, primeros 10 caracteres. Se
+confirmó porque la implementación nueva calcula `f8acddcfa9`, que es justo lo que el archivo
+ya traía. Vaciar el valor —y no quitar la línea— es lo que lo hace converger: si se hasheara
+el archivo con el sello dentro, cada sellada cambiaría la entrada y el sello nunca se
+estabilizaría.
+
+**61. Un commit hecho por un workflow NO dispara otros workflows.** GitHub lo bloquea para
+que un workflow no se llame a sí mismo en bucle. Se descubrió antes de encenderlo, no después:
+sin corregirlo, el relevo habría guardado el respaldo en `main` y **nunca habría llegado a la
+Sala en vivo** — el «los arreglos no llegaban» otra vez, por una puerta nueva. El relevo y el
+semáforo llaman a `publicar.yml` a mano (`gh workflow run`) después de commitear.
+
+**62. Ninguna tira del repo tiene `versiones[]`.** El manual lo da por hecho (invariante 6,
+«cada versión, su carpeta, con fecha y md5») y el verificador iba a exigirlo; se revisaron las
+22 tiras y **ninguna** lo trae. O el campo vive sólo en el publicador de la Mac y nunca aterriza
+en el repo, o dejó de escribirse en algún momento. La prueba no se puso —un candado que falla
+el 100 % de las veces no es un candado, es un estorbo que se acaba desactivando—, pero queda
+anotado aquí porque significa que **el comparador de versiones no tiene de dónde leer** para
+estas 22 piezas. Es una pregunta abierta para Alejandro, no una afirmación.
+
+## 21-sep-2026 (ampliación el mismo día) · Drive nativo y ejecutar de verdad, no sólo encolar
+
+**Síntoma.** La primera versión del ciclo en la nube (más arriba en este mismo día) tenía un
+defecto real: no tocaba Drive. `sala_productor.huella_insumo()` le sacaba md5 al archivo del
+REPO para identificar cada lámina, cuando la identidad canónica es el SERIAL + la huella del
+CATÁLOGO (invariante 27 y 29) — derivar identidad de una ruta del repo es justo lo que
+corrompió 8 seriales el 8-sep. Y además, se había dicho que la producción no cabía en la nube
+por falta de GPU, lo cual es cierto para `mflux` y `ltx_local` pero NO para `wan_hf`
+(API de HuggingFace), `gemini_tts`/Kokoro (API / CPU) ni el corte (ffmpeg, CPU pura).
+
+**Corrección.**
+
+- `nube/sala_drive.py` — cuenta de servicio, tres operaciones (subir/bajar/asegurar_carpeta),
+  probadas de verdad contra un Drive simulado en memoria con credenciales RSA propias (nunca
+  las de Google). `nube/sala_catalogo.py` da la identidad canónica; `sala_productor.py` se
+  corrigió para usarla primero, con el md5 del repo como respaldo DECLARADO, nunca silencioso.
+- `nube/sala_motores.py` lee la cascada real de MOTORES, respeta `tope_dia` (contando
+  `hecho` Y `corriendo` de HOY, regla 47 textual) y **salta siempre** los motores locales
+  (`mflux`, `ltx_local`) sin tocarlos en el Sheet — la Mac los sigue necesitando.
+- Tres motores nuevos en `nube/motores/`: `voz_kokoro.py` (el que Alejandro eligió a oído el
+  14-sep — CPU, pesos cacheados), `voz_gemini.py` (el respaldo, probado contra el endpoint
+  REAL de Google con una clave falsa) y `escena_wan_hf.py` (el menos probado de los tres: la
+  red del entorno donde se escribió esto bloquea huggingface.co por completo).
+- `nube/sala_guion.py` — la pieza que faltaba para que la voz sepa QUÉ decir: lee
+  `datos/guiones/<PIEZA>-VIDEO.json` (`escenas[].partes[].{rol,dice}`, confirmado contra el
+  único ejemplo real del repo, `APODO-VIDEO.json`) y reparte narrador/vecino según
+  `voz_narrador`/`voz_vecino` de REGLAS.
+- `nube/sala_montador.py` — el corte, reconstruido desde el manual (no desde
+  `apodo/montar_v2.py`, que sólo vive en la Mac). Probado de verdad con ffmpeg real: escena de
+  640×480 cubriendo 1080×1920 sin franjas (nunca `pad` — ésa fue la falla del 7-sep), audio
+  con `audio_margen_s`/`audio_cola_s`/`audio_xfade_s`, y se niega a armar un corte si a una
+  lámina le falta su escena o su voz en la COLA.
+- `nube/sala_ejecutor.py` — el orquestador: PASO 0 (peticiones abiertas), el seguro de
+  `nube_ejecuta_etapas` (vacía de fábrica, invariante 54 intacta), horario quieto, tope de
+  minutos por corrida, y marca cada trabajo `corriendo` ANTES de ejecutar y `hecho`/`fallo`/
+  `pendiente` después — un motor intermitente nunca se marca `fallo`, se queda `pendiente`
+  para el siguiente intento o para la Mac.
+
+**Tres hallazgos de construir esto, más importantes que el código:**
+
+**63. `accion:'regla'` del GAS real SOBREESCRIBE, no sólo agrega** (a diferencia de
+`accion:'hojas'`, que sí sólo agrega lo que falte y lo dice en su propio comentario). Sembrar
+los números nuevos de esta fase a ciegas, en cada corrida, le habría pisado a Alejandro
+cualquier ajuste que hiciera a mano la próxima vez que el sembrador corriera. `nube/
+sembrar_reglas_nube.py` lee `recurso=reglas` primero y sólo manda las llaves que de verdad
+faltan (no existen, o existen vacías) — la comprobación de «ya existe» tuvo que vivir del lado
+de la nube, porque el GAS no la ofrece para esta acción.
+
+**64. El corte no puede asumir que el archivo sigue ahí.** Cada lámina puede haber producido
+su escena y su voz en una invocación distinta del workflow (o en la Mac). El montador busca
+cada una por su id EXACTO en la COLA (`pieza:etapa:item:huella` — la misma huella con la que
+`sala_productor` la abrió) y las baja de Drive si no están ya en el disco del runner actual.
+Si la huella de una lámina cambió (se rehizo) y el corte trae la vieja, simplemente no
+encuentra el trabajo — nunca monta una versión que ya no es la vigente.
+
+**65. `escena_wan_hf.py` no adivina un modelo de HuggingFace.** La hoja MOTORES sólo dice el
+NOMBRE `wan_hf`; ningún lugar del repo dice CUÁL modelo de HuggingFace es. Inventar uno habría
+sido peor que no tener el motor: la REGLA `escena_wan_hf_modelo` nace vacía a propósito, y sin
+ella el trabajo se queda `pendiente` en vez de intentar una llamada a ciegas.
+
+**Pendiente para Alejandro (no se afirma resuelto):** escuchar una voz real de Kokoro antes de
+encender `escena` o `corte` (`nube/README.md`, «Cómo probarlo»); confirmar el modelo de
+HuggingFace para `escena_wan_hf_modelo`; y comparar el primer corte real de la nube contra el
+último de la Mac antes de que cualquiera se publique.
+
+## 21-sep-2026 (misma tarde) · auto-revisión de seguridad antes de encender nada
+
+Antes de que este código toque un secret real, una revisión propia del diff encontró dos
+cosas que arreglar — ninguna explotada, las dos reales:
+
+**66. `redactar()` y `enmascarar_en_actions()` sólo conocían dos secrets de cinco.** Se
+escribieron para `SALA_CLAVE_AGENTE`/`SALA_GAS_EXEC` en la Fase 1 y nunca se ampliaron al
+agregar `GDRIVE_SA_JSON`, `HF_TOKEN` y `GEMINI_API_KEY` en la Fase 2. `voz_gemini.py` arma su
+URL con la clave en la query string (`?key=...`); sin esta corrección, un error de una
+librería que incluyera esa URL completa habría llegado sin tachar a un log de un repo
+PÚBLICO. Las cinco viven ahora en una sola lista (`VARIABLES_SECRETAS`, `sala_cliente.py`) que
+las dos funciones comparten — agregar un secret nuevo el día de mañana es una línea, no dos
+lugares que recordar.
+
+**67. `familia`/`item` de una fila de COLA se usaban tal cual para nombrar archivos locales.**
+En el flujo normal siempre son un slug simple (`apodo`, `3`) porque los escribe nuestro propio
+productor — pero COLA es una hoja que cualquiera con la clave del agente puede escribir, y si
+esa clave se filtrara (el escenario que el hallazgo 66 tapa), una fila con
+`pieza:'../../../tmp/algo'` habría podido escribir fuera de la carpeta de salida del runner.
+`sala_cliente.slug_seguro()` se queda sólo con letras, números, `-` y `_`; se aplica en los
+cuatro lugares donde un motor o el montador arman un nombre de archivo. Probado con
+`../../../etc/passwd` de verdad: queda confinado, sin `/` ni `..`, y el caso normal
+(`apodo:voz:1:aaa11111`) sigue viéndose igual de legible que antes.
+
+## 21-sep-2026 (misma tarde) · dos correcciones de una revisión de correctitud propia
+
+Sin nada nuevo que pedir del usuario, usé el tiempo en revisar casos límite que no se habían
+estresado todavía. Dos hallazgos:
+
+**68. `sala_ejecutor.py` no ordenaba por `prioridad`.** `--limite` cortaba la lista en el
+orden que devolviera el Sheet (casi siempre orden de inserción), no por importancia. Con la
+COLA llena, un `corte` (prioridad 7 — termina una pieza entera) podía quedarse dos horas
+detrás de varios `prospecto` (prioridad 3 — abren candidatas de una lámina rechazada) sólo por
+haber llegado después. Ahora se ordena por prioridad descendente antes de aplicar `--limite`;
+probado con una COLA mixta: el corte sale primero aunque llegó al final de la lista.
+
+**69. El montador sólo se había probado con 1 y 2 láminas.** El filtro de audio de ffmpeg se
+arma en un bucle (`adelay` por pista + `concat`); un desfase de índices ahí es justo el tipo de
+falla que aparece con 3+ entradas y no con 1 ó 2. Probado con tres láminas de tamaños y
+duraciones de audio distintas: resolución correcta, audio presente, sin errores de filtro.
