@@ -29,7 +29,14 @@ import urllib.parse
 import urllib.request
 
 INTENTOS = 3
-ESPERA = 12          # segundos de tope por intento (el presupuesto del manual)
+# 21-sep: 12 s bastaba para `dia` y `catalogo` (los dos tienen caché en el GAS,
+# CacheService) pero se quedó corto para `reglas` y `cola` — los dos únicos
+# recursos SIN caché — confirmado en la sonda real: curl (28) timeout a los
+# 12002 ms, tres intentos seguidos, en los dos mismos recursos. El propio
+# manual documenta que una lectura sin caché de varias pestañas llegó a tardar
+# hasta 12 s (era el presupuesto de `dia` ANTES de que le agregaran caché,
+# 5-sep) — así que 12 s como tope duro para el resto era optimista.
+ESPERA = 25          # segundos de tope por intento
 
 # Acciones que la nube tiene prohibidas por diseño, no por configuración.
 PROHIBIDAS = {'decidir', 'parrilla_decision'}
