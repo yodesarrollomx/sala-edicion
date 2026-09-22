@@ -2582,7 +2582,7 @@
    "Edificios más altos"
   ]
  ],
- "fecha": "2026-09-21",
+ "fecha": "2026-09-22",
  "dias": [
   "2026-01-02",
   "2026-01-03",
@@ -2624,7 +2624,7 @@
   "nota": "en prueba · lleva 3 día(s); se juzga a los 7 · 2026-09-17 14:11"
  },
  "retro": {
-  "fecha": "2026-09-20",
+  "fecha": "2026-09-21",
   "aprobadas": 0,
   "tiradas": 0,
   "producidas": 0,
@@ -2848,6 +2848,66 @@
    "hora": "07:13",
    "evento": "Correo de las 7:00 enviado",
    "detalle": "Sala de Edición · hoy no hay pendientes"
+  },
+  {
+   "hora": "07:53",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "07:53",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "07:53",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "07:53",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "07:56",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "07:57",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "07:57",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "20:58",
+   "evento": "Reglas editadas: nube_ejecuta_etapas, nube_tope_minutos, drive_raiz, escena_wan_hf_modelo",
+   "detalle": ""
+  },
+  {
+   "hora": "21:08",
+   "evento": "Reglas editadas: drive_raiz, escena_wan_hf_modelo",
+   "detalle": ""
+  },
+  {
+   "hora": "02:23",
+   "evento": "Reglas editadas: drive_raiz, escena_wan_hf_modelo",
+   "detalle": ""
+  },
+  {
+   "hora": "02:23",
+   "evento": "Reglas editadas: drive_raiz, escena_wan_hf_modelo",
+   "detalle": ""
+  },
+  {
+   "hora": "02:23",
+   "evento": "Reglas editadas: drive_raiz, escena_wan_hf_modelo",
+   "detalle": ""
   }
  ],
  "decisiones": {
@@ -2868,23 +2928,6 @@
      ]
     ],
     "heredada": "2026-09-15"
-   },
-   "motores-video-7sep": {
-    "laminas": [
-     "si"
-    ],
-    "nota": "",
-    "notas": [],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ]
-    ],
-    "heredada": "2026-09-07"
    }
   },
   "editores": []
