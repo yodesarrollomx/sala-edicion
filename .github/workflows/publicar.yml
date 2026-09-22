@@ -37,6 +37,8 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Librerías que la prueba de sala_drive.py necesita para importar
+        run: pip install --quiet google-auth requests
       - name: La compuerta — nada roto llega a producción
         run: python3 nube/verificar.py
 

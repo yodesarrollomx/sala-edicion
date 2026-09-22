@@ -25,5 +25,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Librerías que la prueba de sala_drive.py necesita para importar
+        # No hace falta credencial real: prueba_drive_logica() genera su propia
+        # cuenta de servicio de mentira (RSA propio) y nunca toca la red — pero
+        # sí necesita poder IMPORTAR google-auth para construirla.
+        run: pip install --quiet google-auth requests
       - name: Reglas del repo, sello de versión e integridad de los datos
         run: python3 nube/verificar.py
