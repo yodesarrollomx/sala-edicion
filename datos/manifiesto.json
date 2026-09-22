@@ -1,163 +1,5 @@
 {
  "_que_es": "Manifiesto de respaldo: el portal lo lee cuando el Sheet aún no está conectado. Cuando el GAS ya está en línea, esta copia queda de plan B.",
- "fecha": "2026-09-15",
- "dias": [
-  "2026-08-01",
-  "2026-08-04",
-  "2026-08-05",
-  "2026-08-27",
-  "2026-08-06",
-  "2026-08-12",
-  "2026-08-13",
-  "2026-08-26",
-  "2026-08-28",
-  "2026-08-29",
-  "2026-08-30",
-  "2026-08-31",
-  "2026-09-02",
-  "2026-09-03",
-  "2026-01-02",
-  "2026-01-03",
-  "2026-09-04",
-  "2026-09-05",
-  "2026-09-06",
-  "2026-09-07",
-  "2026-01-05",
-  "2026-09-08",
-  "2026-09-09",
-  "2026-09-10",
-  "2026-09-12",
-  "2026-05-20",
-  "2026-09-13",
-  "2026-09-14",
-  "2026-09-15"
- ],
- "propuestas": [],
- "parrilla": [
-  {
-   "fecha": "2026-08-01",
-   "pieza": "El terreno que dijo que sí · video",
-   "gate": "pub",
-   "desde": "2026-08-01"
-  },
-  {
-   "fecha": "2026-08-04",
-   "pieza": "La Servilleta",
-   "gate": "g2",
-   "desde": "2026-08-04"
-  },
-  {
-   "fecha": "2026-08-06",
-   "pieza": "La Obra que No Empezó",
-   "gate": "g0",
-   "desde": "2026-08-01"
-  },
-  {
-   "fecha": "2026-08-08",
-   "pieza": "REEL · Así Se Ve Saber",
-   "gate": "g0",
-   "desde": "2026-08-01"
-  },
-  {
-   "fecha": "2026-08-11",
-   "pieza": "La Primera Llamada",
-   "gate": "g0",
-   "desde": "2026-08-01"
-  },
-  {
-   "fecha": "2026-08-13",
-   "pieza": "El Nombre No Se Mueve",
-   "gate": "g0",
-   "desde": "2026-08-01"
-  },
-  {
-   "fecha": "2026-08-15",
-   "pieza": "",
-   "gate": ""
-  },
-  {
-   "fecha": "2026-08-18",
-   "pieza": "",
-   "gate": ""
-  },
-  {
-   "fecha": "2026-08-20",
-   "pieza": "",
-   "gate": ""
-  },
-  {
-   "fecha": "2026-08-22",
-   "pieza": "",
-   "gate": ""
-  }
- ],
- "control": {
-  "pieza": "",
-  "nota": "El cuento ya está en la cancha (publicado 4-ago). La primera pieza que traiga un lead con liga etiquetada se corona control."
- },
- "retro": {
-  "fecha": "2026-08-31",
-  "aprobadas": 2,
-  "tiradas": 2,
-  "producidas": 0,
-  "rehechas": 2,
-  "nota": "Tu revisión del 31-ago: aprobaste escenarios y cierre; tachaste «aguanta» y «la hoja»; pediste la explicación de cada lámina. Aquí van las 2 rehechas con 2 hojas de dirección."
- },
- "produccion": [
-  {
-   "pieza": "El terreno que dijo que sí · el cuento (47 s)",
-   "estado": "publicada",
-   "detalle": "FB + IG (reel) · copy «los dos bandos» · liga única fb/ig-2026-08-04 · primer comentario puesto",
-   "fecha": "2026-08-04",
-   "enlace": "https://www.instagram.com/reel/DboskQogVy1/"
-  },
-  {
-   "pieza": "El terreno que dijo que sí · carrusel",
-   "estado": "publicada",
-   "detalle": "FB + IG · liga medible activa · 4 interacciones IG al 30-jul",
-   "fecha": "2026-07-27"
-  },
-  {
-   "pieza": "La Servilleta · láminas",
-   "estado": "rehacer",
-   "detalle": "quitar «EDICIÓN POR AURUM ARQUITECTOS»",
-   "fecha": "2026-07-29"
-  }
- ],
- "bitacora": [
-  {
-   "hora": "08:37",
-   "evento": "Propuesta montada: El Apodo · lámina 2 salida del guion 1-2-3 (no de la ocurrencia) (1 láminas)"
-  },
-  {
-   "hora": "14:45",
-   "evento": "Propuesta montada: El Apodo · sin lo repetitivo y con los textos parejos (6 láminas) (6 láminas)"
-  },
-  {
-   "hora": "08:19",
-   "evento": "Propuesta montada: El Apodo · 3 textos ajustados a tu nota (3 láminas)"
-  }
- ],
- "decisiones": {
-  "propuestas": {
-   "mesa-vacia-l1-2026-09-15": {
-    "laminas": [
-     "si"
-    ],
-    "nota": "",
-    "notas": [],
-    "firmas": [
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": ""
-      }
-     ]
-    ]
-   }
-  }
- },
  "historial": {
   "2026-08-01": {
    "propuestas": [
@@ -2739,5 +2581,312 @@
    "Más gente en la banqueta",
    "Edificios más altos"
   ]
- ]
+ ],
+ "fecha": "2026-09-21",
+ "dias": [
+  "2026-01-02",
+  "2026-01-03",
+  "2026-01-05",
+  "2026-05-20",
+  "2026-08-05",
+  "2026-08-06",
+  "2026-08-12",
+  "2026-08-13",
+  "2026-08-26",
+  "2026-08-27",
+  "2026-08-28",
+  "2026-08-29",
+  "2026-08-30",
+  "2026-08-31",
+  "2026-09-02",
+  "2026-09-03",
+  "2026-09-04",
+  "2026-09-05",
+  "2026-09-06",
+  "2026-09-07",
+  "2026-09-08",
+  "2026-09-09",
+  "2026-09-10",
+  "2026-09-12",
+  "2026-09-13",
+  "2026-09-14",
+  "2026-09-15"
+ ],
+ "propuestas": [],
+ "parrilla": [],
+ "control": {
+  "pieza": "El comprador ya sabe",
+  "desde": "2026-09-14T07:00:00.000Z",
+  "formula": "Carrusel · vs mediana 42.5",
+  "alcance": 14,
+  "clics": "",
+  "leads": 0,
+  "nota": "en prueba · lleva 3 día(s); se juzga a los 7 · 2026-09-17 14:11"
+ },
+ "retro": {
+  "fecha": "2026-09-20",
+  "aprobadas": 0,
+  "tiradas": 0,
+  "producidas": 0,
+  "rehechas": 0,
+  "nota": ""
+ },
+ "produccion": [
+  {
+   "fecha": "2026-09-15",
+   "pieza": "apodo",
+   "estado": "produccion",
+   "detalle": "apodo:corte:corte:84efdafe · hecho · 48.1 s · motor corte",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "apodo",
+   "estado": "produccion",
+   "detalle": "apodo:escena:2:148eefa9 · hecho · 105.3 s · motor wan_hf",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO TOMADO · corre la sala",
+   "estado": "en curso",
+   "detalle": "{\"id\":\"CHN-20260915-0931-6fd8\",\"texto\":\"no me aparecen como nuevas las que aporbamos en la corrida pasada de las ideas de la suevas producciones aprobadas... al parecer si pusisye nuevas ideas en la p",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO TOMADO · corre la sala",
+   "estado": "en curso",
+   "detalle": "{\"id\":\"CHN-20260915-0921-7f77\",\"texto\":\"por ejemplo no me ests trayendo a la mesa ls propuestas de nuevos temas de publciaciones que fui escogiendo en etapas pasadas... quiro que se vayan integrando a",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO TOMADO · corre la sala",
+   "estado": "en curso",
+   "detalle": "{\"id\":\"CHN-20260915-0931-6fd8\",\"texto\":\"no me aparecen como nuevas las que aporbamos en la corrida pasada de las ideas de la suevas producciones aprobadas... al parecer si pusisye nuevas ideas en la p",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO · chinche · arbol",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260915-0931-6fd8\",\"texto\":\"no me aparecen como nuevas las que aporbamos en la corrida pasada de las ideas de la suevas producciones aprobadas... al parecer si pusisye nuevas ideas en la parte de abajo pero las que seleccionamos como aprobadas no estan ahora en el arbol como en produccion de la primera etapa quiero ver eso... tmb la metodologia donde etsmaos mostrando esto quiero que se veamas como un arbo y que seamos mas practicos en mostrar las publciaiocnes mas ameno mas como si fuera una app para egeneracon z\",\"tipo\":\"\",\"vista\":\"arbol\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"section#vArbol\",\"texto\":\"Árbol de publicaciones Toca un fruto para verlo por dentro: qué se hizo, qué salió y qué falta. Actualizar Vender el Plan de Potencial 253 de alcance esta seman\",\"seccion\":\"Árbol de publicaciones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789489017577\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO · chinche · arbol",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260915-0931-6fd8\",\"texto\":\"no me aparecen como nuevas las que aporbamos en la corrida pasada de las ideas de la suevas producciones aprobadas... al parecer si pusisye nuevas ideas en la parte de abajo pero las que seleccionamos como aprobadas no estan ahora en el arbol como en produccion de la primera etapa quiero ver eso... tmb la metodologia donde etsmaos mostrando esto quiero que se veamas como un arbo y que seamos mas practicos en mostrar las publciaiocnes mas ameno mas como si fuera una app para egeneracon z\",\"tipo\":\"\",\"vista\":\"arbol\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"section#vArbol\",\"texto\":\"Árbol de publicaciones Toca un fruto para verlo por dentro: qué se hizo, qué salió y qué falta. Actualizar Vender el Plan de Potencial 253 de alcance esta seman\",\"seccion\":\"Árbol de publicaciones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789489017577\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO TOMADO · corre la sala",
+   "estado": "en curso",
+   "detalle": "{\"id\":\"CHN-20260915-0921-7f77\",\"texto\":\"por ejemplo no me ests trayendo a la mesa ls propuestas de nuevos temas de publciaciones que fui escogiendo en etapas pasadas... quiro que se vayan integrando a",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO · chinche · hoy",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260915-0921-7f77\",\"texto\":\"por ejemplo no me ests trayendo a la mesa ls propuestas de nuevos temas de publciaciones que fui escogiendo en etapas pasadas... quiro que se vayan integrando al arbol... en el arbol yo quiero poder decidir cual decidir por bloque... y despues si lepongo hoy me pone ne orden de el mas rapido que pudiera salir en ese orden empezamos ... pero todo empeiza en la ruta del arbol ... asi puedo ir tomando yo la decisoon y sobre todo ir viendo el proceso de como se debe de tener todo el arbol completo\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"aside#panel\",\"texto\":\"TU REVISIÓN Guardado ✓ 09:21 a.m. MIS RESPUESTAS · 2/2 opción El Apodo · de las tomas que rechazaste, ¿cuál iba mejor? elige una opción «me estas mesclando lain\",\"seccion\":\"TU REVISIÓN\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789489017577\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO · chinche · hoy",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260915-0921-7f77\",\"texto\":\"por ejemplo no me ests trayendo a la mesa ls propuestas de nuevos temas de publciaciones que fui escogiendo en etapas pasadas... quiro que se vayan integrando al arbol... en el arbol yo quiero poder decidir cual decidir por bloque... y despues si lepongo hoy me pone ne orden de el mas rapido que pudiera salir en ese orden empezamos ... pero todo empeiza en la ruta del arbol ... asi puedo ir tomando yo la decisoon y sobre todo ir viendo el proceso de como se debe de tener todo el arbol completo\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"aside#panel\",\"texto\":\"TU REVISIÓN Guardado ✓ 09:21 a.m. MIS RESPUESTAS · 2/2 opción El Apodo · de las tomas que rechazaste, ¿cuál iba mejor? elige una opción «me estas mesclando lain\",\"seccion\":\"TU REVISIÓN\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789489017577\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "apodo",
+   "estado": "produccion",
+   "detalle": "apodo:escena:4:80c61a37 · hecho · 2458.4 s · motor wan_hf",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "apodo",
+   "estado": "produccion",
+   "detalle": "apodo:escena:4:80c61a37 · hecho · 2458.4 s · motor wan_hf",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "GUION · REEL · Así Se Ve Saber",
+   "estado": "propuesto",
+   "detalle": "{\"pieza\": \"REEL · Así Se Ve Saber\", \"premisa\": \"llamada\", \"formato\": \"Reel\", \"titular\": \"Así se ve saber\", \"bajada\": \"Una página del entregable real, anonimizada: qué dice un Plan de Potencial sobre un terreno.\", \"sello\": \"LA PRIMERA VIDEOLLAMADA NO CUESTA ›\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "GUION · Las 48 Horas",
+   "estado": "propuesto",
+   "detalle": "{\"pieza\": \"Las 48 Horas\", \"premisa\": \"llamada\", \"formato\": \"Lámina\", \"titular\": \"No sabes qué tienes / hasta que alguien lo mide.\", \"bajada\": \"La primera videollamada es para eso: ver si tu caso da para un Plan de Potencial.\", \"sello\": \"LA PRIMERA VIDEOLLAMADA NO CUESTA ›\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "GUION · Las 48 Horas",
+   "estado": "propuesto",
+   "detalle": "{\"pieza\": \"Las 48 Horas\", \"premisa\": \"llamada\", \"formato\": \"Lámina\", \"titular\": \"No sabes qué tienes / hasta que alguien lo mide.\", \"bajada\": \"La primera videollamada es para eso: ver si tu caso da para un Plan de Potencial.\", \"sello\": \"LA PRIMERA VIDEOLLAMADA NO CUESTA ›\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "GUION · La Recámara Cerrada",
+   "estado": "propuesto",
+   "detalle": "{\"pieza\": \"La Recámara Cerrada\", \"premisa\": \"carga\", \"formato\": \"Lámina\", \"titular\": \"Cuartos cerrados. / Recibos abiertos.\", \"bajada\": \"La casa donde cupo todo hoy le cobra a uno solo. Los cuartos siguen ahí, esperando un uso.\", \"sello\": \"TU CASA PUEDE MANTENERSE SOLA · LA PRIMERA VIDEOLLAMADA NO CUESTA ›\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "GUION · La Obra que No Empezó",
+   "estado": "propuesto",
+   "detalle": "{\"pieza\": \"La Obra que No Empezó\", \"premisa\": \"carga\", \"formato\": \"Lámina\", \"titular\": \"Cotizó construir. / Y se asustó.\", \"bajada\": \"No era el proyecto: era pedir todo de golpe. Construir por partes empieza por saber qué permite tu terreno.\", \"sello\": \"SIN CARGAR LA OBRA TÚ SOLO · LA PRIMERA VIDEOLLAMADA NO CUESTA ›\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "GUION · La Obra que No Empezó",
+   "estado": "propuesto",
+   "detalle": "{\"pieza\": \"La Obra que No Empezó\", \"premisa\": \"carga\", \"formato\": \"Lámina\", \"titular\": \"Cotizó construir. / Y se asustó.\", \"bajada\": \"No era el proyecto: era pedir todo de golpe. Construir por partes empieza por saber qué permite tu terreno.\", \"sello\": \"SIN CARGAR LA OBRA TÚ SOLO · LA PRIMERA VIDEOLLAMADA NO CUESTA ›\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "GUION · La Obra que No Empezó",
+   "estado": "propuesto",
+   "detalle": "{\"pieza\": \"La Obra que No Empezó\", \"premisa\": \"carga\", \"formato\": \"Lámina\", \"titular\": \"Cotizó construir. / Y se asustó.\", \"bajada\": \"No era el proyecto: era pedir todo de golpe. Construir por partes empieza por saber qué permite tu terreno.\", \"sello\": \"SIN CARGAR LA OBRA TÚ SOLO · LA PRIMERA VIDEOLLAMADA NO CUESTA ›\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO TOMADO · corre la sala",
+   "estado": "en curso",
+   "detalle": "{\"id\":\"CHN-20260915-0714-582a\",\"texto\":\"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambi",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "apodo",
+   "estado": "produccion",
+   "detalle": "apodo:voz:3:a6f879fb · hecho · 6.4 s · motor gemini_tts",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "apodo",
+   "estado": "produccion",
+   "detalle": "apodo:escena:1:31713b2b · hecho · 1567.5 s · motor wan_hf",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "apodo",
+   "estado": "produccion",
+   "detalle": "apodo:escena:1:31713b2b · hecho · 1567.5 s · motor wan_hf",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "apodo",
+   "estado": "produccion",
+   "detalle": "apodo:escena:1:31713b2b · hecho · 1567.5 s · motor wan_hf",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO TOMADO · corre la sala",
+   "estado": "en curso",
+   "detalle": "{\"id\":\"CHN-20260915-0714-582a\",\"texto\":\"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambi",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO · chinche · arbol",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260915-0714-582a\",\"texto\":\"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambien inclute nuevas cuando menos siempre 3 nuevas ideas bien pensadas de cada una de nuestras vias o ramas principales...\",\"tipo\":\"\",\"vista\":\"arbol\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"div#ideas\",\"texto\":\"Ideas para las próximas publicaciones Las refresco yo por premisa. Elige una o varias y en la siguiente sala entran a producción con su guion. SIN CARGAR LA OBR\",\"seccion\":\"Vender el Plan de Potencial\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789481109336\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "EVIDENCIA · chinches 14-sep",
+   "estado": "cumplida",
+   "detalle": "Capturas de los cambios pedidos por chinche: SALA-EVIDENCIA-2026-09-15-arbol.jpg",
+   "enlace": "https://yodesarrollomx.github.io/sala-edicion/docs/evidencia/2026-09-15/SALA-EVIDENCIA-2026-09-15-arbol.jpg"
+  },
+  {
+   "fecha": "2026-09-15",
+   "pieza": "ENCARGO TOMADO · corre la sala",
+   "estado": "en curso",
+   "detalle": "4 chinches del 14-sep atendidas: sólo lo real cuelga del árbol · leyenda en llano · premisas (editar/cortar/nueva ≤5) · Ideas por premisa · envío de chinches arreglado (tronaba fuera de Ajustes). Veri",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-14",
+   "pieza": "ENCARGO TOMADO · corre la sala",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260914-2307-2292\", \"texto\": \"aquí no se está mostrando la miniatura… las rayas verdes significan los procesos que ya están terminados… explícame en leyendas sencillas al lado del árbol l",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-14",
+   "pieza": "ENCARGO TOMADO · corre la sala",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260914-2306-c2ca\", \"texto\": \"no entiendo cuál es el sistema de reconocimiento de patrón visual… ésta ya está terminada pero la abro y me manda a editar… o cómo debería de ser\", \"vista\": ",
+   "enlace": ""
+  }
+ ],
+ "bitacora": [
+  {
+   "hora": "07:13",
+   "evento": "Correo de las 7:00 enviado",
+   "detalle": "Sala de Edición · hoy no hay pendientes"
+  }
+ ],
+ "decisiones": {
+  "propuestas": {
+   "mesa-vacia-l1-2026-09-15": {
+    "laminas": [
+     "si"
+    ],
+    "nota": "",
+    "notas": [],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ]
+    ],
+    "heredada": "2026-09-15"
+   },
+   "motores-video-7sep": {
+    "laminas": [
+     "si"
+    ],
+    "nota": "",
+    "notas": [],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": ""
+      }
+     ]
+    ],
+    "heredada": "2026-09-07"
+   }
+  },
+  "editores": []
+ }
 }
