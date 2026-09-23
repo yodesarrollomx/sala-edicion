@@ -107,7 +107,9 @@ jobs:
           gh run watch "$id" --exit-status
 
       - name: Montar las cartas en la mesa
-        if: steps.guardar.outputs.hubo == 'si' && env.MODO == 'montar'
+        # Monta aunque no haya archivos nuevos (la tira del día ya estaba publicada); si los
+        # hubo, este paso llega sólo después de que «Publicar» terminó bien.
+        if: steps.mesa.outputs.codigo == '0' && env.MODO == 'montar'
         working-directory: nube
         env:
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
