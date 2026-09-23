@@ -25,10 +25,8 @@ import tempfile
 import urllib.error
 import urllib.request
 
-import sala_catalogo as catalogo
 import sala_cliente as sala
-import sala_drive as drive
-from motores._comun import MotorError
+from motores._comun import MotorError, traer_imagen
 
 ESPERA = 120                                        # una animación tarda; el tope real lo
                                                       # pone el workflow (nube_tope_minutos)
@@ -82,18 +80,10 @@ def producir(trabajo, reglas, cat, salida_dir):
     item = str(trabajo.get('item') or '')
     modelo = _modelo(reglas)                          # falla rápido si no está configurado
 
-    ev = trabajo.get('evidencia') or {}
-    src = str(ev.get('src') or '')
-    d = catalogo.drive_de(src, cat) if src else None
-    if not d or not d.get('original'):
-        raise MotorError('sin id de Drive para la lámina %s de %s — el catálogo no la '
-                         'conoce todavía (accion:catalogar)' % (item, familia),
-                         intermitente=True)
-
     with tempfile.TemporaryDirectory() as tmp:
         origen = pathlib.Path(tmp) / 'lamina.png'
-        drive.bajar(d['original'], origen)
-        prompt = str(ev.get('ve') or ev.get('descripcion') or '').strip()
+        lam = traer_imagen(trabajo, cat, origen)
+        prompt = (lam['ve'] or lam['dice']).strip()
         cuerpo, tipo = _pedir(modelo, origen.read_bytes(), prompt)
 
     if 'json' in tipo.lower():

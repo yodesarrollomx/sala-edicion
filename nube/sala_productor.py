@@ -93,6 +93,24 @@ def huella_insumo(lam, cat=None):
     return hashlib.md5(semilla.encode('utf-8')).hexdigest()[:8], 'tira-sin-imagen'
 
 
+def datos_lamina(lam):
+    """Lo que un motor necesita para trabajar sin volver a preguntarle al día: qué imagen es
+    y qué dice/muestra. Antes la evidencia no llevaba `src` y ninguna escena podía encontrar
+    su lámina (se quedaban `pendiente` para siempre con «sin id de Drive»)."""
+    lam = lam if isinstance(lam, dict) else {}
+    return {k: str(lam.get(k) or '') for k in ('src', 'dice', 've') if lam.get(k)}
+
+
+def nota_de(dia, pid, i):
+    """La nota que el editor dejó junto a su «no» en esa lámina: el prospecto la tiene que
+    atender (LA-LEY §2: la nota persigue a la lámina)."""
+    dec = ((dia.get('decisiones') or {}).get('propuestas') or {}).get(pid) or {}
+    notas = dec.get('notas') or dec.get('notas_laminas') or []
+    if isinstance(notas, list) and i < len(notas):
+        return str(notas[i] or '')
+    return str(dec.get('nota') or '')
+
+
 def marcas_de(dia, pid):
     dec = (dia.get('decisiones') or {}).get('propuestas') or {}
     return ((dec.get(pid) or {}).get('laminas')) or []
@@ -133,7 +151,8 @@ def planear(dia, cola, reglas, cat=None):
                         continue
                     nuevos.append({'id': tid, 'pieza': familia, 'etapa': etapa, 'item': item,
                                    'estado': 'pendiente', 'prioridad': 5, 'pidio': 'productor-nube',
-                                   'evidencia': {'de': pid, 'lamina': item, 'insumo': de_donde}})
+                                   'evidencia': {'de': pid, 'lamina': item, 'insumo': de_donde,
+                                                 **datos_lamina(lam)}})
                     diario.append('abre %s de la lámina %s de %s' % (etapa, item, pid))
 
             elif marca == 'no':
@@ -146,7 +165,9 @@ def planear(dia, cola, reglas, cat=None):
                     nuevos.append({'id': tid, 'pieza': familia, 'etapa': 'prospecto',
                                    'item': '%s-%d' % (item, k), 'estado': 'pendiente',
                                    'prioridad': 3, 'pidio': 'productor-nube',
-                                   'evidencia': {'de': pid, 'lamina': item, 'insumo': de_donde}})
+                                   'evidencia': {'de': pid, 'lamina': item, 'insumo': de_donde,
+                                                 'nota': nota_de(dia, pid, i),
+                                                 **datos_lamina(lam)}})
                     diario.append('abre candidata %d de la lámina %s de %s (por un «no»)'
                                   % (k, item, pid))
             # 'pendiente' → nada. Eso le toca al editor, no al productor.

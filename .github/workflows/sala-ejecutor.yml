@@ -78,6 +78,9 @@ jobs:
           GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           KOKORO_MODEL_PATH: ${{ github.workspace }}/nube/.cache/kokoro/kokoro-v1.0.onnx
           KOKORO_VOICES_PATH: ${{ github.workspace }}/nube/.cache/kokoro/voices-v1.0.bin
         run: |
