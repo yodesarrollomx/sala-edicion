@@ -3,36 +3,36 @@
  "encargos": [
   {
    "que": "{\"id\": \"CHN-20260914-2306-c2ca\", \"texto\": \"no entiendo cuál es el sistema de reconocimiento de patrón visual… ést\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-23",
    "tomado": "08:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/16"
   },
   {
    "que": "{\"id\": \"CHN-20260914-2307-2292\", \"texto\": \"aquí no se está mostrando la miniatura… las rayas verdes significan lo\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-23",
    "tomado": "08:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/17"
   },
   {
    "que": "{\"id\": \"CHN-20260914-2308-b410\", \"texto\": \"quiero poder editar estas ¿premisas? ¿directrices de marketing?… poder\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-23",
    "tomado": "08:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/18"
   },
   {
    "que": "{\"id\": \"CHN-20260914-2313-5cbd\", \"texto\": \"no me está llevando a nada… me estás proponiendo cosas que no tenemos\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-23",
    "tomado": "08:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/19"
   },
   {
-   "que": "{\"id\": \"CHN-20260915-0714-582a\", \"texto\": \"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambien inclute nuevas cuando menos siempre 3 nuevas ideas bien pensadas de cada una de nuestras vias o ramas principales...\"}",
+   "que": "{\"id\": \"CHN-20260915-0714-582a\", \"texto\": \"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a c\"}",
    "estado": "en curso",
-   "cuando": "2026-09-15",
+   "cuando": "2026-09-23",
    "tomado": "08:40",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/20"
   },
@@ -45,14 +45,14 @@
   },
   {
    "que": "{\"id\": \"CHN-20260915-0931-6fd8\", \"texto\": \"no me aparecen como nuevas las que aporbamos en la corrida pasada de las ideas de la suevas producciones aprobadas... al parecer si pusisye nuevas ideas en la parte de abajo pero las que seleccionamos como aprobadas no estan ahora en el arbol como en produccion de la primera etapa quiero ver eso... tmb la metodologia donde etsmaos mostrando esto quiero que se veamas como un arbo y que seamos mas practicos en mostrar las publciaiocnes mas ameno mas como si fuera una app para egeneracon z\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-15",
    "tomado": "08:40",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/22"
   },
   {
    "que": "{\"id\": \"CHN-20260922-2237-dfac\", \"texto\": \"mira aqui le pico y no me deja escoger las de hoy como que esta gairdando antes de actualizar o algo por qu eno permite que siga adeltne todo ... tiene un problema creo.. asi que ayudame a que en toda seccion que necesite ser revisado  algo sea constente en produccion arbol hoy publciaicones y todo\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-22",
    "tomado": "08:40",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/23"

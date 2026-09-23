@@ -1,16 +1,16 @@
 {
- "actualizado": "2026-09-15 18:37",
+ "actualizado": "2026-09-23",
  "piezas": [
   {
    "pieza": "La Servilleta",
-   "estado": "en camino",
+   "estado": "publicada",
    "etapa": "publicada",
    "siguiente": "En producción.",
    "espera": "yo"
   },
   {
    "pieza": "¿Vendo o construyo?",
-   "estado": "en camino",
+   "estado": "publicada",
    "etapa": "publicada",
    "siguiente": "En producción.",
    "espera": "yo"
