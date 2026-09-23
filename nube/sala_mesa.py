@@ -140,6 +140,13 @@ def abiertas(tid, t, leer_sheet=True):
     return salida
 
 
+def portada(lam):
+    """Lo que la carta enseña arriba: la toma A si la lámina trae tomas nuevas; si no, la
+    versión vigente. Nunca la versión rechazada como si fuera la propuesta."""
+    nuevas = [c for c in lam.get('candidatas') or [] if c.get('motor')]
+    return (nuevas or [{}])[0].get('src') or lam['src']
+
+
 def guardia(texto, veto):
     malas = [v for v in veto if v and v.lower() in texto.lower()]
     if malas:
@@ -238,6 +245,18 @@ def main():
         nueva_id = '%s-nube-%s-%s' % (slug, hoy, hashlib.md5(
             json.dumps([(l['n'], n) for l, _, n in pend], ensure_ascii=False).encode()).hexdigest()[:6])
         carpeta = RAIZ / 'laminas' / ('%s-n%s' % (slug, hoy))
+        hecha = TIRAS / (nueva_id + '.json')
+        if hecha.is_file() and not args.simular:
+            # Idempotente: la tira de hoy con estas mismas notas ya se produjo (y se revisó);
+            # montar no vuelve a gastar cuota ni cambia las tomas que el editor va a ver.
+            previa = _leer(hecha, {}) or {}
+            sala.avisar('   ↺ la tira %s ya existe: se reusa sin volver a producir' % nueva_id)
+            plan.append({'familia': slug, 'tira_id': nueva_id, 'carta': {
+                'id': nueva_id, 'titulo': previa.get('titulo'), 'tipo': 'laminas',
+                'laminas': [portada(next(l for l in previa['laminas'] if l['n'] == n))
+                            for n in previa.get('decidir') or []],
+                'opciones': [], 'video': None, 'origen': previa.get('origen')}})
+            continue
         tira = json.loads(json.dumps(t))
         decidir = []
         for lam, marca, nota in pend:
@@ -274,7 +293,7 @@ def main():
                              'una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».',
                      'origen': 'rehecha-de %s' % tid, 'fecha': hoy, 'base': tid})
         carta = {'id': nueva_id, 'titulo': tira['titulo'], 'tipo': 'laminas',
-                 'laminas': [next(l['src'] for l in tira['laminas'] if l['n'] == n) for n in decidir],
+                 'laminas': [portada(next(l for l in tira['laminas'] if l['n'] == n)) for n in decidir],
                  'opciones': [], 'video': None, 'origen': 'rehecha-de %s' % tid}
         plan.append({'familia': slug, 'tira_id': nueva_id, 'carta': carta})
         if not args.simular:
