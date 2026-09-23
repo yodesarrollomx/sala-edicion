@@ -40,6 +40,25 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: python3 sala_chinches.py ${{ inputs.simular && '--simular' || '' }}
 
+      - name: Despertar al Ejecutor si hay trabajo en fila
+        id: despertador
+        if: ${{ !inputs.simular }}
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: python3 sala_despertar.py
+
+      - name: Encender al Ejecutor
+        if: steps.despertador.outputs.despertar == 'si'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # si ya hay uno corriendo o en espera, no se apila otro (el candado del Ejecutor los formaría igual)
+          vivos=$(gh run list --workflow sala-ejecutor.yml --limit 5 --json status --jq '[.[]|select(.status!="completed")]|length')
+          if [ "$vivos" != "0" ]; then echo "ya hay $vivos corrida(s) del Ejecutor en curso"; exit 0; fi
+          gh workflow run sala-ejecutor.yml --ref main && echo "Ejecutor encendido"
+
       - name: Guardar datos/encargos.json si cambió
         if: ${{ !inputs.simular }}
         run: |

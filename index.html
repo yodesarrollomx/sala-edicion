@@ -748,7 +748,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='87230a550d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='fe62139d0d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -872,7 +872,7 @@ async function traer(f,intentos,tope,sinRespaldo){
       let ultimoError=null, sirvio=null, resp=null;
       for(const llave of (_llaveViva?[_llaveViva,...LLAVES().filter(k=>k!==_llaveViva)]:LLAVES())){
         try{
-          const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),tope||(ENTRADO()?60000:20000));   // con sesión se espera al Sheet frío
+          const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),tope||(ENTRADO()?40000:15000));   // 23-sep: 60→40 s; la espera ya se ve contada en pantalla   // con sesión se espera al Sheet frío
           const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(llave)+(f?'&f='+encodeURIComponent(f):''),{signal:ctl.signal});
           clearTimeout(t);
           const j=await leerJSON(r);
@@ -902,6 +902,7 @@ async function conMarcasDeAntes(d,f){
   const falta=(d.propuestas||[]).map(p=>p.id).filter(id=>!M[id]);
   if(!falta.length){ d.decisiones={propuestas:M}; return d }
   const dias=(d.dias||[]).filter(x=>x<(d.fecha||f||'9999')).sort().reverse().slice(0,4);
+  etapaCarga('Trayendo tus marcas de días anteriores');
   const vistas=await Promise.all(dias.map(dd=>traer(dd,1,15000,true).catch(()=>null)));
   const set=new Set(falta);
   for(const v of vistas){
@@ -2005,7 +2006,10 @@ function abrirGuia(forzar){
    con tiras y un aviso — nunca pantalla negra. Se relee sola cada 60 s (solo datos,
    nunca el estado de un botón) y con el botón «Actualizar». ══ */
 let COLA=null, COLA_ERR=false;
-async function traerCola(){
+const _vuelo={}; let _tCola=0;
+const traerCola=()=>_vuelo['traerCola']||(_vuelo['traerCola']=_traerCola().finally(()=>{ delete _vuelo['traerCola'] }));   // un solo pedido en vuelo a la vez
+async function _traerCola(){
+  if(COLA&&Date.now()-_tCola<60000) return;   // 23-sep: al cambiar de vista no se vuelve a pedir lo que se leyó hace <1 min
   COLA_ERR=false;
   if(!ENTRADO()){ COLA=null; COLA_ERR=true; return }
   try{
@@ -2014,7 +2018,7 @@ async function traerCola(){
     // 12-sep: el GAS devuelve la lista como `cola` (y `cuantos`); el árbol la esperaba como `filas`. Se aceptan las dos.
     const _filas=Array.isArray(j&&j.filas)?j.filas:(Array.isArray(j&&j.cola)?j.cola:null);
     if(!r.ok||!j||j.ok!==true||!_filas) throw new Error((j&&j.error)||'sin la hoja COLA');
-    COLA=_filas;
+    COLA=_filas; _tCola=Date.now();
   }catch(e){ COLA=null; COLA_ERR=true }
 }
 function colorPunto(estado){
@@ -2198,6 +2202,25 @@ const HORAS_ATORADO=3;
 const NOM_COLA={prospectos:'las candidatas de lámina',voz:'la voz',escena:'la escena',corte:'el corte'};
 const nomCola=e=>NOM_COLA[e]||e;
 function horaHmo(d){ return d.toLocaleTimeString('es-MX',{hour:'numeric',minute:'2-digit',timeZone:'America/Hermosillo'}) }
+// 23-sep (su pregunta: «¿a las 9:20 sale algo? ¿qué tan cierto es?»): la hora que se promete es
+// la de REVISAR, no la del cron. Cuenta el horario quieto (23-7 h Hmo), el despertador de cada
+// hora (Productor :30 y puente :45 encienden al Ejecutor si hay fila), el retraso típico de
+// GitHub (~15 min) y lo que de verdad tarda la etapa según sus corridas pasadas (COLA.segundos).
+const RETRASO_GH=15;
+function durEtapa(etapa){ const xs=(COLA||[]).filter(f=>f.etapa===etapa&&/hecho/i.test(f.estado||'')).map(f=>+((f.evidencia&&typeof f.evidencia==='object'&&f.evidencia.segundos)||0)).filter(x=>x>0).sort((a,b)=>a-b);
+  return xs.length?Math.max(2,Math.round(xs[Math.floor(xs.length/2)]/60)):6 }
+function horaHmoNum(d){ return (d.getUTCHours()+24-7)%24 }
+function tomaFabrica(){   // cuándo la fábrica TOMA lo que está en fila
+  const d=new Date(); d.setUTCSeconds(0,0);
+  for(let i=1;i<60*30;i++){ const x=new Date(d.getTime()+i*60000), h=horaHmoNum(x), m=x.getUTCMinutes();
+    if(h>=23||h<7) continue;
+    if(m===30||m===45||(m===20&&x.getUTCHours()%2===0)) return x }
+  return null }
+function estimaFabrica(etapa){
+  const t=tomaFabrica(); if(!t) return null;
+  const toma=new Date(t.getTime()+RETRASO_GH*60000), listo=new Date(toma.getTime()+(durEtapa(etapa)+3)*60000);
+  const h=horaHmoNum(new Date()), quieto=h>=23||h<7;
+  return {toma,listo,texto:(quieto?'La fábrica duerme de 11 pm a 7 am. ':'')+`La fábrica lo toma ≈ ${horaHmo(toma)} (GitHub suele llegar tarde) · revísalo ≈ ${horaHmo(listo)}`} }
 function proximaCorrida(minuto,cadaH){ const d=new Date(); d.setUTCSeconds(0,0);
   for(let i=0;i<60*24;i++){ const x=new Date(d.getTime()+i*60000); if(x.getUTCMinutes()===minuto&&x.getUTCHours()%cadaH===0&&x>new Date()) return x } return null }
 function edadHoras(txt){ const m=String(txt||'').match(/^(\d{4}-\d\d-\d\dT\d\d:\d\d(:\d\d)?)/); if(!m) return null;
@@ -2240,14 +2263,14 @@ function filaLinea(z){
     else if(k===run) c=viejos.some(f=>(COLA_DE_ETAPA[k]||'')===f.etapa)?'rojo':'corre';
     else if(i===aqui) c=tuyo?'tu':(fallos.length||viejos.length?'rojo':'sig');
     return {k,txt,c,aqui:i===aqui} });
-  const ejec=proximaCorrida(20,2), prod=proximaCorrida(30,1);
+  const ejec=proximaCorrida(20,2), prod=proximaCorrida(30,1), estF=estimaFabrica((colaPend[0]||viejos[0]||{}).etapa);
   let quien='sig', que='', cuando='';
   const nomEt=aqui>=0?et[aqui][1]:'';
   // lo de la fábrica se cuenta aparte: puede haber algo atorado aunque la decisión sea tuya
   let nota='';
   if(fallos.length){ const e=fallos[0].evidencia; nota=`Además, ${nomCola(fallos[0].etapa)} ${fallos[0].item||''} falló: ${String((e&&typeof e==='object'?e.error:'')||'sin detalle').slice(0,80)} (necesita revisión).` }
   else if(viejos.length) nota=`Además, ${nomCola(viejos[0].etapa)} está atorada desde el ${fechaCorta(viejos[0].actualizado)}; se rescata sola${ejec?' ≈ '+horaHmo(ejec):''}`;
-  else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola${ejec?', siguiente resultado ≈ '+horaHmo(ejec):''}`;
+  else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola${estF?' · revísalo ≈ '+horaHmo(estF.listo):''}`;
   if(aqui<0){ quien='fab'; que='Lista para salir: todas sus etapas están hechas.'; cuando='Falta publicarla.' }
   else if(!mesa&&/esperando tu s|elige una opci|en tu mesa/i.test(falta)){ quien='sig'; que='No pude leer tu mesa de hoy: entra (o actualiza) para saber si te toca algo.'; cuando='' }
   else if(tuyo){ quien='tu'; que=mesa?`Te toca: ${pend.length} en tu mesa de hoy${falta?' ('+falta+')':''}.`:`Te toca: ${falta}.`; const f=fechaDeTiraL(t); cuando='Toca para decidir ahora'+(f?' · esperando desde el '+fechaCorta(f):''); }
@@ -2256,10 +2279,11 @@ function filaLinea(z){
   else if(fallos.length){ quien='rojo'; const e=fallos[0].evidencia; const err=(e&&typeof e==='object'?e.error:'')||'sin detalle';
     que=`${nomCola(fallos[0].etapa)} ${fallos[0].item||''} falló: ${String(err).slice(0,90)}.`; cuando='Necesita revisión: no se reintenta solo.' }
   else if(viejos.length){ quien='rojo'; que=`Atorado en ${nomCola(viejos[0].etapa)} desde el ${fechaCorta(viejos[0].actualizado)} (una corrida que murió).`;
-    cuando=ejec?'Se rescata solo en la corrida de las '+horaHmo(ejec):'' }
+    cuando=estF?'Se rescata solo cuando la fábrica vuelva a correr (≈ '+horaHmo(estF.toma)+')':'' }
   else if(run){ quien='fab'; const n=todas.filter(f=>/corriendo/i.test(f.estado||'')).length;
-    que=`La fábrica está produciendo ${et.find(x=>x[0]===run)?.[1]||run} (${n} trabajo${n===1?'':'s'}).`; cuando='Resultado al terminar la corrida en curso.' }
-  else if(colaPend.length){ quien='fab'; que=`${colaPend.length} trabajo${colaPend.length===1?'':'s'} de ${nomEt} en cola.`; cuando=ejec?'Siguiente resultado ≈ '+horaHmo(ejec)+' (próxima corrida del Ejecutor)':'' }
+    que=`La fábrica está produciendo ${et.find(x=>x[0]===run)?.[1]||run} (${n} trabajo${n===1?'':'s'}).`; { const c=todas.find(f=>/corriendo/i.test(f.estado||'')), ini=c&&Date.parse(String(c.actualizado||'').slice(0,16)+'-07:00'); const fin=ini?new Date(ini+(durEtapa(c.etapa)+3)*60000):null;
+      cuando=fin&&fin>new Date()?'Revísalo ≈ '+horaHmo(fin)+' (lo que suele tardar).':'Sale al terminar la corrida en curso.' } }
+  else if(colaPend.length){ quien='fab'; que=`${colaPend.length} trabajo${colaPend.length===1?'':'s'} de ${nomEt} en cola.`; cuando=estF?estF.texto:'' }
   else if(!t){ quien='sig'; que='Idea elegida, sin guion ni láminas todavía.'; cuando='La siguiente ronda de la Sala escribe el guion y la primera lámina.' }
   else { quien='sig'; que=`Sigue: ${nomEt}.`; cuando=prod?'El Productor lo pone en cola ≈ '+horaHmo(prod)+' y la fábrica lo hace después':'' }
   const pct=Math.round(100*h.size/et.length);
@@ -2279,9 +2303,9 @@ async function pintarLinea(piezas,destino,compacto){
     abiertas.push({slug,nombre:i.titulo||i.id,tira:null,filas:{prospectos:[],escena:[],voz:[],corte:[]}}); ya.add(slug) }
   const filas=abiertas.map(filaLinea).sort((a,b)=>(b.tuyo-a.tuyo)||(b.rojo-a.rojo)||(b.fab-a.fab)||(b.pct-a.pct));
   const nTu=filas.filter(f=>f.tuyo).length, nFab=filas.filter(f=>f.fab).length, nRojo=filas.filter(f=>f.rojo).length, nSig=filas.filter(f=>!f.tuyo&&!f.fab&&!f.rojo).length;
-  const ejec=proximaCorrida(20,2);
+  const ejec=estimaFabrica('');
   const rel=!filas.length?'No hay publicaciones abiertas.':
-    `${filas.length} publicaciones abiertas. `+(nTu?`${nTu} te ${nTu===1?'espera':'esperan'} a ti`:'Ninguna te espera a ti')+(nFab?`, ${nFab} ${nFab===1?'está':'están'} en la fábrica`:'')+(nRojo?` y ${nRojo} ${nRojo===1?'está atorada':'están atoradas'}`:'')+'.'+(ejec&&nFab?` El siguiente resultado de la fábrica sale ≈ ${horaHmo(ejec).replace(/\.$/,'')}.`:'');
+    `${filas.length} publicaciones abiertas. `+(nTu?`${nTu} te ${nTu===1?'espera':'esperan'} a ti`:'Ninguna te espera a ti')+(nFab?`, ${nFab} ${nFab===1?'está':'están'} en la fábrica`:'')+(nRojo?` y ${nRojo} ${nRojo===1?'está atorada':'están atoradas'}`:'')+'.'+(ejec&&nFab?` Lo próximo de la fábrica: revísalo ≈ ${horaHmo(ejec.listo).replace(/\.$/,'')}.`:'');
   // pendientes del sistema: recados atorados, ideas propuestas sin elegir
   let recados=[]; if(!compacto) try{ const j=await (await fetch('datos/encargos.json?v='+Date.now())).json(); const por=new Map();
     (j.encargos||[]).forEach(e=>{ const q=String(e.que||''); const id=(q.match(/"id":"([^"]+)"/)||[])[1]||q; const tx=(q.match(/"texto":"((?:[^"\\]|\\.)*)/)||[])[1]||q; por.set(id,{...e,texto:tx}) });
@@ -2442,7 +2466,10 @@ function frutoFabrica(f){         // pieza de la hoja FABRICA sin tira todavía:
     numeros:'por arrancar',titulo:`${f.pieza} · ${f.nota||''}`,extra:` data-fab="${esc(f.slug)}"`});
 }
 let FABRICA=null;
-async function traerFabrica(){
+let _tFab=0;
+const traerFabrica=()=>_vuelo['traerFabrica']||(_vuelo['traerFabrica']=_traerFabrica().finally(()=>{ delete _vuelo['traerFabrica'] }));   // un solo pedido en vuelo a la vez
+async function _traerFabrica(){
+  if(FABRICA&&FABRICA.length&&Date.now()-_tFab<60000) return; _tFab=Date.now();
   if(ENTRADO()){ try{ const r=await fetch(GAS()+'?recurso=fabrica&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'});
     const j=await leerJSON(r); if(r.ok&&j&&j.ok&&Array.isArray(j.fabrica)){ FABRICA=j.fabrica; return } }catch(e){} }
   FABRICA=[];
@@ -2645,7 +2672,10 @@ async function nuevaPremisa(){
 /* ══ IDEAS debajo del árbol (15-sep, chinche de Alejandro): «varias ideas de publicación por tema que vayas
    refrescando; si selecciono una o varias las subimos en la siguiente sala a producción». Hoja IDEAS. */
 let IDEAS=null;
-async function traerIdeas(){
+let _tIdeas=0;
+const traerIdeas=()=>_vuelo['traerIdeas']||(_vuelo['traerIdeas']=_traerIdeas().finally(()=>{ delete _vuelo['traerIdeas'] }));   // un solo pedido en vuelo a la vez
+async function _traerIdeas(){
+  if(IDEAS&&IDEAS.length&&Date.now()-_tIdeas<60000) return; _tIdeas=Date.now();
   if(ENTRADO()){ try{ const r=await fetch(GAS()+'?recurso=ideas&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'}); const j=await leerJSON(r); if(r.ok&&j&&j.ok&&Array.isArray(j.ideas)){ IDEAS=j.ideas; return } }catch(e){} }
   try{ IDEAS=(await (await fetch('datos/ideas.json?v='+Date.now())).json()).ideas||[] }catch(e){ IDEAS=[] } }
 async function pintarIdeas(temas){
@@ -2682,16 +2712,26 @@ async function pintarIdeas(temas){
 /* ══ arranque ══ */
 function pintarFecha(f){ try{ $('#fechaTxt').textContent=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}) }catch(e){ $('#fechaTxt').textContent=f } }
 let _pintado=false, _tFrases=null, _reintentando=false;
+// 23-sep (su queja: «tarda muchísimo… se siente caída»): nada de frases que rotan solas. Dice qué
+// está haciendo DE VERDAD, cuántos segundos lleva y cuánto suele tardar en este aparato.
+let _t0Carga=0, _etapaCarga='Leyendo tu mesa de hoy en el Sheet';
+function etapaCarga(t){ _etapaCarga=t; pintaAvance() }
+function pintaAvance(){ const e=$('#fraseCarga'); if(!e) return;
+  const seg=Math.round((Date.now()-_t0Carga)/1000); let tip=0; try{ tip=+localStorage.getItem('sala_carga_s')||0 }catch(x){}
+  e.innerHTML=`${esc(_etapaCarga)}… <b>${seg} s</b>${tip?` <small>(suele tardar ~${tip} s)</small>`:''}`+
+    (seg>=20?`<br><small>El Sheet está lento hoy; sigo intentando, la página no se cayó.</small> <button class="secund" id="btnRecarga" type="button">Reintentar</button>`:'');
+  const b=$('#btnRecarga'); if(b) b.onclick=()=>location.reload() }
 function pintarCargando(){
   const z=$('#zona'); if(!z) return;
   $('#titulo').innerHTML='Abriendo la mesa…'; $('#subt').textContent='Leyendo el Sheet, no una copia';
-  const frases=['Preguntándole al Sheet qué falta hoy…','Trayendo tus marcas de otros días…','Acomodando la tira de láminas…','Afinando la carta…','Ya casi…'];
-  z.innerHTML=`<div class="carta cargando-carta"><div class="lienzo"><div class="cargando"><i class="ruedita"></i><span id="fraseCarga">${frases[0]}</span></div></div></div>`;
+  _t0Carga=Date.now();
+  z.innerHTML=`<div class="carta cargando-carta"><div class="lienzo"><div class="cargando"><i class="ruedita"></i><span id="fraseCarga"></span></div></div></div>`;
   const mw=$('#mandoWrap'); if(mw) mw.hidden=true;
-  let k=0; clearInterval(_tFrases); _tFrases=setInterval(()=>{ const e=$('#fraseCarga'); if(!e){ clearInterval(_tFrases); return } k=(k+1)%frases.length; e.textContent=frases[k] },1700);
+  pintaAvance(); clearInterval(_tFrases); _tFrases=setInterval(()=>{ if(!$('#fraseCarga')){ clearInterval(_tFrases); return } pintaAvance() },1000);
 }
 function aplicarDia(d){
   clearInterval(_tFrases);
+  if(_t0Carga&&d&&!d._respaldo){ try{ localStorage.setItem('sala_carga_s',String(Math.max(1,Math.round((Date.now()-_t0Carga)/1000)))) }catch(e){} _t0Carga=0 }
   // traer() cae solo al respaldo si el Sheet no contestó: con sesión, eso se dice y se reintenta (nunca pasa por «lo de hoy»)
   if(d&&d._respaldo&&ENTRADO()&&_ultimoErrorLlave){ /* llave rechazada: no se dice «sin señal» ni se reintenta en balde */ }
   else if(d&&d._respaldo&&ENTRADO()&&!_reintentando){ _reintentando=true; setTimeout(()=>{ avisarRespaldo(); reintentarSheet(0) },0) }
@@ -2804,7 +2844,8 @@ setInterval(vigilarVersion,600000);
 (async function(){
   $('#barraSinEntrar').hidden=ENTRADO();   // 8-sep: se decide de una vez, sin esperar al Sheet (ENTRADO() solo mira este aparato)
   abrirGuia(false); ajustarZona(); setTimeout(vigilarVersion,4000);            // la bienvenida no espera al Sheet
-  cargarExpedientes(); subirCola();
+  _expP=cargarExpedientes(); subirCola();
+  if(ENTRADO()) setTimeout(()=>{ traerCola(); traerFabrica(); traerIdeas() },0);   // 23-sep: en paralelo con el día; la Línea y el Árbol ya no esperan en fila
   // 5-sep (Alejandro): «prefiero una animación mientras carga que estar viendo algo pasado».
   // Ya NO se pinta la copia de respaldo a los 2.5 s: se espera al Sheet con una carta de carga.
   // El respaldo solo entra si el Sheet de verdad no contesta, y se dice con todas sus letras.
@@ -2822,7 +2863,7 @@ $('#verresp').onclick=abrirRespuestas; $('#btnEntrar').onclick=abrirEntrar;
 $('#btnReintentar').onclick=async()=>{ pintarEstado('subiendo','Reintentando…'); await subirCola(); await subir(); };
 document.addEventListener('keydown',e=>{ if(CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.key==='ArrowRight'&&$('#btnSi')&&$('#btnSi').hidden) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
   if(e.key==='ArrowRight') decidir('si'); if(e.key==='ArrowLeft') decidir('no') });
-const _bProdAct=$('#prodActualizar'); if(_bProdAct) _bProdAct.onclick=()=>pintarProduccion();
+const _bProdAct=$('#prodActualizar'); if(_bProdAct) _bProdAct.onclick=()=>{ _tCola=_tFab=_tIdeas=0; pintarProduccion() };
 setInterval(()=>{ if(document.body.dataset.vista==='prod') pintarProduccion() },60000);   // solo relee datos; nunca el estado de un botón
 window.addEventListener('online',subirCola);
 setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subirCola() },60000);   // sin tocar nada, sube solo
