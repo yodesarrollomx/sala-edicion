@@ -79,7 +79,7 @@ def producir(trabajo, reglas, cat, salida_dir):
     empalme simple, no el crossfade fino del corte completo."""
     familia = str(trabajo.get('pieza') or '')
     item = str(trabajo.get('item') or '')
-    g = guion.cargar(familia)
+    g = guion.cargar(familia) or guion.desde_lamina(trabajo)
     if not g:
         raise MotorError('no hay guion de video para «%s» (datos/guiones/%s-VIDEO.json)'
                          % (familia, familia.upper()), intermitente=True)
