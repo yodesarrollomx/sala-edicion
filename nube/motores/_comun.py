@@ -38,7 +38,8 @@ def lamina_de(trabajo):
     except ValueError:
         return datos
     mapa = tira.get('mapa') or {}
-    n = str(mapa.get(n, n)) if str(ev.get('de') or '').find('-nube-') > 0 else n
+    if str(ev.get('de') or '').find('-nube-') > 0 and not ev.get('n_real'):
+        n = str(mapa.get(n, n))   # trabajos viejos: traían el número de la carta, no el real
     for i, lam in enumerate(tira.get('laminas') or []):
         if isinstance(lam, dict) and str(lam.get('n') or i + 1) == n:
             for k in datos:
