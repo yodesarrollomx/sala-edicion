@@ -2610,9 +2610,40 @@
   "2026-09-12",
   "2026-09-13",
   "2026-09-14",
-  "2026-09-15"
+  "2026-09-15",
+  "2026-09-22"
  ],
- "propuestas": [],
+ "propuestas": [
+  {
+   "id": "apodo-nube-2026-09-22-5876c4",
+   "titulo": "El Apodo del Terreno · rehechas con tus notas (1)",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/apodo-n2026-09-22/L6-1.jpg"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "rehecha-de apodo-tira-2026-09-15"
+  },
+  {
+   "id": "mesa-vacia-nube-2026-09-22-c3f77d",
+   "titulo": "La Mesa Vacía · rehechas con tus notas (6)",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/mesa-vacia-n2026-09-22/L2-1.jpg",
+    "laminas/mesa-vacia-n2026-09-22/L3-1.jpg",
+    "laminas/mesa-vacia-n2026-09-22/L4-1.jpg",
+    "laminas/mesa-vacia-n2026-09-22/L5-1.jpg",
+    "laminas/mesa-vacia-n2026-09-22/L6-1.jpg",
+    "laminas/mesa-vacia-n2026-09-22/L7-1.jpg"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "rehecha-de mesa-vacia-tira-2026-09-15"
+  }
+ ],
  "parrilla": [],
  "control": {
   "pieza": "El comprador ya sabe",
@@ -2628,7 +2659,7 @@
   "aprobadas": 0,
   "tiradas": 0,
   "producidas": 0,
-  "rehechas": 0,
+  "rehechas": 2,
   "nota": ""
  },
  "produccion": [
@@ -2912,24 +2943,91 @@
  ],
  "decisiones": {
   "propuestas": {
-   "mesa-vacia-l1-2026-09-15": {
+   "apodo-nube-2026-09-22-5876c4": {
     "laminas": [
      "si"
     ],
     "nota": "",
-    "notas": [],
+    "notas": [
+     "[toma elegida: 1]"
+    ],
     "firmas": [
      [
       {
        "quien": "Alejandro",
        "marca": "si",
-       "nota": ""
+       "nota": "[toma elegida: 1]"
       }
      ]
+    ]
+   },
+   "mesa-vacia-nube-2026-09-22-c3f77d": {
+    "laminas": [
+     "no",
+     "no",
+     "si",
+     "si",
+     "no",
+     "no"
     ],
-    "heredada": "2026-09-15"
+    "nota": "",
+    "notas": [
+     "La imagen no cuadra con el texto. El texto no engancha",
+     "La imagen no cuadra con el texto. creo que la primer imaggen habla de otra cos ay derrepente estan dentro de la casa hay que seguir la logica d elas imagenes en dodne estan contexto y personas",
+     "[toma elegida: 2]",
+     "[toma elegida: 1]",
+     "La imagen no cuadra con el texto. El texto no engancha",
+     "El texto no engancha"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "La imagen no cuadra con el texto. El texto no engancha"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "La imagen no cuadra con el texto. creo que la primer imaggen habla de otra cos ay derrepente estan dentro de la casa hay que seguir la logica d elas imagenes en dodne estan contexto y personas"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 2]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 1]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "La imagen no cuadra con el texto. El texto no engancha"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "El texto no engancha"
+      }
+     ]
+    ]
    }
   },
-  "editores": []
+  "editores": [
+   "Alejandro"
+  ],
+  "guardado": "2026-09-22T22:30:14"
  }
 }
