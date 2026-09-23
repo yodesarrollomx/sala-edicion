@@ -1,0 +1,37 @@
+# Prueba aislada del motor Wan en un Space ZeroGPU gratis. Corre sólo en su rama; no toca
+# el Sheet ni la cola. Deja los videos como artifact «wan-hf-escenas».
+name: Prueba Wan HF (Space gratis)
+
+on:
+  push:
+    branches: [claude/prueba-wan-hf]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  wan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet gradio_client
+      - name: Animar 3 escenas pendientes
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SALIDA: salida
+        run: |
+          python3 nube/pruebas/wan_hf_space.py \
+            laminas/apodo-e2026-09-14/L4.png \
+            laminas/apodo-e2026-09-14/L5.png \
+            laminas/mesa-vacia-g1/L4.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wan-hf-escenas
+          path: salida/
+          if-no-files-found: warn
