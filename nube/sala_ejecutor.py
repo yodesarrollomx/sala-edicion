@@ -276,6 +276,25 @@ def main():
             sala.post('cola', op='estado', filas=[{'id': t.get('id'), 'estado': 'pendiente',
                 'evidencia': {'rescatado': 'corriendo sin tocar desde %s' % t.get('actualizado')}} for t in viejos])
 
+    # 23-sep: lo que se produjo pero NO subió a Drive (la llave de la cuenta de servicio
+    # fallaba) queda «hecho» y el corte nunca lo encuentra. Escena y voz son gratis y tardan
+    # segundos: se rehacen, una vez por día, hasta que suban.
+    if drive_raiz:
+        hoy = sala.hoy_hermosillo()
+        sin_drive = [t for t in cola if str(t.get('estado')) == 'hecho'
+                     and str(t.get('etapa')) in ('escena', 'voz')
+                     and isinstance(t.get('evidencia'), dict)
+                     and not t['evidencia'].get('drive_id') and t['evidencia'].get('aviso_subida')
+                     and t['evidencia'].get('reintento_drive') != hoy]
+        for t in sin_drive:
+            t['estado'] = 'pendiente'
+            t['evidencia'] = dict(t['evidencia'], reintento_drive=hoy)
+        if sin_drive and not args.simular:
+            sala.avisar('↺ %d producto(s) sin subir a Drive se rehacen para que el corte los '
+                        'encuentre' % len(sin_drive))
+            sala.post('cola', op='estado', filas=[{'id': t['id'], 'estado': 'pendiente',
+                                                    'evidencia': t['evidencia']} for t in sin_drive])
+
     pendientes = [t for t in cola if str(t.get('estado')) == 'pendiente'
                   and str(t.get('etapa')) in habilitadas]
     # Sin esto, --limite cortaba en el orden que devolviera el Sheet — casi siempre orden de
