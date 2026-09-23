@@ -1,25 +1,25 @@
 {
- "corrida": "2026-09-23T14:48Z",
+ "corrida": "2026-09-23T16:09Z",
  "piezas": [
   {
    "pieza": "La Obra que No Empezó",
-   "resultado": "sin guion",
-   "motivo": "Google rechazó la llave de Gemini (401): hay que renovar GEMINI_API_KEY"
+   "resultado": "sin lámina",
+   "motivo": "toma 1: sin cerebro disponible (Gemini gemini-3.5-flash-lite 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high dema"
   },
   {
    "pieza": "La Recámara Cerrada",
    "resultado": "sin guion",
-   "motivo": "Google rechazó la llave de Gemini (401): hay que renovar GEMINI_API_KEY"
+   "motivo": "el cerebro no contestó con un JSON (gemini: Gemini gemini-3.5-flash-lite 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experienci"
   },
   {
    "pieza": "Las 48 Horas",
    "resultado": "sin guion",
-   "motivo": "Google rechazó la llave de Gemini (401): hay que renovar GEMINI_API_KEY"
+   "motivo": "el cerebro no contestó con un JSON (gemini: Gemini gemini-3.5-flash-lite 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experienci"
   },
   {
    "pieza": "REEL · Así Se Ve Saber",
-   "resultado": "sin guion",
-   "motivo": "Google rechazó la llave de Gemini (401): hay que renovar GEMINI_API_KEY"
+   "resultado": "arrancada",
+   "motivo": "guion de 6 lámina(s) y lámina 1 con 2 tomas en tu mesa"
   }
  ]
 }

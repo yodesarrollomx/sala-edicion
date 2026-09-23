@@ -1,0 +1,89 @@
+{
+ "pieza": "REEL · Así Se Ve Saber",
+ "pieza_slug": "asi-se-ve-saber",
+ "promesa": "Muestra cómo se ve tener la certeza real sobre un terreno en Hermosillo con el Plan de Potencial.",
+ "formato": "Reel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Sabes exactamente qué construir en tus 300 m²?",
+   "ve": "Dueño sonriente sosteniendo una carpeta elegante frente a su terreno con sol de tarde.",
+   "entiende": "Tener información clara da tranquilidad inmediata.",
+   "src": "laminas/asi-se-ve-saber-a2026-09-23/L1-1.jpg",
+   "estado": "propuesta",
+   "version": 1,
+   "fecha": "2026-09-23",
+   "candidatas": [
+    {
+     "src": "laminas/asi-se-ve-saber-a2026-09-23/L1-1.jpg",
+     "original": "laminas/asi-se-ve-saber-a2026-09-23/L1-1.png",
+     "titulo": "A",
+     "texto": "Se mantiene el texto original sin cambios al no haber nota del editor, ajustándolo a la estructura de pregunta y segunda persona.",
+     "dice": "¿Sabes exactamente qué construir en tus 300 m²?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "129d8dc4ee33035c3bfe712b7be68b49"
+    },
+    {
+     "src": "laminas/asi-se-ve-saber-a2026-09-23/L1-2.jpg",
+     "original": "laminas/asi-se-ve-saber-a2026-09-23/L1-2.png",
+     "titulo": "B",
+     "texto": "El texto ajusta la idea a pregunta directa en segunda persona manteniendo la promesa original.",
+     "dice": "¿Así se ve saber la verdad exacta de tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "ed0d9f5e41fc227c760e16a5aa235fc4"
+    }
+   ]
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Así se ve tener la verdad de tu terreno en Hermosillo.",
+   "ve": "Dueño sonriente sosteniendo una carpeta elegante frente a su terreno con sol de tarde.",
+   "entiende": "Tener información clara da tranquilidad inmediata."
+  },
+  {
+   "n": 2,
+   "dice": "Se acabaron las adivinanzas y las dudas.",
+   "ve": "Acercamiento a manos hojeando planos claros y limpios sobre una mesa de madera.",
+   "entiende": "El Plan de Potencial sustituye suposiciones por datos exactos."
+  },
+  {
+   "n": 3,
+   "dice": "Esto es lo que realmente puedes construir aquí.",
+   "ve": "Gráficos limpios sobre el terreno mostrando siluetas de proyectos posibles.",
+   "entiende": "El potencial real se calcula, no se opina."
+  },
+  {
+   "n": 4,
+   "dice": "Llega con arquitectos e inversionistas con el dato exacto.",
+   "ve": "Reunión cálida en una terraza de Hermosillo viendo planos con confianza.",
+   "entiende": "La certeza acelera cualquier trato o decisión."
+  },
+  {
+   "n": 5,
+   "dice": "El terreno habla y nosotros te traducimos su futuro.",
+   "ve": "Toma panorámica del terreno con luz dorada del atardecer sonorense.",
+   "entiende": "Cada metro cuadrado tiene un destino calculado esperando."
+  },
+  {
+   "n": 6,
+   "dice": "Conoce el Plan de Potencial de tu terreno hoy.",
+   "ve": "Logo limpio de Yo Desarrollo sobre fondo claro con datos de contacto.",
+   "entiende": "Invita a dar el siguiente paso con la desarrolladora."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-23",
+ "titulo": "REEL · Así Se Ve Saber · arranque: guion y lámina 1",
+ "nota": "Idea elegida en el Árbol. Aquí va el guion completo y la PRIMERA lámina con 2 tomas: elige una con «Ésta». Cuando la apruebes, las demás se hacen a su semejanza.",
+ "origen": "arranque-de idea asi-se-ve-saber",
+ "base": null
+}
