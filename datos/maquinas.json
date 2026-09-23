@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-23 04:29",
+  "actualizado": "2026-09-23 09:52",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -172,10 +172,10 @@
       "hace": "Sube la Sala a GitHub Pages cuando el verificador pasa.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-23T08:54:51Z",
-      "dijo": "arranque: el log dice por qué falló cada cerebro (Gemini ya no queda …",
+      "corrio": "2026-09-23T16:13:11Z",
+      "dijo": "arranque: el motivo dice «Gemini saturado» en vez del JSON crudo del 503",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 2 h"
+      "porque": "su última corrida salió bien hace 0 h"
     },
     {
       "id": "nube:sala-maquinas.yml",
@@ -183,7 +183,7 @@
       "hace": "Escribe este mismo tablero de salud.",
       "evita": "quedarse sin saber si los demás corrieron",
       "cuando": "cada 2 h",
-      "corrio": "2026-09-23T11:28:42Z",
+      "corrio": "2026-09-23T16:52:09Z",
       "dijo": "Semáforo de la Sala",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
@@ -194,10 +194,10 @@
       "hace": "Abre las compuertas de lo aprobado y lo anota en la COLA.",
       "evita": "que un «sí» de la mesa no dispare nada",
       "cuando": "cada hora",
-      "corrio": "2026-09-23T06:28:53Z",
+      "corrio": "2026-09-23T14:37:27Z",
       "dijo": "Productor de la Sala",
-      "salud": "bien",
-      "porque": "su última corrida salió bien hace 5 h"
+      "salud": "mal",
+      "porque": "su última corrida falló"
     },
     {
       "id": "nube:sala-relevo.yml",
@@ -208,7 +208,7 @@
       "corrio": "2026-09-23T05:30:04Z",
       "dijo": "Relevo de la Sala",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 5 h"
+      "porque": "su última corrida salió bien hace 11 h"
     },
     {
       "id": "nube:verificar.yml",
@@ -216,10 +216,10 @@
       "hace": "Corre las pruebas del repo en cada push y cada pull request.",
       "evita": "publicar una Sala rota",
       "cuando": "en cada guardado",
-      "corrio": "2026-09-23T08:54:51Z",
-      "dijo": "arranque: el log dice por qué falló cada cerebro (Gemini ya no queda …",
+      "corrio": "2026-09-23T16:13:11Z",
+      "dijo": "arranque: el motivo dice «Gemini saturado» en vez del JSON crudo del 503",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 2 h"
+      "porque": "su última corrida salió bien hace 0 h"
     }
   ]
 }
