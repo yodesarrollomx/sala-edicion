@@ -85,7 +85,7 @@ jobs:
         run: |
           git config user.name "Arranque de la Sala"
           git config user.email "noreply@yodesarrollo.mx"
-          git add laminas datos/tiras
+          git add laminas datos/tiras datos/arranque.json 2>/dev/null || git add laminas datos/tiras
           if git diff --cached --quiet; then echo "hubo=no" >> "$GITHUB_OUTPUT"; exit 0; fi
           git commit -m "arranque: guion y primera lámina de las ideas elegidas"
           git pull --rebase --quiet origin main

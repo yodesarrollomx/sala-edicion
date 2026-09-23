@@ -172,6 +172,16 @@ def arranque(simular, reglas, cola, tope):
             and slug(i.get('id')) not in con_tira and slug(i.get('titulo')) not in con_tira]
     sala.avisar('ideas elegidas sin arrancar: %d' % len(pend))
     plan = []
+    bitacora = []   # 23-sep: lo que la Sala le dice a él de cada idea (datos/arranque.json, repo público)
+
+    def apunta(nombre, resultado, motivo=''):
+        m = re.sub(r'key=[^&\s"]+', 'key=***', str(motivo or ''))
+        if ' 401' in m or 'invalid authentication' in m:
+            m = 'Google rechazó la llave de Gemini (401): hay que renovar GEMINI_API_KEY'
+        elif 'OPENAI' in m and 'gemini' not in m.lower():
+            m = 'sin cerebro disponible (Gemini no contestó y no hay respaldo de pago)'
+        bitacora.append({'pieza': nombre, 'resultado': resultado, 'motivo': m[:160]})
+
     for i in pend[:tope]:
         s, nombre = slug(i.get('id') or i.get('titulo')), str(i.get('titulo') or i.get('id'))
         n = N_LAMINAS.get(str(i.get('formato') or '').lower(), 1)
@@ -185,10 +195,12 @@ def arranque(simular, reglas, cola, tope):
                        INSTR_GUION, reglas, cola)
         except MotorError as e:
             sala.avisar('  ✗ sin guion: %s' % e)
+            apunta(nombre, 'sin guion', e)
             continue
         lams = [l for l in (g.get('laminas') or []) if l.get('dice')][:n]
         if not lams:
             sala.avisar('  ✗ el guion vino vacío')
+            apunta(nombre, 'sin guion', 'el cerebro devolvió un guion vacío')
             continue
         for k, l in enumerate(lams, 1):
             l['n'] = k
@@ -197,6 +209,7 @@ def arranque(simular, reglas, cola, tope):
         lam1 = dict(lams[0])
         if not lam1.get('dice'):
             sala.avisar('  ✗ el texto de la lámina 1 trae algo prohibido; no se arranca')
+            apunta(nombre, 'sin lámina', 'el texto traía una palabra vetada; se reintenta')
             continue
         t = {'pieza': nombre, 'pieza_slug': s, 'promesa': g.get('promesa') or i.get('bajada') or '',
              'laminas': [lam1]}
@@ -206,6 +219,7 @@ def arranque(simular, reglas, cola, tope):
             sala.avisar('     ⚠ %s' % a)
         if not tomas:
             sala.avisar('  ✗ sin tomas para la lámina 1: se intenta en la próxima corrida')
+            apunta(nombre, 'sin lámina', '; '.join(avisos) or 'el motor de imagen no devolvió tomas')
             continue
         lam1.update({'src': tomas[0]['src'], 'estado': 'propuesta', 'version': 1, 'fecha': hoy,
                      'candidatas': tomas, 'dice': tomas[0].get('dice') or lam1['dice']})
@@ -223,10 +237,14 @@ def arranque(simular, reglas, cola, tope):
         plan.append({'familia': s, 'tira_id': tid, 'carta': {
             'id': tid, 'titulo': tira['titulo'], 'tipo': 'laminas', 'laminas': [lam1['src']],
             'opciones': [], 'video': None, 'origen': tira['origen']}})
+        apunta(nombre, 'arrancada', 'guion de %d lámina(s) y lámina 1 con %d tomas en tu mesa' % (len(lams), len(tomas)))
         sala.avisar('  ✓ guion de %d lámina(s) y %d tomas de la lámina 1 · tira %s' % (len(lams), len(tomas), tid))
     if not simular:
         PLAN.parent.mkdir(parents=True, exist_ok=True)
         PLAN.write_text(json.dumps({'fecha': hoy, 'cartas': plan}, ensure_ascii=False, indent=1), encoding='utf-8')
+        import datetime
+        (DATOS / 'arranque.json').write_text(json.dumps({'corrida': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%MZ'),
+            'piezas': bitacora}, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     sala.avisar('resumen: %d pieza(s) arrancadas' % len(plan))
     return 0
 

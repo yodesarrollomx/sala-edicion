@@ -609,6 +609,7 @@ html.cargando::before{content:'';position:fixed;top:0;left:0;height:3px;width:10
 #actualizando{position:fixed;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:9998;display:none;align-items:center;gap:8px;
   padding:6px 12px;border-radius:999px;background:var(--tarjeta);border:1px solid var(--oro);color:var(--oro);font-size:12px;font-weight:600;letter-spacing:.04em;pointer-events:none;box-shadow:var(--sombra)}
 html.cargando #actualizando{display:flex}
+#actualizando{max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #actualizando i{width:10px;height:10px;border-radius:50%;border:2px solid var(--oro-suave);border-top-color:var(--oro);animation:gira .8s linear infinite}
 @keyframes gira{to{transform:rotate(360deg)}}
 /* teléfono: la lámina manda. Estas reglas van al final a propósito: anulan a las de arriba. */
@@ -748,7 +749,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='fe62139d0d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='08690f5d20';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -771,10 +772,21 @@ async function leerJSON(r){ try{ return JSON.parse(await r.text()) }catch(e){ re
 /* indicador de carga: cada fetch cuenta; mientras haya uno vivo se ve la barra y la píldora */
 let _vivos=0;
 const _fetch0=window.fetch.bind(window);
+// 23-sep (su pedido: «el cargador más padre, en todos los procesos»): la píldora dice QUÉ se está
+// trayendo y cuántos segundos lleva; a los 15 s avisa que el Sheet va lento, no que se cayó.
+const _enVuelo=new Map(); let _tPildora=0, _t0Pildora=0;
+const NOM_RECURSO={dia:'tu mesa',cola:'la fábrica',fabrica:'las piezas',ideas:'las ideas',expedientes:'las publicaciones',arbol:'el árbol',catalogo:'las láminas'};
+function pintaPildora(){ const el=document.getElementById('actualizando'); if(!el) return;
+  const nombres=[...new Set([..._enVuelo.values()].filter(Boolean))]; const seg=Math.round((Date.now()-_t0Pildora)/1000);
+  const que=nombres.length?(nombres.length>2?nombres.slice(0,2).join(', ')+' y más':nombres.join(' y ')):'datos';
+  el.innerHTML=`<i></i>${/guardando/.test(que)?'Guardando':'Trayendo '+que}… ${seg} s${seg>=15?' · el Sheet va lento, no se cayó':''}` }
 window.fetch=async function(...a){
-  _vivos++; document.documentElement.classList.add('cargando');
+  const u=String((a[0]&&a[0].url)||a[0]||''), m=u.match(/[?&]recurso=(\w+)/), post=a[1]&&/post/i.test(a[1].method||'');
+  const k=Symbol(); _enVuelo.set(k,m?(NOM_RECURSO[m[1]]||m[1]):(post?'guardando':''));
+  if(!_vivos){ _t0Pildora=Date.now(); clearInterval(_tPildora); _tPildora=setInterval(pintaPildora,1000) }
+  _vivos++; document.documentElement.classList.add('cargando'); pintaPildora();
   try{ return await _fetch0(...a) }
-  finally{ _vivos=Math.max(0,_vivos-1); if(!_vivos) document.documentElement.classList.remove('cargando') }
+  finally{ _enVuelo.delete(k); _vivos=Math.max(0,_vivos-1); if(!_vivos){ clearInterval(_tPildora); document.documentElement.classList.remove('cargando') } }
 };
 const bloquear=on=>document.body.classList.toggle('bloqueado',!!on);
 /* (Se retiró el relevo por postMessage: publicaba la llave con destino '*' —cualquier sitio
@@ -2207,6 +2219,12 @@ function horaHmo(d){ return d.toLocaleTimeString('es-MX',{hour:'numeric',minute:
 // hora (Productor :30 y puente :45 encienden al Ejecutor si hay fila), el retraso típico de
 // GitHub (~15 min) y lo que de verdad tarda la etapa según sus corridas pasadas (COLA.segundos).
 const RETRASO_GH=15;
+let ARRANQUE=null;
+function fechaHoraCorta(iso){ const t=Date.parse(iso||''); return isNaN(t)?'—':new Date(t).toLocaleString('es-MX',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',timeZone:'America/Hermosillo'}) }
+function proxArranque(){ const d=new Date(), x=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),12,50)); let dia='hoy';
+  if(x<=d) x.setUTCDate(x.getUTCDate()+1);
+  const f=y=>y.toLocaleDateString('es-MX',{timeZone:'America/Hermosillo'}); dia=f(x)===f(d)?'hoy':'mañana';
+  return dia+' ≈ '+horaHmo(new Date(x.getTime()+RETRASO_GH*60000)).replace(/\.$/,'') }
 function durEtapa(etapa){ const xs=(COLA||[]).filter(f=>f.etapa===etapa&&/hecho/i.test(f.estado||'')).map(f=>+((f.evidencia&&typeof f.evidencia==='object'&&f.evidencia.segundos)||0)).filter(x=>x>0).sort((a,b)=>a-b);
   return xs.length?Math.max(2,Math.round(xs[Math.floor(xs.length/2)]/60)):6 }
 function horaHmoNum(d){ return (d.getUTCHours()+24-7)%24 }
@@ -2284,7 +2302,11 @@ function filaLinea(z){
     que=`La fábrica está produciendo ${et.find(x=>x[0]===run)?.[1]||run} (${n} trabajo${n===1?'':'s'}).`; { const c=todas.find(f=>/corriendo/i.test(f.estado||'')), ini=c&&Date.parse(String(c.actualizado||'').slice(0,16)+'-07:00'); const fin=ini?new Date(ini+(durEtapa(c.etapa)+3)*60000):null;
       cuando=fin&&fin>new Date()?'Revísalo ≈ '+horaHmo(fin)+' (lo que suele tardar).':'Sale al terminar la corrida en curso.' } }
   else if(colaPend.length){ quien='fab'; que=`${colaPend.length} trabajo${colaPend.length===1?'':'s'} de ${nomEt} en cola.`; cuando=estF?estF.texto:'' }
-  else if(!t){ quien='sig'; que='Idea elegida, sin guion ni láminas todavía.'; cuando='La siguiente ronda de la Sala escribe el guion y la primera lámina.' }
+  else if(!t){ const ar=((ARRANQUE&&ARRANQUE.piezas)||[]).find(x=>x.pieza===z.nombre);
+    // 23-sep (su reclamo: «dice que la siguiente ronda escribe el guion… y no he visto que haga nada»):
+    // si el arranque ya lo intentó y no pudo, se dice qué pasó y cuándo, no una promesa genérica.
+    if(ar&&ar.resultado!=='arrancada'){ quien='rojo'; que=`Idea elegida; el arranque lo intentó y no pudo: ${ar.motivo||ar.resultado}.`; cuando=`Último intento: ${fechaHoraCorta(ARRANQUE.corrida)} · se reintenta solo cada mañana a las 5:50.` }
+    else { quien='sig'; que='Idea elegida, sin guion ni láminas todavía.'; const m=proxArranque(); cuando=`El arranque escribe su guion y su lámina 1 ${m}.` } }
   else { quien='sig'; que=`Sigue: ${nomEt}.`; cuando=prod?'El Productor lo pone en cola ≈ '+horaHmo(prod)+' y la fábrica lo hace después':'' }
   const pct=Math.round(100*h.size/et.length);
   if(tuyo&&nota) cuando+=' · '+nota;
@@ -2294,6 +2316,7 @@ async function pintarLinea(piezas,destino,compacto){
   const c=destino===null?null:$('#'+(destino||'linea')); if(destino!==null&&!c) return '';
   if(FABRICA===null) await traerFabrica();
   if(IDEAS===null) await traerIdeas();
+  if(ARRANQUE===null){ try{ ARRANQUE=await (await fetch('datos/arranque.json?v='+Date.now())).json() }catch(e){ ARRANQUE={} } }
   if(!Object.keys(EXP).length){ try{ await (_expP=_expP||cargarExpedientes()) }catch(e){} }   // sin expedientes no se sabe qué ya salió
   const abiertas=piezas.filter(z=>!esPublicada(z.nombre)&&(z.tira||Object.values(z.filas||{}).some(a=>a.length)));
   // ideas en producción que todavía no tienen tira ni cola: también son publicaciones abiertas
@@ -2527,6 +2550,45 @@ function fichaFabrica(slug){
     <p class="arb-sub">La fábrica la toma en la próxima pasada: le arma la tira con el material que ya está en tu Mac.</p></div>`,'fab-'+slug);
 }
 /* ══ El segundo árbol: una publicación por dentro — antes, después y lo que falta ══ */
+// 23-sep (su pedido: «el botón ver no me lleva a ninguna parte… que me abra lo ya decidido, la
+// premisa, cómo se eligió el nombre, qué sigue, y que pueda pedir cambios desde ahí»). La ficha de
+// una idea que todavía no tiene tira: todo lo que el Sheet sabe de ella y una caja para pedir algo.
+// Lo que pide sale como encargo de chinche → el puente lo vuelve issue 📌 → Producción lo atiende.
+async function fichaIdeaProd(nombre){
+  await Promise.all([IDEAS===null?traerIdeas():0, ARBOL===null?traerArbol():0]);
+  if(ARRANQUE===null){ try{ ARRANQUE=await (await fetch('datos/arranque.json?v='+Date.now())).json() }catch(e){ ARRANQUE={} } }
+  const i=(IDEAS||[]).find(x=>x.titulo===nombre||normSlug(x.titulo||'')===normSlug(nombre)||x.id===nombre);
+  const nodos=(ARBOL&&ARBOL.nodos)||[], rama=i&&nodos.find(n=>n.id===i.premisa), tronco=rama&&nodos.find(n=>n.id===rama.padre);
+  const ar=((ARRANQUE&&ARRANQUE.piezas)||[]).find(x=>x.pieza===nombre);
+  const est=String(i&&i.estado||'').replace(/_/g,' ');
+  const sigue=ar&&ar.resultado!=='arrancada'
+    ? `<p class="arb-sub"><b>Detenida:</b> ${esc(ar.motivo||ar.resultado)} <small>(intento del ${esc(fechaHoraCorta(ARRANQUE.corrida))})</small></p><p><small>En cuanto se arregle, el arranque escribe su guion y su lámina 1 y te llega a Hoy.</small></p>`
+    : `<p>El arranque escribe su guion y su lámina 1 ${esc(proxArranque())}; te llega a Hoy para que elijas.</p>`;
+  const v=hoja(`<div class="arb-ficha"><h3>${esc(nombre)}</h3><p class="arb-sub">${i?esc(i.formato||'')+' · '+esc(est||'sin estado'):'Esta idea no está en la hoja IDEAS'}</p>
+    <div class="pasos">
+      ${pasoHTML('Premisa',rama?'hecho':'falta',rama?`<small><b>${esc(rama.titulo)}</b> — ${esc(rama.bajada||'')}${tronco?`<br>Tronco: ${esc(tronco.titulo)}`:''}</small>`:'<small>No está colgada de ninguna rama del Árbol.</small>')}
+      ${pasoHTML('La idea',i?'hecho':'falta',i?`<small>${esc(i.bajada||'—')}</small>`:'')}
+      ${pasoHTML('Cómo llegó aquí',i?'hecho':'falta',i?`<small>Nació como propuesta el ${esc(fechaCorta(i.creada)||i.creada||'—')}${i.nota?' · «'+esc(i.nota)+'»':''}. ${/produccion|elegida|aprobada/i.test(i.estado||'')?'La elegiste en el Árbol y pasó a producción.':'Todavía no la eliges.'} El nombre es el que traía la propuesta; el Sheet no guarda otra historia del nombre.</small>`:'')}
+      ${pasoHTML('Guion y láminas','falta',sigue)}
+    </div>
+    <h4 style="margin:16px 0 6px">¿Quieres cambiar algo?</h4>
+    <textarea id="fiTxt" placeholder="Escribe lo que quieras: otro enfoque, otro nombre, quitarla, juntarla con otra…" style="width:100%;min-height:80px"></textarea>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+      <button class="listo" data-fi="cambio">Pedir este cambio</button>
+      <button class="secund" data-fi="nombre">Cambiarle el nombre</button>
+      <button class="secund" data-fi="propuesta">Proponer otra cosa</button>
+    </div><p id="fiAviso" class="arb-sub" style="margin-top:8px"></p></div>`,'fichaIdea');
+  v.querySelectorAll('[data-fi]').forEach(b=>b.onclick=async()=>{
+    const tipo=b.dataset.fi; let txt=(v.querySelector('#fiTxt').value||'').trim(), av=v.querySelector('#fiAviso');
+    if(tipo==='nombre'&&!txt){ const n=prompt('¿Qué nombre nuevo le ponemos a «'+nombre+'»?',nombre); if(!n||n.trim()===nombre) return; txt='Nombre nuevo: «'+n.trim()+'»' }
+    if(!txt){ av.textContent='Escribe primero lo que quieres.'; return }
+    const d=new Date(), p2=n=>String(n).padStart(2,'0'), id='CHN-'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes())+'-'+Math.random().toString(16).slice(2,6);
+    const etiqueta={cambio:'Pedir cambio',nombre:'Cambiar nombre',propuesta:'Propuesta'}[tipo];
+    b.disabled=true; av.textContent='Mandando…';
+    try{ await mandarProduccion('ENCARGO · chinche · '+nombre, JSON.stringify({id,texto:`[${etiqueta}] «${nombre}»: ${txt}`,tipo:'ficha',vista:'produccion',carta:{pieza:nombre},url:location.href}), false);
+      av.textContent='✓ Anotado. En menos de una hora se vuelve un pedido de Producción (📌) y te avisa aquí mismo en «Tus recados».'; v.querySelector('#fiTxt').value='' }
+    catch(e){ av.textContent='No se pudo mandar: '+(e&&e.message||e) } finally{ b.disabled=false } });
+}
 function pasoHTML(nombre,estado,cuerpo){ return `<div class="paso ${estado}"><i></i><div><b>${esc(nombre)}</b>${cuerpo||''}</div></div>` }
 function fichaPublicacion(clave){
   const c=((EMBUDO&&EMBUDO.catalogo)||[]).find(x=>x.clave===clave); if(!c) return;
@@ -2546,7 +2608,7 @@ function fichaPublicacion(clave){
     ${DECIDE()?`<button class="secund" onclick="editarNodo(${JSON.stringify(nodoDePub(c))})">✎ Sugerir un cambio</button>`:''}</div>`,'ficha-'+clave);
 }
 async function fichaPieza(nombre){
-  const piezas=await armarPiezas(); const z=piezas.find(p=>p.nombre===nombre); if(!z) return; const t=z.tira; const g=z.filas;
+  const piezas=await armarPiezas(); const z=piezas.find(p=>p.nombre===nombre); if(!z) return fichaIdeaProd(nombre); const t=z.tira; const g=z.filas;
   const est=(f)=>{ if(!(f||[]).length) return 'falta'; return f.every(x=>/hecho/i.test(x.estado||''))?'hecho':'proceso' };
   const abiertas=t?(t.laminas||[]).filter(l=>laminaAbierta(t,l)):[];
   // 23-sep (chinche #16): «ésta ya está terminada pero la abro y me manda a editar». Lo terminado se
