@@ -87,6 +87,38 @@ html.embed .app{padding-top:8px}
 }
 
 /* ── árbol de Producción (12-sep) ── */
+/* La Línea (23-sep) */
+.linea-cab{border:1px solid var(--linea);background:var(--tarjeta);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.linea-cab .rel{font-family:var(--serif);font-size:19px;line-height:1.35;margin:0}
+.linea-cab .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.linea-cab .chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;background:var(--fondo);border:1px solid var(--linea)}
+.linea-cab .chip b{font-variant-numeric:tabular-nums}
+.ln-fila{display:grid;grid-template-columns:minmax(140px,190px) minmax(280px,1.3fr) minmax(220px,1fr);gap:14px;align-items:center;border:1px solid var(--linea);background:var(--tarjeta);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit}
+.ln-fila:hover{border-color:var(--linea2)}
+.ln-nom b{display:block;font-family:var(--serif);font-weight:400;font-size:18px;line-height:1.15}
+.ln-nom small{color:var(--guia);font-size:11.5px}
+.ln-barra{display:flex;gap:3px;min-width:0}
+.ln-seg{flex:1;min-width:0;position:relative}
+.ln-seg i{display:block;height:12px;border-radius:4px;background:var(--linea)}
+.ln-seg span{display:block;font-size:10.5px;color:var(--guia);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ln-seg.hecho i{background:var(--si)} .ln-seg.corre i{background:var(--oro);animation:lnLate 1.4s ease-in-out infinite}
+.ln-seg.tu i{background:var(--azul)} .ln-seg.rojo i{background:var(--no)} .ln-seg.sig i{background:var(--linea2)}
+.ln-seg.aqui span{color:var(--tinta);font-weight:700}
+.ln-seg.aqui::before{content:'';position:absolute;top:-7px;left:50%;border:5px solid transparent;border-top-color:var(--tinta);transform:translateX(-50%)}
+@keyframes lnLate{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.ln-seg.corre i{animation:none}}
+.ln-rel{font-size:13px;line-height:1.45}
+.ln-rel .quien{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:10px;margin-bottom:3px}
+.ln-rel .quien.tu{background:var(--azul-suave);color:var(--azul)} .ln-rel .quien.fab{background:var(--oro-suave);color:var(--oro)}
+.ln-rel .quien.rojo{background:var(--no-suave);color:var(--no)} .ln-rel .quien.sig{background:var(--fondo);color:var(--gris)}
+.ln-rel .cuando{display:block;color:var(--guia);font-size:12px;margin-top:2px}
+.ln-pend{border:1px dashed var(--linea2);border-radius:14px;padding:12px 14px;margin:14px 0}
+.ln-pend h4{margin:0 0 6px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--guia)}
+.ln-pend li{font-size:13px;line-height:1.45;margin:4px 0}
+.ln-ley{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--guia);margin:6px 2px 12px}
+.ln-ley i{display:inline-block;width:14px;height:8px;border-radius:3px;margin-right:5px;vertical-align:1px}
+details.prod-dentro>summary{cursor:pointer;font-weight:600;color:var(--guia);margin:18px 0 10px}
+@media (max-width:760px){.ln-fila{grid-template-columns:1fr;gap:8px}}
 .prod-pieza{border:1px solid var(--linea);background:var(--tarjeta);border-radius:16px;padding:14px 16px;margin-bottom:14px;max-width:100%;overflow:hidden}
 .prod-pieza .cab-pieza{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .prod-pieza h3{font-family:var(--serif);font-weight:400;font-size:20px;margin:0}
@@ -622,12 +654,13 @@ html.cargando #actualizando{display:flex}
   <!-- ④ PRODUCCIÓN: árbol en tiempo real de dónde va cada pieza -->
   <section class="vista" id="vProd">
     <h2 class="titulo-v">Producción</h2>
-    <p class="bajada-v">Un árbol por pieza: guion · láminas · escenas · voces · corte · publicada.</p>
+    <p class="bajada-v">Todas las publicaciones abiertas en una línea: dónde va cada una, de quién depende y cuándo sale lo siguiente.</p>
     <div class="fila-estado" style="justify-content:center;margin-bottom:14px">
       <button class="secund" id="prodActualizar" style="width:auto;padding:8px 16px;min-height:40px">Actualizar</button>
       <span id="prodAviso" style="font-size:12.5px;color:var(--guia);margin-left:8px"></span>
     </div>
-    <div id="prodArbol"></div>
+    <div id="linea"></div>
+    <details class="prod-dentro"><summary>Ver cada pieza por dentro (árbol de láminas, voces y escenas)</summary><div id="prodArbol"></div></details>
   </section>
 
   <!-- ⑤ ÁRBOL: del tronco (vender PPP) a los temas, las publicaciones, sus versiones y el fruto -->
@@ -680,7 +713,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='76e83ac5a8';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='41d3145a8d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2084,6 +2117,7 @@ async function pintarProduccion(){
   await traerCola();
   const piezas=await armarPiezas();
   av.textContent=COLA_ERR?'Sin la hoja COLA · mostrando solo las tiras':'';
+  try{ await pintarLinea(piezas) }catch(e){ const l=$('#linea'); if(l) l.innerHTML='<p class="nota-pie">No se pudo armar la línea: '+esc(e.message||e)+'</p>' }
   if(!piezas.length){ c.innerHTML='<p class="nota-pie">Nada en producción todavía.</p>'; return }
   c.innerHTML=piezas.map(z=>{
     const t=z.tira, g=z.filas, nombre=z.nombre||z.slug;
@@ -2100,6 +2134,104 @@ async function pintarProduccion(){
         ${publicada?`<div class="prod-rama"><b>Publicada</b><div class="prod-hojas"><div class="prod-hoja"><span class="prod-punto verde"></span><span class="tt">Ya salió</span></div></div></div>`:''}
       </div></div>`;
   }).join('');
+}
+
+/* ══ LA LÍNEA + EL RELATOR (23-sep) ═══════════════════════════════════════════════════════
+   Alejandro: «quiero ver el proceso de producción de toda mi sala en una sola gráfica… dónde
+   estamos, qué falta y cuándo… más resumida que el árbol… y que me diga más cosas de cada
+   publicación de las que están abiertas, no de las pasadas». Una fila por publicación ABIERTA,
+   un segmento por etapa de su formato y, a la derecha, el relator: qué pasa, de quién depende y
+   cuándo esperar el siguiente resultado. Fuentes: armarPiezas() (tira + COLA), FABRICA, IDEAS,
+   PZ y datos/encargos.json. Horarios: Ejecutor cada 2 h al minuto 20, Productor cada hora al 30 (UTC). */
+const COLA_DE_ETAPA={laminas:'prospectos',voz:'voz',escenas:'escena',corte:'corte'};
+const HORAS_ATORADO=3;
+const NOM_COLA={prospectos:'las candidatas de lámina',voz:'la voz',escena:'la escena',corte:'el corte'};
+const nomCola=e=>NOM_COLA[e]||e;
+function horaHmo(d){ return d.toLocaleTimeString('es-MX',{hour:'numeric',minute:'2-digit',timeZone:'America/Hermosillo'}) }
+function proximaCorrida(minuto,cadaH){ const d=new Date(); d.setUTCSeconds(0,0);
+  for(let i=0;i<60*24;i++){ const x=new Date(d.getTime()+i*60000); if(x.getUTCMinutes()===minuto&&x.getUTCHours()%cadaH===0&&x>new Date()) return x } return null }
+function edadHoras(txt){ const m=String(txt||'').match(/^(\d{4}-\d\d-\d\dT\d\d:\d\d(:\d\d)?)/); if(!m) return null;
+  const t=Date.parse(m[1]+(m[2]?'':':00')+'-07:00'); return isNaN(t)?null:(Date.now()-t)/36e5 }
+function fechaCorta(txt){ const t=Date.parse(String(txt||'').slice(0,10)); return isNaN(t)?'':new Date(t+12*36e5).toLocaleDateString('es-MX',{day:'numeric',month:'short'}) }
+function fechaDeTiraL(t){ let m=''; for(const l of (t&&t.laminas)||[]){ for(const v of (l.versiones||[])) if((v.fecha||'')>m) m=v.fecha; if((l.fecha||'')>m) m=l.fecha } return m }
+function formatoDePieza(z){
+  const fab=(FABRICA||[]).find(f=>f.slug===z.slug||normSlug(f.pieza||'')===z.slug); if(fab&&fab.formato) return fab.formato;
+  const idea=(IDEAS||[]).find(i=>i.id===z.slug||normSlug(i.titulo||'')===z.slug||normSlug(i.titulo||'')===normSlug(z.nombre)); if(idea&&idea.formato) return idea.formato;
+  // un video se reconoce por su trabajo: voz/escena/corte en la COLA o la etapa «video» en piezas.json
+  const g=z.filas||{}; if((g.voz||[]).length||(g.escena||[]).length||(g.corte||[]).length) return 'Reel';
+  const pz=PZ[z.nombre]; if(pz&&/video|reel|corte/i.test(pz.etapa||'')) return 'Reel';
+  const t=z.tira; return t&&(t.laminas||[]).length>3?'Carrusel':'Lámina';
+}
+function filaLinea(z){
+  const t=z.tira, g=z.filas||{}, publicada=PZ[z.nombre]&&PZ[z.nombre].estado==='publicada';
+  const et=etapasDe(formatoDePieza(z)), h=hechasDe(z,publicada), run=corriendoDe(z);
+  const falta=quefaltaPara(t,g,publicada)||'';
+  const tuyo=/esperando tu s|elige una opci|pidió cambio|en tu mesa/i.test(falta);
+  const todas=[].concat(g.prospectos||[],g.voz||[],g.escena||[],g.corte||[]);
+  const fallos=todas.filter(f=>/fallo|error/i.test(f.estado||''));
+  const viejos=todas.filter(f=>/corriendo/i.test(f.estado||'')&&(edadHoras(f.actualizado)||0)>HORAS_ATORADO);
+  const colaPend=todas.filter(f=>/pendiente/i.test(f.estado||''));
+  const aqui=et.findIndex(([k])=>!h.has(k));
+  const segs=et.map(([k,txt],i)=>{ let c='gris';
+    if(h.has(k)) c='hecho';
+    else if(k===run) c=viejos.some(f=>(COLA_DE_ETAPA[k]||'')===f.etapa)?'rojo':'corre';
+    else if(i===aqui) c=tuyo?'tu':(fallos.length||viejos.length?'rojo':'sig');
+    return {k,txt,c,aqui:i===aqui} });
+  const ejec=proximaCorrida(20,2), prod=proximaCorrida(30,1);
+  let quien='sig', que='', cuando='';
+  const nomEt=aqui>=0?et[aqui][1]:'';
+  // lo de la fábrica se cuenta aparte: puede haber algo atorado aunque la decisión sea tuya
+  let nota='';
+  if(fallos.length){ const e=fallos[0].evidencia; nota=`Además, ${nomCola(fallos[0].etapa)} ${fallos[0].item||''} falló: ${String((e&&typeof e==='object'?e.error:'')||'sin detalle').slice(0,80)} (necesita revisión).` }
+  else if(viejos.length) nota=`Además, ${nomCola(viejos[0].etapa)} está atorada desde el ${fechaCorta(viejos[0].actualizado)}; se rescata sola${ejec?' ≈ '+horaHmo(ejec):''}`;
+  else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola${ejec?', siguiente resultado ≈ '+horaHmo(ejec):''}`;
+  if(aqui<0){ quien='fab'; que='Lista para salir: todas sus etapas están hechas.'; cuando='Falta publicarla.' }
+  else if(tuyo){ quien='tu'; que='Te toca: '+falta+'.'; const f=fechaDeTiraL(t); cuando='Sale en cuanto decidas'+(f?' · esperando desde el '+fechaCorta(f):''); }
+  else if(fallos.length){ quien='rojo'; const e=fallos[0].evidencia; const err=(e&&typeof e==='object'?e.error:'')||'sin detalle';
+    que=`${nomCola(fallos[0].etapa)} ${fallos[0].item||''} falló: ${String(err).slice(0,90)}.`; cuando='Necesita revisión: no se reintenta solo.' }
+  else if(viejos.length){ quien='rojo'; que=`Atorado en ${nomCola(viejos[0].etapa)} desde el ${fechaCorta(viejos[0].actualizado)} (una corrida que murió).`;
+    cuando=ejec?'Se rescata solo en la corrida de las '+horaHmo(ejec):'' }
+  else if(run){ quien='fab'; const n=todas.filter(f=>/corriendo/i.test(f.estado||'')).length;
+    que=`La fábrica está produciendo ${et.find(x=>x[0]===run)?.[1]||run} (${n} trabajo${n===1?'':'s'}).`; cuando='Resultado al terminar la corrida en curso.' }
+  else if(colaPend.length){ quien='fab'; que=`${colaPend.length} trabajo${colaPend.length===1?'':'s'} de ${nomEt} en cola.`; cuando=ejec?'Siguiente resultado ≈ '+horaHmo(ejec)+' (próxima corrida del Ejecutor)':'' }
+  else if(!t){ quien='sig'; que='Idea elegida, sin guion ni láminas todavía.'; cuando='La siguiente ronda de la Sala escribe el guion y la primera lámina.' }
+  else { quien='sig'; que=`Sigue: ${nomEt}.`; cuando=prod?'El Productor lo pone en cola ≈ '+horaHmo(prod)+' y la fábrica lo hace después':'' }
+  const pct=Math.round(100*h.size/et.length);
+  if(tuyo&&nota) cuando+=' · '+nota;
+  return {z,segs,quien,que,cuando,pct,run,tuyo,rojo:!!(fallos.length||viejos.length),fab:!tuyo&&quien==='fab'};
+}
+async function pintarLinea(piezas){
+  const c=$('#linea'); if(!c) return;
+  if(FABRICA===null) await traerFabrica();
+  if(IDEAS===null) await traerIdeas();
+  const abiertas=piezas.filter(z=>!(PZ[z.nombre]&&PZ[z.nombre].estado==='publicada')&&(z.tira||Object.values(z.filas||{}).some(a=>a.length)));
+  // ideas en producción que todavía no tienen tira ni cola: también son publicaciones abiertas
+  const ya=new Set(abiertas.map(z=>z.slug));
+  for(const i of (IDEAS||[])){ if(!/produccion|elegida|aprobada/i.test(i.estado||'')) continue;
+    const slug=normSlug(i.id||i.titulo); if(ya.has(slug)||[...ya].some(s=>s.split('-')[0]===slug.split('-')[0])) continue;
+    abiertas.push({slug,nombre:i.titulo||i.id,tira:null,filas:{prospectos:[],escena:[],voz:[],corte:[]}}); ya.add(slug) }
+  const filas=abiertas.map(filaLinea).sort((a,b)=>(b.tuyo-a.tuyo)||(b.rojo-a.rojo)||(b.fab-a.fab)||(b.pct-a.pct));
+  const nTu=filas.filter(f=>f.tuyo).length, nFab=filas.filter(f=>f.fab).length, nRojo=filas.filter(f=>f.rojo).length, nSig=filas.filter(f=>!f.tuyo&&!f.fab&&!f.rojo).length;
+  const ejec=proximaCorrida(20,2);
+  const rel=!filas.length?'No hay publicaciones abiertas.':
+    `${filas.length} publicaciones abiertas. `+(nTu?`${nTu} te esperan a ti`:'Ninguna te espera a ti')+(nFab?`, ${nFab} están en la fábrica`:'')+(nRojo?` y ${nRojo} ${nRojo===1?'está atorada':'están atoradas'}`:'')+'.'+(ejec&&nFab?` El siguiente resultado de la fábrica sale ≈ ${horaHmo(ejec)}.`:'');
+  // pendientes del sistema: recados atorados, ideas propuestas sin elegir
+  let recados=[]; try{ const j=await (await fetch('datos/encargos.json?v='+Date.now())).json(); const por=new Map();
+    (j.encargos||[]).forEach(e=>{ const q=String(e.que||''); const id=(q.match(/"id":"([^"]+)"/)||[])[1]||q; const tx=(q.match(/"texto":"((?:[^"\\]|\\.)*)/)||[])[1]||q; por.set(id,{...e,texto:tx}) });
+    recados=[...por.values()].filter(e=>e.estado==='en curso'&&(Date.now()-Date.parse(e.cuando||''))/864e5>2) }catch(e){}
+  const propuestas=(IDEAS||[]).filter(i=>/propuesta/i.test(i.estado||''));
+  const pend=[];
+  recados.forEach(e=>pend.push(`<b>Recado atorado</b> desde el ${esc(fechaCorta(e.cuando))}: «${esc(String(e.texto).slice(0,110))}» — vuelve a clavarlo o pídelo con «Mandar a Claude».`));
+  if(propuestas.length) pend.push(`<b>${propuestas.length} ideas propuestas</b> esperando que elijas (en la pestaña Árbol, abajo): ${esc(propuestas.slice(0,4).map(i=>i.titulo).join(' · '))}${propuestas.length>4?'…':''}.`);
+  const seg=s=>`<div class="ln-seg ${s.c}${s.aqui?' aqui':''}"><i></i><span>${esc(s.txt)}</span></div>`;
+  c.innerHTML=`<div class="linea-cab"><p class="rel">${esc(rel)}</p>
+      <div class="chips"><span class="chip"><b>${nTu}</b> te toca</span><span class="chip"><b>${nFab}</b> en la fábrica</span><span class="chip"><b>${nRojo}</b> atoradas</span><span class="chip"><b>${nSig}</b> por arrancar</span></div></div>
+    <div class="ln-ley"><span><i style="background:var(--si)"></i>hecho</span><span><i style="background:var(--oro)"></i>produciéndose</span><span><i style="background:var(--azul)"></i>te toca</span><span><i style="background:var(--no)"></i>atorado</span><span><i style="background:var(--linea2)"></i>lo que sigue</span><span>▼ estás aquí</span></div>
+    ${filas.map(f=>`<button class="ln-fila" data-pieza="${esc(f.z.nombre)}"><div class="ln-nom"><b>${esc(f.z.nombre)}</b><small>${f.pct}% · ${f.segs.length} etapas</small></div>
+      <div class="ln-barra">${f.segs.map(seg).join('')}</div>
+      <div class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span><br>${esc(f.que)}<span class="cuando">${esc(f.cuando)}</span></div></button>`).join('')}
+    ${pend.length?`<div class="ln-pend"><h4>Lo que quedó a medias</h4><ul>${pend.map(p=>`<li>${p}</li>`).join('')}</ul></div>`:''}`;
+  c.querySelectorAll('.ln-fila[data-pieza]').forEach(el=>el.onclick=()=>fichaPieza(el.dataset.pieza));
 }
 
 /* ══ el árbol de publicaciones (14-sep) ══
