@@ -136,6 +136,17 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
         elif etapa == 'corte':
             ev0 = trabajo.get('evidencia') or {}
             tira = _leer_tira(ev0.get('de'))
+            if not ev0.get('laminas'):
+                # Un corte que perdió su lista (por el bug de arriba) la rehace desde la tira
+                # viva de su pieza, con la misma huella que usa el productor para escena/voz.
+                from sala_mesa import tiras_por_pieza
+                from sala_productor import huella_insumo
+                tid_tira, tira = (tiras_por_pieza().get(str(trabajo.get('pieza'))) or (None, None))
+                if tira:
+                    ev0 = dict(ev0, de=ev0.get('de') or tid_tira, laminas=[
+                        {'item': str(l.get('n')), 'huella': huella_insumo(l, cat)[0]}
+                        for l in tira.get('laminas') or []])
+                    trabajo['evidencia'] = ev0
             if tira and len(ev0.get('laminas') or []) < len(tira.get('laminas') or []):
                 raise MotorError('corte incompleto: trae %d de las %d láminas de la pieza — lo '
                                  'abrió un productor viejo; el nuevo abre el corte de la pieza entera'
@@ -303,7 +314,12 @@ def main():
             estado, ev = ejecutar_uno(t, reglas, motores_resp, cat, drive_raiz, cola)
         except Exception as e:   # 23-sep: una excepción dejaba el trabajo en «corriendo» y tumbaba la corrida
             estado, ev = 'fallo', {'error': 'excepción %s: %s' % (type(e).__name__, str(e)[:300])}
-        sala.post('cola', op='estado', filas=[{'id': tid, 'estado': estado, 'evidencia': ev,
+        # 23-sep: la evidencia NUEVA se suma a la de entrada, no la reemplaza. Antes un intento
+        # intermitente escribía sólo {motor, error} y borraba de qué carta y qué lámina era el
+        # trabajo (o la lista de láminas de un corte): el siguiente intento ya no sabía qué hacer.
+        entrada = t.get('evidencia') if isinstance(t.get('evidencia'), dict) else {}
+        entrada = {k: v for k, v in entrada.items() if k not in ('error', 'segundos', 'rescatado')}
+        sala.post('cola', op='estado', filas=[{'id': tid, 'estado': estado, 'evidencia': {**entrada, **ev},
                                                'motor': ev.get('motor') or ''}])
 
         if estado == 'hecho':

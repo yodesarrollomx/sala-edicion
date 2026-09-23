@@ -30,7 +30,17 @@ def lamina_de(trabajo):
         return datos
     datos['src'] = ''
     n = str(ev.get('lamina') or trabajo.get('item') or '').split('-')[0]
-    ruta = TIRAS / ('%s.json' % str(ev.get('de') or ''))
+    de = str(ev.get('de') or '')
+    if not de:
+        # Trabajo que perdió su evidencia (el ejecutor la pisaba antes del 23-sep): su pieza
+        # y su `item` (número real) bastan para hallarlo en la tira viva de la pieza.
+        try:
+            from sala_mesa import tiras_por_pieza
+            de = (tiras_por_pieza().get(str(trabajo.get('pieza'))) or ('', None))[0] or ''
+            ev = dict(ev, n_real=True)
+        except Exception:
+            de = ''
+    ruta = TIRAS / ('%s.json' % de)
     if not n or not ruta.is_file():
         return datos
     try:
@@ -38,7 +48,7 @@ def lamina_de(trabajo):
     except ValueError:
         return datos
     mapa = tira.get('mapa') or {}
-    if str(ev.get('de') or '').find('-nube-') > 0 and not ev.get('n_real'):
+    if de.find('-nube-') > 0 and not ev.get('n_real'):
         n = str(mapa.get(n, n))   # trabajos viejos: traían el número de la carta, no el real
     for i, lam in enumerate(tira.get('laminas') or []):
         if isinstance(lam, dict) and str(lam.get('n') or i + 1) == n:
@@ -46,6 +56,11 @@ def lamina_de(trabajo):
                 datos[k] = datos[k] or str(lam.get(k) or '')
             elegida = toma_elegida(datos['nota'] or str(ev.get('nota') or ''))
             tomas = lam.get('candidatas') or []
+            if not ev.get('de') and not elegida and any(c.get('motor') for c in tomas):
+                # Sin evidencia no se sabe qué toma eligió el editor: mejor no producir que
+                # animar la versión vieja (14-sep).
+                datos['src'] = ''
+                break
             if elegida and 0 < elegida <= len(tomas):
                 # 14-sep: se animó la foto vieja porque nadie siguió la toma elegida. La
                 # toma manda: su original (png) y su texto sustituyen a la versión anterior.
