@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-22 15:54",
+  "actualizado": "2026-09-22 21:40",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -172,10 +172,10 @@
       "hace": "Sube la Sala a GitHub Pages cuando el verificador pasa.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-22T19:43:27Z",
-      "dijo": "Publicar la Sala",
+      "corrio": "2026-09-23T04:31:38Z",
+      "dijo": "Ejecutor: una excepción marca el trabajo «fallo» con su motivo y sigu…",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 3 h"
+      "porque": "su última corrida salió bien hace 0 h"
     },
     {
       "id": "nube:sala-maquinas.yml",
@@ -183,7 +183,7 @@
       "hace": "Escribe este mismo tablero de salud.",
       "evita": "quedarse sin saber si los demás corrieron",
       "cuando": "cada 2 h",
-      "corrio": "2026-09-22T22:54:41Z",
+      "corrio": "2026-09-23T04:40:06Z",
       "dijo": "Semáforo de la Sala",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
@@ -194,10 +194,10 @@
       "hace": "Abre las compuertas de lo aprobado y lo anota en la COLA.",
       "evita": "que un «sí» de la mesa no dispare nada",
       "cuando": "cada hora",
-      "corrio": "2026-09-22T21:35:06Z",
+      "corrio": "2026-09-23T04:31:12Z",
       "dijo": "Productor de la Sala",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 1 h"
+      "porque": "su última corrida salió bien hace 0 h"
     },
     {
       "id": "nube:sala-relevo.yml",
@@ -205,10 +205,10 @@
       "hace": "Rehace el respaldo espejo del día (datos/manifiesto.json).",
       "evita": "que la Sala se quede sin plan B si el Sheet no contesta",
       "cuando": "6, 9, 12, 15 y 18 h",
-      "corrio": "2026-09-22T21:45:32Z",
+      "corrio": "2026-09-22T23:55:25Z",
       "dijo": "Relevo de la Sala",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 1 h"
+      "porque": "su última corrida salió bien hace 4 h"
     },
     {
       "id": "nube:verificar.yml",
@@ -216,10 +216,10 @@
       "hace": "Corre las pruebas del repo en cada push y cada pull request.",
       "evita": "publicar una Sala rota",
       "cuando": "en cada guardado",
-      "corrio": "2026-09-22T03:28:26Z",
-      "dijo": "Merge pull request #2 from yodesarrollomx/claude/sonda-timeout",
+      "corrio": "2026-09-23T04:31:38Z",
+      "dijo": "Ejecutor: una excepción marca el trabajo «fallo» con su motivo y sigu…",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 19 h"
+      "porque": "su última corrida salió bien hace 0 h"
     }
   ]
 }
