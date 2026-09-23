@@ -1,0 +1,25 @@
+{
+ "corrida": "2026-09-23T14:48Z",
+ "piezas": [
+  {
+   "pieza": "La Obra que No Empezó",
+   "resultado": "sin guion",
+   "motivo": "Google rechazó la llave de Gemini (401): hay que renovar GEMINI_API_KEY"
+  },
+  {
+   "pieza": "La Recámara Cerrada",
+   "resultado": "sin guion",
+   "motivo": "Google rechazó la llave de Gemini (401): hay que renovar GEMINI_API_KEY"
+  },
+  {
+   "pieza": "Las 48 Horas",
+   "resultado": "sin guion",
+   "motivo": "Google rechazó la llave de Gemini (401): hay que renovar GEMINI_API_KEY"
+  },
+  {
+   "pieza": "REEL · Así Se Ve Saber",
+   "resultado": "sin guion",
+   "motivo": "Google rechazó la llave de Gemini (401): hay que renovar GEMINI_API_KEY"
+  }
+ ]
+}
