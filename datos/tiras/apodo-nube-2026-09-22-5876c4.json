@@ -1,0 +1,211 @@
+{
+ "pieza": "El Apodo del Terreno",
+ "pieza_slug": "apodo",
+ "promesa": "Que el dueño sienta que su terreno lleva años cargando nombres ajenos — y que hay uno solo que sí es suyo: lo que puede llegar a ser.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/apodo-e2026-09-14/L1.png",
+   "dice": "¿Ya sabes cómo le dicen a tu terreno?",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L1.png",
+     "hash": "9402bbc1",
+     "marca": ""
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L1.png",
+     "hash": "6ec6be33",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 2
+  },
+  {
+   "n": 2,
+   "src": "laminas/apodo-e2026-09-15/L2.png",
+   "dice": "Los vecinos le dicen «el de la esquina».",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L2.png",
+     "hash": "742f0cae",
+     "marca": ""
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-15",
+     "src": "laminas/apodo-e2026-09-15/L2.png",
+     "hash": "33d3c1e8",
+     "marca": "si",
+     "nota": "toma Toma 3 elegida por Alejandro"
+    }
+   ],
+   "version": 2,
+   "nota_previa": "Tu nota del 15-sep: «la imagen no se ve un terreno en esquina como lo dice la lamina». Era cierto: en las cuatro anteriores no habia esquina y ni siquiera habia baldio. La receta arrancaba describiendo la colonia y el modelo pintaba eso; ahora arranca por el terreno de la esquina, igual que en la 3 y la 5 que si aprobaste. Aqui va SOLO la lamina 2, sin mezclarla con la 6.",
+   "fecha": "2026-09-15",
+   "toma_elegida": "Toma 3",
+   "aprobada_por": "Alejandro",
+   "aprobada_el": "2026-09-15"
+  },
+  {
+   "n": 3,
+   "src": "laminas/apodo-e2026-09-14/L3.png",
+   "dice": "En la colonia le dicen «el baldío». Un descuido, no un patrimonio.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L3.png",
+     "hash": "6902c53d",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L1.png",
+     "hash": "96eb6d21",
+     "marca": "",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L3.png",
+     "hash": "0ab02c96",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 3,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no enganchamas nivel medio alto"
+  },
+  {
+   "n": 4,
+   "src": "laminas/apodo-e2026-09-14/L4.png",
+   "dice": "Ninguno de esos nombres se lo puso tu terreno.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g7/L4.png",
+     "hash": "c044b62e",
+     "marca": ""
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L4.png",
+     "hash": "269fb20b",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 2
+  },
+  {
+   "n": 5,
+   "src": "laminas/apodo-e2026-09-14/L5.png",
+   "dice": "Tu terreno sí tiene un nombre propio: lo que puede llegar a ser.",
+   "estado": "aprobada",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L5.png",
+     "hash": "5c43746a",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L2.png",
+     "hash": "bc30416b",
+     "marca": "",
+     "igual": false
+    },
+    {
+     "v": 3,
+     "fecha": "2026-09-14",
+     "src": "laminas/apodo-e2026-09-14/L5.png",
+     "hash": "79c1ed61",
+     "marca": "si",
+     "nota": "toma Toma 2 elegida por Alejandro"
+    }
+   ],
+   "version": 3,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto más entorno urbano clase media alta"
+  },
+  {
+   "n": 6,
+   "src": "laminas/apodo-g8/L3.png",
+   "dice": "Pídele a tu terreno su Plan de Potencial Personalizado y descubramos juntos su nombre real.",
+   "estado": "rehecha",
+   "versiones": [
+    {
+     "v": 1,
+     "fecha": "2026-09-09",
+     "src": "laminas/apodo-g7/L6.png",
+     "hash": "5a25ffd2",
+     "marca": "si"
+    },
+    {
+     "v": 2,
+     "fecha": "2026-09-12",
+     "src": "laminas/apodo-g8/L3.png",
+     "hash": "88e1482b",
+     "marca": "",
+     "igual": false
+    }
+   ],
+   "version": 2,
+   "nota_previa": "Alejandro: La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago... creo que debe de ser la misma pareja que estaba en ottras laminas... tmb deberia de tener un plan o un folder n tanto un plano... estamos prometiendo analisis y plan de ptencial no un proyecto aun",
+   "marca_previa": "pendiente",
+   "candidatas": [
+    {
+     "src": "laminas/apodo-n2026-09-22/L6-1.jpg",
+     "original": "laminas/apodo-n2026-09-22/L6-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota cambiando a pregunta concreta, usando la misma pareja, mostrando un folder con el plan en lugar de planos, y ajustando la imagen para sostener e",
+     "dice": "¿Tu terreno ya tiene un Plan de Potencial Personalizado?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "844361202f4117c6c7b4f0eee68788ea"
+    },
+    {
+     "src": "laminas/apodo-n2026-09-22/L6-2.jpg",
+     "original": "laminas/apodo-n2026-09-22/L6-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota cambiando el texto por uno concreto de plan/folder y mostrando a la pareja exacta con un folder en mano.",
+     "dice": "¿Y si le das a tu terreno un plan de 250 m²?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "272b39587eda98a32adf25565a5e54d7"
+    }
+   ],
+   "fecha": "2026-09-22"
+  }
+ ],
+ "decidir": [
+  6
+ ],
+ "mapa": {
+  "1": 6
+ },
+ "base": "apodo-tira-2026-09-15",
+ "guion": "datos/guiones/APODO-VIDEO.json",
+ "titulo": "El Apodo del Terreno · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de apodo-tira-2026-09-15",
+ "fecha": "2026-09-22"
+}
