@@ -71,11 +71,14 @@ def slug(texto):
 def pensar(texto, instruccion, reglas, cola):
     """Gemini primero; OpenAI con tope si Gemini no contesta (la misma cascada del cerebro)."""
     fallas = []
+    # 23-sep: Gemini tardó >60 s y el TimeoutError (no es MotorError) tumbó toda la corrida.
+    # Una red lenta es un intento fallido, no un choque: se reintenta Gemini una vez y se sigue.
     for nombre, f in (('gemini', lambda: cerebro._gemini(texto, reglas, instruccion)),
+                      ('gemini', lambda: cerebro._gemini(texto, reglas, instruccion)),
                       ('openai', lambda: cerebro._openai(texto, reglas, cola or [], instruccion))):
         try:
             crudo = f()
-        except MotorError as e:
+        except (MotorError, OSError, ValueError) as e:   # OSError cubre TimeoutError y URLError
             fallas.append('%s: %s' % (nombre, e))
             continue
         d = cerebro._json_de(crudo)
