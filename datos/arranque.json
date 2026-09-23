@@ -1,25 +1,20 @@
 {
- "corrida": "2026-09-23T16:09Z",
+ "corrida": "2026-09-23T17:47Z",
  "piezas": [
   {
    "pieza": "La Obra que No Empezó",
    "resultado": "sin lámina",
-   "motivo": "toma 1: sin cerebro disponible (Gemini gemini-3.5-flash-lite 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high dema"
+   "motivo": "toma 1: ningún motor de imagen pudo: Cloudflare 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, ple"
   },
   {
    "pieza": "La Recámara Cerrada",
-   "resultado": "sin guion",
-   "motivo": "el cerebro no contestó con un JSON (gemini: Gemini gemini-3.5-flash-lite 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experienci"
+   "resultado": "sin lámina",
+   "motivo": "toma 1: ningún motor de imagen pudo: Cloudflare 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, ple"
   },
   {
    "pieza": "Las 48 Horas",
-   "resultado": "sin guion",
-   "motivo": "el cerebro no contestó con un JSON (gemini: Gemini gemini-3.5-flash-lite 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experienci"
-  },
-  {
-   "pieza": "REEL · Así Se Ve Saber",
-   "resultado": "arrancada",
-   "motivo": "guion de 6 lámina(s) y lámina 1 con 2 tomas en tu mesa"
+   "resultado": "sin lámina",
+   "motivo": "toma 1: ningún motor de imagen pudo: Cloudflare 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, ple"
   }
  ]
 }
