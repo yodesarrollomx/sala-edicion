@@ -24,7 +24,7 @@
   },
   {
    "pieza": "El comprador ya sabe",
-   "estado": "en camino",
+   "estado": "publicada",
    "etapa": "láminas",
    "siguiente": "En producción.",
    "espera": "yo"
