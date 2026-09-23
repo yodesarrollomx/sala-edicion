@@ -26,7 +26,10 @@ def conectar():
     token = os.environ.get('HF_TOKEN') or None
     for space in SPACES:
         try:
-            c = Client(space, hf_token=token)
+            try:
+                c = Client(space, token=token)
+            except TypeError:
+                c = Client(space, hf_token=token)
             print('== conectado a', space, '(con token)' if token else '(anónimo)')
             return c
         except Exception as e:  # noqa: BLE001
