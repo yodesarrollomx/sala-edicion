@@ -20,6 +20,7 @@ Reglas que cuida, las mismas que `sala_productor.py` y en el mismo orden:
 """
 
 import argparse
+import json
 import hashlib
 import pathlib
 import subprocess
@@ -77,6 +78,13 @@ def subir_producto(ruta, familia, drive_raiz, cat_reglas):
         return None, str(e)
 
 
+def _leer_tira(pid):
+    try:
+        return json.loads((RAIZ / 'datos' / 'tiras' / ('%s.json' % pid)).read_text(encoding='utf-8'))
+    except (OSError, ValueError, TypeError):
+        return None
+
+
 def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
     """Devuelve (estado_nuevo, evidencia_dict)."""
     etapa = str(trabajo.get('etapa'))
@@ -126,6 +134,12 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
             motor_usado = extra.pop('motor')
 
         elif etapa == 'corte':
+            ev0 = trabajo.get('evidencia') or {}
+            tira = _leer_tira(ev0.get('de'))
+            if tira and len(ev0.get('laminas') or []) < len(tira.get('laminas') or []):
+                raise MotorError('corte incompleto: trae %d de las %d láminas de la pieza — lo '
+                                 'abrió un productor viejo; el nuevo abre el corte de la pieza entera'
+                                 % (len(ev0.get('laminas') or []), len(tira.get('laminas') or [])))
             ruta = montador.ensamblar(trabajo, reglas, cat, SALIDA, cola)
             motor_usado = 'ffmpeg'
 
@@ -207,6 +221,12 @@ def main():
         r = sala.get('reglas')
         reglas, motores_resp = r.get('reglas') or {}, r.get('motores') or []
         cola = (sala.get('cola') or {}).get('cola') or []
+        for t in cola:   # 23-sep: el Sheet devuelve la evidencia como TEXTO JSON; aquí es un dict
+            if isinstance(t.get('evidencia'), str):
+                try:
+                    t['evidencia'] = json.loads(t['evidencia'] or '{}')
+                except ValueError:
+                    t['evidencia'] = {'crudo': t['evidencia']}
     except sala.SalaError as e:
         sala.avisar('✗ no pude leer REGLAS/COLA: %s' % e)
         return 2

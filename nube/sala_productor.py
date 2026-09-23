@@ -93,6 +93,17 @@ def huella_insumo(lam, cat=None):
     return hashlib.md5(semilla.encode('utf-8')).hexdigest()[:8], 'tira-sin-imagen'
 
 
+def tira_de(pid):
+    try:
+        return json.loads((RAIZ / 'datos' / 'tiras' / ('%s.json' % pid)).read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return None
+
+
+def lamina_tira(tira, n):
+    return next((l for l in (tira or {}).get('laminas') or [] if str(l.get('n')) == str(n)), None)
+
+
 def datos_lamina(lam):
     """Lo que un motor necesita para trabajar sin volver a preguntarle al día: qué imagen es
     y qué dice/muestra. Antes la evidencia no llevaba `src` y ninguna escena podía encontrar
@@ -128,8 +139,13 @@ def planear(dia, cola, reglas, cat=None):
 
     for p in (dia.get('propuestas') or []):
         pid = str(p.get('id') or '')
-        familia = pid.split('-')[0] if pid else ''
-        if vigiladas and familia not in vigiladas:
+        # 23-sep: la pieza la dice su tira (`mesa-vacia`, no `mesa`), y el número real de cada
+        # lámina lo dice su mapa: la carta «lámina 1 de 1» del Apodo es la L6, no la L1.
+        tira = tira_de(pid)
+        mapa = (tira or {}).get('mapa') or {}
+        familia = str((tira or {}).get('pieza_slug') or (pid.split('-')[0] if pid else ''))
+        if vigiladas and familia not in vigiladas and '-nube-' not in pid:
+            diario.append('%s no se vigila (REGLA productor_piezas = %s)' % (pid, ','.join(vigiladas)))
             continue
         laminas = p.get('laminas') or []
         if not isinstance(laminas, list) or not laminas:
@@ -140,8 +156,10 @@ def planear(dia, cola, reglas, cat=None):
         for i, lam in enumerate(laminas):
             marca = str(marcas[i]) if i < len(marcas) else ''
             estados.append(marca or 'pendiente')
-            ver, de_donde = huella_insumo(lam if isinstance(lam, dict) else {}, cat)
-            item = str(i + 1)
+            item = str(mapa.get(str(i + 1), i + 1)) if tira else str(i + 1)
+            lam_t = lamina_tira(tira, item) if tira else None
+            ver, de_donde = huella_insumo(lam_t or (lam if isinstance(lam, dict) else {}), cat)
+            extra = {'n_real': True, **datos_lamina(lam_t)} if lam_t else datos_lamina(lam)
 
             if marca == 'si':
                 # Invariante 51: se abre ESTA rama, sin esperar a las hermanas.
@@ -152,9 +170,14 @@ def planear(dia, cola, reglas, cat=None):
                     nuevos.append({'id': tid, 'pieza': familia, 'etapa': etapa, 'item': item,
                                    'estado': 'pendiente', 'prioridad': 5, 'pidio': 'productor-nube',
                                    'evidencia': {'de': pid, 'lamina': item, 'insumo': de_donde,
-                                                 'nota': nota_de(dia, pid, i),
-                                                 **datos_lamina(lam)}})
+                                                 'nota': nota_de(dia, pid, i), **extra}})
                     diario.append('abre %s de la lámina %s de %s' % (etapa, item, pid))
+
+            elif marca == 'no' and '-nube-' in pid:
+                # Las cartas del montador las rehace el propio montador (05:40): tomas nuevas
+                # con esta nota, compuestas y MONTADAS. Un prospecto aquí sólo gastaría cuota
+                # en imágenes que nadie ve.
+                diario.append('lámina %s de %s: la rehace el montador de la mesa con tu nota' % (item, pid))
 
             elif marca == 'no':
                 # Un «no» abre candidatas, y sólo si no existen ya para ESA lámina en ESA
@@ -167,13 +190,47 @@ def planear(dia, cola, reglas, cat=None):
                                    'item': '%s-%d' % (item, k), 'estado': 'pendiente',
                                    'prioridad': 3, 'pidio': 'productor-nube',
                                    'evidencia': {'de': pid, 'lamina': item, 'insumo': de_donde,
-                                                 'nota': nota_de(dia, pid, i),
-                                                 **datos_lamina(lam)}})
+                                                 'nota': nota_de(dia, pid, i), **extra}})
                     diario.append('abre candidata %d de la lámina %s de %s (por un «no»)'
                                   % (k, item, pid))
             # 'pendiente' → nada. Eso le toca al editor, no al productor.
 
         # El corte es la ÚNICA compuerta de todo-o-nada: todas aprobadas.
+        if tira:
+            # 23-sep: con tira, «todas» es la PIEZA entera, no la carta (que sólo trae lo que
+            # faltaba decidir). Antes una carta de 1 lámina abría el corte de un video de 1 escena.
+            nuevos_ids = {x['id'] for x in nuevos}
+            por_n = {str(mapa.get(str(i + 1), i + 1)): e for i, e in enumerate(estados)}
+            listas, faltan = [], []
+            for lt in tira.get('laminas') or []:
+                n = str(lt.get('n'))
+                ok = por_n.get(n) == 'si' or (n not in por_n and lt.get('estado') == 'aprobada')
+                (listas if ok else faltan).append(lt)
+            if faltan:
+                diario.append('el corte de %s NO se abre: láminas sin aprobar %s'
+                              % (familia, [l.get('n') for l in faltan]))
+                continue
+            lam_ev = []
+            for lt in listas:
+                n, h = str(lt.get('n')), huella_insumo(lt, cat)[0]
+                lam_ev.append({'item': n, 'huella': h})
+                for etapa in ('escena', 'voz'):   # lo aprobado antes que aún no tiene escena/voz
+                    tid = '%s:%s:%s:%s' % (familia, etapa, n, h)
+                    if tid in ya or tid in nuevos_ids:
+                        continue
+                    nuevos.append({'id': tid, 'pieza': familia, 'etapa': etapa, 'item': n,
+                                   'estado': 'pendiente', 'prioridad': 5, 'pidio': 'productor-nube',
+                                   'evidencia': {'de': pid, 'lamina': n, 'n_real': True,
+                                                 **datos_lamina(lt)}})
+                    nuevos_ids.add(tid)
+            ver_pieza = hashlib.md5(json.dumps(lam_ev, sort_keys=True).encode()).hexdigest()[:8]
+            tid = '%s:corte:completo:%s' % (familia, ver_pieza)
+            if tid not in ya:
+                nuevos.append({'id': tid, 'pieza': familia, 'etapa': 'corte', 'item': 'completo',
+                               'estado': 'pendiente', 'prioridad': 7, 'pidio': 'productor-nube',
+                               'evidencia': {'de': pid, 'laminas': lam_ev}})
+                diario.append('abre el corte de %s (las %d láminas de la pieza)' % (familia, len(lam_ev)))
+            continue
         todas_si = bool(estados) and all(e == 'si' for e in estados)
         if todas_si:
             ver_pieza = hashlib.md5(
