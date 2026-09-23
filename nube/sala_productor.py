@@ -152,6 +152,7 @@ def planear(dia, cola, reglas, cat=None):
                     nuevos.append({'id': tid, 'pieza': familia, 'etapa': etapa, 'item': item,
                                    'estado': 'pendiente', 'prioridad': 5, 'pidio': 'productor-nube',
                                    'evidencia': {'de': pid, 'lamina': item, 'insumo': de_donde,
+                                                 'nota': nota_de(dia, pid, i),
                                                  **datos_lamina(lam)}})
                     diario.append('abre %s de la lámina %s de %s' % (etapa, item, pid))
 

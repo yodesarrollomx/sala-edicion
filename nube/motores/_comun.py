@@ -26,8 +26,9 @@ def lamina_de(trabajo):
     El número sale de `evidencia.lamina` (la tira manda, invariante 29), no del nombre."""
     ev = trabajo.get('evidencia') or {}
     datos = {k: str(ev.get(k) or '') for k in ('src', 'dice', 've', 'nota')}
-    if datos['src']:
+    if datos['src'] and not toma_elegida(datos['nota']):
         return datos
+    datos['src'] = ''
     n = str(ev.get('lamina') or trabajo.get('item') or '').split('-')[0]
     ruta = TIRAS / ('%s.json' % str(ev.get('de') or ''))
     if not n or not ruta.is_file():
@@ -36,12 +37,29 @@ def lamina_de(trabajo):
         tira = json.loads(ruta.read_text(encoding='utf-8'))
     except ValueError:
         return datos
+    mapa = tira.get('mapa') or {}
+    n = str(mapa.get(n, n)) if str(ev.get('de') or '').find('-nube-') > 0 else n
     for i, lam in enumerate(tira.get('laminas') or []):
         if isinstance(lam, dict) and str(lam.get('n') or i + 1) == n:
             for k in datos:
                 datos[k] = datos[k] or str(lam.get(k) or '')
+            elegida = toma_elegida(datos['nota'] or str(ev.get('nota') or ''))
+            tomas = lam.get('candidatas') or []
+            if elegida and 0 < elegida <= len(tomas):
+                # 14-sep: se animó la foto vieja porque nadie siguió la toma elegida. La
+                # toma manda: su original (png) y su texto sustituyen a la versión anterior.
+                t = tomas[elegida - 1]
+                datos['src'] = str(t.get('original') or t.get('src') or datos['src'])
+                datos['dice'] = str(t.get('dice') or datos['dice'])
             break
     return datos
+
+
+def toma_elegida(nota):
+    """«[toma elegida: 2]» (lo que escribe la Sala al tocar «Ésta», en base 1) → 2."""
+    import re
+    m = re.search(r'\[toma elegida:\s*(\d+)\]', nota or '')
+    return int(m.group(1)) if m else 0
 
 
 def traer_imagen(trabajo, cat, destino):
