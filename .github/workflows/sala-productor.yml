@@ -73,6 +73,8 @@ jobs:
         if: steps.productor.outputs.codigo != '0'
         env:
           GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}      # sólo para tacharlos del log (limpiar_log.py)
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
         run: |
           gh label create "atencion" --color "D93F0B" \
             --description "Algo del ciclo de la Sala necesita una mirada" --force
@@ -90,7 +92,7 @@ jobs:
             echo "No se encoló nada."
             echo
             echo '```'
-            cat productor.log
+            python3 nube/limpiar_log.py productor.log
             echo '```'
           } > comentario.md
           gh issue comment "$numero" --body-file comentario.md

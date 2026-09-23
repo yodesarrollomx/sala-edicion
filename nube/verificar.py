@@ -94,6 +94,28 @@ def prueba_workflows_no_filtran():
                   'nunca imprimas un secret; usa ::add-mask:: y redactar()')
 
 
+def prueba_logs_publicos_limpios():
+    """23-sep: el aviso del Vigía pegó `cat ejecutor.log` en el issue #3 (público) con las líneas
+    `::add-mask::<secreto>` adentro; Google y Hugging Face desactivaron las llaves. Todo log que
+    va a un issue pasa por nube/limpiar_log.py."""
+    d = RAIZ / '.github' / 'workflows'
+    if not d.is_dir():
+        return
+    for y in sorted(d.glob('*.yml')):
+        texto = y.read_text(encoding='utf-8', errors='replace')
+        if 'gh issue comment' not in texto and 'gh issue create' not in texto:
+            continue
+        crudo = re.findall(r'^\s*(?:.*;\s*)?(?:cat|tail|head)\b[^\n]*\.log', texto, re.M)
+        if crudo:
+            falla('INVIOLABLE 2 · cero claves en el log',
+                  '%s pega un log crudo a un issue: %s' % (y.name, crudo[0].strip()[:80]),
+                  'usa python3 nube/limpiar_log.py archivo.log [N]')
+    for f in (RAIZ / 'datos').rglob('*.json'):
+        if '::add-mask::' in f.read_text(encoding='utf-8', errors='replace'):
+            falla('INVIOLABLE 2 · cero claves en el log', '%s trae una línea ::add-mask::' % f,
+                  'bórrala y rota la llave que exponía')
+
+
 def prueba_workflows_no_deciden():
     """INVIOLABLE 3 — decidir es de los editores; el agente no marca.
     Si falla: un bot marcaría cartas en nombre de Alejandro o de Sayri.

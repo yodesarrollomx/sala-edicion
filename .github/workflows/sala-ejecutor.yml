@@ -95,6 +95,8 @@ jobs:
         if: steps.ejecutor.outputs.codigo != '0'
         env:
           GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}      # sólo para tacharlos del log (limpiar_log.py)
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
         run: |
           gh label create "atencion" --color "D93F0B" \
             --description "Algo del ciclo de la Sala necesita una mirada" --force
@@ -110,7 +112,7 @@ jobs:
             echo "## 🔴 El ejecutor salió con código ${{ steps.ejecutor.outputs.codigo }} — $(date -u '+%Y-%m-%d %H:%M UTC')"
             echo
             echo '```'
-            cat ejecutor.log
+            python3 nube/limpiar_log.py ejecutor.log
             echo '```'
           } > comentario.md
           gh issue comment "$numero" --body-file comentario.md

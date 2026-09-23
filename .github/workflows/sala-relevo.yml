@@ -87,6 +87,8 @@ jobs:
         if: steps.relevo.outputs.codigo != '0'
         env:
           GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}      # sólo para tacharlos del log (limpiar_log.py)
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
         run: |
           gh label create "atencion" --color "D93F0B" \
             --description "Algo del ciclo de la Sala necesita una mirada" --force
@@ -105,7 +107,7 @@ jobs:
             echo "En los dos casos **no se tocó el respaldo espejo**: «no contestó» nunca es «no hay nada»."
             echo
             echo '```'
-            cat relevo.log
+            python3 nube/limpiar_log.py relevo.log
             echo '```'
           } > comentario.md
           gh issue comment "$numero" --body-file comentario.md
