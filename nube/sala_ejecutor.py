@@ -324,7 +324,9 @@ def main():
 
         if estado == 'hecho':
             hechos += 1
-            sala.avisar('  ✓ hecho · motor=%s · %ss' % (ev.get('motor'), ev.get('segundos_produccion')))
+            sala.avisar('  ✓ hecho · motor=%s · %ss%s' % (ev.get('motor'), ev.get('segundos_produccion'),
+                        (' · ⚠ NO subió a Drive: %s' % sala.redactar(str(ev['aviso_subida']))[:300])
+                        if ev.get('aviso_subida') else ' · en Drive'))
         elif estado == 'fallo':
             fallados += 1
             sala.avisar('  ✗ fallo · %s' % ev.get('error'))
