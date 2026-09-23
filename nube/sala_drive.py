@@ -105,6 +105,15 @@ def _peticion(metodo, url, **kw):
         raise DriveError('falta el paquete «requests» (se instala en el workflow)')
     cab = kw.pop('headers', {}) or {}
     cab['Authorization'] = 'Bearer ' + _token()
+    # 23-sep: una cuenta de servicio NO tiene cuota en un «Mi unidad» personal (403 «Service
+    # Accounts do not have storage quota»). Sólo puede escribir en una unidad COMPARTIDA, y la API
+    # ignora esas unidades si no se le dice. Inofensivo con carpetas normales.
+    params = dict(kw.pop('params', {}) or {})
+    params.setdefault('supportsAllDrives', 'true')
+    if metodo == 'GET' and url.rstrip('/').endswith('/files'):
+        params.setdefault('includeItemsFromAllDrives', 'true')
+        params.setdefault('corpora', 'allDrives')
+    kw['params'] = params
     ultimo = None
     for intento in range(1, INTENTOS + 1):
         try:
