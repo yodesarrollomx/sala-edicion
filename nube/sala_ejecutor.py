@@ -40,7 +40,7 @@ RAIZ = pathlib.Path(__file__).resolve().parent.parent
 MANIFIESTO = RAIZ / 'datos' / 'manifiesto.json'
 SALIDA = RAIZ / '.producido'                        # nunca se commitea (ver .gitignore)
 
-ETAPAS_SOPORTADAS = {'escena', 'voz', 'corte'}
+ETAPAS_SOPORTADAS = {'escena', 'voz', 'corte', 'prospecto'}
 MOTORES_VOZ = {'kokoro': voz_kokoro, 'gemini_tts': voz_gemini}
 
 
@@ -81,6 +81,7 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
     """Devuelve (estado_nuevo, evidencia_dict)."""
     etapa = str(trabajo.get('etapa'))
     inicio = time.time()
+    extra = {}
 
     try:
         if etapa == 'voz':
@@ -95,14 +96,34 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
             motor_usado = m['motor']
 
         elif etapa == 'escena':
+            # wan_hf (animación real, gratis e intermitente) primero; si no puede, la cámara
+            # sobre la lámina (ffmpeg, siempre sale). `escena_respaldo_camara`=0 la apaga.
             m, razon = motores.elegir_motor('escena', motores_resp, [])
-            if not m or m['motor'] != 'wan_hf':
-                raise MotorError('sin motor de escena disponible en la nube: %s'
-                                 % (razon if not m else 'sólo "%s" implementado' % m['motor']),
-                                 intermitente=True)
-            from motores import escena_wan_hf
-            ruta = escena_wan_hf.producir(trabajo, reglas, cat, SALIDA)
-            motor_usado = 'wan_hf'
+            avisos = []
+            ruta = None
+            if m and m['motor'] == 'wan_hf':
+                from motores import escena_wan_hf
+                try:
+                    ruta = escena_wan_hf.producir(trabajo, reglas, cat, SALIDA)
+                    motor_usado = 'wan_hf'
+                except MotorError as e:
+                    if not e.intermitente:
+                        raise
+                    avisos.append(str(e))
+            else:
+                avisos.append('wan_hf no disponible: %s' % (razon if not m else m['motor']))
+            if ruta is None:
+                if str(reglas.get('escena_respaldo_camara', '1')).strip() in ('0', 'no', 'false'):
+                    raise MotorError('sin animación y la cámara de respaldo está apagada: %s'
+                                     % ' · '.join(avisos), intermitente=True)
+                from motores import escena_camara
+                ruta = escena_camara.producir(trabajo, reglas, cat, SALIDA)
+                motor_usado = 'camara'
+
+        elif etapa == 'prospecto':
+            from motores import prospecto
+            ruta, extra = prospecto.producir(trabajo, reglas, cat, SALIDA, cola)
+            motor_usado = extra.pop('motor')
 
         elif etapa == 'corte':
             ruta = montador.ensamblar(trabajo, reglas, cat, SALIDA, cola)
@@ -129,6 +150,7 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                                             drive_raiz, reglas)
     ev = {'motor': motor_usado, 'md5': md5, 'segundos_produccion': segundos,
           'duracion_s': duracion, 'ruta_local': str(ruta), 'drive_id': drive_id}
+    ev.update(extra)
     if error_subida:
         ev['aviso_subida'] = error_subida
     return 'hecho', ev

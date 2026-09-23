@@ -34,6 +34,12 @@ NUEVAS = {
     'voz_narrador': ('af_heart', 'voz de Kokoro para el rol narrador (mujer, "ella")'),
     'voz_vecino': ('am_adam', 'voz de Kokoro para el rol vecino (hombre, "el")'),
     'voz_seg_por_palabra': (0.3125, 'segundos por palabra a ritmo Kokoro (~16 palabras en 5s, regla 98)'),
+    'escena_respaldo_camara': (1, 'si wan_hf no puede, anima la lámina con un movimiento de '
+                               'cámara (ffmpeg, gratis, siempre sale); 0 = esperar a wan_hf'),
+    'imagen_motores': ('cloudflare,gemini', 'orden de los motores de imagen en la nube (gratis primero)'),
+    'cerebro_modelo': ('gemini-2.5-flash-lite', 'modelo gratis que escribe las recetas de candidatas'),
+    'cerebro_respaldo_modelo': ('gpt-4o-mini', 'respaldo de pago del cerebro, sólo si Gemini no contesta'),
+    'cerebro_pago_tope_dia': (30, 'llamadas máximas al día al respaldo de pago (≈ centavos, < 1 USD)'),
     'escena_wan_hf_modelo': ('', 'el id del modelo en HuggingFace para animar con wan_hf — '
                              'vacío a propósito: no se adivina uno sin confirmar'),
 }

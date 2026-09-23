@@ -137,3 +137,25 @@ tumba la corrida — ya queda escrito en su propia fila de COLA (visible desde A
 Sala), y uno intermitente se reintenta solo. El issue sólo se abre cuando la corrida ENTERA
 no pudo trabajar (REGLAS, COLA o el catálogo no contestaron) — ahí sí nadie más se entera si
 esto no avisa.
+
+## 23-sep · Los dos eslabones que faltaban (gratis primero)
+
+La nube ya no se queda sin nada que hacer por falta de la Mac:
+
+| Etapa | Motores, en orden | Costo |
+|---|---|---|
+| `escena` | `wan_hf` (animación real) → **`camara`**: movimiento lento sobre la lámina entera, ffmpeg en el runner | 0 |
+| `prospecto` (candidata nueva tras un «no») | cerebro: Gemini `cerebro_modelo` → OpenAI con tope `cerebro_pago_tope_dia`; imagen: Cloudflare FLUX schnell → Gemini imagen (`imagen_motores`) | 0; el respaldo OpenAI queda muy por debajo de 1 USD/día |
+
+**Bug corregido:** el productor encolaba escena/voz/prospecto sin `src` de la lámina, y el
+motor de escena no podía encontrarla nunca («sin id de Drive» → `pendiente` para siempre).
+Ahora la evidencia lleva `src`, `dice`, `ve` y la nota del «no»; los trabajos viejos la
+recuperan de su tira (`motores/_comun.lamina_de`). La imagen se toma del repo si está en el
+checkout y, si no, de Drive.
+
+**Para encenderlo:** secrets `CF_ACCOUNT_ID` y `CF_API_TOKEN` (cuenta gratis de Cloudflare →
+Workers AI → REST API); `OPENAI_API_KEY` es opcional. Luego, en la REGLA
+`nube_ejecuta_etapas`, agrega `escena,prospecto` (el seguro de fábrica sigue siendo tuyo).
+
+**Aún no:** montar el prospecto en la mesa del editor. Hoy queda producido y subido a Drive
+con su receta en la evidencia de la COLA; montarlo (accion:proponer) es el siguiente paso.
