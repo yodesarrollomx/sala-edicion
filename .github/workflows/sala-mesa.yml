@@ -1,0 +1,129 @@
+# El montador de la mesa. Antes: sala_publicar.py en la Mac (si la Mac dormía, la mesa
+# amanecía vacía). Aquí: cada mañana retoma lo que los editores rechazaron o dejaron sin
+# decidir, prepara tomas nuevas con su última nota y monta la carta — después de publicar,
+# para que la carta nunca llegue a la mesa sin su tira.
+name: Montador de la mesa
+
+on:
+  schedule:
+    - cron: '40 12 * * *'   # 05:40 Hermosillo, antes del correo de las 7:00
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'simular = sólo decir; producir = generar sin montar; montar = generar y montar'
+        type: choice
+        options: [simular, producir, montar]
+        default: simular
+      pieza:
+        description: 'Sólo esta pieza (slug, p.ej. comprador). Vacío = todas.'
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: sala-mesa
+  cancel-in-progress: false
+
+jobs:
+  mesa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      MODO: ${{ inputs.modo || 'montar' }}
+      PIEZA: ${{ inputs.pieza }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Librerías (imagen y HTTP)
+        run: pip install --quiet pillow requests
+
+      - name: Caché de la tipografía de la casa (Playfair Display, OFL)
+        id: cache-fuentes
+        uses: actions/cache@v4
+        with:
+          path: nube/.cache/fuentes
+          key: playfair-v1
+
+      - name: Bajar la tipografía si no está en caché
+        if: steps.cache-fuentes.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p nube/.cache/fuentes
+          base=https://github.com/google/fonts/raw/main/ofl/playfairdisplay
+          curl -fsSL -o 'nube/.cache/fuentes/PlayfairDisplay[wght].ttf' "$base/PlayfairDisplay%5Bwght%5D.ttf"
+          curl -fsSL -o 'nube/.cache/fuentes/PlayfairDisplay-Italic[wght].ttf' "$base/PlayfairDisplay-Italic%5Bwght%5D.ttf"
+
+      - name: Preparar las tomas
+        id: mesa
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          set +e
+          bandera=--producir; [ "$MODO" = simular ] && bandera=--simular
+          python3 sala_mesa.py $bandera ${PIEZA:+--pieza "$PIEZA"} 2>&1 | tee ../mesa.log
+          echo "codigo=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Verificar antes de publicar (las reglas del repo)
+        if: steps.mesa.outputs.codigo == '0' && env.MODO != 'simular'
+        run: |
+          pip install --quiet google-auth
+          python3 nube/verificar.py
+
+      - name: Guardar las tomas y las tiras
+        id: guardar
+        if: steps.mesa.outputs.codigo == '0' && env.MODO != 'simular'
+        run: |
+          git config user.name "Montador de la mesa"
+          git config user.email "noreply@yodesarrollo.mx"
+          git add laminas datos/tiras
+          if git diff --cached --quiet; then
+            echo "nada nuevo que guardar"; echo "hubo=no" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          git commit -m "mesa: tomas nuevas con las últimas notas de los editores"
+          git pull --rebase --quiet origin main
+          git push
+          echo "hubo=si" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar y esperar a que la tira esté en línea
+        if: steps.guardar.outputs.hubo == 'si'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run publicar.yml --ref main
+          sleep 15
+          id=$(gh run list --workflow publicar.yml --limit 1 --json databaseId --jq '.[0].databaseId')
+          gh run watch "$id" --exit-status
+
+      - name: Montar las cartas en la mesa
+        if: steps.guardar.outputs.hubo == 'si' && env.MODO == 'montar'
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: python3 sala_mesa.py --montar 2>&1 | tee -a ../mesa.log
+
+      - name: Avisar si algo falló
+        if: failure() || steps.mesa.outputs.codigo != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          titulo="🔎 Vigía · Sala de Edición"
+          numero=$(gh issue list --search "in:title \"$titulo\"" --state open \
+                   --json number,title --jq ".[] | select(.title==\"$titulo\") | .number" | head -n1)
+          [ -z "$numero" ] && exit 0
+          { echo "## 🔴 El montador de la mesa falló — $(date -u '+%Y-%m-%d %H:%M UTC')"; echo;
+            echo '```'; tail -40 mesa.log 2>/dev/null; echo '```'; } > comentario.md
+          gh issue comment "$numero" --body-file comentario.md
+          exit 1
