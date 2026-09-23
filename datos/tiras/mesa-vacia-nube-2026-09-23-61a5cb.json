@@ -1,0 +1,233 @@
+{
+ "pieza": "La Mesa Vacía",
+ "pieza_slug": "mesa-vacia",
+ "promesa": "Toda familia tiene un terreno esperando. Lo que falta no es dinero ni acuerdo: es un Miguel.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/mesa-vacia-e2026-09-15/L1.png",
+   "dice": "En tu familia hay un terreno del que todos opinan y nadie decide.",
+   "estado": "aprobada",
+   "versiones": [],
+   "version": 1,
+   "toma_elegida": "Toma 1",
+   "aprobada_el": "2026-09-15"
+  },
+  {
+   "n": 2,
+   "src": "laminas/mesa-vacia-g1/L2.png",
+   "dice": "Quedó intestado. Y el tiempo no espera papeles.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-23/L2-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-23/L2-1.png",
+     "titulo": "A",
+     "texto": "El texto ahora es una pregunta en segunda persona que engancha y la imagen muestra exactamente a la pareja discutiendo sobre el problema.",
+     "dice": "¿Tu familia sigue discutiendo por ese terreno intestado?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "93156643550302dd796b7be85596c401"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-23/L2-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-23/L2-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota cambiando el texto a una pregunta enganchadora y creando una imagen clara que la sostiene.",
+     "dice": "¿Y si el terreno familiar se sigue haciendo viejo sin escrituras?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "eea41f4cf7aae2f06e9eab2924e7ec7a"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto. El texto no engancha",
+   "fecha": "2026-09-23"
+  },
+  {
+   "n": 3,
+   "src": "laminas/mesa-vacia-g1/L3.png",
+   "dice": "Un día, Miguel se sentó en la cabecera.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-23/L3-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-23/L3-1.png",
+     "titulo": "A",
+     "texto": "Muestra lógicamente a Miguel tomando la cabecera dentro de la casa como pide la nota.",
+     "dice": "¿Y si esta vez Miguel toma la cabecera en tu propia casa de 240 m²?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "7c60e967d20ce78ba47a3446b627dbe4"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-23/L3-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-23/L3-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota mostrando el contexto de la casa y la secuencia lógica de los personajes.",
+     "dice": "¿Y si te sientas en la cabecera de tu casa nueva?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "e2ee3cd652c186f56689b549e4de4657"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto. creo que la primer imaggen habla de otra cos ay derrepente estan dentro de la casa hay que seguir la logica d elas imagenes en dodne estan contexto y personas",
+   "fecha": "2026-09-23"
+  },
+  {
+   "n": 4,
+   "src": "laminas/mesa-vacia-g1/L4.png",
+   "dice": "No tenía que saberlo todo. Tenía que sentar a los que saben.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L4-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L4-1.png",
+     "titulo": "A",
+     "texto": "Se mantiene el texto original ajustado a pregunta en segunda persona y la receta replica exactamente a los personajes, lugar y luz de la lámina 1.",
+     "dice": "¿No tenías que saberlo todo, sino sentar a los que saben?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "2e9d3dcbad1759991463e55be856c12d"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L4-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L4-2.png",
+     "titulo": "B",
+     "texto": "Mantiene el mismo texto pero ajusta la receta fotográfica para asegurar que aparezcan los mismos personajes, lugar y luz de la lámina 1.",
+     "dice": "¿Y si en vez de debatir, sientas a los que saben?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "5b36d0902eb546673518f64bbcf2b4b1"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": "",
+   "fecha": "2026-09-22"
+  },
+  {
+   "n": 5,
+   "src": "laminas/mesa-vacia-g1/L5.png",
+   "dice": "La familia pone el terreno. El equipo, todo lo demás.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L5-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L5-1.png",
+     "titulo": "A",
+     "texto": "Mantiene a los personajes, la luz y el lugar de la lámina aprobada pero adapta el texto a pregunta.",
+     "dice": "¿Y si el terreno familiar por fin deja de ser solo una platica de sobremesa?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "d06b8ce728b8dffd30dfea91a02734a7"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L5-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L5-2.png",
+     "titulo": "B",
+     "texto": "Modifica la imagen manteniendo estrictamente la continuidad visual de los mismos personajes y espacio luminoso de la lámina 1.",
+     "dice": "¿Tu familia pone el terreno y ustedes la construyen?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "0d5827c2700d15092b7fee80e1f5664c"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": "",
+   "fecha": "2026-09-22"
+  },
+  {
+   "n": 6,
+   "src": "laminas/mesa-vacia-g1/L6.png",
+   "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-23/L6-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-23/L6-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota al cambiar a una pregunta directa que engancha y una composición dinámica con el protagonista solo junto al auto.",
+     "dice": "¿Por qué tus hermanos ya apartaron su terreno familiar?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "cc35700525a093b363fe2bf91e454c06"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-23/L6-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-23/L6-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota cambiando el texto a una pregunta atractiva y mostrando a la pareja idealizada en su propio terreno.",
+     "dice": "¿Y si el terreno familiar se convierte en tu próxima casa?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "943beb691da4a6394491eea01eb3278c"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto. El texto no engancha",
+   "fecha": "2026-09-23"
+  },
+  {
+   "n": 7,
+   "src": "laminas/mesa-vacia-g1/L7.png",
+   "dice": "Esta silla es la tuya.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-23/L7-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-23/L7-1.png",
+     "titulo": "A",
+     "texto": "El texto se cambió a una pregunta directa que engancha al lector y apela a la toma de decisiones familiares.",
+     "dice": "¿Quién falta en tu mesa para decidir por fin ese terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "1c7fb1b344f1f6f5ee9367a115292084"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-23/L7-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-23/L7-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota usando una pregunta directa en segunda persona que engancha al lector.",
+     "dice": "¿Sabes exactamente en qué esquina construirás?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "7a950f4a74cccb39e82fdd0176ba2b33"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "El texto no engancha",
+   "fecha": "2026-09-23"
+  }
+ ],
+ "decidir": [
+  2,
+  3,
+  6,
+  7
+ ],
+ "mapa": {
+  "1": 2,
+  "2": 3,
+  "3": 6,
+  "4": 7
+ },
+ "base": "mesa-vacia-nube-2026-09-22-c3f77d",
+ "guion": "",
+ "titulo": "La Mesa Vacía · rehechas con tus notas (4)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de mesa-vacia-nube-2026-09-22-c3f77d",
+ "fecha": "2026-09-23"
+}
