@@ -2628,21 +2628,19 @@
    "origen": "rehecha-de asi-se-ve-saber-arranque-2026-09-23-64f1e0"
   },
   {
-   "id": "mesa-vacia-nube-2026-09-22-c3f77d",
-   "titulo": "La Mesa Vacía · rehechas con tus notas (6)",
+   "id": "mesa-vacia-nube-2026-09-23-61a5cb",
+   "titulo": "La Mesa Vacía · rehechas con tus notas (4)",
    "tipo": "laminas",
    "laminas": [
-    "laminas/mesa-vacia-n2026-09-22/L2-1.jpg",
-    "laminas/mesa-vacia-n2026-09-22/L3-1.jpg",
-    "laminas/mesa-vacia-n2026-09-22/L4-1.jpg",
-    "laminas/mesa-vacia-n2026-09-22/L5-1.jpg",
-    "laminas/mesa-vacia-n2026-09-22/L6-1.jpg",
-    "laminas/mesa-vacia-n2026-09-22/L7-1.jpg"
+    "laminas/mesa-vacia-n2026-09-23/L2-1.jpg",
+    "laminas/mesa-vacia-n2026-09-23/L3-1.jpg",
+    "laminas/mesa-vacia-n2026-09-23/L6-1.jpg",
+    "laminas/mesa-vacia-n2026-09-23/L7-1.jpg"
    ],
    "opciones": [],
    "video": null,
-   "de_antes": "2026-09-22",
-   "origen": "rehecha-de mesa-vacia-tira-2026-09-15"
+   "de_antes": null,
+   "origen": "rehecha-de mesa-vacia-nube-2026-09-22-c3f77d"
   }
  ],
  "parrilla": [],
@@ -3498,6 +3496,69 @@
      ]
     ]
    },
+   "asi-se-ve-saber-nube-2026-09-23-b8d656": {
+    "laminas": [
+     "no"
+    ],
+    "nota": "",
+    "notas": [
+     "La imagen B esta bien pero eso de tus 300 m2 no se de donde salio... creo que quiero que qnalices de lleno lalogica de todo el guion y textos por que creo que no estan aliniados con todos nisiguiendo un sistem a tipo de venta hook"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "La imagen B esta bien pero eso de tus 300 m2 no se de donde salio... creo que quiero que qnalices de lleno lalogica de todo el guion y textos por que creo que no estan aliniados con todos nisiguiendo un sistem a tipo de venta hook"
+      }
+     ]
+    ]
+   },
+   "mesa-vacia-nube-2026-09-23-61a5cb": {
+    "laminas": [
+     "no",
+     "no",
+     "no",
+     "no"
+    ],
+    "nota": "",
+    "notas": [
+     "B pero el texto no engancha ni da buena espina ... creo que no tiene que ver con lod el plan de ppp ... al igual qu ela otra revisoon de la lamina que acabo de revisar ... revisa los textos y la logixa de como lo contamos... la imagen b esta bien",
+     "La imagen no cuadra con el texto... al igual creo qu el texto no me engancha ... y estamos desviando realiza las cosas mas sobre elplan de potencial haz un solo guoon y siguelo uyque hormozi lo revise todo compelto no tomes estos textos como uno por uno si no piensa todo uy vuelve amostrar",
+     "B pero creo qu enoe stamos engfocados en el plan de potenicla al igual que lo demas revis abien de que se trata y ayyduame ahcerlo bien",
+     "B pero no tiene nada que ver el texto noe stan alinaidos los textos de todas las laminas estan platicando por separado preguntas y eso no es un editor de marketing hazlo bien pensando y ponoendote la cachca de un exxperto y que me quiere hacer un anuncio que convierta"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "B pero el texto no engancha ni da buena espina ... creo que no tiene que ver con lod el plan de ppp ... al igual qu ela otra revisoon de la lamina que acabo de revisar ... revisa los textos y la logixa de como lo contamos... la imagen b esta bien"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "La imagen no cuadra con el texto... al igual creo qu el texto no me engancha ... y estamos desviando realiza las cosas mas sobre elplan de potencial haz un solo guoon y siguelo uyque hormozi lo revise todo compelto no tomes estos textos como uno por uno si no piensa todo uy vuelve amostrar"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "B pero creo qu enoe stamos engfocados en el plan de potenicla al igual que lo demas revis abien de que se trata y ayyduame ahcerlo bien"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "B pero no tiene nada que ver el texto noe stan alinaidos los textos de todas las laminas estan platicando por separado preguntas y eso no es un editor de marketing hazlo bien pensando y ponoendote la cachca de un exxperto y que me quiere hacer un anuncio que convierta"
+      }
+     ]
+    ]
+   },
    "apodo-nube-2026-09-22-5876c4": {
     "laminas": [
      "si"
@@ -3521,6 +3582,6 @@
   "editores": [
    "Alejandro"
   ],
-  "guardado": "2026-09-23T09:58:14"
+  "guardado": "2026-09-23T12:27:37"
  }
 }
