@@ -66,6 +66,20 @@ revisión. De ahí sale lo que la Mac produce ese día, y todo queda registrado 
 
 ## El ciclo en la nube (21-sep-2026, ampliado el mismo día)
 
+**23-sep · YA NO HAY MAC.** Alejandro ya no cuenta con la Mac: todo corre en la nube. Donde este
+documento (o `docs/`) mencione `~/yod_audit/`, `~/.sala_gas*` o `launchd`, es historia; su
+equivalente vivo está en esta tabla y en `nube/README.md` («Rotar la clave del agente sin Mac»).
+Nada nuevo puede depender de la Mac.
+
+| Lo que hacía la Mac | Dónde vive ahora |
+|---|---|
+| cosechar chinches de la Sala (`encargos.py` + `/sala`) | `sala-chinches.yml` → issues 📌 (cada hora) |
+| guion y lámina 1 de las ideas elegidas, semillero de ideas | `sala-arranque.yml` (5:50 Hmo) |
+| montar la mesa del día | `sala-mesa.yml` |
+| escena/voz/corte y subir a Drive | `sala-ejecutor.yml` + despertador (Productor y puente) · Drive en **unidad compartida** |
+| guardar la clave del agente (`~/.sala_gas_claves.json`) | secret `SALA_CLAVE_AGENTE` + fila `clave_agente` de la hoja CONFIG |
+| `sala_verificar.py` (recorrido de botones) | pendiente de portar: hoy `nube/verificar.py` + Playwright a mano |
+
 `~/yod_audit/` ya no es la única casa del ciclo. La orquestación diaria —cosechar el día,
 rehacer el respaldo espejo, abrir compuertas, encolar, y ahora también EJECUTAR lo que no
 necesita GPU— corre en **GitHub Actions**, contra el mismo `/exec` y el mismo Drive de

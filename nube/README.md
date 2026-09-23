@@ -159,3 +159,17 @@ Workers AI → REST API); `OPENAI_API_KEY` es opcional. Luego, en la REGLA
 
 **Aún no:** montar el prospecto en la mesa del editor. Hoy queda producido y subido a Drive
 con su receta en la evidencia de la COLA; montarlo (accion:proponer) es el siguiente paso.
+
+
+## Rotar la clave del agente sin Mac (23-sep)
+
+La clave del agente estuvo pública (fuga del 23-sep) y ya no hay Mac para `rotar_claves`.
+Se rota **sólo la del agente**; las de editor/editor2/lector no se tocan (son de las personas).
+
+1. Genera una cadena nueva de 16 caracteres hex (cualquier generador; no la escribas en chats).
+2. En el Sheet «Sala de Edición · YOD», hoja **CONFIG**: en la fila `clave_agente` cambia el
+   valor por la nueva. (Si hay filas repetidas de `clave_agente`, cámbialas todas.)
+3. En el repo → Settings → Secrets → Actions → `SALA_CLAVE_AGENTE` → pega la misma.
+4. Corre «Sonda de la Sala»: debe contestar sin «clave incorrecta».
+
+Entre el paso 2 y el 3 los workflows fallan con «clave»: hazlos seguidos.
