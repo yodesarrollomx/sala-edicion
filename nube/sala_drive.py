@@ -65,12 +65,19 @@ def _credenciales():
         info = json.loads(crudo)
     except ValueError as e:
         raise DriveError('GDRIVE_SA_JSON no es JSON válido: %s' % e)
+    # 23-sep: tras rotar la llave seguía «Invalid JWT Signature». El id de la llave NO es secreto
+    # (Google lo muestra en la consola) y dice si el secret trae la nueva o la vieja ya borrada.
+    global _llave_id
+    _llave_id = str(info.get('private_key_id') or '')[:8]
     try:
         _credenciales_cache = service_account.Credentials.from_service_account_info(
             info, scopes=[ALCANCE])
     except (ValueError, KeyError) as e:
         raise DriveError('GDRIVE_SA_JSON no es una cuenta de servicio válida: %s' % e)
     return _credenciales_cache
+
+
+_llave_id = ''
 
 
 def _token():
@@ -84,7 +91,8 @@ def _token():
     try:
         cred.refresh(Request())
     except Exception as e:                          # cualquier fallo de red o de firma
-        raise DriveError('no se pudo obtener el token de la cuenta de servicio: %s' % e)
+        raise DriveError('no se pudo obtener el token de la cuenta de servicio (llave id %s…, cuenta %s): %s'
+                         % (_llave_id or '?', getattr(cred, 'service_account_email', '?'), e))
     _token_cache['token'] = cred.token
     _token_cache['vence'] = cred.expiry.timestamp() if cred.expiry else ahora + 3000
     return cred.token
