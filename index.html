@@ -88,6 +88,15 @@ html.embed .app{padding-top:8px}
 
 /* ── árbol de Producción (12-sep) ── */
 /* La Línea (23-sep) */
+.ln-mini h4{margin:0 0 4px}
+.ln-mini .rel{font-size:13.5px;line-height:1.4;margin:0 0 8px}
+.ln-mfila{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:0;border-top:1px solid var(--linea);padding:9px 0;cursor:pointer}
+.ln-mfila>b{display:block;font-size:13.5px;margin-bottom:5px}
+.ln-mfila .ln-seg i{height:8px}
+.ln-mfila .ln-rel{display:block;font-size:12px;margin-top:6px;line-height:1.4}
+.ln-mfila .ln-rel .cuando{display:block}
+.ln-vertodo{margin-top:8px;width:100%}
+.linea-arbol{max-width:760px;margin:0 auto 18px;border:1px solid var(--linea);background:var(--tarjeta);border-radius:16px;padding:14px 16px}
 .linea-cab{border:1px solid var(--linea);background:var(--tarjeta);border-radius:16px;padding:14px 16px;margin-bottom:12px}
 .linea-cab .rel{font-family:var(--serif);font-size:19px;line-height:1.35;margin:0}
 .linea-cab .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
@@ -671,6 +680,7 @@ html.cargando #actualizando{display:flex}
       <button class="secund" id="arbActualizar" style="width:auto;padding:8px 16px;min-height:40px">Actualizar</button>
       <span id="arbAviso" style="font-size:12.5px;color:var(--guia);margin-left:8px"></span>
     </div>
+    <div id="lineaArbol" class="linea-arbol"></div>
     <div id="arbol"></div>
     <p class="arb-pie" id="arbPie"></p>
   </section>
@@ -713,7 +723,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='41d3145a8d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='daec91fecb';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1565,13 +1575,14 @@ function abrirRespuestas(){
 function pintarPanel(){
   const p=$('#panel'); if(!p||getComputedStyle(p).display==='none') return;
   const x=pasos[idx]; const {hoyF,lockF,reF}=filasRespuestas(true); const c=cuentas();
-  p.innerHTML=`<div class="bloque"><h4>Tu revisión</h4><span class="estado ${guard.tipo}" id="pEstado"><i></i><span>${esc(guard.texto)}</span></span></div>
+  p.innerHTML=`<div class="bloque" id="lineaHoy">${LINEA_HOY||'<p class="luego2">Cargando la producción…</p>'}</div><div class="bloque"><h4>Tu revisión</h4><span class="estado ${guard.tipo}" id="pEstado"><i></i><span>${esc(guard.texto)}</span></span></div>
     ${x&&DECIDE()?`<div class="bloque"><h4>Qué estás decidiendo</h4><p class="luego2"><b>${esc(x.p.titulo||x.pid)}</b><br>${x.tipo==='lamina'?`${numeroReal(x).replace(/^l/,'L')}. <b>Aprobar</b> → queda lista. <b>Pedir cambio</b> → Producción la rehace con tu nota y vuelve a tu mesa.`:'Eliges una opción y Producción empieza con ésa.'}</p></div>`:''}
     <div class="bloque"><h4>Mis respuestas · ${c.hoy}/${pasos.length}</h4><div class="lista-r">${hoyF||'<p class="luego2">Nada todavía.</p>'}</div>
       ${pasos.length&&DECIDE()?`<button class="secund" style="margin-top:10px" id="pVer">Cambiar alguna</button>`:''}</div>
     ${lockF?`<div class="bloque"><h4>Decididas antes</h4><div class="lista-r">${lockF}</div></div>`:''}
     ${reF?`<div class="bloque"><h4>Esperando a Producción</h4><div class="lista-r">${reF}</div></div>`:''}`;
   const pv=$('#pVer'); if(pv) pv.onclick=abrirRespuestas;
+  const lh=$('#lineaHoy'); if(lh&&LINEA_HOY) enganchaLinea(lh);
 }
 
 /* ══ zoom ══ */
@@ -2200,8 +2211,8 @@ function filaLinea(z){
   if(tuyo&&nota) cuando+=' · '+nota;
   return {z,segs,quien,que,cuando,pct,run,tuyo,rojo:!!(fallos.length||viejos.length),fab:!tuyo&&quien==='fab'};
 }
-async function pintarLinea(piezas){
-  const c=$('#linea'); if(!c) return;
+async function pintarLinea(piezas,destino,compacto){
+  const c=destino===null?null:$('#'+(destino||'linea')); if(destino!==null&&!c) return '';
   if(FABRICA===null) await traerFabrica();
   if(IDEAS===null) await traerIdeas();
   const abiertas=piezas.filter(z=>!(PZ[z.nombre]&&PZ[z.nombre].estado==='publicada')&&(z.tira||Object.values(z.filas||{}).some(a=>a.length)));
@@ -2224,6 +2235,16 @@ async function pintarLinea(piezas){
   recados.forEach(e=>pend.push(`<b>Recado atorado</b> desde el ${esc(fechaCorta(e.cuando))}: «${esc(String(e.texto).slice(0,110))}» — vuelve a clavarlo o pídelo con «Mandar a Claude».`));
   if(propuestas.length) pend.push(`<b>${propuestas.length} ideas propuestas</b> esperando que elijas (en la pestaña Árbol, abajo): ${esc(propuestas.slice(0,4).map(i=>i.titulo).join(' · '))}${propuestas.length>4?'…':''}.`);
   const seg=s=>`<div class="ln-seg ${s.c}${s.aqui?' aqui':''}"><i></i><span>${esc(s.txt)}</span></div>`;
+  if(compacto){
+    // 23-sep: la misma Línea, corta, arriba de Hoy y del Árbol — «no vi nada de lo nuevo»: vivía sólo en Producción
+    const html=`<div class="ln-mini"><h4>Producción ahora</h4><p class="rel">${esc(rel)}</p>
+      ${filas.map(f=>`<button class="ln-mfila" data-pieza="${esc(f.z.nombre)}"><b>${esc(f.z.nombre)}</b>
+        <div class="ln-barra">${f.segs.map(s=>`<div class="ln-seg ${s.c}${s.aqui?' aqui':''}"><i></i></div>`).join('')}</div>
+        <span class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span> ${esc(f.que)} <span class="cuando">${esc(f.cuando.split(' · Además')[0])}</span></span></button>`).join('')}
+      <button class="secund ln-vertodo" data-irprod>Ver todo en Producción →</button></div>`;
+    if(c){ c.innerHTML=html; enganchaLinea(c) }
+    return html;
+  }
   c.innerHTML=`<div class="linea-cab"><p class="rel">${esc(rel)}</p>
       <div class="chips"><span class="chip"><b>${nTu}</b> te toca</span><span class="chip"><b>${nFab}</b> en la fábrica</span><span class="chip"><b>${nRojo}</b> atoradas</span><span class="chip"><b>${nSig}</b> por arrancar</span></div></div>
     <div class="ln-ley"><span><i style="background:var(--si)"></i>hecho</span><span><i style="background:var(--oro)"></i>produciéndose</span><span><i style="background:var(--azul)"></i>te toca</span><span><i style="background:var(--no)"></i>atorado</span><span><i style="background:var(--linea2)"></i>lo que sigue</span><span>▼ estás aquí</span></div>
@@ -2231,8 +2252,24 @@ async function pintarLinea(piezas){
       <div class="ln-barra">${f.segs.map(seg).join('')}</div>
       <div class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span><br>${esc(f.que)}<span class="cuando">${esc(f.cuando)}</span></div></button>`).join('')}
     ${pend.length?`<div class="ln-pend"><h4>Lo que quedó a medias</h4><ul>${pend.map(p=>`<li>${p}</li>`).join('')}</ul></div>`:''}`;
-  c.querySelectorAll('.ln-fila[data-pieza]').forEach(el=>el.onclick=()=>fichaPieza(el.dataset.pieza));
+  enganchaLinea(c);
+  return '';
 }
+function enganchaLinea(c){
+  c.querySelectorAll('[data-pieza].ln-fila,[data-pieza].ln-mfila').forEach(el=>el.onclick=()=>fichaPieza(el.dataset.pieza));
+  c.querySelectorAll('[data-irprod]').forEach(el=>el.onclick=()=>irVista('prod'));
+}
+// Hoy repinta su panel a cada rato: la Línea se calcula aparte y el panel sólo reinserta el HTML
+let LINEA_HOY='', _lineaHoyT=0;
+async function actualizarLineaHoy(){
+  if(Date.now()-_lineaHoyT<50000) return; _lineaHoyT=Date.now();
+  try{ await traerCola(); const piezas=await armarPiezas(); LINEA_HOY=await pintarLinea(piezas,null,true) }catch(e){ LINEA_HOY='' }
+  let b=$('#lineaHoy');
+  if(!b){ const p=$('#panel'); if(p&&getComputedStyle(p).display!=='none'){ p.insertAdjacentHTML('afterbegin','<div class="bloque" id="lineaHoy"></div>'); b=$('#lineaHoy') } }
+  if(b){ b.innerHTML=LINEA_HOY; enganchaLinea(b) }
+}
+setTimeout(actualizarLineaHoy,2500);
+setInterval(()=>{ if(document.body.dataset.vista==='hoy'){ _lineaHoyT=0; actualizarLineaHoy() } },60000);
 
 /* ══ el árbol de publicaciones (14-sep) ══
    Alejandro: «el tronco es vender el PPP, de ahí 5 temas, de ahí las publicaciones, ver las ediciones y el
@@ -2359,6 +2396,7 @@ async function pintarArbol(forzar){
   c.innerHTML='<p style="color:var(--guia);font-size:13px;text-align:center">Cargando el árbol…</p>';
   await Promise.all([traerArbol(),traerCola(),traerEmbudo(),traerFabrica()]);
   const piezas=await armarPiezas();
+  try{ await pintarLinea(piezas,'lineaArbol',true) }catch(e){}
   const N=ARBOL.nodos||[]; const tronco=N.find(n=>n.nivel==='tronco')||{titulo:'Vender el Plan de Potencial'};
   const temas=N.filter(n=>n.nivel==='tema'&&!/cortada/i.test(n.estado||'')).sort((a,b)=>(a.orden||99)-(b.orden||99));
   const nodoPieza=N.filter(n=>n.nivel==='pieza');
