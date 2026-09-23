@@ -1,35 +1,61 @@
 {
- "actualizado": "2026-09-17 14:08",
+ "_que_es": "Las chinches de la Sala y su estado, desde sus issues (nube/sala_chinches.py).",
  "encargos": [
   {
-   "que": "{\"id\":\"CHN-20260915-0714-582a\",\"texto\":\"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambi",
-   "estado": "cumplida",
-   "cuando": "2026-09-15",
-   "tomado": "07:57"
+   "que": "{\"id\": \"CHN-20260914-2306-c2ca\", \"texto\": \"no entiendo cuál es el sistema de reconocimiento de patrón visual… ést\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-23",
+   "tomado": "08:39",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/16"
   },
   {
-   "que": "{\"id\":\"CHN-20260915-0921-7f77\",\"texto\":\"por ejemplo no me ests trayendo a la mesa ls propuestas de nuevos temas de publciaciones que fui escogiendo en etapas pasadas... quiro que se vayan integrando al arbol... en el arbol yo quiero poder decidir cual decidir por bloque... y despues si lepongo hoy me pone ne orden de el mas rapido que pudiera salir en ese orden empezamos ... pero todo empeiza en la ruta del arbol ... asi puedo ir tomando yo la decisoon y sobre todo ir viendo el proceso de como se debe de tener todo el arbol completo\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"aside#panel\",\"texto\":\"TU REVISIÓN Guardado ✓ 09:21 a.m. MIS RESPUESTAS · 2/2 opción El Apodo · de las tomas que rechazaste, ¿cuál iba mejor? elige una opción «me estas mesclando lain\",\"seccion\":\"TU REVISIÓN\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789489017577\"}",
+   "que": "{\"id\": \"CHN-20260914-2307-2292\", \"texto\": \"aquí no se está mostrando la miniatura… las rayas verdes significan lo\"}",
    "estado": "en curso",
-   "cuando": "2026-09-15",
-   "tomado": "09:32"
+   "cuando": "2026-09-23",
+   "tomado": "08:39",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/17"
   },
   {
-   "que": "{\"id\":\"CHN-20260915-0931-6fd8\",\"texto\":\"no me aparecen como nuevas las que aporbamos en la corrida pasada de las ideas de la suevas producciones aprobadas... al parecer si pusisye nuevas ideas en la parte de abajo pero las que seleccionamos como aprobadas no estan ahora en el arbol como en produccion de la primera etapa quiero ver eso... tmb la metodologia donde etsmaos mostrando esto quiero que se veamas como un arbo y que seamos mas practicos en mostrar las publciaiocnes mas ameno mas como si fuera una app para egeneracon z\",\"tipo\":\"\",\"vista\":\"arbol\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"section#vArbol\",\"texto\":\"Árbol de publicaciones Toca un fruto para verlo por dentro: qué se hizo, qué salió y qué falta. Actualizar Vender el Plan de Potencial 253 de alcance esta seman\",\"seccion\":\"Árbol de publicaciones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1789489017577\"}",
+   "que": "{\"id\": \"CHN-20260914-2308-b410\", \"texto\": \"quiero poder editar estas ¿premisas? ¿directrices de marketing?… poder\"}",
    "estado": "en curso",
-   "cuando": "2026-09-15",
-   "tomado": "10:08"
+   "cuando": "2026-09-23",
+   "tomado": "08:39",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/18"
   },
   {
-   "que": "{\"id\":\"CHN-20260915-0921-7f77\",\"texto\":\"por ejemplo no me ests trayendo a la mesa ls propuestas de nuevos temas de publciaciones que fui escogiendo en etapas pasadas... quiro que se vayan integrando a",
+   "que": "{\"id\": \"CHN-20260914-2313-5cbd\", \"texto\": \"no me está llevando a nada… me estás proponiendo cosas que no tenemos\"}",
    "estado": "en curso",
-   "cuando": "2026-09-15",
-   "tomado": "10:08"
+   "cuando": "2026-09-23",
+   "tomado": "08:39",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/19"
   },
   {
-   "que": "{\"id\":\"CHN-20260915-0931-6fd8\",\"texto\":\"no me aparecen como nuevas las que aporbamos en la corrida pasada de las ideas de la suevas producciones aprobadas... al parecer si pusisye nuevas ideas en la p",
+   "que": "{\"id\": \"CHN-20260915-0714-582a\", \"texto\": \"No me etas poniendo nuevas premisas para seleccionar y qu emepiece a crecer el arbol con nuevas rama que vayamso trabajando juntos ... cada vez que reviss tambien inclute nuevas cuando menos siempre 3 nuevas ideas bien pensadas de cada una de nuestras vias o ramas principales...\"}",
    "estado": "en curso",
    "cuando": "2026-09-15",
-   "tomado": "10:25"
+   "tomado": "08:40",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/20"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260915-0921-7f77\", \"texto\": \"por ejemplo no me ests trayendo a la mesa ls propuestas de nuevos temas de publciaciones que fui escogiendo en etapas pasadas... quiro que se vayan integrando al arbol... en el arbol yo quiero poder decidir cual decidir por bloque... y despues si lepongo hoy me pone ne orden de el mas rapido que pudiera salir en ese orden empezamos ... pero todo empeiza en la ruta del arbol ... asi puedo ir tomando yo la decisoon y sobre todo ir viendo el proceso de como se debe de tener todo el arbol completo\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-15",
+   "tomado": "08:40",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/21"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260915-0931-6fd8\", \"texto\": \"no me aparecen como nuevas las que aporbamos en la corrida pasada de las ideas de la suevas producciones aprobadas... al parecer si pusisye nuevas ideas en la parte de abajo pero las que seleccionamos como aprobadas no estan ahora en el arbol como en produccion de la primera etapa quiero ver eso... tmb la metodologia donde etsmaos mostrando esto quiero que se veamas como un arbo y que seamos mas practicos en mostrar las publciaiocnes mas ameno mas como si fuera una app para egeneracon z\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-15",
+   "tomado": "08:40",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/22"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260922-2237-dfac\", \"texto\": \"mira aqui le pico y no me deja escoger las de hoy como que esta gairdando antes de actualizar o algo por qu eno permite que siga adeltne todo ... tiene un problema creo.. asi que ayudame a que en toda seccion que necesite ser revisado  algo sea constente en produccion arbol hoy publciaicones y todo\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-22",
+   "tomado": "08:40",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/23"
   }
  ]
 }
