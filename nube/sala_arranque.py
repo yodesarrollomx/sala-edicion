@@ -70,17 +70,19 @@ def slug(texto):
 
 def pensar(texto, instruccion, reglas, cola):
     """Gemini primero; OpenAI con tope si Gemini no contesta (la misma cascada del cerebro)."""
-    ultimo = None
-    for f in (lambda: cerebro._gemini(texto, reglas, instruccion),
-              lambda: cerebro._openai(texto, reglas, cola or [], instruccion)):
+    fallas = []
+    for nombre, f in (('gemini', lambda: cerebro._gemini(texto, reglas, instruccion)),
+                      ('openai', lambda: cerebro._openai(texto, reglas, cola or [], instruccion))):
         try:
-            d = cerebro._json_de(f())
-            if d:
-                return d
+            crudo = f()
         except MotorError as e:
-            ultimo = e
-    raise MotorError('el cerebro no contestó con un JSON (%s)' % (ultimo or 'respuesta vacía'),
-                     intermitente=True)
+            fallas.append('%s: %s' % (nombre, e))
+            continue
+        d = cerebro._json_de(crudo)
+        if d:
+            return d
+        fallas.append('%s contestó sin JSON: «%s»' % (nombre, re.sub(r'\s+', ' ', str(crudo))[:160]))
+    raise MotorError('el cerebro no contestó con un JSON (%s)' % ' | '.join(fallas), intermitente=True)
 
 
 def leer_hoja(recurso, clave, respaldo):
