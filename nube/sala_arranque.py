@@ -181,6 +181,10 @@ def arranque(simular, reglas, cola, tope):
         m = re.sub(r'key=[^&\s"]+', 'key=***', str(motivo or ''))
         if ' 401' in m or 'invalid authentication' in m:
             m = 'Google rechazó la llave de Gemini (401): hay que renovar GEMINI_API_KEY'
+        elif ' 503' in m or 'high demand' in m or 'overloaded' in m.lower():
+            m = 'Gemini estaba saturado (503, es de Google y pasa solo); se reintenta en la próxima corrida'
+        elif 'timed out' in m:
+            m = 'Gemini tardó demasiado en contestar; se reintenta en la próxima corrida'
         elif 'OPENAI' in m and 'gemini' not in m.lower():
             m = 'sin cerebro disponible (Gemini no contestó y no hay respaldo de pago)'
         bitacora.append({'pieza': nombre, 'resultado': resultado, 'motivo': m[:160]})
