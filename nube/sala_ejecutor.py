@@ -290,10 +290,14 @@ def main():
                      and str(t.get('etapa')) in ('escena', 'voz')
                      and isinstance(t.get('evidencia'), dict)
                      and not t['evidencia'].get('drive_id') and t['evidencia'].get('aviso_subida')
-                     and t['evidencia'].get('reintento_drive') != hoy]
+                     and (t['evidencia'].get('reintento_drive') != hoy
+                          or int(t['evidencia'].get('reintentos_hoy') or 0) < 3)]
         for t in sin_drive:
             t['estado'] = 'pendiente'
-            t['evidencia'] = dict(t['evidencia'], reintento_drive=hoy)
+            # 23-sep: una vez al día no alcanzó — Drive se arregló a media tarde y el corte del Apodo
+            # se quedó esperando hasta mañana. Hasta 3 intentos por día (escena/voz tardan segundos).
+            n = int(t['evidencia'].get('reintentos_hoy') or 0) if t['evidencia'].get('reintento_drive') == hoy else 0
+            t['evidencia'] = dict(t['evidencia'], reintento_drive=hoy, reintentos_hoy=n + 1)
         if sin_drive and not args.simular:
             sala.avisar('↺ %d producto(s) sin subir a Drive se rehacen para que el corte los '
                         'encuentre' % len(sin_drive))
