@@ -46,6 +46,23 @@ def cargar(familia):
         return None
 
 
+def desde_lamina(trabajo):
+    """Respaldo cuando la pieza NO tiene guion de video (p. ej. Mesa Vacía): el narrador
+    dice el texto de la lámina — el de la toma que eligió el editor, vía lamina_de. Es un
+    guion de una sola escena para ESTE trabajo; nunca se escribe a datos/guiones/."""
+    from motores._comun import lamina_de
+    dice = str(lamina_de(trabajo).get('dice') or '').strip()
+    if not dice:
+        return None
+    n = str(trabajo.get('item') or '').split('-')[0]
+    try:
+        n = int(n)
+    except ValueError:
+        return None
+    return {'escenas': [{'n': n, 'partes': [{'rol': 'narrador', 'dice': dice}]}],
+            '_origen': 'texto de la lámina (la pieza no tiene guion de video)'}
+
+
 def escena_de_lamina(guion, item):
     """La escena cuyo número `n` == el número de lámina (item, 1-based). Ver docstring del
     módulo: es la convención observada en el único ejemplo real, no una garantía del formato."""

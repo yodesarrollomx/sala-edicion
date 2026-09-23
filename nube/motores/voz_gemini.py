@@ -97,7 +97,7 @@ def _escribir_wav(ruta, pcm_bytes, sr):
 def producir(trabajo, reglas, cat, salida_dir):
     familia = str(trabajo.get('pieza') or '')
     item = str(trabajo.get('item') or '')
-    g = guion.cargar(familia)
+    g = guion.cargar(familia) or guion.desde_lamina(trabajo)
     if not g:
         raise MotorError('no hay guion de video para «%s»' % familia, intermitente=True)
     partes = guion.partes_de(g, item)
