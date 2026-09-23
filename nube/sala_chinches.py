@@ -134,6 +134,26 @@ def main():
         sala.post('produccion', pieza='ENCARGO TOMADO · chinche', estado='en curso',
                   detalle=json.dumps({'id': cid, 'issue': url}, ensure_ascii=False), enlace=url)
 
+    # «✦ Proponme ideas ahora» (Árbol, chinche #20): la fila `ENCARGO · ideas` enciende el semillero
+    hechas = set()
+    pedidas = {}
+    for f in dia.get('produccion') or []:
+        ev, det = str(f.get('pieza') or ''), str(f.get('detalle') or '')
+        m = re.search(r'"id"\s*:\s*"([^"]+)"', det)
+        if not ev.startswith('ENCARGO') or 'ideas' not in ev or not m:
+            continue
+        if 'CUMPLIDO' in ev:
+            hechas.add(m.group(1))
+        else:
+            pedidas.setdefault(m.group(1), f)
+    for iid in sorted(set(pedidas) - hechas):
+        sala.avisar('  ✦ pidió ideas · %s → semillero' % iid)
+        if args.simular:
+            continue
+        gh('workflow', 'run', 'sala-arranque.yml', '--ref', 'main', '-f', 'modo=ideas')
+        sala.post('produccion', pieza='ENCARGO CUMPLIDO · ideas', estado='cumplida',
+                  detalle=json.dumps({'id': iid, 'que': 'semillero encendido'}, ensure_ascii=False))
+
     cumplidas = 0
     for it in issues:
         if not it['chn'] or it['state'] != 'CLOSED' or it.get('stateReason') == 'NOT_PLANNED' \

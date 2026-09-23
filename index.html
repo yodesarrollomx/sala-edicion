@@ -88,6 +88,31 @@ html.embed .app{padding-top:8px}
 
 /* ── árbol de Producción (12-sep) ── */
 /* La Línea (23-sep) */
+.ln-tarjetas{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.ln-tarjetas .ln-mfila{flex:0 0 min(78%,260px);scroll-snap-align:start;border:1px solid var(--linea);border-radius:14px;padding:0 0 10px;overflow:hidden;background:var(--papel,transparent)}
+.ln-tarjetas .ln-mfila>b,.ln-tarjetas .ln-mfila .ln-barra,.ln-tarjetas .ln-mfila .ln-rel,.ln-accion{margin-left:10px;margin-right:10px}
+.ln-tarjetas .ln-mfila>b{margin-top:8px}
+.ln-portada{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--linea)}
+.ln-portada.vacia{display:flex;align-items:center;justify-content:center;font-size:12px;opacity:.6;aspect-ratio:4/2}
+.ln-accion{display:block;margin-top:8px;font-weight:600;font-size:13px;color:var(--azul)}
+.ok-tag{display:inline-block;padding:4px 10px;border-radius:99px;background:var(--si);color:#fff;font-weight:600;font-size:13px}
+button.chico{font-size:12.5px;padding:6px 10px;opacity:.85}
+.historia{position:fixed;inset:0;z-index:9999;background:#000;color:#fff;display:flex;flex-direction:column}
+.h-barras{display:flex;gap:4px;padding:10px 12px 0;position:relative;z-index:3}
+.h-barras i{flex:1;height:3px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden}
+.h-barras b{display:block;height:100%;width:0;background:#fff}
+.h-barras i.lleno b{width:100%}
+.h-barras i.corre b{animation:hcorre 4s linear forwards}
+@keyframes hcorre{from{width:0}to{width:100%}}
+.h-cab{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;position:relative;z-index:3}
+.h-x{background:none;border:0;color:#fff;font-size:30px;line-height:1;cursor:pointer}
+.h-img{flex:1;min-height:0;width:100%;object-fit:contain}
+.h-pie{padding:10px 16px 18px;position:relative;z-index:3}
+.h-dice{margin:0 0 4px;font-size:15px;line-height:1.4}
+.h-est{margin:0 0 10px;font-size:12.5px;opacity:.75}
+.h-det{background:#fff;color:#000;border:0;border-radius:99px;padding:8px 16px;font-weight:600;cursor:pointer}
+.h-prev,.h-next{position:absolute;top:60px;bottom:120px;width:50%;background:none;border:0;z-index:2;cursor:pointer}
+.h-prev{left:0}.h-next{right:0}
 .ln-mini h4{margin:0 0 4px}
 .ln-mini .rel{font-size:13.5px;line-height:1.4;margin:0 0 8px}
 .ln-mfila{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:0;border-top:1px solid var(--linea);padding:9px 0;cursor:pointer}
@@ -723,7 +748,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='200baa0358';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='385b360f1a';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2253,9 +2278,10 @@ async function pintarLinea(piezas,destino,compacto){
   if(compacto){
     // 23-sep: la misma Línea, corta, arriba de Hoy y del Árbol — «no vi nada de lo nuevo»: vivía sólo en Producción
     const html=`<div class="ln-mini"><h4>Producción ahora</h4><p class="rel">${esc(rel)}</p>
-      ${filas.map(f=>`<button class="ln-mfila" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}><b>${esc(f.z.nombre)}</b>
+      <div class="ln-tarjetas">${filas.map(f=>{ const l=((f.z.tira&&f.z.tira.laminas)||[]).find(x=>x.src);
+        return `<button class="ln-mfila" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}>${l?`<img class="ln-portada" loading="lazy" alt="" src="${esc(ligera(l.src))}">`:'<span class="ln-portada vacia">sin lámina aún</span>'}<b>${esc(f.z.nombre)}</b>
         <div class="ln-barra">${f.segs.map(s=>`<div class="ln-seg ${s.c}${s.aqui?' aqui':''}"><i></i></div>`).join('')}</div>
-        <span class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span> ${esc(f.que)} <span class="cuando">${esc(f.cuando.split(' · Además')[0])}</span></span></button>`).join('')}
+        <span class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span> ${esc(f.que)} <span class="cuando">${esc(f.cuando.split(' · Además')[0])}</span></span><span class="ln-accion">${f.paso!=null?'Decidir →':'Ver →'}</span></button>`}).join('')}</div>
       <button class="secund ln-vertodo" data-irprod>Ver todo en Producción →</button></div>`;
     if(c){ c.innerHTML=html; enganchaLinea(c) }
     return html;
@@ -2445,7 +2471,7 @@ async function pintarArbol(forzar){
     <div id="ideas"></div>`;
   pintarIdeas(temas);
   c.querySelectorAll('[data-ficha]').forEach(el=>el.onclick=()=>fichaPublicacion(el.dataset.ficha));
-  c.querySelectorAll('[data-pieza]').forEach(el=>el.onclick=()=>fichaPieza(el.dataset.pieza));
+  c.querySelectorAll('[data-pieza]').forEach(el=>el.onclick=()=>verHistoria(el.dataset.pieza));
   c.querySelectorAll('[data-fab]').forEach(el=>el.onclick=()=>fichaFabrica(el.dataset.fab));
   c.querySelectorAll('[data-edita]').forEach(el=>el.onclick=(e)=>{ e.stopPropagation(); editarNodo(el.dataset.edita) });
   const su=(D&&D.sheet_url)||''; const pie=$('#arbPie'); if(pie) pie.innerHTML=su?`<a href="${esc(su)}" target="_blank" rel="noopener" title="El Sheet donde vive todo esto">·</a>`:'';
@@ -2480,7 +2506,13 @@ async function fichaPieza(nombre){
   const piezas=await armarPiezas(); const z=piezas.find(p=>p.nombre===nombre); if(!z) return; const t=z.tira; const g=z.filas;
   const est=(f)=>{ if(!(f||[]).length) return 'falta'; return f.every(x=>/hecho/i.test(x.estado||''))?'hecho':'proceso' };
   const abiertas=t?(t.laminas||[]).filter(l=>laminaAbierta(t,l)):[];
-  hoja(`<div class="arb-ficha"><h3>${esc(nombre)}</h3><p class="arb-sub">en producción · ${esc(quefaltaPara(t,g,false))}</p>
+  // 23-sep (chinche #16): «ésta ya está terminada pero la abro y me manda a editar». Lo terminado se
+  // presenta terminado: se ve como historia y cambiar algo queda como opción secundaria, no al frente.
+  const publicada=!!(PZ[nombre]&&PZ[nombre].estado==='publicada');
+  const colaViva=[].concat(g.escena||[],g.voz||[],g.corte||[]).some(x=>!/hecho/i.test(x.estado||''));
+  const terminada=publicada||(!!t&&(t.laminas||[]).length>0&&!abiertas.length&&!colaViva);
+  hoja(`<div class="arb-ficha"><h3>${esc(nombre)}</h3><p class="arb-sub">${terminada?(publicada?'<b class="ok-tag">Publicada ✓</b>':'<b class="ok-tag">Terminada ✓ · lista para salir</b> — nada que decidir'):'en producción · '+esc(quefaltaPara(t,g,false))}</p>
+    ${terminada&&t?`<button class="listo" id="fVerHist">▶ Verla como historia</button>`:''}
     <div class="pasos">
       ${pasoHTML('Guion',t?'hecho':'falta',t?`<small>${esc(t.promesa||'')}</small>`:'')}
       ${pasoHTML('Láminas',t?(abiertas.length?'proceso':'hecho'):'falta',t?`<div class="arb-vers">${(t.laminas||[]).map(l=>{const ab=laminaAbierta(t,l);return `<div class="arb-ver ${ab?'abierta':''}"><img src="${esc(ligera(l.src))}" alt="" loading="lazy"><b>L${l.n}</b><small>${ab?(ab.tipo==='no'?'cambio':'por decidir'):'✓'}</small></div>`}).join('')}</div>`:'')}
@@ -2488,7 +2520,39 @@ async function fichaPieza(nombre){
       ${pasoHTML('Voces',est(g.voz),`<small>${(g.voz||[]).filter(x=>/hecho/i.test(x.estado)).length} de ${(g.voz||[]).length||6}</small>`)}
       ${pasoHTML('Corte',est(g.corte),'')}
       ${pasoHTML('Publicar','falta','<small>con tu sí en la Sala</small>')}
-    </div>${abiertas.length?`<button class="listo" onclick="cerrarCapas();irVista('hoy')">Ir a decidir (${abiertas.length}) →</button>`:''}${DECIDE()?`<button class="secund" onclick="editarNodo(${JSON.stringify(nodoDePieza(nombre))})">✎ Editar esta publicación</button>`:''}</div>`,'pieza-'+normSlug(nombre));
+    </div>${abiertas.length?`<button class="listo" onclick="cerrarCapas();irVista('hoy')">Ir a decidir (${abiertas.length}) →</button>`:''}${DECIDE()?`<button class="secund${terminada?' chico':''}" onclick="editarNodo(${JSON.stringify(nodoDePieza(nombre))})">${terminada?'¿Cambiar algo? Pedir un cambio (la reabre)':'✎ Editar esta publicación'}</button>`:''}</div>`,'pieza-'+normSlug(nombre));
+  const vh=$('#fVerHist'); if(vh) vh.onclick=()=>verHistoria(nombre);
+}
+
+/* ══ HISTORIAS (23-sep, chinche #22 «B»): tocar una publicación la despliega como «stories» — sus
+   láminas a pantalla completa, una tras otra, con barritas de avance arriba. Toque a la derecha =
+   siguiente, a la izquierda = anterior; sola avanza cada 4 s. Abajo, «Ver detalle» abre la ficha. ══ */
+async function verHistoria(nombre){
+  const piezas=LINEA_PIEZAS||await armarPiezas(); const z=piezas.find(p=>p.nombre===nombre); if(!z) return fichaPieza(nombre);
+  const t=z.tira; const lams=((t&&t.laminas)||[]).filter(l=>l.src);
+  if(!lams.length) return fichaPieza(nombre);
+  const falta=quefaltaPara(t,z.filas||{},false)||'';
+  cerrarCapas();
+  const v=document.createElement('div'); v.className='historia'; v.setAttribute('role','dialog'); v.setAttribute('aria-label','Historia de '+nombre);
+  v.innerHTML=`<div class="h-barras">${lams.map(()=>'<i><b></b></i>').join('')}</div>
+    <div class="h-cab"><b>${esc(nombre)}</b><button class="h-x" aria-label="Cerrar">×</button></div>
+    <img class="h-img" alt=""><div class="h-pie"><p class="h-dice"></p><p class="h-est"></p><button class="h-det">Ver detalle</button></div>
+    <button class="h-prev" aria-label="Anterior"></button><button class="h-next" aria-label="Siguiente"></button>`;
+  document.body.appendChild(v);
+  let k=0, tm=null;
+  const pinta=()=>{ const l=lams[k], ab=t?laminaAbierta(t,l):null;
+    v.querySelector('.h-img').src=ligera(l.src); v.querySelector('.h-dice').textContent=l.dice||'';
+    v.querySelector('.h-est').textContent=`Lámina ${l.n} de ${lams.length} · `+(!ab?'aprobada':(ab.tipo==='no'?'pediste cambio':'esperando tu sí'));
+    v.querySelectorAll('.h-barras i').forEach((b,i)=>{ b.className=i<k?'lleno':(i===k?'corre':'') });
+    clearTimeout(tm); tm=setTimeout(()=>{ if(k<lams.length-1){ k++; pinta() } else v.querySelector('.h-est').textContent+=(falta?' · '+falta:'') },4000) };
+  const cerrar=()=>{ clearTimeout(tm); v.remove(); document.removeEventListener('keydown',tecla) };
+  const tecla=e=>{ if(e.key==='Escape') cerrar(); if(e.key==='ArrowRight'&&k<lams.length-1){k++;pinta()} if(e.key==='ArrowLeft'&&k>0){k--;pinta()} };
+  document.addEventListener('keydown',tecla);
+  v.querySelector('.h-x').onclick=cerrar;
+  v.querySelector('.h-next').onclick=()=>{ if(k<lams.length-1){k++;pinta()} else cerrar() };
+  v.querySelector('.h-prev').onclick=()=>{ if(k>0){k--;pinta()} };
+  v.querySelector('.h-det').onclick=()=>{ cerrar(); fichaPieza(nombre) };
+  pinta();
 }
 function fichaIdea(id){ const n=(ARBOL.nodos||[]).find(x=>x.id===id); if(!n) return; const mat=materialDe(n.titulo||id); const vs=mat?Object.keys(mat.versiones||{}).filter(v=>!v.startsWith('_')&&v!=='(raíz)'):[];
   hoja(`<div class="arb-ficha"><h3>${esc(n.titulo||id)}</h3><p class="arb-sub">${esc(n.estado||'por hacer')}</p>
@@ -2580,7 +2644,12 @@ async function pintarIdeas(temas){
   const candHTML=cands.length?`<div class="ideas-cab" style="margin-top:22px"><b>Premisas nuevas que propongo</b><p>Si eliges una, nace una rama del árbol (hay ${vivas} vivas de 5).</p></div>
     ${cands.map(n=>`<div class="idea"><div><span class="idea-tit">${esc(n.titulo)}</span><p>${esc(n.bajada||'')}</p></div>
       ${DECIDE()?`<div class="idea-btns"><button data-prem="${esc(n.id)}" data-est="viva">Abrir rama</button><button data-prem="${esc(n.id)}" data-est="descartada" class="q">×</button></div>`:''}</div>`).join('')}`:'';
-  c.innerHTML=`<div class="ideas-cab"><b>Ideas para las próximas publicaciones</b><p>Las refresco yo por premisa. Elige una o varias y en la siguiente sala entran a producción con su guion.</p></div>${grupos||'<p class="arb-sub">Sin ideas todavía.</p>'}${candHTML}${DECIDE()?`<button class="ver-mas" id="nuevaPremisa">+ nueva premisa mía</button>`:''}`;
+  c.innerHTML=`<div class="ideas-cab"><b>Ideas para las próximas publicaciones</b><p>Las refresco yo por premisa. Elige una o varias y en la siguiente sala entran a producción con su guion.</p></div>${grupos||'<p class="arb-sub">Sin ideas todavía.</p>'}${candHTML}${DECIDE()?`<button class="ver-mas" id="nuevaPremisa">+ nueva premisa mía</button><button class="ver-mas" id="proponIdeas">✦ Proponme ideas ahora</button><p class="arb-sub" id="proponAviso"></p>`:''}`;
+  const pi=$('#proponIdeas'); if(pi) pi.onclick=async()=>{ pi.disabled=true;
+    // viaja como las chinches: fila «ENCARGO · ideas» en el Sheet → el puente dispara el semillero en ese momento
+    const d=new Date(), p=n=>String(n).padStart(2,'0'), id='CHN-'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'-'+Math.random().toString(16).slice(2,6);
+    await mandarProduccion('ENCARGO · ideas',JSON.stringify({id,texto:'Proponme ideas nuevas: 3 por cada rama viva y una premisa candidata.',vista:'arbol'}),false);
+    const a=$('#proponAviso'); if(a) a.textContent='Pedido. En menos de una hora aparecen aquí las ideas nuevas (el semillero corre en cuanto el puente lo ve).' };
   c.querySelectorAll('[data-prem]').forEach(b=>b.onclick=async()=>{ const n=cands.find(x=>x.id===b.dataset.prem); if(!n) return;
     if(b.dataset.est==='viva'&&vivas>=5){ alert('Ya hay cinco premisas vivas. Corta una antes de abrir otra.'); return }
     b.disabled=true;

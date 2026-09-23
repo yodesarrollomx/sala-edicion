@@ -1,0 +1,122 @@
+# El semillero y el arranque (23-sep, chinches #20 y #21): lo que la ronda /sala hacía en la Mac.
+# Cada mañana: 3 ideas nuevas por rama viva (+1 premisa candidata) y, a cada idea que él eligió en
+# el Árbol y no tiene tira, su guion y su primera lámina con tomas → a su mesa de Hoy.
+name: Semillero y arranque de la Sala
+
+on:
+  schedule:
+    - cron: '50 12 * * *'   # 05:50 Hermosillo, después del montador de la mesa
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'simular = sólo decir; ideas = sólo el semillero; arrancar = sólo el arranque; todo = las dos'
+        type: choice
+        options: [simular, ideas, arrancar, todo]
+        default: simular
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: sala-mesa        # comparte candado con el montador: nunca dos escribiendo tiras a la vez
+  cancel-in-progress: false
+
+jobs:
+  arranque:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      MODO: ${{ inputs.modo || 'todo' }}
+      SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+      SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Librerías (imagen y HTTP)
+        run: pip install --quiet pillow requests
+
+      - name: Caché de la tipografía de la casa (Playfair Display, OFL)
+        id: cache-fuentes
+        uses: actions/cache@v4
+        with:
+          path: nube/.cache/fuentes
+          key: playfair-v1
+
+      - name: Bajar la tipografía si no está en caché
+        if: steps.cache-fuentes.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p nube/.cache/fuentes
+          base=https://github.com/google/fonts/raw/main/ofl/playfairdisplay
+          curl -fsSL -o 'nube/.cache/fuentes/PlayfairDisplay[wght].ttf' "$base/PlayfairDisplay%5Bwght%5D.ttf"
+          curl -fsSL -o 'nube/.cache/fuentes/PlayfairDisplay-Italic[wght].ttf' "$base/PlayfairDisplay-Italic%5Bwght%5D.ttf"
+
+      - name: Semillero y arranque
+        id: arr
+        working-directory: nube
+        run: |
+          set +e
+          case "$MODO" in
+            simular)  f="--ideas --arrancar --simular" ;;
+            ideas)    f="--ideas" ;;
+            arrancar) f="--arrancar" ;;
+            *)        f="--ideas --arrancar" ;;
+          esac
+          python3 sala_arranque.py $f 2>&1 | tee ../arranque.log
+          echo "codigo=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Verificar antes de publicar
+        if: steps.arr.outputs.codigo == '0' && env.MODO != 'simular' && env.MODO != 'ideas'
+        run: |
+          pip install --quiet google-auth
+          python3 nube/verificar.py
+
+      - name: Guardar las láminas y las tiras
+        id: guardar
+        if: steps.arr.outputs.codigo == '0' && env.MODO != 'simular' && env.MODO != 'ideas'
+        run: |
+          git config user.name "Arranque de la Sala"
+          git config user.email "noreply@yodesarrollo.mx"
+          git add laminas datos/tiras
+          if git diff --cached --quiet; then echo "hubo=no" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git commit -m "arranque: guion y primera lámina de las ideas elegidas"
+          git pull --rebase --quiet origin main
+          git push
+          echo "hubo=si" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar y esperar a que la tira esté en línea
+        if: steps.guardar.outputs.hubo == 'si'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run publicar.yml --ref main
+          sleep 15
+          id=$(gh run list --workflow publicar.yml --limit 1 --json databaseId --jq '.[0].databaseId')
+          gh run watch "$id" --exit-status
+
+      - name: Montar en la mesa
+        if: steps.guardar.outputs.hubo == 'si'
+        working-directory: nube
+        run: python3 sala_arranque.py --montar 2>&1 | tee -a ../arranque.log
+
+      - name: Avisar si algo falló
+        if: failure() || steps.arr.outputs.codigo != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          titulo="🔎 Vigía · Sala de Edición"
+          numero=$(gh issue list --search "in:title \"$titulo\"" --state open \
+                   --json number,title --jq ".[] | select(.title==\"$titulo\") | .number" | head -n1)
+          [ -z "$numero" ] && exit 0
+          { echo "## 🔴 El semillero/arranque falló — $(date -u '+%Y-%m-%d %H:%M UTC')"; echo;
+            echo '```'; tail -40 arranque.log 2>/dev/null; echo '```'; } > comentario.md
+          gh issue comment "$numero" --body-file comentario.md
+          exit 1
