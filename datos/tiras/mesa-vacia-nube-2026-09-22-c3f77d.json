@@ -1,0 +1,237 @@
+{
+ "pieza": "La Mesa Vacía",
+ "pieza_slug": "mesa-vacia",
+ "promesa": "Toda familia tiene un terreno esperando. Lo que falta no es dinero ni acuerdo: es un Miguel.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/mesa-vacia-e2026-09-15/L1.png",
+   "dice": "En tu familia hay un terreno del que todos opinan y nadie decide.",
+   "estado": "aprobada",
+   "versiones": [],
+   "version": 1,
+   "toma_elegida": "Toma 1",
+   "aprobada_el": "2026-09-15"
+  },
+  {
+   "n": 2,
+   "src": "laminas/mesa-vacia-g1/L2.png",
+   "dice": "Quedó intestado. Y el tiempo no espera papeles.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L2-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L2-1.png",
+     "titulo": "A",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "Quedó intestado. Y el tiempo no espera papeles.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "c7976f9a175c5bcfb0665673ce0cf45c"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L2-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L2-2.png",
+     "titulo": "B",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "Quedó intestado. Y el tiempo no espera papeles.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "cb31bf3b14e938f88d2a3d1615f419aa"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": "",
+   "fecha": "2026-09-22"
+  },
+  {
+   "n": 3,
+   "src": "laminas/mesa-vacia-g1/L3.png",
+   "dice": "Un día, Miguel se sentó en la cabecera.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L3-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L3-1.png",
+     "titulo": "A",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "Un día, Miguel se sentó en la cabecera.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "84b2ea0771eeb1b2f0a40c827d8a5cfa"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L3-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L3-2.png",
+     "titulo": "B",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "Un día, Miguel se sentó en la cabecera.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "7ed0b7d658353ba785b4f70135750434"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": "",
+   "fecha": "2026-09-22"
+  },
+  {
+   "n": 4,
+   "src": "laminas/mesa-vacia-g1/L4.png",
+   "dice": "No tenía que saberlo todo. Tenía que sentar a los que saben.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L4-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L4-1.png",
+     "titulo": "A",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "No tenía que saberlo todo. Tenía que sentar a los que saben.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "61d9249521121aed7b86ca79ff85ae0e"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L4-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L4-2.png",
+     "titulo": "B",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "No tenía que saberlo todo. Tenía que sentar a los que saben.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "4f9286e00d78977212985590b13459ca"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": "",
+   "fecha": "2026-09-22"
+  },
+  {
+   "n": 5,
+   "src": "laminas/mesa-vacia-g1/L5.png",
+   "dice": "La familia pone el terreno. El equipo, todo lo demás.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L5-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L5-1.png",
+     "titulo": "A",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "La familia pone el terreno. El equipo, todo lo demás.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "31df342e785b9070dbec8d551dba0345"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L5-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L5-2.png",
+     "titulo": "B",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "La familia pone el terreno. El equipo, todo lo demás.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "5b9cd385c36cf0798fe72b1d193cd37f"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": "",
+   "fecha": "2026-09-22"
+  },
+  {
+   "n": 6,
+   "src": "laminas/mesa-vacia-g1/L6.png",
+   "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L6-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L6-1.png",
+     "titulo": "A",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "cf1e33c9120c373126a5b1c307a2c9d4"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L6-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L6-2.png",
+     "titulo": "B",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "c5b6be175558ff129b7dd62e3d6c681e"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": "",
+   "fecha": "2026-09-22"
+  },
+  {
+   "n": 7,
+   "src": "laminas/mesa-vacia-g1/L7.png",
+   "dice": "Esta silla es la tuya.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L7-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L7-1.png",
+     "titulo": "A",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "Esta silla es la tuya.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "b2cc4d5714628bde296795fe1fd544f0"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-22/L7-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-22/L7-2.png",
+     "titulo": "B",
+     "texto": "sin cerebro: receta cruda",
+     "dice": "Esta silla es la tuya.",
+     "motor": "cloudflare",
+     "cerebro": "sin-cerebro",
+     "huella": "e85613ef053048e3fb4c254cfd496c07"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": "",
+   "fecha": "2026-09-22"
+  }
+ ],
+ "decidir": [
+  2,
+  3,
+  4,
+  5,
+  6,
+  7
+ ],
+ "mapa": {
+  "1": 2,
+  "2": 3,
+  "3": 4,
+  "4": 5,
+  "5": 6,
+  "6": 7
+ },
+ "base": "mesa-vacia-tira-2026-09-15",
+ "guion": "",
+ "titulo": "La Mesa Vacía · rehechas con tus notas (6)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de mesa-vacia-tira-2026-09-15",
+ "fecha": "2026-09-22"
+}
