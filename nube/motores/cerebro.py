@@ -53,11 +53,26 @@ def _gemini(texto, reglas, instruccion=None):
     clave = os.environ.get('GEMINI_API_KEY', '').strip()
     if not clave:
         raise MotorError('falta GEMINI_API_KEY', intermitente=True)
-    modelo = _regla(reglas, 'cerebro_modelo', 'gemini-2.5-flash-lite')
-    url = ('https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s'
-           % (modelo, clave))
-    r = _post_json(url, {'systemInstruction': {'parts': [{'text': instruccion or INSTRUCCION}]},
-                         'contents': [{'parts': [{'text': texto}]}]}, {}, 'Gemini')
+    # 23-sep: Google retiró gemini-2.5-flash-lite para cuentas nuevas (404 «no longer
+    # available»). La REGLA manda, pero si su modelo ya no existe se prueba el siguiente.
+    modelos = []
+    for m in (_regla(reglas, 'cerebro_modelo', ''), 'gemini-3.5-flash-lite', 'gemini-3.5-flash'):
+        if m and m not in modelos:
+            modelos.append(m)
+    ultimo = None
+    for modelo in modelos:
+        url = ('https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s'
+               % (modelo, clave))
+        try:
+            r = _post_json(url, {'systemInstruction': {'parts': [{'text': instruccion or INSTRUCCION}]},
+                                 'contents': [{'parts': [{'text': texto}]}]}, {}, 'Gemini ' + modelo)
+            break
+        except MotorError as e:
+            ultimo = e
+            if ' 404' not in str(e) and ' 400' not in str(e):
+                raise
+    else:
+        raise ultimo
     try:
         return ''.join(p.get('text', '') for p in r['candidates'][0]['content']['parts']).strip()
     except (KeyError, IndexError):
@@ -160,9 +175,8 @@ def lamina(pieza, promesa, dice, ve, nota, vetadas, reglas, cola=None, variante=
             avisos.append('%s contestó sin JSON útil' % nombre)
         except MotorError as e:
             avisos.append(str(e))
-    receta_cruda = ' '.join(x for x in (ve, nota) if x).strip()
-    if not receta_cruda:
-        raise MotorError('ni cerebro ni descripción para rehacer esta lámina', intermitente=True)
-    return {'texto': dice, 'receta': receta_cruda, 'porque': 'sin cerebro: receta cruda'}, \
-        'sin-cerebro', avisos
+    # Sin cerebro NO se inventa receta: el 23-sep una receta cruda (la nota en español)
+    # hizo que FLUX dibujara hojas con letras sin sentido. Mejor no producir que producir basura.
+    raise MotorError('sin cerebro disponible (%s): la lámina espera a la próxima corrida'
+                     % ' · '.join(avisos)[:300], intermitente=True)
 
