@@ -1,0 +1,51 @@
+# El puente de las chinches (23-sep): lo que se clava con la 📌 en la Sala va al Sheet
+# (PRODUCCION · «ENCARGO · chinche»). Antes lo cosechaba la Mac; desde la mudanza a la nube se
+# quedaba ahí. Esto lo convierte en issue 📌 (que trabaja el revisor de chinches), y cuando el issue
+# se cierra apunta «ENCARGO CUMPLIDO» en el Sheet y reescribe datos/encargos.json.
+name: Puente de chinches de la Sala
+
+on:
+  schedule:
+    - cron: '45 * * * *'
+  workflow_dispatch:
+    inputs:
+      simular:
+        description: 'Sólo decir qué haría'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: sala-chinches
+  cancel-in-progress: false
+
+jobs:
+  puente:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Chinches del Sheet → issues, y cerradas → CUMPLIDO
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GH_TOKEN: ${{ github.token }}
+        run: python3 sala_chinches.py ${{ inputs.simular && '--simular' || '' }}
+
+      - name: Guardar datos/encargos.json si cambió
+        if: ${{ !inputs.simular }}
+        run: |
+          if git diff --quiet -- datos/encargos.json; then echo "sin cambios"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add datos/encargos.json
+          git commit -m "chinches: estado al día desde sus issues"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0; sleep 5; done
+          exit 1
