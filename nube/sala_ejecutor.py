@@ -117,6 +117,11 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                 except MotorError as e:
                     if not e.intermitente:
                         raise
+                    # Cuota del día agotada: esperar a mañana en vez de gastar el trabajo en
+                    # la cámara, salvo que la REGLA escena_camara_si_cuota diga lo contrario.
+                    if getattr(e, 'esperar', False) and str(
+                            reglas.get('escena_camara_si_cuota', '0')).strip() not in ('1', 'si', 'true'):
+                        raise
                     avisos.append(str(e))
             else:
                 avisos.append('wan_hf no disponible: %s' % (razon if not m else m['motor']))

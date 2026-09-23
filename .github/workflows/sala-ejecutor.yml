@@ -44,7 +44,7 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
 
       - name: Librerías de Python (Drive, HTTP, Kokoro)
-        run: pip install --quiet google-auth requests kokoro-onnx numpy
+        run: pip install --quiet google-auth requests kokoro-onnx numpy gradio_client
 
       - name: Caché de los pesos de Kokoro (~300 MB, se descargan una vez)
         id: cache-kokoro

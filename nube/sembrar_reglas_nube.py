@@ -40,8 +40,11 @@ NUEVAS = {
     'cerebro_modelo': ('gemini-3.5-flash-lite', 'modelo gratis que escribe las recetas de candidatas'),
     'cerebro_respaldo_modelo': ('gpt-4o-mini', 'respaldo de pago del cerebro, sólo si Gemini no contesta'),
     'cerebro_pago_tope_dia': (30, 'llamadas máximas al día al respaldo de pago (≈ centavos, < 1 USD)'),
-    'escena_wan_hf_modelo': ('', 'el id del modelo en HuggingFace para animar con wan_hf — '
-                             'vacío a propósito: no se adivina uno sin confirmar'),
+    'escena_wan_hf_modelo': ('', 'Space(s) de HuggingFace para animar con wan_hf, separados '
+                             'por coma; vacío = zerogpu-aoti/wan2-2-fp8da-aoti-faster '
+                             '(comprobado 23-sep)'),
+    'escena_camara_si_cuota': ('0', '1 = si wan_hf agotó su cuota gratis del día, usar la '
+                               'cámara de respaldo; 0 = esperar a mañana (23-sep)'),
 }
 
 
