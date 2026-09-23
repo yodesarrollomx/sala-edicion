@@ -299,7 +299,10 @@ def main():
         sala.post('cola', op='estado', filas=[{'id': tid, 'estado': 'corriendo'}])
         sala.avisar('▶ %s' % tid)
 
-        estado, ev = ejecutar_uno(t, reglas, motores_resp, cat, drive_raiz, cola)
+        try:
+            estado, ev = ejecutar_uno(t, reglas, motores_resp, cat, drive_raiz, cola)
+        except Exception as e:   # 23-sep: una excepción dejaba el trabajo en «corriendo» y tumbaba la corrida
+            estado, ev = 'fallo', {'error': 'excepción %s: %s' % (type(e).__name__, str(e)[:300])}
         sala.post('cola', op='estado', filas=[{'id': tid, 'estado': estado, 'evidencia': ev,
                                                'motor': ev.get('motor') or ''}])
 
