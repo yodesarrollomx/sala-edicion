@@ -156,6 +156,31 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
     return 'hecho', ev
 
 
+ATORADO_MIN = 180
+
+
+def atorados(cola, habilitadas, ahora_utc=None, minutos=ATORADO_MIN):
+    """Trabajos en `corriendo` que nadie está trabajando: sólo corre un ejecutor a la vez
+    (invariante 53), así que un `corriendo` que no se ha tocado en horas es de una corrida que
+    murió (tope del runner, cancelada, o la Mac antes de la mudanza del 21-sep). Sin rescate se
+    quedan así para siempre: la Sala los cuenta como «en producción» y nadie los vuelve a tomar.
+    Sin fecha legible no se toca (lado seguro). `actualizado` viene en hora de Hermosillo."""
+    import datetime
+    ahora_utc = ahora_utc or datetime.datetime.now(datetime.timezone.utc)
+    fuera = []
+    for t in cola:
+        if str(t.get('estado')) != 'corriendo' or str(t.get('etapa')) not in habilitadas:
+            continue
+        try:
+            f = datetime.datetime.strptime(str(t.get('actualizado') or '')[:19], '%Y-%m-%dT%H:%M:%S')
+        except ValueError:
+            continue
+        f = f.replace(tzinfo=datetime.timezone(datetime.timedelta(hours=-7)))
+        if (ahora_utc - f).total_seconds() > minutos * 60:
+            fuera.append(t)
+    return fuera
+
+
 def main():
     ap = argparse.ArgumentParser(description='El ejecutor de la Sala: produce de verdad.')
     ap.add_argument('--simular', action='store_true', help='dice qué ejecutaría y no ejecuta nada')
@@ -210,6 +235,15 @@ def main():
         return 2
 
     drive_raiz = str(reglas.get('drive_raiz') or '').strip() or None
+
+    viejos = atorados(cola, habilitadas)
+    if viejos:
+        for t in viejos:
+            sala.avisar('↺ rescatado · %s (en «corriendo» sin tocar desde %s)' % (t.get('id'), t.get('actualizado')))
+            t['estado'] = 'pendiente'
+        if not args.simular:
+            sala.post('cola', op='estado', filas=[{'id': t.get('id'), 'estado': 'pendiente',
+                'evidencia': {'rescatado': 'corriendo sin tocar desde %s' % t.get('actualizado')}} for t in viejos])
 
     pendientes = [t for t in cola if str(t.get('estado')) == 'pendiente'
                   and str(t.get('etapa')) in habilitadas]

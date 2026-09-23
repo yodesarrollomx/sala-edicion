@@ -680,7 +680,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='cc393b8336';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='76e83ac5a8';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1845,11 +1845,21 @@ async function pintarRecados(){
   const c=$('#ajRecados'); if(!c) return;
   try{
     const r=await fetch('datos/encargos.json?v='+Date.now()); if(!r.ok) return;
-    const j=await r.json(); const l=(j.encargos||[]).filter(e=>e.que).slice(-3).reverse();
+    const j=await r.json();
+    /* 23-sep: la misma chinche venía repetida (una fila por cada vez que se tomó), el texto salía
+       como JSON crudo, y un «en curso» de hace una semana seguía diciendo «la ronda la lanza
+       Alejandro» —ese archivo lo escribía la Mac y desde la mudanza a la nube nadie lo actualiza—.
+       Ahora: uno por chinche (gana la fila más nueva), su texto, y lo viejo se dice «atorado». */
+    const lee=e=>{ const q=String(e.que), id=(q.match(/"id":"([^"]+)"/)||[])[1], tx=(q.match(/"texto":"((?:[^"\\]|\\.)*)/)||[])[1];
+      return {id:id||q, texto:tx?tx.replace(/\\n/g,' ').replace(/\\"/g,'"'):q} };
+    const porId=new Map(); (j.encargos||[]).filter(e=>e.que).forEach(e=>{ const x=lee(e); porId.set(x.id,Object.assign({},e,{texto:x.texto})) });
+    const dias=e=>{ const d=Date.parse(e.cuando||''); return isNaN(d)?0:(Date.now()-d)/864e5 };
+    const l=[...porId.values()].slice(-3).reverse();
     if(!l.length) return;
     c.innerHTML=`<p style="margin:12px 0 6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--guia);font-weight:600">Tus recados</p>`+
-      l.map(e=>`<div class="maq ${e.estado==='cumplida'?'bien':e.estado==='en curso'?'duda':'mal'}"><b><i></i>${esc((e.que||'').slice(0,70))}</b>
-        <small>${e.estado==='cumplida'?'Hecho':e.estado==='en curso'?('Tomado'+(e.tomado?' a las '+esc(e.tomado):'')+' — la ronda la lanza Alejandro'):'Atorado'}${e.cuando?' · pedido el '+esc(e.cuando):''}</small></div>`).join('');
+      l.map(e=>{ const viejo=e.estado==='en curso'&&dias(e)>2, cls=e.estado==='cumplida'?'bien':(e.estado==='en curso'&&!viejo)?'duda':'mal';
+        const txt=e.estado==='cumplida'?'Hecho':viejo?('Atorado desde el '+esc(e.cuando||'')+' · nadie lo terminó; vuelve a clavarlo o pídelo en «Mandar a Claude»'):e.estado==='en curso'?('Tomado'+(e.tomado?' a las '+esc(e.tomado):'')):'Atorado';
+        return `<div class="maq ${cls}"><b><i></i>${esc((e.texto||'').slice(0,90))}</b><small>${txt}${e.cuando&&!viejo?' · pedido el '+esc(e.cuando):''}</small></div>` }).join('');
   }catch(e){}
 }
 async function mandarProduccion(pieza,txt,esMensaje){
