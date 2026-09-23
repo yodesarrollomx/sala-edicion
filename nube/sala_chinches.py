@@ -98,6 +98,33 @@ def cuerpo_issue(cid, c):
     return '\n'.join(L)
 
 
+def refrescar_piezas(simular):
+    """23-sep: datos/piezas.json lo escribía la Mac y se congeló el 15-sep; la Sala creía abiertas
+    piezas ya publicadas. Aquí sólo se SUBE el estado a «publicada» cuando el expediente del Sheet
+    lo dice (nunca se baja, y del expediente no se copia nada más: el repo es público)."""
+    ruta = RAIZ / 'datos' / 'piezas.json'
+    try:
+        exp = (sala.get('expedientes') or {}).get('expedientes') or {}
+    except sala.SalaError as e:
+        sala.avisar('⚠ no leí los expedientes: %s' % e)
+        return False
+    pz = json.loads(ruta.read_text(encoding='utf-8'))
+    cambio = False
+    for p in pz.get('piezas') or []:
+        e = exp.get(p.get('pieza')) or {}
+        hitos = ' '.join(str(h.get('que') or '') for h in (e.get('hitos') or []) if isinstance(h, dict))
+        pub = p.get('etapa') == 'publicada' or e.get('estado') == 'publicada' or bool(re.search(r'publicad|IG \d{6,}', hitos, re.I))
+        sala.avisar('  pieza · %s · repo=%s · sheet=%s%s' % (p.get('pieza'), p.get('estado'), e.get('estado') or '—',
+                                                          ' → publicada' if pub and p.get('estado') != 'publicada' else ''))
+        if pub and p.get('estado') != 'publicada':
+            p['estado'] = 'publicada'
+            cambio = True
+    if cambio and not simular:
+        pz['actualizado'] = str(sala.hoy_hermosillo())
+        ruta.write_text(json.dumps(pz, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+    return cambio
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--simular', action='store_true')
@@ -153,6 +180,8 @@ def main():
         gh('workflow', 'run', 'sala-arranque.yml', '--ref', 'main', '-f', 'modo=ideas')
         sala.post('produccion', pieza='ENCARGO CUMPLIDO · ideas', estado='cumplida',
                   detalle=json.dumps({'id': iid, 'que': 'semillero encendido'}, ensure_ascii=False))
+
+    refrescar_piezas(args.simular)
 
     cumplidas = 0
     for it in issues:
