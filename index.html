@@ -2328,7 +2328,7 @@ function chincheClavada(ch){
 // 15-sep: «quita las alertas de chinches». Una chinche que ya llegó al Sheet se marca «mandada» en la base local
 // de la Chinche (misma que usa el portal): baja de la pastilla y queda en gris al fondo de la pila, como las del OS.
 function chincheMandada(id){ try{ const r=indexedDB.open('yodChinche'); r.onsuccess=()=>{ const db=r.result; const tx=db.transaction('chinches','readwrite'); const st=tx.objectStore('chinches'); const g=st.get(id); g.onsuccess=()=>{ const c=g.result; if(!c) return; c.estado='mandada'; c.mandada=new Date().toISOString(); st.put(c); }; tx.oncomplete=()=>{ try{ const n=Math.max(0,(parseInt(localStorage.getItem('yod_chinche_n')||'0',10)||0)-1); localStorage.setItem('yod_chinche_n',String(n)); const p=document.querySelector('button[aria-label="Pendientes de cambio"]'); if(p) p.textContent=n?'📌'+n:'📌'; }catch(e){} } } }catch(e){} }
-(function(){ const s=document.createElement('script'); s.src='/yod-portal/chinche.js?v=sala1';
+(function(){ const s=document.createElement('script'); s.src='/yod-portal/chinche.js?v=ch3';
   s.onload=()=>{ try{ window.YODChinche&&YODChinche.init({pantalla:'sala', vista:()=>chincheContexto().vista,
       seccion:()=>{ const c=chincheContexto(); return c.popup?('pop-up: '+c.popup):(c.carta?('carta '+c.carta.pid+(c.carta.lamina?' · lámina '+c.carta.lamina:'')):c.vista) },
       valores:()=>chincheContexto(), alClavar:chincheClavada}) }catch(e){ console.warn('chinche',e) } };
