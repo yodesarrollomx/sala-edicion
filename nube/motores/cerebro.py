@@ -49,14 +49,14 @@ def _post_json(url, cuerpo, cabeceras, quien):
         raise MotorError('%s no contestó: %s' % (quien, sala.redactar(str(e))), intermitente=True)
 
 
-def _gemini(texto, reglas):
+def _gemini(texto, reglas, instruccion=None):
     clave = os.environ.get('GEMINI_API_KEY', '').strip()
     if not clave:
         raise MotorError('falta GEMINI_API_KEY', intermitente=True)
     modelo = _regla(reglas, 'cerebro_modelo', 'gemini-2.5-flash-lite')
     url = ('https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s'
            % (modelo, clave))
-    r = _post_json(url, {'systemInstruction': {'parts': [{'text': INSTRUCCION}]},
+    r = _post_json(url, {'systemInstruction': {'parts': [{'text': instruccion or INSTRUCCION}]},
                          'contents': [{'parts': [{'text': texto}]}]}, {}, 'Gemini')
     try:
         return ''.join(p.get('text', '') for p in r['candidates'][0]['content']['parts']).strip()
@@ -74,7 +74,7 @@ def _pagadas_hoy(cola):
     return n
 
 
-def _openai(texto, reglas, cola):
+def _openai(texto, reglas, cola, instruccion=None):
     clave = os.environ.get('OPENAI_API_KEY', '').strip()
     if not clave:
         raise MotorError('sin OPENAI_API_KEY (respaldo de pago no configurado)', intermitente=True)
@@ -85,7 +85,7 @@ def _openai(texto, reglas, cola):
     r = _post_json('https://api.openai.com/v1/chat/completions',
                    {'model': _regla(reglas, 'cerebro_respaldo_modelo', 'gpt-4o-mini'),
                     'max_tokens': 220,
-                    'messages': [{'role': 'system', 'content': INSTRUCCION},
+                    'messages': [{'role': 'system', 'content': instruccion or INSTRUCCION},
                                  {'role': 'user', 'content': texto}]},
                    {'Authorization': 'Bearer ' + clave}, 'OpenAI')
     try:
@@ -113,4 +113,56 @@ def receta(base, ve, dice, nota, reglas, cola, variante=1):
     if not crudo:
         raise MotorError('ni cerebro ni receta base para esta lámina', intermitente=True)
     return crudo, 'sin-cerebro', avisos
+
+
+
+INSTRUCCION_LAMINA = (
+    'Eres director creativo de piezas cortas (carrusel de Instagram) de una desarrolladora '
+    'inmobiliaria en Hermosillo, Sonora. El editor RECHAZÓ una lámina y dejó una nota. Rehazla '
+    'obedeciendo la nota al pie de la letra. Reglas de la casa: el texto le habla al público en '
+    'segunda persona y de preferencia es pregunta; una sola idea; máximo 14 palabras; nada de '
+    'cifras de dinero, nada de «gratis», sin plazos ni garantías; áreas en m²; la pareja '
+    'protagonista es de estatus medio-alto y ella 2-3 años más joven; la imagen tiene que '
+    'sostener el texto (que se vea lo que dice). Si la nota NO pide cambiar el texto, deja el '
+    'texto igual. Contesta SOLO un JSON: {"texto": "...", "receta": "...", "porque": "..."} '
+    'donde receta es una descripción fotográfica en inglés de máximo 90 palabras, sin texto '
+    'dentro de la imagen, y porque dice en una línea cómo atiende la nota.')
+
+
+def _json_de(texto):
+    import re
+    m = re.search(r'\{.*\}', texto or '', re.S)
+    if not m:
+        return None
+    try:
+        return json.loads(m.group(0))
+    except ValueError:
+        return None
+
+
+def lamina(pieza, promesa, dice, ve, nota, vetadas, reglas, cola=None, variante=1, referencia=''):
+    """Devuelve ({texto, receta, porque}, cerebro_usado, avisos). Sin cerebro: el texto se
+    queda y la receta sale de lo que la lámina ya mostraba + la nota."""
+    pedido = ('PIEZA: %s\nPROMESA DE LA PIEZA: %s\nTEXTO ACTUAL: %s\nLO QUE MOSTRABA: %s\n'
+              'NOTA DEL EDITOR: %s\nPALABRAS VETADAS (nunca las uses): %s\n'
+              'REFERENCIA VISUAL (mismos personajes, lugar y luz; descríbelos igual en la receta): %s\n'
+              'VARIANTE %d: propón una composición distinta a las anteriores.'
+              % (pieza, promesa or '-', dice or '-', ve or '-', nota or '(sin nota)',
+                 ', '.join(vetadas) or '-', referencia or '-', variante))
+    avisos = []
+    for nombre, fn in (('gemini', lambda: _gemini(pedido, reglas, INSTRUCCION_LAMINA)),
+                       ('openai', lambda: _openai(pedido, reglas, cola, INSTRUCCION_LAMINA))):
+        try:
+            d = _json_de(fn())
+            if d and d.get('receta'):
+                d['texto'] = str(d.get('texto') or dice).strip()
+                return d, nombre, avisos
+            avisos.append('%s contestó sin JSON útil' % nombre)
+        except MotorError as e:
+            avisos.append(str(e))
+    receta_cruda = ' '.join(x for x in (ve, nota) if x).strip()
+    if not receta_cruda:
+        raise MotorError('ni cerebro ni descripción para rehacer esta lámina', intermitente=True)
+    return {'texto': dice, 'receta': receta_cruda, 'porque': 'sin cerebro: receta cruda'}, \
+        'sin-cerebro', avisos
 
