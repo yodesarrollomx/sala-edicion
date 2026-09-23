@@ -108,12 +108,19 @@ def refrescar_piezas(simular):
     except sala.SalaError as e:
         sala.avisar('⚠ no leí los expedientes: %s' % e)
         return False
+    try:
+        fab = {str(f.get('pieza')): f for f in ((sala.get('fabrica') or {}).get('fabrica') or [])}
+    except sala.SalaError as e:
+        sala.avisar('⚠ no leí la fábrica: %s' % e)
+        fab = {}
     pz = json.loads(ruta.read_text(encoding='utf-8'))
     cambio = False
     for p in pz.get('piezas') or []:
         e = exp.get(p.get('pieza')) or {}
         hitos = ' '.join(str(h.get('que') or '') for h in (e.get('hitos') or []) if isinstance(h, dict))
-        pub = p.get('etapa') == 'publicada' or e.get('estado') == 'publicada' or bool(re.search(r'publicad|IG \d{6,}', hitos, re.I))
+        f = fab.get(p.get('pieza')) or {}
+        pub = (str(f.get('activa')) in ('0', 'False', '') and bool(f) and 'publicad' in str(f.get('nota') or '').lower()) or \
+            p.get('etapa') == 'publicada' or e.get('estado') == 'publicada' or bool(re.search(r'publicad|IG \d{6,}', hitos, re.I))
         sala.avisar('  pieza · %s · repo=%s · sheet=%s%s' % (p.get('pieza'), p.get('estado'), e.get('estado') or '—',
                                                           ' → publicada' if pub and p.get('estado') != 'publicada' else ''))
         if pub and p.get('estado') != 'publicada':

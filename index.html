@@ -748,7 +748,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='ffc36cd3a3';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='87230a550d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1651,6 +1651,8 @@ let PZ={}, PROG={};
 function esPublicada(n){
   if(!n) return false;
   if(PZ[n]&&(PZ[n].estado==='publicada'||PZ[n].etapa==='publicada')) return true;   // la Mac dejaba estado «en camino» con etapa «publicada»
+  // la hoja de la fábrica (slug|pieza|…|activa|nota): «activa 0 · publicada 14-sep» es la palabra del Sheet
+  if((FABRICA||[]).some(f=>f.pieza===n&&!(+f.activa)&&/publicad/i.test(String(f.nota||'')))) return true;
   const e=(typeof EXP!=='undefined'&&EXP[n])||null;
   if(e&&(e.estado==='publicada'||(e.hitos||[]).some(h=>/publicad|IG \d{6,}/i.test(String(h.que||''))))) return true;
   return !!(D&&(D.produccion||[]).some(f=>f.pieza===n&&/publicad/i.test(String(f.estado||''))));
