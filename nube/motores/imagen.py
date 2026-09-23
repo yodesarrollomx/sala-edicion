@@ -59,7 +59,7 @@ def gemini(receta, reglas):
     clave = os.environ.get('GEMINI_API_KEY', '').strip()
     if not clave:
         raise MotorError('falta GEMINI_API_KEY', intermitente=True)
-    modelo = str((reglas or {}).get('imagen_gemini_modelo') or 'gemini-2.5-flash-image').strip()
+    modelo = str((reglas or {}).get('imagen_gemini_modelo') or 'gemini-3.5-flash-image').strip()
     url = ('https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s'
            % (modelo, clave))
     cuerpo, _ = _pedir(url, {'contents': [{'parts': [{'text': receta}]}],
@@ -80,8 +80,13 @@ def gemini(receta, reglas):
 MOTORES = {'cloudflare': cloudflare, 'gemini': gemini}
 
 
+SIN_LETRAS = ('. Photorealistic editorial photograph, natural light. Absolutely no text, '
+              'no letters, no words, no captions, no signs, no logos, no watermark.')
+
+
 def generar(receta, reglas):
     """Devuelve (bytes, extension, motor, avisos). Intermitente si ninguno pudo."""
+    receta = receta.rstrip('. ') + SIN_LETRAS
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
                                     or 'cloudflare,gemini').split(',') if m.strip() in MOTORES]
     avisos = []
