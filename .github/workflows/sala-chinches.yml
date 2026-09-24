@@ -62,10 +62,10 @@ jobs:
       - name: Guardar datos/encargos.json si cambió
         if: ${{ !inputs.simular }}
         run: |
-          if git diff --quiet -- datos/encargos.json datos/piezas.json; then echo "sin cambios"; exit 0; fi
+          if git diff --quiet -- datos/encargos.json datos/piezas.json datos/motores_puntaje.json; then echo "sin cambios"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add datos/encargos.json datos/piezas.json
+          git add datos/encargos.json datos/piezas.json datos/motores_puntaje.json
           git commit -m "chinches: estado al día desde sus issues"
           for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0; sleep 5; done
           exit 1

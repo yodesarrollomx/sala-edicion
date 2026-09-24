@@ -189,6 +189,16 @@ def main():
                   detalle=json.dumps({'id': iid, 'que': 'semillero encendido'}, ensure_ascii=False))
 
     refrescar_piezas(args.simular)
+    # la calificación de los motores según lo que aprueban (sala_puntajes)
+    if not args.simular:
+        try:
+            import sala_puntajes
+            cola = (sala.get('cola') or {}).get('cola') or []
+            if sala_puntajes.actualizar(dia, cola):
+                sala.avisar('calificación de motores actualizada: %s' % json.dumps(
+                    sala_puntajes.leer().get('etapas'), ensure_ascii=False))
+        except Exception as e:                      # nunca tumba el puente
+            sala.avisar('⚠ no pude calificar los motores: %s' % e)
 
     cumplidas = 0
     for it in issues:

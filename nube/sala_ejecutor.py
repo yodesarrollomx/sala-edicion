@@ -109,6 +109,12 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
             m, razon = motores.elegir_motor('escena', motores_resp, [])
             avisos = []
             ruta = None
+            # 24-sep (Alejandro): el orden lo pone lo que él aprueba. Si la cámara va mejor
+            # calificada que Wan (sala_puntajes), se empieza por la cámara.
+            import sala_puntajes
+            if m and m['motor'] == 'wan_hf' and sala_puntajes.orden('escena', ['wan_hf', 'camara'])[0] == 'camara':
+                avisos.append('la cámara va mejor calificada que wan_hf por tus decisiones')
+                m = None
             if m and m['motor'] == 'wan_hf':
                 from motores import escena_wan_hf
                 try:
@@ -119,8 +125,11 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                         raise
                     # Cuota del día agotada: esperar a mañana en vez de gastar el trabajo en
                     # la cámara, salvo que la REGLA escena_camara_si_cuota diga lo contrario.
+                    # 24-sep (Alejandro: «nunca te frenes, siempre usa tu máxima posibilidad de
+                    # producción»): por omisión la cámara ENTRA cuando Wan se queda sin cuota; si él
+                    # no quiere cámara, la REGLA escena_camara_si_cuota=0 vuelve a esperar.
                     if getattr(e, 'esperar', False) and str(
-                            reglas.get('escena_camara_si_cuota', '0')).strip() not in ('1', 'si', 'true'):
+                            reglas.get('escena_camara_si_cuota', '1')).strip() in ('0', 'no', 'false'):
                         raise
                     avisos.append(str(e))
             else:
