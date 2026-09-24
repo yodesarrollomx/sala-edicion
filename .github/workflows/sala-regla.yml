@@ -1,0 +1,44 @@
+# Cambiar una REGLA del Sheet sin abrir el Sheet (24-sep, ya no hay Mac).
+# Usa la acción «regla» del GAS, que sólo acepta la clave del agente y sólo edita nombre → valor.
+name: Poner una regla de la Sala
+
+on:
+  workflow_dispatch:
+    inputs:
+      nombre:
+        description: 'nombre de la regla (columna A de REGLAS)'
+        required: true
+      valor:
+        description: 'valor nuevo'
+        required: true
+      motivo:
+        description: 'por qué (queda en la bitácora del run)'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  regla:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Poner la regla
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          NOMBRE: ${{ inputs.nombre }}
+          VALOR: ${{ inputs.valor }}
+          MOTIVO: ${{ inputs.motivo }}
+        run: |
+          python3 - <<'PY'
+          import os, sala_cliente as sala
+          sala.enmascarar_en_actions()
+          n, v = os.environ['NOMBRE'].strip(), os.environ['VALOR'].strip()
+          r = sala.post('regla', set={n: v})
+          print('regla %s = %s · %s · motivo: %s' % (n, v, r, os.environ.get('MOTIVO') or '—'))
+          PY
