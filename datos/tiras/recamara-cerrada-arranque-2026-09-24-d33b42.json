@@ -1,0 +1,49 @@
+{
+ "pieza": "La Recámara Cerrada",
+ "pieza_slug": "recamara-cerrada",
+ "promesa": "Tu casa en Hermosillo puede cuidarse sola y darte tranquilidad.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Esa recámara vacía puede renovar la vida en tu terreno?",
+   "ve": "Una sala luminosa en una casa tradicional de Hermosillo, con una puerta cerrada al fondo y luz cálida del atardecer entrando por la ventana.",
+   "entiende": "Que los espacios vacíos de casa guardan un potencial que aún no he aprovechado.",
+   "src": "laminas/recamara-cerrada-a2026-09-24/L1-2.jpg",
+   "estado": "propuesta",
+   "version": 1,
+   "fecha": "2026-09-24",
+   "candidatas": [
+    {
+     "src": "laminas/recamara-cerrada-a2026-09-24/L1-2.jpg",
+     "original": "laminas/recamara-cerrada-a2026-09-24/L1-2.png",
+     "titulo": "B",
+     "texto": "Mantiene el texto original al no haber recibido ninguna nota de cambio por parte del editor.",
+     "dice": "¿Esa recámara vacía puede renovar la vida en tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "aa26ba97366ec568a3732528ae73d367"
+    }
+   ]
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Esa recámara que ya no usas puede darle vida nueva a tu terreno.",
+   "ve": "Una sala luminosa en una casa tradicional de Hermosillo, con una puerta cerrada al fondo y luz cálida del atardecer entrando por la ventana.",
+   "entiende": "Que los espacios vacíos de casa guardan un potencial que aún no he aprovechado."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-24",
+ "titulo": "La Recámara Cerrada · arranque: guion y lámina 1",
+ "nota": "Idea elegida en el Árbol. Aquí va el guion completo y la PRIMERA lámina con 1 tomas: elige una con «Ésta». Cuando la apruebes, las demás se hacen a su semejanza.",
+ "origen": "arranque-de idea recamara-cerrada",
+ "base": null
+}

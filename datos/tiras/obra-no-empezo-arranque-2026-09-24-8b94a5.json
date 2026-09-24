@@ -1,0 +1,59 @@
+{
+ "pieza": "La Obra que No Empezó",
+ "pieza_slug": "obra-no-empezo",
+ "promesa": "Construir tu terreno por etapas te quita el miedo al primer paso en Hermosillo.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si empiezas a construir tu terreno en Hermosillo a tu propio ritmo?",
+   "ve": "Una pareja sonriente revisa un plano sencillo sobre una mesa de madera bajo la sombra de un mezquite, con luz cálida de atardecer.",
+   "entiende": "Se puede empezar a construir poco a poco sin arriesgar todo el dinero de golpe.",
+   "src": "laminas/obra-no-empezo-a2026-09-24/L1-1.jpg",
+   "estado": "propuesta",
+   "version": 1,
+   "fecha": "2026-09-24",
+   "candidatas": [
+    {
+     "src": "laminas/obra-no-empezo-a2026-09-24/L1-1.jpg",
+     "original": "laminas/obra-no-empezo-a2026-09-24/L1-1.png",
+     "titulo": "A",
+     "texto": "Se mantiene el texto original ya que la nota del editor no solicitó cambios.",
+     "dice": "¿Y si empiezas a construir tu terreno en Hermosillo a tu propio ritmo?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "d9b6e137cec117dd33d76c82217f2096"
+    },
+    {
+     "src": "laminas/obra-no-empezo-a2026-09-24/L1-2.jpg",
+     "original": "laminas/obra-no-empezo-a2026-09-24/L1-2.png",
+     "titulo": "B",
+     "texto": "Se mantiene el texto original sin cambios al no haber nota del editor, ajustando únicamente la composición visual a una variante nueva.",
+     "dice": "¿Y si empiezas a construir tu terreno en Hermosillo a tu propio ritmo?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "749c4ee2624c69606e36530cb0e37216"
+    }
+   ]
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Tu terreno en Hermosillo se construye por etapas, sin prisas ni sustos.",
+   "ve": "Una pareja sonriente revisa un plano sencillo sobre una mesa de madera bajo la sombra de un mezquite, con luz cálida de atardecer.",
+   "entiende": "Se puede empezar a construir poco a poco sin arriesgar todo el dinero de golpe."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-24",
+ "titulo": "La Obra que No Empezó · arranque: guion y lámina 1",
+ "nota": "Idea elegida en el Árbol. Aquí va el guion completo y la PRIMERA lámina con 2 tomas: elige una con «Ésta». Cuando la apruebes, las demás se hacen a su semejanza.",
+ "origen": "arranque-de idea obra-no-empezo",
+ "base": null
+}

@@ -1,0 +1,49 @@
+{
+ "pieza": "Las 48 Horas",
+ "pieza_slug": "48-horas",
+ "promesa": "En solo dos días sabes exactamente qué potencial tiene tu terreno en Hermosillo, sin enredos.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Imaginas saber el potencial real de tu terreno en solo 48 horas?",
+   "ve": "Dos personas platicando sonrientes en una sala fresca con luz de la tarde en Hermosillo, viendo una tablet.",
+   "entiende": "Que la primera videollamada es rápida, cercana y revela el potencial real del terreno.",
+   "src": "laminas/48-horas-a2026-09-24/L1-1.jpg",
+   "estado": "propuesta",
+   "version": 1,
+   "fecha": "2026-09-24",
+   "candidatas": [
+    {
+     "src": "laminas/48-horas-a2026-09-24/L1-1.jpg",
+     "original": "laminas/48-horas-a2026-09-24/L1-1.png",
+     "titulo": "A",
+     "texto": "Mantiene el texto original adaptándolo a pregunta y respeta estrictamente la atmósfera, los personajes y las reglas de la casa.",
+     "dice": "¿Imaginas saber el potencial real de tu terreno en solo 48 horas?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "e1192f8643f69ff68a9421b6a0efc871"
+    }
+   ]
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Tu terreno tiene un futuro claro. Te lo mostramos en 48 horas.",
+   "ve": "Dos personas platicando sonrientes en una sala fresca con luz de la tarde en Hermosillo, viendo una tablet.",
+   "entiende": "Que la primera videollamada es rápida, cercana y revela el potencial real del terreno."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-24",
+ "titulo": "Las 48 Horas · arranque: guion y lámina 1",
+ "nota": "Idea elegida en el Árbol. Aquí va el guion completo y la PRIMERA lámina con 1 tomas: elige una con «Ésta». Cuando la apruebes, las demás se hacen a su semejanza.",
+ "origen": "arranque-de idea 48-horas",
+ "base": null
+}

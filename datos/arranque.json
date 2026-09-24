@@ -1,20 +1,20 @@
 {
- "corrida": "2026-09-23T19:20Z",
+ "corrida": "2026-09-24T13:59Z",
  "piezas": [
   {
    "pieza": "La Obra que No Empezó",
-   "resultado": "sin lámina",
-   "motivo": "toma 1: ningún motor de imagen pudo: Cloudflare 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, ple"
+   "resultado": "arrancada",
+   "motivo": "guion de 1 lámina(s) y lámina 1 con 2 tomas en tu mesa"
   },
   {
    "pieza": "La Recámara Cerrada",
-   "resultado": "sin lámina",
-   "motivo": "toma 1: ningún motor de imagen pudo: Cloudflare 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, ple"
+   "resultado": "arrancada",
+   "motivo": "guion de 1 lámina(s) y lámina 1 con 1 tomas en tu mesa"
   },
   {
    "pieza": "Las 48 Horas",
-   "resultado": "sin lámina",
-   "motivo": "toma 1: ningún motor de imagen pudo: Cloudflare 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, ple"
+   "resultado": "arrancada",
+   "motivo": "guion de 1 lámina(s) y lámina 1 con 1 tomas en tu mesa"
   }
  ]
 }
