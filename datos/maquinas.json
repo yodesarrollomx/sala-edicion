@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-24 11:24",
+  "actualizado": "2026-09-24 16:11",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -172,10 +172,10 @@
       "hace": "Sube la Sala a GitHub Pages cuando el verificador pasa.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-24T17:47:41Z",
+      "corrio": "2026-09-24T21:57:18Z",
       "dijo": "Publicar la Sala",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 0 h"
+      "porque": "su última corrida salió bien hace 1 h"
     },
     {
       "id": "nube:sala-maquinas.yml",
@@ -183,7 +183,7 @@
       "hace": "Escribe este mismo tablero de salud.",
       "evita": "quedarse sin saber si los demás corrieron",
       "cuando": "cada 2 h",
-      "corrio": "2026-09-24T18:24:03Z",
+      "corrio": "2026-09-24T23:11:28Z",
       "dijo": "Semáforo de la Sala",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
@@ -194,10 +194,10 @@
       "hace": "Abre las compuertas de lo aprobado y lo anota en la COLA.",
       "evita": "que un «sí» de la mesa no dispare nada",
       "cuando": "cada hora",
-      "corrio": "2026-09-24T15:25:31Z",
+      "corrio": "2026-09-24T22:40:51Z",
       "dijo": "Productor de la Sala",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 2 h"
+      "porque": "su última corrida salió bien hace 0 h"
     },
     {
       "id": "nube:sala-relevo.yml",
@@ -205,10 +205,10 @@
       "hace": "Rehace el respaldo espejo del día (datos/manifiesto.json).",
       "evita": "que la Sala se quede sin plan B si el Sheet no contesta",
       "cuando": "6, 9, 12, 15 y 18 h",
-      "corrio": "2026-09-24T17:42:06Z",
+      "corrio": "2026-09-24T21:56:40Z",
       "dijo": "Relevo de la Sala",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 0 h"
+      "porque": "su última corrida salió bien hace 1 h"
     },
     {
       "id": "nube:verificar.yml",
@@ -219,7 +219,7 @@
       "corrio": "2026-09-24T14:10:05Z",
       "dijo": "workflow: poner una regla del Sheet desde la nube (acción regla, clav…",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 4 h"
+      "porque": "su última corrida salió bien hace 9 h"
     }
   ]
 }
