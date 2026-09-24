@@ -47,6 +47,11 @@ def _post_json(url, cuerpo, cabeceras, quien):
                          intermitente=e.code in (429, 500, 502, 503))
     except urllib.error.URLError as e:
         raise MotorError('%s no contestó: %s' % (quien, sala.redactar(str(e))), intermitente=True)
+    except (TimeoutError, OSError, ValueError) as e:
+        # 24-sep: un «read operation timed out» (TimeoutError, no URLError) tumbaba la corrida entera del
+        # arranque en vez de contar como un intento fallido del cerebro.
+        raise MotorError('%s tardó demasiado o cortó la conexión: %s' % (quien, sala.redactar(str(e))),
+                         intermitente=True)
 
 
 def _gemini(texto, reglas, instruccion=None):
