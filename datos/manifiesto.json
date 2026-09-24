@@ -2674,6 +2674,13 @@
  "produccion": [
   {
    "fecha": "2026-09-24",
+   "pieza": "ENCARGO TOMADO · chinche",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260924-1049-152f\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/25\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/25"
+  },
+  {
+   "fecha": "2026-09-24",
    "pieza": "ENCARGO · chinche · La Recámara Cerrada",
    "estado": "pendiente",
    "detalle": "{\"id\":\"CHN-20260924-1049-152f\",\"texto\":\"Aqui quiero poder clickar y poder ir a la idea aprobada y pdoerla editar y que todo lo de hacia adelabte si no cumpe se adapte... asi aunque cambiemos algo va causando efecto a todo .. tmb guion si le pico y quiero ver uq es lo que se aprobo y cualesosn lo guones ta porbados y pdoerklos cambiar desd ehi a\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":{\"pid\":\"recamara-cerrada-arranque-2026-09-24-d33b42\",\"tipo\":\"lamina\",\"lamina\":1,\"pieza\":\"La Recámara Cerrada\"},\"elemento\":{\"css\":\"div#ctx\",\"texto\":\"VA EN idea guion láminas video copy publicada\",\"seccion\":\"Faltan 2 decisiones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790271996875\"}",
@@ -2874,13 +2881,6 @@
    "estado": "en curso",
    "detalle": "{\"id\": \"CHN-20260915-0714-582a\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/20\"}",
    "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/20"
-  },
-  {
-   "fecha": "2026-09-22",
-   "pieza": "ENCARGO · chinche · hoy",
-   "estado": "pendiente",
-   "detalle": "{\"id\":\"CHN-20260922-2237-dfac\",\"texto\":\"mira aqui le pico y no me deja escoger las de hoy como que esta gairdando antes de actualizar o algo por qu eno permite que siga adeltne todo ... tiene un problema creo.. asi que ayudame a que en toda seccion que necesite ser revisado  algo sea constente en produccion arbol hoy publciaicones y todo\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"div#lineaHoy div.ln-mini button.ln-mfila\",\"texto\":\"La Mesa Vacía TE TOCA Te toca: pidió cambio en la lámina 2. Sale en cuanto decidas · esperando desde el 22 sep · En la fábrica: 4 trabajos en cola, siguiente re\",\"seccion\":\"PRODUCCIÓN AHORA\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790141817303\"}",
-   "enlace": ""
   }
  ],
  "bitacora": [
