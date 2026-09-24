@@ -71,15 +71,16 @@ def chinches_del_sheet(produccion):
                        'texto': d.get('texto') or '', 'seccion': el.get('seccion') or '',
                        'css': el.get('css') or '', 'dice': (el.get('texto') or '')[:200],
                        'url': d.get('url') or '', 'popup': d.get('popup') or '',
-                       'carta': d.get('carta')}
+                       'carta': d.get('carta'), 'repo': d.get('repo') or '', 'codigo': d.get('codigo') or ''}
     return vistas
 
 
 def cuerpo_issue(cid, c):
     L = ['# Encargo desde la Sala de Edición · 1 cambio',
-         'Alejandro · %s · clavada en la Sala (llegó por el puente `nube/sala_chinches.py`)' % c['fecha'],
-         'Repo: yodesarrollomx/sala-edicion · publicado en yodesarrollomx.github.io/sala-edicion/', '',
-         '## 1 · sala-edicion · vista "%s"' % (c['vista'] or '—')]
+         'Alejandro · %s · clavada en %s (llegó por el puente `nube/sala_chinches.py`)'
+         % (c['fecha'], ('el tablero ' + c['vista']) if c.get('repo') else 'la Sala'),
+         'Repo: yodesarrollomx/%s' % (c.get('repo') or 'sala-edicion'), '',
+         '## 1 · %s · vista "%s"' % (c.get('repo') or 'sala-edicion', c['vista'] or '—')]
     if c['url']:
         L.append('- **Página:** %s' % c['url'])
     L += ['', '**Dice Alejandro:** "%s"' % c['texto'], '']
@@ -91,6 +92,8 @@ def cuerpo_issue(cid, c):
         L.append('- **Dice el elemento:** "%s"' % c['dice'])
     if c['popup']:
         L.append('- **Pop-up abierto:** %s' % c['popup'])
+    if c.get('codigo'):
+        L.append('- **Dónde vive en el código:** %s' % c['codigo'])
     if c['carta']:
         L.append('- **Carta:** `%s`' % json.dumps(c['carta'], ensure_ascii=False)[:300])
     L += ['- id %s' % cid, '',
@@ -158,7 +161,8 @@ def main():
     for cid, c in sorted(enSheet.items()):
         if cid in porId:
             continue
-        titulo = '📌 sala · %s · %s' % (c['vista'] or 'sala', re.sub(r'\s+', ' ', c['texto'])[:70])
+        titulo = '📌 %s · %s' % (c['vista'] if c.get('repo') else 'sala · ' + (c['vista'] or 'sala'),
+                                 re.sub(r'\s+', ' ', c['texto'])[:70])
         sala.avisar('  + %s · %s' % (cid, titulo))
         nuevas += 1
         if args.simular:
