@@ -325,7 +325,7 @@ details.prod-dentro>summary{cursor:pointer;font-weight:600;color:var(--guia);mar
 /* ── contexto de la pieza ── */
 .ctx{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:2px 0 12px;align-items:center}
 .ctx .lbl{font-size:11px;color:var(--guia);letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-right:2px}
-.ctx .et{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--linea);border-radius:999px;padding:4px 11px;font-size:11.5px;color:var(--guia);background:var(--tarjeta)}
+.ctx .et{font:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--linea);border-radius:999px;padding:4px 11px;font-size:11.5px;color:var(--guia);background:var(--tarjeta)}
 .ctx .et.on{border-color:var(--si);color:var(--si)} .ctx .et.aqui{border-color:var(--oro);color:var(--oro);font-weight:600}
 .ctx .et i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
 
@@ -749,7 +749,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='08690f5d20';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='f8527fb611';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1326,8 +1326,38 @@ function pintarCtx(x){
   const angosto=innerWidth<=640;
   const lista=angosto?[[aqui,k]]:ET.map((e,i)=>[e,i]);
   c.innerHTML=`<span class="lbl" title="En qué paso va esta publicación">Va en</span>`+
-    lista.map(([e,i])=>`<span class="et ${i<k?'on':''} ${i===k?'aqui':''}" title="${i<k?'ya pasó':i===k?'aquí estamos':'todavía no'}"><i></i>${e}</span>`).join('')+
-    (angosto?`<span class="lbl" style="margin-left:4px">paso ${k+1} de ${ET.length}</span>`:'');
+    lista.map(([e,i])=>`<button type="button" class="et ${i<k?'on':''} ${i===k?'aqui':''}" data-et="${e}" title="${i<k?'ya pasó · pica para verlo y cambiarlo':i===k?'aquí estamos':'todavía no'}"><i></i>${e}</button>`).join('')+
+    (angosto?`<span class="lbl" style="margin-left:4px">paso ${k+1} de ${ET.length} · pica</span>`:'');
+  // 24-sep (chinche CHN-20260924-1049-152f): «quiero picarle e ir a la idea aprobada y editarla…
+  // también el guion: ver qué se aprobó y cambiarlo desde ahí». Cada etapa abre lo suyo.
+  c.querySelectorAll('[data-et]').forEach(b=>b.onclick=()=>abrirEtapa(x,angosto?null:b.dataset.et));
+}
+function abrirEtapa(x,et){
+  const nombre=piezaDe(x)||(x.p&&x.p.titulo)||'';
+  if(!et){ const v=hoja(`<div class="arb-ficha"><h3>${esc(nombre)}</h3><p class="arb-sub">¿Qué quieres ver o cambiar?</p>
+      <div style="display:grid;gap:8px">${['idea','guion','láminas'].map(e=>`<button class="secund" data-e="${e}">${e==='idea'?'La idea aprobada':e==='guion'?'El guion aprobado':'Las láminas y el avance'}</button>`).join('')}</div></div>`,'etapas');
+    v.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{ cerrarCapas(); setTimeout(()=>abrirEtapa(x,b.dataset.e),320) }); return }
+  if(et==='idea') return fichaIdeaProd(nombre);
+  if(et==='guion') return fichaGuion(x,nombre);
+  return fichaPieza(nombre);
+}
+function fichaGuion(x,nombre){
+  const t=tiraDe(x)||{}; const g=Array.isArray(t.guion)?t.guion:[];
+  const lineas=g.length?g.map(l=>`<li><b>Lámina ${esc(l.n||'')}</b> — ${esc(l.dice||'')}${l.ve?`<br><small>se ve: ${esc(l.ve)}</small>`:''}</li>`).join('')
+    :((t.laminas||[]).filter(l=>l.dice).map(l=>`<li><b>Lámina ${esc(l.n)}</b> — ${esc(l.dice)}</li>`).join(''));
+  const v=hoja(`<div class="arb-ficha"><h3>Guion · ${esc(nombre)}</h3>
+    ${t.promesa?`<p class="arb-sub"><b>Promesa:</b> ${esc(t.promesa)}</p>`:''}
+    ${lineas?`<ol style="padding-left:18px;line-height:1.45">${lineas}</ol>`:'<p class="arb-sub">Esta pieza todavía no tiene su guion guardado en la tira.</p>'}
+    <h4 style="margin:14px 0 6px">¿Cambiamos el guion?</h4>
+    <textarea id="guTxt" style="width:100%;min-height:80px" placeholder="Qué cambia: el mensaje, una lámina, el orden… Producción ajusta lo que siga (láminas, voz, video) para que cumpla."></textarea>
+    <button class="listo" id="guOk" style="margin-top:8px">Pedir cambio al guion</button><p id="guAv" class="arb-sub"></p></div>`,'guion');
+  v.querySelector('#guOk').onclick=async()=>{ const txt=(v.querySelector('#guTxt').value||'').trim(), av=v.querySelector('#guAv');
+    if(!txt){ av.textContent='Escribe primero qué cambia.'; return }
+    const d=new Date(), p2=n=>String(n).padStart(2,'0'), id='CHN-'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes())+'-'+Math.random().toString(16).slice(2,6);
+    av.textContent='Mandando…';
+    try{ await mandarProduccion('ENCARGO · chinche · '+nombre, JSON.stringify({id,texto:`[Cambio de guion] «${nombre}»: ${txt} — y adapta en cascada lo que ya no cumpla (láminas, voz, video, copy).`,tipo:'guion',vista:'hoy',carta:{pieza:nombre,pid:x.pid},url:location.href}), false);
+      av.textContent='✓ Anotado. Llega a Producción en menos de una hora (📌) y lo que siga se rehace para cumplir el guion nuevo.'; v.querySelector('#guTxt').value='' }
+    catch(e){ av.textContent='No se pudo mandar: '+(e&&e.message||e) } };
 }
 function luegoDe(x){
   if(x.tipo==='eje') return `<div class="luego"><span class="s"><i></i>Al elegir, Producción empieza con ésa</span></div>`;
@@ -2231,14 +2261,13 @@ function horaHmoNum(d){ return (d.getUTCHours()+24-7)%24 }
 function tomaFabrica(){   // cuándo la fábrica TOMA lo que está en fila
   const d=new Date(); d.setUTCSeconds(0,0);
   for(let i=1;i<60*30;i++){ const x=new Date(d.getTime()+i*60000), h=horaHmoNum(x), m=x.getUTCMinutes();
-    if(h>=23||h<7) continue;
     if(m===30||m===45||(m===20&&x.getUTCHours()%2===0)) return x }
   return null }
 function estimaFabrica(etapa){
   const t=tomaFabrica(); if(!t) return null;
   const toma=new Date(t.getTime()+RETRASO_GH*60000), listo=new Date(toma.getTime()+(durEtapa(etapa)+3)*60000);
-  const h=horaHmoNum(new Date()), quieto=h>=23||h<7;
-  return {toma,listo,texto:(quieto?'La fábrica duerme de 11 pm a 7 am. ':'')+`La fábrica lo toma ≈ ${horaHmo(toma)} (GitHub suele llegar tarde) · revísalo ≈ ${horaHmo(listo)}`} }
+  // 24-sep (chinche CHN-20260924-0644-3ca4): «que produzca toda la noche». Se quitó el horario quieto.
+  return {toma,listo,texto:`La fábrica lo toma ≈ ${horaHmo(toma)} (GitHub suele llegar tarde) · revísalo ≈ ${horaHmo(listo)}`} }
 function proximaCorrida(minuto,cadaH){ const d=new Date(); d.setUTCSeconds(0,0);
   for(let i=0;i<60*24;i++){ const x=new Date(d.getTime()+i*60000); if(x.getUTCMinutes()===minuto&&x.getUTCHours()%cadaH===0&&x>new Date()) return x } return null }
 function edadHoras(txt){ const m=String(txt||'').match(/^(\d{4}-\d\d-\d\dT\d\d:\d\d(:\d\d)?)/); if(!m) return null;
