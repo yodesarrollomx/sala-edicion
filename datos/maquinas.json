@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-24 16:11",
+  "actualizado": "2026-09-24 18:47",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -169,57 +169,46 @@
     {
       "id": "nube:publicar.yml",
       "nombre": "Publicador",
-      "hace": "Sube la Sala a GitHub Pages cuando el verificador pasa.",
+      "hace": "Corre las pruebas y sube la Sala a GitHub Pages en cada guardado a main.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-24T21:57:18Z",
-      "dijo": "Publicar la Sala",
-      "salud": "bien",
-      "porque": "su última corrida salió bien hace 1 h"
-    },
-    {
-      "id": "nube:sala-maquinas.yml",
-      "nombre": "Semáforo",
-      "hace": "Escribe este mismo tablero de salud.",
-      "evita": "quedarse sin saber si los demás corrieron",
-      "cuando": "cada 2 h",
-      "corrio": "2026-09-24T23:11:28Z",
-      "dijo": "Semáforo de la Sala",
+      "corrio": "2026-09-25T01:46:37Z",
+      "dijo": "Puertas de la Sala: botón manual por proceso",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
     },
     {
-      "id": "nube:sala-productor.yml",
-      "nombre": "Productor",
-      "hace": "Abre las compuertas de lo aprobado y lo anota en la COLA.",
-      "evita": "que un «sí» de la mesa no dispare nada",
+      "id": "nube:sala-cada-hora.yml",
+      "nombre": "Sala · Cada hora",
+      "hace": "Productor (cada hora), puente de chinches, ejecutor y este semáforo (cada 2 h).",
+      "evita": "que un «sí» de la mesa no dispare nada y que las chinches no lleguen",
       "cuando": "cada hora",
-      "corrio": "2026-09-24T22:40:51Z",
-      "dijo": "Productor de la Sala",
-      "salud": "bien",
-      "porque": "su última corrida salió bien hace 0 h"
+      "corrio": "2026-09-25T01:46:42Z",
+      "dijo": "Sala · Cada hora",
+      "salud": "regular",
+      "porque": "está corriendo ahora mismo"
     },
     {
-      "id": "nube:sala-relevo.yml",
-      "nombre": "Relevo de la Sala",
-      "hace": "Rehace el respaldo espejo del día (datos/manifiesto.json).",
-      "evita": "que la Sala se quede sin plan B si el Sheet no contesta",
-      "cuando": "6, 9, 12, 15 y 18 h",
-      "corrio": "2026-09-24T21:56:40Z",
-      "dijo": "Relevo de la Sala",
-      "salud": "bien",
-      "porque": "su última corrida salió bien hace 1 h"
+      "id": "nube:sala-diario.yml",
+      "nombre": "Sala · Diario",
+      "hace": "Monta la mesa (5:40), siembra y arranca (5:50) y rehace el respaldo espejo (6, 9, 12, 15 y 18 h).",
+      "evita": "que la mesa amanezca vacía o la Sala sin plan B si el Sheet no contesta",
+      "cuando": "5:40 a 18 h",
+      "corrio": null,
+      "dijo": "",
+      "salud": "sin noticias",
+      "porque": "todavía no ha corrido ni una vez"
     },
     {
       "id": "nube:verificar.yml",
       "nombre": "Verificador",
-      "hace": "Corre las pruebas del repo en cada push y cada pull request.",
-      "evita": "publicar una Sala rota",
-      "cuando": "en cada guardado",
-      "corrio": "2026-09-24T14:10:05Z",
-      "dijo": "workflow: poner una regla del Sheet desde la nube (acción regla, clav…",
+      "hace": "Corre las pruebas del repo en cada pull request.",
+      "evita": "aceptar un cambio roto",
+      "cuando": "en cada pull request",
+      "corrio": "2026-09-25T01:16:14Z",
+      "dijo": "chinche #24 #25: la fábrica sin horario quieto en la Línea; «Va en» s…",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 9 h"
+      "porque": "su última corrida salió bien hace 0 h"
     }
   ]
 }
