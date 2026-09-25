@@ -1,0 +1,25 @@
+# Por qué existe (25-sep-2026): tras la fuga del 22-sep, probar a mano que las tres llaves
+# repuestas sirven, sin producir nada. Sólo lee; el log dice ✅/⛔ y nunca una llave.
+name: Sala · Probar llaves (sólo lee)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  llaves:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet google-auth requests
+      - name: Probar Drive, Gemini y Hugging Face
+        env:
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python3 nube/probar_llaves.py
