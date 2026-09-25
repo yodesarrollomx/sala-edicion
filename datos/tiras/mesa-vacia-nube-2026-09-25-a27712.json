@@ -1,0 +1,187 @@
+{
+ "pieza": "La Mesa Vacía",
+ "pieza_slug": "mesa-vacia",
+ "promesa": "Toda familia tiene un terreno esperando. Lo que falta no es dinero ni acuerdo: es un Miguel.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/mesa-vacia-e2026-09-15/L1.png",
+   "dice": "En tu familia hay un terreno del que todos opinan y nadie decide.",
+   "estado": "aprobada",
+   "versiones": [],
+   "version": 1,
+   "toma_elegida": "Toma 1",
+   "aprobada_el": "2026-09-15"
+  },
+  {
+   "n": 2,
+   "src": "laminas/mesa-vacia-g1/L2.png",
+   "dice": "Quedó intestado. Y el tiempo no espera papeles.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-25/L2-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-25/L2-2.png",
+     "titulo": "B",
+     "texto": "Se cambia el texto a una pregunta directa y optimista en segunda persona sobre resolver el terreno familiar, conectando con la promesa.",
+     "dice": "¿Y si el terreno intestado de la familia por fin tiene dueño?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "e125e0fbc3b93364f7a7e508ed948121"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "B pero el texto no engancha ni da buena espina ... creo que no tiene que ver con lod el plan de ppp ... al igual qu ela otra revisoon de la lamina que acabo de revisar ... revisa los textos y la logixa de como lo contamos... la imagen b esta bien",
+   "fecha": "2026-09-25"
+  },
+  {
+   "n": 3,
+   "src": "laminas/mesa-vacia-g1/L3.png",
+   "dice": "Un día, Miguel se sentó en la cabecera.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-25/L3-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-25/L3-1.png",
+     "titulo": "A",
+     "texto": "Modifica el texto a pregunta en segunda persona sobre el potencial del terreno y muestra a la pareja analizando el espacio exactamente como pide la nota.",
+     "dice": "¿Y si el potencial de tu terreno familiar por fin se decide hoy?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "3a8a34a47b3a4029cf0afefdbfb6c3e1"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto... al igual creo qu el texto no me engancha ... y estamos desviando realiza las cosas mas sobre elplan de potencial haz un solo guoon y siguelo uyque hormozi lo revise todo compelto no tomes estos textos como uno por uno si no piensa todo uy vuelve amostrar",
+   "fecha": "2026-09-25"
+  },
+  {
+   "n": 4,
+   "src": "laminas/mesa-vacia-g1/L4.png",
+   "dice": "No tenía que saberlo todo. Tenía que sentar a los que saben.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-25/L4-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-25/L4-1.png",
+     "titulo": "A",
+     "texto": "Se mantiene el texto original adaptado a pregunta y segunda persona, y la receta replica exactamente a los mismos personajes, lugar y luz de la lámina 1.",
+     "dice": "¿No tenías que saberlo todo para empezar a construir en tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "91b945e8fda7e6399d9960996954338d"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": "",
+   "fecha": "2026-09-25"
+  },
+  {
+   "n": 5,
+   "src": "laminas/mesa-vacia-g1/L5.png",
+   "dice": "La familia pone el terreno. El equipo, todo lo demás.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-25/L5-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-25/L5-2.png",
+     "titulo": "B",
+     "texto": "Se ajusta estrictamente a la nota manteniendo los personajes, lugar y luz de la lámina 1 con una composición nueva y pregunta en segunda persona.",
+     "dice": "¿Tu familia pone el terreno y ustedes no saben por dónde empezar?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "3006a9ed3ff39589b9d06cf3679a3ee4"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": "",
+   "fecha": "2026-09-25"
+  },
+  {
+   "n": 6,
+   "src": "laminas/mesa-vacia-g1/L6.png",
+   "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-25/L6-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-25/L6-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota al enfocar la pieza directamente en el plan de potencial familiar y la toma de decisiones.",
+     "dice": "¿Y si el plan de potencial familiar empieza cuando todos se ponen de acuerdo?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "1181ca2353bf9d4f83d366c0f6f650bc"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-25/L6-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-25/L6-2.png",
+     "titulo": "B",
+     "texto": "Alinea la pieza con el enfoque del plan de potencial familiar exigido por el editor.",
+     "dice": "¿Tu familia sigue discutiendo sobre el terreno que nadie decide?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "b6f2d506dbb2ccfffe112389566c2155"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "B pero creo qu enoe stamos engfocados en el plan de potenicla al igual que lo demas revis abien de que se trata y ayyduame ahcerlo bien",
+   "fecha": "2026-09-25"
+  },
+  {
+   "n": 7,
+   "src": "laminas/mesa-vacia-g1/L7.png",
+   "dice": "Esta silla es la tuya.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-25/L7-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-25/L7-1.png",
+     "titulo": "A",
+     "texto": "Convierte la frase en una pregunta directa y alineada con la conversación de las demás láminas sobre decidir el terreno familiar.",
+     "dice": "¿Y si la próxima cena familiar es en tu propio terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "9f5d98387d4a38bb7576dbfeb0df3ba4"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "B pero no tiene nada que ver el texto noe stan alinaidos los textos de todas las laminas estan platicando por separado preguntas y eso no es un editor de marketing hazlo bien pensando y ponoendote la cachca de un exxperto y que me quiere hacer un anuncio que convierta",
+   "fecha": "2026-09-25"
+  }
+ ],
+ "decidir": [
+  2,
+  3,
+  4,
+  5,
+  6,
+  7
+ ],
+ "mapa": {
+  "1": 2,
+  "2": 3,
+  "3": 4,
+  "4": 5,
+  "5": 6,
+  "6": 7
+ },
+ "base": "mesa-vacia-nube-2026-09-23-61a5cb",
+ "guion": "",
+ "titulo": "La Mesa Vacía · rehechas con tus notas (6)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de mesa-vacia-nube-2026-09-23-61a5cb",
+ "fecha": "2026-09-25"
+}

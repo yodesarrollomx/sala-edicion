@@ -1,0 +1,51 @@
+{
+ "pieza": "La Obra que No Empezó",
+ "pieza_slug": "obra-no-empezo",
+ "promesa": "Construir tu terreno por etapas te quita el miedo al primer paso en Hermosillo.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si empiezas a construir tu terreno en Hermosillo a tu propio ritmo?",
+   "ve": "Una pareja sonriente revisa un plano sencillo sobre una mesa de madera bajo la sombra de un mezquite, con luz cálida de atardecer.",
+   "entiende": "Se puede empezar a construir poco a poco sin arriesgar todo el dinero de golpe.",
+   "src": "laminas/obra-no-empezo-a2026-09-24/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-25",
+   "candidatas": [
+    {
+     "src": "laminas/obra-no-empezo-n2026-09-25/L1-1.jpg",
+     "original": "laminas/obra-no-empezo-n2026-09-25/L1-1.png",
+     "titulo": "A",
+     "texto": "Se eliminó la mención geográfica de Hermosillo para lograr una comunicación más global atendiendo la nota del editor.",
+     "dice": "¿Y si empiezas a construir tu terreno a tu propio ritmo?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "d907386dc988d912a338a0f33c890ceb"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "Sayri: [toma elegida: 2] | Alejandro: No teng problema ocn la imagen pro lo partticular d ehermosilo creo que no hace falta ... para hacer la comunciauon mas global evitando temas locales"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Tu terreno en Hermosillo se construye por etapas, sin prisas ni sustos.",
+   "ve": "Una pareja sonriente revisa un plano sencillo sobre una mesa de madera bajo la sombra de un mezquite, con luz cálida de atardecer.",
+   "entiende": "Se puede empezar a construir poco a poco sin arriesgar todo el dinero de golpe."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-25",
+ "titulo": "La Obra que No Empezó · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de obra-no-empezo-arranque-2026-09-24-8b94a5",
+ "base": "obra-no-empezo-arranque-2026-09-24-8b94a5"
+}

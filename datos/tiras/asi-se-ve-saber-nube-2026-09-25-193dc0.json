@@ -1,0 +1,81 @@
+{
+ "pieza": "REEL · Así Se Ve Saber",
+ "pieza_slug": "asi-se-ve-saber",
+ "promesa": "Muestra cómo se ve tener la certeza real sobre un terreno en Hermosillo con el Plan de Potencial.",
+ "formato": "Reel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Sabes exactamente qué construir en tus 300 m²?",
+   "ve": "Dueño sonriente sosteniendo una carpeta elegante frente a su terreno con sol de tarde.",
+   "entiende": "Tener información clara da tranquilidad inmediata.",
+   "src": "laminas/asi-se-ve-saber-a2026-09-23/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-25",
+   "candidatas": [
+    {
+     "src": "laminas/asi-se-ve-saber-n2026-09-25/L1-2.jpg",
+     "original": "laminas/asi-se-ve-saber-n2026-09-25/L1-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota eliminando la mención de metraje arbitrario y enfoca la pregunta directamente en la certeza del terreno según el guion.",
+     "dice": "¿Sabes exactamente qué construir aquí?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "a0244e346e0c7be723cfe0ca05d2b9e1"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen B esta bien pero eso de tus 300 m2 no se de donde salio... creo que quiero que qnalices de lleno lalogica de todo el guion y textos por que creo que no estan aliniados con todos nisiguiendo un sistem a tipo de venta hook"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Así se ve tener la verdad de tu terreno en Hermosillo.",
+   "ve": "Dueño sonriente sosteniendo una carpeta elegante frente a su terreno con sol de tarde.",
+   "entiende": "Tener información clara da tranquilidad inmediata."
+  },
+  {
+   "n": 2,
+   "dice": "Se acabaron las adivinanzas y las dudas.",
+   "ve": "Acercamiento a manos hojeando planos claros y limpios sobre una mesa de madera.",
+   "entiende": "El Plan de Potencial sustituye suposiciones por datos exactos."
+  },
+  {
+   "n": 3,
+   "dice": "Esto es lo que realmente puedes construir aquí.",
+   "ve": "Gráficos limpios sobre el terreno mostrando siluetas de proyectos posibles.",
+   "entiende": "El potencial real se calcula, no se opina."
+  },
+  {
+   "n": 4,
+   "dice": "Llega con arquitectos e inversionistas con el dato exacto.",
+   "ve": "Reunión cálida en una terraza de Hermosillo viendo planos con confianza.",
+   "entiende": "La certeza acelera cualquier trato o decisión."
+  },
+  {
+   "n": 5,
+   "dice": "El terreno habla y nosotros te traducimos su futuro.",
+   "ve": "Toma panorámica del terreno con luz dorada del atardecer sonorense.",
+   "entiende": "Cada metro cuadrado tiene un destino calculado esperando."
+  },
+  {
+   "n": 6,
+   "dice": "Conoce el Plan de Potencial de tu terreno hoy.",
+   "ve": "Logo limpio de Yo Desarrollo sobre fondo claro con datos de contacto.",
+   "entiende": "Invita a dar el siguiente paso con la desarrolladora."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-25",
+ "titulo": "REEL · Así Se Ve Saber · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de asi-se-ve-saber-nube-2026-09-23-b8d656",
+ "base": "asi-se-ve-saber-nube-2026-09-23-b8d656"
+}
