@@ -8,6 +8,12 @@ on:
     - cron: '20 */2 * * *'  # ejecutor
     - cron: '30 * * * *'    # productor
     - cron: '45 * * * *'    # puente de chinches
+  workflow_dispatch:
+    inputs:
+      proceso:
+        description: 'Qué correr ahora (cada proceso conserva además su propio botón)'
+        type: choice
+        options: [maquinas, ejecutor, productor, chinches]
 
 permissions:
   contents: write
@@ -16,18 +22,18 @@ permissions:
 
 jobs:
   maquinas:
-    if: github.event.schedule == '15 */2 * * *'
+    if: (github.event.schedule == '15 */2 * * *') || inputs.proceso == 'maquinas'
     uses: ./.github/workflows/sala-maquinas.yml
     secrets: inherit
   ejecutor:
-    if: github.event.schedule == '20 */2 * * *'
+    if: (github.event.schedule == '20 */2 * * *') || inputs.proceso == 'ejecutor'
     uses: ./.github/workflows/sala-ejecutor.yml
     secrets: inherit
   productor:
-    if: github.event.schedule == '30 * * * *'
+    if: (github.event.schedule == '30 * * * *') || inputs.proceso == 'productor'
     uses: ./.github/workflows/sala-productor.yml
     secrets: inherit
   chinches:
-    if: github.event.schedule == '45 * * * *'
+    if: (github.event.schedule == '45 * * * *') || inputs.proceso == 'chinches'
     uses: ./.github/workflows/sala-chinches.yml
     secrets: inherit
