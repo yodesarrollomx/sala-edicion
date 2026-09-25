@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-24 18:47",
+  "actualizado": "2026-09-25 00:51",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -172,10 +172,10 @@
       "hace": "Corre las pruebas y sube la Sala a GitHub Pages en cada guardado a main.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-25T01:46:37Z",
-      "dijo": "Puertas de la Sala: botón manual por proceso",
-      "salud": "regular",
-      "porque": "está corriendo ahora mismo"
+      "corrio": "2026-09-25T04:06:27Z",
+      "dijo": "Prueba de sólo lectura de las tres llaves de la nube (Drive, Gemini, …",
+      "salud": "bien",
+      "porque": "su última corrida salió bien hace 3 h"
     },
     {
       "id": "nube:sala-cada-hora.yml",
@@ -183,7 +183,7 @@
       "hace": "Productor (cada hora), puente de chinches, ejecutor y este semáforo (cada 2 h).",
       "evita": "que un «sí» de la mesa no dispare nada y que las chinches no lleguen",
       "cuando": "cada hora",
-      "corrio": "2026-09-25T01:46:42Z",
+      "corrio": "2026-09-25T07:50:43Z",
       "dijo": "Sala · Cada hora",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
@@ -208,7 +208,7 @@
       "corrio": "2026-09-25T01:16:14Z",
       "dijo": "chinche #24 #25: la fábrica sin horario quieto en la Línea; «Va en» s…",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 0 h"
+      "porque": "su última corrida salió bien hace 6 h"
     }
   ]
 }
