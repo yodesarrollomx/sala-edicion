@@ -29,24 +29,22 @@ PREFIJO = 'nube:'
 # Qué hace cada centinela de la nube y qué se pierde si se apaga. El texto va en llano
 # a propósito: esto se lee desde la franja «Las máquinas» de la Sala, no desde una consola.
 QUE_HACE = {
-    'sala-relevo.yml': ('Relevo de la Sala',
-                        'Rehace el respaldo espejo del día (datos/manifiesto.json).',
-                        'que la Sala se quede sin plan B si el Sheet no contesta',
-                        '6, 9, 12, 15 y 18 h'),
-    'sala-productor.yml': ('Productor',
-                           'Abre las compuertas de lo aprobado y lo anota en la COLA.',
-                           'que un «sí» de la mesa no dispare nada',
+    # Desde el 25-sep-2026 los procesos con horario se llaman desde dos puertas; el
+    # semáforo mira las puertas (sus corridas son las que llevan el horario).
+    'sala-diario.yml': ('Sala · Diario',
+                        'Monta la mesa (5:40), siembra y arranca (5:50) y rehace el respaldo espejo (6, 9, 12, 15 y 18 h).',
+                        'que la mesa amanezca vacía o la Sala sin plan B si el Sheet no contesta',
+                        '5:40 a 18 h'),
+    'sala-cada-hora.yml': ('Sala · Cada hora',
+                           'Productor (cada hora), puente de chinches, ejecutor y este semáforo (cada 2 h).',
+                           'que un «sí» de la mesa no dispare nada y que las chinches no lleguen',
                            'cada hora'),
-    'sala-maquinas.yml': ('Semáforo',
-                          'Escribe este mismo tablero de salud.',
-                          'quedarse sin saber si los demás corrieron',
-                          'cada 2 h'),
     'verificar.yml': ('Verificador',
-                      'Corre las pruebas del repo en cada push y cada pull request.',
-                      'publicar una Sala rota',
-                      'en cada guardado'),
+                      'Corre las pruebas del repo en cada pull request.',
+                      'aceptar un cambio roto',
+                      'en cada pull request'),
     'publicar.yml': ('Publicador',
-                     'Sube la Sala a GitHub Pages cuando el verificador pasa.',
+                     'Corre las pruebas y sube la Sala a GitHub Pages en cada guardado a main.',
                      'que un arreglo no llegue a producción',
                      'en cada guardado a main'),
 }

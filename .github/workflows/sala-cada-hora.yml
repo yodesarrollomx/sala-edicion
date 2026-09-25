@@ -1,0 +1,33 @@
+# Por qué existe (25-sep-2026): una de las tres puertas de la Sala (ver sala-diario.yml).
+# Aquí late lo que corre todo el día, a los mismos minutos de siempre.
+name: Sala · Cada hora
+
+on:
+  schedule:
+    - cron: '15 */2 * * *'  # semáforo de las máquinas
+    - cron: '20 */2 * * *'  # ejecutor
+    - cron: '30 * * * *'    # productor
+    - cron: '45 * * * *'    # puente de chinches
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  maquinas:
+    if: github.event.schedule == '15 */2 * * *'
+    uses: ./.github/workflows/sala-maquinas.yml
+    secrets: inherit
+  ejecutor:
+    if: github.event.schedule == '20 */2 * * *'
+    uses: ./.github/workflows/sala-ejecutor.yml
+    secrets: inherit
+  productor:
+    if: github.event.schedule == '30 * * * *'
+    uses: ./.github/workflows/sala-productor.yml
+    secrets: inherit
+  chinches:
+    if: github.event.schedule == '45 * * * *'
+    uses: ./.github/workflows/sala-chinches.yml
+    secrets: inherit

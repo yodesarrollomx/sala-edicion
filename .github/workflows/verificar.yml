@@ -9,8 +9,7 @@
 name: Verificar la Sala
 
 on:
-  push:
-    branches: [main]
+  # En cada push a main las pruebas ya corren dentro de publicar.yml; aquí solo PR y a mano.
   pull_request:
   workflow_dispatch:
 

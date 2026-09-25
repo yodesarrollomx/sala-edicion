@@ -1,0 +1,35 @@
+# Por qué existe (25-sep-2026): la Sala tenía 7 procesos con horario propio, cada uno
+# con su cron. Ahora hay TRES puertas: este (lo del día), sala-cada-hora.yml (lo que
+# late todo el día) y publicar.yml (cada guardado). Los procesos no cambiaron: siguen
+# en su archivo, con sus candados (concurrency) y permisos, y se les llama de aquí a la
+# MISMA hora de antes. A mano, cada uno sigue teniendo su propio botón (workflow_dispatch).
+name: Sala · Diario
+
+on:
+  schedule:
+    - cron: '40 12 * * *'   # 05:40 Hermosillo · montador de la mesa
+    - cron: '50 12 * * *'   # 05:50 · semillero y arranque
+    - cron: '0 13 * * *'    # 06:00 · relevo
+    - cron: '0 16 * * *'    # 09:00 · relevo
+    - cron: '0 19 * * *'    # 12:00 · relevo
+    - cron: '0 22 * * *'    # 15:00 · relevo
+    - cron: '0 1 * * *'     # 18:00 · relevo (del día anterior en UTC)
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  mesa:
+    if: github.event.schedule == '40 12 * * *'
+    uses: ./.github/workflows/sala-mesa.yml
+    secrets: inherit
+  arranque:
+    if: github.event.schedule == '50 12 * * *'
+    uses: ./.github/workflows/sala-arranque.yml
+    secrets: inherit
+  relevo:
+    if: contains(fromJSON('["0 13 * * *","0 16 * * *","0 19 * * *","0 22 * * *","0 1 * * *"]'), github.event.schedule)
+    uses: ./.github/workflows/sala-relevo.yml
+    secrets: inherit

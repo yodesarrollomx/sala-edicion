@@ -5,8 +5,8 @@
 name: Montador de la mesa
 
 on:
-  schedule:
-    - cron: '40 12 * * *'   # 05:40 Hermosillo, antes del correo de las 7:00
+  # El horario vive en sala-diario.yml / sala-cada-hora.yml (25-sep-2026): aquí solo se llama.
+  workflow_call:
   workflow_dispatch:
     inputs:
       modo:

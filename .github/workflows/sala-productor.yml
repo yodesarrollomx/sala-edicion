@@ -10,8 +10,8 @@
 name: Productor de la Sala
 
 on:
-  schedule:
-    - cron: '30 * * * *'
+  # El horario vive en sala-diario.yml / sala-cada-hora.yml (25-sep-2026): aquí solo se llama.
+  workflow_call:
   workflow_dispatch:
     inputs:
       simular:
