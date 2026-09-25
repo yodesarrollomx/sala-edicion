@@ -3578,6 +3578,24 @@
  ],
  "decisiones": {
   "propuestas": {
+   "asi-se-ve-saber-nube-2026-09-25-193dc0": {
+    "laminas": [
+     "si"
+    ],
+    "nota": "",
+    "notas": [
+     "[toma elegida: 1]"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 1]"
+      }
+     ]
+    ]
+   },
    "recamara-cerrada-arranque-2026-09-24-d33b42": {
     "laminas": [
      "no"
@@ -3594,8 +3612,88 @@
        "nota": "La imagen no cuadra con el texto. El texto no engancha... no tiene congruencia con el guion  o mas bien no lo conzoco bien"
       }
      ]
+    ]
+   },
+   "mesa-vacia-nube-2026-09-25-a27712": {
+    "laminas": [
+     "no",
+     "no",
+     "no",
+     "no",
+     "si",
+     "no"
     ],
-    "heredada": "2026-09-24"
+    "nota": "",
+    "notas": [
+     "La imagen no cuadra con el texto. El texto no engancha… no me gustan las palabras que tienen connotación negativa",
+     "La imagen no cuadra con el texto",
+     "No entiendo que está queriendo decir",
+     "La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago",
+     "[toma elegida: 2]",
+     "La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "La imagen no cuadra con el texto. El texto no engancha… no me gustan las palabras que tienen connotación negativa"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "La imagen no cuadra con el texto"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "No entiendo que está queriendo decir"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 2]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago"
+      }
+     ]
+    ]
+   },
+   "obra-no-empezo-nube-2026-09-25-e1356a": {
+    "laminas": [
+     "si"
+    ],
+    "nota": "",
+    "notas": [
+     "[toma elegida: 1]"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 1]"
+      }
+     ]
+    ]
    },
    "48-horas-arranque-2026-09-24-e98d7d": {
     "laminas": [
@@ -3636,6 +3734,9 @@
     "heredada": "2026-09-22"
    }
   },
-  "editores": []
+  "editores": [
+   "Alejandro"
+  ],
+  "guardado": "2026-09-25T13:18:42"
  }
 }
