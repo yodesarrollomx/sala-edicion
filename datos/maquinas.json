@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-26 09:25",
+  "actualizado": "2026-09-26 14:12",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -172,10 +172,10 @@
       "hace": "Corre las pruebas y sube la Sala a GitHub Pages en cada guardado a main.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-26T14:56:29Z",
-      "dijo": "Publicar la Sala",
+      "corrio": "2026-09-26T17:08:46Z",
+      "dijo": "Sala: «Ver el guion» ahora es un storyboard de director (chinche CHN-…",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 1 h"
+      "porque": "su última corrida salió bien hace 4 h"
     },
     {
       "id": "nube:sala-cada-hora.yml",
@@ -183,7 +183,7 @@
       "hace": "Productor (cada hora), puente de chinches, ejecutor y este semáforo (cada 2 h).",
       "evita": "que un «sí» de la mesa no dispare nada y que las chinches no lleguen",
       "cuando": "cada hora",
-      "corrio": "2026-09-26T16:25:08Z",
+      "corrio": "2026-09-26T21:11:42Z",
       "dijo": "Sala · Cada hora",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
@@ -194,10 +194,10 @@
       "hace": "Monta la mesa (5:40), siembra y arranca (5:50) y rehace el respaldo espejo (6, 9, 12, 15 y 18 h).",
       "evita": "que la mesa amanezca vacía o la Sala sin plan B si el Sheet no contesta",
       "cuando": "5:40 a 18 h",
-      "corrio": "2026-09-26T05:44:46Z",
+      "corrio": "2026-09-26T19:06:13Z",
       "dijo": "Sala · Diario",
-      "salud": "bien",
-      "porque": "su última corrida salió bien hace 10 h"
+      "salud": "mal",
+      "porque": "su última corrida falló"
     },
     {
       "id": "nube:verificar.yml",
@@ -208,7 +208,7 @@
       "corrio": "2026-09-25T01:16:14Z",
       "dijo": "chinche #24 #25: la fábrica sin horario quieto en la Línea; «Va en» s…",
       "salud": "mal",
-      "porque": "lleva 39 h sin correr"
+      "porque": "lleva 43 h sin correr"
     }
   ]
 }
