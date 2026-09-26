@@ -87,6 +87,15 @@ html.embed .app{padding-top:8px}
   #vPub,#vAj,#vProd{max-width:760px;margin:0 auto} #vArbol{max-width:1180px;margin:0 auto}
 }
 
+.sb-brujula{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:8px 0 6px}
+.sb-brujula>div{border:1px solid var(--linea);border-radius:12px;padding:10px 12px;background:var(--tarjeta)}
+.sb-brujula span{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--guia)} .sb-brujula b{display:block;margin:2px 0} .sb-brujula small{color:var(--gris);font-size:12px;line-height:1.35}
+.sb-lista{display:grid;gap:12px}
+.sb-cuadro{display:grid;grid-template-columns:minmax(120px,38%) 1fr;gap:12px;border:1px solid var(--linea);border-radius:14px;padding:10px;background:var(--tarjeta)}
+.sb-img{position:relative} .sb-img img{width:100%;border-radius:10px;display:block;aspect-ratio:4/5;object-fit:cover} .sb-img span{position:absolute;top:6px;left:6px;background:#000a;color:#fff;border-radius:99px;padding:1px 8px;font-size:12px;font-weight:600}
+.sb-dice{font-family:var(--serif);font-size:17px;line-height:1.3;margin:8px 0 6px} .sb-txt p{margin:4px 0} .sb-nota{font-size:12.5px;color:var(--no)}
+.sb-txt details summary{cursor:pointer;font-weight:600;font-size:13px;margin-top:8px;color:var(--azul)} .sb-txt textarea{width:100%;min-height:64px;margin-top:6px}
+@media (max-width:520px){ .sb-cuadro{grid-template-columns:1fr} }
 /* ── árbol de Producción (12-sep) ── */
 /* La Línea (23-sep) */
 .ln-tarjetas{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;-webkit-overflow-scrolling:touch}
@@ -750,7 +759,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='83efcf4aac';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='18d438dc27';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1313,11 +1322,48 @@ function hidratarReaperturas(){      // lo que ya pedí hoy (del Sheet) vuelve a
     dec[pid]={laminas:l,notas:mias.map(m=>(m&&m.nota)||''),nota:'',_reabierta:true};
   }
 }
-function verGuia(t){
-  hoja(`<h3>El guion de la publicación</h3><p>${esc(t.promesa||t.pieza)}</p>
-    <div class="lista-r">${(t.laminas||[]).map(l=>`<div class="fila-r"><img class="th" src="${esc(ligera(l.src))}" alt="" loading="lazy">
-      <div class="txt"><b>${l.n}. ${esc((l.dice||'').replace(' / ',' · '))}</b><small>${esc(l.ve||'')}</small>${notaDeLamina(t,l)?`<em>nota: «${esc(notaDeLamina(t,l))}»</em>`:''}</div>
-      <div class="acc"><span class="chipm ${l.estado==='aprobada'?'si':'pend'}">${l.estado==='aprobada'?'Aprobada':'Se rehízo'}</span></div></div>`).join('')}</div>`,'guia-tira');
+/* STORYBOARD (26-sep, chinche CHN-20260926-0841-3399): «debería poder leer todo lo que un director
+   de escena ve en su storyboard, con sus guiones, y desde ahí proponer cambios exactos… que no me
+   pierda entre las historias… cuál es la idea original, qué queremos vender, cuál es el sentido».
+   Arriba la brújula (qué vendemos, la idea, la premisa, la promesa); abajo cada lámina en grande con
+   lo que dice, lo que se ve, su estado, tus notas y un cambio exacto que viaja a Producción. */
+async function verGuia(t){
+  const nombre=t.pieza||'';
+  try{ await Promise.all([IDEAS===null?traerIdeas():0, ARBOL===null?traerArbol():0]) }catch(e){}
+  const i=(IDEAS||[]).find(x=>x.titulo===nombre||normSlug(x.titulo||'')===normSlug(nombre)||x.id===nombre);
+  const nodos=(ARBOL&&ARBOL.nodos)||[], rama=i&&nodos.find(n=>n.id===i.premisa);
+  const g=Array.isArray(t.guion)?t.guion:[], deG=n=>g.find(x=>+x.n===+n)||{};
+  const lams=(t.laminas||[]).slice().sort((a,b)=>a.n-b.n);
+  const brujula=`<div class="sb-brujula">
+      <div><span>Qué vendemos</span><b>El Plan de Potencial Personalizado</b><small>qué puede llegar a ser un terreno, calculado, no opinado · el primer paso es una videollamada</small></div>
+      <div><span>La idea original</span><b>${esc(i?(i.titulo||nombre):nombre)}</b><small>${esc(i&&i.bajada||'—')}</small></div>
+      ${rama?`<div><span>La premisa que defiende</span><b>${esc(rama.titulo)}</b><small>${esc(rama.bajada||'')}</small></div>`:''}
+      <div><span>La promesa de esta pieza</span><b>${esc(t.promesa||'—')}</b><small>relato con giro · una idea por lámina · pregunta solo en la 1 · el experto propone, no manda</small></div>
+    </div>`;
+  const cuadro=l=>{ const gg=deG(l.n), nota=notaDeLamina(t,l), ok=l.estado==='aprobada';
+    return `<article class="sb-cuadro" data-n="${l.n}">
+      <div class="sb-img"><img src="${esc(ligera(l.src))}" alt="Lámina ${l.n}" loading="lazy"><span>${l.n}</span></div>
+      <div class="sb-txt">
+        <span class="chipm ${ok?'si':'pend'}">${ok?'Aprobada':'Por decidir / se rehízo'}</span>
+        <p class="sb-dice">«${esc((l.dice||gg.dice||'').replace(' / ',' · '))}»</p>
+        ${(l.ve||gg.ve)?`<p><small><b>Se ve:</b> ${esc(l.ve||gg.ve)}</small></p>`:''}
+        ${gg.entiende?`<p><small><b>Quien la ve entiende:</b> ${esc(gg.entiende)}</small></p>`:''}
+        ${nota?`<p class="sb-nota">Tu nota: «${esc(nota)}»</p>`:''}
+        <details><summary>Proponer un cambio exacto</summary>
+          <textarea placeholder="Ej.: que diga «…» · que se vea … · quita la pregunta"></textarea>
+          <button class="listo sb-ok">Mandar a Producción</button><small class="sb-av"></small>
+        </details>
+      </div></article>`};
+  const v=hoja(`<div class="arb-ficha sb"><h3>Storyboard · ${esc(nombre)}</h3>${brujula}
+    <h4>Las ${lams.length} láminas, en orden</h4><div class="sb-lista">${lams.map(cuadro).join('')}</div></div>`,'guia-tira');
+  v.querySelectorAll('.sb-cuadro').forEach(c=>{ const b=c.querySelector('.sb-ok'); if(!b) return;
+    b.onclick=async()=>{ const n=c.dataset.n, txt=(c.querySelector('textarea').value||'').trim(), av=c.querySelector('.sb-av');
+      if(!txt){ av.textContent='Escribe primero el cambio.'; return }
+      const d=new Date(), p2=k=>String(k).padStart(2,'0'), id='CHN-'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes())+'-'+Math.random().toString(16).slice(2,6);
+      av.textContent='Mandando…'; b.disabled=true;
+      try{ await mandarProduccion('ENCARGO · chinche · '+nombre, JSON.stringify({id,texto:`[Storyboard] «${nombre}» · lámina ${n}: ${txt}`,tipo:'guion',vista:'hoy',carta:{pieza:nombre,lamina:+n},url:location.href}), false);
+        av.textContent='✓ Anotado para la lámina '+n+'. Llega a Producción (📌) en menos de una hora.'; c.querySelector('textarea').value='' }
+      catch(e){ av.textContent='No se pudo mandar: '+(e&&e.message||e); b.disabled=false } } });
 }
 /* ══ pintado de Hoy ══ */
 function etapaDe(p){ if(p.tipo==='eje'&&p.video) return 'video'; if(p.tipo==='eje') return /copy|sale|public/i.test(p.titulo||'')?'copy':'guion'; return /guion/i.test(p.titulo||'')?'guion':'láminas' }
