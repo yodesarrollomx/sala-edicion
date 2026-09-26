@@ -1,0 +1,231 @@
+{
+ "pieza": "La Mesa Vacía",
+ "pieza_slug": "mesa-vacia",
+ "promesa": "Toda familia tiene un terreno esperando. Lo que falta no es dinero ni acuerdo: es un Miguel.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/mesa-vacia-e2026-09-15/L1.png",
+   "dice": "En tu familia hay un terreno del que todos opinan y nadie decide.",
+   "estado": "aprobada",
+   "versiones": [],
+   "version": 1,
+   "toma_elegida": "Toma 1",
+   "aprobada_el": "2026-09-15"
+  },
+  {
+   "n": 2,
+   "src": "laminas/mesa-vacia-g1/L2.png",
+   "dice": "Quedó intestado. Y el tiempo no espera papeles.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L2-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L2-1.png",
+     "titulo": "A",
+     "texto": "Elimina la negatividad del texto usando una pregunta en segunda persona y muestra visualmente la discusión familiar sobre el terreno.",
+     "dice": "¿Tu familia sigue discutiendo sobre qué hacer con ese terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "b2092a61f819d8ef9a42ee4a7eeadb75"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L2-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L2-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota eliminando la negatividad y directo a una pregunta en segunda persona.",
+     "dice": "¿Tu familia sigue discutiendo sobre el terreno intestado?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "94be957985a695fbad1702b50313a2fb"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto. El texto no engancha… no me gustan las palabras que tienen connotación negativa",
+   "fecha": "2026-09-26"
+  },
+  {
+   "n": 3,
+   "src": "laminas/mesa-vacia-g1/L3.png",
+   "dice": "Un día, Miguel se sentó en la cabecera.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L3-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L3-1.png",
+     "titulo": "A",
+     "texto": "Ajusta la imagen para que muestre exactamente a Miguel sentado en la cabecera como indica el texto.",
+     "dice": "¿Y si el lugar en la cabecera es de Miguel?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "1289c89d355a54e1aa94e2768a4899bb"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L3-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L3-2.png",
+     "titulo": "B",
+     "texto": "La receta muestra al personaje sentado en la cabecera como indica el texto, corrigiendo la discordancia visual.",
+     "dice": "¿Y si te sientas hoy en la cabecera?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "d8e875c97772192d357466810989db44"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto",
+   "fecha": "2026-09-26"
+  },
+  {
+   "n": 4,
+   "src": "laminas/mesa-vacia-g1/L4.png",
+   "dice": "No tenía que saberlo todo. Tenía que sentar a los que saben.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L4-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L4-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota cambiando el tono imperativo por una propuesta donde los expertos guían la decisión.",
+     "dice": "¿Y si mejor dejas que los expertos te ayuden a decidir?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "884b8d51c300bf51908c5b9867c8b7a9"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L4-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L4-2.png",
+     "titulo": "B",
+     "texto": "Cambia la instrucción imperativa por una pregunta que sugiere la ayuda experta según la nota.",
+     "dice": "¿Y si mejor dejas que los expertos resuelvan por ustedes?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "6bc3ae5b5549489ad069ad7c033237c2"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "Creo que a nadie le gust que les digan qu ehacer... mejor que te propongas los ecpertos que hacer",
+   "fecha": "2026-09-26"
+  },
+  {
+   "n": 5,
+   "src": "laminas/mesa-vacia-g1/L5.png",
+   "dice": "La familia pone el terreno. El equipo, todo lo demás.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L5-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L5-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota al hacer el texto mucho más concreto, directo y en pregunta.",
+     "dice": "¿Y si mejor tú dejas de esperar a que todos se pongan de acuerdo?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "1ff980abd761cb538ff5443b00919062"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L5-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L5-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota al ser un texto directo y concreto con una pregunta, y la imagen muestra claramente al gestor coordinando.",
+     "dice": "¿Y si mejor dejas que Miguel coordine a toda la familia?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "1eec7e50ef75359bdef59314b01688d8"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago",
+   "fecha": "2026-09-26"
+  },
+  {
+   "n": 6,
+   "src": "laminas/mesa-vacia-g1/L6.png",
+   "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L6-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L6-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota al enfocar la pieza directamente en la toma de decisiones y el plan de potencial del terreno familiar.",
+     "dice": "¿Quién toma las decisiones sobre el terreno familiar?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "fe2ea803bac417ed7a09f10ce906522b"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L6-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L6-2.png",
+     "titulo": "B",
+     "texto": "Alinea la pieza con el plan de potencial familiar exigido por el editor.",
+     "dice": "¿Y si el terreno se queda en la familia para siempre?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "438994c672ef11ac17609969e0a1bddc"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "B pero creo qu enoe stamos engfocados en el plan de potenicla al igual que lo demas revis abien de que se trata y ayyduame ahcerlo bien",
+   "fecha": "2026-09-26"
+  },
+  {
+   "n": 7,
+   "src": "laminas/mesa-vacia-g1/L7.png",
+   "dice": "Esta silla es la tuya.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L7-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L7-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota al cambiar el texto por una pregunta directa y desafiante que evita sonar como cuestionario largo.",
+     "dice": "¿Esperas que alguien más decida por ti?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "82e3914b40e997763d7951e59ffd4c9e"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-26/L7-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-26/L7-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota cambiando el cuestionario múltiple por una sola pregunta directa y atractiva.",
+     "dice": "¿Y si el siguiente lugar en la mesa es para ti?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "dd2b2d38732d144aff3a893a3bb9efc2"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "El texto no engancha... demasiadas preguntas no es unrealto e sun cuestionario... tomalo en cuenta para todas las lamians",
+   "fecha": "2026-09-26"
+  }
+ ],
+ "decidir": [
+  4,
+  6,
+  7
+ ],
+ "mapa": {
+  "1": 4,
+  "2": 6,
+  "3": 7
+ },
+ "base": "mesa-vacia-nube-2026-09-26-be1f6e",
+ "guion": "",
+ "titulo": "La Mesa Vacía · rehechas con tus notas (3)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de mesa-vacia-nube-2026-09-26-be1f6e",
+ "fecha": "2026-09-26"
+}
