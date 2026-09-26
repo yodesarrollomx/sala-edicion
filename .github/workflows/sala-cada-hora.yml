@@ -37,3 +37,44 @@ jobs:
     if: (github.event.schedule == '45 * * * *') || inputs.proceso == 'chinches'
     uses: ./.github/workflows/sala-chinches.yml
     secrets: inherit
+
+  # 26-sep-2026 · GitHub dispara los horarios con horas de retraso y a veces NO los dispara
+  # (la mesa del 26-sep nunca salió). Esta puerta sí late muchas veces al día, así que en
+  # cada latido revisa si la mesa y el arranque de HOY (Hermosillo) ya corrieron; si no,
+  # los lanza. Un proceso en curso cuenta como corrido; tras 2 fallas del día no insiste
+  # (su propio «Avisar si algo falló» ya dio la alarma).
+  al-dia:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Lanzar lo del día que GitHub no disparó
+        env:
+          GH_TOKEN: ${{ github.token }}
+          R: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          hoy=$(TZ=America/Hermosillo date +%F); hora=$(TZ=America/Hermosillo date +%H%M)
+          desde="${hoy}T12:00:00Z"   # 05:00 Hermosillo
+          estado(){ # imprime «ok» si hoy ya corrió (o corre), «fallas:N» si no
+            local p=$1 ok=0 f=0 c
+            for c in $(gh api "repos/$R/actions/workflows/sala-$p.yml/runs?created=%3E%3D$desde&per_page=30" --jq '.workflow_runs[]|(.conclusion // "encurso")'); do
+              [ "$c" = failure ] && f=$((f+1)) || ok=1
+            done
+            for id in $(gh api "repos/$R/actions/workflows/sala-diario.yml/runs?created=%3E%3D$desde&per_page=30" --jq '.workflow_runs[].id'); do
+              for c in $(gh api "repos/$R/actions/runs/$id/jobs" --jq ".jobs[]|select(.name==\"$p / $p\")|(.conclusion // \"encurso\")"); do
+                [ "$c" = failure ] && f=$((f+1)) || ok=1
+              done
+            done
+            [ $ok = 1 ] && echo ok || echo "fallas:$f"
+          }
+          lanza(){ # $1 proceso · $2 desde qué hora (HHMM Hermosillo)
+            [ "$hora" -lt "$2" ] && { echo "$1: aún no es hora ($hora < $2)"; return; }
+            local e; e=$(estado "$1")
+            if [ "$e" = ok ]; then echo "$1: ya corrió hoy"
+            elif [ "${e#fallas:}" -ge 2 ]; then echo "::warning::$1 falló 2 veces hoy; no se relanza"
+            else echo "::notice::$1 no corrió hoy ($hoy): lo lanzo"; gh workflow run "sala-$1.yml" -R "$R" --ref main; fi
+          }
+          lanza mesa 0545
+          lanza arranque 0555
