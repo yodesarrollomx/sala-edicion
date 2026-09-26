@@ -1,0 +1,61 @@
+{
+ "pieza": "La Recámara Cerrada",
+ "pieza_slug": "recamara-cerrada",
+ "promesa": "Tu casa en Hermosillo puede cuidarse sola y darte tranquilidad.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Esa recámara vacía puede renovar la vida en tu terreno?",
+   "ve": "Una sala luminosa en una casa tradicional de Hermosillo, con una puerta cerrada al fondo y luz cálida del atardecer entrando por la ventana.",
+   "entiende": "Que los espacios vacíos de casa guardan un potencial que aún no he aprovechado.",
+   "src": "laminas/recamara-cerrada-a2026-09-24/L1-2.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-26",
+   "candidatas": [
+    {
+     "src": "laminas/recamara-cerrada-n2026-09-26/L1-1.jpg",
+     "original": "laminas/recamara-cerrada-n2026-09-26/L1-1.png",
+     "titulo": "A",
+     "texto": "Ajusta la pregunta a la segunda persona sobre ingresos por la recámara y muestra exactamente eso en la imagen.",
+     "dice": "¿Esa recámara vacía genera ingresos extra cada mes para ustedes?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "446a34b46e7c4510c4816307a96becb2"
+    },
+    {
+     "src": "laminas/recamara-cerrada-n2026-09-26/L1-2.jpg",
+     "original": "laminas/recamara-cerrada-n2026-09-26/L1-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota creando una imagen congruente y un texto enganchador en segunda persona que plantea una pregunta clara.",
+     "dice": "¿Y si esa recámara extra se convierte en tu estudio privado?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "61dc37dd63346d6ed1a14df8e432830e"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto. El texto no engancha... no tiene congruencia con el guion  o mas bien no lo conzoco bien"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Esa recámara que ya no usas puede darle vida nueva a tu terreno.",
+   "ve": "Una sala luminosa en una casa tradicional de Hermosillo, con una puerta cerrada al fondo y luz cálida del atardecer entrando por la ventana.",
+   "entiende": "Que los espacios vacíos de casa guardan un potencial que aún no he aprovechado."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-26",
+ "titulo": "La Recámara Cerrada · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de recamara-cerrada-arranque-2026-09-24-d33b42",
+ "base": "recamara-cerrada-arranque-2026-09-24-d33b42"
+}
