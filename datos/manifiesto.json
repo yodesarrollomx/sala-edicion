@@ -2582,7 +2582,7 @@
    "Edificios más altos"
   ]
  ],
- "fecha": "2026-09-25",
+ "fecha": "2026-09-26",
  "dias": [
   "2026-01-02",
   "2026-01-03",
@@ -2614,49 +2614,35 @@
   "2026-09-22",
   "2026-09-23",
   "2026-09-24",
-  "2026-09-25"
+  "2026-09-25",
+  "2026-09-26"
  ],
  "propuestas": [
   {
-   "id": "asi-se-ve-saber-nube-2026-09-25-193dc0",
-   "titulo": "REEL · Así Se Ve Saber · rehechas con tus notas (1)",
+   "id": "mesa-vacia-nube-2026-09-26-7f9f0a",
+   "titulo": "La Mesa Vacía · rehechas con tus notas (3)",
    "tipo": "laminas",
    "laminas": [
-    "laminas/asi-se-ve-saber-n2026-09-25/L1-2.jpg"
+    "laminas/mesa-vacia-n2026-09-26/L4-1.jpg",
+    "laminas/mesa-vacia-n2026-09-26/L6-1.jpg",
+    "laminas/mesa-vacia-n2026-09-26/L7-1.jpg"
    ],
    "opciones": [],
    "video": null,
    "de_antes": null,
-   "origen": "rehecha-de asi-se-ve-saber-nube-2026-09-23-b8d656"
+   "origen": "rehecha-de mesa-vacia-nube-2026-09-26-be1f6e"
   },
   {
-   "id": "mesa-vacia-nube-2026-09-25-a27712",
-   "titulo": "La Mesa Vacía · rehechas con tus notas (6)",
+   "id": "recamara-cerrada-nube-2026-09-26-71f1d1",
+   "titulo": "La Recámara Cerrada · rehechas con tus notas (1)",
    "tipo": "laminas",
    "laminas": [
-    "laminas/mesa-vacia-n2026-09-25/L2-2.jpg",
-    "laminas/mesa-vacia-n2026-09-25/L3-1.jpg",
-    "laminas/mesa-vacia-n2026-09-25/L4-1.jpg",
-    "laminas/mesa-vacia-n2026-09-25/L5-2.jpg",
-    "laminas/mesa-vacia-n2026-09-25/L6-1.jpg",
-    "laminas/mesa-vacia-n2026-09-25/L7-1.jpg"
+    "laminas/recamara-cerrada-n2026-09-26/L1-1.jpg"
    ],
    "opciones": [],
    "video": null,
    "de_antes": null,
-   "origen": "rehecha-de mesa-vacia-nube-2026-09-23-61a5cb"
-  },
-  {
-   "id": "obra-no-empezo-nube-2026-09-25-e1356a",
-   "titulo": "La Obra que No Empezó · rehechas con tus notas (1)",
-   "tipo": "laminas",
-   "laminas": [
-    "laminas/obra-no-empezo-n2026-09-25/L1-1.jpg"
-   ],
-   "opciones": [],
-   "video": null,
-   "de_antes": null,
-   "origen": "rehecha-de obra-no-empezo-arranque-2026-09-24-8b94a5"
+   "origen": "rehecha-de recamara-cerrada-nube-2026-09-26-9ad47f"
   }
  ],
  "parrilla": [],
@@ -2670,14 +2656,42 @@
   "nota": "en prueba · lleva 3 día(s); se juzga a los 7 · 2026-09-17 14:11"
  },
  "retro": {
-  "fecha": "2026-09-24",
-  "aprobadas": 2,
-  "tiradas": 7,
+  "fecha": "2026-09-25",
+  "aprobadas": 3,
+  "tiradas": 6,
   "producidas": 0,
-  "rehechas": 3,
+  "rehechas": 2,
   "nota": ""
  },
  "produccion": [
+  {
+   "fecha": "2026-09-26",
+   "pieza": "ENCARGO CUMPLIDO · chinche",
+   "estado": "cumplida",
+   "detalle": "{\"id\": \"CHN-20260926-0841-3399\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/26\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/26"
+  },
+  {
+   "fecha": "2026-09-26",
+   "pieza": "ENCARGO TOMADO · chinche",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260926-0841-3399\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/26\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/26"
+  },
+  {
+   "fecha": "2026-09-26",
+   "pieza": "ENCARGO · chinche · La Mesa Vacía",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260926-0841-3399\",\"texto\":\"Aqui me pones supuestamente el guion pero me lo pones medio mal con las correciones ... debera de poder leet todo lo que un director de escena pudiera ver su storyboard con sus guiones y que desde ahi pueda tmb proponer cambiso exactos .. asi quiero poder entender cuando este revisando varias coas de que se trata y qu eno me pierd entre las historias... quiero poder ver todo completo ahi para poder checar y avabzar con conocimiento d elo qu eestot dado clcik ... cual es la idea original que stamos buscando para que que queremos vender cual es el sentido todo ymas de lo que creas qu enecsito\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":{\"pid\":\"mesa-vacia-nube-2026-09-26-be1f6e\",\"tipo\":\"lamina\",\"lamina\":1,\"pieza\":\"La Mesa Vacía\"},\"elemento\":{\"css\":\"button#verGuia\",\"texto\":\"Ver el guion\",\"seccion\":\"Faltan 6 decisiones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790437128365\"}",
+   "enlace": ""
+  },
+  {
+   "fecha": "2026-09-26",
+   "pieza": "ENCARGO · chinche · La Mesa Vacía",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260926-0841-3399\",\"texto\":\"Aqui me pones supuestamente el guion pero me lo pones medio mal con las correciones ... debera de poder leet todo lo que un director de escena pudiera ver su storyboard con sus guiones y que desde ahi pueda tmb proponer cambiso exactos .. asi quiero poder entender cuando este revisando varias coas de que se trata y qu eno me pierd entre las historias... quiero poder ver todo completo ahi para poder checar y avabzar con conocimiento d elo qu eestot dado clcik ... cual es la idea original que stamos buscando para que que queremos vender cual es el sentido todo ymas de lo que creas qu enecsito\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":{\"pid\":\"mesa-vacia-nube-2026-09-26-be1f6e\",\"tipo\":\"lamina\",\"lamina\":1,\"pieza\":\"La Mesa Vacía\"},\"elemento\":{\"css\":\"button#verGuia\",\"texto\":\"Ver el guion\",\"seccion\":\"Faltan 6 decisiones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790437128365\"}",
+   "enlace": ""
+  },
   {
    "fecha": "2026-09-25",
    "pieza": "ENCARGO CUMPLIDO · chinche",
@@ -2859,211 +2873,68 @@
    "estado": "cumplida",
    "detalle": "{\"id\": \"CHN-20260914-2313-5cbd\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/19\"}",
    "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/19"
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0931-6fd8\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/22\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/22"
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260922-2237-dfac\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/23\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/23"
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO TOMADO · chinche",
-   "estado": "en curso",
-   "detalle": "{\"id\": \"CHN-20260922-2237-dfac\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/23\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/23"
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO TOMADO · chinche",
-   "estado": "en curso",
-   "detalle": "{\"id\": \"CHN-20260915-0931-6fd8\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/22\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/22"
   }
  ],
  "bitacora": [
   {
-   "hora": "06:10",
-   "evento": "Portero no autorizó una credencial",
-   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
-  },
-  {
-   "hora": "06:10",
-   "evento": "Portero no autorizó una credencial",
-   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
-  },
-  {
-   "hora": "06:10",
-   "evento": "Portero no autorizó una credencial",
-   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
-  },
-  {
-   "hora": "06:37",
+   "hora": "06:49",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
   },
   {
-   "hora": "06:45",
-   "evento": "Producción: ENCARGO · chinche · prod → pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-0644-3ca4\",\"texto\":\"por qu dice que descansa d enoche? .. qu eprduzca roda la ncohe si e sposible para eso sosn las gpu para usarse no como humanos .. por favor corrije el asunto d"
+   "hora": "06:50",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "06:46",
-   "evento": "Producción: ENCARGO · chinche · prod → pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-0644-3ca4\",\"texto\":\"por qu dice que descansa d enoche? .. qu eprduzca roda la ncohe si e sposible para eso sosn las gpu para usarse no como humanos .. por favor corrije el asunto d"
+   "hora": "06:50",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "07:00",
-   "evento": "Propuestas del día montadas",
-   "detalle": "1 propuesta(s)"
-  },
-  {
-   "hora": "07:00",
-   "evento": "Propuestas del día montadas",
-   "detalle": "1 propuesta(s)"
-  },
-  {
-   "hora": "07:00",
-   "evento": "Propuestas del día montadas",
-   "detalle": "1 propuesta(s)"
-  },
-  {
-   "hora": "07:07",
+   "hora": "07:08",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
   },
   {
-   "hora": "07:07",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:07",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:07",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:07",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:07",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:08",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:08",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:08",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:08",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:08",
+   "hora": "07:10",
    "evento": "COLA · estado",
    "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
    "hora": "07:11",
-   "evento": "Reglas editadas: escena_camara_si_cuota",
-   "detalle": ""
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "07:11",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "07:11",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "07:11",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
    "hora": "07:12",
-   "evento": "Reglas editadas: escena_camara_si_cuota",
-   "detalle": ""
-  },
-  {
-   "hora": "07:12",
-   "evento": "Reglas editadas: escena_camara_si_cuota",
-   "detalle": ""
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
    "hora": "07:13",
    "evento": "Correo de las 7:00 enviado",
-   "detalle": "Sala de Edición · 3 propuesta(s) esperan tu revisión"
+   "detalle": "Sala de Edición · hoy no hay pendientes"
   },
   {
-   "hora": "07:14",
+   "hora": "07:15",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
-  },
-  {
-   "hora": "07:15",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:15",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:15",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:16",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:16",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:17",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:17",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:17",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:17",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:17",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
    "hora": "07:17",
@@ -3076,372 +2947,272 @@
    "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "07:18",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
+   "hora": "10:43",
+   "evento": "Propuestas del día montadas",
+   "detalle": "1 propuesta(s) · familia «asi-se-ve-saber»: retiradas asi-se-ve-saber-nube-2026-09-23-b8d656"
   },
   {
-   "hora": "07:18",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:20",
-   "evento": "Reglas editadas: escena_wan_hf_modelo",
-   "detalle": ""
-  },
-  {
-   "hora": "07:20",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:21",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:21",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:21",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:21",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:21",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:21",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:22",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:22",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:22",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:23",
-   "evento": "Reglas editadas: escena_wan_hf_modelo",
-   "detalle": ""
-  },
-  {
-   "hora": "07:24",
-   "evento": "Reglas editadas: escena_wan_hf_modelo",
-   "detalle": ""
-  },
-  {
-   "hora": "07:24",
-   "evento": "Reglas editadas: escena_wan_hf_modelo",
-   "detalle": ""
-  },
-  {
-   "hora": "07:24",
-   "evento": "Reglas editadas: escena_wan_hf_modelo",
-   "detalle": ""
-  },
-  {
-   "hora": "07:25",
-   "evento": "Reglas editadas: escena_wan_hf_modelo",
-   "detalle": ""
-  },
-  {
-   "hora": "07:26",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:27",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:27",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:27",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:27",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:27",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:27",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:27",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:27",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "07:28",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "08:31",
-   "evento": "Reglas editadas: escena_wan_hf_modelo",
-   "detalle": ""
-  },
-  {
-   "hora": "08:31",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "08:32",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "09:11",
-   "evento": "Portero no autorizó una credencial",
-   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
-  },
-  {
-   "hora": "09:11",
-   "evento": "Portero no autorizó una credencial",
-   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
-  },
-  {
-   "hora": "09:17",
-   "evento": "Portero no autorizó una credencial",
-   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
-  },
-  {
-   "hora": "09:32",
-   "evento": "Revisión recibida de editor2",
-   "detalle": "7 registro(s) · envío f1cdae57"
-  },
-  {
-   "hora": "09:33",
-   "evento": "Revisión recibida de editor2",
-   "detalle": "7 registro(s) · envío 015c3ad9"
-  },
-  {
-   "hora": "10:37",
-   "evento": "Producción: ENCARGO TOMADO · chinche → en curso",
-   "detalle": "{\"id\": \"CHN-20260924-0644-3ca4\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/24\"}"
-  },
-  {
-   "hora": "10:37",
-   "evento": "Producción: ENCARGO TOMADO · chinche → en curso",
-   "detalle": "{\"id\": \"CHN-20260924-0644-3ca4\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/24\"}"
-  },
-  {
-   "hora": "10:38",
-   "evento": "Producción: ENCARGO TOMADO · chinche → en curso",
-   "detalle": "{\"id\": \"CHN-20260924-0644-3ca4\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/24\"}"
-  },
-  {
-   "hora": "10:38",
-   "evento": "IDEAS escrita",
-   "detalle": "14 nueva(s), 0 reescrita(s), 0 respetada(s)"
-  },
-  {
-   "hora": "10:38",
-   "evento": "Producción: ENCARGO CUMPLIDO · chinche → cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0921-7f77\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/21\"}"
-  },
-  {
-   "hora": "10:39",
-   "evento": "Producción: ENCARGO CUMPLIDO · chinche → cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0921-7f77\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/21\"}"
-  },
-  {
-   "hora": "10:39",
-   "evento": "Producción: ENCARGO CUMPLIDO · chinche → cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0921-7f77\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/21\"}"
-  },
-  {
-   "hora": "10:40",
-   "evento": "Producción: ENCARGO CUMPLIDO · chinche → cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0714-582a\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/20\"}"
-  },
-  {
-   "hora": "10:40",
-   "evento": "Producción: ENCARGO CUMPLIDO · chinche → cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0714-582a\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/20\"}"
-  },
-  {
-   "hora": "10:41",
-   "evento": "Producción: ENCARGO CUMPLIDO · chinche → cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0714-582a\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/20\"}"
-  },
-  {
-   "hora": "10:42",
-   "evento": "Reglas editadas: escena_wan_hf_modelo",
-   "detalle": ""
+   "hora": "10:43",
+   "evento": "Propuestas del día montadas",
+   "detalle": "1 propuesta(s)"
   },
   {
    "hora": "10:44",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
+   "evento": "Propuestas del día montadas",
+   "detalle": "1 propuesta(s)"
   },
   {
-   "hora": "10:45",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
+   "hora": "10:44",
+   "evento": "Propuestas del día montadas",
+   "detalle": "1 propuesta(s) · familia «mesa-vacia»: retiradas mesa-vacia-nube-2026-09-23-61a5cb"
   },
   {
-   "hora": "10:49",
-   "evento": "Revisión recibida de editor",
-   "detalle": "14 registro(s) · envío e754f8ba"
+   "hora": "10:44",
+   "evento": "Propuestas del día montadas",
+   "detalle": "1 propuesta(s) · familia «obra-no-empezo»: retiradas obra-no-empezo-arranque-2026-09-24-8b94a5"
   },
   {
-   "hora": "10:51",
-   "evento": "Producción: ENCARGO · chinche · La Recámara Cerrada → pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-1049-152f\",\"texto\":\"Aqui quiero poder clickar y poder ir a la idea aprobada y pdoerla editar y que todo lo de hacia adelabte si no cumpe se adapte... asi aunque cambiemos algo va c"
+   "hora": "10:46",
+   "evento": "IDEAS escrita",
+   "detalle": "15 nueva(s), 0 reescrita(s), 0 respetada(s)"
   },
   {
-   "hora": "10:51",
-   "evento": "Revisión recibida de editor",
-   "detalle": "14 registro(s) · envío 8fbe7e2d"
-  },
-  {
-   "hora": "10:51",
-   "evento": "Producción: ENCARGO · chinche · La Recámara Cerrada → pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-1049-152f\",\"texto\":\"Aqui quiero poder clickar y poder ir a la idea aprobada y pdoerla editar y que todo lo de hacia adelabte si no cumpe se adapte... asi aunque cambiemos algo va c"
-  },
-  {
-   "hora": "10:51",
-   "evento": "Revisión recibida de editor",
-   "detalle": "14 registro(s) · envío a6765e27"
-  },
-  {
-   "hora": "10:52",
-   "evento": "Revisión recibida de editor",
-   "detalle": "14 registro(s) · envío f8a3d56c"
-  },
-  {
-   "hora": "10:53",
-   "evento": "Producción: ENCARGO · chinche · La Recámara Cerrada → pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-1049-152f\",\"texto\":\"Aqui quiero poder clickar y poder ir a la idea aprobada y pdoerla editar y que todo lo de hacia adelabte si no cumpe se adapte... asi aunque cambiemos algo va c"
-  },
-  {
-   "hora": "10:54",
-   "evento": "Producción: ENCARGO · chinche · La Recámara Cerrada → pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-1049-152f\",\"texto\":\"Aqui quiero poder clickar y poder ir a la idea aprobada y pdoerla editar y que todo lo de hacia adelabte si no cumpe se adapte... asi aunque cambiemos algo va c"
-  },
-  {
-   "hora": "11:28",
+   "hora": "11:39",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
   },
   {
-   "hora": "11:29",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "11:29",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "12:29",
+   "hora": "11:39",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
   },
   {
-   "hora": "12:29",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "12:30",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "13:47",
-   "evento": "Producción: ENCARGO TOMADO · chinche → en curso",
-   "detalle": "{\"id\": \"CHN-20260924-1049-152f\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/25\"}"
-  },
-  {
-   "hora": "13:50",
+   "hora": "11:40",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
   },
   {
-   "hora": "13:50",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "13:51",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "13:51",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "13:51",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "15:43",
+   "hora": "11:40",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
+  },
+  {
+   "hora": "11:40",
+   "evento": "Reglas editadas: escena_wan_hf_modelo",
+   "detalle": ""
+  },
+  {
+   "hora": "11:41",
+   "evento": "Reglas editadas: escena_wan_hf_modelo",
+   "detalle": ""
+  },
+  {
+   "hora": "11:56",
+   "evento": "Reglas editadas: escena_wan_hf_modelo",
+   "detalle": ""
+  },
+  {
+   "hora": "11:59",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "12:00",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "13:14",
+   "evento": "Revisión recibida de editor",
+   "detalle": "14 registro(s) · envío f9bf7946"
+  },
+  {
+   "hora": "13:15",
+   "evento": "Revisión recibida de editor",
+   "detalle": "14 registro(s) · envío c1ec8c10"
+  },
+  {
+   "hora": "13:15",
+   "evento": "Revisión recibida de editor",
+   "detalle": "14 registro(s) · envío 92a7b915"
+  },
+  {
+   "hora": "13:16",
+   "evento": "Revisión recibida de editor",
+   "detalle": "14 registro(s) · envío 5436015b"
+  },
+  {
+   "hora": "13:17",
+   "evento": "Revisión recibida de editor",
+   "detalle": "14 registro(s) · envío 804cd029"
+  },
+  {
+   "hora": "13:17",
+   "evento": "Revisión recibida de editor",
+   "detalle": "14 registro(s) · envío 7e205c0f"
+  },
+  {
+   "hora": "13:18",
+   "evento": "Revisión recibida de editor",
+   "detalle": "14 registro(s) · envío 54165b15"
+  },
+  {
+   "hora": "13:18",
+   "evento": "Revisión recibida de editor",
+   "detalle": "14 registro(s) · envío 9b0cd91c"
   },
   {
    "hora": "15:44",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
+   "evento": "COLA · upsert",
+   "detalle": "8 nueva(s), 0 actualizada(s)"
   },
   {
-   "hora": "15:44",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "16:16",
+   "hora": "15:45",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
+  },
+  {
+   "hora": "15:45",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:46",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:46",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:46",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:46",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:46",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:46",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:48",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:48",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:48",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:49",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:49",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:52",
+   "evento": "Reglas editadas: escena_wan_hf_modelo",
+   "detalle": ""
+  },
+  {
+   "hora": "15:52",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:53",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:53",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:53",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:53",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:53",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:53",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:55",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:55",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "15:55",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
    "hora": "16:19",
+   "evento": "Reglas editadas: escena_wan_hf_modelo",
+   "detalle": ""
+  },
+  {
+   "hora": "16:20",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "16:20",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "16:20",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "16:20",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "16:20",
    "evento": "COLA · estado",
    "detalle": "0 nueva(s), 1 actualizada(s)"
   },
@@ -3461,130 +3232,153 @@
    "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "16:21",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "16:22",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "17:01",
+   "hora": "18:55",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
   },
   {
-   "hora": "17:01",
+   "hora": "18:55",
    "evento": "COLA · estado",
    "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "17:02",
+   "hora": "18:55",
    "evento": "COLA · estado",
    "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "18:16",
-   "evento": "Reglas editadas: productor_silencio_desde",
-   "detalle": ""
+   "hora": "18:55",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "18:16",
-   "evento": "Reglas editadas: productor_silencio_hasta",
-   "detalle": ""
+   "hora": "18:55",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "18:49",
+   "hora": "19:04",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
   },
   {
-   "hora": "18:50",
+   "hora": "19:07",
    "evento": "COLA · estado",
    "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "18:50",
+   "hora": "19:08",
    "evento": "COLA · estado",
    "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "00:51",
+   "hora": "22:00",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
   },
   {
-   "hora": "00:51",
+   "hora": "22:01",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "22:01",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "23:27",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "23:27",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "23:28",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "23:29",
+   "evento": "Portero no autorizó una credencial",
+   "detalle": "Portero: 200 {\"ok\":false,\"error\":\"liga\"} · hoja: Exception: No cuentas con el permiso necesario para acceder al documento solicitado."
+  },
+  {
+   "hora": "01:00",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
   },
   {
-   "hora": "00:51",
+   "hora": "01:01",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "01:01",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "01:02",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "01:02",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "01:02",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "01:02",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "01:03",
+   "evento": "COLA · estado",
+   "detalle": "0 nueva(s), 1 actualizada(s)"
+  },
+  {
+   "hora": "04:27",
    "evento": "Reglas editadas: escena_wan_hf_modelo",
    "detalle": ""
   },
   {
-   "hora": "00:52",
+   "hora": "04:28",
    "evento": "COLA · estado",
    "detalle": "0 nueva(s), 1 actualizada(s)"
   },
   {
-   "hora": "00:53",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "01:09",
-   "evento": "Reglas editadas: escena_wan_hf_modelo",
-   "detalle": ""
-  },
-  {
-   "hora": "01:09",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "01:10",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "01:12",
-   "evento": "Producción: ENCARGO CUMPLIDO · chinche → cumplida",
-   "detalle": "{\"id\": \"CHN-20260924-1049-152f\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/25\"}"
-  },
-  {
-   "hora": "01:12",
-   "evento": "Producción: ENCARGO CUMPLIDO · chinche → cumplida",
-   "detalle": "{\"id\": \"CHN-20260924-0644-3ca4\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/24\"}"
-  },
-  {
-   "hora": "01:14",
-   "evento": "Reglas editadas: escena_wan_hf_modelo",
-   "detalle": ""
-  },
-  {
-   "hora": "01:15",
-   "evento": "COLA · estado",
-   "detalle": "0 nueva(s), 1 actualizada(s)"
-  },
-  {
-   "hora": "01:15",
+   "hora": "04:29",
    "evento": "COLA · estado",
    "detalle": "0 nueva(s), 1 actualizada(s)"
   }
  ],
  "decisiones": {
   "propuestas": {
-   "asi-se-ve-saber-nube-2026-09-25-193dc0": {
+   "mesa-vacia-nube-2026-09-26-be1f6e": {
     "laminas": [
-     "si"
+     "si",
+     "si",
+     "no",
+     "si",
+     "no"
     ],
     "nota": "",
     "notas": [
-     "[toma elegida: 1]"
+     "[toma elegida: 1]",
+     "[toma elegida: 2]",
+     "Creo que a nadie le gust que les digan qu ehacer... mejor que te propongas los ecpertos que hacer",
+     "[toma elegida: 1]",
+     "El texto no engancha... demasiadas preguntas no es unrealto e sun cuestionario... tomalo en cuenta para todas las lamians"
     ],
     "firmas": [
      [
@@ -3592,6 +3386,34 @@
        "quien": "Alejandro",
        "marca": "si",
        "nota": "[toma elegida: 1]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 2]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "Creo que a nadie le gust que les digan qu ehacer... mejor que te propongas los ecpertos que hacer"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 1]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "El texto no engancha... demasiadas preguntas no es unrealto e sun cuestionario... tomalo en cuenta para todas las lamians"
       }
      ]
     ]
@@ -3620,7 +3442,7 @@
      "no",
      "no",
      "no",
-     "si",
+     null,
      "no"
     ],
     "nota": "",
@@ -3629,7 +3451,7 @@
      "La imagen no cuadra con el texto",
      "No entiendo que está queriendo decir",
      "La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago",
-     "[toma elegida: 2]",
+     null,
      "La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago"
     ],
     "firmas": [
@@ -3661,13 +3483,7 @@
        "nota": "La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago"
       }
      ],
-     [
-      {
-       "quien": "Alejandro",
-       "marca": "si",
-       "nota": "[toma elegida: 2]"
-      }
-     ],
+     null,
      [
       {
        "quien": "Alejandro",
@@ -3676,6 +3492,43 @@
       }
      ]
     ]
+   },
+   "recamara-cerrada-nube-2026-09-26-9ad47f": {
+    "laminas": [
+     "no"
+    ],
+    "nota": "",
+    "notas": [
+     "El texto no engancha... no tiene nada que ver con lo que buscamos lograr con esta publciacon se me hace que nomas etsas proponiendo sin conocimiento de que queremos lograr como que mandas a producir en ala sin conocimiento de contexto asi que ayudate  generar esa orden de entendr el contexto y ser un experto de marketing con una estrategia clara y comprobada y probada por ejemplo la de hormozi .. pero para ismeore y todos los agentes"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "El texto no engancha... no tiene nada que ver con lo que buscamos lograr con esta publciacon se me hace que nomas etsas proponiendo sin conocimiento de que queremos lograr como que mandas a producir en ala sin conocimiento de contexto asi que ayudate  generar esa orden de entendr el contexto y ser un experto de marketing con una estrategia clara y comprobada y probada por ejemplo la de hormozi .. pero para ismeore y todos los agentes"
+      }
+     ]
+    ]
+   },
+   "asi-se-ve-saber-nube-2026-09-25-193dc0": {
+    "laminas": [
+     "si"
+    ],
+    "nota": "",
+    "notas": [
+     "[toma elegida: 1]"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 1]"
+      }
+     ]
+    ],
+    "heredada": "2026-09-25"
    },
    "obra-no-empezo-nube-2026-09-25-e1356a": {
     "laminas": [
@@ -3693,7 +3546,8 @@
        "nota": "[toma elegida: 1]"
       }
      ]
-    ]
+    ],
+    "heredada": "2026-09-25"
    },
    "48-horas-arranque-2026-09-24-e98d7d": {
     "laminas": [
@@ -3737,6 +3591,6 @@
   "editores": [
    "Alejandro"
   ],
-  "guardado": "2026-09-25T13:18:42"
+  "guardado": "2026-09-26T08:51:54"
  }
 }
