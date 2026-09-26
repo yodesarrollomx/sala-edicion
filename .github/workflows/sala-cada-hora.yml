@@ -57,24 +57,29 @@ jobs:
           set -euo pipefail
           hoy=$(TZ=America/Hermosillo date +%F); hora=$(TZ=America/Hermosillo date +%H%M)
           desde="${hoy}T12:00:00Z"   # 05:00 Hermosillo
-          estado(){ # imprime «ok» si hoy ya corrió (o corre), «fallas:N» si no
-            local p=$1 ok=0 f=0 c
-            for c in $(gh api "repos/$R/actions/workflows/sala-$p.yml/runs?created=%3E%3D$desde&per_page=30" --jq '.workflow_runs[]|(.conclusion // "encurso")'); do
-              [ "$c" = failure ] && f=$((f+1)) || ok=1
-            done
-            for id in $(gh api "repos/$R/actions/workflows/sala-diario.yml/runs?created=%3E%3D$desde&per_page=30" --jq '.workflow_runs[].id'); do
-              for c in $(gh api "repos/$R/actions/runs/$id/jobs" --jq ".jobs[]|select(.name==\"$p / $p\")|(.conclusion // \"encurso\")"); do
-                [ "$c" = failure ] && f=$((f+1)) || ok=1
-              done
+          # «ya corrió» = una corrida de HOY que llegó a «Verificar antes de publicar» (un simulacro
+          # se lo salta y NO cuenta: el 26-sep uno pasó por «éxito» y la mesa siguió vacía).
+          # En curso cuenta como corrida, para no lanzar dos.
+          estado(){
+            local p=$1 ok=0 f=0 id j
+            local ids; ids=$( { gh api "repos/$R/actions/workflows/sala-$p.yml/runs?created=%3E%3D$desde&per_page=30" --jq '.workflow_runs[].id'
+                                gh api "repos/$R/actions/workflows/sala-diario.yml/runs?created=%3E%3D$desde&per_page=30" --jq '.workflow_runs[].id'; } )
+            for id in $ids; do
+              while IFS=$'\t' read -r st co ver; do
+                [ -z "$st" ] && continue
+                if [ "$st" != completed ]; then ok=1
+                elif [ "$co" = failure ]; then f=$((f+1))
+                elif [ "$ver" = success ]; then ok=1; fi
+              done < <(gh api "repos/$R/actions/runs/$id/jobs" --jq ".jobs[]|select(.name==\"$p\" or .name==\"$p / $p\")|[.status, (.conclusion // \"\"), ([.steps[]?|select(.name|startswith(\"Verificar antes de publicar\"))|.conclusion][0] // \"\")]|@tsv")
             done
             [ $ok = 1 ] && echo ok || echo "fallas:$f"
           }
-          lanza(){ # $1 proceso · $2 desde qué hora (HHMM Hermosillo)
+          lanza(){ # $1 proceso · $2 desde qué hora (HHMM Hermosillo) · $3 modo REAL (nunca simular)
             [ "$hora" -lt "$2" ] && { echo "$1: aún no es hora ($hora < $2)"; return; }
             local e; e=$(estado "$1")
             if [ "$e" = ok ]; then echo "$1: ya corrió hoy"
             elif [ "${e#fallas:}" -ge 2 ]; then echo "::warning::$1 falló 2 veces hoy; no se relanza"
-            else echo "::notice::$1 no corrió hoy ($hoy): lo lanzo"; gh workflow run "sala-$1.yml" -R "$R" --ref main; fi
+            else echo "::notice::$1 no corrió hoy ($hoy): lo lanzo"; gh workflow run "sala-$1.yml" -R "$R" --ref main -f modo="$3"; fi
           }
-          lanza mesa 0545
-          lanza arranque 0555
+          lanza mesa 0545 montar
+          lanza arranque 0555 todo
