@@ -27,6 +27,7 @@ import unicodedata
 import sala_cliente as sala
 from motores import cerebro
 from motores._comun import MotorError
+from motores.estrategia import con_estrategia
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 DATOS = RAIZ / 'datos'
@@ -37,6 +38,7 @@ N_LAMINAS = {'lámina': 1, 'lamina': 1, 'carrusel': 5, 'reel': 6}
 INSTR_GUION = (
     'Eres guionista de piezas cortas para redes de Yo Desarrollo, una desarrolladora en Hermosillo, '
     'Sonora, que vende el Plan de Potencial de un terreno (qué puede llegar a ser, calculado, no opinado). '
+    'La pieza es un relato con giro que termina en el Plan de Potencial Personalizado (ver ESTRATEGIA). '
     'Tono: cálido, directo, local, sin tecnicismos ni cifras de dinero, sin «gratis». Devuelve SOLO un '
     'JSON: {"promesa": "una frase", "laminas": [{"n": 1, "dice": "texto corto que va escrito en la '
     'lámina (máx 14 palabras)", "ve": "qué se ve en la ilustración, concreto: personas, lugar, luz", '
@@ -73,9 +75,9 @@ def pensar(texto, instruccion, reglas, cola):
     fallas = []
     # 23-sep: Gemini tardó >60 s y el TimeoutError (no es MotorError) tumbó toda la corrida.
     # Una red lenta es un intento fallido, no un choque: se reintenta Gemini una vez y se sigue.
-    for nombre, f in (('gemini', lambda: cerebro._gemini(texto, reglas, instruccion)),
-                      ('gemini', lambda: cerebro._gemini(texto, reglas, instruccion)),
-                      ('openai', lambda: cerebro._openai(texto, reglas, cola or [], instruccion))):
+    for nombre, f in (('gemini', lambda: cerebro._gemini(texto, reglas, con_estrategia(instruccion))),
+                      ('gemini', lambda: cerebro._gemini(texto, reglas, con_estrategia(instruccion))),
+                      ('openai', lambda: cerebro._openai(texto, reglas, cola or [], con_estrategia(instruccion)))):
         try:
             crudo = f()
         except (MotorError, OSError, ValueError) as e:   # OSError cubre TimeoutError y URLError

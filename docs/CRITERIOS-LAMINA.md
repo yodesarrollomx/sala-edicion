@@ -16,7 +16,10 @@ No inventé ninguno. **Cada criterio sale de una nota que tú escribiste**, y la
 
 | Criterio | Tu nota |
 |---|---|
-| **Pregunta, no afirmación** | «creo que debemos cambiar la sintaxis a una pregunta mejor que a una afirmación» · «con entonación de pregunta se siente más leído por el cliente» — **lo escribiste tres veces** |
+| **~~Pregunta, no afirmación~~ → RELATO (26-sep)** | Reemplaza lo anterior: «demasiadas preguntas: no es un relato, es un cuestionario… tómalo en cuenta para todas las láminas». Máximo UNA pregunta por pieza, solo en la lámina 1 como gancho. Fuente única: `nube/motores/estrategia.py` |
+| **Experto que propone, no que manda** (26-sep) | «a nadie le gusta que le digan qué hacer… mejor que te propongamos los expertos qué hacer» |
+| **Estrategia antes que texto** (26-sep) | «ser un experto de marketing con una estrategia clara y comprobada… Hormozi… para todos los agentes» → todos los agentes reciben `ESTRATEGIA` |
+| (histórico) Pregunta, no afirmación | «creo que debemos cambiar la sintaxis a una pregunta mejor que a una afirmación» · «con entonación de pregunta se siente más leído por el cliente» — **lo escribiste tres veces** |
 | **Narrador hablándole al público**, segunda persona | «debemos hablarle al público, o sea que la sintaxis de esta lámina y las demás debería ser así… un narrador hablándole al público» |
 | **La última lámina lleva la guía del cómo** | «también guía a cómo hacerlo ahí mismo, para que no tengan que ir al copy a descubrirlo» |
 | **Mensaje rápido** | «si no entienden pronto, se van» |

@@ -18,6 +18,7 @@ import urllib.request
 
 import sala_cliente as sala
 from motores._comun import MotorError
+from motores.estrategia import con_estrategia
 
 ESPERA = 60
 
@@ -139,8 +140,9 @@ def receta(base, ve, dice, nota, reglas, cola, variante=1):
 INSTRUCCION_LAMINA = (
     'Eres director creativo de piezas cortas (carrusel de Instagram) de una desarrolladora '
     'inmobiliaria en Hermosillo, Sonora. El editor RECHAZÓ una lámina y dejó una nota. Rehazla '
-    'obedeciendo la nota al pie de la letra. Reglas de la casa: el texto le habla al público en '
-    'segunda persona y de preferencia es pregunta; una sola idea; máximo 14 palabras; nada de '
+    'obedeciendo la nota al pie de la letra y la ESTRATEGIA de arriba. Reglas de la casa: el '
+    'texto avanza el relato de la pieza (afirma; pregunta solo si es la lámina 1); una sola idea; '
+    'máximo 14 palabras; nada de '
     'cifras de dinero, nada de «gratis», sin plazos ni garantías; áreas en m²; la pareja '
     'protagonista es de estatus medio-alto y ella 2-3 años más joven; la imagen tiene que '
     'sostener el texto (que se vea lo que dice). Si la nota NO pide cambiar el texto, deja el '
@@ -160,18 +162,18 @@ def _json_de(texto):
         return None
 
 
-def lamina(pieza, promesa, dice, ve, nota, vetadas, reglas, cola=None, variante=1, referencia=''):
+def lamina(pieza, promesa, dice, ve, nota, vetadas, reglas, cola=None, variante=1, referencia='', numero=None):
     """Devuelve ({texto, receta, porque}, cerebro_usado, avisos). Sin cerebro: el texto se
     queda y la receta sale de lo que la lámina ya mostraba + la nota."""
-    pedido = ('PIEZA: %s\nPROMESA DE LA PIEZA: %s\nTEXTO ACTUAL: %s\nLO QUE MOSTRABA: %s\n'
+    pedido = ('LÁMINA NÚMERO: %s\n' % (numero or '?')) + ('PIEZA: %s\nPROMESA DE LA PIEZA: %s\nTEXTO ACTUAL: %s\nLO QUE MOSTRABA: %s\n'
               'NOTA DEL EDITOR: %s\nPALABRAS VETADAS (nunca las uses): %s\n'
               'REFERENCIA VISUAL (mismos personajes, lugar y luz; descríbelos igual en la receta): %s\n'
               'VARIANTE %d: propón una composición distinta a las anteriores.'
               % (pieza, promesa or '-', dice or '-', ve or '-', nota or '(sin nota)',
                  ', '.join(vetadas) or '-', referencia or '-', variante))
     avisos = []
-    for nombre, fn in (('gemini', lambda: _gemini(pedido, reglas, INSTRUCCION_LAMINA)),
-                       ('openai', lambda: _openai(pedido, reglas, cola, INSTRUCCION_LAMINA))):
+    for nombre, fn in (('gemini', lambda: _gemini(pedido, reglas, con_estrategia(INSTRUCCION_LAMINA))),
+                       ('openai', lambda: _openai(pedido, reglas, cola, con_estrategia(INSTRUCCION_LAMINA)))):
         try:
             d = _json_de(fn())
             if d and d.get('receta'):

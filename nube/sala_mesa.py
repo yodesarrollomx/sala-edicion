@@ -177,7 +177,8 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
     for k in range(1, n_tomas + 1):
         try:
             d, quien, av = cerebro.lamina(t.get('pieza') or slug, t.get('promesa'), lam.get('dice'),
-                                          lam.get('ve'), nota, veto, reglas, cola, k, ref_txt)
+                                          lam.get('ve'), nota, veto, reglas, cola, k, ref_txt,
+                                          numero=lam.get('n'))
             avisos += av
             texto = d['texto']
             problema = guardia(texto, veto)
