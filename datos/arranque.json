@@ -1,4 +1,25 @@
 {
- "corrida": "2026-09-27T17:26Z",
- "piezas": []
+ "corrida": "2026-09-27T20:25Z",
+ "piezas": [
+  {
+   "pieza": "La servilleta contra el estudio",
+   "resultado": "arrancada",
+   "motivo": "guion de 5 lámina(s) y lámina 1 con 2 tomas en tu mesa"
+  },
+  {
+   "pieza": "Tres opiniones, tres números distintos",
+   "resultado": "arrancada",
+   "motivo": "guion de 5 lámina(s) y lámina 1 con 2 tomas en tu mesa"
+  },
+  {
+   "pieza": "¿Cuántos m² permite tu calle?",
+   "resultado": "arrancada",
+   "motivo": "guion de 1 lámina(s) y lámina 1 con 2 tomas en tu mesa"
+  },
+  {
+   "pieza": "Lo que puede llegar a ser",
+   "resultado": "arrancada",
+   "motivo": "guion de 1 lámina(s) y lámina 1 con 2 tomas en tu mesa"
+  }
+ ]
 }
