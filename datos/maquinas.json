@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-27 01:12",
+  "actualizado": "2026-09-27 07:02",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -172,10 +172,10 @@
       "hace": "Corre las pruebas y sube la Sala a GitHub Pages en cada guardado a main.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-27T00:38:33Z",
+      "corrio": "2026-09-27T11:56:25Z",
       "dijo": "Publicar la Sala",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 7 h"
+      "porque": "su última corrida salió bien hace 2 h"
     },
     {
       "id": "nube:sala-cada-hora.yml",
@@ -183,7 +183,7 @@
       "hace": "Productor (cada hora), puente de chinches, ejecutor y este semáforo (cada 2 h).",
       "evita": "que un «sí» de la mesa no dispare nada y que las chinches no lleguen",
       "cuando": "cada hora",
-      "corrio": "2026-09-27T08:12:27Z",
+      "corrio": "2026-09-27T14:02:03Z",
       "dijo": "Sala · Cada hora",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
@@ -197,7 +197,7 @@
       "corrio": "2026-09-27T06:04:20Z",
       "dijo": "Sala · Diario",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 2 h"
+      "porque": "su última corrida salió bien hace 7 h"
     },
     {
       "id": "nube:verificar.yml",
@@ -208,7 +208,7 @@
       "corrio": "2026-09-25T01:16:14Z",
       "dijo": "chinche #24 #25: la fábrica sin horario quieto en la Línea; «Va en» s…",
       "salud": "mal",
-      "porque": "lleva 54 h sin correr"
+      "porque": "lleva 60 h sin correr"
     }
   ]
 }
