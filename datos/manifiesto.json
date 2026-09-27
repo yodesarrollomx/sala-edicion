@@ -2647,6 +2647,54 @@
    "video": null,
    "de_antes": null,
    "origen": "rehecha-de mesa-vacia-nube-2026-09-27-7f9f0a"
+  },
+  {
+   "id": "dato-servilleta-3-arranque-2026-09-27-1eca95",
+   "titulo": "La servilleta contra el estudio · arranque: guion y lámina 1",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/dato-servilleta-3-a2026-09-27/L1-1.jpg"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "arranque-de idea dato-servilleta-3"
+  },
+  {
+   "id": "dato-tres-opiniones-arranque-2026-09-27-7d0fb3",
+   "titulo": "Tres opiniones, tres números distintos · arranque: guion y lámina 1",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/dato-tres-opiniones-a2026-09-27/L1-1.jpg"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "arranque-de idea dato-tres-opiniones"
+  },
+  {
+   "id": "dato-que-permite-arranque-2026-09-27-f1b7b0",
+   "titulo": "¿Cuántos m² permite tu calle? · arranque: guion y lámina 1",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/dato-que-permite-a2026-09-27/L1-1.jpg"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "arranque-de idea dato-que-permite"
+  },
+  {
+   "id": "nombre-antes-despues-arranque-2026-09-27-75539e",
+   "titulo": "Lo que puede llegar a ser · arranque: guion y lámina 1",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/nombre-antes-despues-a2026-09-27/L1-1.jpg"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "arranque-de idea nombre-antes-despues"
   }
  ],
  "parrilla": [],
@@ -2664,11 +2712,123 @@
   "aprobadas": 3,
   "tiradas": 9,
   "producidas": 0,
-  "rehechas": 2,
+  "rehechas": 6,
   "nota": ""
  },
  "produccion": [
   {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO · chinche · board-aurum/index",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260927-1439-a7f0\",\"folio\":\"\",\"texto\":\"Está pantalla es demasiado grande para su objetivo…. Creo que estamos dejando pasar la oportunas de ser más eficientes y gráficos y más significativos… ayúdame a plantear algo que funcione y que no quite tanto espacio\",\"tipo\":\"\",\"repo\":\"board-aurum\",\"pantalla\":\"index\",\"vista\":\"board-aurum/index\",\"url\":\"https://yodesarrollomx.github.io/board-aurum/\",\"quien\":\"Alejandro Puebla\",\"elemento\":{\"css\":\"div.brief-stats div.brief-stat div.brief-stat-n\",\"texto\":\"0\",\"seccion\":\"Board operativo\"},\"objeto\":null,\"codigo\":\"\"}",
+   "enlace": "https://yodesarrollomx.github.io/board-aurum/"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO TOMADO · chinche",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260927-1423-be54\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/33\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/33"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO TOMADO · chinche",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260927-1422-a379\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/32\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/32"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO TOMADO · chinche",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260927-1422-99a9\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/31\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/31"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO TOMADO · chinche",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260927-1420-e274\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/30\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/30"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO TOMADO · chinche",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260927-1420-7c16\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/29\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/29"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO TOMADO · chinche",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260927-1419-93d1\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/28\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/28"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO TOMADO · chinche",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260927-1409-754d\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/27\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/27"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO · chinche · board-aurum/index",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260927-1419-93d1\",\"folio\":\"\",\"texto\":\"No me deja seleccionar los que ya tenemos dados de alta si se puede confundir y dunpmicsr si pongo una letra o algo de más\",\"tipo\":\"\",\"repo\":\"board-aurum\",\"pantalla\":\"index\",\"vista\":\"board-aurum/index\",\"url\":\"https://yodesarrollomx.github.io/board-aurum/\",\"quien\":\"Alejandro Puebla\",\"elemento\":{\"css\":\"div.grid.gap-3 label.field input.input\",\"texto\":\"\",\"seccion\":\"DATOS\"},\"objeto\":null,\"codigo\":\"\"}",
+   "enlace": "https://yodesarrollomx.github.io/board-aurum/"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO · chinche · board-aurum/index",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260927-1423-be54\",\"folio\":\"\",\"texto\":\"No me gusta tanto opción es funcional si pero la vdd creo que se ve demasiado y quita mucho espacio…. Ayúdame a replantear esta sección y que funcione muy bien  en todo\",\"tipo\":\"\",\"repo\":\"board-aurum\",\"pantalla\":\"index\",\"vista\":\"board-aurum/index\",\"url\":\"https://yodesarrollomx.github.io/board-aurum/\",\"quien\":\"Alejandro Puebla\",\"elemento\":{\"css\":\"div.mx-auto.max-w-[1760px] section.mb-3.yo-card div.flex.flex-wrap\",\"texto\":\"Atrasadas0 Vencen esta semana4 Alta prioridad1 Sin fecha0 Sin movimiento >14 d5\",\"seccion\":\"Board operativo\"},\"objeto\":null,\"codigo\":\"\"}",
+   "enlace": "https://yodesarrollomx.github.io/board-aurum/"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO · chinche · board-aurum/index",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260927-1422-99a9\",\"folio\":\"\",\"texto\":\"Esto me gustaría ver algo más padre… como que fuera mi tarjeta que que pudiera ver las de ala derecha e ir viendo los de mi equipo… pero me gustaba mucho el formato pasado de tarjetas con proyectos y así vuelve más a la otra e inclúyeme esta capacidad de verlo así pero que lo sea la principal\",\"tipo\":\"\",\"repo\":\"board-aurum\",\"pantalla\":\"index\",\"vista\":\"board-aurum/index\",\"url\":\"https://yodesarrollomx.github.io/board-aurum/\",\"quien\":\"Alejandro Puebla\",\"elemento\":{\"css\":\"main div.misemana-view div.ms-toolbar\",\"texto\":\"Mi semana Lo que vence en los próximos 7 días\",\"seccion\":\"Mi semana\"},\"objeto\":null,\"codigo\":\"\"}",
+   "enlace": "https://yodesarrollomx.github.io/board-aurum/"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO · chinche · board-aurum/index",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260927-1422-a379\",\"folio\":\"\",\"texto\":\"Algo se ve error ahí no me gusta que normalices los errores\",\"tipo\":\"\",\"repo\":\"board-aurum\",\"pantalla\":\"index\",\"vista\":\"board-aurum/index\",\"url\":\"https://yodesarrollomx.github.io/board-aurum/\",\"quien\":\"Alejandro Puebla\",\"elemento\":{\"css\":\"button.ms-row div.ms-row-main div.ms-row-title\",\"texto\":\"Integrar al tablero todas las tareas internas sin resolver (Admin, Contratos, Página web, Real de Miramar) con su proyecto correcto\",\"seccion\":\"ESTA SEMANA (4)\"},\"objeto\":null,\"codigo\":\"\"}",
+   "enlace": "https://yodesarrollomx.github.io/board-aurum/"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO · chinche · board-aurum/index",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260927-1420-7c16\",\"folio\":\"\",\"texto\":\"La sección de metas none agrada está quitando mucho espacio y debería de ser algo más fácil de leer como KPi busca laguna metodología para de verdad generar una meta y convertirla en algo medible y que esto tenga objetivos y acciones que puedan referenciar de para llegar al éxito más rápidamente y completo a lo planeado\",\"tipo\":\"\",\"repo\":\"board-aurum\",\"pantalla\":\"index\",\"vista\":\"board-aurum/index\",\"url\":\"https://yodesarrollomx.github.io/board-aurum/\",\"quien\":\"Alejandro Puebla\",\"elemento\":{\"css\":\"div.mx-auto.max-w-[1760px] section.moac-wrap.yo-card div.moac-head\",\"texto\":\"MOAC · METAS → OBJETIVOS → ACCIONES 5 metas · 25 objetivos · 26/26 tareas abiertas con objetivo ✓ 0 tareas sin objetivo Sheet ↗ ↻\",\"seccion\":\"Board operativo\"},\"objeto\":null,\"codigo\":\"\"}",
+   "enlace": "https://yodesarrollomx.github.io/board-aurum/"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO · chinche · board-aurum/index",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260927-1420-e274\",\"folio\":\"\",\"texto\":\"Aquí no me deja seleccionar la fecha realmente revisa en varios formatos de Sta pantalla pro que creo que falla en varias partes más\",\"tipo\":\"\",\"repo\":\"board-aurum\",\"pantalla\":\"index\",\"vista\":\"board-aurum/index\",\"url\":\"https://yodesarrollomx.github.io/board-aurum/\",\"quien\":\"Alejandro Puebla\",\"elemento\":{\"css\":\"div.grid.gap-3 label.field input.input\",\"texto\":\"\",\"seccion\":\"DATOS\"},\"objeto\":null,\"codigo\":\"\"}",
+   "enlace": "https://yodesarrollomx.github.io/board-aurum/"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO · chinche · board-aurum/index",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260927-1419-93d1\",\"folio\":\"\",\"texto\":\"No me deja seleccionar los que ya tenemos dados de alta si se puede confundir y dunpmicsr si pongo una letra o algo de más\",\"tipo\":\"\",\"repo\":\"board-aurum\",\"pantalla\":\"index\",\"vista\":\"board-aurum/index\",\"url\":\"https://yodesarrollomx.github.io/board-aurum/\",\"quien\":\"Alejandro Puebla\",\"elemento\":{\"css\":\"div.grid.gap-3 label.field input.input\",\"texto\":\"\",\"seccion\":\"DATOS\"},\"objeto\":null,\"codigo\":\"\"}",
+   "enlace": "https://yodesarrollomx.github.io/board-aurum/"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO · chinche · board-aurum/index",
+   "estado": "pendiente",
+   "detalle": "{\"id\":\"CHN-20260927-1409-754d\",\"folio\":\"\",\"texto\":\"La meta está para la cercada cuando en realidad ese es un proyecto modificable… lo que la meta tiene que centrarse en cerrar proyectos o algo concreto pero creo que ponerle nombre de la cercada a la meta compromote a que sea esa u no otra opción como el terrenos. Sahuaripa más bien cerrar ppp en codesarrollos… algo que te va que ver con la lógica sistémica de nuestro Yod os…. Entiende bien y plantéame la manera de anclar las metas en el sistema\",\"tipo\":\"\",\"repo\":\"board-aurum\",\"pantalla\":\"index\",\"vista\":\"board-aurum/index\",\"url\":\"https://yodesarrollomx.github.io/board-aurum/\",\"quien\":\"Alejandro Puebla\",\"elemento\":{\"css\":\"section.moac-wrap.yo-card div.moac-grid button.moac-meta.on\",\"texto\":\"M-D 2026-12-31 Al 31-dic-2026 tengo firmadas 2 aportaciones de terreno en co-desarrollo: La Cercada y Torre Ruiseñor. Dueño: Alejandro · 2 objetivos vencidos 0/\",\"seccion\":\"Board operativo\"},\"objeto\":null,\"codigo\":\"\"}",
+   "enlace": "https://yodesarrollomx.github.io/board-aurum/"
+  },
+  {
    "fecha": "2026-09-26",
    "pieza": "ENCARGO CUMPLIDO · chinche",
    "estado": "cumplida",
@@ -2765,118 +2925,6 @@
    "estado": "cumplida",
    "detalle": "{\"id\": \"CHN-20260915-0714-582a\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/20\"}",
    "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/20"
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0921-7f77\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/21\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/21"
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0921-7f77\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/21\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/21"
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0921-7f77\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/21\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/21"
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO TOMADO · chinche",
-   "estado": "en curso",
-   "detalle": "{\"id\": \"CHN-20260924-0644-3ca4\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/24\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/24"
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO TOMADO · chinche",
-   "estado": "en curso",
-   "detalle": "{\"id\": \"CHN-20260924-0644-3ca4\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/24\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/24"
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO TOMADO · chinche",
-   "estado": "en curso",
-   "detalle": "{\"id\": \"CHN-20260924-0644-3ca4\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/24\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/24"
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO · chinche · prod",
-   "estado": "pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-0644-3ca4\",\"texto\":\"por qu dice que descansa d enoche? .. qu eprduzca roda la ncohe si e sposible para eso sosn las gpu para usarse no como humanos .. por favor corrije el asunto de que se cerra la sala ...\",\"tipo\":\"\",\"vista\":\"prod\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"div#linea button.ln-fila div.ln-rel\",\"texto\":\"LA FÁBRICA 1 trabajo de corte en cola. La fábrica duerme de 11 pm a 7 am. La fábrica lo toma ≈ 7:35 a.m. (GitHub suele llegar tarde) · revísalo ≈ 7:44 a.m.\",\"seccion\":\"LO QUE QUEDÓ A MEDIAS\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790257437244\"}",
-   "enlace": ""
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO · chinche · prod",
-   "estado": "pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-0644-3ca4\",\"texto\":\"por qu dice que descansa d enoche? .. qu eprduzca roda la ncohe si e sposible para eso sosn las gpu para usarse no como humanos .. por favor corrije el asunto de que se cerra la sala ...\",\"tipo\":\"\",\"vista\":\"prod\",\"popup\":\"\",\"carta\":null,\"elemento\":{\"css\":\"div#linea button.ln-fila div.ln-rel\",\"texto\":\"LA FÁBRICA 1 trabajo de corte en cola. La fábrica duerme de 11 pm a 7 am. La fábrica lo toma ≈ 7:35 a.m. (GitHub suele llegar tarde) · revísalo ≈ 7:44 a.m.\",\"seccion\":\"LO QUE QUEDÓ A MEDIAS\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790257437244\"}",
-   "enlace": ""
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO · corre la sala",
-   "estado": "pendiente",
-   "detalle": "Corre la sala.",
-   "enlace": ""
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260914-2306-c2ca\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/16\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/16"
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260914-2307-2292\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/17\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/17"
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260914-2307-2292\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/17\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/17"
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260914-2307-2292\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/17\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/17"
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260914-2307-2292\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/17\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/17"
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260914-2308-b410\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/18\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/18"
-  },
-  {
-   "fecha": "2026-09-23",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260914-2313-5cbd\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/19\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/19"
   }
  ],
  "bitacora": [
@@ -3342,6 +3390,141 @@
      ]
     ]
    },
+   "mesa-vacia-nube-2026-09-27-200200": {
+    "laminas": [
+     "si",
+     "si",
+     "si",
+     "si",
+     "si",
+     "si"
+    ],
+    "nota": "",
+    "notas": [
+     "[toma elegida: 1]",
+     "[toma elegida: 2]",
+     "[toma elegida: 2]",
+     "[toma elegida: 2]",
+     "[toma elegida: 1]",
+     "[toma elegida: 2]"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 1]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 2]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 2]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 2]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 1]"
+      }
+     ],
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 2]"
+      }
+     ]
+    ]
+   },
+   "dato-servilleta-3-arranque-2026-09-27-1eca95": {
+    "laminas": [
+     "si"
+    ],
+    "nota": "",
+    "notas": [
+     "[toma elegida: 1]"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 1]"
+      }
+     ]
+    ]
+   },
+   "dato-tres-opiniones-arranque-2026-09-27-7d0fb3": {
+    "laminas": [
+     "no"
+    ],
+    "nota": "",
+    "notas": [
+     "B pero no lo hagas específico de hermosillo para que pueda servir a nivel nacional"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "B pero no lo hagas específico de hermosillo para que pueda servir a nivel nacional"
+      }
+     ]
+    ]
+   },
+   "dato-que-permite-arranque-2026-09-27-f1b7b0": {
+    "laminas": [
+     "si"
+    ],
+    "nota": "",
+    "notas": [
+     "[toma elegida: 1]"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "si",
+       "nota": "[toma elegida: 1]"
+      }
+     ]
+    ]
+   },
+   "nombre-antes-despues-arranque-2026-09-27-75539e": {
+    "laminas": [
+     "no"
+    ],
+    "nota": "",
+    "notas": [
+     "B pero no de hermosillo quiero algo más nacional"
+    ],
+    "firmas": [
+     [
+      {
+       "quien": "Alejandro",
+       "marca": "no",
+       "nota": "B pero no de hermosillo quiero algo más nacional"
+      }
+     ]
+    ]
+   },
    "asi-se-ve-saber-nube-2026-09-25-193dc0": {
     "laminas": [
      "si"
@@ -3422,6 +3605,6 @@
   "editores": [
    "Alejandro"
   ],
-  "guardado": "2026-09-27T10:24:43"
+  "guardado": "2026-09-27T13:41:33"
  }
 }
