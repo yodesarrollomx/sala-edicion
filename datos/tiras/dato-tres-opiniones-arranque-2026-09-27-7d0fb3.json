@@ -1,0 +1,83 @@
+{
+ "pieza": "Tres opiniones, tres números distintos",
+ "pieza_slug": "dato-tres-opiniones",
+ "promesa": "Mostrar cómo la norma supera a las opiniones de familiares y vecinos al evaluar un terreno en Hermosillo.",
+ "formato": "Carrusel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Qué dice tu familia sobre lo que cabe en tu terreno?",
+   "ve": "Una persona pensativa en un patio soleado de Hermosillo, sosteniendo planos enrollados.",
+   "entiende": "Que las opiniones familiares sobre el terreno suelen ser muy variadas.",
+   "src": "laminas/dato-tres-opiniones-a2026-09-27/L1-1.jpg",
+   "estado": "propuesta",
+   "version": 1,
+   "fecha": "2026-09-27",
+   "candidatas": [
+    {
+     "src": "laminas/dato-tres-opiniones-a2026-09-27/L1-1.jpg",
+     "original": "laminas/dato-tres-opiniones-a2026-09-27/L1-1.png",
+     "titulo": "A",
+     "texto": "Se ajusta la pregunta de la lámina uno para enfocarla en el potencial físico del terreno y no en su valor comercial.",
+     "dice": "¿Qué dice tu familia sobre lo que cabe en tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "f81763a213991342ac3ed7ef2e0984a9"
+    },
+    {
+     "src": "laminas/dato-tres-opiniones-a2026-09-27/L1-2.jpg",
+     "original": "laminas/dato-tres-opiniones-a2026-09-27/L1-2.png",
+     "titulo": "B",
+     "texto": "Se ajusta estrictamente a la regla de incluir una única pregunta en toda la pieza exclusivamente como gancho en la lámina 1, manteniendo el tono cálido y local.",
+     "dice": "¿Qué opinan en casa sobre el futuro de tu terreno en Hermosillo?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "6d5280476828b02b36be60b0d309287d"
+    }
+   ]
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Qué dice tu familia sobre lo que vale tu terreno?",
+   "ve": "Una persona pensativa en un patio soleado de Hermosillo, sosteniendo planos enrollados.",
+   "entiende": "Que las opiniones familiares sobre el terreno suelen ser muy variadas."
+  },
+  {
+   "n": 2,
+   "dice": "El tío sugiere locales, el vecino opina que mejor departamentos y todos tienen una versión distinta.",
+   "ve": "Un hombre señalando con entusiasmo hacia un terreno baldío mientras conversa con otra persona.",
+   "entiende": "Que cada conocido aporta una idea diferente sin datos técnicos."
+  },
+  {
+   "n": 3,
+   "dice": "En Yo Desarrollo preferimos calcular metros cuadrados, vialidades y restricciones reales antes de opinar.",
+   "ve": "Un equipo revisando mapas catastrales y planos arquitectónicos en una mesa luminosa.",
+   "entiende": "Que la decisión se basa en análisis técnico y normativo, no en corazonadas."
+  },
+  {
+   "n": 4,
+   "dice": "Descubrimos los giros permitidos y el potencial exacto que la ley permite construir en tu espacio.",
+   "ve": "Una proyección clara y moderna sobre un terreno soleado, mostrando volúmenes posibles de edificación.",
+   "entiende": "Que existe una respuesta precisa y calculada para cada metro cuadrado."
+  },
+  {
+   "n": 5,
+   "dice": "Conozcamos la ubicación de tu terreno para elaborar tu Plan de Potencial Personalizado.",
+   "ve": "Una videollamada en una laptop donde se observa un terreno sonorense y un plano digital.",
+   "entiende": "Que el siguiente paso es solicitar el estudio técnico de su propiedad."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-27",
+ "titulo": "Tres opiniones, tres números distintos · arranque: guion y lámina 1",
+ "nota": "Idea elegida en el Árbol. Aquí va el guion completo y la PRIMERA lámina con 2 tomas: elige una con «Ésta». Cuando la apruebes, las demás se hacen a su semejanza.",
+ "origen": "arranque-de idea dato-tres-opiniones",
+ "base": null
+}

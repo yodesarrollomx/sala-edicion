@@ -1,0 +1,83 @@
+{
+ "pieza": "La servilleta contra el estudio",
+ "pieza_slug": "dato-servilleta-3",
+ "promesa": "Convertir una charla de sobremesa en un proyecto claro y medible para tu terreno en Hermosillo.",
+ "formato": "Carrusel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Qué cabe realmente en ese terreno familiar que tienes en mente?",
+   "ve": "Dos personas sentadas en una mesa de la tarde en Hermosillo, con una servilleta rayada entre tazas de café.",
+   "entiende": "Las ideas iniciales sobre un terreno suelen nacer de pláticas informales y trazos rápidos.",
+   "src": "laminas/dato-servilleta-3-a2026-09-27/L1-1.jpg",
+   "estado": "propuesta",
+   "version": 1,
+   "fecha": "2026-09-27",
+   "candidatas": [
+    {
+     "src": "laminas/dato-servilleta-3-a2026-09-27/L1-1.jpg",
+     "original": "laminas/dato-servilleta-3-a2026-09-27/L1-1.png",
+     "titulo": "A",
+     "texto": "Mantiene el texto original de la lámina uno y detalla una composición cercana y cálida en Hermosillo.",
+     "dice": "¿Qué cabe realmente en ese terreno familiar que tienes en mente?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "80c9f634097ec1a824e55ab9dd11324b"
+    },
+    {
+     "src": "laminas/dato-servilleta-3-a2026-09-27/L1-2.jpg",
+     "original": "laminas/dato-servilleta-3-a2026-09-27/L1-2.png",
+     "titulo": "B",
+     "texto": "Se mantiene el texto original de la primera lámina como gancho y se actualiza la receta con una composición nueva (isla de cocina y planos arquitectónicos) con ",
+     "dice": "¿Qué cabe realmente en ese terreno familiar que tienes en mente?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "3111569ad69cab5df52106fbbf0f7671"
+    }
+   ]
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Qué cabe realmente en ese terreno familiar que tienes en mente?",
+   "ve": "Dos personas sentadas en una mesa de la tarde en Hermosillo, con una servilleta rayada entre tazas de café.",
+   "entiende": "Las ideas iniciales sobre un terreno suelen nacer de pláticas informales y trazos rápidos."
+  },
+  {
+   "n": 2,
+   "dice": "En la sobremesa todos opinan sobre departamentos, locales o una casa grande.",
+   "ve": "Varias manos señalando la servilleta con entusiasmo, cada quien imaginando un uso distinto para el espacio.",
+   "entiende": "La familia tiene buenas intenciones, pero las opiniones a veces se contradicen y generan dudas."
+  },
+  {
+   "n": 3,
+   "dice": "Nosotros pasamos del trazo al cálculo real con la norma y los metros cuadrados.",
+   "ve": "Un plano técnico y una tableta digital junto a la servilleta, bajo la luz cálida del atardecer sonorense.",
+   "entiende": "Existe una forma de comprobar qué permite la ley y el espacio antes de tomar decisiones."
+  },
+  {
+   "n": 4,
+   "dice": "Analizamos vialidades, estacionamiento, agua y drenaje para que cada metro cobre sentido.",
+   "ve": "Un esquema claro que muestra los accesos y las dimensiones exactas del terreno sobre una vista aérea.",
+   "entiende": "La viabilidad técnica da la certeza de que el proyecto puede construirse sin sorpresas."
+  },
+  {
+   "n": 5,
+   "dice": "Diseñamos tu Plan de Potencial Personalizado para ver tu terreno convertido en realidad.",
+   "ve": "La persona sonriendo al revisar su proyecto en la pantalla, con la ciudad de Hermosillo de fondo al atardecer.",
+   "entiende": "El siguiente paso es solicitar el Plan de Potencial Personalizado para conocer el destino ideal del suelo."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-27",
+ "titulo": "La servilleta contra el estudio · arranque: guion y lámina 1",
+ "nota": "Idea elegida en el Árbol. Aquí va el guion completo y la PRIMERA lámina con 2 tomas: elige una con «Ésta». Cuando la apruebes, las demás se hacen a su semejanza.",
+ "origen": "arranque-de idea dato-servilleta-3",
+ "base": null
+}
