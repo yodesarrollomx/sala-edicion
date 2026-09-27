@@ -1,0 +1,61 @@
+{
+ "pieza": "La Recámara Cerrada",
+ "pieza_slug": "recamara-cerrada",
+ "promesa": "Tu casa en Hermosillo puede cuidarse sola y darte tranquilidad.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Esa recámara vacía puede renovar la vida en tu terreno?",
+   "ve": "Una sala luminosa en una casa tradicional de Hermosillo, con una puerta cerrada al fondo y luz cálida del atardecer entrando por la ventana.",
+   "entiende": "Que los espacios vacíos de casa guardan un potencial que aún no he aprovechado.",
+   "src": "laminas/recamara-cerrada-a2026-09-24/L1-2.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-27",
+   "candidatas": [
+    {
+     "src": "laminas/recamara-cerrada-n2026-09-27/L1-1.jpg",
+     "original": "laminas/recamara-cerrada-n2026-09-27/L1-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota del editor elevando el gancho con la ecuación de valor de Hormozi, enfocándose en el resultado soñado sin usar imperativos ni palabras vetadas.",
+     "dice": "¿Y si ese espacio libre en tu terreno se convierte en tu mayor tranquilidad?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "3659874084f29ac2512162a1bb8f00aa"
+    },
+    {
+     "src": "laminas/recamara-cerrada-n2026-09-27/L1-2.jpg",
+     "original": "laminas/recamara-cerrada-n2026-09-27/L1-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota usando un gancho basado en la ecuación de valor de Hormozi que eleva el resultado soñado y plantea una pregunta inicial sobre la propiedad.",
+     "dice": "¿Esa habitación sin uso en casa puede convertirse en un nuevo comienzo?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "a842a5b25d5d551fae8af7b40cf17d6f"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "El texto no engancha... no tiene nada que ver con lo que buscamos lograr con esta publciacon se me hace que nomas etsas proponiendo sin conocimiento de que queremos lograr como que mandas a producir en ala sin conocimiento de contexto asi que ayudate  generar esa orden de entendr el contexto y ser un experto de marketing con una estrategia clara y comprobada y probada por ejemplo la de hormozi .. pero para ismeore y todos los agentes"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Esa recámara que ya no usas puede darle vida nueva a tu terreno.",
+   "ve": "Una sala luminosa en una casa tradicional de Hermosillo, con una puerta cerrada al fondo y luz cálida del atardecer entrando por la ventana.",
+   "entiende": "Que los espacios vacíos de casa guardan un potencial que aún no he aprovechado."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-27",
+ "titulo": "La Recámara Cerrada · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de recamara-cerrada-nube-2026-09-26-9ad47f",
+ "base": "recamara-cerrada-nube-2026-09-26-9ad47f"
+}
