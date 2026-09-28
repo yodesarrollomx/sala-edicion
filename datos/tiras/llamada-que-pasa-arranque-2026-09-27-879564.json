@@ -1,0 +1,59 @@
+{
+ "pieza": "Qué pasa en la videollamada",
+ "pieza_slug": "llamada-que-pasa",
+ "promesa": "Mostrar qué ocurre en los primeros cinco minutos para conocer el potencial de un terreno en Hermosillo sin complicaciones.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si descubres hoy lo que tu terreno en Hermosillo puede llegar a ser?",
+   "ve": "Una persona sonriente en una videollamada desde una sala luminosa, viendo mapas en la pantalla de su laptop con café sobre la mesa.",
+   "entiende": "Que descubrir lo que puede ser su espacio es una charla cercana, rápida y guiada por expertos locales.",
+   "src": "laminas/llamada-que-pasa-a2026-09-27/L1-1.jpg",
+   "estado": "propuesta",
+   "version": 1,
+   "fecha": "2026-09-27",
+   "candidatas": [
+    {
+     "src": "laminas/llamada-que-pasa-a2026-09-27/L1-1.jpg",
+     "original": "laminas/llamada-que-pasa-a2026-09-27/L1-1.png",
+     "titulo": "A",
+     "texto": "Se plantea la única pregunta permitida en toda la pieza como gancho inicial, invitando a la dueña a descubrir el potencial de su espacio de forma cálida.",
+     "dice": "¿Y si descubres hoy lo que tu terreno en Hermosillo puede llegar a ser?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "78dafb13e53b7b63c522039183592ced"
+    },
+    {
+     "src": "laminas/llamada-que-pasa-a2026-09-27/L1-2.jpg",
+     "original": "laminas/llamada-que-pasa-a2026-09-27/L1-2.png",
+     "titulo": "B",
+     "texto": "Mantiene el gancho inicial en forma de pregunta y establece el tono cálido y local de la historia.",
+     "dice": "¿Y si descubres hoy mismo lo que tu terreno en Hermosillo puede ser?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "79377f642647a68b5a5264db9e7451fa"
+    }
+   ]
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Cinco minutos bastan para ver el verdadero potencial de tu terreno en Hermosillo.",
+   "ve": "Una persona sonriente en una videollamada desde una sala luminosa, viendo mapas en la pantalla de su laptop con café sobre la mesa.",
+   "entiende": "Que descubrir lo que puede ser su espacio es una charla cercana, rápida y guiada por expertos locales."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-27",
+ "titulo": "Qué pasa en la videollamada · arranque: guion y lámina 1",
+ "nota": "Idea elegida en el Árbol. Aquí va el guion completo y la PRIMERA lámina con 2 tomas: elige una con «Ésta». Cuando la apruebes, las demás se hacen a su semejanza.",
+ "origen": "arranque-de idea llamada-que-pasa",
+ "base": null
+}

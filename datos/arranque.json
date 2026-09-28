@@ -1,25 +1,25 @@
 {
- "corrida": "2026-09-28T03:02Z",
+ "corrida": "2026-09-28T03:18Z",
  "piezas": [
   {
    "pieza": "Qué pasa en la videollamada",
-   "resultado": "sin lámina",
-   "motivo": "toma 1: ningún motor de imagen pudo: Cloudflare 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, ple"
+   "resultado": "arrancada",
+   "motivo": "guion de 1 lámina(s) y lámina 1 con 2 tomas en tu mesa"
   },
   {
    "pieza": "Así se ve el entregable",
-   "resultado": "sin lámina",
-   "motivo": "toma 1: ningún motor de imagen pudo: Cloudflare 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, ple"
+   "resultado": "arrancada",
+   "motivo": "guion de 5 lámina(s) y lámina 1 con 2 tomas en tu mesa"
   },
   {
    "pieza": "El arquitecto invisible",
-   "resultado": "sin lámina",
-   "motivo": "toma 1: ningún motor de imagen pudo: Cloudflare 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, ple"
+   "resultado": "arrancada",
+   "motivo": "guion de 6 lámina(s) y lámina 1 con 2 tomas en tu mesa"
   },
   {
    "pieza": "Equipos que no chocan",
-   "resultado": "sin lámina",
-   "motivo": "toma 1: ningún motor de imagen pudo: Cloudflare 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, ple"
+   "resultado": "arrancada",
+   "motivo": "guion de 1 lámina(s) y lámina 1 con 2 tomas en tu mesa"
   }
  ]
 }

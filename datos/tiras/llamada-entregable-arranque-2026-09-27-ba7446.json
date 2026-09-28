@@ -1,0 +1,83 @@
+{
+ "pieza": "Así se ve el entregable",
+ "pieza_slug": "llamada-entregable",
+ "promesa": "Mostrar el entregable exacto del Plan de Potencial Personalizado para un terreno en Hermosillo.",
+ "formato": "Carrusel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Te imaginas ver en papel exacto qué puede nacer en tu terreno?",
+   "ve": "Una persona en Hermosillo tomando café frente a su laptop al atardecer.",
+   "entiende": "Se revela el entregable real de un estudio de suelo.",
+   "src": "laminas/llamada-entregable-a2026-09-27/L1-1.jpg",
+   "estado": "propuesta",
+   "version": 1,
+   "fecha": "2026-09-27",
+   "candidatas": [
+    {
+     "src": "laminas/llamada-entregable-a2026-09-27/L1-1.jpg",
+     "original": "laminas/llamada-entregable-a2026-09-27/L1-1.png",
+     "titulo": "A",
+     "texto": "Mantiene el gancho inicial como pregunta permitida en la lámina 1 y establece la pareja protagonista con la edad correcta.",
+     "dice": "¿Te imaginas ver en papel exacto qué puede nacer en tu terreno?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "16de515a5d5ccd9363a58bda9ffd4a7c"
+    },
+    {
+     "src": "laminas/llamada-entregable-a2026-09-27/L1-2.jpg",
+     "original": "laminas/llamada-entregable-a2026-09-27/L1-2.png",
+     "titulo": "B",
+     "texto": "Se mantiene el texto original de la lámina 1 funcionando como gancho en forma de pregunta, y la receta visual muestra el entregable del Plan de Potencial Person",
+     "dice": "¿Cómo se ve el documento que te dice qué puede ser tu terreno?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "09a4c86566a3f134b37c2bb92a4d4ef6"
+    }
+   ]
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Cómo se ve el documento que te dice qué puede ser tu terreno?",
+   "ve": "Una persona en Hermosillo tomando café frente a su laptop al atardecer.",
+   "entiende": "Se revela el entregable real de un estudio de suelo."
+  },
+  {
+   "n": 2,
+   "dice": "Aquí mostramos los metros cuadrados exactos que permite la norma municipal en tu zona.",
+   "ve": "Primer plano de una pantalla mostrando un plano con polígonos claros y áreas calculadas.",
+   "entiende": "El informe detalla los m² permitidos sin adivinanzas."
+  },
+  {
+   "n": 3,
+   "dice": "Agregamos los giros comerciales y habitacionales que realmente caben y funcionan aquí.",
+   "ve": "La misma pantalla deslizando hacia una sección con iconos de comercios y viviendas.",
+   "entiende": "Se visualizan las opciones de uso de suelo viables."
+  },
+  {
+   "n": 4,
+   "dice": "También integramitros clave: agua, drenaje, vialidad y cajones de estacionamiento necesarios.",
+   "ve": "Un esquema técnico sencillo y limpio señalando servicios y accesos en el mapa.",
+   "entiende": "La viabilidad técnica queda completamente transparente."
+  },
+  {
+   "n": 5,
+   "dice": "Proponemos armar tu Plan de Potencial Personalizado con la ubicación exacta de tu terreno.",
+   "ve": "Manos cerrando la laptop con una sonrisa en una sala iluminada de Hermosillo.",
+   "entiende": "El siguiente paso es solicitar el estudio para su propio espacio."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-27",
+ "titulo": "Así se ve el entregable · arranque: guion y lámina 1",
+ "nota": "Idea elegida en el Árbol. Aquí va el guion completo y la PRIMERA lámina con 2 tomas: elige una con «Ésta». Cuando la apruebes, las demás se hacen a su semejanza.",
+ "origen": "arranque-de idea llamada-entregable",
+ "base": null
+}
