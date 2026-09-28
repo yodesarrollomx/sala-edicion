@@ -11,7 +11,7 @@ on:
         default: ''
 
 permissions:
-  contents: read
+  contents: write   # guarda los comparativos en la rama banco-escenas (para verlos en el chat)
 
 jobs:
   banco:
@@ -39,3 +39,12 @@ jobs:
           GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python3 banco_escenas.py ${{ inputs.laminas }}
+      - name: Guardar comparativos en la rama banco-escenas
+        if: always()
+        run: |
+          ls .banco/*COMPARATIVO.mp4 >/dev/null 2>&1 || exit 0
+          d=$(mktemp -d); cp .banco/*COMPARATIVO.mp4 .banco/informe.json "$d"/ 2>/dev/null
+          git config user.name "sala-banco"; git config user.email "sala-banco@users.noreply.github.com"
+          git checkout --orphan banco-escenas && git rm -rfq . && rm -rf .banco nube/.cache
+          cp "$d"/* . && git add -A && git commit -qm "banco de escenas $(date -u +%F_%H%M)"
+          git push -f origin banco-escenas
