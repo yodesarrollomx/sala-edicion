@@ -38,7 +38,7 @@ DEFAULTS = {
     'prospectos_por_rechazo': 2,
     'productor_silencio_desde': 23,
     'productor_silencio_hasta': 7,
-    'productor_piezas': 'apodo',
+    'productor_piezas': '',   # 27-sep: vacío = todas las piezas aprobadas (antes 'apodo' dejaba fuera los datos)
     'productor_ejecuta_etapas': '',
 }
 
