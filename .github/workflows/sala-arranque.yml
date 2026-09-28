@@ -6,6 +6,10 @@ name: Semillero y arranque de la Sala
 on:
   # El horario vive en sala-diario.yml / sala-cada-hora.yml (25-sep-2026): aquí solo se llama.
   workflow_call:
+    inputs:
+      modo:
+        type: string
+        default: todo
   workflow_dispatch:
     inputs:
       modo:

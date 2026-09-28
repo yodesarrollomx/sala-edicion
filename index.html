@@ -759,7 +759,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='9d8d3c7b48';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='319340f424';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2298,8 +2298,8 @@ function horaHmo(d){ return d.toLocaleTimeString('es-MX',{hour:'numeric',minute:
 const RETRASO_GH=15;
 let ARRANQUE=null;
 function fechaHoraCorta(iso){ const t=Date.parse(iso||''); return isNaN(t)?'—':new Date(t).toLocaleString('es-MX',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',timeZone:'America/Hermosillo'}) }
-function proxArranque(){ const d=new Date(), x=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),12,50)); let dia='hoy';
-  if(x<=d) x.setUTCDate(x.getUTCDate()+1);
+function proxArranque(){ const d=new Date(), x=new Date(d); x.setUTCMinutes(5,0,0); let dia='hoy';   // 28-sep: el arranque corre cada hora (:05)
+  if(x<=d) x.setUTCHours(x.getUTCHours()+1);
   const f=y=>y.toLocaleDateString('es-MX',{timeZone:'America/Hermosillo'}); dia=f(x)===f(d)?'hoy':'mañana';
   return dia+' ≈ '+horaHmo(new Date(x.getTime()+RETRASO_GH*60000)).replace(/\.$/,'') }
 function durEtapa(etapa){ const xs=(COLA||[]).filter(f=>f.etapa===etapa&&/hecho/i.test(f.estado||'')).map(f=>+((f.evidencia&&typeof f.evidencia==='object'&&f.evidencia.segundos)||0)).filter(x=>x>0).sort((a,b)=>a-b);
@@ -2381,7 +2381,7 @@ function filaLinea(z){
   else if(!t){ const ar=((ARRANQUE&&ARRANQUE.piezas)||[]).find(x=>x.pieza===z.nombre);
     // 23-sep (su reclamo: «dice que la siguiente ronda escribe el guion… y no he visto que haga nada»):
     // si el arranque ya lo intentó y no pudo, se dice qué pasó y cuándo, no una promesa genérica.
-    if(ar&&ar.resultado!=='arrancada'){ quien='rojo'; que=`Idea elegida; el arranque lo intentó y no pudo: ${ar.motivo||ar.resultado}.`; cuando=`Último intento: ${fechaHoraCorta(ARRANQUE.corrida)} · se reintenta solo cada mañana a las 5:50.` }
+    if(ar&&ar.resultado!=='arrancada'){ quien='rojo'; que=`Idea elegida; el arranque lo intentó y no pudo: ${ar.motivo||ar.resultado}.`; cuando=`Último intento: ${fechaHoraCorta(ARRANQUE.corrida)} · se reintenta solo cada hora.` }
     else { quien='sig'; que='Idea elegida, sin guion ni láminas todavía.'; const m=proxArranque(); cuando=`El arranque escribe su guion y su lámina 1 ${m}.` } }
   else { quien='sig'; que=`Sigue: ${nomEt}.`; cuando=prod?'El Productor lo pone en cola ≈ '+horaHmo(prod)+' y la fábrica lo hace después':'' }
   const pct=Math.round(100*h.size/et.length);
