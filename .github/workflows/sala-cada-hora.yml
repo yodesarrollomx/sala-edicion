@@ -8,13 +8,14 @@ on:
     - cron: '20 */2 * * *'  # ejecutor
     - cron: '10,30,50 * * * *'    # productor (28-sep: cada 20 min, saturar la producción)
     - cron: '45 * * * *'    # puente de chinches
+    - cron: '35 * * * *'    # mesa (28-sep: máximo potencial — lo nuevo llega a tu mesa cada hora)
     - cron: '5 * * * *'     # arranque (28-sep: «si elijo una idea, que empiece ya», no hasta mañana)
   workflow_dispatch:
     inputs:
       proceso:
         description: 'Qué correr ahora (cada proceso conserva además su propio botón)'
         type: choice
-        options: [maquinas, ejecutor, productor, chinches, al-dia, arranque]
+        options: [maquinas, ejecutor, productor, chinches, al-dia, arranque, mesa]
 
 permissions:
   contents: write
@@ -33,6 +34,10 @@ jobs:
   productor:
     if: (github.event.schedule == '10,30,50 * * * *') || inputs.proceso == 'productor'
     uses: ./.github/workflows/sala-productor.yml
+    secrets: inherit
+  mesa:
+    if: (github.event.schedule == '35 * * * *') || inputs.proceso == 'mesa'
+    uses: ./.github/workflows/sala-mesa.yml
     secrets: inherit
   arranque:
     if: (github.event.schedule == '5 * * * *') || inputs.proceso == 'arranque'
