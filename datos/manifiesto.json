@@ -2718,6 +2718,13 @@
  "produccion": [
   {
    "fecha": "2026-09-27",
+   "pieza": "ENCARGO TOMADO · chinche",
+   "estado": "en curso",
+   "detalle": "{\"id\": \"CHN-20260927-1439-a7f0\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/34\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/34"
+  },
+  {
+   "fecha": "2026-09-27",
    "pieza": "ENCARGO · chinche · board-aurum/index",
    "estado": "pendiente",
    "detalle": "{\"id\":\"CHN-20260927-1439-a7f0\",\"folio\":\"\",\"texto\":\"Está pantalla es demasiado grande para su objetivo…. Creo que estamos dejando pasar la oportunas de ser más eficientes y gráficos y más significativos… ayúdame a plantear algo que funcione y que no quite tanto espacio\",\"tipo\":\"\",\"repo\":\"board-aurum\",\"pantalla\":\"index\",\"vista\":\"board-aurum/index\",\"url\":\"https://yodesarrollomx.github.io/board-aurum/\",\"quien\":\"Alejandro Puebla\",\"elemento\":{\"css\":\"div.brief-stats div.brief-stat div.brief-stat-n\",\"texto\":\"0\",\"seccion\":\"Board operativo\"},\"objeto\":null,\"codigo\":\"\"}",
@@ -2904,13 +2911,6 @@
    "estado": "pendiente",
    "detalle": "{\"id\":\"CHN-20260924-1049-152f\",\"texto\":\"Aqui quiero poder clickar y poder ir a la idea aprobada y pdoerla editar y que todo lo de hacia adelabte si no cumpe se adapte... asi aunque cambiemos algo va causando efecto a todo .. tmb guion si le pico y quiero ver uq es lo que se aprobo y cualesosn lo guones ta porbados y pdoerklos cambiar desd ehi a\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":{\"pid\":\"recamara-cerrada-arranque-2026-09-24-d33b42\",\"tipo\":\"lamina\",\"lamina\":1,\"pieza\":\"La Recámara Cerrada\"},\"elemento\":{\"css\":\"div#ctx\",\"texto\":\"VA EN idea guion láminas video copy publicada\",\"seccion\":\"Faltan 2 decisiones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790271996875\"}",
    "enlace": ""
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0714-582a\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/20\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/20"
   },
   {
    "fecha": "2026-09-24",
