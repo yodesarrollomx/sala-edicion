@@ -1,0 +1,34 @@
+# Despliega LTX-Video en Modal (nube/modal_ltx.py) — 28-sep-2026. Corre sola cuando cambia el
+# archivo, o a mano. Necesita los secretos MODAL_TOKEN_ID y MODAL_TOKEN_SECRET (modal.com →
+# Settings → API Tokens). Sin ellos, avisa y no hace nada.
+name: Sala · Desplegar LTX en Modal
+
+on:
+  push:
+    branches: [main]
+    paths: ['nube/modal_ltx.py']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Desplegar
+        env:
+          MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+          MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+        run: |
+          if [ -z "$MODAL_TOKEN_ID" ] || [ -z "$MODAL_TOKEN_SECRET" ]; then
+            echo "Faltan MODAL_TOKEN_ID / MODAL_TOKEN_SECRET en los secretos del repo: no se despliega."
+            exit 0
+          fi
+          pip install --quiet modal
+          modal deploy nube/modal_ltx.py

@@ -134,6 +134,16 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                     avisos.append(str(e))
             else:
                 avisos.append('wan_hf no disponible: %s' % (razon if not m else m['motor']))
+            # 28-sep · modal_ltx: animación de IA REAL (LTX-Video en Modal, centavos por escena,
+            # crédito gratis mensual de Modal). Entra si Wan no pudo; `escena_modal`=0 la apaga.
+            if ruta is None and str(reglas.get('escena_modal', '1')).strip() not in ('0', 'no', 'false'):
+                from motores import escena_modal
+                if escena_modal.disponible():
+                    try:
+                        ruta = escena_modal.producir(trabajo, reglas, cat, SALIDA)
+                        motor_usado = 'modal_ltx'
+                    except Exception as e:  # noqa: BLE001
+                        avisos.append('modal_ltx: %s' % e)
             # 28-sep · parallax: animación 2.5D hecha con código (profundidad + cámara virtual),
             # gratis y sin cuota. Va entre Wan y la cámara; `escena_parallax`=0 la apaga.
             if ruta is None and str(reglas.get('escena_parallax', '1')).strip() not in ('0', 'no', 'false'):

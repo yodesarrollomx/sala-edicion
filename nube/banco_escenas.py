@@ -22,7 +22,7 @@ import traceback
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import sala_cliente as sala          # noqa: E402
 import sala_drive as drive          # noqa: E402
-from motores import escena_camara, escena_parallax, escena_wan_hf  # noqa: E402
+from motores import escena_camara, escena_modal, escena_parallax, escena_wan_hf  # noqa: E402
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 SALIDA = RAIZ / '.banco'
@@ -43,6 +43,11 @@ def wan(img, dest, seg, reglas):
         except Exception as e:  # noqa: BLE001
             ultimo = sala.redactar(str(e))[:300]
     raise RuntimeError(ultimo or 'sin Space')
+
+
+def modal_ltx(img, dest, seg, reglas):
+    escena_modal.animar(img, dest, seg)
+    return 'LTX-Video en Modal'
 
 
 def parallax_ia(img, dest, seg, reglas):
@@ -67,7 +72,7 @@ def camara(img, dest, seg, reglas):
     return 'camara (zoom)'
 
 
-MOTORES = [('wan', wan), ('parallax-ia', parallax_ia), ('parallax-aprox', parallax_aprox),
+MOTORES = [('wan', wan), ('modal-ltx', modal_ltx), ('parallax-ia', parallax_ia), ('parallax-aprox', parallax_aprox),
            ('camara', camara)]
 
 
