@@ -1,0 +1,85 @@
+{
+ "pieza": "Tres opiniones, tres números distintos",
+ "pieza_slug": "dato-tres-opiniones",
+ "promesa": "Mostrar cómo la norma supera a las opiniones de familiares y vecinos al evaluar un terreno en Hermosillo.",
+ "formato": "Carrusel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Qué dice tu familia sobre lo que cabe en tu terreno?",
+   "ve": "Una persona pensativa en un patio soleado de Hermosillo, sosteniendo planos enrollados.",
+   "entiende": "Que las opiniones familiares sobre el terreno suelen ser muy variadas.",
+   "src": "laminas/dato-tres-opiniones-a2026-09-27/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-28",
+   "candidatas": [
+    {
+     "src": "laminas/dato-tres-opiniones-n2026-09-28/L1-1.jpg",
+     "original": "laminas/dato-tres-opiniones-n2026-09-28/L1-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota al cambiar el render por una toma cercana y elegante de la protagonista, eliminando el modelo anterior y usando una pregunta como gancho en la l",
+     "dice": "¿Y si descubrimos lo que realmente permite la norma en tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "4148017576aed3d7bc5adcfd532118bf"
+    },
+    {
+     "src": "laminas/dato-tres-opiniones-n2026-09-28/L1-2.jpg",
+     "original": "laminas/dato-tres-opiniones-n2026-09-28/L1-2.png",
+     "titulo": "B",
+     "texto": "Mantiene el texto original aprobado por la estrategia como gancho y renueva completamente la composición visual con modelos de estatus medio-alto en un entorno ",
+     "dice": "¿Qué dice tu familia sobre lo que cabe en tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "02bbe33dfc83ecdada8e8c9b284081ae"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "Quién hizo estos renders cancela ese\nModelo se ve muy feo"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Qué dice tu familia sobre lo que vale tu terreno?",
+   "ve": "Una persona pensativa en un patio soleado de Hermosillo, sosteniendo planos enrollados.",
+   "entiende": "Que las opiniones familiares sobre el terreno suelen ser muy variadas."
+  },
+  {
+   "n": 2,
+   "dice": "El tío sugiere locales, el vecino opina que mejor departamentos y todos tienen una versión distinta.",
+   "ve": "Un hombre señalando con entusiasmo hacia un terreno baldío mientras conversa con otra persona.",
+   "entiende": "Que cada conocido aporta una idea diferente sin datos técnicos."
+  },
+  {
+   "n": 3,
+   "dice": "En Yo Desarrollo preferimos calcular metros cuadrados, vialidades y restricciones reales antes de opinar.",
+   "ve": "Un equipo revisando mapas catastrales y planos arquitectónicos en una mesa luminosa.",
+   "entiende": "Que la decisión se basa en análisis técnico y normativo, no en corazonadas."
+  },
+  {
+   "n": 4,
+   "dice": "Descubrimos los giros permitidos y el potencial exacto que la ley permite construir en tu espacio.",
+   "ve": "Una proyección clara y moderna sobre un terreno soleado, mostrando volúmenes posibles de edificación.",
+   "entiende": "Que existe una respuesta precisa y calculada para cada metro cuadrado."
+  },
+  {
+   "n": 5,
+   "dice": "Conozcamos la ubicación de tu terreno para elaborar tu Plan de Potencial Personalizado.",
+   "ve": "Una videollamada en una laptop donde se observa un terreno sonorense y un plano digital.",
+   "entiende": "Que el siguiente paso es solicitar el estudio técnico de su propiedad."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-28",
+ "titulo": "Tres opiniones, tres números distintos · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de dato-tres-opiniones-nube-2026-09-28-54c1f6",
+ "base": "dato-tres-opiniones-nube-2026-09-28-54c1f6"
+}

@@ -1,0 +1,61 @@
+{
+ "pieza": "Juicio experto inicial",
+ "pieza_slug": "juicio-experto-inicial",
+ "promesa": "Descubre el potencial real de tu terreno en Hermosillo con una charla experta.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Qué futuro guarda ese terreno en la familia?",
+   "ve": "Dos hermanos mirando un terreno amplio bajo el atardecer sonorense, tomando café en la banqueta.",
+   "entiende": "Tener un terreno genera dudas sobre qué hacer con él y opiniones encontradas.",
+   "src": "laminas/juicio-experto-inicial-a2026-09-28/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-28",
+   "candidatas": [
+    {
+     "src": "laminas/juicio-experto-inicial-n2026-09-28/L1-1.jpg",
+     "original": "laminas/juicio-experto-inicial-n2026-09-28/L1-1.png",
+     "titulo": "A",
+     "texto": "Ajusta la pareja a perfil mexicano de clase media-alta, incluye una pregunta directa como gancho en la lámina 1 y conecta con la situación familiar típica en He",
+     "dice": "¿Heredaste un terreno y la familia no sabe qué construir?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "8f47cf780e489ff14c351d98c287b5d0"
+    },
+    {
+     "src": "laminas/juicio-experto-inicial-n2026-09-28/L1-2.jpg",
+     "original": "laminas/juicio-experto-inicial-n2026-09-28/L1-2.png",
+     "titulo": "B",
+     "texto": "Integra a la pareja correcta de estratus medio-alto con rasgos latinos, muestra Hermosillo y usa una pregunta inicial que engancha con el futuro del suelo.",
+     "dice": "¿Tu terreno en Hermosillo merece algo más que solo esperar?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "4758d3604b3f29249989d773148eef51"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto. El texto no engancha. Cambia a la pareja: media alta\nNo veo que sean como de características latinas o mexicanas. Estamos poniendo como japoneses o chinos, entonces de alguna manera ayúdame a mejorar todo eso igual que nos diga Hermosillo y los textos no me están gustando"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Qué historia oculta ese terreno baldío en la familia?",
+   "ve": "Dos hermanos mirando un terreno amplio bajo el atardecer sonorense, tomando café en la banqueta.",
+   "entiende": "Tener un terreno genera dudas sobre qué hacer con él y opiniones encontradas."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-28",
+ "titulo": "Juicio experto inicial · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de juicio-experto-inicial-arranque-2026-09-28-7564a1",
+ "base": "juicio-experto-inicial-arranque-2026-09-28-7564a1"
+}
