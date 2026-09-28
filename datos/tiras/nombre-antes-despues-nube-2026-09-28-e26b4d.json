@@ -1,0 +1,61 @@
+{
+ "pieza": "Lo que puede llegar a ser",
+ "pieza_slug": "nombre-antes-despues",
+ "promesa": "Visualiza el verdadero potencial de tu terreno en Hermosillo con datos claros y normativos.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si tu terreno en Hermosillo pudiera ser mucho más de lo que imaginas?",
+   "ve": "Un terreno soleado en Hermosillo junto a un plano arquitectónico moderno y luminoso con familias sonriendo.",
+   "entiende": "Se puede descubrir el potencial real de un espacio con ayuda experta.",
+   "src": "laminas/nombre-antes-despues-a2026-09-27/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-28",
+   "candidatas": [
+    {
+     "src": "laminas/nombre-antes-despues-n2026-09-28/L1-1.jpg",
+     "original": "laminas/nombre-antes-despues-n2026-09-28/L1-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota eliminando cualquier mención de ciudad, estado o país, manteniendo el gancho y los personajes definidos.",
+     "dice": "¿Y si ese espacio desocupado pudiera convertirse en tu próximo gran proyecto?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "fd791132af2eb4aa9f2ef9ec4a9a886c"
+    },
+    {
+     "src": "laminas/nombre-antes-despues-n2026-09-28/L1-2.jpg",
+     "original": "laminas/nombre-antes-despues-n2026-09-28/L1-2.png",
+     "titulo": "B",
+     "texto": "Se elimina la mención a la ciudad cumpliendo la nota del editor y se mantiene el gancho en forma de pregunta respetando el perfil y la calidez.",
+     "dice": "¿Y si el espacio que tienes guardado pudiera convertirse en tu próximo gran capítulo?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "fb5f482200aeb4b4c6095e57a4b1afb3"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "No menciones pais se mes generico ni ciudad ni estado ni pais"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Y si tu terreno en Hermosillo pudiera ser mucho más de lo que imaginas?",
+   "ve": "Un terreno soleado en Hermosillo junto a un plano arquitectónico moderno y luminoso con familias sonriendo.",
+   "entiende": "Se puede descubrir el potencial real de un espacio con ayuda experta."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-28",
+ "titulo": "Lo que puede llegar a ser · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de nombre-antes-despues-nube-2026-09-28-e05fae",
+ "base": "nombre-antes-despues-nube-2026-09-28-e05fae"
+}
