@@ -1,0 +1,51 @@
+{
+ "pieza": "Lo que puede llegar a ser",
+ "pieza_slug": "nombre-antes-despues",
+ "promesa": "Visualiza el verdadero potencial de tu terreno en Hermosillo con datos claros y normativos.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si tu terreno en Hermosillo pudiera ser mucho más de lo que imaginas?",
+   "ve": "Un terreno soleado en Hermosillo junto a un plano arquitectónico moderno y luminoso con familias sonriendo.",
+   "entiende": "Se puede descubrir el potencial real de un espacio con ayuda experta.",
+   "src": "laminas/nombre-antes-despues-a2026-09-27/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-28",
+   "candidatas": [
+    {
+     "src": "laminas/nombre-antes-despues-n2026-09-28/L1-2.jpg",
+     "original": "laminas/nombre-antes-despues-n2026-09-28/L1-2.png",
+     "titulo": "B",
+     "texto": "Se ajusta la ubicación de Hermosillo a un contexto nacional manteniendo la misma estructura y tono de la historia.",
+     "dice": "¿Y si tu terreno en México pudiera ser mucho más de lo que imaginas?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "6ac3d960a66ffad0b9402aa6581ba400"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "B pero no de hermosillo quiero algo más nacional"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Y si tu terreno en Hermosillo pudiera ser mucho más de lo que imaginas?",
+   "ve": "Un terreno soleado en Hermosillo junto a un plano arquitectónico moderno y luminoso con familias sonriendo.",
+   "entiende": "Se puede descubrir el potencial real de un espacio con ayuda experta."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-28",
+ "titulo": "Lo que puede llegar a ser · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de nombre-antes-despues-arranque-2026-09-27-75539e",
+ "base": "nombre-antes-despues-arranque-2026-09-27-75539e"
+}

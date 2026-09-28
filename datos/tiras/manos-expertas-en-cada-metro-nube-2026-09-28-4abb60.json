@@ -1,0 +1,75 @@
+{
+ "pieza": "Manos expertas en cada metro",
+ "pieza_slug": "manos-expertas-en-cada-metro",
+ "promesa": "Convertimos tu terreno en un proyecto claro, coordinando cada etapa con expertos.",
+ "formato": "Carrusel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si construir en tu terreno en Hermosillo fuera un proceso tranquilo?",
+   "ve": "Propietario mirando un plano bajo la sombra de un árbol al atardecer sonorense.",
+   "entiende": "Visualiza que construir puede ser un proceso sin dolores de cabeza.",
+   "src": "laminas/manos-expertas-en-cada-metro-a2026-09-28/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-28",
+   "candidatas": [
+    {
+     "src": "laminas/manos-expertas-en-cada-metro-n2026-09-28/L1-1.jpg",
+     "original": "laminas/manos-expertas-en-cada-metro-n2026-09-28/L1-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota eliminando cualquier mención geográfica local y mantiene la única pregunta permitida en toda la pieza como gancho.",
+     "dice": "¿Y si desarrollar tu terreno fuera un proceso tranquilo?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "2780e799429019504256ce8cefc7ecc0"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "seguimos hablando de hermosillo y no me gusta quiero publicidad a nivel nacional... haz esto una regla genera por favor ... no vuelvas a tarerme palabras como hermosillo o SOnora a arevison de laminas o textos"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Y si construir en tu terreno en Hermosillo fuera un proceso tranquilo?",
+   "ve": "Propietario mirando un plano bajo la sombra de un árbol al atardecer sonorense.",
+   "entiende": "Visualiza que construir puede ser un proceso sin dolores de cabeza."
+  },
+  {
+   "n": 2,
+   "dice": "Donde cada equipo especializado entra en su momento exacto, sin improvisar.",
+   "ve": "Arquitectos e ingenieros revisando trazos con luz natural en un terreno amplio.",
+   "entiende": "Existe un orden y una estrategia clara detrás de cada metro cuadrado."
+  },
+  {
+   "n": 3,
+   "dice": "Nosotros coordinamos la obra completa para que tú disfrutes el avance.",
+   "ve": "Manos expertas midiendo y planeando con planos detallados sobre una mesa de trabajo.",
+   "entiende": "La responsabilidad técnica recae en profesionales, no en el propietario."
+  },
+  {
+   "n": 4,
+   "dice": "Calculamos qué puede ser tu suelo con datos reales de norma y viabilidad.",
+   "ve": "Pantalla mostrando un diseño tridimensional limpio y moderno adaptado al terreno.",
+   "entiende": "El proyecto se basa en cálculos precisos y no en opiniones al aire."
+  },
+  {
+   "n": 5,
+   "dice": "Proponemos iniciar con tu Plan de Potencial Personalizado compartiéndonos la ubicación.",
+   "ve": "Propietario y desarrolladora saludándose cordialmente frente a su terreno con sol cálido.",
+   "entiende": "El siguiente paso es sencillo y comienza con una videollamada para conocer la ubicación."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-28",
+ "titulo": "Manos expertas en cada metro · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de manos-expertas-en-cada-metro-arranque-2026-09-28-3121ba",
+ "base": "manos-expertas-en-cada-metro-arranque-2026-09-28-3121ba"
+}
