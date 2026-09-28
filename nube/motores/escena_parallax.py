@@ -87,6 +87,36 @@ def profundidad(img):
     return cv2.GaussianBlur(d, (0, 0), 15), 'aproximada'
 
 
+def capa_texto(img):
+    """(letras, capa): `letras` = máscara dura de las letras (para borrarlas de la foto que se
+    mueve) y `capa` = máscara suave de lo que se queda FIJO encima (28-sep, Alejandro: «el texto
+    es una capa encima del video; se trata diferente»). Las láminas llegan compuestas, así que se
+    detecta: letras claras/doradas en el encabezado (12 % de arriba) y en la franja oscura de
+    abajo (desde el 55 %). La franja oscura de abajo entera se queda quieta."""
+    import cv2
+    import numpy as np
+    h, w = img.shape[:2]
+    gris = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    fondo = cv2.GaussianBlur(gris, (0, 0), 15)
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    tinta = (gris > 150) | ((hsv[..., 0] > 10) & (hsv[..., 0] < 35) & (hsv[..., 1] > 50) & (hsv[..., 2] > 130))
+    letras = np.zeros((h, w), np.uint8)
+    top, abajo = int(h * 0.12), int(h * 0.55)
+    # arriba el cielo es claro: ahí sólo cuentan los TRAZOS finos (letra), no las zonas claras
+    trazo = cv2.morphologyEx(gris, cv2.MORPH_TOPHAT, np.ones((9, 9), np.uint8)) > 35
+    letras[:top] = trazo[:top]
+    letras[abajo:] = (tinta & (fondo < 110))[abajo:]
+    letras = cv2.dilate(letras, np.ones((3, 3), np.uint8), iterations=2)
+    capa = letras.astype(np.float32)
+    filas = np.where(letras[abajo:].sum(1) > w * 0.01)[0]
+    if len(filas):                               # desde la primera línea de texto, la franja completa
+        ini = abajo + filas.min() - int(h * 0.03)
+        rampa = np.clip((np.arange(h, dtype=np.float32) - ini) / (h * 0.04), 0, 1)[:, None]
+        capa = np.maximum(capa, rampa * np.ones((1, w), np.float32))
+    capa = cv2.GaussianBlur(capa, (0, 0), 2)
+    return letras, capa[..., None]
+
+
 def cuadros(img, dep, segundos):
     """Genera los cuadros (BGR, tamaño de la lámina) de la cámara moviéndose en la escena."""
     import cv2
@@ -95,6 +125,11 @@ def cuadros(img, dep, segundos):
     n = int(round(segundos * FPS))
     gx, gy = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(h, dtype=np.float32))
     cx, cy = w / 2.0, h / 2.0
+    letras, capa = capa_texto(img)
+    img_f = img.astype(np.float32)
+    # la foto que se mueve va SIN letras (se rellenan con lo de alrededor) para que no salga
+    # una segunda copia del texto desplazada debajo de la capa fija
+    fondo_limpio = cv2.inpaint(img, letras, 7, cv2.INPAINT_TELEA)
     for i in range(n):
         t = i / max(n - 1, 1)
         suave = 0.5 - 0.5 * np.cos(np.pi * t)            # arranca y termina despacio
@@ -107,7 +142,9 @@ def cuadros(img, dep, segundos):
         esc = BASE + (z - BASE) * (0.25 + 0.75 * dep) + (BASE - 1.0) * 0
         mx = cx + (gx - cx) / esc - dx * (dep - 0.35)
         my = cy + (gy - cy) / esc - dy * (dep - 0.35)
-        yield cv2.remap(img, mx.astype(np.float32), my.astype(np.float32), cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+        movida = cv2.remap(fondo_limpio, mx.astype(np.float32), my.astype(np.float32), cv2.INTER_LINEAR,
+                           borderMode=cv2.BORDER_REFLECT)
+        yield (movida * (1 - capa) + img_f * capa).astype(np.uint8)
 
 
 def animar(imagen, destino, segundos):
