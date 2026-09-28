@@ -77,7 +77,40 @@ def gemini(receta, reglas):
     raise MotorError('Gemini imagen contestó sin imagen', intermitente=True)
 
 
-MOTORES = {'cloudflare': cloudflare, 'gemini': gemini}
+def pollinations(receta, reglas):
+    """Pollinations (FLUX), gratis y sin llave (28-sep: respaldo cuando Cloudflare agota su cuota
+    diaria y Gemini no contesta). 4:5 como la lámina."""
+    import random
+    import urllib.parse
+    url = ('https://image.pollinations.ai/prompt/%s?width=1080&height=1350&model=flux&nologo=true'
+           '&private=true&seed=%d' % (urllib.parse.quote(receta[:1500]), random.randint(1, 10 ** 9)))
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'sala-yod'}),
+                                    timeout=ESPERA) as r:
+            datos, tipo = r.read(), r.headers.get('Content-Type', '')
+    except urllib.error.HTTPError as e:
+        raise MotorError('Pollinations %s' % e.code, intermitente=True)
+    except urllib.error.URLError as e:
+        raise MotorError('Pollinations no contestó: %s' % sala.redactar(str(e)), intermitente=True)
+    if 'image' not in tipo or len(datos) < 5000:
+        raise MotorError('Pollinations contestó sin imagen (%s)' % tipo, intermitente=True)
+    return datos, ('png' if 'png' in tipo else 'jpg')
+
+
+def hf(receta, reglas):
+    """FLUX.1-schnell en la inferencia de HuggingFace con HF_TOKEN (créditos gratis de la cuenta)."""
+    token = os.environ.get('HF_TOKEN', '').strip()
+    if not token:
+        raise MotorError('falta HF_TOKEN', intermitente=True)
+    url = 'https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell'
+    datos, tipo = _pedir(url, {'inputs': receta[:1500], 'parameters': {'width': 1024, 'height': 1280}},
+                         {'Authorization': 'Bearer ' + token, 'Accept': 'image/jpeg'}, 'HF FLUX')
+    if 'image' not in (tipo or '') and len(datos) < 5000:
+        raise MotorError('HF FLUX contestó sin imagen', intermitente=True)
+    return datos, 'jpg'
+
+
+MOTORES = {'cloudflare': cloudflare, 'gemini': gemini, 'pollinations': pollinations, 'hf': hf}
 
 
 SIN_LETRAS = ('. Photorealistic editorial photograph, natural light. Absolutely no text, '
@@ -88,7 +121,7 @@ def generar(receta, reglas):
     """Devuelve (bytes, extension, motor, avisos). Intermitente si ninguno pudo."""
     receta = receta.rstrip('. ') + SIN_LETRAS
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
-                                    or 'cloudflare,gemini').split(',') if m.strip() in MOTORES]
+                                    or 'cloudflare,gemini,pollinations,hf').split(',') if m.strip() in MOTORES]
     avisos = []
     for nombre in orden:
         try:
