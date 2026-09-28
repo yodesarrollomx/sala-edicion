@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '15 */2 * * *'  # semáforo de las máquinas
     - cron: '20 */2 * * *'  # ejecutor
-    - cron: '30 * * * *'    # productor
+    - cron: '10,30,50 * * * *'    # productor (28-sep: cada 20 min, saturar la producción)
     - cron: '45 * * * *'    # puente de chinches
   workflow_dispatch:
     inputs:
@@ -30,7 +30,7 @@ jobs:
     uses: ./.github/workflows/sala-ejecutor.yml
     secrets: inherit
   productor:
-    if: (github.event.schedule == '30 * * * *') || inputs.proceso == 'productor'
+    if: (github.event.schedule == '10,30,50 * * * *') || inputs.proceso == 'productor'
     uses: ./.github/workflows/sala-productor.yml
     secrets: inherit
   chinches:

@@ -24,6 +24,7 @@ on:
 permissions:
   contents: read
   issues: write
+  actions: write   # para encadenarse a sí mismo si quedó trabajo
 
 # Invariante 53: nunca dos ejecutores a la vez.
 concurrency:
@@ -33,7 +34,7 @@ concurrency:
 jobs:
   ejecutor:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60   # 28-sep: saturar — más trabajos por vuelta (el tope real lo pone nube_tope_minutos)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -85,11 +86,27 @@ jobs:
           KOKORO_VOICES_PATH: ${{ github.workspace }}/nube/.cache/kokoro/voices-v1.0.bin
         run: |
           set +e
-          python3 sala_ejecutor.py \
+          python3 sala_ejecutor.py --limite 40 \
             ${{ inputs.simular && '--simular' || '' }} \
             ${{ inputs.ignorar_silencio && '--ignorar-silencio' || '' }} \
             2>&1 | tee ../ejecutor.log
           echo "codigo=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      # 28-sep · Saturar: si esta vuelta avanzó (≥1 hecho) y todavía queda trabajo, se vuelve a
+      # encender en lugar de esperar al siguiente latido. Sin avance no se relanza (un trabajo
+      # atorado no puede crear un bucle).
+      - name: Seguir de inmediato si avanzó y quedó trabajo
+        if: ${{ !inputs.simular }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          linea=$(grep -E '^resumen:' ejecutor.log | tail -1 || true)
+          hechos=$(echo "$linea" | grep -oE '[0-9]+ hecho' | grep -oE '[0-9]+' || echo 0)
+          quedan=$(echo "$linea" | grep -oE '[0-9]+ sigue' | grep -oE '[0-9]+' || echo 0)
+          echo "vuelta: ${hechos:-0} hechos · ${quedan:-0} pendientes"
+          if [ "${hechos:-0}" -gt 0 ] && [ "${quedan:-0}" -gt 0 ]; then
+            gh workflow run sala-ejecutor.yml --repo "$GITHUB_REPOSITORY" --ref main && echo "Ejecutor encadenado"
+          fi
 
       - name: Avisar si algo falló de verdad (no un simple «nada que hacer»)
         if: steps.ejecutor.outputs.codigo != '0'
