@@ -34,6 +34,7 @@ imagen = (
 
 MODELO = 'Lightricks/LTX-Video'
 REVISION = 'a6d59ee37c13c58261aa79027d3e41cd41960925'   # la del ejemplo oficial
+# 28-sep: L40S pide tarjeta registrada; A10G (24 GB) alcanza para LTX 2B en bf16 con el crédito gratis
 pesos = modal.Volume.from_name('sala-ltx-pesos', create_if_missing=True)
 
 with imagen.imports():
@@ -42,7 +43,7 @@ with imagen.imports():
     from PIL import Image
 
 
-@app.cls(image=imagen, gpu='L40S', timeout=15 * 60, scaledown_window=2 * 60,
+@app.cls(image=imagen, gpu='A10G', timeout=15 * 60, scaledown_window=2 * 60,
          volumes={'/models': pesos})
 class LTX:
     @modal.enter()
