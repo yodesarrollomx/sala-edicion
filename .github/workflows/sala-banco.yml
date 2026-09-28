@@ -1,0 +1,41 @@
+# Banco de escenas (28-sep-2026): las mismas láminas por todos los motores de escena, lado a
+# lado, para comparar consistencia antes de decidir el orden. No toca la COLA ni la mesa.
+name: Sala · Banco de escenas
+
+on:
+  workflow_dispatch:
+    inputs:
+      laminas:
+        description: 'Rutas de láminas separadas por espacio (vacío = las 3 de siempre)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  banco:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+      - name: Librerías
+        run: pip install --quiet google-auth requests numpy gradio_client opencv-python-headless onnxruntime
+      - name: Caché del modelo de profundidad
+        uses: actions/cache@v4
+        with:
+          path: nube/.cache/depth
+          key: depth-anything-v2-small-onnx
+      - name: Correr el banco
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python3 banco_escenas.py ${{ inputs.laminas }}
