@@ -80,35 +80,35 @@
   },
   {
    "que": "{\"id\": \"CHN-20260927-1409-754d\", \"texto\": \"La meta está para la cercada cuando en realidad ese es un proyecto modificable… lo que la meta tiene que centrarse en cerrar proyectos o algo concreto pero creo que ponerle nombre de la cercada a la meta compromote a que sea esa u no otra opción como el terrenos. Sahuaripa más bien cerrar ppp en codesarrollos… algo que te va que ver con la lógica sistémica de nuestro Yod os…. Entiende bien y plantéame la manera de anclar las metas en el sistema\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/27"
   },
   {
    "que": "{\"id\": \"CHN-20260927-1419-93d1\", \"texto\": \"No me deja seleccionar los que ya tenemos dados de alta si se puede confundir y dunpmicsr si pongo una letra o algo de más\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/28"
   },
   {
    "que": "{\"id\": \"CHN-20260927-1420-7c16\", \"texto\": \"La sección de metas none agrada está quitando mucho espacio y debería de ser algo más fácil de leer como KPi busca laguna metodología para de verdad generar una meta y convertirla en algo medible y que esto tenga objetivos y acciones que puedan referenciar de para llegar al éxito más rápidamente y completo a lo planeado\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/29"
   },
   {
    "que": "{\"id\": \"CHN-20260927-1420-e274\", \"texto\": \"Aquí no me deja seleccionar la fecha realmente revisa en varios formatos de Sta pantalla pro que creo que falla en varias partes más\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/30"
   },
   {
    "que": "{\"id\": \"CHN-20260927-1422-99a9\", \"texto\": \"Esto me gustaría ver algo más padre… como que fuera mi tarjeta que que pudiera ver las de ala derecha e ir viendo los de mi equipo… pero me gustaba mucho el formato pasado de tarjetas con proyectos y así vuelve más a la otra e inclúyeme esta capacidad de verlo así pero que lo sea la principal\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/31"
@@ -122,7 +122,7 @@
   },
   {
    "que": "{\"id\": \"CHN-20260927-1423-be54\", \"texto\": \"No me gusta tanto opción es funcional si pero la vdd creo que se ve demasiado y quita mucho espacio…. Ayúdame a replantear esta sección y que funcione muy bien  en todo\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/33"
