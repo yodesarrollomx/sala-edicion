@@ -82,7 +82,7 @@ def pollinations(receta, reglas):
     diaria y Gemini no contesta). 4:5 como la lámina."""
     import random
     import urllib.parse
-    url = ('https://image.pollinations.ai/prompt/%s?width=1080&height=1350&model=flux&nologo=true'
+    url = ('https://image.pollinations.ai/prompt/%s?width=1080&height=1440&model=flux&nologo=true'
            '&private=true&seed=%d' % (urllib.parse.quote(receta[:1500]), random.randint(1, 10 ** 9)))
     try:
         with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'sala-yod'}),
@@ -94,7 +94,19 @@ def pollinations(receta, reglas):
         raise MotorError('Pollinations no contestó: %s' % sala.redactar(str(e)), intermitente=True)
     if 'image' not in tipo or len(datos) < 5000:
         raise MotorError('Pollinations contestó sin imagen (%s)' % tipo, intermitente=True)
-    return datos, ('png' if 'png' in tipo else 'jpg')
+    # la cuenta gratis deja la marca «pollinations.ai» abajo a la derecha: se pide 90 px más alta
+    # y se recorta esa franja → queda 1080×1350 limpia (28-sep)
+    try:
+        import io
+        from PIL import Image
+        im = Image.open(io.BytesIO(datos)).convert('RGB')
+        w, h = im.size
+        corte = max(0, h - int(round(w * 1350 / 1080)))
+        im = im.crop((0, 0, w, h - max(corte, int(h * 0.06))))
+        buf = io.BytesIO(); im.save(buf, 'JPEG', quality=92)
+        return buf.getvalue(), 'jpg'
+    except Exception:  # noqa: BLE001 — sin PIL se entrega tal cual
+        return datos, ('png' if 'png' in tipo else 'jpg')
 
 
 def hf(receta, reglas):
