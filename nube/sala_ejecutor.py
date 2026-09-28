@@ -134,6 +134,15 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                     avisos.append(str(e))
             else:
                 avisos.append('wan_hf no disponible: %s' % (razon if not m else m['motor']))
+            # 28-sep · parallax: animación 2.5D hecha con código (profundidad + cámara virtual),
+            # gratis y sin cuota. Va entre Wan y la cámara; `escena_parallax`=0 la apaga.
+            if ruta is None and str(reglas.get('escena_parallax', '1')).strip() not in ('0', 'no', 'false'):
+                try:
+                    from motores import escena_parallax
+                    ruta = escena_parallax.producir(trabajo, reglas, cat, SALIDA)
+                    motor_usado = 'parallax'
+                except Exception as e:  # noqa: BLE001 — si falla, la cámara sigue saliendo
+                    avisos.append('parallax: %s' % e)
             if ruta is None:
                 if str(reglas.get('escena_respaldo_camara', '1')).strip() in ('0', 'no', 'false'):
                     raise MotorError('sin animación y la cámara de respaldo está apagada: %s'
