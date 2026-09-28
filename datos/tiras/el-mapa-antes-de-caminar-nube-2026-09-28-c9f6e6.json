@@ -1,0 +1,51 @@
+{
+ "pieza": "El mapa antes de caminar",
+ "pieza_slug": "el-mapa-antes-de-caminar",
+ "promesa": "Conoce el entregable exacto para entender tu terreno a fondo en la primera sesión.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "Dicen que tu terreno en Hermosillo tiene potencial, pero ¿cómo saber cuál?",
+   "ve": "Dueño de terreno mirando un plano detallado bajo la luz cálida del atardecer en Hermosillo.",
+   "entiende": "Existe una forma clara y precisa de descubrir exactamente qué puede ser ese espacio.",
+   "src": "laminas/el-mapa-antes-de-caminar-a2026-09-28/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-28",
+   "candidatas": [
+    {
+     "src": "laminas/el-mapa-antes-de-caminar-n2026-09-28/L1-1.jpg",
+     "original": "laminas/el-mapa-antes-de-caminar-n2026-09-28/L1-1.png",
+     "titulo": "A",
+     "texto": "Mantiene el gancho original con pregunta única en la lámina 1 y presenta a la pareja protagonista en Hermosillo.",
+     "dice": "Dicen que tu terreno en Hermosillo tiene potencial, pero ¿cómo saber cuál?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "b8d4f8f97eb2e0991171099a036c487e"
+    }
+   ],
+   "marca_previa": "pendiente",
+   "nota_previa": ""
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Dicen que tu terreno en Hermosillo tiene potencial, pero ¿cómo saber cuál?",
+   "ve": "Dueño de terreno mirando un plano detallado bajo la luz cálida del atardecer en Hermosillo.",
+   "entiende": "Existe una forma clara y precisa de descubrir exactamente qué puede ser ese espacio."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-28",
+ "titulo": "El mapa antes de caminar · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de el-mapa-antes-de-caminar-arranque-2026-09-28-62b9ea",
+ "base": "el-mapa-antes-de-caminar-arranque-2026-09-28-62b9ea"
+}
