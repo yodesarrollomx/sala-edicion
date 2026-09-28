@@ -1,0 +1,132 @@
+[
+ {
+  "lamina": "laminas/mesa-vacia-g1/L3.png",
+  "motor": "wan",
+  "ok": true,
+  "segundos": 116.2,
+  "etiqueta": "wan_hf (zerogpu-aoti/wan2-2-fp8da-aoti-faster)",
+  "drive_id": "1k2OG6aaR898kSsPMW5AVJjKCvYTDMvXT"
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L3.png",
+  "motor": "modal-ltx",
+  "ok": false,
+  "error": "modal_ltx: Lookup failed for Cls 'LTX' from the 'sala-ltx' app: App 'sala-ltx' not found in environment 'main'."
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L3.png",
+  "motor": "parallax-ia",
+  "ok": true,
+  "segundos": 8.8,
+  "etiqueta": "parallax · profundidad IA",
+  "drive_id": "1945A2bsG6uZAkrNTgJef1W9ubC9JIBa9"
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L3.png",
+  "motor": "parallax-aprox",
+  "ok": true,
+  "segundos": 7.8,
+  "etiqueta": "parallax · aproximado",
+  "drive_id": "1f90ORkwBjgrHYvEr87fr-CQzQG1GVEaq"
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L3.png",
+  "motor": "camara",
+  "ok": true,
+  "segundos": 7.1,
+  "etiqueta": "camara (zoom)",
+  "drive_id": "12ilzL8DoEw0nlCQc9OhTJ9_h7-oiDVXj"
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L3.png",
+  "motor": "COMPARATIVO",
+  "ok": true,
+  "drive_id": "1FiJVgyRlf9j71vhuhGBuO4m_NXlGbcz9"
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L7.png",
+  "motor": "wan",
+  "ok": true,
+  "segundos": 116.2,
+  "etiqueta": "wan_hf (zerogpu-aoti/wan2-2-fp8da-aoti-faster)",
+  "drive_id": "1n-2TJV2TnC73HyedufsDv8Udbs-a8Gnu"
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L7.png",
+  "motor": "modal-ltx",
+  "ok": false,
+  "error": "modal_ltx: Lookup failed for Cls 'LTX' from the 'sala-ltx' app: App 'sala-ltx' not found in environment 'main'."
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L7.png",
+  "motor": "parallax-ia",
+  "ok": true,
+  "segundos": 9.0,
+  "etiqueta": "parallax · profundidad IA",
+  "drive_id": "1in0JGQOrmRHsz_WEVnvdtgsvuY0XVjTb"
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L7.png",
+  "motor": "parallax-aprox",
+  "ok": true,
+  "segundos": 8.0,
+  "etiqueta": "parallax · aproximado",
+  "drive_id": "1euRtqmgQi3hMRjTs-5HE27uyv465fNLp"
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L7.png",
+  "motor": "camara",
+  "ok": true,
+  "segundos": 7.1,
+  "etiqueta": "camara (zoom)",
+  "drive_id": "1ybIL7cwtJz1rf2yGdx_YOAzzocIBe9_J"
+ },
+ {
+  "lamina": "laminas/mesa-vacia-g1/L7.png",
+  "motor": "COMPARATIVO",
+  "ok": true,
+  "drive_id": "1VgwCAeg3r6fwXNwgrzIEZj6oSlwynQH8"
+ },
+ {
+  "lamina": "laminas/dato-servilleta-3-a2026-09-27/L1-1.png",
+  "motor": "wan",
+  "ok": false,
+  "error": "You have exceeded your free ZeroGPU quota (165s requested vs. 81s left). Try again in 23:54:47. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU"
+ },
+ {
+  "lamina": "laminas/dato-servilleta-3-a2026-09-27/L1-1.png",
+  "motor": "modal-ltx",
+  "ok": false,
+  "error": "modal_ltx: Lookup failed for Cls 'LTX' from the 'sala-ltx' app: App 'sala-ltx' not found in environment 'main'."
+ },
+ {
+  "lamina": "laminas/dato-servilleta-3-a2026-09-27/L1-1.png",
+  "motor": "parallax-ia",
+  "ok": true,
+  "segundos": 8.6,
+  "etiqueta": "parallax · profundidad IA",
+  "drive_id": "1yerWT4jRkJ5pdh_3BYuve4GO8s3aLchv"
+ },
+ {
+  "lamina": "laminas/dato-servilleta-3-a2026-09-27/L1-1.png",
+  "motor": "parallax-aprox",
+  "ok": true,
+  "segundos": 7.9,
+  "etiqueta": "parallax · aproximado",
+  "drive_id": "1EoRtjDH__NXUEWjt6hf8AB9_bKAr0upi"
+ },
+ {
+  "lamina": "laminas/dato-servilleta-3-a2026-09-27/L1-1.png",
+  "motor": "camara",
+  "ok": true,
+  "segundos": 7.1,
+  "etiqueta": "camara (zoom)",
+  "drive_id": "1Ti9V323rl2DbC2do3VrBnPvHJcGajPoU"
+ },
+ {
+  "lamina": "laminas/dato-servilleta-3-a2026-09-27/L1-1.png",
+  "motor": "COMPARATIVO",
+  "ok": true,
+  "drive_id": "1w73jtYCzbJ3anpTZ5q0ZWWHrvNzjijIv"
+ }
+]
