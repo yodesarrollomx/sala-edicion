@@ -72,7 +72,7 @@
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/25"
   },
   {
-   "que": "{\"id\": \"CHN-20260926-0841-3399\", \"texto\": \"Aqui me pones supuestamente el guion pero me lo pones medio mal con las correciones ... debera de poder leet todo lo que un director de escena pudiera ver su storyboard con sus guiones y que desde ahi pueda tmb proponer cambiso exactos .. asi quiero poder entender cuando este revisando varias coas de que se trata y qu eno me pierd entre las historias... quiero poder ver todo completo ahi para poder checar y avabzar con conocimiento d elo qu eestot dado clcik ... cual es la idea original que stamos buscando para que que queremos vender cual es el sentido todo ymas de lo que creas qu enecsito\"}",
+   "que": "{\"id\": \"CHN-20260926-0841-3399\", \"texto\": \"Aqui me pones supuestamente el guion pero me lo pones medio mal con la\"}",
    "estado": "cumplida",
    "cuando": "2026-09-26",
    "tomado": "17:09",
@@ -133,6 +133,55 @@
    "cuando": "2026-09-27",
    "tomado": "23:59",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/34"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1027-2055\", \"texto\": \"Aquí por ejemplo me está saliendo Real Miramar cuando debería de estar anclado Real Miramar a dentro de los desarrollosEntonces creo que aquí no debería estarEn cambio lo que me gustaría hacer es hacer como un WordMío digamos de Post It donde yo tenga libertad de cambiarLo que significa el cuadrante X el cual entregué y que me dejes poner muchos postes y los pueda mover solo yo es un tablero que sólo me da para hacer a mí entonces un post es que yo le puedo escribir y que se le picó el puedo entrar como un Notion a una versión más sofisticada es por ejemplo si veo que hago un cruce pendiente o lo que sea en en en Y y en X son personas puedo ponerle por ejemplo a Fernando un Post It donde me digaRevisar con élEl cambio de losPermisos no sé un ejemplo y ahí le pico y ahí te voy a poder dar igual chinche si te puedes ir aquí por tal cosa y aquí escribe tal cosa entonces cuando ya termine los puedo clavar en terminados o o los poniendo entonces quiero unaAlgo virtual pero como un en los meseros con las comandas cuando terminan de pagar de cuenta el van y la ponen con una una madera con un clavo o no como un clip entonces van juntan todas las comandas como lasContabilidad de comandas y cualquier cosa pueden volver a ella entonces eso me refiero también cuando ya hemos terminado la pasamos allá pero no se queman pues no siempre tengo ese archivero visual este todo esto lo quiero ser muy visual como si en verdad fueron un tablero completo entonces haz el primer cambio y ayúdame\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "20:51",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/35"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1246-3915\", \"texto\": \"[despacho/tareas-vencidas] DECISIÓN ADELANTE: 5 tareas vencidas: A-058 Mariana 14 d · A-158/A-128/A-095 Sayri · A-155 Claude → Recordatorio a responsables y nueva fecha; Claude cierra A-155.\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "20:51",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/36"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1246-b399\", \"texto\": \"[despacho/bbva-4a] DECISIÓN NO: Borrador BBVA · 4a ministración (15-sep) sin enviar → Revisar datos y enviarlo.\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "20:51",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/37"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1246-c960\", \"texto\": \"[despacho/conejo-14-15] DECISIÓN ADELANTE: Rescisión Lotes 14 y 15 Cerrada del Conejo — Ofelia respondió el 21-sep → Claude redacta respuesta a Ofelia como borrador para tu revisión.\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "20:51",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/38"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1246-dde2\", \"texto\": \"[despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto y probado; falta confirmar que el viejo «yod-sala-nube» está borrado → Entrar a huggingface.co → Settings → Access Tokens y borrar «yod-sala-nube» si sigue ahí.\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "20:51",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/39"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1247-2326\", \"texto\": \"[despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto y probado; falta confirmar que el viejo «yod-sala-nube» está borrado → Entrar a huggingface.co → Settings → Access Tokens y borrar «yod-sala-nube» si sigue ahí.\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "20:51",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/40"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1247-bb22\", \"texto\": \"[despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto y probado; falta confirmar que el viejo «yod-sala-nube» está borrado → Entrar a huggingface.co → Settings → Access Tokens y borrar «yod-sala-nube» si sigue ahí.\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "20:52",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/41"
   }
  ]
 }
