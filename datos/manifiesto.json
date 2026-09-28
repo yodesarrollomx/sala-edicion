@@ -2695,6 +2695,54 @@
    "video": null,
    "de_antes": null,
    "origen": "arranque-de idea nombre-antes-despues"
+  },
+  {
+   "id": "llamada-que-pasa-arranque-2026-09-27-879564",
+   "titulo": "Qué pasa en la videollamada · arranque: guion y lámina 1",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/llamada-que-pasa-a2026-09-27/L1-1.jpg"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "arranque-de idea llamada-que-pasa"
+  },
+  {
+   "id": "llamada-entregable-arranque-2026-09-27-ba7446",
+   "titulo": "Así se ve el entregable · arranque: guion y lámina 1",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/llamada-entregable-a2026-09-27/L1-1.jpg"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "arranque-de idea llamada-entregable"
+  },
+  {
+   "id": "el-arquitecto-invisible-arranque-2026-09-27-b51dbd",
+   "titulo": "El arquitecto invisible · arranque: guion y lámina 1",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/el-arquitecto-invisible-a2026-09-27/L1-1.jpg"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "arranque-de idea el-arquitecto-invisible"
+  },
+  {
+   "id": "equipos-que-no-chocan-arranque-2026-09-27-c28a17",
+   "titulo": "Equipos que no chocan · arranque: guion y lámina 1",
+   "tipo": "laminas",
+   "laminas": [
+    "laminas/equipos-que-no-chocan-a2026-09-27/L1-1.jpg"
+   ],
+   "opciones": [],
+   "video": null,
+   "de_antes": null,
+   "origen": "arranque-de idea equipos-que-no-chocan"
   }
  ],
  "parrilla": [],
@@ -2712,10 +2760,52 @@
   "aprobadas": 3,
   "tiradas": 9,
   "producidas": 0,
-  "rehechas": 6,
+  "rehechas": 10,
   "nota": ""
  },
  "produccion": [
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO CUMPLIDO · chinche",
+   "estado": "cumplida",
+   "detalle": "{\"id\": \"CHN-20260927-1409-754d\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/27\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/27"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO CUMPLIDO · chinche",
+   "estado": "cumplida",
+   "detalle": "{\"id\": \"CHN-20260927-1419-93d1\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/28\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/28"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO CUMPLIDO · chinche",
+   "estado": "cumplida",
+   "detalle": "{\"id\": \"CHN-20260927-1420-7c16\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/29\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/29"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO CUMPLIDO · chinche",
+   "estado": "cumplida",
+   "detalle": "{\"id\": \"CHN-20260927-1420-e274\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/30\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/30"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO CUMPLIDO · chinche",
+   "estado": "cumplida",
+   "detalle": "{\"id\": \"CHN-20260927-1422-99a9\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/31\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/31"
+  },
+  {
+   "fecha": "2026-09-27",
+   "pieza": "ENCARGO CUMPLIDO · chinche",
+   "estado": "cumplida",
+   "detalle": "{\"id\": \"CHN-20260927-1423-be54\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/33\"}",
+   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/33"
+  },
   {
    "fecha": "2026-09-27",
    "pieza": "ENCARGO TOMADO · chinche",
@@ -2883,48 +2973,6 @@
    "estado": "en curso",
    "detalle": "{\"id\": \"CHN-20260924-1049-152f\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/25\"}",
    "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/25"
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO · chinche · La Recámara Cerrada",
-   "estado": "pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-1049-152f\",\"texto\":\"Aqui quiero poder clickar y poder ir a la idea aprobada y pdoerla editar y que todo lo de hacia adelabte si no cumpe se adapte... asi aunque cambiemos algo va causando efecto a todo .. tmb guion si le pico y quiero ver uq es lo que se aprobo y cualesosn lo guones ta porbados y pdoerklos cambiar desd ehi a\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":{\"pid\":\"recamara-cerrada-arranque-2026-09-24-d33b42\",\"tipo\":\"lamina\",\"lamina\":1,\"pieza\":\"La Recámara Cerrada\"},\"elemento\":{\"css\":\"div#ctx\",\"texto\":\"VA EN idea guion láminas video copy publicada\",\"seccion\":\"Faltan 2 decisiones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790271996875\"}",
-   "enlace": ""
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO · chinche · La Recámara Cerrada",
-   "estado": "pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-1049-152f\",\"texto\":\"Aqui quiero poder clickar y poder ir a la idea aprobada y pdoerla editar y que todo lo de hacia adelabte si no cumpe se adapte... asi aunque cambiemos algo va causando efecto a todo .. tmb guion si le pico y quiero ver uq es lo que se aprobo y cualesosn lo guones ta porbados y pdoerklos cambiar desd ehi a\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":{\"pid\":\"recamara-cerrada-arranque-2026-09-24-d33b42\",\"tipo\":\"lamina\",\"lamina\":1,\"pieza\":\"La Recámara Cerrada\"},\"elemento\":{\"css\":\"div#ctx\",\"texto\":\"VA EN idea guion láminas video copy publicada\",\"seccion\":\"Faltan 2 decisiones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790271996875\"}",
-   "enlace": ""
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO · chinche · La Recámara Cerrada",
-   "estado": "pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-1049-152f\",\"texto\":\"Aqui quiero poder clickar y poder ir a la idea aprobada y pdoerla editar y que todo lo de hacia adelabte si no cumpe se adapte... asi aunque cambiemos algo va causando efecto a todo .. tmb guion si le pico y quiero ver uq es lo que se aprobo y cualesosn lo guones ta porbados y pdoerklos cambiar desd ehi a\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":{\"pid\":\"recamara-cerrada-arranque-2026-09-24-d33b42\",\"tipo\":\"lamina\",\"lamina\":1,\"pieza\":\"La Recámara Cerrada\"},\"elemento\":{\"css\":\"div#ctx\",\"texto\":\"VA EN idea guion láminas video copy publicada\",\"seccion\":\"Faltan 2 decisiones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790271996875\"}",
-   "enlace": ""
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO · chinche · La Recámara Cerrada",
-   "estado": "pendiente",
-   "detalle": "{\"id\":\"CHN-20260924-1049-152f\",\"texto\":\"Aqui quiero poder clickar y poder ir a la idea aprobada y pdoerla editar y que todo lo de hacia adelabte si no cumpe se adapte... asi aunque cambiemos algo va causando efecto a todo .. tmb guion si le pico y quiero ver uq es lo que se aprobo y cualesosn lo guones ta porbados y pdoerklos cambiar desd ehi a\",\"tipo\":\"\",\"vista\":\"hoy\",\"popup\":\"\",\"carta\":{\"pid\":\"recamara-cerrada-arranque-2026-09-24-d33b42\",\"tipo\":\"lamina\",\"lamina\":1,\"pieza\":\"La Recámara Cerrada\"},\"elemento\":{\"css\":\"div#ctx\",\"texto\":\"VA EN idea guion láminas video copy publicada\",\"seccion\":\"Faltan 2 decisiones\"},\"url\":\"https://yodesarrollomx.github.io/sala-edicion/?embed=1&cb=1790271996875\"}",
-   "enlace": ""
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0714-582a\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/20\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/20"
-  },
-  {
-   "fecha": "2026-09-24",
-   "pieza": "ENCARGO CUMPLIDO · chinche",
-   "estado": "cumplida",
-   "detalle": "{\"id\": \"CHN-20260915-0714-582a\", \"issue\": \"https://github.com/yodesarrollomx/sala-edicion/issues/20\"}",
-   "enlace": "https://github.com/yodesarrollomx/sala-edicion/issues/20"
   }
  ],
  "bitacora": [
