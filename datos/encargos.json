@@ -58,7 +58,7 @@
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/23"
   },
   {
-   "que": "{\"id\": \"CHN-20260924-0644-3ca4\", \"texto\": \"por qu dice que descansa d enoche? .. qu eprduzca roda la ncohe si e sposible para eso sosn las gpu para usarse no como humanos .. por favor corrije el asunto de que se cerra la sala ...\"}",
+   "que": "{\"id\": \"CHN-20260924-0644-3ca4\", \"texto\": \"por qu dice que descansa d enoche? .. qu eprduzca roda la ncohe si e s\"}",
    "estado": "cumplida",
    "cuando": "2026-09-24",
    "tomado": "17:37",
@@ -126,6 +126,13 @@
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/33"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260927-1439-a7f0\", \"texto\": \"Está pantalla es demasiado grande para su objetivo…. Creo que estamos dejando pasar la oportunas de ser más eficientes y gráficos y más significativos… ayúdame a plantear algo que funcione y que no quite tanto espacio\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-27",
+   "tomado": "23:59",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/34"
   }
  ]
 }
