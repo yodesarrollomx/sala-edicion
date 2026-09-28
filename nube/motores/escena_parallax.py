@@ -30,8 +30,9 @@ ANCHO, ALTO, FPS = 1080, 1920, 30
 MODELO_URL = ('https://huggingface.co/onnx-community/depth-anything-v2-small/resolve/main/'
               'onnx/model.onnx')
 CACHE = pathlib.Path(__file__).resolve().parent.parent / '.cache' / 'depth'
-AMPLITUD = 0.022       # desplazamiento máximo de lo más cercano, en fracción del ancho
-EMPUJE = 0.045         # acercamiento total a lo largo de la escena
+AMPLITUD = 0.07        # desplazamiento de lo más cercano, en fracción del ancho (28-sep: 0.022 no se notaba)
+EMPUJE = 0.16          # acercamiento total a lo largo de la escena (28-sep: 0.045 no se notaba)
+BASE = 1.10            # margen para que el movimiento no deje ver bordes reflejados
 
 
 def _segundos(reglas):
@@ -97,14 +98,15 @@ def cuadros(img, dep, segundos):
     for i in range(n):
         t = i / max(n - 1, 1)
         suave = 0.5 - 0.5 * np.cos(np.pi * t)            # arranca y termina despacio
-        ang = 2 * np.pi * (0.15 + 0.35 * suave)           # un arco, no una vuelta completa
-        dx = AMPLITUD * w * np.cos(ang)
-        dy = AMPLITUD * 0.6 * h * np.sin(ang) * (w / h)
-        z = 1.0 + EMPUJE * suave
+        # travelling lateral de izquierda a derecha + leve subida: el frente cruza por delante
+        # del fondo, que es lo que el ojo lee como «se mueve en 3D»
+        dx = AMPLITUD * w * (2 * suave - 1)
+        dy = -AMPLITUD * 0.35 * w * (2 * suave - 1)
+        z = BASE + EMPUJE * suave
         # lo cercano (dep≈1) se mueve y se acerca más que lo lejano
-        esc = 1.0 + (z - 1.0) * (0.4 + 0.6 * dep)
-        mx = cx + (gx - cx) / esc - dx * dep
-        my = cy + (gy - cy) / esc - dy * dep
+        esc = BASE + (z - BASE) * (0.25 + 0.75 * dep) + (BASE - 1.0) * 0
+        mx = cx + (gx - cx) / esc - dx * (dep - 0.35)
+        my = cy + (gy - cy) / esc - dy * (dep - 0.35)
         yield cv2.remap(img, mx.astype(np.float32), my.astype(np.float32), cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
 
 
