@@ -138,8 +138,16 @@ def buscar_hijo(padre_id, nombre, solo_carpetas=False):
     tipo = " and mimeType = 'application/vnd.google-apps.folder'" if solo_carpetas else ''
     q = ("'%s' in parents and name = '%s' and trashed = false%s"
          % (padre_id, nombre.replace("'", "\\'"), tipo))
-    r = _peticion('GET', API + '/files', params={'q': q, 'fields': 'files(id,name)',
-                                                  'pageSize': 1})
+    try:
+        r = _peticion('GET', API + '/files', params={'q': q, 'fields': 'files(id,name)',
+                                                      'pageSize': 1})
+    except DriveError as e:
+        # 28-sep: una carpeta recién creada en la unidad compartida todavía no «existe» para la
+        # búsqueda (404 «File not found: .»). Recién creada = vacía: no hay hijo que encontrar.
+        # Antes esto tumbaba la subida de TODA pieza nueva (dato-servilleta-3, 27-sep).
+        if ' 404' in str(e):
+            return None
+        raise
     archivos = r.json().get('files') or []
     return archivos[0]['id'] if archivos else None
 
