@@ -1,0 +1,59 @@
+{
+ "pieza": "De la idea al techo sin desgaste",
+ "pieza_slug": "de-la-idea-al-techo-sin-desgaste",
+ "promesa": "Transformar tu terreno en un proyecto real paso a paso y sin desgaste.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Cómo convertir ese terreno en un proyecto sin frenar tu ritmo diario?",
+   "ve": "Una mujer sonriente revisa planos digitales en una tablet mientras disfruta un café bajo la sombra de un mezquite en Hermosillo.",
+   "entiende": "Que es posible avanzar en el desarrollo de un espacio propio con claridad y tranquilidad.",
+   "src": "laminas/de-la-idea-al-techo-sin-desgaste-a2026-09-28/L1-1.jpg",
+   "estado": "propuesta",
+   "version": 1,
+   "fecha": "2026-09-28",
+   "candidatas": [
+    {
+     "src": "laminas/de-la-idea-al-techo-sin-desgaste-a2026-09-28/L1-1.jpg",
+     "original": "laminas/de-la-idea-al-techo-sin-desgaste-a2026-09-28/L1-1.png",
+     "titulo": "A",
+     "texto": "Se mantiene el texto original al no haber nota de corrección, asegurando el gancho inicial de la historia.",
+     "dice": "¿Cómo convertir ese terreno en un proyecto sin frenar tu ritmo diario?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "5edf277cfe323f670f666765edd0b401"
+    },
+    {
+     "src": "laminas/de-la-idea-al-techo-sin-desgaste-a2026-09-28/L1-2.jpg",
+     "original": "laminas/de-la-idea-al-techo-sin-desgaste-a2026-09-28/L1-2.png",
+     "titulo": "B",
+     "texto": "El texto original cumple perfectamente con el gancho narrativo y la estrategia requerida para la lámina 1.",
+     "dice": "¿Cómo convertir ese terreno en un proyecto sin frenar tu ritmo diario?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "a4aa51417fd60f39764a6622ab241181"
+    }
+   ]
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Cómo convertir ese terreno en un proyecto sin frenar tu ritmo diario?",
+   "ve": "Una mujer sonriente revisa planos digitales en una tablet mientras disfruta un café bajo la sombra de un mezquite en Hermosillo.",
+   "entiende": "Que es posible avanzar en el desarrollo de un espacio propio con claridad y tranquilidad."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-28",
+ "titulo": "De la idea al techo sin desgaste · arranque: guion y lámina 1",
+ "nota": "Idea elegida en el Árbol. Aquí va el guion completo y la PRIMERA lámina con 2 tomas: elige una con «Ésta». Cuando la apruebes, las demás se hacen a su semejanza.",
+ "origen": "arranque-de idea de-la-idea-al-techo-sin-desgaste",
+ "base": null
+}

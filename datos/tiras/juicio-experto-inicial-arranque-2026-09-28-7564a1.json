@@ -1,0 +1,59 @@
+{
+ "pieza": "Juicio experto inicial",
+ "pieza_slug": "juicio-experto-inicial",
+ "promesa": "Descubre el potencial real de tu terreno en Hermosillo con una charla experta.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Qué futuro guarda ese terreno en la familia?",
+   "ve": "Dos hermanos mirando un terreno amplio bajo el atardecer sonorense, tomando café en la banqueta.",
+   "entiende": "Tener un terreno genera dudas sobre qué hacer con él y opiniones encontradas.",
+   "src": "laminas/juicio-experto-inicial-a2026-09-28/L1-1.jpg",
+   "estado": "propuesta",
+   "version": 1,
+   "fecha": "2026-09-28",
+   "candidatas": [
+    {
+     "src": "laminas/juicio-experto-inicial-a2026-09-28/L1-1.jpg",
+     "original": "laminas/juicio-experto-inicial-a2026-09-28/L1-1.png",
+     "titulo": "A",
+     "texto": "Mantiene la esencia de la pregunta inicial de la lámina 1 pero con un tono positivo y cálido, alineado al perfil socioeconómico y a la estrategia de Hermosillo.",
+     "dice": "¿Qué futuro guarda ese terreno en la familia?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "c1d42d8ecb47b5bf719a2f372b407351"
+    },
+    {
+     "src": "laminas/juicio-experto-inicial-a2026-09-28/L1-2.jpg",
+     "original": "laminas/juicio-experto-inicial-a2026-09-28/L1-2.png",
+     "titulo": "B",
+     "texto": "Se adapta el texto a la pareja de estatus medio-alto, se elimina el tono de duda familiar negativa y se plantea una pregunta como gancho inicial centrada en el ",
+     "dice": "¿Qué futuro guarda ese terreno familiar en Hermosillo?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "a7e937ef3bdbab6c59ebd81186bcb058"
+    }
+   ]
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Qué historia oculta ese terreno baldío en la familia?",
+   "ve": "Dos hermanos mirando un terreno amplio bajo el atardecer sonorense, tomando café en la banqueta.",
+   "entiende": "Tener un terreno genera dudas sobre qué hacer con él y opiniones encontradas."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-28",
+ "titulo": "Juicio experto inicial · arranque: guion y lámina 1",
+ "nota": "Idea elegida en el Árbol. Aquí va el guion completo y la PRIMERA lámina con 2 tomas: elige una con «Ésta». Cuando la apruebes, las demás se hacen a su semejanza.",
+ "origen": "arranque-de idea juicio-experto-inicial",
+ "base": null
+}
