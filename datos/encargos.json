@@ -79,49 +79,49 @@
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/26"
   },
   {
-   "que": "{\"id\": \"CHN-20260927-1409-754d\", \"texto\": \"La meta está para la cercada cuando en realidad ese es un proyecto modificable… lo que la meta tiene que centrarse en cerrar proyectos o algo concreto pero creo que ponerle nombre de la cercada a la meta compromote a que sea esa u no otra opción como el terrenos. Sahuaripa más bien cerrar ppp en codesarrollos… algo que te va que ver con la lógica sistémica de nuestro Yod os…. Entiende bien y plantéame la manera de anclar las metas en el sistema\"}",
+   "que": "{\"id\": \"CHN-20260927-1409-754d\", \"texto\": \"📌 board-aurum/index · La meta está para la cercada cuando en realidad ese es un proyecto mod\"}",
    "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/27"
   },
   {
-   "que": "{\"id\": \"CHN-20260927-1419-93d1\", \"texto\": \"No me deja seleccionar los que ya tenemos dados de alta si se puede confundir y dunpmicsr si pongo una letra o algo de más\"}",
+   "que": "{\"id\": \"CHN-20260927-1419-93d1\", \"texto\": \"📌 board-aurum/index · No me deja seleccionar los que ya tenemos dados de alta si se puede co\"}",
    "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/28"
   },
   {
-   "que": "{\"id\": \"CHN-20260927-1420-7c16\", \"texto\": \"La sección de metas none agrada está quitando mucho espacio y debería de ser algo más fácil de leer como KPi busca laguna metodología para de verdad generar una meta y convertirla en algo medible y que esto tenga objetivos y acciones que puedan referenciar de para llegar al éxito más rápidamente y completo a lo planeado\"}",
+   "que": "{\"id\": \"CHN-20260927-1420-7c16\", \"texto\": \"📌 board-aurum/index · La sección de metas none agrada está quitando mucho espacio y debería \"}",
    "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/29"
   },
   {
-   "que": "{\"id\": \"CHN-20260927-1420-e274\", \"texto\": \"Aquí no me deja seleccionar la fecha realmente revisa en varios formatos de Sta pantalla pro que creo que falla en varias partes más\"}",
+   "que": "{\"id\": \"CHN-20260927-1420-e274\", \"texto\": \"📌 board-aurum/index · Aquí no me deja seleccionar la fecha realmente revisa en varios format\"}",
    "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/30"
   },
   {
-   "que": "{\"id\": \"CHN-20260927-1422-99a9\", \"texto\": \"Esto me gustaría ver algo más padre… como que fuera mi tarjeta que que pudiera ver las de ala derecha e ir viendo los de mi equipo… pero me gustaba mucho el formato pasado de tarjetas con proyectos y así vuelve más a la otra e inclúyeme esta capacidad de verlo así pero que lo sea la principal\"}",
+   "que": "{\"id\": \"CHN-20260927-1422-99a9\", \"texto\": \"📌 board-aurum/index · Esto me gustaría ver algo más padre… como que fuera mi tarjeta que que\"}",
    "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/31"
   },
   {
-   "que": "{\"id\": \"CHN-20260927-1422-a379\", \"texto\": \"Algo se ve error ahí no me gusta que normalices los errores\"}",
+   "que": "{\"id\": \"CHN-20260927-1422-a379\", \"texto\": \"📌 board-aurum/index · Algo se ve error ahí no me gusta que normalices los errores\"}",
    "estado": "en curso",
    "cuando": "2026-09-27",
    "tomado": "21:39",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/32"
   },
   {
-   "que": "{\"id\": \"CHN-20260927-1423-be54\", \"texto\": \"No me gusta tanto opción es funcional si pero la vdd creo que se ve demasiado y quita mucho espacio…. Ayúdame a replantear esta sección y que funcione muy bien  en todo\"}",
+   "que": "{\"id\": \"CHN-20260927-1423-be54\", \"texto\": \"📌 board-aurum/index · No me gusta tanto opción es funcional si pero la vdd creo que se ve de\"}",
    "estado": "cumplida",
    "cuando": "2026-09-27",
    "tomado": "21:39",
@@ -150,7 +150,7 @@
   },
   {
    "que": "{\"id\": \"CHN-20260928-1246-b399\", \"texto\": \"[despacho/bbva-4a] DECISIÓN NO: Borrador BBVA · 4a ministración (15-sep) sin enviar → Revisar datos y enviarlo.\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-28",
    "tomado": "20:51",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/37"
@@ -164,14 +164,14 @@
   },
   {
    "que": "{\"id\": \"CHN-20260928-1246-dde2\", \"texto\": \"[despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto y probado; falta confirmar que el viejo «yod-sala-nube» está borrado → Entrar a huggingface.co → Settings → Access Tokens y borrar «yod-sala-nube» si sigue ahí.\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-28",
    "tomado": "20:51",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/39"
   },
   {
    "que": "{\"id\": \"CHN-20260928-1247-2326\", \"texto\": \"[despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto y probado; falta confirmar que el viejo «yod-sala-nube» está borrado → Entrar a huggingface.co → Settings → Access Tokens y borrar «yod-sala-nube» si sigue ahí.\"}",
-   "estado": "en curso",
+   "estado": "cumplida",
    "cuando": "2026-09-28",
    "tomado": "20:51",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/40"
@@ -182,6 +182,41 @@
    "cuando": "2026-09-28",
    "tomado": "20:52",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/41"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1539-012e\", \"texto\": \"por ejemplo me estás poniendo ahí todo el texto que puse literal cuando no debe ser así debes de poner un resumen y muchas veces te pongo como tarea muchas tareas no la tienes que subdividir por temas y pensar Así que antes de El de decir que ya terminaste corriste el código que hace que mande directamente la tarea sin pensarla o desglosarla para entender En qué parte del moac encarga encaja en vez de dedicármelo a mí después chistes que me automatices\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "01:17",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/42"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1608-0c1a\", \"texto\": \"[despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto y probado; falta confirmar que el viejo «yod-sala-nube» está borrado → Entrar a huggingface.co → Settings → Access Tokens y borrar «yod-sala-nube» si sigue ahí.\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "01:17",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/43"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1608-eecd\", \"texto\": \"[despacho/sala-mesa] DECISIÓN ADELANTE: 14–15 propuestas de hoy esperan en la mesa → Aprobar en bloque las que pasan reglas y mandar a producir.\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "01:17",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/44"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1609-6442\", \"texto\": \"[despacho/bbva-4a] DECISIÓN ADELANTE: Borrador BBVA · 4a ministración (15-sep) sin enviar → Revisar datos y enviarlo.\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "01:17",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/45"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1609-dff6\", \"texto\": \"[despacho/conejo-14-15] DECISIÓN ADELANTE: Rescisión Lotes 14 y 15 Cerrada del Conejo — Ofelia respondió el 21-sep → Claude redacta respuesta a Ofelia como borrador para tu revisión.\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "01:18",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/46"
   }
  ]
 }
