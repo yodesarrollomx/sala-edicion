@@ -1,0 +1,51 @@
+{
+ "pieza": "Equipos que no chocan",
+ "pieza_slug": "equipos-que-no-chocan",
+ "promesa": "Coordinar los oficios sin volverse el director de orquesta improvisado.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si construir fuera disfrutar el proceso sin coordinar gremios todo el día?",
+   "ve": "Ilustración cálida de una obra limpia en Hermosillo con luz de la tarde.",
+   "entiende": "Visualizamos que es posible construir sin estrés ni juntas interminables.",
+   "src": "laminas/equipos-que-no-chocan-a2026-09-27/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-29",
+   "candidatas": [
+    {
+     "src": "laminas/equipos-que-no-chocan-n2026-09-29/L1-1.jpg",
+     "original": "laminas/equipos-que-no-chocan-n2026-09-29/L1-1.png",
+     "titulo": "A",
+     "texto": "Se cambió la palabra gremio por equipos para conectar con un público maduro y se solicitó una imagen de calidad superior manteniendo la calidez.",
+     "dice": "¿Y si construir fuera disfrutar el proceso sin coordinar equipos todo el día?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "d7bd1b73fc7a9ea328cdf7e8c877d8a0"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "Me gusta la imagen está un poquito rara habla con otro generador de imágenes un poquito más Pro y gremio no me gusta la palabra gremio porque no no es un público como de 14 años que hasta un niño de 14 lo entienda, pero en realidad es para un público de 40 a 60 no"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Y si construir fuera disfrutar el proceso sin coordinar gremios todo el día?",
+   "ve": "Ilustración cálida de una obra limpia en Hermosillo con luz de la tarde.",
+   "entiende": "Visualizamos que es posible construir sin estrés ni juntas interminables."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-29",
+ "titulo": "Equipos que no chocan · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de equipos-que-no-chocan-nube-2026-09-28-c9f6e6",
+ "base": "equipos-que-no-chocan-nube-2026-09-28-c9f6e6"
+}

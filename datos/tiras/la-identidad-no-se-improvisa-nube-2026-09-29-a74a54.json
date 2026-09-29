@@ -1,0 +1,81 @@
+{
+ "pieza": "La identidad no se improvisa",
+ "pieza_slug": "la-identidad-no-se-improvisa",
+ "promesa": "Descubre la verdadera voz y el destino de tu terreno en Hermosillo con datos claros.",
+ "formato": "Reel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si el silencio de tu terreno en Hermosillo guarda una gran respuesta?",
+   "ve": "Una esquina soleada de un terreno bardeado en la colonia San Benito al atardecer, luz dorada sobre la tierra.",
+   "entiende": "Que ese espacio disponible en la ciudad tiene una historia por contar.",
+   "src": "laminas/la-identidad-no-se-improvisa-a2026-09-28/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-29",
+   "candidatas": [
+    {
+     "src": "laminas/la-identidad-no-se-improvisa-n2026-09-29/L1-1.jpg",
+     "original": "laminas/la-identidad-no-se-improvisa-n2026-09-29/L1-1.png",
+     "titulo": "A",
+     "texto": "Se integra explícitamente Hermosillo como contexto local único y se presenta a la pareja protagonista de estatus medio-alto con Sofía 3 años menor que Rodrigo.",
+     "dice": "¿Y si el silencio de tu terreno en Hermosillo guarda el destino de tu familia?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "4e7d2a3eff34f4c0678bf5fb9397ca06"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "Sigues hablando de hermosillo no has hecho de esto una regla… hazlo ahora nadie más habla de hermosillo Sonora o Mexico"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Y si el silencio de tu terreno en Hermosillo guarda una gran respuesta?",
+   "ve": "Una esquina soleada de un terreno bardeado en la colonia San Benito al atardecer, luz dorada sobre la tierra.",
+   "entiende": "Que ese espacio disponible en la ciudad tiene una historia por contar."
+  },
+  {
+   "n": 2,
+   "dice": "Entre opiniones familiares y ofertas al aire, es fácil perder el rumbo del espacio.",
+   "ve": "Dos familiares discutiendo suavemente sobre planos enrollados en la mesa de una terraza fresca.",
+   "entiende": "Que decidir el futuro de un inmueble suele llenarse de ruido y dudas."
+  },
+  {
+   "n": 3,
+   "dice": "En Yo Desarrollo preferimos escuchar lo que la norma y el entorno dicen.",
+   "ve": "Una arquitecta sonriendo mientras revisa mapas catastrales y datos oficiales en una tablet.",
+   "entiende": "Que el análisis técnico y certero sustituye a la adivinanza."
+  },
+  {
+   "n": 4,
+   "dice": "Calculamos metros cuadrados permitidos, vialidades y vocación exacta para cada metro.",
+   "ve": "Esquemas limpios y trazos precisos sobre una vista aérea de Hermosillo, mostrando áreas de desarrollo.",
+   "entiende": "Exactamente qué dimensiones y giros comerciales o habitacionales son viables."
+  },
+  {
+   "n": 5,
+   "dice": "Así creamos el Plan de Potencial Personalizado que revela la identidad de tu suelo.",
+   "ve": "Un documento encuadernado con elegancia sobre una mesa de madera con un café humeante.",
+   "entiende": "El valor de tener una ruta clara, calculada y lista para decidir."
+  },
+  {
+   "n": 6,
+   "dice": "Conozcamos la ubicación de tu terreno en una breve llamada para iniciar.",
+   "ve": "Una persona sonriente sosteniendo su teléfono en un patio arbolado típico de Hermosillo.",
+   "entiende": "Que dar el primer paso es sencillo y comienza con compartir la ubicación."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-29",
+ "titulo": "La identidad no se improvisa · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de la-identidad-no-se-improvisa-nube-2026-09-29-8907ef",
+ "base": "la-identidad-no-se-improvisa-nube-2026-09-29-8907ef"
+}
