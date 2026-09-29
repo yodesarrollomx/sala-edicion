@@ -1,0 +1,61 @@
+{
+ "pieza": "Lo que puede llegar a ser",
+ "pieza_slug": "nombre-antes-despues",
+ "promesa": "Visualiza el verdadero potencial de tu terreno en Hermosillo con datos claros y normativos.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si tu terreno en Hermosillo pudiera ser mucho más de lo que imaginas?",
+   "ve": "Un terreno soleado en Hermosillo junto a un plano arquitectónico moderno y luminoso con familias sonriendo.",
+   "entiende": "Se puede descubrir el potencial real de un espacio con ayuda experta.",
+   "src": "laminas/nombre-antes-despues-a2026-09-27/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-29",
+   "candidatas": [
+    {
+     "src": "laminas/nombre-antes-despues-n2026-09-29/L1-1.jpg",
+     "original": "laminas/nombre-antes-despues-n2026-09-29/L1-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota eliminando cualquier mención a país, mes o ciudad, manteniendo el tono cálido y la pregunta de gancho permitida.",
+     "dice": "¿Y si ese espacio guardara el proyecto con el que tanto has soñado?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "d129ec519059e8da9fc68afed5327f69"
+    },
+    {
+     "src": "laminas/nombre-antes-despues-n2026-09-29/L1-2.jpg",
+     "original": "laminas/nombre-antes-despues-n2026-09-29/L1-2.png",
+     "titulo": "B",
+     "texto": "Se eliminó toda referencia a ciudad, estado o país, cumpliendo la nota del editor y manteniendo el tono aspiracional.",
+     "dice": "¿Y si ese espacio guardado fuera el inicio de algo extraordinario?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "c3af1d8963d7085d4431604d24b1d404"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "No menciones pais se mes generico ni ciudad ni estado ni pais"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Y si tu terreno en Hermosillo pudiera ser mucho más de lo que imaginas?",
+   "ve": "Un terreno soleado en Hermosillo junto a un plano arquitectónico moderno y luminoso con familias sonriendo.",
+   "entiende": "Se puede descubrir el potencial real de un espacio con ayuda experta."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-29",
+ "titulo": "Lo que puede llegar a ser · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de nombre-antes-despues-nube-2026-09-28-e26b4d",
+ "base": "nombre-antes-despues-nube-2026-09-28-e26b4d"
+}
