@@ -128,7 +128,7 @@
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/33"
   },
   {
-   "que": "{\"id\": \"CHN-20260927-1439-a7f0\", \"texto\": \"Está pantalla es demasiado grande para su objetivo…. Creo que estamos dejando pasar la oportunas de ser más eficientes y gráficos y más significativos… ayúdame a plantear algo que funcione y que no quite tanto espacio\"}",
+   "que": "{\"id\": \"CHN-20260927-1439-a7f0\", \"texto\": \"📌 board-aurum/index · Está pantalla es demasiado grande para su objetivo…. Creo que estamos \"}",
    "estado": "en curso",
    "cuando": "2026-09-27",
    "tomado": "23:59",
@@ -217,6 +217,13 @@
    "cuando": "2026-09-28",
    "tomado": "01:18",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/46"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260928-1930-abdd\", \"texto\": \"aquí quién debe de regir es el cus de lo que estamos proponiendo entonces esa es la variable que nos debe dejar máximo ahora también no le estamos poniendo antes el porcentaje de Pasillos vamos a poner solo en porcentaje a los pasillos Y eso nos va a dejar los metros cuadrados rentables que podemos en realidad tener Y eso dividido entre el número de puertos o departamentos nos va a arrojar el tamaño promedio de departamento Así que ayúdame a corregir eso para que salga bien el tablero igual échale un ojo a todo este tablero para poder calcular y también por ejemplo ahí en el tema es que algunos Creo que van a ser locales comerciales Y estos van a ser poder ser rentados a diferente precio al igual que los departamentos entonces a la hora de que le pones a extender Dale la opción de que sea departamento o comercial y vemos los tamaños de departamentos pero primero necesito que me hagas el promedio para saber eso\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-28",
+   "tomado": "05:22",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/47"
   }
  ]
 }
