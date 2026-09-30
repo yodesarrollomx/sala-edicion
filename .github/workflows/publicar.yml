@@ -1,5 +1,5 @@
 # Por qué existe: «que cuando guarde el avance se mande a producción en automático».
-# Guardar = push a main. De ahí a la Sala en vivo, sin que nadie se acuerde de nada.
+# Los productores guardan mediante PR + checks y solicitan su SHA integrado.
 #
 # Pero con compuerta: si el verificador falla, NO se publica y el sitio vivo se queda en la
 # última versión buena. Antes no existía esa red — un index.html roto llegaba a producción en
@@ -8,11 +8,21 @@
 # OJO, un clic manual una sola vez: Settings → Pages → Source = «GitHub Actions».
 # Mientras esté en «Deploy from a branch», este workflow corre y no sirve de nada.
 name: Publicar la Sala
+run-name: 'Sala publicar · ${{ inputs.sha || github.sha }} · ${{ inputs.publicacion_id || github.run_id }}'
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      sha:
+        description: 'Commit completo integrado en main (vacío = commit de la corrida)'
+        type: string
+        required: false
+      publicacion_id:
+        description: 'Identificador de correlación del productor, sin datos de negocio'
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -33,6 +43,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validar y seleccionar el commit integrado
+        env:
+          PUBLICAR_SHA: ${{ inputs.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$PUBLICAR_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo 'SHA inválido'; exit 1; }
+          git cat-file -e "$PUBLICAR_SHA^{commit}"
+          git merge-base --is-ancestor "$PUBLICAR_SHA" refs/remotes/origin/main || {
+            echo 'El commit solicitado no pertenece a main'; exit 1;
+          }
+          git checkout --detach "$PUBLICAR_SHA"
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -42,10 +67,25 @@ jobs:
       - name: La compuerta — nada roto llega a producción
         run: python3 nube/verificar.py
 
+      - name: Comprobar las compuertas de publicación sin red
+        run: python3 -m unittest discover -s tests -p 'publicar_git_test.py'
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
+      - name: No publicar una versión que ya quedó atrás de main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUBLICAR_SHA: ${{ inputs.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          actual=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+          [ "$actual" = "$PUBLICAR_SHA" ] || {
+            echo 'main avanzó; publicar su nueva punta antes de montar cartas'; exit 1;
+          }
+          # La lectura y deploy-pages no son una transacción. El candado pages
+          # evita despliegues simultáneos; main aún puede avanzar entre estos pasos.
       - id: despliegue
         uses: actions/deploy-pages@v4
 
@@ -60,4 +100,5 @@ jobs:
             [ "$code" = "200" ] && exit 0
             sleep 15
           done
-          echo "::warning::la Sala no contestó 200 tras publicar; revísala a mano"
+          echo "::error::la Sala no contestó 200 tras publicar; no montar cartas"
+          exit 1

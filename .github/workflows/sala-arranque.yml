@@ -20,6 +20,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
   issues: write
   actions: write
 
@@ -30,7 +31,7 @@ concurrency:
 jobs:
   arranque:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 70
     env:
       MODO: ${{ inputs.modo || 'todo' }}
       SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
@@ -84,28 +85,19 @@ jobs:
           pip install --quiet google-auth
           python3 nube/verificar.py
 
-      - name: Guardar las láminas y las tiras
+      - name: Guardar mediante PR y checks obligatorios
         id: guardar
         if: steps.arr.outputs.codigo == '0' && env.MODO != 'simular' && env.MODO != 'ideas'
-        run: |
-          git config user.name "Arranque de la Sala"
-          git config user.email "noreply@yodesarrollo.mx"
-          git add laminas datos/tiras datos/arranque.json 2>/dev/null || git add laminas datos/tiras
-          if git diff --cached --quiet; then echo "hubo=no" >> "$GITHUB_OUTPUT"; exit 0; fi
-          git commit -m "arranque: guion y primera lámina de las ideas elegidas"
-          git pull --rebase --quiet origin main
-          git push
-          echo "hubo=si" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/publicar_git.py integrar --proceso arranque
 
-      - name: Publicar y esperar a que la tira esté en línea
+      - name: Publicar el commit integrado y esperar su corrida exacta
         if: steps.guardar.outputs.hubo == 'si'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          gh workflow run publicar.yml --ref main
-          sleep 15
-          id=$(gh run list --workflow publicar.yml --limit 1 --json databaseId --jq '.[0].databaseId')
-          gh run watch "$id" --exit-status
+          MERGE_SHA: ${{ steps.guardar.outputs.merge_sha }}
+        run: python3 nube/publicar_git.py publicar --proceso arranque --sha "$MERGE_SHA"
 
       - name: Montar en la mesa
         if: steps.guardar.outputs.hubo == 'si'
