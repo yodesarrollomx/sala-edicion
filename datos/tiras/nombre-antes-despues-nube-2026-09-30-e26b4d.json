@@ -1,0 +1,61 @@
+{
+ "pieza": "Lo que puede llegar a ser",
+ "pieza_slug": "nombre-antes-despues",
+ "promesa": "Visualiza el verdadero potencial de tu terreno en Hermosillo con datos claros y normativos.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si tu terreno en Hermosillo pudiera ser mucho más de lo que imaginas?",
+   "ve": "Un terreno soleado en Hermosillo junto a un plano arquitectónico moderno y luminoso con familias sonriendo.",
+   "entiende": "Se puede descubrir el potencial real de un espacio con ayuda experta.",
+   "src": "laminas/nombre-antes-despues-a2026-09-27/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-30",
+   "candidatas": [
+    {
+     "src": "laminas/nombre-antes-despues-n2026-09-30/L1-1.jpg",
+     "original": "laminas/nombre-antes-despues-n2026-09-30/L1-1.png",
+     "titulo": "A",
+     "texto": "Elimina la mención a ciudad, estado y país tal como pidió el editor, manteniendo el gancho en forma de pregunta y la pareja con la estética correcta.",
+     "dice": "¿Y si ese espacio guardado pudiera ser mucho más de lo que imaginas?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "5d6db178eceb0fb19e75d445f5a164bb"
+    },
+    {
+     "src": "laminas/nombre-antes-despues-n2026-09-30/L1-2.jpg",
+     "original": "laminas/nombre-antes-despues-n2026-09-30/L1-2.png",
+     "titulo": "B",
+     "texto": "Elimina la mención de ciudad y estado, manteniendo la calidez, la pareja con la edad correcta y una composición fresca enfocada en la intimidad del análisis.",
+     "dice": "¿Y si ese terreno vacío fuera el nuevo capítulo que tu familia merece?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "2ac16821ee49cee2237d6fca0bd16c1b"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "No menciones pais se mes generico ni ciudad ni estado ni pais"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Y si tu terreno en Hermosillo pudiera ser mucho más de lo que imaginas?",
+   "ve": "Un terreno soleado en Hermosillo junto a un plano arquitectónico moderno y luminoso con familias sonriendo.",
+   "entiende": "Se puede descubrir el potencial real de un espacio con ayuda experta."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-30",
+ "titulo": "Lo que puede llegar a ser · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de nombre-antes-despues-nube-2026-09-29-e26b4d",
+ "base": "nombre-antes-despues-nube-2026-09-29-e26b4d"
+}
