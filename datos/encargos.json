@@ -231,6 +231,13 @@
    "cuando": "2026-09-29",
    "tomado": "19:40",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/48"
+  },
+  {
+   "que": "{\"id\": \"CHN-20260930-1101-4ef0\", \"texto\": \"me sigues me sigues presentando palabras como Hermosillo Sonora o México en publicaciones así que por favor ayúdame a generar eso como una regla de que no se pueden usar esas palabras a la hora de producción genera tú los cambios que necesitas generar en tu procesamiento Pero ayúdame que eso quede claro\"}",
+   "estado": "en curso",
+   "cuando": "2026-09-30",
+   "tomado": "21:02",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/49"
   }
  ]
 }
