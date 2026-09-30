@@ -21,6 +21,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
   issues: write
   actions: write
 
@@ -31,7 +32,7 @@ concurrency:
 jobs:
   mesa:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 70
     env:
       MODO: ${{ inputs.modo || 'montar' }}
       PIEZA: ${{ inputs.pieza }}
@@ -82,34 +83,23 @@ jobs:
           pip install --quiet google-auth
           python3 nube/verificar.py
 
-      - name: Guardar las tomas y las tiras
+      - name: Guardar mediante PR y checks obligatorios
         id: guardar
         if: steps.mesa.outputs.codigo == '0' && env.MODO != 'simular'
-        run: |
-          git config user.name "Montador de la mesa"
-          git config user.email "noreply@yodesarrollo.mx"
-          git add laminas datos/tiras
-          if git diff --cached --quiet; then
-            echo "nada nuevo que guardar"; echo "hubo=no" >> "$GITHUB_OUTPUT"; exit 0
-          fi
-          git commit -m "mesa: tomas nuevas con las últimas notas de los editores"
-          git pull --rebase --quiet origin main
-          git push
-          echo "hubo=si" >> "$GITHUB_OUTPUT"
-
-      - name: Publicar y esperar a que la tira esté en línea
-        if: steps.guardar.outputs.hubo == 'si'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          gh workflow run publicar.yml --ref main
-          sleep 15
-          id=$(gh run list --workflow publicar.yml --limit 1 --json databaseId --jq '.[0].databaseId')
-          gh run watch "$id" --exit-status
+        run: python3 nube/publicar_git.py integrar --proceso mesa
+
+      - name: Publicar el commit integrado y esperar su corrida exacta
+        if: steps.guardar.outputs.hubo == 'si' || (steps.guardar.outputs.hubo == 'no' && env.MODO == 'montar')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MERGE_SHA: ${{ steps.guardar.outputs.merge_sha }}
+        run: python3 nube/publicar_git.py publicar --proceso mesa --sha "$MERGE_SHA"
 
       - name: Montar las cartas en la mesa
-        # Monta aunque no haya archivos nuevos (la tira del día ya estaba publicada); si los
-        # hubo, este paso llega sólo después de que «Publicar» terminó bien.
+        # Incluso sin archivos nuevos, Publicar debe confirmar este commit:
+        # un merge anterior pudo quedar integrado pero sin desplegar.
         if: steps.mesa.outputs.codigo == '0' && env.MODO == 'montar'
         working-directory: nube
         env:

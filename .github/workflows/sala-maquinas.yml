@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
   actions: write
 
 concurrency:
@@ -23,6 +24,7 @@ concurrency:
 jobs:
   maquinas:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -34,28 +36,20 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 nube/sala_maquinas.py
 
-      - name: Guardar el semáforo si cambió
-        id: guardar
+      - name: Verificar antes de publicar (las reglas del repo)
         run: |
-          git config user.name "Semáforo de la Sala"
-          git config user.email "noreply@yodesarrollo.mx"
-          if git diff --quiet -- datos/maquinas.json; then
-            echo "el semáforo no cambió"
-            echo "hubo=no" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          git add datos/maquinas.json
-          git commit -m "semáforo: salud de los centinelas de la nube"
-          git push
-          echo "hubo=si" >> "$GITHUB_OUTPUT"
+          pip install --quiet google-auth requests
+          python3 nube/verificar.py
 
-      - name: Mandar el cambio a producción
+      - name: Guardar mediante PR y checks obligatorios
+        id: guardar
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/publicar_git.py integrar --proceso maquinas
+
+      - name: Publicar el commit integrado y esperar su corrida exacta
         if: steps.guardar.outputs.hubo == 'si'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          # Un commit hecho con GITHUB_TOKEN NO dispara otros workflows: GitHub lo bloquea
-          # para que un workflow no se llame a sí mismo en bucle. Sin esta línea, el respaldo
-          # se guardaría en main y NUNCA llegaría a la Sala en vivo — el arreglo «no llegaría»,
-          # que es justo la falla que el sello de versión existe para delatar.
-          gh workflow run publicar.yml --ref main
+          MERGE_SHA: ${{ steps.guardar.outputs.merge_sha }}
+        run: python3 nube/publicar_git.py publicar --proceso maquinas --sha "$MERGE_SHA"

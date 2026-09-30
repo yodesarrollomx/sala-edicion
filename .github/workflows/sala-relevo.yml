@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
   issues: write
   actions: write
 
@@ -31,6 +32,7 @@ concurrency:
 jobs:
   relevo:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -50,37 +52,28 @@ jobs:
           echo "codigo=$codigo" >> "$GITHUB_OUTPUT"
           exit 0
 
-      - name: Guardar el respaldo (sólo si cambió y sólo si el Sheet contestó)
-        id: guardar
+      - name: Verificar antes de publicar (las reglas del repo)
         if: steps.relevo.outputs.codigo == '0' && !inputs.simular
         run: |
-          # INVIOLABLE 4: si el relevo salió con 2 (no contestó) o 3 (sin marcas), este paso
-          # no corre y el respaldo viejo se queda. Un respaldo vacío es peor que uno viejo.
-          git config user.name "Relevo de la Sala"
-          git config user.email "noreply@yodesarrollo.mx"
-          if git diff --quiet -- datos/manifiesto.json; then
-            echo "el respaldo no cambió: nada que guardar"
-            echo "hubo=no" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          git add datos/manifiesto.json
-          git commit -m "relevo: respaldo espejo del día"
-          git push
-          echo "hubo=si" >> "$GITHUB_OUTPUT"
+          pip install --quiet google-auth requests
+          python3 nube/verificar.py
 
-      - name: Mandar el cambio a producción
+      - name: Guardar mediante PR y checks obligatorios
+        id: guardar
+        if: steps.relevo.outputs.codigo == '0' && !inputs.simular
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/publicar_git.py integrar --proceso relevo
+
+      - name: Publicar el commit integrado y esperar su corrida exacta
         if: steps.guardar.outputs.hubo == 'si'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          # Un commit hecho con GITHUB_TOKEN NO dispara otros workflows: GitHub lo bloquea
-          # para que un workflow no se llame a sí mismo en bucle. Sin esta línea, el respaldo
-          # se guardaría en main y NUNCA llegaría a la Sala en vivo — el arreglo «no llegaría»,
-          # que es justo la falla que el sello de versión existe para delatar.
-          gh workflow run publicar.yml --ref main
+          MERGE_SHA: ${{ steps.guardar.outputs.merge_sha }}
+        run: python3 nube/publicar_git.py publicar --proceso relevo --sha "$MERGE_SHA"
 
       - name: Avisar si algo falló
-        if: steps.relevo.outputs.codigo != '0'
+        if: failure() || steps.relevo.outputs.codigo != '0'
         env:
           GH_TOKEN: ${{ github.token }}
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}      # sólo para tacharlos del log (limpiar_log.py)
@@ -100,7 +93,11 @@ jobs:
             echo "## 🔴 El relevo salió con código ${{ steps.relevo.outputs.codigo }} — $(date -u '+%Y-%m-%d %H:%M UTC')"
             echo
             echo "Código 2 = el Sheet no contestó · código 3 = contestó sin marcas."
-            echo "En los dos casos **no se tocó el respaldo espejo**: «no contestó» nunca es «no hay nada»."
+            if [ "${{ steps.relevo.outputs.codigo }}" = "0" ]; then
+              echo "La cosecha terminó; falló una validación, el PR o la publicación. Revisar su estado antes de reintentar."
+            else
+              echo "La cosecha no fue válida y no se guardó el respaldo: «no contestó» nunca es «no hay nada»."
+            fi
             echo
             echo '```'
             python3 nube/limpiar_log.py relevo.log
