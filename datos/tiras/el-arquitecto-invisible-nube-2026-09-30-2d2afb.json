@@ -1,0 +1,91 @@
+{
+ "pieza": "El arquitecto invisible",
+ "pieza_slug": "el-arquitecto-invisible",
+ "promesa": "Delegar el desarrollo de tu terreno en Hermosillo con claridad y control absoluto.",
+ "formato": "Reel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si descubres qué puede ser realmente tu terreno?",
+   "ve": "Dueño de terreno mirando planos bajo la sombra de un mezquite en Hermosillo.",
+   "entiende": "La incertidumbre sobre qué hacer con el espacio consume tiempo y energía.",
+   "src": "laminas/el-arquitecto-invisible-a2026-09-27/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-30",
+   "candidatas": [
+    {
+     "src": "laminas/el-arquitecto-invisible-n2026-09-30/L1-1.jpg",
+     "original": "laminas/el-arquitecto-invisible-n2026-09-30/L1-1.png",
+     "titulo": "A",
+     "texto": "Se mantiene el texto original del gancho y se eleva drásticamente la calidad visual con una composición cinematográfica de la pareja bajo el mezquite.",
+     "dice": "¿Y si descubres qué puede ser realmente tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "fa843d1c35922b70a66e95a65d34c031"
+    },
+    {
+     "src": "laminas/el-arquitecto-invisible-n2026-09-30/L1-2.jpg",
+     "original": "laminas/el-arquitecto-invisible-n2026-09-30/L1-2.png",
+     "titulo": "B",
+     "texto": "Se mantiene el texto aprobado y se mejora la receta fotográfica con una composición más cercana, elegante y de alta calidad visual.",
+     "dice": "¿Y si descubres qué puede ser realmente tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "7edd7dbc98f5070f6d96ec7305eb3ee0"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "A pero las imágenes no se ven bien"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Cuánto tiempo pasas intentando adivinar el siguiente paso en tu terreno?",
+   "ve": "Dueño de terreno mirando planos bajo la sombra de un mezquite en Hermosillo.",
+   "entiende": "La incertidumbre sobre qué hacer con el espacio consume tiempo y energía."
+  },
+  {
+   "n": 2,
+   "dice": "Don Roberto heredó un solar familiar y temía perder el control del proyecto.",
+   "ve": "Hombrero sonorense revisando documentos en la mesa de la cocina con luz cálida.",
+   "entiende": "El miedo a no saber cómo coordinar el desarrollo frena las mejores oportunidades."
+  },
+  {
+   "n": 3,
+   "dice": "Nosotros proponemos trazar la ruta exacta antes de mover la primera piedra.",
+   "ve": "Equipo de Yo Desarrollo mostrando mapas técnicos y esquemas claros a un cliente.",
+   "entiende": "Existe una forma de planificar cada detalle técnico y legal desde el inicio."
+  },
+  {
+   "n": 4,
+   "dice": "El Plan de Potencial Personalizado define los metros cuadrados viables y los giros ideales.",
+   "ve": "Plano detallado de Hermosillo iluminado por el sol de la tarde sobre una mesa de trabajo.",
+   "entiende": "Los datos precisos de norma, agua y vialidades eliminan las adivinanzas."
+  },
+  {
+   "n": 5,
+   "dice": "Con esta guía clara, Don Roberto coordina a su equipo sin pisar la obra todos los días.",
+   "ve": "Don Roberto sonriendo mientras conversa relajado por teléfono en su porche.",
+   "entiende": "Tener el camino trazado permite delegar con absoluta tranquilidad y confianza."
+  },
+  {
+   "n": 6,
+   "dice": "Descubre qué puede ser tu suelo con una videollamada para crear tu Plan de Potencial.",
+   "ve": "Smartphone mostrando una cita agendada con el equipo de Yo Desarrollo en Hermosillo.",
+   "entiende": "El siguiente paso es sencillo y comienza con una conversación para evaluar el terreno."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-30",
+ "titulo": "El arquitecto invisible · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de el-arquitecto-invisible-nube-2026-09-29-2d2afb",
+ "base": "el-arquitecto-invisible-nube-2026-09-29-2d2afb"
+}

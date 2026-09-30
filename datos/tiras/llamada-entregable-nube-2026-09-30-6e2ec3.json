@@ -1,0 +1,85 @@
+{
+ "pieza": "Así se ve el entregable",
+ "pieza_slug": "llamada-entregable",
+ "promesa": "Mostrar el entregable exacto del Plan de Potencial Personalizado para un terreno en Hermosillo.",
+ "formato": "Carrusel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Te imaginas ver en papel exacto qué puede nacer en tu terreno?",
+   "ve": "Una persona en Hermosillo tomando café frente a su laptop al atardecer.",
+   "entiende": "Se revela el entregable real de un estudio de suelo.",
+   "src": "laminas/llamada-entregable-a2026-09-27/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-30",
+   "candidatas": [
+    {
+     "src": "laminas/llamada-entregable-n2026-09-30/L1-1.jpg",
+     "original": "laminas/llamada-entregable-n2026-09-30/L1-1.png",
+     "titulo": "A",
+     "texto": "Se sustituye la palabra nacer por surgir, manteniendo la pregunta de gancho en la lámina 1 y ajustando la escena visual al nuevo plano.",
+     "dice": "¿Te imaginas ver en un plano exacto qué puede surgir en tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "781823ab5c0ade172d0f9ef2dc121377"
+    },
+    {
+     "src": "laminas/llamada-entregable-n2026-09-30/L1-2.jpg",
+     "original": "laminas/llamada-entregable-n2026-09-30/L1-2.png",
+     "titulo": "B",
+     "texto": "Sustituye 'nacer' por 'construirse' para mantener un lenguaje claro y directo que comunica el propósito sin metáforas ambiguas.",
+     "dice": "¿Te imaginas ver en papel exacto qué puede construirse en tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "e4080e0c19ee30b4bca429aed4f0b8d8"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La ah pero no me gusta la palabra nacer en tu terreno porque no están haciendo nada sino otra palabra, qué significa lo que quieres decir"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Cómo se ve el documento que te dice qué puede ser tu terreno?",
+   "ve": "Una persona en Hermosillo tomando café frente a su laptop al atardecer.",
+   "entiende": "Se revela el entregable real de un estudio de suelo."
+  },
+  {
+   "n": 2,
+   "dice": "Aquí mostramos los metros cuadrados exactos que permite la norma municipal en tu zona.",
+   "ve": "Primer plano de una pantalla mostrando un plano con polígonos claros y áreas calculadas.",
+   "entiende": "El informe detalla los m² permitidos sin adivinanzas."
+  },
+  {
+   "n": 3,
+   "dice": "Agregamos los giros comerciales y habitacionales que realmente caben y funcionan aquí.",
+   "ve": "La misma pantalla deslizando hacia una sección con iconos de comercios y viviendas.",
+   "entiende": "Se visualizan las opciones de uso de suelo viables."
+  },
+  {
+   "n": 4,
+   "dice": "También integramitros clave: agua, drenaje, vialidad y cajones de estacionamiento necesarios.",
+   "ve": "Un esquema técnico sencillo y limpio señalando servicios y accesos en el mapa.",
+   "entiende": "La viabilidad técnica queda completamente transparente."
+  },
+  {
+   "n": 5,
+   "dice": "Proponemos armar tu Plan de Potencial Personalizado con la ubicación exacta de tu terreno.",
+   "ve": "Manos cerrando la laptop con una sonrisa en una sala iluminada de Hermosillo.",
+   "entiende": "El siguiente paso es solicitar el estudio para su propio espacio."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-30",
+ "titulo": "Así se ve el entregable · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de llamada-entregable-nube-2026-09-29-6e2ec3",
+ "base": "llamada-entregable-nube-2026-09-29-6e2ec3"
+}

@@ -1,0 +1,61 @@
+{
+ "pieza": "El mapa antes de caminar",
+ "pieza_slug": "el-mapa-antes-de-caminar",
+ "promesa": "Conoce el entregable exacto para entender tu terreno a fondo en la primera sesión.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "Dicen que tu terreno en Hermosillo tiene potencial, pero ¿cómo saber cuál?",
+   "ve": "Dueño de terreno mirando un plano detallado bajo la luz cálida del atardecer en Hermosillo.",
+   "entiende": "Existe una forma clara y precisa de descubrir exactamente qué puede ser ese espacio.",
+   "src": "laminas/el-mapa-antes-de-caminar-a2026-09-28/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-09-30",
+   "candidatas": [
+    {
+     "src": "laminas/el-mapa-antes-de-caminar-n2026-09-30/L1-1.jpg",
+     "original": "laminas/el-mapa-antes-de-caminar-n2026-09-30/L1-1.png",
+     "titulo": "A",
+     "texto": "Atendemos la nota eliminando la mención a Hermosillo y mantenemos una sola pregunta como gancho en la primera lámina con la pareja adecuada.",
+     "dice": "Dicen que tu terreno tiene potencial, pero ¿cómo saber cuál exactamente?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "839234e9478975e8295aaaf788c7997e"
+    },
+    {
+     "src": "laminas/el-mapa-antes-de-caminar-n2026-09-30/L1-2.jpg",
+     "original": "laminas/el-mapa-antes-de-caminar-n2026-09-30/L1-2.png",
+     "titulo": "B",
+     "texto": "Se elimina la mención a Hermosillo para mantener un enfoque universal y se cambia la pregunta del gancho para conectar mejor con la incertidumbre del terreno.",
+     "dice": "Todos hablan de potencial, pero nadie te muestra el mapa exacto.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "3d381a3f8568781ff2a353cc67ecae13"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "Sigues hablando de Hermosillo cuando te digo que no metas la palabra Hermosillo ni los regionalice si no tiene que ser algo para una campaña a nivel nacional"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Dicen que tu terreno en Hermosillo tiene potencial, pero ¿cómo saber cuál?",
+   "ve": "Dueño de terreno mirando un plano detallado bajo la luz cálida del atardecer en Hermosillo.",
+   "entiende": "Existe una forma clara y precisa de descubrir exactamente qué puede ser ese espacio."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-09-30",
+ "titulo": "El mapa antes de caminar · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de el-mapa-antes-de-caminar-nube-2026-09-29-5899fb",
+ "base": "el-mapa-antes-de-caminar-nube-2026-09-29-5899fb"
+}
