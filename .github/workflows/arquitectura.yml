@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: yodesarrollomx/yod-portal
-          ref: 04cf3ebf7b8e7845fd671b36a24ebf78f3ef3af4
+          ref: 43dadf6a285b10d5b4b7f40184623367652f9b4b
           path: .yod-atlas
           persist-credentials: false
           sparse-checkout-cone-mode: false
@@ -99,3 +99,5 @@ jobs:
         run: pip install --quiet google-auth requests
       - name: Verificar reglas, versión y contratos sin red
         run: python3 nube/verificar.py
+      - name: Verificar identidad y compuertas del publicador sin red
+        run: python3 -m unittest discover -s tests -p 'publicar_git_test.py'

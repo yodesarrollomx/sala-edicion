@@ -1,18 +1,19 @@
 {
-  "model_revision": "2026-09-30.1",
-  "proposal_id": "CHG-ATLAS-001",
-  "summary": "Incorporar trazabilidad del atlas y publicar datos/recursos generados mediante PR; comprobar SHA y publicación antes de montar cartas en el backend.",
+  "model_revision": "2026-10-01.2",
+  "proposal_id": "CHG-PUBLICADORES-APP-001",
+  "summary": "Abrir PR automáticos mediante identidad de GitHub App limitada al repositorio, conservando validaciones del commit exacto, checks obligatorios e integración normal antes de publicar y montar.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
-    "SHEET-SALA",
-    "SVC-SALA-PRODUCTOR",
-    "SVC-SALA-EJECUTOR",
-    "EXT-MOTORES-MEDIA"
+    "EXT-ACTIONS",
+    "EXT-GITHUB-PUBLISHER-APP"
   ],
   "tests": [
     "git diff --check",
-    "python3 nube/verificar.py (dependencias google-auth y requests; pruebas sin red)"
+    "python3 -m unittest discover -s tests -p publicar_git_test.py (28 casos sin red)",
+    "python3 nube/verificar.py (12 verificaciones sin red; google-auth y requests)",
+    "Revisión de YAML, condiciones de simulación y ausencia de cambios, permisos y alcance de token",
+    "Pendiente: instalar/configurar App y observar PR, checks, integración y publicación reales"
   ],
-  "rollback": "Revertir el commit de este cambio mediante revisión y repetir las verificaciones locales. No borrar ni restaurar registros de negocio, Sheets o archivos de clientes como parte del rollback."
+  "rollback": "Revertir mediante PR y revocar la clave de la App. Conservar PR pendientes, datos generados, Sheets y decisiones; no eludir protecciones ni aprobar corridas automáticamente."
 }
