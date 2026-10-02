@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-30 12:22",
+  "actualizado": "2026-10-01 22:40",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -172,10 +172,10 @@
       "hace": "Corre las pruebas y sube la Sala a GitHub Pages en cada guardado a main.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-30T18:17:49Z",
-      "dijo": "Publicar la Sala",
+      "corrio": "2026-10-02T05:14:29Z",
+      "dijo": "Sala publicar · c159e3d7e9179299ab50631b04e7f12dc91a4498 · 36968049642",
       "salud": "bien",
-      "porque": "su última corrida salió bien hace 1 h"
+      "porque": "su última corrida salió bien hace 0 h"
     },
     {
       "id": "nube:sala-cada-hora.yml",
@@ -183,7 +183,7 @@
       "hace": "Productor (cada hora), puente de chinches, ejecutor y este semáforo (cada 2 h).",
       "evita": "que un «sí» de la mesa no dispare nada y que las chinches no lleguen",
       "cuando": "cada hora",
-      "corrio": "2026-09-30T19:21:53Z",
+      "corrio": "2026-10-02T05:39:46Z",
       "dijo": "Sala · Cada hora",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
@@ -194,7 +194,7 @@
       "hace": "Monta la mesa (5:40), siembra y arranca (5:50) y rehace el respaldo espejo (6, 9, 12, 15 y 18 h).",
       "evita": "que la mesa amanezca vacía o la Sala sin plan B si el Sheet no contesta",
       "cuando": "5:40 a 18 h",
-      "corrio": "2026-09-30T18:15:40Z",
+      "corrio": "2026-10-02T01:15:25Z",
       "dijo": "Sala · Diario",
       "salud": "mal",
       "porque": "su última corrida falló"
@@ -205,10 +205,10 @@
       "hace": "Corre las pruebas del repo en cada pull request.",
       "evita": "aceptar un cambio roto",
       "cuando": "en cada pull request",
-      "corrio": "2026-09-25T01:16:14Z",
-      "dijo": "chinche #24 #25: la fábrica sin horario quieto en la Línea; «Va en» s…",
-      "salud": "mal",
-      "porque": "lleva 138 h sin correr"
+      "corrio": "2026-10-02T05:06:19Z",
+      "dijo": "Actualizar doce cierres confirmados en Tus recados",
+      "salud": "bien",
+      "porque": "su última corrida salió bien hace 0 h"
     }
   ]
 }
