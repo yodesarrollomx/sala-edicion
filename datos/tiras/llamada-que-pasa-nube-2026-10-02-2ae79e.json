@@ -1,0 +1,61 @@
+{
+ "pieza": "Qué pasa en la videollamada",
+ "pieza_slug": "llamada-que-pasa",
+ "promesa": "Mostrar qué ocurre en los primeros cinco minutos para conocer el potencial de un terreno en Hermosillo sin complicaciones.",
+ "formato": "Lámina",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si descubres hoy lo que tu terreno en Hermosillo puede llegar a ser?",
+   "ve": "Una persona sonriente en una videollamada desde una sala luminosa, viendo mapas en la pantalla de su laptop con café sobre la mesa.",
+   "entiende": "Que descubrir lo que puede ser su espacio es una charla cercana, rápida y guiada por expertos locales.",
+   "src": "laminas/llamada-que-pasa-a2026-09-27/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-10-02",
+   "candidatas": [
+    {
+     "src": "laminas/llamada-que-pasa-n2026-10-02/L1-1.jpg",
+     "original": "laminas/llamada-que-pasa-n2026-10-02/L1-1.png",
+     "titulo": "A",
+     "texto": "Sustituye la pregunta anterior por una que despierta mayor curiosidad sobre el valor oculto del suelo, cumpliendo con la regla de una sola pregunta en toda la p",
+     "dice": "¿Y si descubres hoy todo el potencial oculto en tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "b1674439253cf54fe44b6fdc012bd429"
+    },
+    {
+     "src": "laminas/llamada-que-pasa-n2026-10-02/L1-2.jpg",
+     "original": "laminas/llamada-que-pasa-n2026-10-02/L1-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota usando una pregunta más directa sobre el valor del terreno y su futuro sin mencionar la ciudad vetada.",
+     "dice": "¿Y si descubres hoy todo el potencial que guarda tu terreno?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "0a926bd15f05bf0619d37a4cefc408b3"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "El texto no engancha"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "Cinco minutos bastan para ver el verdadero potencial de tu terreno en Hermosillo.",
+   "ve": "Una persona sonriente en una videollamada desde una sala luminosa, viendo mapas en la pantalla de su laptop con café sobre la mesa.",
+   "entiende": "Que descubrir lo que puede ser su espacio es una charla cercana, rápida y guiada por expertos locales."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-10-02",
+ "titulo": "Qué pasa en la videollamada · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de llamada-que-pasa-nube-2026-09-30-51fb3d",
+ "base": "llamada-que-pasa-nube-2026-09-30-51fb3d"
+}
