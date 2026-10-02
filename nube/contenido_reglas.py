@@ -79,4 +79,3 @@ def exigir(dato, reglas=None, ruta='contenido'):
     fallas = revisar(dato, reglas, ruta)
     if fallas:
         raise ContenidoVetado('requiere reescritura; ubicación vetada en ' + '; '.join(fallas))
-
