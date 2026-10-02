@@ -1,20 +1,16 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-CHINCHES-CIERRE-001",
-  "summary": "Chinche #49: excluir ubicaciones vetadas de todo contenido nuevo mediante estrategia común, rechazo de salida del cerebro y compuertas antes de imágenes, láminas, voz, montaje y recepción de propuestas. Preservar notas, historial, IDs, permisos y decisiones editoriales; acreditar código integrado y backend desplegado por separado.",
+  "summary": "Refrescar sólo doce IDs de chinches conciliados como completados en datos/encargos.json, con confirmación de eventos de la fuente de verdad y lectura actual de sus issues. Conservar todos los otros registros y campos existentes; el agente no decide ni ejecuta el puente o producción editorial.",
   "components": [
     "SYS-SALA",
-    "GAS-SALA",
-    "SHEET-SALA",
-    "SVC-SALA-PRODUCTOR",
-    "SVC-SALA-EJECUTOR",
-    "EXT-MOTORES-MEDIA"
+    "SHEET-SALA"
   ],
   "tests": [
     "git diff --check",
-    "python3 nube/verificar.py (incluye regresiones sintéticas de contenido y guardia GAS; dependencias google-auth, requests, Pillow y Node; sin red)",
-    "python3 -m unittest discover -s tests -p contenido_reglas_test.py",
-    "node --test tests/contenido-reglas.test.cjs"
+    "Comparación por ID: doce estados cumplida, cuatro actualizaciones y ocho altas desde metadata pública; demás registros y campos preservados",
+    "python3 nube/verificar.py; sin red ni escrituras de negocio",
+    "CI del head exacto y publicación Pages; cotejo del JSON servido y estados usados por Tus recados/Línea"
   ],
-  "rollback": "Revertir el commit de este cambio mediante revisión y repetir las verificaciones locales. No borrar ni restaurar registros de negocio, Sheets o archivos de clientes como parte del rollback."
+  "rollback": "Revertir por PR este refresco del espejo JSON y repetir las verificaciones; no alterar eventos, etiquetas, issues cerrados ni registros de la fuente de verdad."
 }
