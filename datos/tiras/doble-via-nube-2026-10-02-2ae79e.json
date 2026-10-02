@@ -1,0 +1,85 @@
+{
+ "pieza": "Doble vía",
+ "pieza_slug": "doble-via",
+ "promesa": "Descubre el valor real de tu terreno con datos claros y sin compromisos.",
+ "formato": "Carrusel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Y si el verdadero valor de tu terreno en Hermosillo está por descubrirse?",
+   "ve": "Una pareja mayor mirando un terreno baldío al atardecer en Hermosillo, con luz cálida.",
+   "entiende": "Su terreno tiene potencial pero aún no saben exactamente qué puede llegar a ser.",
+   "src": "laminas/doble-via-a2026-09-28/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-10-02",
+   "candidatas": [
+    {
+     "src": "laminas/doble-via-n2026-10-02/L1-1.jpg",
+     "original": "laminas/doble-via-n2026-10-02/L1-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota del editor elevando el gancho emocional y estético de la pregunta inicial, evitando palabras vetadas.",
+     "dice": "¿Y si el verdadero potencial de tu terreno está esperando la luz correcta?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "f62076b8a3cb9868bb45b403d4665fac"
+    },
+    {
+     "src": "laminas/doble-via-n2026-10-02/L1-2.jpg",
+     "original": "laminas/doble-via-n2026-10-02/L1-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota del editor elevando la curiosidad y la conexión emocional hacia el potencial del terreno, manteniendo el tono cálido y de estatus medio-alto.",
+     "dice": "¿Y si el verdadero potencial de tu terreno está esperando la luz correcta?",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "5eb42a7dbb50b89d508b31247858a01f"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "El texto no engancha"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Y si el verdadero valor de tu terreno en Hermosillo está por descubrirse?",
+   "ve": "Una pareja mayor mirando un terreno baldío al atardecer en Hermosillo, con luz cálida.",
+   "entiende": "Su terreno tiene potencial pero aún no saben exactamente qué puede llegar a ser."
+  },
+  {
+   "n": 2,
+   "dice": "Don Roberto recibió tres ofertas distintas por su solar y ninguna coincidía.",
+   "ve": "Don Roberto sosteniendo papeles en la mano con expresión pensativa frente a su propiedad.",
+   "entiende": "Las opiniones externas generan dudas sobre el valor real del espacio."
+  },
+  {
+   "n": 3,
+   "dice": "En Yo Desarrollo calculamos metros cuadrados permitidos, giros viables, agua y vialidad.",
+   "ve": "Un plano detallado sobre una mesa de madera junto a un par de tazas de café.",
+   "entiende": "El estudio se basa en datos técnicos precisos y no en opiniones subjetivas."
+  },
+  {
+   "n": 4,
+   "dice": "Así, Don Roberto conoció el potencial exacto de su tierra para tomar la mejor decisión.",
+   "ve": "Don Roberto sonriendo mientras conversa con una asesora en el terreno.",
+   "entiende": "Contar con información clara da tranquilidad y certeza absoluta."
+  },
+  {
+   "n": 5,
+   "dice": "Conozcamos la ubicación de tu espacio para diseñar juntos tu Plan de Potencial Personalizado.",
+   "ve": "Una tablet mostrando una vista aérea de Hermosillo con puntos clave marcados.",
+   "entiende": "El siguiente paso es una videollamada para analizar su terreno."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-10-02",
+ "titulo": "Doble vía · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de doble-via-nube-2026-09-30-c08416",
+ "base": "doble-via-nube-2026-09-30-c08416"
+}
