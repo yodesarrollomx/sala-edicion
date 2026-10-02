@@ -54,3 +54,22 @@ test('doPost rechaza todo el lote antes de tocar PROPUESTAS', () => {
   assert.equal(result.codigo, 'contenido_vetado');
   assert.ok(result.detalle.includes('opciones[0].texto'));
 });
+
+test('doPost conserva el recorrido válido con una hoja sintética', () => {
+  const ctx = backend();
+  const rows = [['fecha', 'id', 'titulo']];
+  ctx.hoja = nombre => {
+    assert.equal(nombre, 'PROPUESTAS');
+    return { getDataRange: () => ({ getValues: () => rows }), appendRow: row => rows.push(row) };
+  };
+  ctx.bitacora = () => {};
+  const result = ctx.doPost({ postData: { contents: JSON.stringify({
+    accion: 'proponer', clave: 'sintetica', propuestas: [
+      { id: 'mexico-sintetico', titulo: 'Un terreno', laminas: ['Sonora/L1.jpg'],
+        opciones: [{ texto: 'Una posibilidad' }] }
+    ]
+  }) } });
+  assert.equal(result.ok, true);
+  assert.equal(rows.length, 2);
+  assert.equal(rows[1][2], 'Un terreno');
+});

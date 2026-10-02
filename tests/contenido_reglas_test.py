@@ -148,6 +148,35 @@ class ContenidoReglasTests(unittest.TestCase):
             with self.assertRaises(montador.MontadorError):
                 montador.ensamblar(trabajo, {}, {}, Path('/no-escribir'), cola)
 
+    def test_toma_valida_compone_png_y_jpg_sinteticos(self):
+        import io
+        from PIL import Image
+        buffer = io.BytesIO()
+        Image.new('RGB', (108, 135), (140, 130, 120)).save(buffer, format='PNG')
+        lam = {'n': 1, 'dice': 'Tu terreno tiene posibilidades', 've': 'A warm courtyard'}
+        candidata = {'texto': lam['dice'], 'receta': lam['ve'], 'porque': 'Una idea clara'}
+        with tempfile.TemporaryDirectory() as carpeta:
+            raiz = Path(carpeta)
+            with patch.object(mesa, 'RAIZ', raiz), \
+                 patch.object(cerebro, 'lamina', return_value=(candidata, 'doble', [])), \
+                 patch.object(imagen, 'generar', return_value=(buffer.getvalue(), 'png', 'doble', [])):
+                tomas, _ = mesa.producir_tomas('sintetica', {'pieza': 'Un terreno', 'laminas': [lam]},
+                                              lam, '', {}, [], raiz / 'laminas', 1)
+            self.assertEqual(len(tomas), 1)
+            self.assertTrue((raiz / tomas[0]['src']).is_file())
+            self.assertTrue((raiz / tomas[0]['original']).is_file())
+            self.assertEqual(tomas[0]['dice'], lam['dice'])
+
+    def test_cliente_admite_contenido_valido_sin_confundir_urls_con_copy(self):
+        with patch.object(cliente, '_clave', return_value='doble'), \
+             patch.object(cliente, '_exec_url', return_value='https://example.test'), \
+             patch.object(cliente, '_pedir', return_value={'ok': True}) as red:
+            result = cliente.post('proponer', propuestas=[{'id': 'mexico-sintetico',
+                'titulo': 'Tu terreno tiene posibilidades', 'laminas': ['Sonora/L1.jpg'],
+                'opciones': [{'texto': 'Una idea clara'}]}])
+            self.assertTrue(result['ok'])
+            self.assertEqual(red.call_count, 1)
+
 
 if __name__ == '__main__':
     unittest.main()
