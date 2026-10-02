@@ -1,5 +1,5 @@
 {
-  "model_revision": "2026-10-01.24-chinches-cierre",
+  "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-CHINCHES-CIERRE-001",
   "summary": "Chinche #49: excluir ubicaciones vetadas de todo contenido nuevo mediante estrategia común, rechazo de salida del cerebro y compuertas antes de imágenes, láminas, voz, montaje y recepción de propuestas. Preservar notas, historial, IDs, permisos y decisiones editoriales; acreditar código integrado y backend desplegado por separado.",
   "components": [
