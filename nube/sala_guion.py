@@ -88,14 +88,22 @@ def voz_de(reglas, rol, guion=None):
     return DEFAULTS_VOZ[clave]
 
 
-def partes_de(guion, item):
+def partes_de(guion, item, reglas=None):
     """Las líneas a sintetizar para una lámina: [(rol, texto), ...] en orden. Vacío si el
     guion existe pero esa lámina no tiene escena — nunca falla con una excepción críptica."""
     e = escena_de_lamina(guion, item)
     if not e:
         return []
-    return [(str(p.get('rol') or 'narrador'), str(p.get('dice') or ''))
-            for p in (e.get('partes') or []) if str(p.get('dice') or '').strip()]
+    from contenido_reglas import ContenidoVetado, exigir
+    from motores._comun import MotorError
+    partes = [(str(p.get('rol') or 'narrador'), str(p.get('dice') or ''))
+              for p in (e.get('partes') or []) if str(p.get('dice') or '').strip()]
+    try:
+        for _, texto in partes:
+            exigir(texto, reglas, 'voz')
+    except ContenidoVetado as error:
+        raise MotorError(str(error)) from error
+    return partes
 
 
 if __name__ == '__main__':                          # prueba de humo contra el guion real

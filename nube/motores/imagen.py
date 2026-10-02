@@ -131,6 +131,11 @@ SIN_LETRAS = ('. Photorealistic editorial photograph, natural light. Absolutely 
 
 def generar(receta, reglas):
     """Devuelve (bytes, extension, motor, avisos). Intermitente si ninguno pudo."""
+    from contenido_reglas import ContenidoVetado, exigir
+    try:
+        exigir(receta, reglas, 'receta de imagen')
+    except ContenidoVetado as e:
+        raise MotorError(str(e)) from e
     receta = receta.rstrip('. ') + SIN_LETRAS
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
                                     or 'cloudflare,gemini,pollinations,hf').split(',') if m.strip() in MOTORES]

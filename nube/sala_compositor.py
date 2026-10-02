@@ -84,6 +84,8 @@ def cubrir(imagen):
 
 def componer(imagen_origen, texto, destino_png, firma='Yodesarrollo presenta'):
     """Devuelve (ruta_png, ruta_jpg)."""
+    from contenido_reglas import exigir
+    exigir({'texto': texto, 'firma': firma}, ruta='lámina')
     base = cubrir(Image.open(imagen_origen))
     # degradado negro en el 45 % de abajo
     capa = Image.new('L', (1, ALTO), 0)

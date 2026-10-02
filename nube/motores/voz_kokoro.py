@@ -83,7 +83,7 @@ def producir(trabajo, reglas, cat, salida_dir):
     if not g:
         raise MotorError('no hay guion de video para «%s» (datos/guiones/%s-VIDEO.json)'
                          % (familia, familia.upper()), intermitente=True)
-    partes = guion.partes_de(g, item)
+    partes = guion.partes_de(g, item, reglas)
     if not partes:
         raise MotorError('el guion de «%s» no tiene una escena para la lámina %s'
                          % (familia, item), intermitente=True)

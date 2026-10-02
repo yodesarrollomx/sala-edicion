@@ -64,7 +64,7 @@ jobs:
       - name: Verificar antes de publicar (las reglas del repo)
         if: ${{ !inputs.simular }}
         run: |
-          pip install --quiet google-auth requests
+          pip install --quiet google-auth requests pillow
           python3 nube/verificar.py
 
       - name: Guardar mediante PR y checks obligatorios

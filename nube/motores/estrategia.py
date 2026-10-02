@@ -13,9 +13,11 @@ preferencia pregunta»: de ahí salían cuestionarios. Esta es la única fuente;
 sala_arranque.py la anteponen a su instrucción. Si cambia el criterio, se cambia AQUÍ.
 """
 
+from contenido_reglas import instruccion
+
 ESTRATEGIA = (
     'CONTEXTO Y ESTRATEGIA (obligatorio, pesa más que cualquier otra instrucción):\n'
-    '· Quién habla: Yo Desarrollo, desarrolladora de Hermosillo, Sonora. Habla como EXPERTO que '
+    '· Quién habla: Yo Desarrollo, desarrolladora inmobiliaria. Habla como EXPERTO que '
     'propone, nunca como alguien que manda. No le digas al lector qué hacer con imperativos '
     '(«haz», «deja de», «no esperes»); di qué proponemos nosotros o qué es posible.\n'
     '· A quién: dueño de un terreno (o de una casa con espacio sin usar) que no sabe qué puede '
@@ -37,6 +39,6 @@ ESTRATEGIA = (
 )
 
 
-def con_estrategia(instruccion):
+def con_estrategia(texto, reglas=None):
     """La instrucción de un agente, precedida de la estrategia común."""
-    return ESTRATEGIA + '\n' + instruccion
+    return ESTRATEGIA + instruccion(reglas) + '\n' + texto

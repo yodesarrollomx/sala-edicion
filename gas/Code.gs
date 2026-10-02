@@ -83,7 +83,9 @@ var REGLAS_DEFAULT = [
   // montaba una carta NUEVA sin retirar la anterior. Con esto en 1, una familia de pieza
   // tiene como máximo UNA carta viva en la mesa: proponer otra retira las ya decididas y,
   // si hay una sin decidir, la nueva ni siquiera se monta (se encola bloqueada).
-  ['una_carta_por_pieza', 1, 'máximo UNA carta viva por familia de pieza en la mesa (1=sí)']
+  ['una_carta_por_pieza', 1, 'máximo UNA carta viva por familia de pieza en la mesa (1=sí)'],
+  ['contenido_ubicaciones_vetadas', 'Hermosillo,Sonora,México',
+    'ubicaciones vetadas en contenido nuevo; se pueden añadir términos, los tres vetos editoriales obligatorios se conservan']
 ];
 var MOTORES_DEFAULT = [
   // etapa, motor, encendido, tope_dia, costo, orden, nota
@@ -294,6 +296,41 @@ function reglaGas_(nombre, porDefecto) {
 }
 function json(o) {
   return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+/* Chinche #49: contenido NUEVO. No reescribir notas, IDs, URLs ni historia.
+   REGLAS puede sumar palabras; no quitar las tres que el editor prohibió. */
+function normalizarContenido_(texto) {
+  return String(texto || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+function contenidoVetado_(dato) {
+  var palabras = ['Hermosillo', 'Sonora', 'México'];
+  String(reglaGas_('contenido_ubicaciones_vetadas', '')).split(',').forEach(function (p) {
+    p = p.trim();
+    if (p && !palabras.some(function (x) { return normalizarContenido_(x) === normalizarContenido_(p); })) palabras.push(p);
+  });
+  var campos = ['titulo', 'bajada', 'promesa', 'dice', 've', 'entiende', 'texto', 'receta', 'porque', 'prompt_base', 'acento', 'firma'];
+  var historia = ['versiones', 'historial', 'nota', 'nota_previa', 'origen'];
+  var fallas = [];
+  function revisar(valor, ruta) {
+    if (Array.isArray(valor)) {
+      valor.forEach(function (v, i) { if (v && typeof v === 'object') revisar(v, ruta + '[' + i + ']'); });
+    } else if (valor && typeof valor === 'object') {
+      Object.keys(valor).forEach(function (campo) {
+        if (historia.indexOf(campo) >= 0) return;
+        var v = valor[campo], subruta = ruta + '.' + campo;
+        if (campos.indexOf(campo) >= 0 && typeof v === 'string') {
+          var limpio = normalizarContenido_(v);
+          var malas = palabras.filter(function (p) {
+            var termino = normalizarContenido_(p).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            return new RegExp('(^|[^\\p{L}\\p{N}_])' + termino + '($|[^\\p{L}\\p{N}_])', 'u').test(limpio);
+          });
+          if (malas.length) fallas.push(subruta + ': ' + malas.join(', '));
+        } else if (v && typeof v === 'object') revisar(v, subruta);
+      });
+    }
+  }
+  revisar(dato, 'contenido');
+  return fallas.join('; ');
 }
 var _FECHAS = {}; var _RECALENTAR = null;
 function fechaDe(v) {
@@ -1006,6 +1043,9 @@ function doPost(e) {
 
   if (d.accion === 'proponer') {                            // la Mac monta el dia
     if (rol !== 'agente' && rol !== 'editor') return json({ error: 'solo el agente propone' });
+    var contenidoError = contenidoVetado_(d.propuestas || []);
+    if (contenidoError) return json({ error: 'contenido inválido: requiere reescritura',
+      codigo: 'contenido_vetado', detalle: contenidoError });
     var hpr = hoja('PROPUESTAS'), fpr = d.fecha || hoy();
     // 7-sep (Alejandro: «¿por qué me duplicas cosas a revisar?»): proponer es IDEMPOTENTE.
     // Si ya existe una fila con la misma fecha + prop_id, se reemplaza; nunca se apila.
