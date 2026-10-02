@@ -996,6 +996,16 @@ function doPost(e) {
     return json({ error: 'no reconocí tu entrada (credencial no válida o sin acceso a la Sala)' });
   }
 
+  // Compuerta de recepción para todos los lotes de contenido nuevo, antes de sus handlers.
+  // Las operaciones de ideas/árbol de la fuente activa conservan su implementación;
+  // este espejo no debe usarse para reemplazar código activo sin comparar versiones.
+  if (['proponer', 'ideas', 'arbol'].indexOf(d.accion) >= 0 &&
+      (rol === 'agente' || rol === 'editor')) {
+    var contenidoError = contenidoVetado_(d.accion === 'proponer' ? (d.propuestas || []) : (d.filas || []));
+    if (contenidoError) return json({ error: 'contenido inválido: requiere reescritura',
+      codigo: 'contenido_vetado', detalle: contenidoError });
+  }
+
   if (d.accion === 'decidir') {
     if (rol !== 'editor' && rol !== 'editor2') return json({ error: 'tu rol solo lee' });
     if (!/^\d{4}-\d{2}-\d{2}$/.test(d.fecha || '')) return json({ error: 'falta la fecha; no se guardó nada' });
@@ -1043,9 +1053,6 @@ function doPost(e) {
 
   if (d.accion === 'proponer') {                            // la Mac monta el dia
     if (rol !== 'agente' && rol !== 'editor') return json({ error: 'solo el agente propone' });
-    var contenidoError = contenidoVetado_(d.propuestas || []);
-    if (contenidoError) return json({ error: 'contenido inválido: requiere reescritura',
-      codigo: 'contenido_vetado', detalle: contenidoError });
     var hpr = hoja('PROPUESTAS'), fpr = d.fecha || hoy();
     // 7-sep (Alejandro: «¿por qué me duplicas cosas a revisar?»): proponer es IDEMPOTENTE.
     // Si ya existe una fila con la misma fecha + prop_id, se reemplaza; nunca se apila.

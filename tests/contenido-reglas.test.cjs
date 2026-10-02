@@ -43,16 +43,19 @@ test('GAS conserva notas, IDs, URLs y versiones históricas', () => {
   assert.equal(JSON.stringify(value), before);
 });
 
-test('doPost rechaza todo el lote antes de tocar PROPUESTAS', () => {
-  const ctx = backend();
-  const result = ctx.doPost({ postData: { contents: JSON.stringify({
-    accion: 'proponer', clave: 'sintetica', propuestas: [
+test('doPost rechaza cada lote nuevo completo antes de tocar hojas', () => {
+  for (const accion of ['proponer', 'ideas', 'arbol']) {
+    const ctx = backend();
+    const lote = [
       { id: 'uno', titulo: 'Un terreno', opciones: [] },
       { id: 'dos', titulo: 'Otra posibilidad', opciones: [{ texto: 'En MEXICO' }] }
-    ]
-  }) } });
-  assert.equal(result.codigo, 'contenido_vetado');
-  assert.ok(result.detalle.includes('opciones[0].texto'));
+    ];
+    const result = ctx.doPost({ postData: { contents: JSON.stringify({
+      accion, clave: 'sintetica', [accion === 'proponer' ? 'propuestas' : 'filas']: lote
+    }) } });
+    assert.equal(result.codigo, 'contenido_vetado', accion);
+    assert.ok(result.detalle.includes('opciones[0].texto'), accion);
+  }
 });
 
 test('doPost conserva el recorrido válido con una hoja sintética', () => {
