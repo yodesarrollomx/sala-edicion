@@ -127,6 +127,17 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
                     'la lámina %s le falta %s (todavía no está "hecho" en la COLA) — el '
                     'corte no se arma incompleto' % (item, ' y '.join(faltan)))
 
+            from contenido_reglas import ContenidoVetado, exigir
+            from motores._comun import lamina_de
+            from sala_guion import cargar, desde_lamina, partes_de
+            from motores._comun import MotorError
+            try:
+                for job in (j_escena, j_voz):
+                    exigir({'dice': lamina_de(job).get('dice')}, reglas, 'corte')
+                partes_de(cargar(familia) or desde_lamina(j_voz), item, reglas)
+            except (ContenidoVetado, MotorError) as error:
+                raise MontadorError(str(error)) from error
+
             voz_local = _bajar_de_drive(j_voz, '.wav', tmp)
             dur = float(subprocess.run(
                 ['ffprobe', '-v', 'error', '-show_entries', 'format=duration',

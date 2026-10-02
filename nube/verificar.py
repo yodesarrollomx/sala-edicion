@@ -321,6 +321,27 @@ def prueba_identidad_pasa_por_catalogo():
 
 # --------------------------------------------------------------- el corredor
 
+def prueba_contenido_ubicaciones():
+    """#49: regresiones del contenido y guardia GAS con dobles, sin red."""
+    import importlib.util
+    import subprocess
+    import unittest
+    spec = importlib.util.spec_from_file_location('contenido_reglas_test', RAIZ / 'tests/contenido_reglas_test.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    suite = unittest.defaultTestLoader.loadTestsFromModule(module)
+    result = unittest.TestResult()
+    suite.run(result)
+    for test, error in result.errors + result.failures:
+        falla('contenido nuevo · ubicación vetada', str(test) + ': ' + error,
+              'corre python3 -m unittest discover -s tests -p contenido_reglas_test.py')
+    node = subprocess.run(['node', '--test', str(RAIZ / 'tests/contenido-reglas.test.cjs')],
+                          capture_output=True, text=True, cwd=RAIZ)
+    if node.returncode:
+        falla('GAS · contenido nuevo antes de escribir', node.stdout + node.stderr,
+              'corre node --test tests/contenido-reglas.test.cjs')
+    nota('contenido: %d regresiones Python + guardia GAS con dobles' % result.testsRun)
+
 def main():
     pruebas = sorted((n, f) for n, f in globals().items() if n.startswith('prueba_'))
     for nombre, fn in pruebas:

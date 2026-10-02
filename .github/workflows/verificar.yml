@@ -28,6 +28,6 @@ jobs:
         # No hace falta credencial real: prueba_drive_logica() genera su propia
         # cuenta de servicio de mentira (RSA propio) y nunca toca la red — pero
         # sí necesita poder IMPORTAR google-auth para construirla.
-        run: pip install --quiet google-auth requests
+        run: pip install --quiet google-auth requests pillow
       - name: Reglas del repo, sello de versión e integridad de los datos
         run: python3 nube/verificar.py

@@ -28,6 +28,7 @@ import sala_cliente as sala
 from motores import cerebro
 from motores._comun import MotorError
 from motores.estrategia import con_estrategia
+from contenido_reglas import ContenidoVetado, exigir
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 DATOS = RAIZ / 'datos'
@@ -36,8 +37,8 @@ PLAN = RAIZ / 'nube' / '.producido' / 'plan-arranque.json'
 N_LAMINAS = {'lámina': 1, 'lamina': 1, 'carrusel': 5, 'reel': 6}
 
 INSTR_GUION = (
-    'Eres guionista de piezas cortas para redes de Yo Desarrollo, una desarrolladora en Hermosillo, '
-    'Sonora, que vende el Plan de Potencial de un terreno (qué puede llegar a ser, calculado, no opinado). '
+    'Eres guionista de piezas cortas para redes de Yo Desarrollo, una desarrolladora inmobiliaria '
+    'que vende el Plan de Potencial de un terreno (qué puede llegar a ser, calculado, no opinado). '
     'La pieza es un relato con giro que termina en el Plan de Potencial Personalizado (ver ESTRATEGIA). '
     'Tono: cálido, directo, local, sin tecnicismos ni cifras de dinero, sin «gratis». Devuelve SOLO un '
     'JSON: {"promesa": "una frase", "laminas": [{"n": 1, "dice": "texto corto que va escrito en la '
@@ -45,14 +46,14 @@ INSTR_GUION = (
     '"entiende": "qué entiende quien la ve"}]}.')
 
 INSTR_IDEAS = (
-    'Eres editor de contenido de Yo Desarrollo (desarrolladora en Hermosillo, Sonora; vende el Plan de '
+    'Eres editor de contenido de Yo Desarrollo (desarrolladora inmobiliaria; vende el Plan de '
     'Potencial de un terreno). Propón ideas de publicación NUEVAS, distintas de las que ya existen, que '
     'defiendan la premisa dada. Sin cifras de dinero ni «gratis». Devuelve SOLO un JSON: {"ideas": '
     '[{"titulo": "título corto y memorable", "bajada": "una frase: de qué trata", "formato": "Lámina" | '
     '"Carrusel" | "Reel"}]}.')
 
 INSTR_PREMISA = (
-    'Eres estratega de marca de Yo Desarrollo (Plan de Potencial de terrenos, Hermosillo). Propón UNA '
+    'Eres estratega de marca de Yo Desarrollo (Plan de Potencial de terrenos). Propón UNA '
     'premisa nueva —una afirmación que la marca pueda defender con varias publicaciones— distinta de las '
     'que ya existen. Devuelve SOLO un JSON: {"titulo": "la premisa en una frase", "bajada": "por qué '
     'importa, en una frase"}.')
@@ -75,9 +76,9 @@ def pensar(texto, instruccion, reglas, cola):
     fallas = []
     # 23-sep: Gemini tardó >60 s y el TimeoutError (no es MotorError) tumbó toda la corrida.
     # Una red lenta es un intento fallido, no un choque: se reintenta Gemini una vez y se sigue.
-    for nombre, f in (('gemini', lambda: cerebro._gemini(texto, reglas, con_estrategia(instruccion))),
-                      ('gemini', lambda: cerebro._gemini(texto, reglas, con_estrategia(instruccion))),
-                      ('openai', lambda: cerebro._openai(texto, reglas, cola or [], con_estrategia(instruccion)))):
+    for nombre, f in (('gemini', lambda: cerebro._gemini(texto, reglas, con_estrategia(instruccion, reglas))),
+                      ('gemini', lambda: cerebro._gemini(texto, reglas, con_estrategia(instruccion, reglas))),
+                      ('openai', lambda: cerebro._openai(texto, reglas, cola or [], con_estrategia(instruccion, reglas)))):
         try:
             crudo = f()
         except (MotorError, OSError, ValueError) as e:   # OSError cubre TimeoutError y URLError
@@ -85,6 +86,11 @@ def pensar(texto, instruccion, reglas, cola):
             continue
         d = cerebro._json_de(crudo)
         if d:
+            try:
+                exigir(d, reglas, 'salida')
+            except ContenidoVetado as e:
+                fallas.append('%s: %s' % (nombre, e))
+                continue
             return d
         fallas.append('%s contestó sin JSON: «%s»' % (nombre, re.sub(r'\s+', ' ', str(crudo))[:160]))
     raise MotorError('el cerebro no contestó con un JSON (%s)' % ' | '.join(fallas), intermitente=True)
@@ -222,6 +228,11 @@ def arranque(simular, reglas, cola, tope):
             continue
         t = {'pieza': nombre, 'pieza_slug': s, 'promesa': g.get('promesa') or i.get('bajada') or '',
              'laminas': [lam1]}
+        try:
+            exigir(dict(t, titulo=nombre, guion=lams), reglas, 'arranque')
+        except ContenidoVetado as e:
+            apunta(nombre, 'sin guion', e)
+            continue
         carpeta = RAIZ / 'laminas' / ('%s-a%s' % (s, hoy))
         tomas, avisos = producir_tomas(s, t, lam1, '', reglas, cola, carpeta, n_tomas)
         for a in avisos:
@@ -264,6 +275,13 @@ def montar():
         sala.avisar('nada que montar')
         return 0
     for c in plan['cartas']:
+        tira = _leer(TIRAS / (c['tira_id'] + '.json'), None)
+        if not isinstance(tira, dict):
+            raise sala.SalaError('no se monta una carta sin su tira')
+        try:
+            exigir(tira, ruta='tira')
+        except ContenidoVetado as e:
+            raise sala.SalaError(str(e)) from e
         sala.post('proponer', fecha=plan['fecha'], propuestas=[c['carta']], familia=c['familia'])
         sala.avisar('✓ en tu mesa: %s' % c['tira_id'])
     return 0

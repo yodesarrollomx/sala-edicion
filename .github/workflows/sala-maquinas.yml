@@ -48,7 +48,7 @@ jobs:
 
       - name: Verificar antes de publicar (las reglas del repo)
         run: |
-          pip install --quiet google-auth requests
+          pip install --quiet google-auth requests pillow
           python3 nube/verificar.py
 
       - name: Detectar los archivos generados pendientes
