@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: yodesarrollomx/yod-portal
-          ref: 04cf3ebf7b8e7845fd671b36a24ebf78f3ef3af4
+          ref: 4bcff83904b282aaa5287d599f4fe57773ed980f
           path: .yod-atlas
           persist-credentials: false
           sparse-checkout-cone-mode: false
@@ -96,6 +96,6 @@ jobs:
         with:
           python-version: '3.11'
       - name: Instalar dependencias de los dobles de Drive
-        run: pip install --quiet google-auth requests
+        run: pip install --quiet google-auth requests pillow
       - name: Verificar reglas, versión y contratos sin red
         run: python3 nube/verificar.py

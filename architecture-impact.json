@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-09-30.1",
-  "proposal_id": "CHG-ATLAS-001",
-  "summary": "Incorporar trazabilidad del atlas y publicar datos/recursos generados mediante PR; comprobar SHA y publicación antes de montar cartas en el backend.",
+  "model_revision": "2026-10-01.28-chinches-complementos",
+  "proposal_id": "CHG-CHINCHES-CIERRE-001",
+  "summary": "Chinche #49: excluir ubicaciones vetadas de todo contenido nuevo mediante estrategia común, rechazo de salida del cerebro y compuertas antes de imágenes, láminas, voz, montaje y recepción de propuestas. Preservar notas, historial, IDs, permisos y decisiones editoriales; acreditar código integrado y backend desplegado por separado.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -12,7 +12,9 @@
   ],
   "tests": [
     "git diff --check",
-    "python3 nube/verificar.py (dependencias google-auth y requests; pruebas sin red)"
+    "python3 nube/verificar.py (incluye regresiones sintéticas de contenido y guardia GAS; dependencias google-auth, requests, Pillow y Node; sin red)",
+    "python3 -m unittest discover -s tests -p contenido_reglas_test.py",
+    "node --test tests/contenido-reglas.test.cjs"
   ],
   "rollback": "Revertir el commit de este cambio mediante revisión y repetir las verificaciones locales. No borrar ni restaurar registros de negocio, Sheets o archivos de clientes como parte del rollback."
 }

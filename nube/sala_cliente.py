@@ -160,6 +160,12 @@ def post(accion, **campos):
         raise SalaError(
             "la nube entra como «agente» y el agente NO decide (INVIOLABLE 3): «%s» está "
             "prohibida aquí. Decidir es de Alejandro y Sayri, en la Sala." % accion)
+    if accion in {'proponer', 'ideas', 'arbol'}:
+        from contenido_reglas import ContenidoVetado, exigir
+        try:
+            exigir(campos, ruta=accion)
+        except ContenidoVetado as e:
+            raise SalaError(str(e)) from e
     cuerpo = {'accion': accion, 'clave': _clave()}
     cuerpo.update(campos)
     return _pedir(_exec_url(), json.dumps(cuerpo), 'POST accion=' + accion)

@@ -34,7 +34,8 @@ import sala_drive as drive
 import sala_montador as montador
 import sala_motores as motores
 from sala_productor import en_silencio, entero, regla
-from motores._comun import MotorError
+from motores._comun import MotorError, lamina_de
+from contenido_reglas import ContenidoVetado, exigir
 from motores import voz_gemini, voz_kokoro
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
@@ -104,6 +105,7 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
             motor_usado = m['motor']
 
         elif etapa == 'escena':
+            exigir({'dice': lamina_de(trabajo).get('dice')}, reglas, 'escena')
             # wan_hf (animación real, gratis e intermitente) primero; si no puede, la cámara
             # sobre la lámina (ffmpeg, siempre sale). `escena_respaldo_camara`=0 la apaga.
             m, razon = motores.elegir_motor('escena', motores_resp, [])
@@ -184,12 +186,16 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                 raise MotorError('corte incompleto: trae %d de las %d láminas de la pieza — lo '
                                  'abrió un productor viejo; el nuevo abre el corte de la pieza entera'
                                  % (len(ev0.get('laminas') or []), len(tira.get('laminas') or [])))
+            if tira:
+                exigir(tira, reglas, 'corte')
             ruta = montador.ensamblar(trabajo, reglas, cat, SALIDA, cola)
             motor_usado = 'ffmpeg'
 
         else:
             raise MotorError('etapa «%s» no soportada en la nube' % etapa)
 
+    except ContenidoVetado as e:
+        return 'fallo', {'motor': None, 'error': str(e), 'segundos': round(time.time() - inicio, 1)}
     except MotorError as e:
         ev = {'motor': None, 'error': str(e), 'segundos': round(time.time() - inicio, 1)}
         return ('pendiente' if e.intermitente else 'fallo'), ev

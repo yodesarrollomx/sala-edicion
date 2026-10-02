@@ -32,6 +32,7 @@ import tempfile
 import sala_cliente as sala
 from motores import cerebro, imagen
 from motores._comun import MotorError
+from contenido_reglas import ContenidoVetado, exigir, normalizar, prohibidas, ubicaciones
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 DATOS = RAIZ / 'datos'
@@ -88,7 +89,7 @@ def vetadas(slug):
     for clave in ('global', slug.upper()):
         for x in v.get(clave) or []:
             out.append(str(x.get('palabra') if isinstance(x, dict) else x))
-    return [x for x in out if x]
+    return list(dict.fromkeys(ubicaciones() + [x for x in out if x]))
 
 
 def fechas_montada(pid):
@@ -148,7 +149,11 @@ def portada(lam):
 
 
 def guardia(texto, veto):
-    malas = [v for v in veto if v and v.lower() in texto.lower()]
+    lugares = prohibidas(texto)
+    if lugares:
+        return 'usa ubicación vetada: %s' % ', '.join(lugares)
+    lugares = {normalizar(v) for v in ubicaciones()}
+    malas = [v for v in veto if v and normalizar(v) not in lugares and v.lower() in texto.lower()]
     if malas:
         return 'usa palabra vetada: %s' % ', '.join(malas)
     if DINERO.search(texto):
@@ -180,6 +185,7 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                                           lam.get('ve'), nota, veto, reglas, cola, k, ref_txt,
                                           numero=lam.get('n'))
             avisos += av
+            exigir(d, reglas, 'candidata')
             texto = d['texto']
             problema = guardia(texto, veto)
             if problema:
@@ -188,6 +194,7 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                 if guardia(texto, veto):
                     avisos.append('toma %d: el texto de la tira también %s — no se monta' % (k, guardia(texto, veto)))
                     continue
+            exigir({'texto': texto}, reglas, 'texto elegido')
             datos, ext, motor, av2 = imagen.generar(d['receta'], reglas)
             avisos += av2
             with tempfile.NamedTemporaryFile(suffix='.' + ext) as tmp:
@@ -198,7 +205,7 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                           'titulo': chr(64 + k), 'texto': str(d.get('porque') or '')[:160],
                           'dice': texto, 'motor': motor, 'cerebro': quien,
                           'huella': hashlib.md5(png.read_bytes()).hexdigest()})
-        except MotorError as e:
+        except (MotorError, ContenidoVetado) as e:
             avisos.append('toma %d: %s' % (k, e))
     return tomas, avisos + avisos_comp
 
@@ -319,6 +326,13 @@ def montar():
         sala.avisar('nada que montar (no hay plan de esta corrida)')
         return 0
     for c in plan['cartas']:
+        tira = _leer(TIRAS / (c['tira_id'] + '.json'), None)
+        if not isinstance(tira, dict):
+            raise sala.SalaError('no se monta una carta sin su tira')
+        try:
+            exigir(tira, ruta='tira')
+        except ContenidoVetado as e:
+            raise sala.SalaError(str(e)) from e
         r = sala.post('proponer', fecha=plan['fecha'], propuestas=[c['carta']], familia=c['familia'])
         sala.avisar('✓ montada %s · retiradas: %s' % (c['tira_id'], ', '.join(r.get('retiradas_familia') or []) or '—'))
     return 0

@@ -19,12 +19,13 @@ import urllib.request
 import sala_cliente as sala
 from motores._comun import MotorError
 from motores.estrategia import con_estrategia
+from contenido_reglas import ContenidoVetado, exigir
 
 ESPERA = 60
 
 INSTRUCCION = (
     'Eres director de arte de piezas publicitarias cortas de una desarrolladora inmobiliaria '
-    'en Hermosillo, Sonora. Reescribe la receta de UNA ilustración para un generador de '
+    'de Yo Desarrollo. Reescribe la receta de UNA ilustración para un generador de '
     'imágenes. Mantén el estilo de la receta base. Atiende la nota del editor al pie de la '
     'letra. Nada de texto dentro de la imagen, nada de cifras de dinero. Devuelve SOLO la '
     'receta, en inglés, en un párrafo de máximo 90 palabras.')
@@ -70,7 +71,7 @@ def _gemini(texto, reglas, instruccion=None):
         url = ('https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s'
                % (modelo, clave))
         try:
-            r = _post_json(url, {'systemInstruction': {'parts': [{'text': instruccion or INSTRUCCION}]},
+            r = _post_json(url, {'systemInstruction': {'parts': [{'text': instruccion or con_estrategia(INSTRUCCION, reglas)}]},
                                  'contents': [{'parts': [{'text': texto}]}]}, {}, 'Gemini ' + modelo)
             break
         except MotorError as e:
@@ -106,7 +107,7 @@ def _openai(texto, reglas, cola, instruccion=None):
     r = _post_json('https://api.openai.com/v1/chat/completions',
                    {'model': _regla(reglas, 'cerebro_respaldo_modelo', 'gpt-4o-mini'),
                     'max_tokens': 220,
-                    'messages': [{'role': 'system', 'content': instruccion or INSTRUCCION},
+                    'messages': [{'role': 'system', 'content': instruccion or con_estrategia(INSTRUCCION, reglas)},
                                  {'role': 'user', 'content': texto}]},
                    {'Authorization': 'Bearer ' + clave}, 'OpenAI')
     try:
@@ -127,19 +128,24 @@ def receta(base, ve, dice, nota, reglas, cola, variante=1):
         try:
             texto = fn()
             if texto:
+                exigir(texto, reglas, 'receta')
                 return texto, nombre, avisos
-        except MotorError as e:
+        except (MotorError, ContenidoVetado) as e:
             avisos.append(str(e))
     crudo = ' '.join(x for x in (base, ve, nota) if x).strip()
     if not crudo:
         raise MotorError('ni cerebro ni receta base para esta lámina', intermitente=True)
+    try:
+        exigir(crudo, reglas, 'receta base')
+    except ContenidoVetado as e:
+        raise MotorError(str(e)) from e
     return crudo, 'sin-cerebro', avisos
 
 
 
 INSTRUCCION_LAMINA = (
     'Eres director creativo de piezas cortas (carrusel de Instagram) de una desarrolladora '
-    'inmobiliaria en Hermosillo, Sonora. El editor RECHAZÓ una lámina y dejó una nota. Rehazla '
+    'inmobiliaria de Yo Desarrollo. El editor RECHAZÓ una lámina y dejó una nota. Rehazla '
     'obedeciendo la nota al pie de la letra y la ESTRATEGIA de arriba. Reglas de la casa: el '
     'texto avanza el relato de la pieza (afirma; pregunta solo si es la lámina 1); una sola idea; '
     'máximo 14 palabras; nada de '
@@ -172,18 +178,18 @@ def lamina(pieza, promesa, dice, ve, nota, vetadas, reglas, cola=None, variante=
               % (pieza, promesa or '-', dice or '-', ve or '-', nota or '(sin nota)',
                  ', '.join(vetadas) or '-', referencia or '-', variante))
     avisos = []
-    for nombre, fn in (('gemini', lambda: _gemini(pedido, reglas, con_estrategia(INSTRUCCION_LAMINA))),
-                       ('openai', lambda: _openai(pedido, reglas, cola, con_estrategia(INSTRUCCION_LAMINA)))):
+    for nombre, fn in (('gemini', lambda: _gemini(pedido, reglas, con_estrategia(INSTRUCCION_LAMINA, reglas))),
+                       ('openai', lambda: _openai(pedido, reglas, cola, con_estrategia(INSTRUCCION_LAMINA, reglas)))):
         try:
             d = _json_de(fn())
             if d and d.get('receta'):
                 d['texto'] = str(d.get('texto') or dice).strip()
+                exigir(d, reglas, 'candidata')
                 return d, nombre, avisos
             avisos.append('%s contestó sin JSON útil' % nombre)
-        except MotorError as e:
+        except (MotorError, ContenidoVetado) as e:
             avisos.append(str(e))
     # Sin cerebro NO se inventa receta: el 23-sep una receta cruda (la nota en español)
     # hizo que FLUX dibujara hojas con letras sin sentido. Mejor no producir que producir basura.
     raise MotorError('sin cerebro disponible (%s): la lámina espera a la próxima corrida'
                      % ' · '.join(avisos)[:300], intermitente=True)
-
