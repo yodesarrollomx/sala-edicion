@@ -1,16 +1,19 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
-  "proposal_id": "CHG-CHINCHES-CIERRE-001",
-  "summary": "Refrescar sólo doce IDs de chinches conciliados como completados en datos/encargos.json, con confirmación de eventos de la fuente de verdad y lectura actual de sus issues. Conservar todos los otros registros y campos existentes; el agente no decide ni ejecuta el puente o producción editorial.",
+  "proposal_id": "CHG-PUBLICADORES-APP-001",
+  "summary": "Abrir PR automáticos de Sala con token temporal de GitHub App limitado al repositorio solicitado; conservar checks del commit exacto, protecciones y publicación antes de montar.",
   "components": [
     "SYS-SALA",
-    "SHEET-SALA"
+    "GAS-SALA",
+    "EXT-ACTIONS",
+    "EXT-GITHUB-PUBLISHER-APP"
   ],
   "tests": [
     "git diff --check",
-    "Comparación por ID: doce estados cumplida, cuatro actualizaciones y ocho altas desde metadata pública; demás registros y campos preservados",
-    "python3 nube/verificar.py; sin red ni escrituras de negocio",
-    "CI del head exacto y publicación Pages; cotejo del JSON servido y estados usados por Tus recados/Línea"
+    "python3 -m unittest discover -s tests -p publicar_git_test.py",
+    "python3 nube/verificar.py",
+    "CI del SHA exacto: Arquitectura YOD (incluye pruebas del publicador) y Verificar la Sala",
+    "Pendiente: limitar la instalación a aurum-board y sala-edicion, configurar el ID y la llave en Actions y observar una corrida completa antes de montar"
   ],
-  "rollback": "Revertir por PR este refresco del espejo JSON y repetir las verificaciones; no alterar eventos, etiquetas, issues cerrados ni registros de la fuente de verdad."
+  "rollback": "Revertir mediante PR y revocar la clave de la App. Conservar PR pendientes, datos generados, Sheets y decisiones; no eludir protecciones ni aprobar corridas automáticamente."
 }
