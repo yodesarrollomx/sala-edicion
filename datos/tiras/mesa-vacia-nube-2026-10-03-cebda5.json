@@ -1,0 +1,223 @@
+{
+ "pieza": "La Mesa Vacía",
+ "pieza_slug": "mesa-vacia",
+ "promesa": "Toda familia tiene un terreno esperando. Lo que falta no es dinero ni acuerdo: es un Miguel.",
+ "laminas": [
+  {
+   "n": 1,
+   "src": "laminas/mesa-vacia-e2026-09-15/L1.png",
+   "dice": "En tu familia hay un terreno del que todos opinan y nadie decide.",
+   "estado": "aprobada",
+   "versiones": [],
+   "version": 1,
+   "toma_elegida": "Toma 1",
+   "aprobada_el": "2026-09-15"
+  },
+  {
+   "n": 2,
+   "src": "laminas/mesa-vacia-g1/L2.png",
+   "dice": "Quedó intestado. Y el tiempo no espera papeles.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-10-03/L2-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-10-03/L2-1.png",
+     "titulo": "A",
+     "texto": "Elimina la connotación negativa, usa una afirmación en lugar de pregunta y describe exactamente la escena familiar analizando el terreno.",
+     "dice": "Las opiniones de todos se cruzan sobre el mismo plano.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "c3f9a98331520a4ed2f2b4061aceeb4d"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-10-03/L2-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-10-03/L2-2.png",
+     "titulo": "B",
+     "texto": "Elimina connotaciones negativas, mantiene el tono positivo y muestra a Miguel escuchando en un entorno cálido.",
+     "dice": "Un legado familiar que busca convertirse en realidad.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "988f14d0331cf51b3b4bbbb97434f5c9"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto. El texto no engancha… no me gustan las palabras que tienen connotación negativa",
+   "fecha": "2026-10-03"
+  },
+  {
+   "n": 3,
+   "src": "laminas/mesa-vacia-g1/L3.png",
+   "dice": "Un día, Miguel se sentó en la cabecera.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-10-03/L3-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-10-03/L3-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota al ser más luminoso, con un texto concreto y directo que avanza la historia del personaje sin rodeos.",
+     "dice": "Miguel propuso revisar el terreno familiar con datos reales.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "181da486f30dd2cbdf9e9bb6452a1c88"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-10-03/L3-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-10-03/L3-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota al hacer el texto más concreto y propositivo, y ajusta la iluminación de la imagen para que sea más luminosa.",
+     "dice": "Miguel propuso medir los metros reales antes de opinar.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "02dd31f2934647303d7bbf399861d868"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto. La imagen no cuadra con el texto. Más luminosa. Texto más concreto, menos vago. El texto no engancha",
+   "fecha": "2026-10-03"
+  },
+  {
+   "n": 4,
+   "src": "laminas/mesa-vacia-g1/L4.png",
+   "dice": "No tenía que saberlo todo. Tenía que sentar a los que saben.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-10-03/L4-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-10-03/L4-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota al evitar el tono imperativo y proponer directamente que nosotros integramos a los expertos.",
+     "dice": "Nosotros integramos a los expertos para definir cada m² juntos.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "f917a8ffb2424ba00b2fe583c2ac0a11"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-10-03/L4-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-10-03/L4-2.png",
+     "titulo": "B",
+     "texto": "Elimina el imperativo y propone directamente qué hacemos nosotros con los expertos.",
+     "dice": "Nosotros integramos a los expertos para definir qué puede ser.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "8a493d0febba44b092e3b890c2957ec9"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "Creo que a nadie le gust que les digan qu ehacer... mejor que te propongas los ecpertos que hacer",
+   "fecha": "2026-10-03"
+  },
+  {
+   "n": 5,
+   "src": "laminas/mesa-vacia-g1/L5.png",
+   "dice": "La familia pone el terreno. El equipo, todo lo demás.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-10-03/L5-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-10-03/L5-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota al ser un texto totalmente concreto y directo sobre los metros cuadrados permitidos por la norma, eliminando la vaguedad anterior y alineando la",
+     "dice": "Proponemos calcular cuántos metros cuadrados permite la norma en tu suelo.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "44fdcf3fc65c34609a4762fbbe37bb9f"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-10-03/L5-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-10-03/L5-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota al ser un texto más concreto sobre la labor de Miguel y propone una composición distinta centrada en el análisis técnico del terreno.",
+     "dice": "Miguel analiza sobre el plano los metros cuadrados y los accesos viales.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "f7480991d04eb99486f366733ad9ab80"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "La imagen no cuadra con el texto. El texto no engancha. Texto más concreto, menos vago",
+   "fecha": "2026-10-03"
+  },
+  {
+   "n": 6,
+   "src": "laminas/mesa-vacia-g1/L6.png",
+   "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-30/L6-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-30/L6-2.png",
+     "titulo": "B",
+     "texto": "Integra directamente el Plan de Potencial Personalizado para empujar la acción según la promesa de la pieza.",
+     "dice": "Miguel mostró el Plan de Potencial Personalizado y todos vimos con claridad.",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "c4681634b4a415e0eab6f3d1f4bcef42"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "B pero creo qu enoe stamos engfocados en el plan de potenicla al igual que lo demas revis abien de que se trata y ayyduame ahcerlo bien",
+   "fecha": "2026-09-30"
+  },
+  {
+   "n": 7,
+   "src": "laminas/mesa-vacia-g1/L7.png",
+   "dice": "Esta silla es la tuya.",
+   "estado": "rehecha",
+   "versiones": [],
+   "version": 1,
+   "candidatas": [
+    {
+     "src": "laminas/mesa-vacia-n2026-09-30/L7-1.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-30/L7-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota eliminando preguntas, afirmando nuestra propuesta y avanzando el relato hacia el cálculo exacto.",
+     "dice": "Proponemos calcular exactamente los metros cuadrados permitidos por la norma en Hermosillo.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "b344bc1d438630758caea4d34ad8e25a"
+    },
+    {
+     "src": "laminas/mesa-vacia-n2026-09-30/L7-2.jpg",
+     "original": "laminas/mesa-vacia-n2026-09-30/L7-2.png",
+     "titulo": "B",
+     "texto": "Atiende la nota al eliminar la pregunta y avanzar el relato con una afirmación cálida y propositiva.",
+     "dice": "Aquí cabe el proyecto que une a todos.",
+     "motor": "cloudflare",
+     "cerebro": "gemini",
+     "huella": "6c1a17ab804917a9b9fd0df4ed58b72e"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "El texto no engancha... demasiadas preguntas no es unrealto e sun cuestionario... tomalo en cuenta para todas las lamians",
+   "fecha": "2026-09-30"
+  }
+ ],
+ "decidir": [
+  2,
+  3,
+  4,
+  5
+ ],
+ "mapa": {
+  "1": 2,
+  "2": 3,
+  "3": 4,
+  "4": 5
+ },
+ "base": "mesa-vacia-nube-2026-09-30-fb43c0",
+ "guion": "",
+ "titulo": "La Mesa Vacía · rehechas con tus notas (4)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de mesa-vacia-nube-2026-09-30-fb43c0",
+ "fecha": "2026-10-03"
+}
