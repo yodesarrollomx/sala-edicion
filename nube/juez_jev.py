@@ -12,10 +12,9 @@ Qué pregunta, por lámina (sólo texto — Jev no ve imágenes):
   · coherencia (sí/no): ¿lo que se ve ilustra lo que se dice?
 
 **Instalado el 3-oct-2026 sin probar contra la API real**: la cuenta y la llave aún no
-existían. Endpoint y forma según la documentación pública (POST
-https://api.typesafe.ai/v1/systemone, Bearer; preguntas Noul/Choice/Score). Si el SDK oficial
-`typesafe_sdk` está instalado se usa ése; si no, HTTP directo. Sin `TYPESAFE_API_KEY` sale con
-código 0 y lo dice — no es un fallo, es que todavía no se da de alta.
+existían. La forma de la petición sigue la referencia oficial (docs.typesafe.ai/api.md, leída
+ese día), en HTTP directo. Sin `TYPESAFE_API_KEY` sale con código 0 y lo dice — no es un
+fallo, es que todavía no se da de alta. Claridad es un Score de 3 niveles (0–2): 2 = claro.
 """
 
 import glob
@@ -31,52 +30,55 @@ TIRAS = RAIZ / 'datos' / 'tiras'
 URL = 'https://api.typesafe.ai/v1/systemone'
 MAX_LAMINAS = int(os.environ.get('JUEZ_MAX', '40'))     # cuida el crédito gratis
 
+MODELO = os.environ.get('JEV_MODELO', 'jev-latest')
+
+# Forma según https://docs.typesafe.ai/api.md (leída el 3-oct-2026): state estructurado,
+# `model` obligatorio, Noul con criteria true/false, Score con niveles ordenados (2–10).
 PREGUNTAS = {
-    'sujeto_primero': ('noul', 'Does the visual description start with the concrete subject '
-                       'that the slide text names (not with the neighbourhood or context)?'),
-    'coherencia': ('noul', 'Does the visual description actually illustrate what the slide '
-                   'text says?'),
-    'claridad': ('score', 'Rate 0-10 how clearly the slide text reads in one pass, in plain '
-                 'Spanish, for a family in Hermosillo who owns an empty lot.'),
+    'sujeto_primero': {
+        'type': 'noul',
+        'instructions': 'Does `lamina.ve` (the visual description) open with the concrete '
+                        'subject that `lamina.dice` (the slide text) names, rather than with '
+                        'the neighbourhood or general context?',
+        'criteria': {'true': 'The first thing described is the subject the text talks about',
+                     'false': 'It opens with setting/context and the subject comes later or '
+                              'is missing'}},
+    'coherencia': {
+        'type': 'noul',
+        'instructions': 'Would an image matching `lamina.ve` clearly illustrate what '
+                        '`lamina.dice` says?',
+        'criteria': {'true': 'The image shows what the text says',
+                     'false': 'The image is about something else or contradicts the text'}},
+    'claridad': {
+        'type': 'score',
+        'instructions': 'How clearly does `lamina.dice` read in one pass, in plain Spanish, '
+                        'for a family in Hermosillo who owns an empty lot?',
+        'criteria': ['Confusing: needs rereading or uses jargon',
+                     'Understandable with some effort',
+                     'Clear on first read, plain words']},
 }
 
 
 def _estado(lam):
-    return ('TEXTO DE LA LÁMINA (dice): %s\nDESCRIPCIÓN VISUAL (ve): %s\nQUÉ DEBE ENTENDER '
-            '(entiende): %s' % (lam.get('dice', ''), lam.get('ve', ''), lam.get('entiende', '')))
+    return {'lamina': {k: lam.get(k, '') for k in ('dice', 've', 'entiende')},
+            'contexto': 'Slide of a real-estate development carousel/reel in Hermosillo, '
+                        'Sonora; audience: families who own an empty urban lot.'}
 
 
-def _con_sdk(estado):
-    from typesafe_sdk import Noul, Score, TypeSafeClient
-    q = {k: (Noul(instructions=t) if tipo == 'noul' else Score(instructions=t))
-         for k, (tipo, t) in PREGUNTAS.items()}
-    r = TypeSafeClient().system_one(state=estado, questions=q)
-    out = {}
-    for k, (tipo, _) in PREGUNTAS.items():
-        a = r.answers[k]
-        out[k] = getattr(a, 'noul', None) if tipo == 'noul' else getattr(a, 'score', None)
-    return out
-
-
-def _con_http(estado, llave):
-    cuerpo = {'state': estado,
-              'questions': {k: {'type': tipo, 'instructions': t}
-                            for k, (tipo, t) in PREGUNTAS.items()}}
+def juzgar(estado, llave):
+    cuerpo = {'state': estado, 'model': MODELO, 'questions': PREGUNTAS}
     pet = urllib.request.Request(URL, data=json.dumps(cuerpo).encode(), method='POST',
                                  headers={'Authorization': 'Bearer ' + llave,
                                           'Content-Type': 'application/json'})
     with urllib.request.urlopen(pet, timeout=60) as r:
-        datos = json.loads(r.read().decode())
-    res = datos.get('answers', datos)
-    return {k: (v.get('noul', v.get('score', v)) if isinstance(v, dict) else v)
-            for k, v in res.items()}
-
-
-def juzgar(estado, llave):
-    try:
-        return _con_sdk(estado)
-    except ImportError:
-        return _con_http(estado, llave)
+        resp = json.loads(r.read().decode())
+    out = {}
+    for k, a in resp['answers'].items():
+        valor = a.get('noul', a.get('score'))
+        out[k] = round(valor, 2) if isinstance(valor, (int, float)) else valor
+        if 'confidence' in a:
+            out[k + '_confianza'] = round(a['confidence'], 2)
+    return out
 
 
 def propuestas():
