@@ -326,10 +326,12 @@ def prueba_contenido_ubicaciones():
     import importlib.util
     import subprocess
     import unittest
-    spec = importlib.util.spec_from_file_location('contenido_reglas_test', RAIZ / 'tests/contenido_reglas_test.py')
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    suite = unittest.defaultTestLoader.loadTestsFromModule(module)
+    suite = unittest.TestSuite()
+    for nombre in ('contenido_reglas_test', 'activar_regla_contenido_test'):
+        spec = importlib.util.spec_from_file_location(nombre, RAIZ / ('tests/' + nombre + '.py'))
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        suite.addTests(unittest.defaultTestLoader.loadTestsFromModule(module))
     result = unittest.TestResult()
     suite.run(result)
     for test, error in result.errors + result.failures:
