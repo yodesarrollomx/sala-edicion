@@ -1,0 +1,32 @@
+# Juez Jev: segunda opinión sobre las láminas propuestas. Sólo opina (no toca el Sheet).
+# Sin el secret TYPESAFE_API_KEY corre y sale limpio diciendo que falta darlo de alta.
+name: Juez Jev (opinión sobre láminas)
+
+on:
+  schedule:
+    - cron: '40 12 * * *'        # 5:40 Hermosillo, antes de la mesa del día
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  juez:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet typesafe-sdk || echo "sin SDK oficial: se usa HTTP directo"
+      - name: Juzgar láminas propuestas
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: python3 nube/juez_jev.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: juez-jev
+          path: juez-jev.json
+          if-no-files-found: ignore
