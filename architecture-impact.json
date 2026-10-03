@@ -1,21 +1,17 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
-  "proposal_id": "CHG-CHINCHES-CIERRE-001",
-  "summary": "Completar #49 con parche mínimo sobre GAS-SALA vigente: guardia antes de handlers tempranos ideas/arbol, respetando roles originales incluido editor2. Publicar fuente privada respaldada, verificar versión exacta y comprobar rechazo sin lista de propuestas insertable.",
+  "proposal_id": "CHG-SALA-JUEZ-JEV-001",
+  "summary": "Juez Jev (TypeSafe System One): workflow diario que da una segunda opinión de texto sobre las láminas propuestas (sujeto primero, coherencia, claridad). Sólo opina: no escribe en el Sheet ni decide (INVIOLABLE 3); deja resumen del job y artifact. Sin el secret TYPESAFE_API_KEY sale limpio.",
   "components": [
     "SYS-SALA",
-    "GAS-SALA",
-    "SHEET-SALA",
-    "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-MOTORES-MEDIA"
   ],
   "tests": [
     "git diff --check",
     "python3 nube/verificar.py",
-    "SALA_GAS_SOURCE=<candidato privado> node --test tests/contenido-reglas.test.cjs",
-    "Parche inverso exacto: retirar únicamente dos inserciones recupera fuente vigente byte por byte",
-    "Verificar contenido inmutable y editor, misma implementación/permisos/manifiesto; solicitud sintética de rechazo con propuestas objeto (no lista insertable)"
+    "TYPESAFE_API_KEY= python3 nube/juez_jev.py (sale 0 avisando que falta la llave)",
+    "Detección local: 20 láminas propuestas en datos/tiras"
   ],
-  "rollback": "Restaurar versión71 en la misma implementación y fuente del editor previa, solo si no existe cambio concurrente; no restaurar ni borrar datos de negocio. Revertir cambios Git por PR."
+  "rollback": "Revertir el PR (borra nube/juez_jev.py y .github/workflows/sala-juez-jev.yml). No toca datos de negocio ni el Sheet."
 }
