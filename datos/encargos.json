@@ -135,165 +135,165 @@
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/34"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1027-2055\", \"texto\": \"Aquí por ejemplo me está saliendo Real Miramar cuando debería de estar anclado Real Miramar a dentro de los desarrollosEntonces creo que aquí no debería estarEn cambio lo que me gustaría hacer es hacer como un WordMío digamos de Post It donde yo tenga libertad de cambiarLo que significa el cuadrante X el cual entregué y que me dejes poner muchos postes y los pueda mover solo yo es un tablero que sólo me da para hacer a mí entonces un post es que yo le puedo escribir y que se le picó el puedo entrar como un Notion a una versión más sofisticada es por ejemplo si veo que hago un cruce pendiente o lo que sea en en en Y y en X son personas puedo ponerle por ejemplo a Fernando un Post It donde me digaRevisar con élEl cambio de losPermisos no sé un ejemplo y ahí le pico y ahí te voy a poder dar igual chinche si te puedes ir aquí por tal cosa y aquí escribe tal cosa entonces cuando ya termine los puedo clavar en terminados o o los poniendo entonces quiero unaAlgo virtual pero como un en los meseros con las comandas cuando terminan de pagar de cuenta el van y la ponen con una una madera con un clavo o no como un clip entonces van juntan todas las comandas como lasContabilidad de comandas y cualquier cosa pueden volver a ella entonces eso me refiero también cuando ya hemos terminado la pasamos allá pero no se queman pues no siempre tengo ese archivero visual este todo esto lo quiero ser muy visual como si en verdad fueron un tablero completo entonces haz el primer cambio y ayúdame\"}",
-   "estado": "en curso",
+   "que": "{\"id\": \"CHN-20260928-1027-2055\", \"texto\": \"📌 yod-despacho/despacho · Aquí por ejemplo me está saliendo Real Miramar cuando debería de estar\"}",
+   "estado": "cumplida",
    "cuando": "2026-09-28",
    "tomado": "20:51",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/35"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1246-3915\", \"texto\": \"[despacho/tareas-vencidas] DECISIÓN ADELANTE: 5 tareas vencidas: A-058 Mariana 14 d · A-158/A-128/A-095 Sayri · A-155 Claude → Recordatorio a responsables y nueva fecha; Claude cierra A-155.\"}",
+   "que": "{\"id\": \"CHN-20260928-1246-3915\", \"texto\": \"📌 yod-despacho/decisiones · decisión ADELANTE (tareas del tablero) — detalle en privado\"}",
    "estado": "en curso",
    "cuando": "2026-09-28",
    "tomado": "20:51",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/36"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1246-b399\", \"texto\": \"[despacho/bbva-4a] DECISIÓN NO: Borrador BBVA · 4a ministración (15-sep) sin enviar → Revisar datos y enviarlo.\"}",
+   "que": "{\"id\": \"CHN-20260928-1246-b399\", \"texto\": \"📌 yod-despacho/decisiones · decisión NO (correo) — detalle en privado\"}",
    "estado": "cumplida",
    "cuando": "2026-09-28",
    "tomado": "20:51",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/37"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1246-c960\", \"texto\": \"[despacho/conejo-14-15] DECISIÓN ADELANTE: Rescisión Lotes 14 y 15 Cerrada del Conejo — Ofelia respondió el 21-sep → Claude redacta respuesta a Ofelia como borrador para tu revisión.\"}",
-   "estado": "en curso",
+   "que": "{\"id\": \"CHN-20260928-1246-c960\", \"texto\": \"📌 yod-despacho/decisiones · decisión ADELANTE (asunto legal) — detalle en privado\"}",
+   "estado": "cumplida",
    "cuando": "2026-09-28",
    "tomado": "20:51",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/38"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1246-dde2\", \"texto\": \"[despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto y probado; falta confirmar que el viejo «yod-sala-nube» está borrado → Entrar a huggingface.co → Settings → Access Tokens y borrar «yod-sala-nube» si sigue ahí.\"}",
+   "que": "{\"id\": \"CHN-20260928-1246-dde2\", \"texto\": \"📌 yod-despacho/decisiones · decisión (seguridad) — duplicado, detalle en privado\"}",
    "estado": "cumplida",
    "cuando": "2026-09-28",
    "tomado": "20:51",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/39"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1247-2326\", \"texto\": \"[despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto y probado; falta confirmar que el viejo «yod-sala-nube» está borrado → Entrar a huggingface.co → Settings → Access Tokens y borrar «yod-sala-nube» si sigue ahí.\"}",
+   "que": "{\"id\": \"CHN-20260928-1247-2326\", \"texto\": \"📌 yod-despacho/decisiones · decisión (seguridad) — duplicado, detalle en privado\"}",
    "estado": "cumplida",
    "cuando": "2026-09-28",
    "tomado": "20:51",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/40"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1247-bb22\", \"texto\": \"[despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto y probado; falta confirmar que el viejo «yod-sala-nube» está borrado → Entrar a huggingface.co → Settings → Access Tokens y borrar «yod-sala-nube» si sigue ahí.\"}",
-   "estado": "en curso",
+   "que": "{\"id\": \"CHN-20260928-1247-bb22\", \"texto\": \"📌 yod-despacho/decisiones · decisión (seguridad) — detalle en privado\"}",
+   "estado": "cumplida",
    "cuando": "2026-09-28",
    "tomado": "20:52",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/41"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1539-012e\", \"texto\": \"por ejemplo me estás poniendo ahí todo el texto que puse literal cuando no debe ser así debes de poner un resumen y muchas veces te pongo como tarea muchas tareas no la tienes que subdividir por temas y pensar Así que antes de El de decir que ya terminaste corriste el código que hace que mande directamente la tarea sin pensarla o desglosarla para entender En qué parte del moac encarga encaja en vez de dedicármelo a mí después chistes que me automatices\"}",
+   "que": "{\"id\": \"CHN-20260928-1539-012e\", \"texto\": \"📌 board-aurum/index · por ejemplo me estás poniendo ahí todo el texto que puse literal cuand\"}",
    "estado": "cumplida",
-   "cuando": "2026-09-28",
+   "cuando": "2026-09-29",
    "tomado": "01:17",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/42"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1608-0c1a\", \"texto\": \"[despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto y probado; falta confirmar que el viejo «yod-sala-nube» está borrado → Entrar a huggingface.co → Settings → Access Tokens y borrar «yod-sala-nube» si sigue ahí.\"}",
-   "estado": "en curso",
-   "cuando": "2026-09-28",
+   "que": "{\"id\": \"CHN-20260928-1608-0c1a\", \"texto\": \"📌 yod-despacho/decisiones · [despacho/seg-hf] DECISIÓN ADELANTE: Hugging Face: token nuevo puesto \"}",
+   "estado": "cumplida",
+   "cuando": "2026-09-29",
    "tomado": "01:17",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/43"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1608-eecd\", \"texto\": \"[despacho/sala-mesa] DECISIÓN ADELANTE: 14–15 propuestas de hoy esperan en la mesa → Aprobar en bloque las que pasan reglas y mandar a producir.\"}",
+   "que": "{\"id\": \"CHN-20260928-1608-eecd\", \"texto\": \"📌 yod-despacho/decisiones · [despacho/sala-mesa] DECISIÓN ADELANTE: 14–15 propuestas de hoy espera\"}",
    "estado": "en curso",
-   "cuando": "2026-09-28",
+   "cuando": "2026-09-29",
    "tomado": "01:17",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/44"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1609-6442\", \"texto\": \"[despacho/bbva-4a] DECISIÓN ADELANTE: Borrador BBVA · 4a ministración (15-sep) sin enviar → Revisar datos y enviarlo.\"}",
-   "estado": "en curso",
-   "cuando": "2026-09-28",
+   "que": "{\"id\": \"CHN-20260928-1609-6442\", \"texto\": \"📌 yod-despacho/decisiones · [despacho/bbva-4a] DECISIÓN ADELANTE: Borrador BBVA · 4a ministración \"}",
+   "estado": "cumplida",
+   "cuando": "2026-09-29",
    "tomado": "01:17",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/45"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1609-dff6\", \"texto\": \"[despacho/conejo-14-15] DECISIÓN ADELANTE: Rescisión Lotes 14 y 15 Cerrada del Conejo — Ofelia respondió el 21-sep → Claude redacta respuesta a Ofelia como borrador para tu revisión.\"}",
-   "estado": "en curso",
-   "cuando": "2026-09-28",
+   "que": "{\"id\": \"CHN-20260928-1609-dff6\", \"texto\": \"📌 yod-despacho/decisiones · [despacho/conejo-14-15] DECISIÓN ADELANTE: Rescisión Lotes 14 y 15 Cer\"}",
+   "estado": "cumplida",
+   "cuando": "2026-09-29",
    "tomado": "01:18",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/46"
   },
   {
-   "que": "{\"id\": \"CHN-20260928-1930-abdd\", \"texto\": \"aquí quién debe de regir es el cus de lo que estamos proponiendo entonces esa es la variable que nos debe dejar máximo ahora también no le estamos poniendo antes el porcentaje de Pasillos vamos a poner solo en porcentaje a los pasillos Y eso nos va a dejar los metros cuadrados rentables que podemos en realidad tener Y eso dividido entre el número de puertos o departamentos nos va a arrojar el tamaño promedio de departamento Así que ayúdame a corregir eso para que salga bien el tablero igual échale un ojo a todo este tablero para poder calcular y también por ejemplo ahí en el tema es que algunos Creo que van a ser locales comerciales Y estos van a ser poder ser rentados a diferente precio al igual que los departamentos entonces a la hora de que le pones a extender Dale la opción de que sea departamento o comercial y vemos los tamaños de departamentos pero primero necesito que me hagas el promedio para saber eso\"}",
-   "estado": "en curso",
-   "cuando": "2026-09-28",
+   "que": "{\"id\": \"CHN-20260928-1930-abdd\", \"texto\": \"📌 potenciales-yod/patrimonial · aquí quién debe de regir es el cus de lo que estamos proponiendo enton\"}",
+   "estado": "cumplida",
+   "cuando": "2026-09-29",
    "tomado": "05:22",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/47"
   },
   {
    "que": "{\"id\": \"CHN-20260929-0735-6e84\", \"texto\": \"No se ve nada en esta pantalla está todo negro o un error como que el el está tratando de programar el despacho completo o algo yo quiero que retomes no como lo antiguo no como lo propones sino una mejor versión actualizadaDonde en realidad funciona el despacho con el con el diagrama de sistema que que él tenía pero por favor ayúdame a que salga así\"}",
    "estado": "cumplida",
-   "cuando": "2026-09-29",
+   "cuando": "2026-10-01",
    "tomado": "19:40",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/48"
   },
   {
-   "que": "{\"id\": \"CHN-20260930-1101-4ef0\", \"texto\": \"me sigues me sigues presentando palabras como Hermosillo Sonora o México en publicaciones así que por favor ayúdame a generar eso como una regla de que no se pueden usar esas palabras a la hora de producción genera tú los cambios que necesitas generar en tu procesamiento Pero ayúdame que eso quede claro\"}",
-   "estado": "en curso",
+   "que": "{\"id\": \"CHN-20260930-1101-4ef0\", \"texto\": \"me sigues me sigues presentando palabras como Hermosillo Sonora o Méxi\"}",
+   "estado": "cumplida",
    "cuando": "2026-09-30",
    "tomado": "21:02",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/49"
   },
   {
-   "que": "{\"id\":\"CHN-20260930-1941-268e\",\"texto\":\"📌 potenciales-yod/macrolotes · No entiendo lo de las versiones como que estás mezclando varias cosasN\"}",
+   "que": "{\"id\": \"CHN-20260930-1941-268e\", \"texto\": \"📌 potenciales-yod/macrolotes · No entiendo lo de las versiones como que estás mezclando varias cosasN\"}",
    "estado": "cumplida",
    "cuando": "2026-10-01",
    "tomado": "07:49",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/57"
   },
   {
-   "que": "{\"id\":\"CHN-20260930-1941-7b9f\",\"texto\":\"📌 potenciales-yod/macrolotes · No entiendo lo de las versiones como que estás mezclando varias cosasN\"}",
+   "que": "{\"id\": \"CHN-20260930-1941-7b9f\", \"texto\": \"📌 potenciales-yod/macrolotes · No entiendo lo de las versiones como que estás mezclando varias cosasN\"}",
    "estado": "cumplida",
    "cuando": "2026-10-01",
    "tomado": "07:49",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/58"
   },
   {
-   "que": "{\"id\":\"CHN-20260930-1941-dcea\",\"texto\":\"📌 potenciales-yod/macrolotes · No entiendo lo de las versiones como que estás mezclando varias cosasN\"}",
+   "que": "{\"id\": \"CHN-20260930-1941-dcea\", \"texto\": \"📌 potenciales-yod/macrolotes · No entiendo lo de las versiones como que estás mezclando varias cosasN\"}",
    "estado": "cumplida",
    "cuando": "2026-10-01",
    "tomado": "07:50",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/59"
   },
   {
-   "que": "{\"id\":\"CHN-20260930-2130-5eb2\",\"texto\":\"📌 potenciales-yod/index · Por ejemplo aquí lo que me gustaría que integraras que ya lo había pue\"}",
+   "que": "{\"id\": \"CHN-20260930-2130-5eb2\", \"texto\": \"📌 potenciales-yod/index · Por ejemplo aquí lo que me gustaría que integraras que ya lo había pue\"}",
    "estado": "cumplida",
    "cuando": "2026-10-01",
    "tomado": "07:50",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/60"
   },
   {
-   "que": "{\"id\":\"CHN-20261001-1109-1127\",\"texto\":\"📌 potenciales-yod/mixto · Creo que está medio raroTiene como que icono en realidadNo está refere\"}",
+   "que": "{\"id\": \"CHN-20261001-1109-1127\", \"texto\": \"Creo que está medio raroTiene como que icono en realidadNo está referenciándome nada o sea no es un infográficoQue esté diciéndome algo cada logo pues o cada cada gráfico de la tarjeta tiene que estar geo referenciado a digamos los capéis que tienes adentro de la tarjetaAsí es un gráfico único cada uno de ellos 298.77 pico de deuda peroTal vez hay una relación que no estamos viendo entrePico de deudaY utilidad o o garantía o no sé cuál sería la mejor café y que deberías de poner ahí pero que en vez de un café y sólido pues fuera como un gráficoQue pudiera verse diferente dependiendo en los múltiples factores adentro de esa tarjeta\"}",
    "estado": "cumplida",
    "cuando": "2026-10-01",
    "tomado": "20:33",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/74"
   },
   {
-   "que": "{\"id\":\"CHN-20261001-1109-9575\",\"texto\":\"📌 potenciales-yod/mixto · Creo que está medio raroTiene como que icono en realidadNo está refere\"}",
+   "que": "{\"id\": \"CHN-20261001-1109-9575\", \"texto\": \"Creo que está medio raroTiene como que icono en realidadNo está referenciándome nada o sea no es un infográficoQue esté diciéndome algo cada logo pues o cada cada gráfico de la tarjeta tiene que estar geo referenciado a digamos los capéis que tienes adentro de la tarjetaAsí es un gráfico único cada uno de ellos 298.77 pico de deuda peroTal vez hay una relación que no estamos viendo entrePico de deudaY utilidad o o garantía o no sé cuál sería la mejor café y que deberías de poner ahí pero que en vez de un café y sólido pues fuera como un gráficoQue pudiera verse diferente dependiendo en los múltiples factores adentro de esa tarjeta\"}",
    "estado": "cumplida",
    "cuando": "2026-10-01",
    "tomado": "20:33",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/75"
   },
   {
-   "que": "{\"id\":\"CHN-20261001-1208-566d\",\"texto\":\"📌 potenciales-yod/mixto · Qué pasóAntes me salía el nombre de el proyecto y arriba y todo eso us\"}",
+   "que": "{\"id\": \"CHN-20261001-1208-566d\", \"texto\": \"Qué pasóAntes me salía el nombre de el proyecto y arriba y todo eso usa los datos sólo de Excel que tenemos revisa bien tu tu domi que hicieron en en pizarrón los los analistas para ver qué te está faltando y qué debía estar haciendo y qué debería ser más animado más gráficoVamos con eso adelante\"}",
    "estado": "cumplida",
    "cuando": "2026-10-01",
    "tomado": "20:33",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/76"
   },
   {
-   "que": "{\"id\":\"CHN-20261001-2017-6536\",\"texto\":\"📌 potenciales-yod/mixto · Proporciones visibles en los indicadores de cada tarjeta\"}",
+   "que": "{\"id\": \"CHN-20261001-2017-6536\", \"texto\": \"Creo que aquí está bien, empieza a haberse padre eso lo del terreno, yo ya lo empiezo a entender cómo está dimensionado y eso me permite conocer más cosas pero en enlace o sea en los textos que están ahí alternos en vez de qué sean textos y un número busca que también sean parte de un mismo infográfico para que sea gráfico. Puedes usar números, pero que el número tenga más bien que el gráfico tenga relevancia con el número para decir que es un 85%, pero no sé si es una casa de la que estamos hablando se vea llena o se vea terminada al 85% entonces tiene que ver relación si está bien el número más sin embargo, no me necesitas explicar tanto texto pero quiero ser más visual Hora de los gráficos, así como en el primer tarjeta como en todas\"}",
    "estado": "cumplida",
    "cuando": "2026-10-02",
-   "tomado": "04:14",
-   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/82"
+   "tomado": "06:16",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/86"
   }
  ]
 }
