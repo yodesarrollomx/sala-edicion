@@ -1,16 +1,21 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-CHINCHES-CIERRE-001",
-  "summary": "Refrescar sólo doce IDs de chinches conciliados como completados en datos/encargos.json, con confirmación de eventos de la fuente de verdad y lectura actual de sus issues. Conservar todos los otros registros y campos existentes; el agente no decide ni ejecuta el puente o producción editorial.",
+  "summary": "Activar y releer el veto editorial de #49 mediante el contrato existente REGLAS y su workflow manual. Conservar términos previos y tres vetos mínimos; abortar ante lecturas inválidas o cambio concurrente observado. No producir contenido ni acreditar despliegue GAS.",
   "components": [
     "SYS-SALA",
-    "SHEET-SALA"
+    "GAS-SALA",
+    "SHEET-SALA",
+    "SVC-SALA-PRODUCTOR",
+    "SVC-SALA-EJECUTOR",
+    "EXT-MOTORES-MEDIA"
   ],
   "tests": [
     "git diff --check",
-    "Comparación por ID: doce estados cumplida, cuatro actualizaciones y ocho altas desde metadata pública; demás registros y campos preservados",
-    "python3 nube/verificar.py; sin red ni escrituras de negocio",
-    "CI del head exacto y publicación Pages; cotejo del JSON servido y estados usados por Tus recados/Línea"
+    "python3 -m unittest discover -s tests -p activar_regla_contenido_test.py",
+    "python3 nube/verificar.py",
+    "node --test tests/contenido-reglas.test.cjs",
+    "Workflow manual: configuración real por accion=regla y lectura posterior exacta; sin publicar contenido. El backend GAS sigue pendiente de identidad/despliegue."
   ],
-  "rollback": "Revertir por PR este refresco del espejo JSON y repetir las verificaciones; no alterar eventos, etiquetas, issues cerrados ni registros de la fuente de verdad."
+  "rollback": "Revertir por PR el auxiliar/workflow y repetir checks. La regla es mandato vigente del propietario: no retirar vetos ni restaurar datos operativos. Una lectura concurrente evita la escritura antes de enviar, pero el contrato existente no ofrece CAS atómico."
 }
