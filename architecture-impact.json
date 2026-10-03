@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-CHINCHES-CIERRE-001",
-  "summary": "Activar y releer el veto editorial de #49 mediante el contrato existente REGLAS y su workflow manual. Conservar términos previos y tres vetos mínimos; abortar ante lecturas inválidas o cambio concurrente observado. No producir contenido ni acreditar despliegue GAS.",
+  "summary": "Completar #49 con parche mínimo sobre GAS-SALA vigente: guardia antes de handlers tempranos ideas/arbol, respetando roles originales incluido editor2. Publicar fuente privada respaldada, verificar versión exacta y comprobar rechazo sin lista de propuestas insertable.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -12,10 +12,10 @@
   ],
   "tests": [
     "git diff --check",
-    "python3 -m unittest discover -s tests -p activar_regla_contenido_test.py",
     "python3 nube/verificar.py",
-    "node --test tests/contenido-reglas.test.cjs",
-    "Workflow manual: configuración real por accion=regla y lectura posterior exacta; sin publicar contenido. El backend GAS sigue pendiente de identidad/despliegue."
+    "SALA_GAS_SOURCE=<candidato privado> node --test tests/contenido-reglas.test.cjs",
+    "Parche inverso exacto: retirar únicamente dos inserciones recupera fuente vigente byte por byte",
+    "Verificar contenido inmutable y editor, misma implementación/permisos/manifiesto; solicitud sintética de rechazo con propuestas objeto (no lista insertable)"
   ],
-  "rollback": "Revertir por PR el auxiliar/workflow y repetir checks. La regla es mandato vigente del propietario: no retirar vetos ni restaurar datos operativos. Una lectura concurrente evita la escritura antes de enviar, pero el contrato existente no ofrece CAS atómico."
+  "rollback": "Restaurar versión71 en la misma implementación y fuente del editor previa, solo si no existe cambio concurrente; no restaurar ni borrar datos de negocio. Revertir cambios Git por PR."
 }

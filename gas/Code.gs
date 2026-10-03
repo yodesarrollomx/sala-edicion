@@ -332,6 +332,14 @@ function contenidoVetado_(dato) {
   revisar(dato, 'contenido');
   return fallas.join('; ');
 }
+function validarContenidoEntrada_(d) {
+  if (!d || ['proponer', 'ideas', 'arbol'].indexOf(d.accion) < 0) return '';
+  var rolContenido = rolDe(d.clave);
+  var permitidos = d.accion === 'proponer' ? ['agente', 'editor'] : ['agente', 'editor', 'editor2'];
+  // No conceder acceso: los handlers originales siguen autorizando cada operación.
+  if (permitidos.indexOf(rolContenido) < 0) return '';
+  return contenidoVetado_(d.accion === 'proponer' ? (d.propuestas || []) : (d.filas || []));
+}
 var _FECHAS = {}; var _RECALENTAR = null;
 function fechaDe(v) {
   // a prueba de zonas: medianoche de CUALQUIER zona +12 h cae en la fecha correcta en UTC
@@ -749,6 +757,10 @@ function armarDia_(f) {
 /* ------------------------------------------------ escritura */
 function doPost(e) {
   var d; try { d = JSON.parse(e.postData.contents); } catch (err) { return json({ error: 'cuerpo ilegible' }); }
+  // #49: validar antes de cachés y de los handlers tempranos de ideas/árbol.
+  var contenidoError = validarContenidoEntrada_(d);
+  if (contenidoError) return json({ error: 'contenido inválido: requiere reescritura',
+    codigo: 'contenido_vetado', detalle: contenidoError });
   if (d && d.accion && d.accion !== 'entrada') { invalidarDia_(d.fecha || d.dia); _RECALENTAR = d.fecha || d.dia || hoy(); }   // lo que se escribe se ve en la siguiente lectura
   // «mándame mi entrada» NO pide clave: es justo para cuando ya no la tienes.
   // No revela nada: el correo va SOLO a la dirección de CONFIG.
@@ -994,16 +1006,6 @@ function doPost(e) {
     try { var kk = String(d.clave || ''); bitacora('Envío rechazado: credencial no reconocida',
       (d.accion || '') + ' · clave ' + kk.slice(0, 3) + '…(' + kk.length + ')'); } catch (e0) {}
     return json({ error: 'no reconocí tu entrada (credencial no válida o sin acceso a la Sala)' });
-  }
-
-  // Compuerta de recepción para todos los lotes de contenido nuevo, antes de sus handlers.
-  // Las operaciones de ideas/árbol de la fuente activa conservan su implementación;
-  // este espejo no debe usarse para reemplazar código activo sin comparar versiones.
-  if (['proponer', 'ideas', 'arbol'].indexOf(d.accion) >= 0 &&
-      (rol === 'agente' || rol === 'editor')) {
-    var contenidoError = contenidoVetado_(d.accion === 'proponer' ? (d.propuestas || []) : (d.filas || []));
-    if (contenidoError) return json({ error: 'contenido inválido: requiere reescritura',
-      codigo: 'contenido_vetado', detalle: contenidoError });
   }
 
   if (d.accion === 'decidir') {
