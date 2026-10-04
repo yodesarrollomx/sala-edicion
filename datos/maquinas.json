@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-30 12:22",
+  "actualizado": "2026-10-04 12:38",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -172,10 +172,10 @@
       "hace": "Corre las pruebas y sube la Sala a GitHub Pages en cada guardado a main.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-30T18:17:49Z",
-      "dijo": "Publicar la Sala",
-      "salud": "bien",
-      "porque": "su última corrida salió bien hace 1 h"
+      "corrio": "2026-10-03T01:31:35Z",
+      "dijo": "Sala publicar · b6a28ea3885801818a6d5928d9776b1fb7f79028 · 37086428052",
+      "salud": "mal",
+      "porque": "lleva 42 h sin correr"
     },
     {
       "id": "nube:sala-cada-hora.yml",
@@ -183,7 +183,7 @@
       "hace": "Productor (cada hora), puente de chinches, ejecutor y este semáforo (cada 2 h).",
       "evita": "que un «sí» de la mesa no dispare nada y que las chinches no lleguen",
       "cuando": "cada hora",
-      "corrio": "2026-09-30T19:21:53Z",
+      "corrio": "2026-10-04T19:38:36Z",
       "dijo": "Sala · Cada hora",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
@@ -194,7 +194,7 @@
       "hace": "Monta la mesa (5:40), siembra y arranca (5:50) y rehace el respaldo espejo (6, 9, 12, 15 y 18 h).",
       "evita": "que la mesa amanezca vacía o la Sala sin plan B si el Sheet no contesta",
       "cuando": "5:40 a 18 h",
-      "corrio": "2026-09-30T18:15:40Z",
+      "corrio": "2026-10-04T19:19:07Z",
       "dijo": "Sala · Diario",
       "salud": "mal",
       "porque": "su última corrida falló"
@@ -205,10 +205,10 @@
       "hace": "Corre las pruebas del repo en cada pull request.",
       "evita": "aceptar un cambio roto",
       "cuando": "en cada pull request",
-      "corrio": "2026-09-25T01:16:14Z",
-      "dijo": "chinche #24 #25: la fábrica sin horario quieto en la Línea; «Va en» s…",
-      "salud": "mal",
-      "porque": "lleva 138 h sin correr"
+      "corrio": "2026-10-04T18:49:33Z",
+      "dijo": "Sala mesa: archivos generados (corrida 37225571446)",
+      "salud": "regular",
+      "porque": "terminó en «action_required»"
     }
   ]
 }
