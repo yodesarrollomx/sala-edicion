@@ -1,21 +1,15 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
-  "proposal_id": "CHG-CHINCHES-CIERRE-001",
-  "summary": "Completar #49 con parche mínimo sobre GAS-SALA vigente: guardia antes de handlers tempranos ideas/arbol, respetando roles originales incluido editor2. Publicar fuente privada respaldada, verificar versión exacta y comprobar rechazo sin lista de propuestas insertable.",
+  "proposal_id": "CHG-SALA-PUBLICACION-001",
+  "summary": "Actualizar archivos generados de Sala (mesa), corrida 37278312959, intento 1.",
   "components": [
     "SYS-SALA",
-    "GAS-SALA",
-    "SHEET-SALA",
-    "SVC-SALA-PRODUCTOR",
-    "SVC-SALA-EJECUTOR",
-    "EXT-MOTORES-MEDIA"
+    "GAS-SALA"
   ],
   "tests": [
-    "git diff --check",
-    "python3 nube/verificar.py",
-    "SALA_GAS_SOURCE=<candidato privado> node --test tests/contenido-reglas.test.cjs",
-    "Parche inverso exacto: retirar únicamente dos inserciones recupera fuente vigente byte por byte",
-    "Verificar contenido inmutable y editor, misma implementación/permisos/manifiesto; solicitud sintética de rechazo con propuestas objeto (no lista insertable)"
+    "python3 nube/verificar.py antes de crear el PR",
+    "JSON válido y rutas generadas permitidas antes del commit",
+    "Arquitectura YOD y todos los checks obligatorios sobre el head exacto"
   ],
-  "rollback": "Restaurar versión71 en la misma implementación y fuente del editor previa, solo si no existe cambio concurrente; no restaurar ni borrar datos de negocio. Revertir cambios Git por PR."
+  "rollback": "Revertir el commit mediante PR tras revisión; conservar los registros del Sheet y los planes de montaje."
 }
