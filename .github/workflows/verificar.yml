@@ -37,5 +37,7 @@ jobs:
         run: python3 -m unittest discover -s tests -p publicar_git_test.py
       - name: Pruebas de carga inicial de Hoy (sin red)
         run: node --test tests/sala-carga.test.cjs
+      - name: Pruebas de fotos publicadas, zoom y reintentos
+        run: node --test tests/sala-imagenes.test.cjs
       - name: Pruebas de conciliación de COLA con fechas de Sheets
         run: python3 -m unittest discover -s tests -p cola_salud_test.py -v
