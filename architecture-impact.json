@@ -1,17 +1,20 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Corrección específica de Sala: los PR creados por github-actions[bot] no disparan checks pull_request. Despachar manualmente Arquitectura YOD y Verificar la Sala sobre el SHA exacto y esperar su aprobación antes del merge. Tolerar propagación temporalmente vacía, sin omitir protecciones.",
+  "summary": "Endurecer la lectura fresca de Sala Relevo previa a publicar su respaldo espejo: el GET dia fresco dispone de dos intentos curl -L con 60 segundos de margen, sin duplicar una solicitud lenta con urllib. Mantener los datos y decisiones existentes, prohibir caché para el espejo y no escribir al fallar el GAS. No altera la fuente GAS ni los flujos de otros proyectos. Además, este PR corrige disparo explícito del verificador para PR creados por bot, con controles del SHA exacto.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p publicar_git_test.py",
+    "python3 -m unittest discover -s tests -p 'sala_cliente_test.py' -v (cinco casos sin red)",
     "python3 nube/verificar.py",
+    "git diff --check",
+    "Verificar CI Arquitectura YOD y Verificar la Sala en el commit exacto del PR",
+    "Prueba operativa pendiente: corrida real Sala Diario / Relevo con respuesta de GAS; comparar manifiesto previo y posterior antes de declarar resuelto",
+    "python3 -m unittest discover -s tests -p publicar_git_test.py",
     "Verificar check runs de Arquitectura YOD y verificar sobre el SHA exacto",
-    "No hacer merge cuando falta o falla cualquiera de los dos checks",
-    "git diff --check"
+    "No hacer merge cuando falta o falla cualquiera de los dos checks"
   ],
-  "rollback": "Revertir el PR sobre nube/publicar_git.py, tests/publicar_git_test.py y verificar.yml; no tocar Sheets, el respaldo, los PR preexistentes ni los permisos de producción."
+  "rollback": "Revertir los commits de este PR sin cambiar Apps Script ni datos de Google Sheets; conservar datos/manifiesto.json y comentarios históricos, verificar la ejecución del relevo anterior. Para revertir el publicador de bot, revertir únicamente este PR, sin revertir el GET fresco de Relevo."
 }
