@@ -300,6 +300,14 @@ def main():
                      'nota': 'La pieza completa. Sólo las láminas marcadas piden respuesta: en cada '
                              'una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».',
                      'origen': 'rehecha-de %s' % tid, 'fecha': hoy, 'base': tid})
+        # Las tiras históricas pueden traer términos que el editor vetó después.
+        # Comprobar la tira COMPLETA antes de crear archivos del PR. Nunca
+        # publicar imágenes nuevas si su contenido sería rechazado al montar.
+        try:
+            exigir(tira, reglas, 'tira propuesta')
+        except ContenidoVetado as e:
+            sala.avisar('⏸ %s: tira no publicable; %s' % (nombre, e))
+            continue
         carta = {'id': nueva_id, 'titulo': tira['titulo'], 'tipo': 'laminas',
                  'laminas': [portada(next(l for l in tira['laminas'] if l['n'] == n)) for n in decidir],
                  'opciones': [], 'video': None, 'origen': 'rehecha-de %s' % tid}
