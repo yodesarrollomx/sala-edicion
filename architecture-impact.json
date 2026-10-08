@@ -1,20 +1,16 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Endurecer la lectura fresca de Sala Relevo previa a publicar su respaldo espejo: el GET dia fresco dispone de dos intentos curl -L con 60 segundos de margen, sin duplicar una solicitud lenta con urllib. Mantener los datos y decisiones existentes, prohibir caché para el espejo y no escribir al fallar el GAS. No altera la fuente GAS ni los flujos de otros proyectos. Además, este PR corrige disparo explícito del verificador para PR creados por bot, con controles del SHA exacto.",
+  "summary": "Actualizar archivos generados de Sala (chinches), corrida 37717110584, intento 1. Revisión técnica: recuperar comprobaciones vinculadas al PR para no saltar la protección de main.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p 'sala_cliente_test.py' -v (cinco casos sin red)",
-    "python3 nube/verificar.py",
-    "git diff --check",
-    "Verificar CI Arquitectura YOD y Verificar la Sala en el commit exacto del PR",
-    "Prueba operativa pendiente: corrida real Sala Diario / Relevo con respuesta de GAS; comparar manifiesto previo y posterior antes de declarar resuelto",
-    "python3 -m unittest discover -s tests -p publicar_git_test.py",
-    "Verificar check runs de Arquitectura YOD y verificar sobre el SHA exacto",
-    "No hacer merge cuando falta o falla cualquiera de los dos checks"
+    "python3 nube/verificar.py antes de crear el PR",
+    "JSON válido y rutas generadas permitidas antes del commit",
+    "Arquitectura YOD y todos los checks obligatorios sobre el head exacto",
+    "Verificar la Sala y Arquitectura YOD en evento pull_request sobre el HEAD preciso de #224"
   ],
-  "rollback": "Revertir los commits de este PR sin cambiar Apps Script ni datos de Google Sheets; conservar datos/manifiesto.json y comentarios históricos, verificar la ejecución del relevo anterior. Para revertir el publicador de bot, revertir únicamente este PR, sin revertir el GET fresco de Relevo."
+  "rollback": "Revertir el commit mediante PR tras revisión; conservar los registros del Sheet y los planes de montaje."
 }
