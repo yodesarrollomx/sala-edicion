@@ -1,16 +1,16 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Optimizar exclusivamente la entrada a Hoy de Sala de Edición: no iniciar consultas de COLA, fabricación, ideas, expedientes ni descargar la versión HTML antes de montar la primera carta y su JPG ligera. Preservar decisión, sesión de YOD OS y recuperación del GAS de producción, sin tocar backend.",
+  "summary": "Reparar la presentación de imágenes y el primer acceso móvil en Hoy, sin cambiar datos ni decisiones: priorizar JPG de GitHub Pages incluso si el catálogo ofrece Drive; no repintar la foto al llegar el catálogo; ampliar con un toque y mostrar JPG inmediata con original HD opcional; botón de reintento cuando falle la imagen; posponer descargas de tiras y consultas secundarias hasta la primera imagen.",
   "components": [
     "SYS-SALA"
   ],
   "tests": [
-    "node --test tests/sala-carga.test.cjs (carga diferida y sin solicitudes anticipadas)",
-    "python3 nube/verificar.py (sello HTML y contratos)",
-    "Verificar la Sala y Arquitectura YOD en HEAD exacto del PR",
-    "GitHub Pages HTTP 200 después de desplegar",
-    "Medir en Chromebook con su sesión válida; no afirmar tiempo hasta comprobarlo"
+    "node --test tests/sala-carga.test.cjs (ruta JPG antes de Drive, recuperación con botón y zoom móvil, consultas pospuestas)",
+    "python3 nube/verificar.py (sello MD5, autorización y contratos)",
+    "GitHub: Arquitectura YOD y Verificar la Sala en el SHA del PR",
+    "GitHub Pages: publicación en main y comprobación HTTP 200",
+    "Comprobar el tiempo real con celular conectado y revalidación fresca de Sheets; no declarar latencia ni calidad de imagen no medidos"
   ],
-  "rollback": "Revertir el PR de rendimiento de Sala sin afectar datos de Sheets, credenciales de acceso, notas editoriales ni imágenes producidas."
+  "rollback": "Revertir el PR de corrección visual sin modificar Sheets, decisiones firmadas, sesiones del Portero, catálogo, archivos PNG/JPG ni producción."
 }
