@@ -1,21 +1,18 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
-  "proposal_id": "CHG-CHINCHES-CIERRE-001",
-  "summary": "Completar #49 con parche mínimo sobre GAS-SALA vigente: guardia antes de handlers tempranos ideas/arbol, respetando roles originales incluido editor2. Publicar fuente privada respaldada, verificar versión exacta y comprobar rechazo sin lista de propuestas insertable.",
+  "proposal_id": "CHG-SALA-PUBLICACION-001",
+  "summary": "Corrección específica de Sala: los PR creados por github-actions[bot] no disparan checks pull_request. Despachar manualmente Arquitectura YOD y Verificar la Sala sobre el SHA exacto y esperar su aprobación antes del merge. Tolerar propagación temporalmente vacía, sin omitir protecciones.",
   "components": [
     "SYS-SALA",
-    "GAS-SALA",
-    "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
-    "SVC-SALA-EJECUTOR",
-    "EXT-MOTORES-MEDIA"
+    "SVC-SALA-EJECUTOR"
   ],
   "tests": [
-    "git diff --check",
+    "python3 -m unittest discover -s tests -p publicar_git_test.py",
     "python3 nube/verificar.py",
-    "SALA_GAS_SOURCE=<candidato privado> node --test tests/contenido-reglas.test.cjs",
-    "Parche inverso exacto: retirar únicamente dos inserciones recupera fuente vigente byte por byte",
-    "Verificar contenido inmutable y editor, misma implementación/permisos/manifiesto; solicitud sintética de rechazo con propuestas objeto (no lista insertable)"
+    "Verificar check runs de Arquitectura YOD y verificar sobre el SHA exacto",
+    "No hacer merge cuando falta o falla cualquiera de los dos checks",
+    "git diff --check"
   ],
-  "rollback": "Restaurar versión71 en la misma implementación y fuente del editor previa, solo si no existe cambio concurrente; no restaurar ni borrar datos de negocio. Revertir cambios Git por PR."
+  "rollback": "Revertir el PR sobre nube/publicar_git.py, tests/publicar_git_test.py y verificar.yml; no tocar Sheets, el respaldo, los PR preexistentes ni los permisos de producción."
 }
