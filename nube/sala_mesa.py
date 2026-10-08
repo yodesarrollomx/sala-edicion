@@ -355,11 +355,35 @@ def main():
     return 0
 
 
+def _existe_en_commit_publicado(ruta):
+    """Solo rutas del repositorio, contenidas en el HEAD ya desplegado."""
+    import subprocess
+    from pathlib import PurePosixPath
+    p = PurePosixPath(str(ruta or ''))
+    if (p.is_absolute() or '..' in p.parts
+            or not str(p).startswith('laminas/')
+            or p.suffix.lower() not in ('.jpg', '.jpeg', '.png', '.webp')):
+        return False
+    run = subprocess.run(['git', 'ls-tree', '-r', '--name-only', 'HEAD', '--', str(p)],
+                         cwd=RAIZ, capture_output=True, text=True, timeout=10, check=False)
+    return run.returncode == 0 and str(p) in run.stdout.splitlines()
+
+
 def montar():
     plan = _leer(PLAN, None)
     if not plan or not plan.get('cartas'):
         sala.avisar('nada que montar (no hay plan de esta corrida)')
         return 0
+    # Todos los JPG de cada carta DEBEN estar en el commit ya publicado.
+    # Los archivos del runner pueden existir en disco aunque su PR no se haya
+    # integrado; ese era el origen de las fotos rotas en los teléfonos.
+    sin_publicar = [(c.get('tira_id'), ruta) for c in plan['cartas']
+                   for ruta in (c.get('carta') or {}).get('laminas') or []
+                   if not _existe_en_commit_publicado(ruta)]
+    if sin_publicar:
+        raise sala.SalaError(
+            '%d lámina(s) aún sin archivo en main; no se monta ninguna carta de '
+            'este lote y se conservan las decisiones previas' % len(sin_publicar))
     for c in plan['cartas']:
         tira = _leer(TIRAS / (c['tira_id'] + '.json'), None)
         if not isinstance(tira, dict):
