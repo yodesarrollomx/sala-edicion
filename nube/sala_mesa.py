@@ -161,6 +161,31 @@ def guardia(texto, veto):
     return ''
 
 
+def validar_nuevas_tomas(tira, reglas=None):
+    """Veta el contenido NUEVO sin alterar guiones, aprobaciones ni notas históricas.
+
+    Solo las láminas indicadas en `decidir` son candidatas recién generadas.
+    Revisar el guion entero bloquearía imágenes nuevas por texto antiguo ya
+    guardado como historia (la Ley prohíbe modificar retrospectivamente ese dato).
+    """
+    numeros = {str(n) for n in tira.get('decidir') or []}
+    if not numeros:
+        raise sala.SalaError('la tira no trae láminas para revisión')
+    encontradas = set()
+    for lam in tira.get('laminas') or []:
+        n = str(lam.get('n') or '')
+        if n not in numeros:
+            continue
+        encontradas.add(n)
+        candidatas = [c for c in lam.get('candidatas') or [] if c.get('motor')]
+        if not candidatas:
+            raise sala.SalaError('lámina %s sin tomas nuevas verificables' % n)
+        exigir(candidatas, reglas, 'tomas nuevas L%s' % n)
+    if numeros != encontradas:
+        raise sala.SalaError('el mapa de láminas nuevas no coincide con la tira')
+    return True
+
+
 def referencia(t):
     """La lámina aprobada más temprana de la pieza: el mundo al que las demás se parecen
     (invariante 105: «todas tienen que parecerse a la primera lámina que aprobemos»)."""
@@ -216,6 +241,7 @@ def main():
     g.add_argument('--simular', action='store_true')
     g.add_argument('--producir', action='store_true')
     g.add_argument('--montar', action='store_true')
+    g.add_argument('--montar-commit', action='store_true', help='nuevas tiras del commit que ya publicó Pages')
     ap.add_argument('--pieza', help='sólo esta pieza (slug)')
     ap.add_argument('--sin-sheet', action='store_true', help='no leer el Sheet (pruebas locales)')
     args = ap.parse_args()
@@ -223,6 +249,8 @@ def main():
 
     if args.montar:
         return montar()
+    if args.montar_commit:
+        return montar_desde_commit()
 
     reglas, cola = {}, []
     if not args.sin_sheet:
@@ -300,13 +328,12 @@ def main():
                      'nota': 'La pieza completa. Sólo las láminas marcadas piden respuesta: en cada '
                              'una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».',
                      'origen': 'rehecha-de %s' % tid, 'fecha': hoy, 'base': tid})
-        # Las tiras históricas pueden traer términos que el editor vetó después.
-        # Comprobar la tira COMPLETA antes de crear archivos del PR. Nunca
-        # publicar imágenes nuevas si su contenido sería rechazado al montar.
+        # Los textos anteriores se conservan como historia; la compuerta revisa
+        # exclusivamente las tomas recién producidas y sus textos visibles.
         try:
-            exigir(tira, reglas, 'tira propuesta')
-        except ContenidoVetado as e:
-            sala.avisar('⏸ %s: tira no publicable; %s' % (nombre, e))
+            validar_nuevas_tomas(tira, reglas)
+        except (ContenidoVetado, sala.SalaError) as e:
+            sala.avisar('⏸ %s: las tomas nuevas requieren corrección; %s' % (nombre, e))
             continue
         carta = {'id': nueva_id, 'titulo': tira['titulo'], 'tipo': 'laminas',
                  'laminas': [portada(next(l for l in tira['laminas'] if l['n'] == n)) for n in decidir],
@@ -338,11 +365,75 @@ def montar():
         if not isinstance(tira, dict):
             raise sala.SalaError('no se monta una carta sin su tira')
         try:
-            exigir(tira, ruta='tira')
+            validar_nuevas_tomas(tira)
         except ContenidoVetado as e:
             raise sala.SalaError(str(e)) from e
         r = sala.post('proponer', fecha=plan['fecha'], propuestas=[c['carta']], familia=c['familia'])
         sala.avisar('✓ montada %s · retiradas: %s' % (c['tira_id'], ', '.join(r.get('retiradas_familia') or []) or '—'))
+    return 0
+
+
+def montar_desde_commit():
+    """Montar tarjetas de tiras NUEVAS tras despliegue confirmado de Pages.
+
+    La salida efímera del productor ya desapareció al terminar aquel runner.
+    Git conserva qué tiras creó el commit publicado; los originales y la
+    historia anteriores no cambian. Se usa la misma puerta de GAS (proponer).
+    """
+    import subprocess
+    proc = subprocess.run(
+        ['git', 'diff-tree', '--no-commit-id', '--name-status', '-r',
+         '--first-parent', 'HEAD'],
+        cwd=RAIZ, capture_output=True, text=True, timeout=25, check=False)
+    if proc.returncode:
+        raise sala.SalaError('no se pudo comprobar cuáles tiras agregó el commit publicado')
+    rutas = []
+    for linea in proc.stdout.splitlines():
+        tipo, _, nombre = linea.partition('\t')
+        if tipo != 'A' or not re.fullmatch(r'datos/tiras/[A-Za-z0-9_.-]+\.json', nombre):
+            continue
+        if '-nube-' not in nombre and '-arranque-' not in nombre:
+            continue
+        rutas.append(nombre)
+    if not rutas:
+        sala.avisar('✓ publicación sin tiras nuevas que montar')
+        return 0
+    # Una ficha no autorizada no debe bloquear el resto de publicaciones.
+    fallas = 0
+    for nombre in rutas:
+        tira = _leer(RAIZ / nombre, None)
+        if not isinstance(tira, dict):
+            sala.avisar('⏸ tira inexistente o inválida: %s' % nombre)
+            fallas += 1
+            continue
+        try:
+            validar_nuevas_tomas(tira)
+            mapa = {str(l.get('n')): l for l in tira.get('laminas') or []}
+            elegidas = [mapa[str(n)] for n in tira['decidir']]
+            srcs = [portada(l) for l in elegidas]
+            if not all((RAIZ / src).is_file() for src in srcs):
+                raise sala.SalaError('alguna imagen aprobable no está en el sitio publicado')
+            tid = pathlib.Path(nombre).stem
+            slug = str(tira.get('pieza_slug') or '').strip()
+            if not slug:
+                raise sala.SalaError('tira sin familia de pieza')
+            carta = {
+                'id': tid, 'titulo': str(tira.get('titulo') or tira.get('pieza') or slug),
+                'tipo': 'laminas', 'laminas': srcs,
+                'opciones': [], 'video': None,
+                'origen': str(tira.get('origen') or 'nueva propuesta'),
+            }
+            respuesta = sala.post('proponer', fecha=str(tira.get('fecha') or sala.hoy_hermosillo()),
+                                  propuestas=[carta], familia=slug)
+            if not respuesta.get('ok'):
+                raise sala.SalaError('GAS no confirmó el montaje de la pieza')
+            sala.avisar('✓ tarjeta lista para editores: %s (%s tomas)' % (tid, len(srcs)))
+        except (sala.SalaError, ContenidoVetado, KeyError, ValueError) as e:
+            fallas += 1
+            sala.avisar('⏸ no se montó %s: %s' % (nombre, e))
+    if fallas:
+        raise sala.SalaError('%d de %d tiras requieren atención (resto conservado)' %
+                             (fallas, len(rutas)))
     return 0
 
 
