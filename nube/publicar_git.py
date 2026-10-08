@@ -181,10 +181,44 @@ class Publisher:
                     and str(p.get("title") or "").startswith(prefijo)
                     and (p.get("base") or {}).get("ref") == "main"
                     and p.get("state") == "open"]
-        if abiertos:
-            numero = max(int(p["number"]) for p in abiertos if isinstance(p.get("number"), int))
-            print(f"::notice::Sala {process}: PR #{numero} esperando verificación o revisión. "
-                  "No se crea otro ni se monta material no publicado.")
+        bloqueadores = []
+        nuevas_tiras = {p for p in changed if p.startswith("datos/tiras/")
+                         and p.endswith(".json") and p != "datos/tiras/index.json"}
+        if process in ("mesa", "arranque") and nuevas_tiras:
+            # PRs viejos pueden tener revisiones de otras piezas. No congelar toda
+            # la fábrica por una solicitud antigua que NO contiene estas tiras.
+            # El ID de tira incluye la fecha y la huella de sus notas.
+            for pr in abiertos[:12]:
+                numero = pr.get("number")
+                if not isinstance(numero, int):
+                    continue
+                archivos = self.api(f"repos/{self.repo}/pulls/{numero}/files?per_page=100")
+                if not isinstance(archivos, list):
+                    raise PublicationError("No se pudieron comparar archivos pendientes.")
+                rutas = {str(a.get("filename") or "") for a in archivos
+                         if isinstance(a, dict)}
+                if nuevas_tiras & rutas:
+                    bloqueadores.append(pr)
+                    break
+        elif abiertos:
+            # Respaldo/chinches/máquinas actualizan SIEMPRE la misma ruta. Un PR
+            # de hace semanas no puede congelar ese proceso para siempre. A lo
+            # sumo una propuesta pendiente por proceso cada 12 horas.
+            from datetime import datetime, timezone, timedelta
+            umbral = datetime.now(timezone.utc) - timedelta(hours=12)
+            for pr in abiertos:
+                fecha = str(pr.get("created_at") or "")
+                try:
+                    creada = datetime.fromisoformat(fecha.replace("Z", "+00:00"))
+                except ValueError:
+                    creada = None
+                if creada is None or creada >= umbral:
+                    bloqueadores.append(pr)
+                    break
+        if bloqueadores:
+            numero = bloqueadores[0].get("number")
+            print(f"::notice::Sala {process}: PR #{numero} contiene la revisión actual "
+                  "o es reciente. No se crea una solicitud duplicada.")
             return self.output(hubo="pendiente", pr=numero)
         if not changed:
             if process == "mesa":
