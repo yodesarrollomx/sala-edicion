@@ -1,18 +1,17 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Recuperar exclusivamente Sala: instalar una vez el calentador nativo del GAS (cada 10 min), y mediante el montador habitual reintentar SOLO la foto no publicada de la videollamada del 8-oct. Declarar inputs para el workflow_call reutilizable, conservar candados y exigir Pages verificado antes de volver a montar tarjetas.",
+  "summary": "Instalar una vez el calentador de 10 minutos ya programado en Apps Script para reducir los 40 s de espera del Sheet; reintentar SOLO la fotografía ausente de la videollamada mediante el montador existente y sus reglas de publicación, sin falsificar versiones. Conservar PR229 de fotos reales y el checkout rápido de CI.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
   ],
   "tests": [
-    "Verificar la Sala y Arquitectura YOD en commit exacto",
-    "Comprobar secrets nunca en workflows de pull_request",
-    "Comprobar YAML workflow_call acepta modo=montar y pieza=llamada-que-pasa",
-    "Ejecución del calentador confirma ok o warning, sin destruir datos",
-    "Recuperación de fotografía usa los motores existentes y nunca monta si PR no integrado",
-    "Respetar notas/decisiones y no copiar la imagen 10/07 como falsa 10/08"
+    "GitHub CI Verificar la Sala y Arquitectura YOD",
+    "Revisión de workflow_call inputs modo y pieza, y secrets: inherit sólo en jobs sin pull_request",
+    "Calentador confirma respuesta del GAS o reporta advertencia, sin borrar información",
+    "Sala mesa produce con Cloudflare/Gemini/HF y no monta antes de Pages",
+    "Verificar que el último JPG del día existe en main después de integrar su PR"
   ],
-  "rollback": "Revertir workflows de una sola ejecución y la declaración de inputs si hace falta; no borrar entregas, notas ni decisiones existentes."
+  "rollback": "Revertir workflows especiales por PR; conservar todas las imágenes, notas y decisiones del Sheet y el cache previamente configurado."
 }
