@@ -1,16 +1,17 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Complementar sin sustituir la reparación de imagen y montaje seguro ya aprobada: JPG local de Pages tiene prioridad incluso si el Sheet devuelve .jpg y el catálogo apunta a thumbnail de Drive; el catálogo añade seriales sin destruir y reconstruir la imagen; los GET secundarios esperan la primera foto o máximo 2 segundos. Se conserva el botón reintento, zoom y bloqueo de decisiones sin imagen del PR #234. También se corrige la regla CSS z-index que había quedado accidentalmente anidada, para que el botón Reintentar quede por encima del IMG roto y funcione en móvil.",
+  "summary": "Recuperar los tres lotes de fotos del 8 de octubre sin perder la mejora de móvil #235 ni notas/historia de los editores; unificar índice con 118 tiras y correr checks rápidos mediante sparse checkout.",
   "components": [
-    "SYS-SALA"
+    "SYS-SALA",
+    "GAS-SALA"
   ],
   "tests": [
-    "node --test tests/sala-carga.test.cjs (JPG local desde catálogo, actualización de serial sin recrear carta, carga secundaria diferida)",
-    "node --test tests/sala-imagenes.test.cjs (se conserva protección contra aprobación de imágenes no publicadas) y CSS de botón Reintentar en regla independiente",
-    "python3 nube/verificar.py (sello, contratos y permisos)",
-    "Arquitectura YOD y Verificar la Sala en commit exacto; GitHub Pages HTTP 200 tras merge",
-    "Comprobar latencia de respuesta de GAS y primera foto en móvil con sesión actual, no estimar segundos sin medición"
+    "Validar 6 imágenes JPG+PNG verdaderas y 3 tiras nuevas",
+    "Checkout parcial de Verificar la Sala sin video y PNG pesados",
+    "Python nube/verificar.py y Node tests completos",
+    "Después de publicar Pages, verificar JPG reales y montar la nueva carta de La Mesa Vacía",
+    "Conservar las mejoras de imagen de la rama main y los 115 IDs previos"
   ],
-  "rollback": "Revertir sólo este complemento de carga de imágenes; no revertir la protección del PR #234 ni alterar Sheets, decisiones, credenciales, rutas de producción o datos."
+  "rollback": "Revertir solo el lote de contenidos mediante PR; jamás borrar decisiones del Sheet, notas ni originales del proyecto."
 }

@@ -21,6 +21,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # El repo guarda cientos de originales PNG y videos pesados. Ninguna
+          # prueba de CI necesita bajar esos binarios para validar reglas,
+          # contratos, hojas y las referencias de las tiras.
+          sparse-checkout: |
+            .github
+            datos
+            gas
+            nube
+            tests
+            docs
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
