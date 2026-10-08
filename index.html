@@ -761,7 +761,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='f49ac5ce81';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='5b080aa97d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2459,8 +2459,8 @@ async function actualizarLineaHoy(){
   if(!b){ const p=$('#panel'); if(p&&getComputedStyle(p).display!=='none'){ p.insertAdjacentHTML('afterbegin','<div class="bloque" id="lineaHoy"></div>'); b=$('#lineaHoy') } }
   if(b){ b.innerHTML=LINEA_HOY; enganchaLinea(b) }
 }
-setTimeout(actualizarLineaHoy,2500);
-setInterval(()=>{ if(document.body.dataset.vista==='hoy'){ _lineaHoyT=0; actualizarLineaHoy() } },60000);
+// La Línea consulta COLA: esperar hasta que Hoy esté pintado antes de solicitarla.
+setInterval(()=>{ if(_pintado&&document.body.dataset.vista==='hoy'){ _lineaHoyT=0; actualizarLineaHoy() } },60000);
 
 /* ══ el árbol de publicaciones (14-sep) ══
    Alejandro: «el tronco es vender el PPP, de ahí 5 temas, de ahí las publicaciones, ver las ediciones y el
@@ -2863,11 +2863,23 @@ function cargarSecundarios(){
   if(_secundariosLanzados) return;
   _secundariosLanzados=true;
   const iniciar=()=>{
-    _expP=_expP||cargarExpedientes();
-    if(ENTRADO()){ traerCatalogo(); traerCola(); traerFabrica(); traerIdeas(); }
+    // Primordial: dejar el primer JPG del mismo origen descargarse sin competir
+    // con cuatro lecturas de Sheets que no son necesarias para decidir en Hoy.
+    if(ENTRADO()) traerCatalogo();
+    setTimeout(()=>{
+      _expP=_expP||cargarExpedientes();
+      if(ENTRADO()) traerCola();
+    },2800);
+    setTimeout(()=>{
+      if(ENTRADO()){ traerFabrica(); traerIdeas(); }
+      if(_pintado&&document.body.dataset.vista==='hoy') actualizarLineaHoy();
+    },7000);
+    // Verificar nueva versión descarga index.html completo; no hacerlo mientras
+    // la mesa todavía espera a Apps Script ni mientras baja la primera foto.
+    setTimeout(vigilarVersion,9500);
   };
-  if(typeof requestIdleCallback==='function') requestIdleCallback(iniciar,{timeout:2000});
-  else setTimeout(iniciar,750);
+  if(typeof requestIdleCallback==='function') requestIdleCallback(iniciar,{timeout:1000});
+  else setTimeout(iniciar,500);
 }
 function pintarFecha(f){ try{ $('#fechaTxt').textContent=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}) }catch(e){ $('#fechaTxt').textContent=f } }
 let _pintado=false, _tFrases=null, _reintentando=false;
@@ -3017,7 +3029,7 @@ async function vigilarVersion(){
 setInterval(vigilarVersion,600000);
 (async function(){
   $('#barraSinEntrar').hidden=ENTRADO();   // 8-sep: se decide de una vez, sin esperar al Sheet (ENTRADO() solo mira este aparato)
-  abrirGuia(false); ajustarZona(); setTimeout(vigilarVersion,4000);            // la bienvenida no espera al Sheet
+  abrirGuia(false); ajustarZona();   // bienvenida inmediata; vigilar versión después de abrir Hoy
   subirCola();   // preservar guardados: sólo las lecturas secundarias esperan a que pinte Hoy
   // 5-sep (Alejandro): «prefiero una animación mientras carga que estar viendo algo pasado».
   // Ya NO se pinta la copia de respaldo a los 2.5 s: se espera al Sheet con una carta de carga.
