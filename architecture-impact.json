@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Publicar tres revisiones de fotografías que Mesa ya generó el 8-oct-2026: Doble vía, La identidad no se improvisa y La Mesa Vacía. Conservar todas las tiras actuales sin sobrescribir el índice histórico. No registrar una tarjeta hasta que Pages publique las fotos.",
+  "summary": "Publicar tres revisiones de fotografías que Mesa ya generó el 8-oct-2026: Doble vía, La identidad no se improvisa y La Mesa Vacía. Conservar todas las tiras actuales sin sobrescribir el índice histórico. No registrar una tarjeta hasta que Pages publique las fotos. Para las verificaciones, descargar sólo código/JSON en CI; no descargar los 600 MB de binarios ya conservados y verificados aparte como blobs.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
@@ -11,7 +11,8 @@
     "Python nube/verificar.py, HTML y leyes editoriales",
     "Checks Arquitecture YOD y Verificar la Sala sobre SHA exacto",
     "Publicar Pages y luego enviar las cartas por sala_mesa.py --montar-commit",
-    "Conservar la historia actual de index.json y notas en Google Sheets"
+    "Conservar la historia actual de index.json y notas en Google Sheets",
+    "Verificar la Sala mediante checkout parcial de código/JSON: todas las pruebas deben pasar sin tocar PNG o videos; los JPG del lote ya tienen blobs válidos en GitHub"
   ],
   "rollback": "Revertir solo los 3 lotes de fotos mediante PR; nunca borrar marcas/decisiones de la hoja ni usar versiones antiguas como si fueran nuevas."
 }
