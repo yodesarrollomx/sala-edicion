@@ -35,10 +35,18 @@ jobs:
           if [ -n "$HEAD_INPUT" ]; then
             [ "$HEAD_INPUT" = "$EVENT_SHA" ] || { echo 'El SHA solicitado debe coincidir con el ref que recibe el check.'; exit 1; }
           fi
-      - name: Código completo del cambio
+      - name: Código y árbol Git completos, sin transferir fotos/video innecesarios
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
+          sparse-checkout: |
+            .github
+            datos
+            gas
+            nube
+            tests
+            docs
           persist-credentials: false
           ref: ${{ inputs.head_sha || github.event.pull_request.head.sha || github.sha }}
       - name: Atlas aprobado
