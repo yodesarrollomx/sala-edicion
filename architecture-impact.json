@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
-  "proposal_id": "CHG-SALA-RENDIMIENTO-20261008-001",
-  "summary": "Acelerar la apertura de Hoy sin modificar el GAS ni las decisiones de los editores: omitir consultas históricas cuando el servidor ya entrega heredarMarcas_, preferir miniaturas JPG de GitHub Pages para la primera lámina, priorizar esa imagen y posponer catálogo, expedientes y vistas auxiliares hasta después de pintar la mesa. El fallback de GAS antiguo y originales de Drive se mantienen.",
+  "proposal_id": "CHG-SALA-PUBLICACION-001",
+  "summary": "Acelerar la apertura de Hoy sin modificar el GAS ni las decisiones de los editores: omitir consultas históricas cuando el servidor ya entrega heredarMarcas_, preferir miniaturas JPG de GitHub Pages para la primera lámina, priorizar esa imagen y posponer catálogo, expedientes y vistas auxiliares hasta después de pintar la mesa. El fallback de GAS antiguo y originales de Drive se mantienen. Es mejora de rendimiento de la entrega de tarjetas de CHG-SALA-PUBLICACION-001 y no crea conexiones, flujos ni contratos nuevos; no requiere una revisión nueva del atlas.",
   "components": [
     "SYS-SALA"
   ],
