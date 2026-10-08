@@ -1,18 +1,16 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Resolver tarjetas sin imágenes del móvil: la Mesa no monta desde archivos de un PR pendiente, sino tras SHA verificado y publicación; el montador comprueba que cada JPG existe en el HEAD publicado; el cliente hace reintento real, ofrece fallback legible en zoom y no permite aprobar una foto que no se mostró.",
+  "summary": "Reducir latencia de la primera lectura en Sala de Edición mediante el calentador que YA existe en el GAS: solicitar por una sola vez, desde un GitHub Action con credencial secreta, que Apps Script programe calentarCache cada 10 minutos. No crear un servidor nuevo, no publicar claves, no modificar el contenido de Sheets ni el Portero.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
   ],
   "tests": [
-    "node --test tests/sala-imagenes.test.cjs (imagen cargada/error, zoom y montaje seguro)",
-    "node --test tests/sala-carga.test.cjs",
-    "python3 nube/verificar.py, sello MD5",
-    "Arquitectura YOD + Verificar la Sala sobre commit exacto",
-    "Comprobar cinco imágenes del día frente a main y el Sheet, sin modificar decisiones",
-    "Desplegar Pages, comprobar primer archivo JPG y mensaje real si aún no está publicado"
+    "python3 nube/verificar.py (workflow sin secrets en PR)",
+    "GitHub checks Verificar la Sala y Arquitectura YOD",
+    "Ejecutar una sola vez con push a main y verificar salida de activación o advertencia honesta",
+    "Reabrir desde móvil y medir tiempo real, sin prometer latencia hasta medir"
   ],
-  "rollback": "Revertir solamente este PR; conservar cron, decisiones, credenciales, historial editorial, archivos originales y los PR de producción pendientes."
+  "rollback": "Desactivar el trigger calentarCache en Apps Script si causa carga; revertir solo el workflow, conservar todas las notas editoriales y credenciales."
 }
