@@ -224,25 +224,12 @@ ATORADO_MIN = 180
 
 
 def atorados(cola, habilitadas, ahora_utc=None, minutos=ATORADO_MIN):
-    """Trabajos en `corriendo` que nadie está trabajando: sólo corre un ejecutor a la vez
-    (invariante 53), así que un `corriendo` que no se ha tocado en horas es de una corrida que
-    murió (tope del runner, cancelada, o la Mac antes de la mudanza del 21-sep). Sin rescate se
-    quedan así para siempre: la Sala los cuenta como «en producción» y nadie los vuelve a tomar.
-    Sin fecha legible no se toca (lado seguro). `actualizado` viene en hora de Hermosillo."""
-    import datetime
-    ahora_utc = ahora_utc or datetime.datetime.now(datetime.timezone.utc)
-    fuera = []
-    for t in cola:
-        if str(t.get('estado')) != 'corriendo' or str(t.get('etapa')) not in habilitadas:
-            continue
-        try:
-            f = datetime.datetime.strptime(str(t.get('actualizado') or '')[:19], '%Y-%m-%dT%H:%M:%S')
-        except ValueError:
-            continue
-        f = f.replace(tzinfo=datetime.timezone(datetime.timedelta(hours=-7)))
-        if (ahora_utc - f).total_seconds() > minutos * 60:
-            fuera.append(t)
-    return fuera
+    """Compatibilidad: devuelve trabajos huérfanos, sin reencolarlos a ciegas."""
+    from cola_salud import propuestas_rescate
+    cambios, _ = propuestas_rescate(cola, habilitadas, ahora_utc=ahora_utc,
+                                    minutos=minutos)
+    ids = {c['id'] for c in cambios}
+    return [t for t in cola if t.get('id') in ids]
 
 
 def main():
@@ -306,14 +293,36 @@ def main():
 
     drive_raiz = str(reglas.get('drive_raiz') or '').strip() or None
 
-    viejos = atorados(cola, habilitadas)
-    if viejos:
-        for t in viejos:
-            sala.avisar('↺ rescatado · %s (en «corriendo» sin tocar desde %s)' % (t.get('id'), t.get('actualizado')))
-            t['estado'] = 'pendiente'
-        if not args.simular:
-            sala.post('cola', op='estado', filas=[{'id': t.get('id'), 'estado': 'pendiente',
-                'evidencia': {'rescatado': 'corriendo sin tocar desde %s' % t.get('actualizado')}} for t in viejos])
+    from cola_salud import propuestas_rescate
+    cambios, ilegibles = propuestas_rescate(cola, habilitadas)
+    if ilegibles:
+        sala.avisar('⚠ trabajos con fecha ilegible (no se tocan): %s' % ', '.join(ilegibles[:10]))
+    if cambios:
+        # La segunda lectura evita sobrescribir una fila que otro operador ya cambió.
+        try:
+            actual = (sala.get('cola') or {}).get('cola') or []
+        except sala.SalaError as e:
+            sala.avisar('✗ sin segunda lectura no se concilia COLA: %s' % e)
+            return 2
+        vigentes = {(str(t.get('id')), str(t.get('actualizado'))) for t in actual
+                    if t.get('estado') == 'corriendo'}
+        seguros = [c for c in cambios
+                   if (c['id'], c['evidencia']['actualizado_anterior']) in vigentes]
+        for c in seguros:
+            sala.avisar('⏸ trabajo huérfano %s: revisión necesaria antes de reintentar' % c['id'])
+        if seguros and not args.simular:
+            r = sala.post('cola', op='estado', filas=[
+                {k: c[k] for k in ('id', 'estado', 'evidencia', 'bloqueado_por')}
+                for c in seguros])
+            if not r.get('ok') or r.get('ignoradas'):
+                sala.avisar('✗ GAS no confirmó toda la conciliación; revisar COLA')
+                return 2
+        if seguros:
+            ids_seguros = {c['id'] for c in seguros}
+            # No dejar que una fila aún cacheada se cuele como pendiente.
+            for t in cola:
+                if t.get('id') in ids_seguros:
+                    t['estado'] = 'fallo'
 
     # 23-sep: lo que se produjo pero NO subió a Drive (la llave de la cuenta de servicio
     # fallaba) queda «hecho» y el corte nunca lo encuentra. Escena y voz son gratis y tardan
