@@ -1,17 +1,17 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Corregir continuidad exclusiva de Sala: identificar COLA huérfana con formato real de fechas, conservar evidencia/decisiones sin reintentar versiones no comprobadas, impedir PR automáticos duplicados y tratar check pendiente como espera sin correos de falso error. Validar nueva tira antes de publicar.",
+  "summary": "Publicar cinco juegos de láminas y sus archivos de revisión para Doble vía, La identidad no se improvisa, La ruta autónoma, Qué pasa en la videollamada y La Mesa Vacía, sin dar aprobación editorial ni volver a presentar originales rechazados.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p 'cola_salud_test.py' -v",
-    "python3 -m unittest discover -s tests -p 'publicar_git_test.py' -v",
+    "Verificar rutas, imágenes y JSON de cada tira nueva",
     "python3 nube/verificar.py",
-    "Arquitectura YOD y Verificar la Sala en el commit exacto de este PR",
-    "Verificar que la Sala en vivo mantiene su estado y las decisiones anteriores"
+    "Arquitectura YOD y Verificar la Sala sobre SHA exacto",
+    "Confirmar publicación en GitHub Pages antes de proponer cinco cartas en la mesa",
+    "Respetar notas, firmas, rol de editor y regla una carta por pieza"
   ],
-  "rollback": "Revertir únicamente el commit de este PR; conservar Sheets, Drive, decisiones, originales, PR existentes y la revisión previa de la Sala."
+  "rollback": "Revertir el commit de archivos de revisión en un PR supervisado; nunca deshacer decisiones en Sheets, borrar originales, ni alterar historial."
 }
