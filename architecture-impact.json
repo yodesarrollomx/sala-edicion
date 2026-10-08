@@ -1,21 +1,16 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
-  "proposal_id": "CHG-CHINCHES-CIERRE-001",
-  "summary": "Completar #49 con parche mínimo sobre GAS-SALA vigente: guardia antes de handlers tempranos ideas/arbol, respetando roles originales incluido editor2. Publicar fuente privada respaldada, verificar versión exacta y comprobar rechazo sin lista de propuestas insertable.",
+  "proposal_id": "CHG-SALA-PUBLICACION-001",
+  "summary": "Endurecer la lectura fresca de Sala Relevo previa a publicar su respaldo espejo: el GET dia fresco dispone de dos intentos curl -L con 60 segundos de margen, sin duplicar una solicitud lenta con urllib. Mantener los datos y decisiones existentes, prohibir caché para el espejo y no escribir al fallar el GAS. No altera la fuente GAS ni los flujos de otros proyectos.",
   "components": [
-    "SYS-SALA",
-    "GAS-SALA",
-    "SHEET-SALA",
-    "SVC-SALA-PRODUCTOR",
-    "SVC-SALA-EJECUTOR",
-    "EXT-MOTORES-MEDIA"
+    "SYS-SALA"
   ],
   "tests": [
-    "git diff --check",
+    "python3 -m unittest discover -s tests -p 'sala_cliente_test.py' -v (cinco casos sin red)",
     "python3 nube/verificar.py",
-    "SALA_GAS_SOURCE=<candidato privado> node --test tests/contenido-reglas.test.cjs",
-    "Parche inverso exacto: retirar únicamente dos inserciones recupera fuente vigente byte por byte",
-    "Verificar contenido inmutable y editor, misma implementación/permisos/manifiesto; solicitud sintética de rechazo con propuestas objeto (no lista insertable)"
+    "git diff --check",
+    "Verificar CI Arquitectura YOD y Verificar la Sala en el commit exacto del PR",
+    "Prueba operativa pendiente: corrida real Sala Diario / Relevo con respuesta de GAS; comparar manifiesto previo y posterior antes de declarar resuelto"
   ],
-  "rollback": "Restaurar versión71 en la misma implementación y fuente del editor previa, solo si no existe cambio concurrente; no restaurar ni borrar datos de negocio. Revertir cambios Git por PR."
+  "rollback": "Revertir los commits de este PR sin cambiar Apps Script ni datos de Google Sheets; conservar datos/manifiesto.json y comentarios históricos, verificar la ejecución del relevo anterior."
 }
