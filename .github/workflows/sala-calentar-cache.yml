@@ -1,0 +1,45 @@
+# Una sola instalación del calentador de caché que ya existe en el Apps Script
+# de la Sala. Es una acción de lectura sobre el Sheet; Google ejecuta el
+# disparador cada diez minutos, GitHub NO se queda consultando constantemente.
+name: Sala · Activar caché de acceso rápido
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sala-calentar-cache.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  habilitar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: nube
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Activar el calentador oficial del GAS (sin copiar ni mostrar credenciales)
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, 'nube')
+          import sala_cliente as sala
+          sala.enmascarar_en_actions()
+          try:
+              r = sala.get('calentador')
+              if not r.get('ok'):
+                  print('::warning::El GAS vigente aún no admite el recurso calentador; se conserva la operación actual.')
+              else:
+                  print('Caché de la Sala preparado: Google Apps Script confirma su disparador de 10 minutos.')
+          except Exception:
+              print('::warning::El GAS no confirmó el calentador. No se alteraron datos ni credenciales; revisar antes de reintentar.')
+          PY

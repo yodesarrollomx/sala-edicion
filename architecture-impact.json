@@ -1,17 +1,18 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Recuperar los tres lotes de fotos del 8 de octubre sin perder la mejora de móvil #235 ni notas/historia de los editores; unificar índice con 118 tiras y correr checks rápidos mediante sparse checkout.",
+  "summary": "Instalar una vez el calentador de 10 minutos ya programado en Apps Script para reducir los 40 s de espera del Sheet; reintentar SOLO la fotografía ausente de la videollamada mediante el montador existente y sus reglas de publicación, sin falsificar versiones. Conservar PR229 de fotos reales y el checkout rápido de CI. El guardián de arquitectura sigue verificando todos los commits y el atlas pero descarga los blobs de medios solo cuando una comprobación realmente los requiere.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
   ],
   "tests": [
-    "Validar 6 imágenes JPG+PNG verdaderas y 3 tiras nuevas",
-    "Checkout parcial de Verificar la Sala sin video y PNG pesados",
-    "Python nube/verificar.py y Node tests completos",
-    "Después de publicar Pages, verificar JPG reales y montar la nueva carta de La Mesa Vacía",
-    "Conservar las mejoras de imagen de la rama main y los 115 IDs previos"
+    "GitHub CI Verificar la Sala y Arquitectura YOD",
+    "Revisión de workflow_call inputs modo y pieza, y secrets: inherit sólo en jobs sin pull_request",
+    "Calentador confirma respuesta del GAS o reporta advertencia, sin borrar información",
+    "Sala mesa produce con Cloudflare/Gemini/HF y no monta antes de Pages",
+    "Verificar que el último JPG del día existe en main después de integrar su PR",
+    "Arquitectura YOD en checkout parcial con git histórico completo y filter blob:none, sin omitir verificador/atlas"
   ],
-  "rollback": "Revertir solo el lote de contenidos mediante PR; jamás borrar decisiones del Sheet, notas ni originales del proyecto."
+  "rollback": "Revertir workflows especiales por PR; conservar todas las imágenes, notas y decisiones del Sheet y el cache previamente configurado."
 }

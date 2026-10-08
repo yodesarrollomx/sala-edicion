@@ -1,0 +1,25 @@
+# Recuperación puntual y sin duplicados de la foto que el Sheet montó
+# antes de que existiera en Pages. Sigue exactamente el montador de la Sala,
+# con el candado, créditos y reglas de aprobación existentes.
+name: Sala · Recuperar foto de videollamada
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sala-rescate-llamada.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+jobs:
+  rescatar:
+    uses: ./.github/workflows/sala-mesa.yml
+    with:
+      modo: montar
+      pieza: llamada-que-pasa
+    secrets: inherit
