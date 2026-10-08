@@ -4,8 +4,7 @@
   "summary": "Corrección específica de Sala: los PR creados por github-actions[bot] no disparan checks pull_request. Despachar manualmente Arquitectura YOD y Verificar la Sala sobre el SHA exacto y esperar su aprobación antes del merge. Tolerar propagación temporalmente vacía, sin omitir protecciones.",
   "components": [
     "SYS-SALA",
-    "SVC-SALA-PRODUCTOR",
-    "SVC-SALA-EJECUTOR"
+    "GAS-SALA"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p publicar_git_test.py",
