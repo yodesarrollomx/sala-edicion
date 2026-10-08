@@ -70,6 +70,10 @@ jobs:
       - name: Comprobar las compuertas de publicación sin red
         run: python3 -m unittest discover -s tests -p 'publicar_git_test.py'
 
+      - name: Pruebas de carga inicial de Hoy (sin red)
+        run: node --test tests/sala-carga.test.cjs
+      - name: Pruebas de fotos publicadas, zoom y reintentos
+        run: node --test tests/sala-imagenes.test.cjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -102,3 +106,18 @@ jobs:
           done
           echo "::error::la Sala no contestó 200 tras publicar; no montar cartas"
           exit 1
+
+      - name: Llevar a Hoy las tiras nuevas ya publicadas
+        # Solo push real a main, jamás workflow_dispatch repetido: el usuario
+        # puede haber decidido una carta y no se le debe volver a preguntar.
+        if: github.event_name == 'push'
+        continue-on-error: true
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: |
+          python3 sala_mesa.py --montar-commit || {
+            echo "::warning::Pages ya está publicado, pero una o más tarjetas no se montaron en el Sheet."
+            exit 1
+          }

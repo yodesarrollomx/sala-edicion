@@ -72,8 +72,29 @@ jobs:
           MERGE_SHA: ${{ steps.guardar.outputs.merge_sha }}
         run: python3 nube/publicar_git.py publicar --proceso relevo --sha "$MERGE_SHA"
 
+      - name: Advertir una vez por día si Apps Script no contesta
+        # Código 2: falla TRANSITORIA de lectura; se conserva el respaldo viejo.
+        # No transformar una interrupción externa en cinco workflows fallidos
+        # diarios. Una advertencia por día queda en el Vigía de Sala.
+        if: steps.relevo.outputs.codigo == '2'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "::warning::Apps Script no contestó. Se conservó el respaldo previo, sin sobrescribir decisiones."
+          marca="SALA-GAS-SIN-RESPUESTA-$(TZ=America/Hermosillo date +%F)"
+          desde="$(TZ=America/Hermosillo date +%F)T07:00:00Z"
+          existentes=$(gh api "repos/$GITHUB_REPOSITORY/issues/3/comments?since=$desde&per_page=100" \
+            --jq "[.[] | select(.body | contains(\"$marca\"))] | length" 2>/dev/null || echo desconocido)
+          if [ "$existentes" = 0 ]; then
+            gh issue comment 3 --repo "$GITHUB_REPOSITORY" \
+              --body "⚠ $marca — El relevo no pudo leer el Sheet. Se conserva intacto el manifiesto anterior; la próxima corrida vuelve a intentar. Si continúa mañana, revisar Apps Script." \
+              || echo "::warning::No se pudo registrar el aviso en Vigía."
+          fi
+          exit 0
+
       - name: Avisar si algo falló
-        if: failure() || steps.relevo.outputs.codigo != '0'
+        # Código 3 o fallo de checks/publicación: sigue siendo un error real.
+        if: failure() || (steps.relevo.outputs.codigo != '0' && steps.relevo.outputs.codigo != '2')
         env:
           GH_TOKEN: ${{ github.token }}
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}      # sólo para tacharlos del log (limpiar_log.py)

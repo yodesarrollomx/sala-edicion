@@ -35,6 +35,10 @@ class FakeGitHub:
                        {"name": "verificar", "bucket": "pass"}]
         self.empty_checks_reads = 0
         self.dispatched = {}
+        self.existing_pr = False
+        self.existing_title = "Sala relevo: archivos generados"
+        self.existing_date = None
+        self.existing_files = []
         self.fail_prefix = None
         self.clock = 0
 
@@ -67,7 +71,14 @@ class FakeGitHub:
             self.merged = True
         elif argv[:2] == ["gh", "api"]:
             endpoint, method = argv[4], argv[3]
-            if endpoint.endswith("/pulls") and method == "POST":
+            if endpoint.endswith("/pulls?state=open&per_page=100") and method == "GET":
+                result = json.dumps([{"number": 8, "title": self.existing_title,
+                                      "created_at": self.existing_date,
+                                      "base": {"ref": "main"}, "state": "open"}]
+                                    if self.existing_pr else [])
+            elif endpoint.endswith("/pulls/8/files?per_page=100"):
+                result = json.dumps([{"filename": p} for p in self.existing_files])
+            elif endpoint.endswith("/pulls") and method == "POST":
                 result = json.dumps({"number": 9})
             elif endpoint.endswith("/pulls/9"):
                 result = json.dumps({
@@ -157,7 +168,7 @@ class PublicationTests(unittest.TestCase):
     def test_mesa_without_changes_returns_sha_to_verify_before_mount(self):
         self.fake.status = "?? mesa.log\0"
         self.assertEqual(self.publisher.integrate("mesa"), {"hubo": "no", "merge_sha": BASE})
-        self.assertEqual(len(self.commands()), 2)
+        self.assertEqual(len(self.commands()), 3)
         self.assertEqual(self.commands()[-1], ["git", "rev-parse", "HEAD"])
         workflow = (ROOT / ".github/workflows/sala-mesa.yml").read_text()
         self.assertIn("steps.guardar.outputs.hubo == 'no' && env.MODO == 'montar'", workflow)
@@ -185,6 +196,43 @@ class PublicationTests(unittest.TestCase):
         (self.cwd / "datos/manifiesto.json").symlink_to(self.cwd / "architecture-impact.json")
         with self.assertRaisesRegex(module.PublicationError, "simbólicos"):
             self.publisher.integrate("relevo")
+
+    def test_existing_bot_pr_does_not_generate_duplicate(self):
+        self.fake.existing_pr = True
+        result = self.publisher.integrate("relevo")
+        self.assertEqual(result, {"hubo": "pendiente", "pr": 8})
+        self.assertFalse(any(c[:2] == ["git", "checkout"] for c in self.commands()))
+        self.assert_no_merge()
+
+    def test_old_bot_pr_does_not_block_a_new_snapshot(self):
+        self.fake.existing_pr = True
+        self.fake.existing_date = "2026-01-01T00:00:00Z"
+        self.assertEqual(self.publisher.integrate("relevo"),
+                         {"hubo": "si", "merge_sha": MERGE, "pr": 9})
+
+    def test_same_revision_in_pending_mesa_pr_is_not_recreated(self):
+        self.fake.existing_pr = True
+        self.fake.existing_title = "Sala mesa: archivos generados"
+        self.fake.existing_files = ["datos/tiras/revision.json"]
+        self.fake.status = "?? datos/tiras/revision.json\0"
+        self.fake.staged = "datos/tiras/revision.json\0architecture-impact.json\0"
+        self.assertEqual(self.publisher.integrate("mesa"),
+                         {"hubo": "pendiente", "pr": 8})
+        self.assert_no_merge()
+
+    def test_different_mesa_revision_not_blocked_by_old_pr(self):
+        self.fake.existing_pr = True
+        self.fake.existing_title = "Sala mesa: archivos generados"
+        self.fake.existing_files = ["datos/tiras/old.json"]
+        self.fake.status = "?? datos/tiras/new.json\0"
+        self.fake.staged = "datos/tiras/new.json\0architecture-impact.json\0"
+        self.assertEqual(self.publisher.integrate("mesa"),
+                         {"hubo": "si", "merge_sha": MERGE, "pr": 9})
+
+    def test_no_change_in_other_process_still_one_git_read(self):
+        self.fake.status = ""
+        self.assertEqual(self.publisher.integrate("relevo"), {"hubo": "no"})
+        self.assertEqual(len(self.commands()), 1)
 
     def test_failed_guard_leaves_pr_without_merge(self):
         self.fake.guard = "failure"
@@ -214,8 +262,8 @@ class PublicationTests(unittest.TestCase):
 
     def test_missing_required_architecture_check_is_blocked(self):
         self.fake.checks = [{"name": "unrelated", "bucket": "pass"}]
-        with self.assertRaisesRegex(module.PublicationError, "agotó"):
-            self.publisher.integrate("relevo")
+        result = self.publisher.integrate("relevo")
+        self.assertEqual(result, {"hubo": "pendiente", "pr": 9})
         self.assert_no_merge()
 
     def test_bot_pr_dispatches_verification_on_exact_commit(self):
@@ -234,8 +282,8 @@ class PublicationTests(unittest.TestCase):
 
     def test_missing_verification_check_never_merges(self):
         self.fake.checks = [{"name": "Arquitectura YOD", "bucket": "pass"}]
-        with self.assertRaisesRegex(module.PublicationError, "agotó"):
-            self.publisher.integrate("relevo")
+        result = self.publisher.integrate("relevo")
+        self.assertEqual(result, {"hubo": "pendiente", "pr": 9})
         self.assert_no_merge()
 
     def test_empty_checks_while_github_registers_dispatch_are_retried(self):
