@@ -761,7 +761,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='5b080aa97d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='1db29c35e1';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1496,6 +1496,11 @@ function pintarCartas(){
       el.querySelectorAll('.lupa,.num-movil').forEach(b=>b.onclick=e=>{ e.stopPropagation(); abrirZoom(src) });
       dobleToque(el.querySelector('.lienzo'),()=>abrirZoom(src));
       el.querySelectorAll('[data-cand]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); if(!DECIDE()||!candadoLibre()) return; const k=+b.dataset.cand;
+        const mini=el.querySelectorAll('.cand-item img')[k];
+        if(el.dataset.imagenLista!=='si'||!mini||!mini.complete||!mini.naturalWidth){
+          pintarEstado('cola','Esta toma aún no tiene imagen visible; no se puede aprobar');
+          return;
+        }
         const _prev=String(dec[x.pid].notas[x.i]||'').replace(/\s*\[toma elegida: \d+\]/g,'').trim();
         dec[x.pid].laminas[x.i]='si'; dec[x.pid].notas[x.i]=(_prev?_prev+' ':'')+'[toma elegida: '+(k+1)+']'; if(dec[x.pid]._borrar) delete dec[x.pid]._borrar[x.i]; avanzar('si') });
       el.querySelectorAll('.cand-item img[data-amp]').forEach(im=>im.onclick=e=>{ e.stopPropagation(); if(im.dataset.amp) abrirZoom(im.dataset.amp) });
@@ -1553,18 +1558,39 @@ function mandoDecidir(){   // si la Sala venía de la vista de solo lectura, dev
   const m=$('#mando'); if(m.querySelector('#btnSi')) return;
   m.innerHTML=MANDO_HTML; $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 }
-function montarImagen(el,src,prioritaria=true){
-  const img=el.querySelector('img');
+function montarImagen(el,src,prioritaria=true,reintento=false){
+  const img=el.querySelector('.lienzo img')||el.querySelector('img');
+  if(!img) return;
   img.loading=prioritaria?'eager':'lazy'; img.fetchPriority=prioritaria?'high':'low'; img.decoding='async';
-  const lista=()=>{ img.classList.add('lista'); const c=el.querySelector('.cargando'); if(c) c.remove() };
+  el.dataset.imagenLista='cargando';
+  const c=el.querySelector('.lienzo .cargando');
+  if(c) c.textContent='Cargando lámina…';
+  const cat=_porRuta[src]||{};
+  const fuentes=[...new Set([ligera(src),src,cat.prueba?deDrive(cat.prueba,1200):null]
+    .filter(Boolean))];
+  let i=0;
+  const version=u=>reintento?u+(u.includes('?')?'&':'?')+'reintentar='+Date.now():u;
+  const lista=()=>{
+    el.dataset.imagenLista='si'; img.classList.add('lista');
+    const aviso=el.querySelector('.lienzo .cargando'); if(aviso) aviso.remove();
+  };
+  const sinFoto=()=>{
+    el.dataset.imagenLista='no';
+    const aviso=el.querySelector('.lienzo .cargando'); if(!aviso) return;
+    aviso.replaceChildren();
+    const txt=document.createElement('span');
+    txt.textContent='Esta revisión todavía no tiene una imagen disponible. No se puede aprobar sin verla.';
+    const btn=document.createElement('button'); btn.type='button';
+    btn.className='secund reintentar-imagen'; btn.textContent='Reintentar imagen';
+    btn.onclick=e=>{ e.preventDefault(); e.stopPropagation(); montarImagen(el,src,prioritaria,true) };
+    aviso.append(txt,btn);
+  };
   img.onload=lista;
-  // 8-sep: si la de Drive no llega, se cae a la LIGERA del repo — nunca al maestro .png.
-  // (Antes el respaldo era `src` crudo: 1.8 MB al teléfono justo cuando la señal está mal,
-  // que es lo contrario de lo que se quería.)
-  const _repoLigera=/\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
-  img.onerror=()=>{ if(!img.src.endsWith(_repoLigera)){ img.src=_repoLigera; return }
-    const c=el.querySelector('.cargando'); if(c) c.textContent='No cargó la imagen. Toca «Ampliar» para reintentar.' };
-  img.src=ligera(src);
+  img.onerror=()=>{
+    if(i<fuentes.length){ img.src=version(fuentes[i++]); return }
+    sinFoto();
+  };
+  if(fuentes.length) img.src=version(fuentes[i++]); else sinFoto();
   if(img.complete&&img.naturalWidth) lista();
 }
 function dobleToque(el,fn){ let t=0; el.addEventListener('pointerup',e=>{ const n=Date.now(); if(n-t<320&&Math.abs(_dxUlt)<8){ t=0; fn() } else t=n }) }
@@ -1596,6 +1622,13 @@ setInterval(vigilante,500);
 function decidir(m){
   if(!DECIDE()||!candadoLibre()) return;
   const x=pasos[idx]; if(!x||x.tipo!=='lamina') return;
+  const actual=document.querySelector('#zona .carta[data-k="'+idx+'"]');
+  if(!actual||actual.dataset.imagenLista!=='si'){
+    pintarEstado('cola','Imagen de esta revisión pendiente; reintenta antes de decidir');
+    const b=actual&&actual.querySelector('.lienzo .reintentar-imagen');
+    if(b) b.focus();
+    return;
+  }
   if(m==='no'){ if(CAPAS.some(c=>c.id==='nota')) return; _tDecidio=Date.now(); pedirNota(nota=>{ dec[x.pid].laminas[x.i]='no'; dec[x.pid].notas[x.i]=nota; if(dec[x.pid]._borrar) delete dec[x.pid]._borrar[x.i]; avanzar('no') }); return }
   if(conTomas(x)){ const c=document.querySelector('#zona .carta'); if(c){ c.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'none'}],{duration:260}) } return }   // 23-sep: con tomas, un sí sin elegir cuál es ambiguo (14-sep)
   dec[x.pid].laminas[x.i]='si'; dec[x.pid].notas[x.i]=''; if(dec[x.pid]._borrar) delete dec[x.pid]._borrar[x.i]; avanzar('si');
