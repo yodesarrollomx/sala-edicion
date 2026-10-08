@@ -48,5 +48,5 @@ test('imagen disponible se muestra y el visor tiene salida y reintento',()=>{
   assert.match(zoom,/class="zoom-error"/);assert.match(zoom,/class="reintentar-zoom"/);
   assert.match(zoom,/img\.onerror=\(\)=>proxima\(\)/);
   assert.match(zoom,/closest\('\.zx,\.reintentar-zoom'\)/);
-  assert.match(html,/\.lienzo>\.cargando\{z-index:3\}/);
+  assert.match(html,/\.cargando\{[^}]*\}\s*\.lienzo>\.cargando\{z-index:3\}/); // regla separada, no CSS anidado
 });

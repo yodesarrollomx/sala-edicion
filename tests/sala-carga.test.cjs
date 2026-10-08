@@ -41,11 +41,12 @@ test('para un GAS antiguo se rescatan las marcas sin perder los demás campos', 
   assert.deepEqual(j.decisiones.editores, ['Editor']);
 });
 test('una portada del repo prefiere JPG ligera aunque el catálogo ofrezca Drive', () => {
-  const contexto = {_porRuta:{'laminas/lote/L1.png':{prueba:'test-drive'},'externa.png':{prueba:'test-drive'}},
+  const contexto = {_porRuta:{'laminas/lote/L1.png':{prueba:'test-drive'},'laminas/lote/L1.jpg':{prueba:'test-drive-jpg'},'externa.png':{prueba:'test-drive'}},
     deDrive: id => 'https://drive.invalid/'+id};
   vm.runInNewContext(extraer('const ligera=src=>{', '/* Ampliar sí pide') +
     '\nthis.ligeraPublica = ligera;', contexto);
   assert.equal(contexto.ligeraPublica('laminas/lote/L1.png'),'laminas/lote/L1.jpg');
+  assert.equal(contexto.ligeraPublica('laminas/lote/L1.jpg'),'laminas/lote/L1.jpg');
   assert.equal(contexto.ligeraPublica('externa.png'),'https://drive.invalid/test-drive');
 });
 test('la lectura secundaria arranca después de pintar la mesa', () => {
@@ -65,4 +66,17 @@ test('ninguna solicitud secundaria o comprobación de versión arranca antes de 
   assert.match(secundarios, /setTimeout\(vigilarVersion,9500\)/);
   assert.match(secundarios, /setTimeout\(\(\)=>\{/);
   assert.match(html, /if\(_pintado&&document\.body\.dataset\.vista==='hoy'\)/);
+});
+
+test('al llegar el catálogo se actualiza el serial sin reemplazar la JPG ya cargada', () => {
+  const segmento=extraer('async function traerCatalogo(){','/* La liga de Drive');
+  assert.doesNotMatch(segmento, /pintarCartas\(\)/);
+  assert.match(segmento, /querySelectorAll\('\.carta\[data-k\]'\)/);
+  assert.match(segmento, /etiqueta\.textContent=serial/);
+});
+test('consultas secundarias dan prioridad limitada a la primera foto', () => {
+  const secundarios=extraer('function cargarSecundarios(){','function pintarFecha(');
+  assert.match(secundarios,/principal\.addEventListener\('load',adelante,\{once:true\}\)/);
+  assert.match(secundarios,/principal\.addEventListener\('error',adelante,\{once:true\}\)/);
+  assert.match(secundarios,/setTimeout\(adelante,2000\)/);
 });
