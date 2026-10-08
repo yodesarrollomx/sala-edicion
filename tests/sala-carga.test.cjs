@@ -43,7 +43,7 @@ test('para un GAS antiguo se rescatan las marcas sin perder los demás campos', 
 test('una portada del repo prefiere JPG ligera aunque el catálogo ofrezca Drive', () => {
   const contexto = {_porRuta:{'laminas/lote/L1.png':{prueba:'test-drive'},'laminas/lote/L1.jpg':{prueba:'test-drive-jpg'},'externa.png':{prueba:'test-drive'}},
     deDrive: id => 'https://drive.invalid/'+id};
-  vm.runInNewContext(extraer('const esLaminaLocal=src=>', '/* Ampliar sí pide') +
+  vm.runInNewContext(extraer('const esLaminaLocal=src=>', '/* Ampliar sí permite') +
     '\nthis.ligeraPublica = ligera;', contexto);
   assert.equal(contexto.ligeraPublica('laminas/lote/L1.png'),'laminas/lote/L1.jpg');
   assert.equal(contexto.ligeraPublica('laminas/lote/L1.jpg'),'laminas/lote/L1.jpg'); // no Drive
