@@ -362,6 +362,7 @@ details.prod-dentro>summary{cursor:pointer;font-weight:600;color:var(--guia);mar
 .ruedita{width:26px;height:26px;border-radius:50%;border:3px solid var(--oro-suave);border-top-color:var(--oro);animation:gira .8s linear infinite}
 .cargando-carta .cargando{display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:14.5px;color:#e6dfd2}
 .cargando{position:absolute;inset:0;display:grid;place-items:center;color:#c9c2b4;font-size:13px;gap:10px;padding:20px;text-align:center;
+.lienzo>.cargando{z-index:3} /* el botón de reintentar debe quedar sobre el IMG roto */
   background:linear-gradient(110deg,#141210 30%,#1f1c18 50%,#141210 70%);background-size:200% 100%;animation:brilla 1.4s infinite}
 @keyframes brilla{to{background-position:-200% 0}}
 .chip-dec{position:absolute;top:12px;right:12px;z-index:3;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;background:rgba(20,18,14,.8);color:#f6f2ea;backdrop-filter:blur(4px)}
@@ -761,7 +762,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='ffb675d99f';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='f245dc563a';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
