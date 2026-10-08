@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Reducir notificaciones redundantes de Sala Relevo cuando Apps Script no responde (código 2) sin perder respaldo ni decisiones. Dejar una advertencia visible en el Vigía por día. Mantener fallos reales, datos inválidos (código 3) y problemas de publicación como errores.",
+  "summary": "Reducir notificaciones redundantes de Sala Relevo cuando Apps Script no responde (código 2) sin perder respaldo ni decisiones. Dejar una advertencia visible en el Vigía por día. Mantener fallos reales, datos inválidos (código 3) y problemas de publicación como errores. Además, PR antiguos de otras revisiones ya no bloquean imágenes nuevas: se deduplica por ID de tira, y los procesos con estado compartido limitan PR recientes a una ventana de 12 horas.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
@@ -11,7 +11,8 @@
     "Arquitectura YOD y Verificar la Sala en PR exacto",
     "Simular salida de relevo 2: conserva manifiesto y emite advertencia una vez por día",
     "Simular código 3: falla y conserva aviso fuerte",
-    "Comprobar que ningún cambio de GAS, datos editoriales o credenciales entra al PR"
+    "Comprobar que ningún cambio de GAS, datos editoriales o credenciales entra al PR",
+    "Pruebas unitarias: PR viejo, misma tira y tira distinta no duplican ni bloquean producción"
   ],
   "rollback": "Revertir este workflow mediante PR, restaurar tratamiento de código 2 como fallo de Actions; no tocar Google Sheets ni respaldos."
 }
