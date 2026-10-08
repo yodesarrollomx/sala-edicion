@@ -1,13 +1,13 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Complementar sin sustituir la reparación de imagen y montaje seguro ya aprobada: JPG local de Pages tiene prioridad incluso si el Sheet devuelve .jpg y el catálogo apunta a thumbnail de Drive; el catálogo añade seriales sin destruir y reconstruir la imagen; los GET secundarios esperan la primera foto o máximo 2 segundos. Se conserva el botón reintento, zoom y bloqueo de decisiones sin imagen del PR #234.",
+  "summary": "Complementar sin sustituir la reparación de imagen y montaje seguro ya aprobada: JPG local de Pages tiene prioridad incluso si el Sheet devuelve .jpg y el catálogo apunta a thumbnail de Drive; el catálogo añade seriales sin destruir y reconstruir la imagen; los GET secundarios esperan la primera foto o máximo 2 segundos. Se conserva el botón reintento, zoom y bloqueo de decisiones sin imagen del PR #234. También se corrige la regla CSS z-index que había quedado accidentalmente anidada, para que el botón Reintentar quede por encima del IMG roto y funcione en móvil.",
   "components": [
     "SYS-SALA"
   ],
   "tests": [
     "node --test tests/sala-carga.test.cjs (JPG local desde catálogo, actualización de serial sin recrear carta, carga secundaria diferida)",
-    "node --test tests/sala-imagenes.test.cjs (se conserva protección contra aprobación de imágenes no publicadas)",
+    "node --test tests/sala-imagenes.test.cjs (se conserva protección contra aprobación de imágenes no publicadas) y CSS de botón Reintentar en regla independiente",
     "python3 nube/verificar.py (sello, contratos y permisos)",
     "Arquitectura YOD y Verificar la Sala en commit exacto; GitHub Pages HTTP 200 tras merge",
     "Comprobar latencia de respuesta de GAS y primera foto en móvil con sesión actual, no estimar segundos sin medición"
