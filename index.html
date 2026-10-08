@@ -355,6 +355,7 @@ details.prod-dentro>summary{cursor:pointer;font-weight:600;color:var(--guia);mar
 .lienzo{flex:1 1 0;position:relative;background:#141210;display:grid;place-items:center;min-height:90px;overflow:hidden}
 .lienzo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;opacity:0;transition:opacity .3s}
 .lienzo img.lista{opacity:1}
+.lienzo .reintentar-lamina{border:1px solid #e4d9c7;border-radius:999px;background:#e4d9c7;color:#191408;min-height:44px;padding:9px 20px;font-size:14px;font-weight:650;touch-action:manipulation}
 .lienzo video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
 .lienzo.conVideo{flex:1 1 auto;min-height:190px}
 .num-movil{display:none}
@@ -486,6 +487,7 @@ p.fechas{font-size:12.5px;color:var(--guia)} button.liga{background:none;border:
 .zoom .zx{position:fixed;top:calc(12px + env(safe-area-inset-top));left:14px;height:44px;padding:0 16px 0 10px;border-radius:999px;border:0;
   background:rgba(255,255,255,.14);color:#fff;font-size:14px;font-weight:600;z-index:2;backdrop-filter:blur(6px);display:inline-flex;align-items:center;gap:6px}
 .zoom .zx svg{width:20px;height:20px}
+.zoom .zx.zhd{left:auto;right:14px}
 .zoom .zt{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);color:#cfc8ba;font-size:12.5px;
   background:rgba(0,0,0,.45);padding:6px 12px;border-radius:999px;pointer-events:none;white-space:nowrap}
 
@@ -761,7 +763,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='5b080aa97d';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='9ff61446d9';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -826,10 +828,22 @@ async function traerCatalogo(){
       // imagen que apodo-g2/L2.png). Todas apuntan al mismo archivo de Drive.
       for(const ruta of String(v.rutas||v.ruta||'').split('|').filter(Boolean))
         _porRuta[ruta]={serial:s,r:v.r,de:v.de,prueba:v.prueba,original:v.original};
-    // 8-sep: el catálogo llega DESPUÉS de que las cartas ya se pintaron (probado en su Chrome:
-    // 49 láminas cargadas y aun así las 4 imágenes salían del repo). Al llegar, se vuelve a
-    // pintar para que la foto se pida a Drive y el serial se vea.
-    if(Object.keys(_porRuta).length && typeof pintarCartas==='function' && pasos && pasos.length) pintarCartas();
+    // Actualizar el serial SIN reconstruir la carta: volver a pintar disparaba nuevas
+    // descargas y podía cambiar la JPG local por una miniatura de Drive fallida.
+    if(Object.keys(_porRuta).length && typeof pasos!=='undefined' && pasos.length){
+      const zona=$('#zona');
+      if(zona) zona.querySelectorAll('.carta[data-k]').forEach(el=>{
+        const x=pasos[+el.dataset.k]; if(!x||x.tipo!=='lamina') return;
+        const serial=serialDe(x.p.laminas[x.i]); if(!serial) return;
+        let etiqueta=el.querySelector('.lienzo .serie');
+        if(!etiqueta){
+          const l=el.querySelector('.lienzo'); if(!l) return;
+          etiqueta=document.createElement('span'); etiqueta.className='serie'; l.prepend(etiqueta);
+        }
+        etiqueta.textContent=serial;
+        const pie=el.querySelector('.pie-lamina .serial'); if(pie) pie.textContent=serial;
+      });
+    }
   }catch(e){ /* sin catálogo la Sala sigue igual: sirve las ligeras del repo */ }
 }
 /* La liga de Drive que SÍ responde parejo para pintar en una página. (`uc?export=view` tarda
@@ -841,14 +855,15 @@ const deDrive=(id,ancho)=>`https://drive.google.com/thumbnail?id=${id}&sz=w${anc
    video desapareció de la mesa («Nada pendiente para ti» con el video esperando en el Sheet).
    Se lee en un solo lugar. */
 const CANDIDATAS=p=>{ const o=(p&&p.opciones)||[]; return Array.isArray(o)?o:(o.candidatas||o.opciones||[]) };
+const esLaminaLocal=src=>/^laminas\/[^?#]+\.(?:png|jpe?g|webp)$/i.test(src||'');
 const ligera=src=>{
-  // Las 371 láminas PNG de Pages tienen JPG ligera; la portada debe llegar del mismo origen.
-  // El catálogo conserva el serial y la liga original de Drive para Ampliar.
-  if(/^laminas\/.*\.png$/i.test(src||'')) return src.replace(/\.png$/i,'.jpg');
+  // Los archivos publicados en Pages son la primera opción en celular, también
+  // cuando ya vienen como .jpg y aunque el catálogo anuncie un ID de Drive.
+  if(esLaminaLocal(src)) return /\.png$/i.test(src)?src.replace(/\.png$/i,'.jpg'):src;
   const c=_porRuta[src]; if(c&&c.prueba) return deDrive(c.prueba,1200);
   return /\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
 };
-/* Ampliar sí pide el original limpio (sin sello), que para eso está. */
+/* Ampliar sí permite pedir el original limpio: primero se muestra la JPG ligera. */
 const original=src=>{ const c=_porRuta[src]; return (c&&c.original)?deDrive(c.original,2000):src };
 /* El serial visible: «APODO-L04 · revisión 5 de 5». Para no volver a dudar si es nueva. */
 function serialDe(src){ const c=_porRuta[src]; return c?`${c.serial} · revisión ${c.r} de ${c.de}`:'' }
@@ -1494,7 +1509,8 @@ function pintarCartas(){
           <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button></div>${luegoDe(x)}</div>`;
       montarImagen(el,src,k===idx);
       el.querySelectorAll('.lupa,.num-movil').forEach(b=>b.onclick=e=>{ e.stopPropagation(); abrirZoom(src) });
-      dobleToque(el.querySelector('.lienzo'),()=>abrirZoom(src));
+      // En celular un toque abre la ampliación: antes solo un doble toque o la píldora.
+      el.querySelector('.lienzo > img').onclick=e=>{ e.stopPropagation(); abrirZoom(src) };
       el.querySelectorAll('[data-cand]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); if(!DECIDE()||!candadoLibre()) return; const k=+b.dataset.cand;
         const _prev=String(dec[x.pid].notas[x.i]||'').replace(/\s*\[toma elegida: \d+\]/g,'').trim();
         dec[x.pid].laminas[x.i]='si'; dec[x.pid].notas[x.i]=(_prev?_prev+' ':'')+'[toma elegida: '+(k+1)+']'; if(dec[x.pid]._borrar) delete dec[x.pid]._borrar[x.i]; avanzar('si') });
@@ -1554,18 +1570,45 @@ function mandoDecidir(){   // si la Sala venía de la vista de solo lectura, dev
   m.innerHTML=MANDO_HTML; $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 }
 function montarImagen(el,src,prioritaria=true){
-  const img=el.querySelector('img');
+  const img=el.querySelector('.lienzo > img'); if(!img) return;
+  const c=el.querySelector('.lienzo .cargando');
   img.loading=prioritaria?'eager':'lazy'; img.fetchPriority=prioritaria?'high':'low'; img.decoding='async';
-  const lista=()=>{ img.classList.add('lista'); const c=el.querySelector('.cargando'); if(c) c.remove() };
+  const candidatos=()=>{
+    const posibles=[ligera(src)];
+    if(esLaminaLocal(src)){
+      if(/\.png$/i.test(src||'')) posibles.push(src); // original del repo si falta la JPG
+      const ficha=_porRuta[src]; if(ficha&&ficha.prueba) posibles.push(deDrive(ficha.prueba,900));
+    }else if(src&&src!==posibles[0]) posibles.push(src);
+    return [...new Set(posibles.filter(Boolean))];
+  };
+  let opciones=candidatos(),i=0;
+  const lista=()=>{ img.classList.add('lista'); if(c) c.remove() };
+  const fallo=()=>{
+    if(!c) return;
+    c.innerHTML='<span>No cargó la imagen.</span><button class="reintentar-lamina" type="button">Reintentar imagen</button>';
+    const b=c.querySelector('button');
+    b.onclick=e=>{ e.stopPropagation(); opciones=candidatos(); i=0; probar(true) };
+  };
+  const probar=forzar=>{
+    img.classList.remove('lista'); if(c) c.textContent='Cargando lámina…';
+    if(!opciones[i]){ fallo(); return }
+    const srcActual=opciones[i];
+    img.src=forzar?srcActual+(srcActual.includes('?')?'&':'?')+'recarga='+Date.now():srcActual;
+    if(img.complete&&img.naturalWidth) lista();
+  };
   img.onload=lista;
-  // 8-sep: si la de Drive no llega, se cae a la LIGERA del repo — nunca al maestro .png.
-  // (Antes el respaldo era `src` crudo: 1.8 MB al teléfono justo cuando la señal está mal,
-  // que es lo contrario de lo que se quería.)
-  const _repoLigera=/\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
-  img.onerror=()=>{ if(!img.src.endsWith(_repoLigera)){ img.src=_repoLigera; return }
-    const c=el.querySelector('.cargando'); if(c) c.textContent='No cargó la imagen. Toca «Ampliar» para reintentar.' };
-  img.src=ligera(src);
-  if(img.complete&&img.naturalWidth) lista();
+  img.onerror=()=>{ if(i+1<opciones.length){ i++; probar(false) } else fallo() };
+  probar(false);
+}
+// No competir con la primera foto por el ancho de banda del celular.
+function trasPrimeraFoto(fn){
+  const img=$('#zona .carta:not(.detras) .lienzo > img');
+  if(!img||img.complete){ setTimeout(fn,0); return }
+  let listo=false;
+  const terminar=()=>{ if(listo) return; listo=true; fn() };
+  img.addEventListener('load',terminar,{once:true});
+  img.addEventListener('error',terminar,{once:true});
+  setTimeout(terminar,2000); // nunca bloquea navegación ni la tira si una foto falla
 }
 function dobleToque(el,fn){ let t=0; el.addEventListener('pointerup',e=>{ const n=Date.now(); if(n-t<320&&Math.abs(_dxUlt)<8){ t=0; fn() } else t=n }) }
 let _dxUlt=0;
@@ -1715,15 +1758,27 @@ function pintarPanel(){
 /* ══ zoom ══ */
 function abrirZoom(src){
   bloquear(true);
-  src=original(src);   // 8-sep: al ampliar se trae el maestro limpio, sin el sello de la prueba
+  // Abrir con la JPG de Pages, no con Drive. El original de alta resolución es optativo.
+  const vista=ligera(src),alta=original(src);
   const z=document.createElement('div'); z.className='zoom';
-  z.innerHTML=`<img src="${esc(src)}" alt="Lámina ampliada"><button class="zx">${ICO_VOLVER}Volver</button><div class="zt">${matchMedia('(hover:hover)').matches?'Rueda o doble clic para acercar · arrastra para mover':'Pellizca o doble toque para acercar · desliza para mover'}</div>`;
+  z.innerHTML=`<img alt="Lámina ampliada"><button class="zx" type="button">${ICO_VOLVER}Volver</button>${alta&&alta!==vista?'<button class="zx zhd" type="button">Original HD</button>':''}<div class="zt">${matchMedia('(hover:hover)').matches?'Rueda o doble clic para acercar · arrastra para mover':'Pellizca o doble toque para acercar · desliza para mover'}</div>`;
   document.body.appendChild(z);
-  const img=z.querySelector('img'); let s=1,tx=0,ty=0,base=1,W=0,H=0;
+  const img=z.querySelector('img'), info=z.querySelector('.zt'),btnAlta=z.querySelector('.zhd');
+  let s=1,tx=0,ty=0,base=1,W=0,H=0,fuente='ligera',alternativa=false;
   const aplicar=()=>{ img.style.transform=`translate(${tx}px,${ty}px) scale(${s})` };
   const ajustar=()=>{ const vw=innerWidth,vh=innerHeight; const nw=img.naturalWidth||1080,nh=img.naturalHeight||1350;
-    base=Math.min(vw/nw,vh/nh); W=nw*base; H=nh*base; s=1; tx=(vw-W)/2; ty=(vh-H)/2; img.style.width=W+'px'; img.style.height=H+'px'; aplicar() };
-  if(img.complete&&img.naturalWidth) ajustar(); else img.onload=ajustar;
+    base=Math.min(vw/nw,vh/nh); W=nw*base; H=nh*base; s=1; tx=(vw-W)/2; ty=(vh-H)/2; img.style.width=W+'px'; img.style.height=H+'px'; aplicar();
+    if(btnAlta){btnAlta.disabled=false;btnAlta.textContent=fuente==='alta'?'Original HD ✓':'Original HD'}
+  };
+  img.onload=ajustar;
+  img.onerror=()=>{
+    if(!alternativa && vista!==alta){
+      alternativa=true;
+      if(fuente==='alta'){fuente='ligera'; info.textContent='Original no disponible · mostrando versión ligera'; img.src=vista}
+      else {fuente='alta';info.textContent='Probando imagen alternativa…';img.src=alta}
+    }else{ info.textContent='No cargó esta imagen. Vuelve y toca Reintentar imagen en la tarjeta.';
+      if(btnAlta){btnAlta.disabled=false;btnAlta.textContent='Original HD'} }
+  };
   const pts=new Map(); let d0=0,s0=1,c0=null,ultimoTap=0,pan0=null;
   const acotar=()=>{ s=Math.max(1,Math.min(5,s)); const w=W*s,h=H*s;
     tx=w<=innerWidth?(innerWidth-w)/2:Math.min(0,Math.max(innerWidth-w,tx)); ty=h<=innerHeight?(innerHeight-h)/2:Math.min(0,Math.max(innerHeight-h,ty)) };
@@ -1737,10 +1792,12 @@ function abrirZoom(src){
   const soltar=e=>{ pts.delete(e.pointerId); if(pts.size<2){ d0=0 } if(!pts.size) pan0=null };
   z.addEventListener('pointerup',soltar); z.addEventListener('pointercancel',soltar);
   z.addEventListener('wheel',e=>{ e.preventDefault(); zoomEn(e.clientX,e.clientY,s*(e.deltaY<0?1.15:0.87)) },{passive:false});
-  const onResize=()=>ajustar(); addEventListener('resize',onResize);
+  const onResize=()=>{ if(img.naturalWidth) ajustar() }; addEventListener('resize',onResize);
   const id='zoom'+Date.now();
   z.querySelector('.zx').onclick=()=>cerrarCapa(id);
+  if(btnAlta) btnAlta.onclick=e=>{e.stopPropagation();fuente='alta';alternativa=false;btnAlta.disabled=true;info.textContent='Abriendo original HD…';img.src=alta};
   abrirCapa(id,()=>{ z.remove(); removeEventListener('resize',onResize) },z.querySelector('.zx'),z);
+  img.src=vista; if(img.complete&&img.naturalWidth) ajustar();
 }
 
 /* ══ final / vacío ══ */
@@ -2878,8 +2935,10 @@ function cargarSecundarios(){
     // la mesa todavía espera a Apps Script ni mientras baja la primera foto.
     setTimeout(vigilarVersion,9500);
   };
-  if(typeof requestIdleCallback==='function') requestIdleCallback(iniciar,{timeout:1000});
-  else setTimeout(iniciar,500);
+  trasPrimeraFoto(()=>{
+    if(typeof requestIdleCallback==='function') requestIdleCallback(iniciar,{timeout:1000});
+    else setTimeout(iniciar,500);
+  });
 }
 function pintarFecha(f){ try{ $('#fechaTxt').textContent=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}) }catch(e){ $('#fechaTxt').textContent=f } }
 let _pintado=false, _tFrases=null, _reintentando=false;
@@ -2981,7 +3040,20 @@ function montar(d){
   armarPasos(borradorManda); hidratarReaperturas();
   const hubo=restaurarBorrador(); if(!hubo){ idx=0; hist=[] }
   estadoInicial(); pintarCartas(); const mw=$('#mandoWrap'); if(mw&&pasos.length&&idx<pasos.length) mw.hidden=false;
-  Promise.all([...new Set(pasos.map(x=>x.pid))].map(cargarTira)).then(()=>{ if(pasos[idx]){ pintarTira(pasos[idx]); pintarCartas() } });
+  // Antes pedía todas las tiras a la vez y reconstruía la foto aun sin terminar de cargar.
+  // Primero la foto; después la tira actual; el resto se precarga sin repintar toda la mesa.
+  trasPrimeraFoto(()=>{
+    const actual=pasos[idx]&&pasos[idx].pid, ids=[...new Set(pasos.map(x=>x.pid))];
+    if(actual) cargarTira(actual).then(()=>{
+      const x=pasos[idx]; if(!x||x.pid!==actual) return;
+      const t=tiraDe(x),l=t&&x.tipo==='lamina'?laminaTira(t,x.p.laminas[x.i],nLamina(x)):null;
+      if(l&&Array.isArray(l.candidatas)&&l.candidatas.length) pintarCartas();
+      else pintarTira(x);
+    }).catch(()=>{});
+    setTimeout(()=>{ Promise.all(ids.filter(id=>id!==actual).map(cargarTira)).then(()=>{
+      if(pasos[idx]) pintarTira(pasos[idx]);
+    }).catch(()=>{}) },1500);
+  });
   if(hubo&&idx>0&&idx<pasos.length) $('#subt').textContent=`Sigues donde ibas · ${piezaDe(pasos[idx])}`;
   ajustarZona();
 }
