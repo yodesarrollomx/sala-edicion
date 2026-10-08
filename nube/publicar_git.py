@@ -169,6 +169,8 @@ class Publisher:
 
     def integrate(self, process):
         changed = self.changed_paths(process)
+        if not changed and process != "mesa":
+            return self.output(hubo="no")
         # Sólo UNA propuesta pendiente por clase; evita desperdiciar créditos y crear
         # decenas de PR idénticos mientras GitHub exige aprobar su CI.
         existentes = self.api(f"repos/{self.repo}/pulls?state=open&per_page=100")
