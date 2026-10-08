@@ -36,6 +36,9 @@ class FakeGitHub:
         self.empty_checks_reads = 0
         self.dispatched = {}
         self.existing_pr = False
+        self.existing_title = "Sala relevo: archivos generados"
+        self.existing_date = None
+        self.existing_files = []
         self.fail_prefix = None
         self.clock = 0
 
@@ -69,9 +72,12 @@ class FakeGitHub:
         elif argv[:2] == ["gh", "api"]:
             endpoint, method = argv[4], argv[3]
             if endpoint.endswith("/pulls?state=open&per_page=100") and method == "GET":
-                result = json.dumps([{"number": 8, "title": "Sala relevo: archivos generados",
+                result = json.dumps([{"number": 8, "title": self.existing_title,
+                                      "created_at": self.existing_date,
                                       "base": {"ref": "main"}, "state": "open"}]
                                     if self.existing_pr else [])
+            elif endpoint.endswith("/pulls/8/files?per_page=100"):
+                result = json.dumps([{"filename": p} for p in self.existing_files])
             elif endpoint.endswith("/pulls") and method == "POST":
                 result = json.dumps({"number": 9})
             elif endpoint.endswith("/pulls/9"):
@@ -197,6 +203,31 @@ class PublicationTests(unittest.TestCase):
         self.assertEqual(result, {"hubo": "pendiente", "pr": 8})
         self.assertFalse(any(c[:2] == ["git", "checkout"] for c in self.commands()))
         self.assert_no_merge()
+
+    def test_old_bot_pr_does_not_block_a_new_snapshot(self):
+        self.fake.existing_pr = True
+        self.fake.existing_date = "2026-01-01T00:00:00Z"
+        self.assertEqual(self.publisher.integrate("relevo"),
+                         {"hubo": "si", "merge_sha": MERGE, "pr": 9})
+
+    def test_same_revision_in_pending_mesa_pr_is_not_recreated(self):
+        self.fake.existing_pr = True
+        self.fake.existing_title = "Sala mesa: archivos generados"
+        self.fake.existing_files = ["datos/tiras/revision.json"]
+        self.fake.status = "?? datos/tiras/revision.json\\0"
+        self.fake.staged = "datos/tiras/revision.json\\0architecture-impact.json\\0"
+        self.assertEqual(self.publisher.integrate("mesa"),
+                         {"hubo": "pendiente", "pr": 8})
+        self.assert_no_merge()
+
+    def test_different_mesa_revision_not_blocked_by_old_pr(self):
+        self.fake.existing_pr = True
+        self.fake.existing_title = "Sala mesa: archivos generados"
+        self.fake.existing_files = ["datos/tiras/old.json"]
+        self.fake.status = "?? datos/tiras/new.json\\0"
+        self.fake.staged = "datos/tiras/new.json\\0architecture-impact.json\\0"
+        self.assertEqual(self.publisher.integrate("mesa"),
+                         {"hubo": "si", "merge_sha": MERGE, "pr": 9})
 
     def test_no_change_in_other_process_still_one_git_read(self):
         self.fake.status = ""
