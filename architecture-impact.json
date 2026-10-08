@@ -1,18 +1,16 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Resolver tarjetas sin imágenes del móvil: la Mesa no monta desde archivos de un PR pendiente, sino tras SHA verificado y publicación; el montador comprueba que cada JPG existe en el HEAD publicado; el cliente hace reintento real, ofrece fallback legible en zoom y no permite aprobar una foto que no se mostró.",
+  "summary": "Complementar sin sustituir la reparación de imagen y montaje seguro ya aprobada: JPG local de Pages tiene prioridad incluso si el Sheet devuelve .jpg y el catálogo apunta a thumbnail de Drive; el catálogo añade seriales sin destruir y reconstruir la imagen; los GET secundarios esperan la primera foto o máximo 2 segundos. Se conserva el botón reintento, zoom y bloqueo de decisiones sin imagen del PR #234.",
   "components": [
-    "SYS-SALA",
-    "GAS-SALA"
+    "SYS-SALA"
   ],
   "tests": [
-    "node --test tests/sala-imagenes.test.cjs (imagen cargada/error, zoom y montaje seguro)",
-    "node --test tests/sala-carga.test.cjs",
-    "python3 nube/verificar.py, sello MD5",
-    "Arquitectura YOD + Verificar la Sala sobre commit exacto",
-    "Comprobar cinco imágenes del día frente a main y el Sheet, sin modificar decisiones",
-    "Desplegar Pages, comprobar primer archivo JPG y mensaje real si aún no está publicado"
+    "node --test tests/sala-carga.test.cjs (JPG local desde catálogo, actualización de serial sin recrear carta, carga secundaria diferida)",
+    "node --test tests/sala-imagenes.test.cjs (se conserva protección contra aprobación de imágenes no publicadas)",
+    "python3 nube/verificar.py (sello, contratos y permisos)",
+    "Arquitectura YOD y Verificar la Sala en commit exacto; GitHub Pages HTTP 200 tras merge",
+    "Comprobar latencia de respuesta de GAS y primera foto en móvil con sesión actual, no estimar segundos sin medición"
   ],
-  "rollback": "Revertir solamente este PR; conservar cron, decisiones, credenciales, historial editorial, archivos originales y los PR de producción pendientes."
+  "rollback": "Revertir sólo este complemento de carga de imágenes; no revertir la protección del PR #234 ni alterar Sheets, decisiones, credenciales, rutas de producción o datos."
 }
