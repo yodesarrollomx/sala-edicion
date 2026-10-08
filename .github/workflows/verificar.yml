@@ -33,3 +33,5 @@ jobs:
         run: python3 nube/verificar.py
       - name: Probar recuperación de Relevo (sin Google ni credenciales)
         run: python3 -m unittest discover -s tests -p 'sala_cliente_test.py' -v
+      - name: Pruebas aisladas de PR automático y verificación de checks
+        run: python3 -m unittest discover -s tests -p publicar_git_test.py

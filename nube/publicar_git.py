@@ -136,13 +136,21 @@ class Publisher:
         while self.clock() < deadline:
             raw = self.command(["gh", "pr", "checks", str(number), "--repo", self.repo,
                                 "--required", "--json", "name,bucket"], allowed=(0, 1, 8))
+            # Los PR creados con GITHUB_TOKEN no despiertan checks de pull_request.
+            # Tras dispararlos explícitamente, GitHub tarda en asociarlos al head.
+            if not raw.strip():
+                self.sleep(self.interval)
+                continue
             try:
                 checks = json.loads(raw)
             except ValueError as exc:
-                raise PublicationError("No se pudieron comprobar los checks obligatorios.") from exc
-            if (not isinstance(checks, list) or any(not isinstance(c, dict) for c in checks)
-                    or not any(c.get("name") == "Arquitectura YOD" for c in checks)):
-                raise PublicationError("Falta configurar el check obligatorio Arquitectura YOD.")
+                raise PublicationError("GitHub devolvió checks obligatorios inválidos.") from exc
+            if not isinstance(checks, list) or any(not isinstance(c, dict) for c in checks):
+                raise PublicationError("GitHub devolvió checks obligatorios inválidos.")
+            names = {c.get("name") for c in checks}
+            if not {"Arquitectura YOD", "verificar"}.issubset(names):
+                self.sleep(self.interval)
+                continue
             if any(c.get("bucket") in ("fail", "cancel", "skipping") for c in checks):
                 raise PublicationError("Una comprobación obligatoria no pasó.")
             if all(c.get("bucket") == "pass" for c in checks):
@@ -224,6 +232,9 @@ class Publisher:
             deadline = self.clock() + self.timeout
             self.dispatch_and_wait("arquitectura.yml", branch,
                                    {"base_sha": base, "head_sha": head}, head=head, deadline=deadline)
+            # En un PR creado por github-actions[bot], pull_request no activa verificar.yml.
+            # workflow_dispatch sí produce su propio check sobre el SHA exacto.
+            self.dispatch_and_wait("verificar.yml", branch, {}, head=head, deadline=deadline)
             self.required_checks(number, deadline)
             current = self.api(f"repos/{self.repo}/pulls/{number}")
             if (not isinstance(current, dict) or current.get("state") != "open" or current.get("draft")
