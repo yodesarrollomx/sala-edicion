@@ -31,3 +31,5 @@ jobs:
         run: pip install --quiet google-auth requests pillow
       - name: Reglas del repo, sello de versión e integridad de los datos
         run: python3 nube/verificar.py
+      - name: Pruebas aisladas de PR automático y verificación de checks
+        run: python3 -m unittest discover -s tests -p publicar_git_test.py
