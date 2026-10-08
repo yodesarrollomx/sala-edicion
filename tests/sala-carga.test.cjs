@@ -55,3 +55,14 @@ test('la lectura secundaria arranca después de pintar la mesa', () => {
   assert.doesNotMatch(inicio, /traerCatalogo\(\)/);
   assert.doesNotMatch(inicio, /traerCola\(\)/);
 });
+
+test('ninguna solicitud secundaria o comprobación de versión arranca antes de Hoy', () => {
+  assert.doesNotMatch(html, /setTimeout\(actualizarLineaHoy,2500\)/);
+  assert.doesNotMatch(html, /setTimeout\(vigilarVersion,4000\)/);
+  const inicio = extraer('(async function(){', '  // Catálogo y vistas auxiliares se cargan');
+  assert.doesNotMatch(inicio, /traerCatalogo\(\)|traerCola\(\)|cargarExpedientes\(\)/);
+  const secundarios = extraer('function cargarSecundarios(){', 'function pintarFecha(');
+  assert.match(secundarios, /setTimeout\(vigilarVersion,9500\)/);
+  assert.match(secundarios, /setTimeout\(\(\)=>\{/);
+  assert.match(html, /if\(_pintado&&document\.body\.dataset\.vista==='hoy'\)/);
+});
