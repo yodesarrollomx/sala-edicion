@@ -1,16 +1,18 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Reducir latencia de la primera lectura en Sala de Edición mediante el calentador que YA existe en el GAS: solicitar por una sola vez, desde un GitHub Action con credencial secreta, que Apps Script programe calentarCache cada 10 minutos. No crear un servidor nuevo, no publicar claves, no modificar el contenido de Sheets ni el Portero.",
+  "summary": "Recuperar exclusivamente Sala: instalar una vez el calentador nativo del GAS (cada 10 min), y mediante el montador habitual reintentar SOLO la foto no publicada de la videollamada del 8-oct. Declarar inputs para el workflow_call reutilizable, conservar candados y exigir Pages verificado antes de volver a montar tarjetas.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
   ],
   "tests": [
-    "python3 nube/verificar.py (workflow sin secrets en PR)",
-    "GitHub checks Verificar la Sala y Arquitectura YOD",
-    "Ejecutar una sola vez con push a main y verificar salida de activación o advertencia honesta",
-    "Reabrir desde móvil y medir tiempo real, sin prometer latencia hasta medir"
+    "Verificar la Sala y Arquitectura YOD en commit exacto",
+    "Comprobar secrets nunca en workflows de pull_request",
+    "Comprobar YAML workflow_call acepta modo=montar y pieza=llamada-que-pasa",
+    "Ejecución del calentador confirma ok o warning, sin destruir datos",
+    "Recuperación de fotografía usa los motores existentes y nunca monta si PR no integrado",
+    "Respetar notas/decisiones y no copiar la imagen 10/07 como falsa 10/08"
   ],
-  "rollback": "Desactivar el trigger calentarCache en Apps Script si causa carga; revertir solo el workflow, conservar todas las notas editoriales y credenciales."
+  "rollback": "Revertir workflows de una sola ejecución y la declaración de inputs si hace falta; no borrar entregas, notas ni decisiones existentes."
 }
