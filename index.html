@@ -761,7 +761,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='1db29c35e1';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='7e0058ed90';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1748,20 +1748,33 @@ function pintarPanel(){
 /* ══ zoom ══ */
 function abrirZoom(src){
   bloquear(true);
-  src=original(src);   // 8-sep: al ampliar se trae el maestro limpio, sin el sello de la prueba
+  const fuentes=[...new Set([ligera(src),original(src),src].filter(Boolean))];
   const z=document.createElement('div'); z.className='zoom';
-  z.innerHTML=`<img src="${esc(src)}" alt="Lámina ampliada"><button class="zx">${ICO_VOLVER}Volver</button><div class="zt">${matchMedia('(hover:hover)').matches?'Rueda o doble clic para acercar · arrastra para mover':'Pellizca o doble toque para acercar · desliza para mover'}</div>`;
+  z.innerHTML=`<img alt="Lámina ampliada"><button class="zx">${ICO_VOLVER}Volver</button><div class="zoom-error" hidden style="position:absolute;z-index:4;max-width:min(92vw,360px);padding:24px;border-radius:16px;background:#28231c;color:#fff;text-align:center"><p>La imagen de esta revisión todavía no está disponible. Puedes reintentar sin cerrar la Sala.</p><button type="button" class="reintentar-zoom" style="min-height:44px;padding:8px 18px;border-radius:12px">Reintentar imagen</button></div><div class="zt">${matchMedia('(hover:hover)').matches?'Rueda o doble clic para acercar · arrastra para mover':'Pellizca o doble toque para acercar · desliza para mover'}</div>`;
   document.body.appendChild(z);
-  const img=z.querySelector('img'); let s=1,tx=0,ty=0,base=1,W=0,H=0;
+  const img=z.querySelector('img'), aviso=z.querySelector('.zoom-error'); let s=1,tx=0,ty=0,base=1,W=0,H=0;
   const aplicar=()=>{ img.style.transform=`translate(${tx}px,${ty}px) scale(${s})` };
   const ajustar=()=>{ const vw=innerWidth,vh=innerHeight; const nw=img.naturalWidth||1080,nh=img.naturalHeight||1350;
     base=Math.min(vw/nw,vh/nh); W=nw*base; H=nh*base; s=1; tx=(vw-W)/2; ty=(vh-H)/2; img.style.width=W+'px'; img.style.height=H+'px'; aplicar() };
-  if(img.complete&&img.naturalWidth) ajustar(); else img.onload=ajustar;
+  let pos=0, espera=null, recargar=false;
+  const proxima=()=>{
+    clearTimeout(espera);
+    if(pos>=fuentes.length){ img.hidden=true; aviso.hidden=false; return }
+    const ruta=fuentes[pos++];
+    img.hidden=false; img.src=recargar?ruta+(ruta.includes('?')?'&':'?')+'reintentar='+Date.now():ruta;
+    espera=setTimeout(()=>{ if(!img.complete||!img.naturalWidth) proxima() },8000);
+  };
+  img.onload=()=>{ clearTimeout(espera); aviso.hidden=true; ajustar() };
+  img.onerror=()=>proxima();
+  z.querySelector('.reintentar-zoom').onclick=e=>{
+    e.preventDefault(); e.stopPropagation(); aviso.hidden=true; pos=0; recargar=true; proxima();
+  };
+  proxima();
   const pts=new Map(); let d0=0,s0=1,c0=null,ultimoTap=0,pan0=null;
   const acotar=()=>{ s=Math.max(1,Math.min(5,s)); const w=W*s,h=H*s;
     tx=w<=innerWidth?(innerWidth-w)/2:Math.min(0,Math.max(innerWidth-w,tx)); ty=h<=innerHeight?(innerHeight-h)/2:Math.min(0,Math.max(innerHeight-h,ty)) };
   const zoomEn=(cx,cy,ns)=>{ const k=ns/s; tx=cx-(cx-tx)*k; ty=cy-(cy-ty)*k; s=ns; acotar(); aplicar() };
-  z.addEventListener('pointerdown',e=>{ if(e.target.closest('.zx')) return; z.setPointerCapture(e.pointerId); pts.set(e.pointerId,[e.clientX,e.clientY]);
+  z.addEventListener('pointerdown',e=>{ if(e.target.closest('.zx,.reintentar-zoom')) return; z.setPointerCapture(e.pointerId); pts.set(e.pointerId,[e.clientX,e.clientY]);
     if(pts.size===1){ pan0=[e.clientX-tx,e.clientY-ty]; const t=Date.now(); if(t-ultimoTap<300){ zoomEn(e.clientX,e.clientY,s>1.2?1:2.5); ultimoTap=0 } else ultimoTap=t }
     if(pts.size===2){ const [a,b]=[...pts.values()]; d0=Math.hypot(a[0]-b[0],a[1]-b[1]); s0=s; c0=[(a[0]+b[0])/2,(a[1]+b[1])/2] } });
   z.addEventListener('pointermove',e=>{ if(!pts.has(e.pointerId)) return; pts.set(e.pointerId,[e.clientX,e.clientY]);
@@ -1773,7 +1786,7 @@ function abrirZoom(src){
   const onResize=()=>ajustar(); addEventListener('resize',onResize);
   const id='zoom'+Date.now();
   z.querySelector('.zx').onclick=()=>cerrarCapa(id);
-  abrirCapa(id,()=>{ z.remove(); removeEventListener('resize',onResize) },z.querySelector('.zx'),z);
+  abrirCapa(id,()=>{ clearTimeout(espera); z.remove(); removeEventListener('resize',onResize) },z.querySelector('.zx'),z);
 }
 
 /* ══ final / vacío ══ */
