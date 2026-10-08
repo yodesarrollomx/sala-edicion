@@ -1,16 +1,18 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Optimizar exclusivamente la entrada a Hoy de Sala de Edición: no iniciar consultas de COLA, fabricación, ideas, expedientes ni descargar la versión HTML antes de montar la primera carta y su JPG ligera. Preservar decisión, sesión de YOD OS y recuperación del GAS de producción, sin tocar backend.",
+  "summary": "Resolver tarjetas sin imágenes del móvil: la Mesa no monta desde archivos de un PR pendiente, sino tras SHA verificado y publicación; el montador comprueba que cada JPG existe en el HEAD publicado; el cliente hace reintento real, ofrece fallback legible en zoom y no permite aprobar una foto que no se mostró.",
   "components": [
-    "SYS-SALA"
+    "SYS-SALA",
+    "GAS-SALA"
   ],
   "tests": [
-    "node --test tests/sala-carga.test.cjs (carga diferida y sin solicitudes anticipadas)",
-    "python3 nube/verificar.py (sello HTML y contratos)",
-    "Verificar la Sala y Arquitectura YOD en HEAD exacto del PR",
-    "GitHub Pages HTTP 200 después de desplegar",
-    "Medir en Chromebook con su sesión válida; no afirmar tiempo hasta comprobarlo"
+    "node --test tests/sala-imagenes.test.cjs (imagen cargada/error, zoom y montaje seguro)",
+    "node --test tests/sala-carga.test.cjs",
+    "python3 nube/verificar.py, sello MD5",
+    "Arquitectura YOD + Verificar la Sala sobre commit exacto",
+    "Comprobar cinco imágenes del día frente a main y el Sheet, sin modificar decisiones",
+    "Desplegar Pages, comprobar primer archivo JPG y mensaje real si aún no está publicado"
   ],
-  "rollback": "Revertir el PR de rendimiento de Sala sin afectar datos de Sheets, credenciales de acceso, notas editoriales ni imágenes producidas."
+  "rollback": "Revertir solamente este PR; conservar cron, decisiones, credenciales, historial editorial, archivos originales y los PR de producción pendientes."
 }
