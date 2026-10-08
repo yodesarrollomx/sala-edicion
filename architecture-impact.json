@@ -1,17 +1,17 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Publicar cinco juegos de láminas y sus archivos de revisión para Doble vía, La identidad no se improvisa, La ruta autónoma, Qué pasa en la videollamada y La Mesa Vacía, sin dar aprobación editorial ni volver a presentar originales rechazados.",
+  "summary": "Reducir notificaciones redundantes de Sala Relevo cuando Apps Script no responde (código 2) sin perder respaldo ni decisiones. Dejar una advertencia visible en el Vigía por día. Mantener fallos reales, datos inválidos (código 3) y problemas de publicación como errores.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
   ],
   "tests": [
-    "Verificar rutas, imágenes y JSON de cada tira nueva",
     "python3 nube/verificar.py",
-    "Arquitectura YOD y Verificar la Sala sobre SHA exacto",
-    "Confirmar publicación en GitHub Pages antes de proponer cinco cartas en la mesa",
-    "Respetar notas, firmas, rol de editor y regla una carta por pieza"
+    "Arquitectura YOD y Verificar la Sala en PR exacto",
+    "Simular salida de relevo 2: conserva manifiesto y emite advertencia una vez por día",
+    "Simular código 3: falla y conserva aviso fuerte",
+    "Comprobar que ningún cambio de GAS, datos editoriales o credenciales entra al PR"
   ],
-  "rollback": "Revertir el commit de archivos de revisión en un PR supervisado; nunca deshacer decisiones en Sheets, borrar originales, ni alterar historial."
+  "rollback": "Revertir este workflow mediante PR, restaurar tratamiento de código 2 como fallo de Actions; no tocar Google Sheets ni respaldos."
 }
