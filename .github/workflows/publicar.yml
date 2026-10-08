@@ -70,6 +70,8 @@ jobs:
       - name: Comprobar las compuertas de publicación sin red
         run: python3 -m unittest discover -s tests -p 'publicar_git_test.py'
 
+      - name: Pruebas de carga inicial de Hoy (sin red)
+        run: node --test tests/sala-carga.test.cjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
