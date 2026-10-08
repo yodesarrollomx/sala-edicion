@@ -214,8 +214,8 @@ class PublicationTests(unittest.TestCase):
         self.fake.existing_pr = True
         self.fake.existing_title = "Sala mesa: archivos generados"
         self.fake.existing_files = ["datos/tiras/revision.json"]
-        self.fake.status = "?? datos/tiras/revision.json\\0"
-        self.fake.staged = "datos/tiras/revision.json\\0architecture-impact.json\\0"
+        self.fake.status = "?? datos/tiras/revision.json\0"
+        self.fake.staged = "datos/tiras/revision.json\0architecture-impact.json\0"
         self.assertEqual(self.publisher.integrate("mesa"),
                          {"hubo": "pendiente", "pr": 8})
         self.assert_no_merge()
@@ -224,8 +224,8 @@ class PublicationTests(unittest.TestCase):
         self.fake.existing_pr = True
         self.fake.existing_title = "Sala mesa: archivos generados"
         self.fake.existing_files = ["datos/tiras/old.json"]
-        self.fake.status = "?? datos/tiras/new.json\\0"
-        self.fake.staged = "datos/tiras/new.json\\0architecture-impact.json\\0"
+        self.fake.status = "?? datos/tiras/new.json\0"
+        self.fake.staged = "datos/tiras/new.json\0architecture-impact.json\0"
         self.assertEqual(self.publisher.integrate("mesa"),
                          {"hubo": "si", "merge_sha": MERGE, "pr": 9})
 
