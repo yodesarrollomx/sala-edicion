@@ -26,11 +26,14 @@ class FakeGitHub:
         self.merge_confirmed = True
         self.head_changed = False
         self.guard = "success"
+        self.verification = "success"
         self.publication = "success"
         self.wrong_guard_head = False
         self.ambiguous = False
         self.old_guard = False
-        self.checks = [{"name": "Arquitectura YOD", "bucket": "pass"}]
+        self.checks = [{"name": "Arquitectura YOD", "bucket": "pass"},
+                       {"name": "verificar", "bucket": "pass"}]
+        self.empty_checks_reads = 0
         self.dispatched = {}
         self.fail_prefix = None
         self.clock = 0
@@ -55,7 +58,11 @@ class FakeGitHub:
         elif argv[:2] == ["git", "-c"] and "commit" in argv:
             self.committed = True
         elif argv[:3] == ["gh", "pr", "checks"]:
-            result = json.dumps(self.checks)
+            if self.empty_checks_reads:
+                self.empty_checks_reads -= 1
+                result = ""
+            else:
+                result = json.dumps(self.checks)
         elif argv[:3] == ["gh", "pr", "merge"]:
             self.merged = True
         elif argv[:2] == ["gh", "api"]:
@@ -90,14 +97,16 @@ class FakeGitHub:
 
     def make_run(self, workflow, number, dispatch):
         is_guard = workflow == "arquitectura.yml"
-        status = self.guard if is_guard else self.publication
+        is_verifier = workflow == "verificar.yml"
+        status = self.guard if is_guard else (self.verification if is_verifier else self.publication)
         fields = dispatch.get("inputs", {})
         return {
             "id": number, "event": "workflow_dispatch", "head_branch": dispatch["ref"],
-            "head_sha": (BASE if self.wrong_guard_head else HEAD) if is_guard else BASE,
+            "head_sha": (BASE if self.wrong_guard_head else HEAD) if is_guard else
+                        (HEAD if is_verifier else BASE),
             "status": "queued" if status == "queued" else "completed",
             "conclusion": None if status == "queued" else status,
-            "display_title": "" if is_guard else
+            "display_title": "" if is_guard or is_verifier else
             f"Sala publicar · {fields['sha']} · {fields['publicacion_id']}",
         }
 
@@ -205,9 +214,35 @@ class PublicationTests(unittest.TestCase):
 
     def test_missing_required_architecture_check_is_blocked(self):
         self.fake.checks = [{"name": "unrelated", "bucket": "pass"}]
-        with self.assertRaisesRegex(module.PublicationError, "Falta configurar"):
+        with self.assertRaisesRegex(module.PublicationError, "agotó"):
             self.publisher.integrate("relevo")
         self.assert_no_merge()
+
+    def test_bot_pr_dispatches_verification_on_exact_commit(self):
+        self.publisher.integrate("relevo")
+        self.assertEqual(self.fake.dispatched["verificar.yml"], {
+            "ref": BRANCH, "inputs": {}})
+        self.assertEqual(self.fake.dispatched["arquitectura.yml"], {
+            "ref": BRANCH, "inputs": {"base_sha": BASE, "head_sha": HEAD}})
+        self.assertTrue(self.fake.merged)
+
+    def test_failed_explicit_verification_never_merges(self):
+        self.fake.verification = "failure"
+        with self.assertRaisesRegex(module.PublicationError, "sin éxito"):
+            self.publisher.integrate("relevo")
+        self.assert_no_merge()
+
+    def test_missing_verification_check_never_merges(self):
+        self.fake.checks = [{"name": "Arquitectura YOD", "bucket": "pass"}]
+        with self.assertRaisesRegex(module.PublicationError, "agotó"):
+            self.publisher.integrate("relevo")
+        self.assert_no_merge()
+
+    def test_empty_checks_while_github_registers_dispatch_are_retried(self):
+        self.fake.empty_checks_reads = 2
+        self.publisher.integrate("relevo")
+        self.assertEqual(self.fake.empty_checks_reads, 0)
+        self.assertTrue(self.fake.merged)
 
     def test_failed_required_check_is_blocked(self):
         self.fake.checks.append({"name": "functional", "bucket": "fail"})
