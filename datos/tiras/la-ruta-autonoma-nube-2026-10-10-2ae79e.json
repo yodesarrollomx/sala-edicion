@@ -1,0 +1,81 @@
+{
+ "pieza": "La ruta autónoma",
+ "pieza_slug": "la-ruta-autonoma",
+ "promesa": "Descubre el potencial real de tu terreno con datos claros y sin ataduras.",
+ "formato": "Reel",
+ "laminas": [
+  {
+   "n": 1,
+   "dice": "¿Qué historia cuenta realmente el terreno que tienes en Hermosillo?",
+   "ve": "Atardecer cálido en Hermosillo, un terreno baldío con vegetación nativa y luz dorada. Un dueño observa el horizonte.",
+   "entiende": "La curiosidad sobre el verdadero valor y destino de un espacio propio.",
+   "src": "laminas/la-ruta-autonoma-a2026-09-28/L1-1.jpg",
+   "estado": "rehecha",
+   "version": 1,
+   "fecha": "2026-10-10",
+   "candidatas": [
+    {
+     "src": "laminas/la-ruta-autonoma-n2026-10-10/L1-1.jpg",
+     "original": "laminas/la-ruta-autonoma-n2026-10-10/L1-1.png",
+     "titulo": "A",
+     "texto": "Atiende la nota cambiando la pregunta para generar mayor curiosidad sobre el espacio real y elimina la palabra vetada.",
+     "dice": "¿Y si el terreno familiar guarda más metros útiles de los que imaginas?",
+     "motor": "pollinations",
+     "cerebro": "gemini",
+     "huella": "05484c5d30f7321579c29014628de4fa"
+    }
+   ],
+   "marca_previa": "no",
+   "nota_previa": "El texto no engancha"
+  }
+ ],
+ "guion": [
+  {
+   "n": 1,
+   "dice": "¿Qué historia cuenta realmente el terreno que tienes en Hermosillo?",
+   "ve": "Atardecer cálido en Hermosillo, un terreno baldío con vegetación nativa y luz dorada. Un dueño observa el horizonte.",
+   "entiende": "La curiosidad sobre el verdadero valor y destino de un espacio propio."
+  },
+  {
+   "n": 2,
+   "dice": "Entre opiniones familiares y ofertas diversas, el camino puede parecer incierto.",
+   "ve": "Una sala de estar iluminada, varias personas conversando y apuntando con papeles hacia una ventana.",
+   "entiende": "Cómo las distintas voces del entorno a menudo nublan la visión clara del propietario."
+  },
+  {
+   "n": 3,
+   "dice": "En Yo Desarrollo proponemos calcular con precisión lo que la norma permite construir.",
+   "ve": "Planos desplegados sobre una mesa de madera, luz natural, un café y un lápiz marcando metros cuadrados.",
+   "entiende": "Que existe un método basado en datos técnicos y no en opiniones subjetivas."
+  },
+  {
+   "n": 4,
+   "dice": "Analizamos metros cuadrados, accesos, agua, drenaje y vialidades para diseñar opciones reales.",
+   "ve": "Un mapa urbano de Hermosillo sobre la mesa, señalando conexiones viales y servicios con claridad.",
+   "entiende": "El desglose técnico y práctico que define qué giros o proyectos caben en el terreno."
+  },
+  {
+   "n": 5,
+   "dice": "El resultado es un panorama claro para decidir el siguiente paso con total tranquilidad.",
+   "ve": "El dueño sonriendo al mirar los resultados calculados, con el terreno al fondo bañado por la luz del día.",
+   "entiende": "La paz mental que aporta tomar decisiones informadas y respaldadas."
+  },
+  {
+   "n": 6,
+   "dice": "Conozcamos la ubicación de tu espacio para armar tu Plan de Potencial Personalizado.",
+   "ve": "Una videollamada en una pantalla limpia mostrando a una especialista de Yo Desarrollo junto a planos claros.",
+   "entiende": "El siguiente paso es sencillo: compartir la ubicación para iniciar el análisis."
+  }
+ ],
+ "decidir": [
+  1
+ ],
+ "mapa": {
+  "1": 1
+ },
+ "fecha": "2026-10-10",
+ "titulo": "La ruta autónoma · rehechas con tus notas (1)",
+ "nota": "La pieza completa. Sólo las láminas marcadas piden respuesta: en cada una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».",
+ "origen": "rehecha-de la-ruta-autonoma-nube-2026-10-07-2ae79e",
+ "base": "la-ruta-autonoma-nube-2026-10-07-2ae79e"
+}
