@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,6 +20,7 @@ BRANCH = "bot/sala-relevo-123-1"
 class FakeGitHub:
     def __init__(self):
         self.calls = []
+        self.environments = []
         self.status = " M datos/manifiesto.json\0?? relevo.log\0"
         self.staged = "datos/manifiesto.json\0architecture-impact.json\0"
         self.committed = False
@@ -34,6 +36,7 @@ class FakeGitHub:
         self.checks = [{"name": "Arquitectura YOD", "bucket": "pass"},
                        {"name": "verificar", "bucket": "pass"}]
         self.empty_checks_reads = 0
+        self.empty_checks_payload = ""
         self.dispatched = {}
         self.existing_pr = False
         self.existing_title = "Sala relevo: archivos generados"
@@ -48,8 +51,9 @@ class FakeGitHub:
     def sleep(self, seconds):
         self.clock += seconds
 
-    def __call__(self, argv, *, cwd, input=None):
+    def __call__(self, argv, *, cwd, input=None, env=None):
         self.calls.append((argv, input))
+        self.environments.append(env)
         result = ""
         if self.fail_prefix and argv[:len(self.fail_prefix)] == self.fail_prefix:
             return subprocess.CompletedProcess(argv, 1, "", "sensitive diagnostics must not escape")
@@ -64,7 +68,7 @@ class FakeGitHub:
         elif argv[:3] == ["gh", "pr", "checks"]:
             if self.empty_checks_reads:
                 self.empty_checks_reads -= 1
-                result = ""
+                result = self.empty_checks_payload
             else:
                 result = json.dumps(self.checks)
         elif argv[:3] == ["gh", "pr", "merge"]:
@@ -133,6 +137,7 @@ class PublicationTests(unittest.TestCase):
         self.fake = FakeGitHub()
         self.env = {"GITHUB_REPOSITORY": "example/sala", "GITHUB_RUN_ID": "123",
                     "GITHUB_RUN_ATTEMPT": "1", "GH_TOKEN": "synthetic",
+                    "PR_CREATION_TOKEN": "synthetic-app",
                     "GITHUB_OUTPUT": str(self.cwd / "output")}
         self.publisher = module.Publisher(self.cwd, env=self.env, runner=self.fake,
                                           clock=self.fake.now, sleep=self.fake.sleep,
@@ -161,11 +166,55 @@ class PublicationTests(unittest.TestCase):
         self.assertNotIn("publicar.yml", self.fake.dispatched)
 
     def test_no_changes_does_not_mutate_git_or_github(self):
+        self.env.pop("PR_CREATION_TOKEN")
         self.fake.status = "?? relevo.log\0"
         self.assertEqual(self.publisher.integrate("relevo"), {"hubo": "no"})
         self.assertEqual(len(self.commands()), 1)
 
+    def test_app_token_is_used_only_to_create_pr(self):
+        self.publisher.integrate("relevo")
+        app_calls = []
+        for (argv, _), env in zip(self.fake.calls, self.fake.environments):
+            self.assertIsNotNone(env)
+            self.assertNotIn("PR_CREATION_TOKEN", env)
+            self.assertNotIn("synthetic-app", " ".join(argv))
+            if env["GH_TOKEN"] == "synthetic-app":
+                app_calls.append(argv)
+            else:
+                self.assertEqual(env["GH_TOKEN"], "synthetic")
+        self.assertEqual(len(app_calls), 1)
+        self.assertEqual(app_calls[0][:5], ["gh", "api", "--method", "POST", "repos/example/sala/pulls"])
+
+    def test_missing_or_reused_app_token_fails_before_mutation(self):
+        original = (self.cwd / "architecture-impact.json").read_text()
+        self.env["GITHUB_TOKEN"] = "synthetic-github-token"
+        for token in ("", "  ", "synthetic", "synthetic-github-token"):
+            with self.subTest(token=token):
+                self.fake.calls.clear()
+                self.env["PR_CREATION_TOKEN"] = token
+                with self.assertRaisesRegex(module.PublicationError, "GitHub App"):
+                    self.publisher.integrate("relevo")
+                self.assertEqual(self.commands(), [["git", "status", "--porcelain=v1", "--untracked-files=all", "-z"]])
+                self.assertEqual((self.cwd / "architecture-impact.json").read_text(), original)
+                self.assert_no_merge()
+
+    def test_prepare_reports_changes_without_app_or_mutation(self):
+        self.env.pop("PR_CREATION_TOKEN")
+        self.assertEqual(self.publisher.prepare("relevo"), {"hubo": "si"})
+        self.assertEqual(len(self.commands()), 1)
+        self.fake.status = "?? relevo.log\0"
+        self.assertEqual(self.publisher.prepare("relevo"), {"hubo": "no"})
+        self.assertEqual(len(self.commands()), 2)
+
+    def test_execute_passes_token_as_environment_only(self):
+        env = {"GH_TOKEN": "synthetic-app"}
+        with mock.patch.object(module.subprocess, "run") as run:
+            module.execute(["gh", "api", "example"], cwd=self.cwd, env=env)
+        self.assertEqual(run.call_args.kwargs["env"], env)
+        self.assertNotIn("synthetic-app", repr(run.call_args.args))
+
     def test_mesa_without_changes_returns_sha_to_verify_before_mount(self):
+        self.env.pop("PR_CREATION_TOKEN")
         self.fake.status = "?? mesa.log\0"
         self.assertEqual(self.publisher.integrate("mesa"), {"hubo": "no", "merge_sha": BASE})
         self.assertEqual(len(self.commands()), 3)
@@ -298,6 +347,26 @@ class PublicationTests(unittest.TestCase):
             self.publisher.integrate("relevo")
         self.assert_no_merge()
 
+    def test_empty_checks_wait_for_registration_without_bypassing_checks(self):
+        self.fake.empty_checks_reads = 1
+        self.publisher.integrate("relevo")
+        reads = [c for c in self.commands() if c[:3] == ["gh", "pr", "checks"]]
+        self.assertEqual(len(reads), 2)
+        self.assertEqual(self.fake.clock, 10)
+
+    def test_checks_that_remain_empty_never_merge(self):
+        for payload in ("", "[]"):
+            with self.subTest(payload=payload):
+                self.fake.clock = 0
+                self.fake.committed = False
+                self.fake.calls.clear()
+                self.fake.dispatched.clear()
+                self.fake.empty_checks_reads = 100
+                self.fake.empty_checks_payload = payload
+                result = self.publisher.integrate("relevo")
+                self.assertNotEqual(result["hubo"], "si")
+                self.assert_no_merge()
+
     def test_pending_required_check_times_out(self):
         self.fake.checks[0]["bucket"] = "pending"
         with self.assertRaisesRegex(module.PublicationError, "agotó"):
@@ -325,6 +394,7 @@ class PublicationTests(unittest.TestCase):
             self.publisher.integrate("relevo")
 
     def test_publish_dispatches_branch_with_exact_sha_and_correlation(self):
+        self.env.pop("PR_CREATION_TOKEN")
         result = self.publisher.publish(MERGE, "relevo")
         self.assertEqual(result, {"publicado_sha": MERGE, "publicacion_run": 10})
         self.assertEqual(self.fake.dispatched["publicar.yml"], {
@@ -359,6 +429,18 @@ class PublicationTests(unittest.TestCase):
             self.assertIn(f"publicar --proceso {process}", text)
             self.assertNotIn("git push", text)
             self.assertIn("pull-requests: write", text)
+            self.assertLess(text.index(f"preparar --proceso {process}"),
+                            text.index("uses: actions/create-github-app-token@"))
+            self.assertIn("if: steps.cambios.outputs.hubo == 'si'", text)
+            self.assertIn("app-id: ${{ vars.YOD_PUBLISHER_APP_ID }}", text)
+            self.assertIn("private-key: ${{ secrets.YOD_PUBLISHER_APP_PRIVATE_KEY }}", text)
+            self.assertIn("permission-pull-requests: write", text)
+            self.assertIn("permission-contents: read", text)
+            self.assertNotIn("permission-actions:", text)
+            self.assertNotIn("skip-token-revoke:", text)
+            self.assertIn("PR_CREATION_TOKEN: ${{ steps.pr_app.outputs.token }}", text)
+            self.assertEqual(text.count("PR_CREATION_TOKEN:"), 1)
+            self.assertNotIn("pull_request:", text)
             if process in ("arranque", "mesa"):
                 self.assertLess(text.index(f"publicar --proceso {process}"),
                                 text.index(f"sala_{process}.py --montar"))

@@ -1,17 +1,19 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
-  "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Corregir la detección de tiras nuevas en el commit publicado tras el merge normal de un PR. Comparar HEAD con su primer padre mediante git diff: diff-tree omitía el merge y anunciaba que no había nada que montar. Se conservan las compuertas de contenido, archivos publicados y permisos de agente.",
+  "proposal_id": "CHG-PUBLICADORES-APP-001",
+  "summary": "Actualizar la propuesta de identidad publicadora de Sala sobre main, conservando los cambios posteriores: detección de PR duplicados y obligatoriedad de Arquitectura YOD y verificar. Token App solo al abrir PR; token del workflow para Git, checks, merge y publicación.",
   "components": [
     "SYS-SALA",
-    "GAS-SALA"
+    "GAS-SALA",
+    "EXT-ACTIONS",
+    "EXT-GITHUB-PUBLISHER-APP"
   ],
   "tests": [
     "python3 nube/verificar.py",
-    "git diff --check",
-    "python3 -m unittest discover -s tests -p sala_montaje_commit_test.py -v: commit simple, merge con dos padres, cambio de historia y referencia sin imagen; Git real y GAS doble.",
-    "Evidencia previa: Publicar la Sala 38093992004 omite una tira nueva en el merge b911364382471181863695d59506388f0a5c111e.",
-    "No se crean propuestas ni se marcan decisiones en producción para probar el cambio."
+    "python3 -m unittest discover -s tests -p publicar_git_test.py (37 regresiones con dobles)",
+    "Pruebas de transporte y catálogo integradas en Verificar la Sala",
+    "Separación de tokens, configuración ausente/reutilizada, checks vacíos y fallidos, PR duplicados y head exacto",
+    "git diff --check"
   ],
-  "rollback": "Revertir por PR la detección del commit y sus pruebas. Conservar todas las referencias, medios, propuestas y decisiones. No repetir publicaciones para probar."
+  "rollback": "Revertir por PR el publicador y sus workflows, retirar de forma coordinada la configuración App. Conservar hojas, decisiones, medios, historial y PR pendientes. La integración y la activación real siguen pendientes de configurar la App."
 }
