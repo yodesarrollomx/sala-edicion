@@ -117,7 +117,9 @@ def _curl(url, cuerpo=None, espera=ESPERA):
     """Respaldo con curl -L: sigue la redirección de Apps Script como manda CLAUDE.md."""
     cmd = ['curl', '-sS', '-L', '--max-time', str(espera)]
     if cuerpo is not None:
-        cmd += ['-X', 'POST', '-H', 'Content-Type: application/json', '--data-binary', '@-']
+        # --data-binary elige POST solo en el origen. La respuesta 302 de GAS
+        # vive en un recurso GET: -X POST también lo forzaría allí y devuelve HTML/405.
+        cmd += ['-H', 'Content-Type: text/plain;charset=utf-8', '--data-binary', '@-']
     cmd.append(url)
     r = subprocess.run(cmd, input=(cuerpo or ''), capture_output=True, text=True)
     if r.returncode != 0:

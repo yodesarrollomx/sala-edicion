@@ -52,3 +52,7 @@ jobs:
         run: node --test tests/sala-imagenes.test.cjs
       - name: Pruebas de conciliación de COLA con fechas de Sheets
         run: python3 -m unittest discover -s tests -p cola_salud_test.py -v
+      - name: Probar redirección POST a GET con un GAS sintético local
+        run: python3 -m unittest discover -s tests -p sala_transporte_test.py -v
+      - name: Probar contrato real del catálogo con fuentes sintéticas
+        run: python3 -m unittest discover -s tests -p sala_catalogo_test.py -v
