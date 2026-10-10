@@ -1,18 +1,15 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Instalar una vez el calentador de 10 minutos ya programado en Apps Script para reducir los 40 s de espera del Sheet; reintentar SOLO la fotografía ausente de la videollamada mediante el montador existente y sus reglas de publicación, sin falsificar versiones. Conservar PR229 de fotos reales y el checkout rápido de CI. El guardián de arquitectura sigue verificando todos los commits y el atlas pero descarga los blobs de medios solo cuando una comprobación realmente los requiere.",
+  "summary": "Mesa móvil: quien tiene llave pero el Sheet lo ve como lector ya no queda en un callejón sin salida — el estado lo dice y el botón Entrar queda visible para volver a entrar como editor. Sin cambio de permisos: el Sheet sigue decidiendo el rol.",
   "components": [
-    "SYS-SALA",
-    "GAS-SALA"
+    "SYS-SALA"
   ],
   "tests": [
-    "GitHub CI Verificar la Sala y Arquitectura YOD",
-    "Revisión de workflow_call inputs modo y pieza, y secrets: inherit sólo en jobs sin pull_request",
-    "Calentador confirma respuesta del GAS o reporta advertencia, sin borrar información",
-    "Sala mesa produce con Cloudflare/Gemini/HF y no monta antes de Pages",
-    "Verificar que el último JPG del día existe en main después de integrar su PR",
-    "Arquitectura YOD en checkout parcial con git histórico completo y filter blob:none, sin omitir verificador/atlas"
+    "git diff --check",
+    "python3 nube/verificar.py",
+    "Playwright: con llave y sala_rol=lector se ve 'Tu llave entra como lector' y el botón Entrar",
+    "Producción pendiente: Alejandro entra desde el celular y ve Aprobar/Pedir cambio"
   ],
-  "rollback": "Revertir workflows especiales por PR; conservar todas las imágenes, notas y decisiones del Sheet y el cache previamente configurado."
+  "rollback": "Revertir este PR; no toca Sheet, GAS ni decisiones."
 }
