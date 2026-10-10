@@ -1,17 +1,17 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Recuperar el respaldo espejo del 10 de octubre y los archivos originales de una propuesta que GAS ya presenta a los editores. Copia exacta de la tira, JPG y PNG del PR #238; sin generación nueva ni decisiones editoriales. Los bloques de historial, peticiones, conexión y sugerencias se conservan.",
+  "summary": "Corregir la detección de tiras nuevas en el commit publicado tras el merge normal de un PR. Comparar HEAD con su primer padre mediante git diff: diff-tree omitía el merge y anunciaba que no había nada que montar. Se conservan las compuertas de contenido, archivos publicados y permisos de agente.",
   "components": [
-    "SYS-SALA"
+    "SYS-SALA",
+    "GAS-SALA"
   ],
   "tests": [
     "python3 nube/verificar.py",
     "git diff --check",
-    "Comparar hashes Git de la tira, JPG y PNG contra el PR #238.",
-    "Comprobar que las cinco propuestas del respaldo coinciden con el día vivo de GAS y que sus rutas/tiras existen en el árbol publicado.",
-    "Arquitectura YOD y verificar obligatorios antes de integrar; Publicar la Sala debe completar Pages.",
-    "Comprobación HTTP posterior de respaldo, cinco JPG, cinco tiras y PNG recuperado; sin marcar decisiones."
+    "python3 -m unittest discover -s tests -p sala_montaje_commit_test.py -v: commit simple, merge con dos padres, cambio de historia y referencia sin imagen; Git real y GAS doble.",
+    "Evidencia previa: Publicar la Sala 38093992004 omite una tira nueva en el merge b911364382471181863695d59506388f0a5c111e.",
+    "No se crean propuestas ni se marcan decisiones en producción para probar el cambio."
   ],
-  "rollback": "Revertir mediante PR el respaldo y los archivos recuperados. No borrar ni restaurar filas de Sheets, revisiones, decisiones ni medios de Drive."
+  "rollback": "Revertir por PR la detección del commit y sus pruebas. Conservar todas las referencias, medios, propuestas y decisiones. No repetir publicaciones para probar."
 }
