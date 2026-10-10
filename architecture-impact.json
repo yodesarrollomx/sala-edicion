@@ -1,14 +1,17 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Copia pública del GAS: se quitan las 4 claves de acceso que estaban escritas en resembrar() (regla 2 del CLAUDE.md: nunca claves en el repo). La función queda inerte con los marcadores '…'. No cambia nada en vivo: el GAS que corre es el pegado en el editor.",
+  "summary": "Restaurar el transporte POST→302→GET de Apps Script eliminando -X POST en curl; preservar endpoint, claves por rol y compuertas. Añadir diagnóstico explícito de lectura y presencia de configuración App con salida agregada, sin datos ni credenciales.",
   "components": [
-    "SYS-SALA"
+    "SYS-SALA",
+    "GAS-SALA"
   ],
   "tests": [
-    "git diff --check",
     "python3 nube/verificar.py",
-    "git grep de las 4 claves en gas/Code.gs: sin resultados"
+    "python3 -m unittest discover -s tests -p sala_transporte_test.py -v (servidor sintético en 127.0.0.1; sin Google)",
+    "Regresión reproducida en fuente original: 405/no JSON tras 302; corrección produce JSON y conserva una sola petición POST.",
+    "git diff --check",
+    "Diagnóstico separado con GET catalogo/dia; solo conteos y nombres de campos, sin decisiones ni producción. No certifica publicación automática."
   ],
-  "rollback": "Revertir este PR; no toca Sheet, GAS desplegado, claves vivas ni decisiones."
+  "rollback": "Revertir mediante PR el cambio del cliente y diagnóstico. Conservar claves, implementaciones, hojas, decisiones, medios y PR pendientes. No restaurar ni borrar registros de negocio."
 }
