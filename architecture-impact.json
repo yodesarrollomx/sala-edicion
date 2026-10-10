@@ -1,15 +1,14 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Mesa móvil: quien tiene llave pero el Sheet lo ve como lector ya no queda en un callejón sin salida — el estado lo dice y el botón Entrar queda visible para volver a entrar como editor. Sin cambio de permisos: el Sheet sigue decidiendo el rol.",
+  "summary": "Copia pública del GAS: se quitan las 4 claves de acceso que estaban escritas en resembrar() (regla 2 del CLAUDE.md: nunca claves en el repo). La función queda inerte con los marcadores '…'. No cambia nada en vivo: el GAS que corre es el pegado en el editor.",
   "components": [
     "SYS-SALA"
   ],
   "tests": [
     "git diff --check",
     "python3 nube/verificar.py",
-    "Playwright: con llave y sala_rol=lector se ve 'Tu llave entra como lector' y el botón Entrar",
-    "Producción pendiente: Alejandro entra desde el celular y ve Aprobar/Pedir cambio"
+    "git grep de las 4 claves en gas/Code.gs: sin resultados"
   ],
-  "rollback": "Revertir este PR; no toca Sheet, GAS ni decisiones."
+  "rollback": "Revertir este PR; no toca Sheet, GAS desplegado, claves vivas ni decisiones."
 }
