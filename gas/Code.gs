@@ -1178,7 +1178,9 @@ function correoDiario() {
    que la siembra llegara al despliegue. Las claves canonicas (las que la Mac y el
    portal conocen) sobreescriben; cuando ya coinciden, no toca nada. */
 function resembrar() {
-  var SEM = {'clave':'57c6b8a8b91648c6','clave_editor2':'e9bf841689014e6d','clave_lector':'95398491248444a1','clave_agente':'3b2e27caa9d64ba8'};
+  // 10-oct: el repo es público; las claves reales viven sólo en CONFIG y en el editor.
+  var SEM = {'clave':'…','clave_editor2':'…','clave_lector':'…','clave_agente':'…'};
+  if (Object.keys(SEM).some(function (k) { return SEM[k] === '…'; })) return;   // copia pública: no siembra
   var h = hoja('CONFIG'); if (!h) return;
   var datos = h.getDataRange().getValues(), vistos = {};
   for (var i = 1; i < datos.length; i++) {
