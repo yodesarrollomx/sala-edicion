@@ -2,7 +2,7 @@ name: Diagnosticar instalación de Sala
 on:
   push:
     branches: [codex/sala-transporte-20261010]
-    paths: ['nube/diagnosticar_instalacion.py', 'nube/sala_cliente.py', 'tests/sala_transporte_test.py', '.github/workflows/sala-diagnostico.yml']
+    paths: ['nube/diagnosticar_instalacion.py', 'nube/sala_cliente.py', 'nube/sala_catalogo.py', 'tests/sala_catalogo_test.py', 'tests/sala_transporte_test.py', '.github/workflows/sala-diagnostico.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -21,7 +21,9 @@ jobs:
         with:
           python-version: '3.11'
       - name: Comprobar transporte con un servidor local sintético
-        run: python3 -m unittest discover -s tests -p sala_transporte_test.py -v
+        run: |
+          python3 -m unittest discover -s tests -p sala_transporte_test.py -v
+          python3 -m unittest discover -s tests -p sala_catalogo_test.py -v
       - name: Leer catálogo y día, sin decisiones ni producción
         env:
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}

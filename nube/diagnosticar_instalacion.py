@@ -8,6 +8,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import sala_cliente as sala
+import sala_catalogo as catalogo
 
 def main():
     sala.enmascarar_en_actions()
@@ -20,11 +21,14 @@ def main():
         catalog = data.get("catalogo")
         if not isinstance(catalog, dict):
             raise sala.SalaError("catalogo sin estructura válida")
+        normalized = catalogo.normalizar(catalog)
+        routes = catalogo.por_ruta(normalized)
         revisions = [r for c in catalog.values() for r in c.get("revisiones", [])]
         report["catalogo"] = {
             "seriales": len(catalog), "revisiones": len(revisions),
             "con_huella": sum(bool(r.get("huella")) for r in revisions),
             "campos_revision": sorted({k for r in revisions for k in r}),
+            "rutas_con_identidad": sum(bool(catalogo.huella_de(ruta, normalized)) for ruta in routes),
         }
         day = sala.get("dia", fresco="1")
         if not isinstance(day.get("decisiones"), dict):
