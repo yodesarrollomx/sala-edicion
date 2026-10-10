@@ -28,6 +28,34 @@ RESPALDO = RAIZ / 'datos' / 'catalogo.json'
 _cache = None
 
 
+def normalizar(catalogo):
+    """Conserva la identidad de Sheets y adapta los nombres de la API del GAS.
+
+    El GAS devuelve ruta/rutas/prueba/original; los consumidores y el respaldo
+    histórico usan src/tambien_en/drive_prueba/drive_original. Ambas formas
+    representan la misma revisión: nunca recalcular serial, huella ni número.
+    """
+    out = {}
+    for serial, entrada in catalogo.items():
+        copia = dict(entrada)
+        revisiones = []
+        for revision in entrada.get('revisiones') or []:
+            rev = dict(revision)
+            src = rev.get('src') or rev.get('ruta')
+            rutas = rev.get('rutas') or ''
+            aliases = list(rev.get('tambien_en') or [])
+            aliases.extend(rutas.split('|') if isinstance(rutas, str) else rutas)
+            rev['src'] = src
+            rev['tambien_en'] = list(dict.fromkeys(
+                ruta for ruta in aliases if ruta and ruta != src))
+            rev['drive_original'] = rev.get('drive_original') or rev.get('original')
+            rev['drive_prueba'] = rev.get('drive_prueba') or rev.get('prueba')
+            revisiones.append(rev)
+        copia['revisiones'] = revisiones
+        out[serial] = copia
+    return out
+
+
 def cargar(fresco=False):
     """Devuelve el catálogo como {serial: {..., revisiones:[...]}}. Intenta el Sheet primero
     (fuente de verdad); si no contesta, cae al respaldo del repo y lo dice."""
@@ -36,13 +64,13 @@ def cargar(fresco=False):
         return _cache
     try:
         r = sala.get('catalogo', fresco='1' if fresco else None)
-        _cache = r.get('catalogo') or {}
+        _cache = normalizar(r.get('catalogo') or {})
         return _cache
     except sala.SalaError as e:
         sala.avisar('⚠ catálogo: el Sheet no contestó (%s); uso el respaldo del repo. '
                     'Puede ir atrás de Drive — no se usa para decidir, sólo para identidad.' % e)
         if RESPALDO.exists():
-            _cache = json.loads(RESPALDO.read_text(encoding='utf-8'))
+            _cache = normalizar(json.loads(RESPALDO.read_text(encoding='utf-8')))
             return _cache
         raise
 

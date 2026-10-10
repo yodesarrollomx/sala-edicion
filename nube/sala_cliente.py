@@ -37,6 +37,10 @@ INTENTOS = 3
 # hasta 12 s (era el presupuesto de `dia` ANTES de que le agregaran caché,
 # 5-sep) — así que 12 s como tope duro para el resto era optimista.
 ESPERA = 25          # segundos de tope por intento
+# Sólo la cosecha fresca del relevo: armarDia_ lee varias pestañas sin caché.
+# Dos llamadas curl de 60 s evitan seis lecturas concurrentes/repetidas de 25 s.
+ESPERA_RELEVO = 60
+INTENTOS_RELEVO = 2
 
 # Acciones que la nube tiene prohibidas por diseño, no por configuración.
 PROHIBIDAS = {'decidir', 'parrilla_decision'}
@@ -109,11 +113,13 @@ def _leer_json(crudo, donde):
     return datos
 
 
-def _curl(url, cuerpo=None):
+def _curl(url, cuerpo=None, espera=ESPERA):
     """Respaldo con curl -L: sigue la redirección de Apps Script como manda CLAUDE.md."""
-    cmd = ['curl', '-sS', '-L', '--max-time', str(ESPERA)]
+    cmd = ['curl', '-sS', '-L', '--max-time', str(espera)]
     if cuerpo is not None:
-        cmd += ['-X', 'POST', '-H', 'Content-Type: application/json', '--data-binary', '@-']
+        # --data-binary elige POST solo en el origen. La respuesta 302 de GAS
+        # vive en un recurso GET: -X POST también lo forzaría allí y devuelve HTML/405.
+        cmd += ['-H', 'Content-Type: text/plain;charset=utf-8', '--data-binary', '@-']
     cmd.append(url)
     r = subprocess.run(cmd, input=(cuerpo or ''), capture_output=True, text=True)
     if r.returncode != 0:
@@ -121,28 +127,36 @@ def _curl(url, cuerpo=None):
     return r.stdout
 
 
-def _urllib(url, cuerpo=None):
+def _urllib(url, cuerpo=None, espera=ESPERA):
     datos = cuerpo.encode('utf-8') if cuerpo is not None else None
     cab = {'Content-Type': 'application/json'} if datos else {}
     pet = urllib.request.Request(url, data=datos, headers=cab)
-    with urllib.request.urlopen(pet, timeout=ESPERA) as r:
+    with urllib.request.urlopen(pet, timeout=espera) as r:
         return r.read().decode('utf-8', 'replace')
 
 
-def _pedir(url, cuerpo, donde):
-    """3 intentos. Cada intento prueba urllib y, si no entregó JSON usable, curl -L."""
+def _pedir(url, cuerpo, donde, espera=ESPERA, intentos=INTENTOS, solo_curl=False):
+    """Reintenta sin aceptar como vacío un fallo de transporte o de JSON.
+
+    El relevo fresco usa curl -L (el transporte de respaldo ya probado con GAS):
+    no duplica cada solicitud lenta con urllib antes de reintentar.
+    Los demás recursos conservan sus dos vías y tiempos anteriores.
+    """
     ultimo = None
-    for intento in range(1, INTENTOS + 1):
-        for via, fn in (('urllib', _urllib), ('curl -L', _curl)):
+    vias = (('curl -L', _curl),) if solo_curl else (
+        ('urllib', _urllib), ('curl -L', _curl))
+    for intento in range(1, intentos + 1):
+        for via, fn in vias:
             try:
-                return _leer_json(fn(url, cuerpo), donde)
+                return _leer_json(fn(url, cuerpo, espera), donde)
             except SalaError as e:
-                ultimo = e                       # contestó, pero mal: se prueba la otra vía
+                ultimo = e
             except (urllib.error.URLError, OSError, subprocess.SubprocessError) as e:
                 ultimo = SalaError('%s por %s: %s' % (donde, via, redactar(e)))
-        if intento < INTENTOS:
-            time.sleep(2 ** intento)             # 2 s, 4 s
-    raise SalaError('%s no contestó en %d intentos · último: %s' % (donde, INTENTOS, ultimo))
+        if intento < intentos:
+            time.sleep(2 ** intento)
+    raise SalaError('%s no contestó en %d intentos · último: %s' % (
+        donde, intentos, ultimo))
 
 
 def get(recurso, **params):
@@ -151,6 +165,12 @@ def get(recurso, **params):
     q = {'recurso': recurso, 'clave': _clave()}
     q.update({k: v for k, v in params.items() if v is not None})
     url = _exec_url() + '?' + urllib.parse.urlencode(q)
+    # fresco=1 nunca permite caché: el respaldo conserva sólo datos verificados.
+    # Un día sin caché puede tardar más que un recurso ordinario (6 pestañas).
+    if recurso == 'dia' and str(params.get('fresco')) == '1':
+        return _pedir(url, None, 'GET ?recurso=dia',
+                      espera=ESPERA_RELEVO, intentos=INTENTOS_RELEVO,
+                      solo_curl=True)
     return _pedir(url, None, 'GET ?recurso=' + recurso)
 
 

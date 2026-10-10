@@ -145,33 +145,97 @@ class Publisher:
         raise PublicationError(f"Se agotó la espera de la corrida exacta de {workflow}.")
 
     def required_checks(self, number, deadline):
+        # GitHub obliga a aprobar workflows de PR creados con GITHUB_TOKEN.
+        # No son pruebas rojas: aún no existen checks de PR aprobados.
+        ausentes = 0
         while self.clock() < deadline:
             raw = self.command(["gh", "pr", "checks", str(number), "--repo", self.repo,
                                 "--required", "--json", "name,bucket"], allowed=(0, 1, 8))
+            # Los PR creados con GITHUB_TOKEN no despiertan checks de pull_request.
+            # Tras dispararlos explícitamente, GitHub tarda en asociarlos al head.
             if not raw.strip():
-                # GitHub puede tardar en asociar las corridas al PR. Ausencia
-                # nunca equivale a éxito, incluso si el dispatch salió verde.
+                ausentes += 1
+                if ausentes >= 3:
+                    return False
                 self.sleep(self.interval)
                 continue
             try:
                 checks = json.loads(raw)
             except ValueError as exc:
-                raise PublicationError("No se pudieron comprobar los checks obligatorios.") from exc
-            if checks == []:
+                raise PublicationError("GitHub devolvió checks obligatorios inválidos.") from exc
+            if not isinstance(checks, list) or any(not isinstance(c, dict) for c in checks):
+                raise PublicationError("GitHub devolvió checks obligatorios inválidos.")
+            names = {c.get("name") for c in checks}
+            if not {"Arquitectura YOD", "verificar"}.issubset(names):
+                ausentes += 1
+                if ausentes >= 3:
+                    return False
                 self.sleep(self.interval)
                 continue
-            if (not isinstance(checks, list) or any(not isinstance(c, dict) for c in checks)
-                    or not any(c.get("name") == "Arquitectura YOD" for c in checks)):
-                raise PublicationError("Falta configurar el check obligatorio Arquitectura YOD.")
             if any(c.get("bucket") in ("fail", "cancel", "skipping") for c in checks):
                 raise PublicationError("Una comprobación obligatoria no pasó.")
             if all(c.get("bucket") == "pass" for c in checks):
-                return
+                return True
             self.sleep(self.interval)
         raise PublicationError("Se agotó la espera de los checks obligatorios.")
 
     def integrate(self, process):
         changed = self.changed_paths(process)
+        if not changed and process != "mesa":
+            return self.output(hubo="no")
+        if changed:
+            token = self.env.get("PR_CREATION_TOKEN", "")
+            if not token.strip() or token in (self.env.get("GH_TOKEN"), self.env.get("GITHUB_TOKEN")):
+                raise PublicationError("Falta una identidad independiente de GitHub App para abrir el PR.")
+        # Sólo UNA propuesta pendiente por clase; evita desperdiciar créditos y crear
+        # decenas de PR idénticos mientras GitHub exige aprobar su CI.
+        existentes = self.api(f"repos/{self.repo}/pulls?state=open&per_page=100")
+        if not isinstance(existentes, list):
+            raise PublicationError("No se pudo comprobar el inventario de PR de Sala.")
+        prefijo = f"Sala {process}: archivos generados"
+        abiertos = [p for p in existentes if isinstance(p, dict)
+                    and str(p.get("title") or "").startswith(prefijo)
+                    and (p.get("base") or {}).get("ref") == "main"
+                    and p.get("state") == "open"]
+        bloqueadores = []
+        nuevas_tiras = {p for p in changed if p.startswith("datos/tiras/")
+                         and p.endswith(".json") and p != "datos/tiras/index.json"}
+        if process in ("mesa", "arranque") and nuevas_tiras:
+            # PRs viejos pueden tener revisiones de otras piezas. No congelar toda
+            # la fábrica por una solicitud antigua que NO contiene estas tiras.
+            # El ID de tira incluye la fecha y la huella de sus notas.
+            for pr in abiertos[:12]:
+                numero = pr.get("number")
+                if not isinstance(numero, int):
+                    continue
+                archivos = self.api(f"repos/{self.repo}/pulls/{numero}/files?per_page=100")
+                if not isinstance(archivos, list):
+                    raise PublicationError("No se pudieron comparar archivos pendientes.")
+                rutas = {str(a.get("filename") or "") for a in archivos
+                         if isinstance(a, dict)}
+                if nuevas_tiras & rutas:
+                    bloqueadores.append(pr)
+                    break
+        elif abiertos:
+            # Respaldo/chinches/máquinas actualizan SIEMPRE la misma ruta. Un PR
+            # de hace semanas no puede congelar ese proceso para siempre. A lo
+            # sumo una propuesta pendiente por proceso cada 12 horas.
+            from datetime import datetime, timezone, timedelta
+            umbral = datetime.now(timezone.utc) - timedelta(hours=12)
+            for pr in abiertos:
+                fecha = str(pr.get("created_at") or "")
+                try:
+                    creada = datetime.fromisoformat(fecha.replace("Z", "+00:00"))
+                except ValueError:
+                    creada = None
+                if creada is None or creada >= umbral:
+                    bloqueadores.append(pr)
+                    break
+        if bloqueadores:
+            numero = bloqueadores[0].get("number")
+            print(f"::notice::Sala {process}: PR #{numero} contiene la revisión actual "
+                  "o es reciente. No se crea una solicitud duplicada.")
+            return self.output(hubo="pendiente", pr=numero)
         if not changed:
             if process == "mesa":
                 # Una tira sin cambios puede venir de un merge cuya publicación
@@ -181,9 +245,6 @@ class Publisher:
                     raise PublicationError("No se pudo identificar el commit de la mesa.")
                 return self.output(hubo="no", merge_sha=head)
             return self.output(hubo="no")
-        token = self.env.get("PR_CREATION_TOKEN", "")
-        if not token.strip() or token in (self.env.get("GH_TOKEN"), self.env.get("GITHUB_TOKEN")):
-            raise PublicationError("Falta una identidad independiente de GitHub App para abrir el PR.")
         for path in changed:
             full = self.cwd / path
             if path.endswith(".json") and full.is_file():
@@ -247,7 +308,13 @@ class Publisher:
             deadline = self.clock() + self.timeout
             self.dispatch_and_wait("arquitectura.yml", branch,
                                    {"base_sha": base, "head_sha": head}, head=head, deadline=deadline)
-            self.required_checks(number, deadline)
+            # En un PR creado por github-actions[bot], pull_request no activa verificar.yml.
+            # workflow_dispatch sí produce su propio check sobre el SHA exacto.
+            self.dispatch_and_wait("verificar.yml", branch, {}, head=head, deadline=deadline)
+            if not self.required_checks(number, deadline):
+                print(f"::notice::PR #{number} necesita aprobación de los checks de "
+                      "pull_request; queda pendiente sin marcar fallo de producción.")
+                return self.output(hubo="pendiente", pr=number)
             current = self.api(f"repos/{self.repo}/pulls/{number}")
             if (not isinstance(current, dict) or current.get("state") != "open" or current.get("draft")
                     or not isinstance(current.get("head"), dict)
@@ -255,6 +322,10 @@ class Publisher:
                     or current.get("head", {}).get("sha") != head
                     or current.get("base", {}).get("ref") != "main"):
                 raise PublicationError("El PR cambió después de validar su commit.")
+            if current.get("mergeable_state") == "blocked":
+                print(f"::notice::PR #{number}: GitHub exige un check de pull_request "
+                      "o una revisión. Se conserva el PR sin intentar saltar protecciones.")
+                return self.output(hubo="pendiente", pr=number)
             self.command(["gh", "pr", "merge", str(number), "--repo", self.repo,
                           "--squash", "--match-head-commit", head])
             merged = self.api(f"repos/{self.repo}/pulls/{number}")

@@ -7,6 +7,13 @@ name: Montador de la mesa
 on:
   # El horario vive en sala-diario.yml / sala-cada-hora.yml (25-sep-2026): aquí solo se llama.
   workflow_call:
+    inputs:
+      modo:
+        type: string
+        default: montar
+      pieza:
+        type: string
+        default: ''
   workflow_dispatch:
     inputs:
       modo:
@@ -121,16 +128,18 @@ jobs:
         run: python3 nube/publicar_git.py integrar --proceso mesa
 
       - name: Publicar el commit integrado y esperar su corrida exacta
+        id: publicacion
         if: steps.guardar.outputs.hubo == 'si' || (steps.guardar.outputs.hubo == 'no' && env.MODO == 'montar')
         env:
           GH_TOKEN: ${{ github.token }}
           MERGE_SHA: ${{ steps.guardar.outputs.merge_sha }}
         run: python3 nube/publicar_git.py publicar --proceso mesa --sha "$MERGE_SHA"
 
-      - name: Montar las cartas en la mesa
-        # Incluso sin archivos nuevos, Publicar debe confirmar este commit:
-        # un merge anterior pudo quedar integrado pero sin desplegar.
-        if: steps.mesa.outputs.codigo == '0' && env.MODO == 'montar'
+      - name: Montar cartas ya publicadas (nunca un PR pendiente)
+        # Cuando hubo cambios, publicar.yml monta las tarjetas DESPUÉS de Pages.
+        # Solo recuperamos planes de material ya contenido en main si publicar
+        # verificó este mismo SHA. Un PR pendiente nunca llega al Sheet.
+        if: steps.mesa.outputs.codigo == '0' && env.MODO == 'montar' && steps.guardar.outputs.hubo == 'no' && steps.publicacion.outcome == 'success'
         working-directory: nube
         env:
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}

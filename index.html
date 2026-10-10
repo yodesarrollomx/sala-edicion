@@ -12,6 +12,8 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Sala de Edición · Yo Desarrollo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://script.google.com">
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&display=swap">
 <style>
 /* Sala 3.0 · «Tres puertas» (3-sep-2026): Hoy · Publicaciones · Ajustes.
@@ -361,6 +363,7 @@ details.prod-dentro>summary{cursor:pointer;font-weight:600;color:var(--guia);mar
 .cargando-carta .cargando{display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:14.5px;color:#e6dfd2}
 .cargando{position:absolute;inset:0;display:grid;place-items:center;color:#c9c2b4;font-size:13px;gap:10px;padding:20px;text-align:center;
   background:linear-gradient(110deg,#141210 30%,#1f1c18 50%,#141210 70%);background-size:200% 100%;animation:brilla 1.4s infinite}
+.lienzo>.cargando{z-index:3} /* encima del IMG roto para que el botón Reintentar reciba el toque */
 @keyframes brilla{to{background-position:-200% 0}}
 .chip-dec{position:absolute;top:12px;right:12px;z-index:3;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;background:rgba(20,18,14,.8);color:#f6f2ea;backdrop-filter:blur(4px)}
 .chip-dec.si{background:var(--si);color:#fff} .chip-dec.no{background:var(--no);color:#fff}
@@ -759,7 +762,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='319340f424';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='7d82fd2e00';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -824,10 +827,20 @@ async function traerCatalogo(){
       // imagen que apodo-g2/L2.png). Todas apuntan al mismo archivo de Drive.
       for(const ruta of String(v.rutas||v.ruta||'').split('|').filter(Boolean))
         _porRuta[ruta]={serial:s,r:v.r,de:v.de,prueba:v.prueba,original:v.original};
-    // 8-sep: el catálogo llega DESPUÉS de que las cartas ya se pintaron (probado en su Chrome:
-    // 49 láminas cargadas y aun así las 4 imágenes salían del repo). Al llegar, se vuelve a
-    // pintar para que la foto se pida a Drive y el serial se vea.
-    if(Object.keys(_porRuta).length && typeof pintarCartas==='function' && pasos && pasos.length) pintarCartas();
+    // El catálogo aporta número de revisión, NO debe destruir y recrear la imagen
+    // mientras el celular la descarga. Las JPG del mismo origen siguen prioritarias.
+    if(Object.keys(_porRuta).length && typeof pasos!=='undefined' && pasos.length){
+      const zona=$('#zona');
+      if(zona) zona.querySelectorAll('.carta[data-k]').forEach(el=>{
+        const x=pasos[+el.dataset.k]; if(!x||x.tipo!=='lamina') return;
+        const serial=serialDe(x.p.laminas[x.i]); if(!serial) return;
+        let etiqueta=el.querySelector('.lienzo .serie');
+        if(!etiqueta){ const lienzo=el.querySelector('.lienzo'); if(!lienzo) return;
+          etiqueta=document.createElement('span'); etiqueta.className='serie'; lienzo.prepend(etiqueta); }
+        etiqueta.textContent=serial;
+        const pie=el.querySelector('.pie-lamina .serial'); if(pie) pie.textContent=serial;
+      });
+    }
   }catch(e){ /* sin catálogo la Sala sigue igual: sirve las ligeras del repo */ }
 }
 /* La liga de Drive que SÍ responde parejo para pintar en una página. (`uc?export=view` tarda
@@ -840,6 +853,10 @@ const deDrive=(id,ancho)=>`https://drive.google.com/thumbnail?id=${id}&sz=w${anc
    Se lee en un solo lugar. */
 const CANDIDATAS=p=>{ const o=(p&&p.opciones)||[]; return Array.isArray(o)?o:(o.candidatas||o.opciones||[]) };
 const ligera=src=>{
+  // Las PNG y JPG de laminas/ se sirven desde Pages. También aplica si el
+  // Sheet ya devuelve .jpg y el catálogo ofrece una miniatura lenta de Drive.
+  if(/^laminas\/[^?#]+\.(?:png|jpe?g|webp)$/i.test(src||''))
+    return /\.png$/i.test(src)?src.replace(/\.png$/i,'.jpg'):src;
   const c=_porRuta[src]; if(c&&c.prueba) return deDrive(c.prueba,1200);
   return /\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
 };
@@ -920,9 +937,12 @@ async function traer(f,intentos,tope,sinRespaldo){
 }
 async function conMarcasDeAntes(d,f){
   if(d._respaldo) return d;
+  // El GAS vigente ya llama heredarMarcas_ (14 días) e incluye de_antes en cada propuesta.
+  // No repetir cuatro lecturas históricas antes de mostrar Hoy; para GAS legado se conserva el rescate.
+  if((d.propuestas||[]).every(p=>Object.prototype.hasOwnProperty.call(p,'de_antes'))) return d;
   const M=(d.decisiones&&d.decisiones.propuestas)||{};
   const falta=(d.propuestas||[]).map(p=>p.id).filter(id=>!M[id]);
-  if(!falta.length){ d.decisiones={propuestas:M}; return d }
+  if(!falta.length){ d.decisiones={...(d.decisiones||{}),propuestas:M}; return d }
   const dias=(d.dias||[]).filter(x=>x<(d.fecha||f||'9999')).sort().reverse().slice(0,4);
   etapaCarga('Trayendo tus marcas de días anteriores');
   const vistas=await Promise.all(dias.map(dd=>traer(dd,1,15000,true).catch(()=>null)));
@@ -932,7 +952,7 @@ async function conMarcasDeAntes(d,f){
     const m=(v.decisiones&&v.decisiones.propuestas)||{};
     for(const id of [...set]) if(m[id]){ M[id]=m[id]; set.delete(id) }
   }
-  d.decisiones={propuestas:M}; return d;
+  d.decisiones={...(d.decisiones||{}),propuestas:M}; return d;
 }
 function normalizarDia(j){
   const porId={};
@@ -1090,13 +1110,13 @@ function pintarEstado(tipo,texto){
   const e=$('#estado'); e.className='estado '+tipo; e.querySelector('span').textContent=texto;
   const fg=$('#finGuardado'); if(fg) fg.textContent=texto;
   const p=$('#pEstado'); if(p){ p.className='estado '+tipo; p.querySelector('span').textContent=texto }
-  $('#btnEntrar').hidden=ENTRADO();
+  $('#btnEntrar').hidden=ENTRADO()&&DECIDE();   // 10-oct: con llave pero visto como lector, el botón sigue ahí (antes quedabas sin salida)
   const bse=$('#barraSinEntrar'); if(bse) bse.hidden=ENTRADO();   // 8-sep: la barra ancha solo vive mientras no hay sesión
   const br=$('#btnReintentar'); if(br) br.hidden=!(tipo==='cola'||tipo==='sin'&&leerLS('sala_cola',[]).length);
   avisarPuerta('aj',!ENTRADO());
 }
 function estadoInicial(){
-  if(!DECIDE()) return pintarEstado('lectura','Solo lectura · deciden Alejandro y Sayri');
+  if(!DECIDE()) return pintarEstado('lectura', ENTRADO()?'Tu llave entra como lector · toca Entrar para decidir':'Solo lectura · deciden Alejandro y Sayri');
   const c=cuentas();
   if(!ENTRADO()) return pintarEstado('sin', c.hoy?'Guardado aquí · entra por el YOD OS para subirlo':'Entra por el YOD OS');
   if(guard.env) return pintarEstado('subido','Guardado ✓ '+guard.env.hora);
@@ -1484,10 +1504,15 @@ function pintarCartas(){
         ${candHTML}
         <div class="pie pie-lamina"><div class="fila-pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · ${numeroReal(x)}${serialDe(src)?` · <b class="serial">${esc(serialDe(src))}</b>`:``}</span>
           <button class="lupa" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Ampliar</button></div>${luegoDe(x)}</div>`;
-      montarImagen(el,src);
+      montarImagen(el,src,k===idx);
       el.querySelectorAll('.lupa,.num-movil').forEach(b=>b.onclick=e=>{ e.stopPropagation(); abrirZoom(src) });
       dobleToque(el.querySelector('.lienzo'),()=>abrirZoom(src));
       el.querySelectorAll('[data-cand]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); if(!DECIDE()||!candadoLibre()) return; const k=+b.dataset.cand;
+        const mini=el.querySelectorAll('.cand-item img')[k];
+        if(el.dataset.imagenLista!=='si'||!mini||!mini.complete||!mini.naturalWidth){
+          pintarEstado('cola','Esta toma aún no tiene imagen visible; no se puede aprobar');
+          return;
+        }
         const _prev=String(dec[x.pid].notas[x.i]||'').replace(/\s*\[toma elegida: \d+\]/g,'').trim();
         dec[x.pid].laminas[x.i]='si'; dec[x.pid].notas[x.i]=(_prev?_prev+' ':'')+'[toma elegida: '+(k+1)+']'; if(dec[x.pid]._borrar) delete dec[x.pid]._borrar[x.i]; avanzar('si') });
       el.querySelectorAll('.cand-item img[data-amp]').forEach(im=>im.onclick=e=>{ e.stopPropagation(); if(im.dataset.amp) abrirZoom(im.dataset.amp) });
@@ -1527,7 +1552,7 @@ function pintarCartas(){
     z.appendChild(el);
     if(k===idx&&x.tipo==='lamina') arrastrar(el);
   }
-  pasos.slice(idx+1,idx+3).forEach(x=>{ if(x.tipo==='lamina'){ const im=new Image(); im.src=ligera(x.p.laminas[x.i]) } });
+  pasos.slice(idx+1,idx+2).forEach(x=>{ if(x.tipo==='lamina'){ const im=new Image(); im.fetchPriority='low'; im.decoding='async'; im.src=ligera(x.p.laminas[x.i]) } });
   mandoDecidir();
   const esLam=pasos[idx].tipo==='lamina';
   $('#mando').hidden=!esLam;                 // en una carta de opciones se elige arriba…
@@ -1545,16 +1570,39 @@ function mandoDecidir(){   // si la Sala venía de la vista de solo lectura, dev
   const m=$('#mando'); if(m.querySelector('#btnSi')) return;
   m.innerHTML=MANDO_HTML; $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 }
-function montarImagen(el,src){
-  const img=el.querySelector('img');
-  const lista=()=>{ img.classList.add('lista'); const c=el.querySelector('.cargando'); if(c) c.remove() };
-  img.onload=lista; img.src=ligera(src);
-  // 8-sep: si la de Drive no llega, se cae a la LIGERA del repo — nunca al maestro .png.
-  // (Antes el respaldo era `src` crudo: 1.8 MB al teléfono justo cuando la señal está mal,
-  // que es lo contrario de lo que se quería.)
-  const _repoLigera=/\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
-  img.onerror=()=>{ if(!img.src.endsWith(_repoLigera)){ img.src=_repoLigera; return }
-    const c=el.querySelector('.cargando'); if(c) c.textContent='No cargó la imagen. Toca «Ampliar» para reintentar.' };
+function montarImagen(el,src,prioritaria=true,reintento=false){
+  const img=el.querySelector('.lienzo img')||el.querySelector('img');
+  if(!img) return;
+  img.loading=prioritaria?'eager':'lazy'; img.fetchPriority=prioritaria?'high':'low'; img.decoding='async';
+  el.dataset.imagenLista='cargando';
+  const c=el.querySelector('.lienzo .cargando');
+  if(c) c.textContent='Cargando lámina…';
+  const cat=_porRuta[src]||{};
+  const fuentes=[...new Set([ligera(src),src,cat.prueba?deDrive(cat.prueba,1200):null]
+    .filter(Boolean))];
+  let i=0;
+  const version=u=>reintento?u+(u.includes('?')?'&':'?')+'reintentar='+Date.now():u;
+  const lista=()=>{
+    el.dataset.imagenLista='si'; img.classList.add('lista');
+    const aviso=el.querySelector('.lienzo .cargando'); if(aviso) aviso.remove();
+  };
+  const sinFoto=()=>{
+    el.dataset.imagenLista='no';
+    const aviso=el.querySelector('.lienzo .cargando'); if(!aviso) return;
+    aviso.replaceChildren();
+    const txt=document.createElement('span');
+    txt.textContent='Esta revisión todavía no tiene una imagen disponible. No se puede aprobar sin verla.';
+    const btn=document.createElement('button'); btn.type='button';
+    btn.className='secund reintentar-imagen'; btn.textContent='Reintentar imagen';
+    btn.onclick=e=>{ e.preventDefault(); e.stopPropagation(); montarImagen(el,src,prioritaria,true) };
+    aviso.append(txt,btn);
+  };
+  img.onload=lista;
+  img.onerror=()=>{
+    if(i<fuentes.length){ img.src=version(fuentes[i++]); return }
+    sinFoto();
+  };
+  if(fuentes.length) img.src=version(fuentes[i++]); else sinFoto();
   if(img.complete&&img.naturalWidth) lista();
 }
 function dobleToque(el,fn){ let t=0; el.addEventListener('pointerup',e=>{ const n=Date.now(); if(n-t<320&&Math.abs(_dxUlt)<8){ t=0; fn() } else t=n }) }
@@ -1586,6 +1634,13 @@ setInterval(vigilante,500);
 function decidir(m){
   if(!DECIDE()||!candadoLibre()) return;
   const x=pasos[idx]; if(!x||x.tipo!=='lamina') return;
+  const actual=document.querySelector('#zona .carta[data-k="'+idx+'"]');
+  if(!actual||actual.dataset.imagenLista!=='si'){
+    pintarEstado('cola','Imagen de esta revisión pendiente; reintenta antes de decidir');
+    const b=actual&&actual.querySelector('.lienzo .reintentar-imagen');
+    if(b) b.focus();
+    return;
+  }
   if(m==='no'){ if(CAPAS.some(c=>c.id==='nota')) return; _tDecidio=Date.now(); pedirNota(nota=>{ dec[x.pid].laminas[x.i]='no'; dec[x.pid].notas[x.i]=nota; if(dec[x.pid]._borrar) delete dec[x.pid]._borrar[x.i]; avanzar('no') }); return }
   if(conTomas(x)){ const c=document.querySelector('#zona .carta'); if(c){ c.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'none'}],{duration:260}) } return }   // 23-sep: con tomas, un sí sin elegir cuál es ambiguo (14-sep)
   dec[x.pid].laminas[x.i]='si'; dec[x.pid].notas[x.i]=''; if(dec[x.pid]._borrar) delete dec[x.pid]._borrar[x.i]; avanzar('si');
@@ -1705,20 +1760,33 @@ function pintarPanel(){
 /* ══ zoom ══ */
 function abrirZoom(src){
   bloquear(true);
-  src=original(src);   // 8-sep: al ampliar se trae el maestro limpio, sin el sello de la prueba
+  const fuentes=[...new Set([ligera(src),original(src),src].filter(Boolean))];
   const z=document.createElement('div'); z.className='zoom';
-  z.innerHTML=`<img src="${esc(src)}" alt="Lámina ampliada"><button class="zx">${ICO_VOLVER}Volver</button><div class="zt">${matchMedia('(hover:hover)').matches?'Rueda o doble clic para acercar · arrastra para mover':'Pellizca o doble toque para acercar · desliza para mover'}</div>`;
+  z.innerHTML=`<img alt="Lámina ampliada"><button class="zx">${ICO_VOLVER}Volver</button><div class="zoom-error" hidden style="position:absolute;z-index:4;max-width:min(92vw,360px);padding:24px;border-radius:16px;background:#28231c;color:#fff;text-align:center"><p>La imagen de esta revisión todavía no está disponible. Puedes reintentar sin cerrar la Sala.</p><button type="button" class="reintentar-zoom" style="min-height:44px;padding:8px 18px;border-radius:12px">Reintentar imagen</button></div><div class="zt">${matchMedia('(hover:hover)').matches?'Rueda o doble clic para acercar · arrastra para mover':'Pellizca o doble toque para acercar · desliza para mover'}</div>`;
   document.body.appendChild(z);
-  const img=z.querySelector('img'); let s=1,tx=0,ty=0,base=1,W=0,H=0;
+  const img=z.querySelector('img'), aviso=z.querySelector('.zoom-error'); let s=1,tx=0,ty=0,base=1,W=0,H=0;
   const aplicar=()=>{ img.style.transform=`translate(${tx}px,${ty}px) scale(${s})` };
   const ajustar=()=>{ const vw=innerWidth,vh=innerHeight; const nw=img.naturalWidth||1080,nh=img.naturalHeight||1350;
     base=Math.min(vw/nw,vh/nh); W=nw*base; H=nh*base; s=1; tx=(vw-W)/2; ty=(vh-H)/2; img.style.width=W+'px'; img.style.height=H+'px'; aplicar() };
-  if(img.complete&&img.naturalWidth) ajustar(); else img.onload=ajustar;
+  let pos=0, espera=null, recargar=false;
+  const proxima=()=>{
+    clearTimeout(espera);
+    if(pos>=fuentes.length){ img.hidden=true; aviso.hidden=false; return }
+    const ruta=fuentes[pos++];
+    img.hidden=false; img.src=recargar?ruta+(ruta.includes('?')?'&':'?')+'reintentar='+Date.now():ruta;
+    espera=setTimeout(()=>{ if(!img.complete||!img.naturalWidth) proxima() },8000);
+  };
+  img.onload=()=>{ clearTimeout(espera); aviso.hidden=true; ajustar() };
+  img.onerror=()=>proxima();
+  z.querySelector('.reintentar-zoom').onclick=e=>{
+    e.preventDefault(); e.stopPropagation(); aviso.hidden=true; pos=0; recargar=true; proxima();
+  };
+  proxima();
   const pts=new Map(); let d0=0,s0=1,c0=null,ultimoTap=0,pan0=null;
   const acotar=()=>{ s=Math.max(1,Math.min(5,s)); const w=W*s,h=H*s;
     tx=w<=innerWidth?(innerWidth-w)/2:Math.min(0,Math.max(innerWidth-w,tx)); ty=h<=innerHeight?(innerHeight-h)/2:Math.min(0,Math.max(innerHeight-h,ty)) };
   const zoomEn=(cx,cy,ns)=>{ const k=ns/s; tx=cx-(cx-tx)*k; ty=cy-(cy-ty)*k; s=ns; acotar(); aplicar() };
-  z.addEventListener('pointerdown',e=>{ if(e.target.closest('.zx')) return; z.setPointerCapture(e.pointerId); pts.set(e.pointerId,[e.clientX,e.clientY]);
+  z.addEventListener('pointerdown',e=>{ if(e.target.closest('.zx,.reintentar-zoom')) return; z.setPointerCapture(e.pointerId); pts.set(e.pointerId,[e.clientX,e.clientY]);
     if(pts.size===1){ pan0=[e.clientX-tx,e.clientY-ty]; const t=Date.now(); if(t-ultimoTap<300){ zoomEn(e.clientX,e.clientY,s>1.2?1:2.5); ultimoTap=0 } else ultimoTap=t }
     if(pts.size===2){ const [a,b]=[...pts.values()]; d0=Math.hypot(a[0]-b[0],a[1]-b[1]); s0=s; c0=[(a[0]+b[0])/2,(a[1]+b[1])/2] } });
   z.addEventListener('pointermove',e=>{ if(!pts.has(e.pointerId)) return; pts.set(e.pointerId,[e.clientX,e.clientY]);
@@ -1730,7 +1798,7 @@ function abrirZoom(src){
   const onResize=()=>ajustar(); addEventListener('resize',onResize);
   const id='zoom'+Date.now();
   z.querySelector('.zx').onclick=()=>cerrarCapa(id);
-  abrirCapa(id,()=>{ z.remove(); removeEventListener('resize',onResize) },z.querySelector('.zx'),z);
+  abrirCapa(id,()=>{ clearTimeout(espera); z.remove(); removeEventListener('resize',onResize) },z.querySelector('.zx'),z);
 }
 
 /* ══ final / vacío ══ */
@@ -2449,8 +2517,8 @@ async function actualizarLineaHoy(){
   if(!b){ const p=$('#panel'); if(p&&getComputedStyle(p).display!=='none'){ p.insertAdjacentHTML('afterbegin','<div class="bloque" id="lineaHoy"></div>'); b=$('#lineaHoy') } }
   if(b){ b.innerHTML=LINEA_HOY; enganchaLinea(b) }
 }
-setTimeout(actualizarLineaHoy,2500);
-setInterval(()=>{ if(document.body.dataset.vista==='hoy'){ _lineaHoyT=0; actualizarLineaHoy() } },60000);
+// La Línea consulta COLA: esperar hasta que Hoy esté pintado antes de solicitarla.
+setInterval(()=>{ if(_pintado&&document.body.dataset.vista==='hoy'){ _lineaHoyT=0; actualizarLineaHoy() } },60000);
 
 /* ══ el árbol de publicaciones (14-sep) ══
    Alejandro: «el tronco es vender el PPP, de ahí 5 temas, de ahí las publicaciones, ver las ediciones y el
@@ -2848,6 +2916,41 @@ async function pintarIdeas(temas){
 }
 
 /* ══ arranque ══ */
+let _secundariosLanzados=false;
+function cargarSecundarios(){
+  if(_secundariosLanzados) return;
+  _secundariosLanzados=true;
+  const iniciar=()=>{
+    // Primordial: dejar el primer JPG del mismo origen descargarse sin competir
+    // con cuatro lecturas de Sheets que no son necesarias para decidir en Hoy.
+    if(ENTRADO()) traerCatalogo();
+    setTimeout(()=>{
+      _expP=_expP||cargarExpedientes();
+      if(ENTRADO()) traerCola();
+    },2800);
+    setTimeout(()=>{
+      if(ENTRADO()){ traerFabrica(); traerIdeas(); }
+      if(_pintado&&document.body.dataset.vista==='hoy') actualizarLineaHoy();
+    },7000);
+    // Verificar nueva versión descarga index.html completo; no hacerlo mientras
+    // la mesa todavía espera a Apps Script ni mientras baja la primera foto.
+    setTimeout(vigilarVersion,9500);
+  };
+  // Dar a la primera foto 2 s exclusivos de red una vez montada la tarjeta.
+  // Pasado ese límite los catálogos continúan aunque la imagen falle; no bloquea la Sala.
+  const principal=$('#zona .carta:not(.detras) .lienzo img');
+  const diferir=()=>{
+    if(typeof requestIdleCallback==='function') requestIdleCallback(iniciar,{timeout:1000});
+    else setTimeout(iniciar,500);
+  };
+  if(principal&&!principal.complete){
+    let lanzado=false;
+    const adelante=()=>{ if(lanzado) return; lanzado=true; diferir() };
+    principal.addEventListener('load',adelante,{once:true});
+    principal.addEventListener('error',adelante,{once:true});
+    setTimeout(adelante,2000);
+  }else diferir();
+}
 function pintarFecha(f){ try{ $('#fechaTxt').textContent=new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}) }catch(e){ $('#fechaTxt').textContent=f } }
 let _pintado=false, _tFrases=null, _reintentando=false;
 // 23-sep (su queja: «tarda muchísimo… se siente caída»): nada de frases que rotan solas. Dice qué
@@ -2881,6 +2984,7 @@ function aplicarDia(d){
   if(_pintado&&D&&DECIDE()&&cuentas().hoy>0){ if(firma(D)!==firma(d)){ D.propuestas=d.propuestas.map(p=>{const v=(D.propuestas||[]).find(q=>q.id===p.id); return v||p}); }
     D.decisiones=d.decisiones; D._respaldo=false; estadoInicial(); $('#subt').textContent=pasos[idx]&&piezaDe(pasos[idx])?`Publicación: ${piezaDe(pasos[idx])}`:''; }
   else { try{ montar(d); _pintado=true }catch(e){ console.error('montar',e); $('#titulo').textContent='No pude armar la mesa'; $('#subt').textContent='Recarga la Sala. Detalle: '+String(e&&e.message||e).slice(0,90); pintarEstado('sin','Error al abrir'); } }
+  if(_pintado&&d) cargarSecundarios();
 }
 function pintarLlaveMala(msg){
   clearInterval(_tFrases);
@@ -2995,14 +3099,13 @@ async function vigilarVersion(){
 setInterval(vigilarVersion,600000);
 (async function(){
   $('#barraSinEntrar').hidden=ENTRADO();   // 8-sep: se decide de una vez, sin esperar al Sheet (ENTRADO() solo mira este aparato)
-  abrirGuia(false); ajustarZona(); setTimeout(vigilarVersion,4000);            // la bienvenida no espera al Sheet
-  _expP=cargarExpedientes(); subirCola();
-  if(ENTRADO()) setTimeout(()=>{ traerCola(); traerFabrica(); traerIdeas() },0);   // 23-sep: en paralelo con el día; la Línea y el Árbol ya no esperan en fila
+  abrirGuia(false); ajustarZona();   // bienvenida inmediata; vigilar versión después de abrir Hoy
+  subirCola();   // preservar guardados: sólo las lecturas secundarias esperan a que pinte Hoy
   // 5-sep (Alejandro): «prefiero una animación mientras carga que estar viendo algo pasado».
   // Ya NO se pinta la copia de respaldo a los 2.5 s: se espera al Sheet con una carta de carga.
   // El respaldo solo entra si el Sheet de verdad no contesta, y se dice con todas sus letras.
   pintarCargando();
-  traerCatalogo();   // 8-sep: en paralelo; si tarda, la Sala abre igual con las ligeras del repo
+  // Catálogo y vistas auxiliares se cargan al pintar la primera carta, sin competir con el día.
   try{ aplicarDia(normalizarDia(await conMarcasDeAntes(await traer(),''))) }
   catch(e){ if(!_pintado&&ENTRADO()&&!VISTA_DOC){ pintarEsperandoSheet(); reintentarSheet(0) }   // 23-sep: invariante 12 — con sesión nunca se abre la copia
     else if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)); avisarRespaldo(); reintentarSheet(0) }

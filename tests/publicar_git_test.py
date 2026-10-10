@@ -28,14 +28,20 @@ class FakeGitHub:
         self.merge_confirmed = True
         self.head_changed = False
         self.guard = "success"
+        self.verification = "success"
         self.publication = "success"
         self.wrong_guard_head = False
         self.ambiguous = False
         self.old_guard = False
-        self.checks = [{"name": "Arquitectura YOD", "bucket": "pass"}]
+        self.checks = [{"name": "Arquitectura YOD", "bucket": "pass"},
+                       {"name": "verificar", "bucket": "pass"}]
         self.empty_checks_reads = 0
         self.empty_checks_payload = ""
         self.dispatched = {}
+        self.existing_pr = False
+        self.existing_title = "Sala relevo: archivos generados"
+        self.existing_date = None
+        self.existing_files = []
         self.fail_prefix = None
         self.clock = 0
 
@@ -69,7 +75,14 @@ class FakeGitHub:
             self.merged = True
         elif argv[:2] == ["gh", "api"]:
             endpoint, method = argv[4], argv[3]
-            if endpoint.endswith("/pulls") and method == "POST":
+            if endpoint.endswith("/pulls?state=open&per_page=100") and method == "GET":
+                result = json.dumps([{"number": 8, "title": self.existing_title,
+                                      "created_at": self.existing_date,
+                                      "base": {"ref": "main"}, "state": "open"}]
+                                    if self.existing_pr else [])
+            elif endpoint.endswith("/pulls/8/files?per_page=100"):
+                result = json.dumps([{"filename": p} for p in self.existing_files])
+            elif endpoint.endswith("/pulls") and method == "POST":
                 result = json.dumps({"number": 9})
             elif endpoint.endswith("/pulls/9"):
                 result = json.dumps({
@@ -99,14 +112,16 @@ class FakeGitHub:
 
     def make_run(self, workflow, number, dispatch):
         is_guard = workflow == "arquitectura.yml"
-        status = self.guard if is_guard else self.publication
+        is_verifier = workflow == "verificar.yml"
+        status = self.guard if is_guard else (self.verification if is_verifier else self.publication)
         fields = dispatch.get("inputs", {})
         return {
             "id": number, "event": "workflow_dispatch", "head_branch": dispatch["ref"],
-            "head_sha": (BASE if self.wrong_guard_head else HEAD) if is_guard else BASE,
+            "head_sha": (BASE if self.wrong_guard_head else HEAD) if is_guard else
+                        (HEAD if is_verifier else BASE),
             "status": "queued" if status == "queued" else "completed",
             "conclusion": None if status == "queued" else status,
-            "display_title": "" if is_guard else
+            "display_title": "" if is_guard or is_verifier else
             f"Sala publicar · {fields['sha']} · {fields['publicacion_id']}",
         }
 
@@ -202,7 +217,7 @@ class PublicationTests(unittest.TestCase):
         self.env.pop("PR_CREATION_TOKEN")
         self.fake.status = "?? mesa.log\0"
         self.assertEqual(self.publisher.integrate("mesa"), {"hubo": "no", "merge_sha": BASE})
-        self.assertEqual(len(self.commands()), 2)
+        self.assertEqual(len(self.commands()), 3)
         self.assertEqual(self.commands()[-1], ["git", "rev-parse", "HEAD"])
         workflow = (ROOT / ".github/workflows/sala-mesa.yml").read_text()
         self.assertIn("steps.guardar.outputs.hubo == 'no' && env.MODO == 'montar'", workflow)
@@ -230,6 +245,43 @@ class PublicationTests(unittest.TestCase):
         (self.cwd / "datos/manifiesto.json").symlink_to(self.cwd / "architecture-impact.json")
         with self.assertRaisesRegex(module.PublicationError, "simbólicos"):
             self.publisher.integrate("relevo")
+
+    def test_existing_bot_pr_does_not_generate_duplicate(self):
+        self.fake.existing_pr = True
+        result = self.publisher.integrate("relevo")
+        self.assertEqual(result, {"hubo": "pendiente", "pr": 8})
+        self.assertFalse(any(c[:2] == ["git", "checkout"] for c in self.commands()))
+        self.assert_no_merge()
+
+    def test_old_bot_pr_does_not_block_a_new_snapshot(self):
+        self.fake.existing_pr = True
+        self.fake.existing_date = "2026-01-01T00:00:00Z"
+        self.assertEqual(self.publisher.integrate("relevo"),
+                         {"hubo": "si", "merge_sha": MERGE, "pr": 9})
+
+    def test_same_revision_in_pending_mesa_pr_is_not_recreated(self):
+        self.fake.existing_pr = True
+        self.fake.existing_title = "Sala mesa: archivos generados"
+        self.fake.existing_files = ["datos/tiras/revision.json"]
+        self.fake.status = "?? datos/tiras/revision.json\0"
+        self.fake.staged = "datos/tiras/revision.json\0architecture-impact.json\0"
+        self.assertEqual(self.publisher.integrate("mesa"),
+                         {"hubo": "pendiente", "pr": 8})
+        self.assert_no_merge()
+
+    def test_different_mesa_revision_not_blocked_by_old_pr(self):
+        self.fake.existing_pr = True
+        self.fake.existing_title = "Sala mesa: archivos generados"
+        self.fake.existing_files = ["datos/tiras/old.json"]
+        self.fake.status = "?? datos/tiras/new.json\0"
+        self.fake.staged = "datos/tiras/new.json\0architecture-impact.json\0"
+        self.assertEqual(self.publisher.integrate("mesa"),
+                         {"hubo": "si", "merge_sha": MERGE, "pr": 9})
+
+    def test_no_change_in_other_process_still_one_git_read(self):
+        self.fake.status = ""
+        self.assertEqual(self.publisher.integrate("relevo"), {"hubo": "no"})
+        self.assertEqual(len(self.commands()), 1)
 
     def test_failed_guard_leaves_pr_without_merge(self):
         self.fake.guard = "failure"
@@ -259,9 +311,35 @@ class PublicationTests(unittest.TestCase):
 
     def test_missing_required_architecture_check_is_blocked(self):
         self.fake.checks = [{"name": "unrelated", "bucket": "pass"}]
-        with self.assertRaisesRegex(module.PublicationError, "Falta configurar"):
+        result = self.publisher.integrate("relevo")
+        self.assertEqual(result, {"hubo": "pendiente", "pr": 9})
+        self.assert_no_merge()
+
+    def test_bot_pr_dispatches_verification_on_exact_commit(self):
+        self.publisher.integrate("relevo")
+        self.assertEqual(self.fake.dispatched["verificar.yml"], {
+            "ref": BRANCH, "inputs": {}})
+        self.assertEqual(self.fake.dispatched["arquitectura.yml"], {
+            "ref": BRANCH, "inputs": {"base_sha": BASE, "head_sha": HEAD}})
+        self.assertTrue(self.fake.merged)
+
+    def test_failed_explicit_verification_never_merges(self):
+        self.fake.verification = "failure"
+        with self.assertRaisesRegex(module.PublicationError, "sin éxito"):
             self.publisher.integrate("relevo")
         self.assert_no_merge()
+
+    def test_missing_verification_check_never_merges(self):
+        self.fake.checks = [{"name": "Arquitectura YOD", "bucket": "pass"}]
+        result = self.publisher.integrate("relevo")
+        self.assertEqual(result, {"hubo": "pendiente", "pr": 9})
+        self.assert_no_merge()
+
+    def test_empty_checks_while_github_registers_dispatch_are_retried(self):
+        self.fake.empty_checks_reads = 2
+        self.publisher.integrate("relevo")
+        self.assertEqual(self.fake.empty_checks_reads, 0)
+        self.assertTrue(self.fake.merged)
 
     def test_failed_required_check_is_blocked(self):
         self.fake.checks.append({"name": "functional", "bucket": "fail"})
@@ -285,8 +363,8 @@ class PublicationTests(unittest.TestCase):
                 self.fake.dispatched.clear()
                 self.fake.empty_checks_reads = 100
                 self.fake.empty_checks_payload = payload
-                with self.assertRaisesRegex(module.PublicationError, "agotó.*PR #9.*No montar"):
-                    self.publisher.integrate("relevo")
+                result = self.publisher.integrate("relevo")
+                self.assertNotEqual(result["hubo"], "si")
                 self.assert_no_merge()
 
     def test_pending_required_check_times_out(self):

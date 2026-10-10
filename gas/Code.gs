@@ -332,6 +332,14 @@ function contenidoVetado_(dato) {
   revisar(dato, 'contenido');
   return fallas.join('; ');
 }
+function validarContenidoEntrada_(d) {
+  if (!d || ['proponer', 'ideas', 'arbol'].indexOf(d.accion) < 0) return '';
+  var rolContenido = rolDe(d.clave);
+  var permitidos = d.accion === 'proponer' ? ['agente', 'editor'] : ['agente', 'editor', 'editor2'];
+  // No conceder acceso: los handlers originales siguen autorizando cada operación.
+  if (permitidos.indexOf(rolContenido) < 0) return '';
+  return contenidoVetado_(d.accion === 'proponer' ? (d.propuestas || []) : (d.filas || []));
+}
 var _FECHAS = {}; var _RECALENTAR = null;
 function fechaDe(v) {
   // a prueba de zonas: medianoche de CUALQUIER zona +12 h cae en la fecha correcta en UTC
@@ -749,6 +757,10 @@ function armarDia_(f) {
 /* ------------------------------------------------ escritura */
 function doPost(e) {
   var d; try { d = JSON.parse(e.postData.contents); } catch (err) { return json({ error: 'cuerpo ilegible' }); }
+  // #49: validar antes de cachés y de los handlers tempranos de ideas/árbol.
+  var contenidoError = validarContenidoEntrada_(d);
+  if (contenidoError) return json({ error: 'contenido inválido: requiere reescritura',
+    codigo: 'contenido_vetado', detalle: contenidoError });
   if (d && d.accion && d.accion !== 'entrada') { invalidarDia_(d.fecha || d.dia); _RECALENTAR = d.fecha || d.dia || hoy(); }   // lo que se escribe se ve en la siguiente lectura
   // «mándame mi entrada» NO pide clave: es justo para cuando ya no la tienes.
   // No revela nada: el correo va SOLO a la dirección de CONFIG.
@@ -996,16 +1008,6 @@ function doPost(e) {
     return json({ error: 'no reconocí tu entrada (credencial no válida o sin acceso a la Sala)' });
   }
 
-  // Compuerta de recepción para todos los lotes de contenido nuevo, antes de sus handlers.
-  // Las operaciones de ideas/árbol de la fuente activa conservan su implementación;
-  // este espejo no debe usarse para reemplazar código activo sin comparar versiones.
-  if (['proponer', 'ideas', 'arbol'].indexOf(d.accion) >= 0 &&
-      (rol === 'agente' || rol === 'editor')) {
-    var contenidoError = contenidoVetado_(d.accion === 'proponer' ? (d.propuestas || []) : (d.filas || []));
-    if (contenidoError) return json({ error: 'contenido inválido: requiere reescritura',
-      codigo: 'contenido_vetado', detalle: contenidoError });
-  }
-
   if (d.accion === 'decidir') {
     if (rol !== 'editor' && rol !== 'editor2') return json({ error: 'tu rol solo lee' });
     if (!/^\d{4}-\d{2}-\d{2}$/.test(d.fecha || '')) return json({ error: 'falta la fecha; no se guardó nada' });
@@ -1176,7 +1178,9 @@ function correoDiario() {
    que la siembra llegara al despliegue. Las claves canonicas (las que la Mac y el
    portal conocen) sobreescriben; cuando ya coinciden, no toca nada. */
 function resembrar() {
-  var SEM = {'clave':'57c6b8a8b91648c6','clave_editor2':'e9bf841689014e6d','clave_lector':'95398491248444a1','clave_agente':'3b2e27caa9d64ba8'};
+  // 10-oct: el repo es público; las claves reales viven sólo en CONFIG y en el editor.
+  var SEM = {'clave':'…','clave_editor2':'…','clave_lector':'…','clave_agente':'…'};
+  if (Object.keys(SEM).some(function (k) { return SEM[k] === '…'; })) return;   // copia pública: no siembra
   var h = hoja('CONFIG'); if (!h) return;
   var datos = h.getDataRange().getValues(), vistos = {};
   for (var i = 1; i < datos.length; i++) {

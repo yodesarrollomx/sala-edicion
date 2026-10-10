@@ -21,6 +21,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # El repo guarda cientos de originales PNG y videos pesados. Ninguna
+          # prueba de CI necesita bajar esos binarios para validar reglas,
+          # contratos, hojas y las referencias de las tiras.
+          sparse-checkout: |
+            .github
+            datos
+            gas
+            nube
+            tests
+            docs
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -31,3 +42,17 @@ jobs:
         run: pip install --quiet google-auth requests pillow
       - name: Reglas del repo, sello de versión e integridad de los datos
         run: python3 nube/verificar.py
+      - name: Probar recuperación de Relevo (sin Google ni credenciales)
+        run: python3 -m unittest discover -s tests -p 'sala_cliente_test.py' -v
+      - name: Pruebas aisladas de PR automático y verificación de checks
+        run: python3 -m unittest discover -s tests -p publicar_git_test.py
+      - name: Pruebas de carga inicial de Hoy (sin red)
+        run: node --test tests/sala-carga.test.cjs
+      - name: Pruebas de fotos publicadas, zoom y reintentos
+        run: node --test tests/sala-imagenes.test.cjs
+      - name: Pruebas de conciliación de COLA con fechas de Sheets
+        run: python3 -m unittest discover -s tests -p cola_salud_test.py -v
+      - name: Probar redirección POST a GET con un GAS sintético local
+        run: python3 -m unittest discover -s tests -p sala_transporte_test.py -v
+      - name: Probar contrato real del catálogo con fuentes sintéticas
+        run: python3 -m unittest discover -s tests -p sala_catalogo_test.py -v

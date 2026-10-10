@@ -5,7 +5,7 @@ const test = require('node:test');
 const vm = require('node:vm');
 
 function backend(extra = '') {
-  const source = fs.readFileSync(path.join(__dirname, '../gas/Code.gs'), 'utf8');
+  const source = fs.readFileSync(process.env.SALA_GAS_SOURCE || path.join(__dirname, '../gas/Code.gs'), 'utf8');
   const ctx = vm.createContext({});
   vm.runInContext(source, ctx);
   ctx.reglaGas_ = () => extra;
@@ -75,4 +75,38 @@ test('doPost conserva el recorrido válido con una hoja sintética', () => {
   assert.equal(result.ok, true);
   assert.equal(rows.length, 2);
   assert.equal(rows[1][2], 'Un terreno');
+});
+
+// En la fuente activa ideas/arbol preceden al bloque común de autorización.
+test('editor2 valida ideas/arbol antes de cualquier efecto; no gana proponer', () => {
+  for (const accion of ['ideas', 'arbol']) {
+    const ctx = backend();
+    ctx.rolDe = () => 'editor2';
+    ctx.invalidarDia_ = () => { throw new Error('invalidó caché antes del veto'); };
+    const r = ctx.doPost({postData: {contents: JSON.stringify({accion, clave: 'sintetica', filas: [{titulo: 'MEXICO'}]})}});
+    assert.equal(r.codigo, 'contenido_vetado');
+  }
+  const ctx = backend();
+  ctx.rolDe = () => 'editor2';
+  assert.equal(ctx.validarContenidoEntrada_({accion: 'proponer', propuestas: [{titulo: 'MEXICO'}]}), '');
+  assert.equal(ctx.doPost({postData: {contents: JSON.stringify({accion: 'proponer', propuestas: []})}}).error, 'solo el agente propone');
+});
+
+test('la guardia no concede permisos ni inspecciona operaciones ajenas', () => {
+  const ctx = backend();
+  ctx.rolDe = () => { throw new Error('consulta de rol innecesaria'); };
+  assert.equal(ctx.validarContenidoEntrada_({accion: 'regla'}), '');
+  ctx.rolDe = () => 'lector';
+  ctx.contenidoVetado_ = () => { throw new Error('lector accedió a reglas de contenido'); };
+  assert.equal(ctx.validarContenidoEntrada_({accion: 'ideas', filas: [{titulo: 'MEXICO'}]}), '');
+});
+
+test('sonda usa objeto no insertable y obtiene los tres vetos', () => {
+  const ctx = backend();
+  ctx.invalidarDia_ = () => { throw new Error('efecto previo al veto'); };
+  const payload = {accion: 'proponer', clave: 'sintetica', propuestas: {titulo: 'HERMOSILLO SONORA Me\u0301xico'}};
+  const r = ctx.doPost({postData: {contents: JSON.stringify(payload)}});
+  assert.equal(r.codigo, 'contenido_vetado');
+  for (const termino of ['Hermosillo', 'Sonora', 'México']) assert.ok(r.detalle.includes(termino));
+  assert.equal(Array.isArray(payload.propuestas), false);
 });
