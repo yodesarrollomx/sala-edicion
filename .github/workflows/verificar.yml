@@ -56,3 +56,6 @@ jobs:
         run: python3 -m unittest discover -s tests -p sala_transporte_test.py -v
       - name: Probar contrato real del catálogo con fuentes sintéticas
         run: python3 -m unittest discover -s tests -p sala_catalogo_test.py -v
+
+      - name: Montaje tras commits simples y merges, con Git real y GAS doble
+        run: python3 -m unittest discover -s tests -p sala_montaje_commit_test.py -v

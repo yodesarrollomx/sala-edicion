@@ -406,8 +406,7 @@ def montar_desde_commit():
     """
     import subprocess
     proc = subprocess.run(
-        ['git', 'diff-tree', '--no-commit-id', '--name-status', '-r',
-         '--first-parent', 'HEAD'],
+        ['git', 'diff', '--name-status', 'HEAD^', 'HEAD'],
         cwd=RAIZ, capture_output=True, text=True, timeout=25, check=False)
     if proc.returncode:
         raise sala.SalaError('no se pudo comprobar cuáles tiras agregó el commit publicado')
