@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-30 12:22",
+  "actualizado": "2026-10-10 05:34",
   "maquinas": [
     {
       "id": "com.yod.pintarron.server",
@@ -172,10 +172,10 @@
       "hace": "Corre las pruebas y sube la Sala a GitHub Pages en cada guardado a main.",
       "evita": "que un arreglo no llegue a producción",
       "cuando": "en cada guardado a main",
-      "corrio": "2026-09-30T18:17:49Z",
-      "dijo": "Publicar la Sala",
-      "salud": "bien",
-      "porque": "su última corrida salió bien hace 1 h"
+      "corrio": "2026-10-08T16:01:29Z",
+      "dijo": "Sala publicar · f0348fd8bd593633745b29558d081f90155c082e · mesa-37804623698-1",
+      "salud": "mal",
+      "porque": "lleva 44 h sin correr"
     },
     {
       "id": "nube:sala-cada-hora.yml",
@@ -183,7 +183,7 @@
       "hace": "Productor (cada hora), puente de chinches, ejecutor y este semáforo (cada 2 h).",
       "evita": "que un «sí» de la mesa no dispare nada y que las chinches no lleguen",
       "cuando": "cada hora",
-      "corrio": "2026-09-30T19:21:53Z",
+      "corrio": "2026-10-10T12:34:21Z",
       "dijo": "Sala · Cada hora",
       "salud": "regular",
       "porque": "está corriendo ahora mismo"
@@ -194,10 +194,10 @@
       "hace": "Monta la mesa (5:40), siembra y arranca (5:50) y rehace el respaldo espejo (6, 9, 12, 15 y 18 h).",
       "evita": "que la mesa amanezca vacía o la Sala sin plan B si el Sheet no contesta",
       "cuando": "5:40 a 18 h",
-      "corrio": "2026-09-30T18:15:40Z",
+      "corrio": "2026-10-10T06:36:17Z",
       "dijo": "Sala · Diario",
-      "salud": "mal",
-      "porque": "su última corrida falló"
+      "salud": "bien",
+      "porque": "su última corrida salió bien hace 5 h"
     },
     {
       "id": "nube:verificar.yml",
@@ -205,10 +205,10 @@
       "hace": "Corre las pruebas del repo en cada pull request.",
       "evita": "aceptar un cambio roto",
       "cuando": "en cada pull request",
-      "corrio": "2026-09-25T01:16:14Z",
-      "dijo": "chinche #24 #25: la fábrica sin horario quieto en la Línea; «Va en» s…",
-      "salud": "mal",
-      "porque": "lleva 138 h sin correr"
+      "corrio": "2026-10-10T07:46:45Z",
+      "dijo": "Verificar la Sala",
+      "salud": "bien",
+      "porque": "su última corrida salió bien hace 4 h"
     }
   ]
 }
