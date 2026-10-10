@@ -301,6 +301,13 @@
    "cuando": "2026-10-05",
    "tomado": "16:25",
    "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/172"
+  },
+  {
+   "que": "{\"id\": \"CHN-20261009-1826-2d97\", \"texto\": \"no me deja enviar a una que aunque estaba ahorita hablando con vos y todo estaba bien no me deja enviar el mensaje pensé que era porque estaba hablando al mismo tiempo pero también ahorita que dejé de hablar ya no me deja enviar me gustaría que a la vez que estoy hablando con él a veces mandarle mensajes aparte los archivos que que ya te mencionó la gente quisiera que me dejes mandarle sus mensajes y que también fuera conscientes de eso okay\"}",
+   "estado": "en curso",
+   "cuando": "2026-10-09",
+   "tomado": "07:45",
+   "issue": "https://github.com/yodesarrollomx/sala-edicion/issues/249"
   }
  ]
 }

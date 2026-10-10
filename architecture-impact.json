@@ -1,18 +1,15 @@
 {
   "model_revision": "2026-10-01.28-chinches-complementos",
   "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Restaurar el contrato de identidad del catálogo GAS (ruta/rutas/prueba/original) con sus consumidores (src/tambien_en/drive_prueba/drive_original), preservando seriales, revisiones y huellas. Corregir POST→302→GET de curl y añadir un diagnóstico de solo lectura. Sin nuevos endpoints, roles ni cambios editoriales.",
+  "summary": "Actualizar archivos generados de Sala (chinches), corrida 38093338570, intento 1.",
   "components": [
     "SYS-SALA",
     "GAS-SALA"
   ],
   "tests": [
-    "python3 nube/verificar.py",
-    "python3 -m unittest discover -s tests -p sala_transporte_test.py -v (servidor sintético en 127.0.0.1; sin Google)",
-    "Regresión reproducida en fuente original: 405/no JSON tras 302; corrección produce JSON y conserva una sola petición POST.",
-    "git diff --check",
-    "Diagnóstico separado con GET catalogo/dia; solo conteos y nombres de campos, sin decisiones ni producción. No certifica publicación automática.",
-    "python3 -m unittest discover -s tests -p sala_catalogo_test.py -v: identidad canónica y Drive por ruta principal/alias, productor y respaldo sin GAS"
+    "python3 nube/verificar.py antes de crear el PR",
+    "JSON válido y rutas generadas permitidas antes del commit",
+    "Arquitectura YOD y todos los checks obligatorios sobre el head exacto"
   ],
-  "rollback": "Revertir mediante PR el cambio del cliente y diagnóstico. Conservar claves, implementaciones, hojas, decisiones, medios y PR pendientes. No restaurar ni borrar registros de negocio."
+  "rollback": "Revertir el commit mediante PR tras revisión; conservar los registros del Sheet y los planes de montaje."
 }
