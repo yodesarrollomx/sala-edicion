@@ -39,6 +39,7 @@ SALA_PATHS = {
     "maquinas": ("datos/maquinas.json",),
     "chinches": ("datos/encargos.json", "datos/piezas.json", "datos/motores_puntaje.json"),
     "revision": ("datos/revision.json",),
+    "plan": ("datos/plan-agregados.json",),
 }
 MARKETING_PATHS = {"metricas": ("metrics.json", "covers/")}
 
@@ -161,10 +162,11 @@ def decode_archive(data, repo, prefixes, expected_hash=None, expected_data=None)
         raise OnlineError("No se pudo validar el snapshot") from exc
 
 
-def receipt_matches(receipt, *, code_sha, data_sha, snapshot_id, run_id):
+def receipt_matches(receipt, *, code_sha, data_sha, snapshot_id, run_id, plan_sha256=None):
     return (isinstance(receipt, dict) and receipt.get("schema") == SCHEMA
             and receipt.get("code_sha") == code_sha and receipt.get("data_sha") == data_sha
-            and receipt.get("snapshot_id") == snapshot_id and receipt.get("run_id") == run_id)
+            and receipt.get("snapshot_id") == snapshot_id and receipt.get("run_id") == run_id
+            and (plan_sha256 is None or receipt.get("plan_sha256") == plan_sha256))
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -567,6 +569,9 @@ class Snapshots:
             data_sha, rid = digest(canonical({"files": [], "deleted": []})), 0
         receipt = {"schema": SCHEMA, "code_sha": sha, "data_sha": data_sha,
                    "snapshot_id": rid, "run_id": self.run}
+        plan_file = self.root / "datos" / "plan-agregados.json"
+        if plan_file.is_file():
+            receipt["plan_sha256"] = digest(plan_file.read_bytes())
         (self.root / "version-online.json").write_bytes(canonical(receipt) + b"\n")
         state = {"source_sha": sha, "snapshot_id": rid, "data_sha": data_sha,
                  "lease": lease, "published_receipt": receipt}
@@ -601,6 +606,8 @@ class Snapshots:
         parsed = urllib.parse.urlsplit(site)
         if parsed.scheme != "https" or parsed.username or parsed.password:
             raise OnlineError("Sitio Pages sin HTTPS")
+        plan_file = self.root / "datos" / "plan-agregados.json"
+        expected_plan = digest(plan_file.read_bytes()) if plan_file.is_file() else None
         deadline = self.clock() + timeout
         while self.clock() < deadline:
             url = site + "version-online.json?run=" + urllib.parse.quote(run_id)
@@ -609,7 +616,8 @@ class Snapshots:
                 with urllib.request.urlopen(req, timeout=30) as response:
                     receipt = json.loads(response.read(32768))
                 if receipt_matches(receipt, code_sha=sha, data_sha=data_sha,
-                                   snapshot_id=snapshot_id, run_id=run_id):
+                                   snapshot_id=snapshot_id, run_id=run_id,
+                                   plan_sha256=expected_plan):
                     return receipt
             except (ValueError, OSError, urllib.error.URLError):
                 pass

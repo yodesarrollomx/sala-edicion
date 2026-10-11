@@ -1,25 +1,25 @@
 {
-  "model_revision": "2026-10-11.sala-online",
-  "proposal_id": "CHG-SALA-ONLINE-20261011",
-  "summary": "Ejecutar la Sala existente en nube con respaldo generativo CPU probado, parallax con procedencia, voz y corte; datos públicos acumulativos en snapshots privados con mutex, validación, Pages y recibo exacto antes de montar. El tablero de revisión diaria agrega lecturas y rutinas sin inventar ceros. Sheets y decisiones se conservan; código por PR y CI.",
+  "model_revision": "2026-10-11.plan-agregados-online",
+  "proposal_id": "CHG-PLAN-AGREGADOS-ONLINE-20261011",
+  "summary": "Implementar lectura acotada de Plan con configuración y diagnóstico privados, agregados sin filas, exclusión de pruebas y confirmación de citas; publicar el hash exacto en recibo y añadir la rutina a la revisión.",
   "components": [
+    "SYS-YOD-OS",
     "SYS-SALA",
-    "GAS-SALA",
-    "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
-    "EXT-MOTORES-MEDIA",
+    "SYS-MARKETING",
+    "SYS-PLAN-POTENCIAL",
+    "GAS-PLAN-POTENCIAL",
+    "SHEET-PLAN-POTENCIAL",
+    "SHEET-CRM",
     "EXT-ACTIONS",
     "EXT-DRIVE"
   ],
   "tests": [
-    "python3 nube/verificar.py",
-    "git diff --check",
-    "python3 -m unittest discover -s tests -p '*_test.py'",
-    "node --test tests/*.test.cjs",
-    "Prueba real 38137779743: 6 archivos privados recuperados por SHA256; imagen CPU, Depth Anything V2, Kokoro y corte H264/AAC 1080x1920 de 10.17s, cero escrituras de negocio.",
-    "Prueba real 38138560011: almacenamiento draft privado y eliminación del artefacto sintético; Pages workflow comprobado.",
-    "Publicación real y revisión diaria pendientes de merge normal y comprobación exacta de versión."
+    "Lectura real y privada de metadatos/encabezados confirma correspondencia con la hoja canónica; comprobar por separado la autoridad del servicio.",
+    "Dobles: lectura por columnas permitidas, cabeceras exactas, folios duplicados/rechazados, pruebas excluidas y cita sólo con confirmación registrada; sin PII o IDs privados en el DTO.",
+    "Snapshot/recibo: hash exacto del archivo de agregados; consumidor rechaza recibos incompletos, corruptos o desactualizados y conserva último dato acreditado.",
+    "Regresiones completas de Sala y leads/publicación Marketing; arquitectura central y CI obligatorios; ninguna escritura de prueba en hojas/CRM."
   ],
-  "rollback": "Revertir PR de infraestructura y volver a publicación Git tras resolver la identidad del bot. Restaurar último snapshot confirmado, sin borrar COLA, decisiones, medios ni registros de Sheets."
+  "rollback": "Revertir PR de lectura y consumidor; mantener los últimos snapshots confirmados y las hojas intactas. Retirar sólo el permiso lector específico si se añadió para esta ruta; no borrar CRM, medios o historial."
 }

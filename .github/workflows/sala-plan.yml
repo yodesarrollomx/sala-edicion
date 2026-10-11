@@ -1,0 +1,76 @@
+name: Plan · lectura agregada en nube
+on:
+  schedule:
+    - cron: "25 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - nube/plan_agregados.py
+      - nube/snapshots_online.py
+      - tests/plan_agregados_test.py
+      - .github/workflows/sala-plan.yml
+  pull_request:
+    paths:
+      - nube/plan_agregados.py
+      - nube/snapshots_online.py
+      - tests/plan_agregados_test.py
+      - .github/workflows/sala-plan.yml
+permissions:
+  contents: read
+jobs:
+  contratos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet requests google-auth
+      - run: |
+          python3 -m unittest discover -s tests -p plan_agregados_test.py -v
+          python3 -m unittest discover -s tests -p snapshots_online_test.py -v
+          git diff --check
+  plan:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: contratos
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet requests google-auth
+      - name: Recuperar datos confirmados y serializar
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py bootstrap --proceso plan --lock
+      - name: Leer únicamente columnas autorizadas; guardar diagnóstico privado
+        env:
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: python3 nube/plan_agregados.py
+      - name: Validar salida y guardar snapshot privado
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 -m json.tool datos/plan-agregados.json >/dev/null
+          python3 nube/snapshots_online.py preparar --proceso plan
+      - name: Publicar y comprobar recibo exacto
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py publicar
+      - name: Liberar mutex
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py liberar
