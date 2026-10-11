@@ -1,27 +1,20 @@
 {
-  "model_revision": "2026-10-11.plan-agregados-online",
-  "proposal_id": "CHG-PLAN-AGREGADOS-ONLINE-20261011",
-  "summary": "Corregir el cableado del productor de agregados de Plan: enviar SHA de código aprobado al publicador, tras lectura y snapshot válidos. La lectura real ya confirmó agregados privados; publicación pendiente de nueva comprobación.",
+  "model_revision": "2026-10-11.plan-verificado-medios-propuestos",
+  "proposal_id": "CHG-SALA-RECONECTAR-MEDIOS-20261011",
+  "summary": "Reconectar exclusivamente evidencia de dos voces originales ya recuperadas, con hashes, identidad exacta, lectura reciente y acuse privado. Ningún estado, decisión, motor o trabajo nuevo.",
   "components": [
     "SYS-YOD-OS",
     "SYS-SALA",
-    "SVC-SALA-PRODUCTOR",
+    "GAS-SALA",
+    "SHEET-SALA",
     "SVC-SALA-EJECUTOR",
-    "SYS-MARKETING",
-    "SYS-PLAN-POTENCIAL",
-    "GAS-PLAN-POTENCIAL",
-    "SHEET-PLAN-POTENCIAL",
-    "SHEET-CRM",
     "EXT-ACTIONS",
     "EXT-DRIVE"
   ],
   "tests": [
-    "Lectura real y privada de metadatos/encabezados confirma correspondencia con la hoja canónica; comprobar por separado la autoridad del servicio.",
-    "Dobles: lectura por columnas permitidas, cabeceras exactas, folios duplicados/rechazados, pruebas excluidas y cita sólo con confirmación registrada; sin PII o IDs privados en el DTO.",
-    "Snapshot/recibo: hash exacto del archivo de agregados; consumidor rechaza recibos incompletos, corruptos o desactualizados y conserva último dato acreditado.",
-    "Regresiones completas de Sala y leads/publicación Marketing; arquitectura central y CI obligatorios; ninguna escritura de prueba en hojas/CRM.",
-    "Regresiones de razón SERVICE_DISABLED y ausencia de fallback para permiso denegado; consultas GViz sólo de encabezados y columnas permitidas, sin token en URL ni eval.",
-    "Recorrido real Plan→snapshot→Pages con SHA explícito y recibo/hash exactos; verificar salida en la red, sin escritura en CRM."
+    "Dobles: hashes/tamaño/formato, filas únicas, coincidencia de MD5 y referencia original, evidencia no dict rechazada, idempotencia, conservación de campos, cambio concurrente y relectura posterior.",
+    "Ejecución real sólo sobre instrucciones privadas de recuperación ya aprobada; conteo/hash y acuse públicos sin referencias privadas, y evidencia completa en Drive privado.",
+    "PR y CI normales; cuenta de servicio/clave de agente sólo en main. Nunca secretos en PR. Si el endpoint no conserva evidencia o cambia la fila, fallar y no acreditar reconexión."
   ],
-  "rollback": "Revertir PR de lectura y consumidor; mantener los últimos snapshots confirmados y las hojas intactas. Retirar sólo el permiso lector específico si se añadió para esta ruta; no borrar CRM, medios o historial."
+  "rollback": "Conservar copia privada del antes/después. Revertir worker y reconectar sólo la referencia técnica previa tras lectura reciente y revisión; no cambiar decisiones, estados, borrar recuperados ni restaurar hojas completas."
 }

@@ -1,0 +1,48 @@
+name: Sala · reconectar voces originales recuperadas
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - nube/medios_reconexion.py
+      - tests/medios_reconexion_test.py
+      - .github/workflows/sala-medios-reconexion.yml
+permissions:
+  contents: read
+jobs:
+  contratos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet requests google-auth pillow
+      - run: |
+          python3 -m unittest discover -s tests -p medios_reconexion_test.py -v
+          python3 -m unittest discover -s tests -p cola_salud_test.py -v
+          git diff --check
+  reconectar:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: contratos
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: sala-ejecutor
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet requests google-auth
+      - name: Verificar originales, reconectar sólo evidencia y leer acuse privado
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: python3 nube/medios_reconexion.py
