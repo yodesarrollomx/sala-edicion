@@ -1,0 +1,26 @@
+name: Sonda de cierre Sala
+on:
+  push:
+    branches: [codex/sala-cierre-sonda-20261011]
+    paths: [nube/cierre_sonda.py, .github/workflows/sala-cierre-sonda.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  sonda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Comprobar fuentes activas
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: python3 nube/cierre_sonda.py
