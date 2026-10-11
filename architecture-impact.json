@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-11.c5-recovery-wait",
   "proposal_id": "CHG-SALA-PRODUCCION-ACOTADA-001",
-  "summary": "Conciliar en lectura los medios heredados y las referencias durables de COLA con sus huellas, archivos existentes de Git/Pages y Drive autorizado. Guardar únicamente el informe privado de auditoría; no cambiar trabajos, decisiones, permisos ni publicaciones.",
+  "summary": "Conservar los productos de Sala por hash, verificar metadata y bytes recuperados de Drive antes de confirmar HECHO, y apartar la ejecución cuando falta persistencia. Conciliar medios existentes en lectura y guardar el informe privado. Se preservan decisiones, cola histórica, originales y contratos de acceso.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -11,10 +11,10 @@
   ],
   "tests": [
     "python3 nube/verificar.py",
-    "python3 -m py_compile nube/conciliar_medios.py",
-    "python3 -m unittest discover -s tests -p '*_test.py'",
     "git diff --check",
-    "Lectura real de referencias existentes, checksum del contenido descargado y acuse del informe privado; sin escrituras de negocio ni motores."
+    "python3 -m unittest discover -s tests -p '*_test.py'",
+    "Siete regresiones de almacenamiento: versiones, reutilización sin sobrescritura, conflicto, descarga diferente, raíz ausente, fallo sin HECHO y acuse confirmado; Drive y motores sintéticos.",
+    "Conciliación real de medios existentes con descarga y hash, sin modificar trabajos ni decisiones."
   ],
-  "rollback": "Retirar por PR el diagnóstico y el pin del atlas. Conservar informes privados, cola, decisiones, medios e historial; sin restaurar datos."
+  "rollback": "Revertir por PR el ejecutor, la conciliación y el pin del atlas. Conservar archivos por hash, informes, cola, decisiones e historial. No restaurar ni borrar registros."
 }

@@ -66,14 +66,32 @@ def duracion_de(ruta):
 
 
 def subir_producto(ruta, familia, drive_raiz, cat_reglas):
-    """Sube el archivo producido a `YOD Editorial/<PIEZA>/_producidos/`. No es una revisión
-    del catálogo (eso lo sigue haciendo `accion:catalogar` desde `sala_publicar.py`, en la
-    Mac) — es un artefacto de producción, separado a propósito."""
+    """Guarda un producto por su hash y confirma bytes recuperables antes de HECHO."""
     if not drive_raiz:
-        return None, 'sin drive_raiz configurado (REGLA): no se sube, se deja sólo local'
+        return None, 'sin drive_raiz: almacenamiento durable no confirmado'
     try:
+        archivo = pathlib.Path(ruta)
+        contenido = archivo.read_bytes()
+        huella = hashlib.md5(contenido).hexdigest()
+        nombre = '%s-%s%s' % (archivo.stem, huella, archivo.suffix)
         carpeta = drive.ruta_carpetas(drive_raiz, familia.upper(), '_producidos')
-        fid = drive.subir(str(ruta), carpeta)
+        existente = drive.buscar_hijo(carpeta, nombre)
+        if existente:
+            fid = existente
+        else:
+            fid = drive.subir(str(archivo), carpeta, nombre=nombre)
+        if not fid:
+            raise drive.DriveError('Drive no confirmó el ID del producto')
+        meta = drive._peticion('GET', drive.API + '/files/' + fid,
+                               params={'fields': 'id,size,md5Checksum,trashed'}).json()
+        if (meta.get('id') != fid or meta.get('trashed')
+                or str(meta.get('size')) != str(len(contenido))
+                or meta.get('md5Checksum') != huella):
+            raise drive.DriveError('el producto de Drive no coincide con su huella')
+        recibido = drive._peticion('GET', drive.API + '/files/' + fid,
+                                   params={'alt': 'media'}).content
+        if recibido != contenido:
+            raise drive.DriveError('el contenido recuperado de Drive no coincide con el producto')
         return fid, None
     except drive.DriveError as e:
         return None, str(e)
@@ -215,8 +233,11 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
     ev = {'motor': motor_usado, 'md5': md5, 'segundos_produccion': segundos,
           'duracion_s': duracion, 'ruta_local': str(ruta), 'drive_id': drive_id}
     ev.update(extra)
-    if error_subida:
-        ev['aviso_subida'] = error_subida
+    ev['durable'] = bool(drive_id) and not error_subida
+    if not ev['durable']:
+        ev['aviso_subida'] = error_subida or 'Drive no confirmó el archivo'
+        ev['error'] = 'almacenamiento durable no confirmado; revisar antes de reintentar'
+        return 'fallo', ev
     return 'hecho', ev
 
 
