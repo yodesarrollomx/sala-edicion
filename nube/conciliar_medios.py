@@ -56,7 +56,7 @@ def public_blob(commit, path, oid, maximum=MAX_BINARY):
     except requests.RequestException:
         raise RuntimeError('public_blob_unavailable')
     content = b''.join(chunks)
-    actual = hashlib.sha1(b'blob ' + str(len(content)).encode() + b'\\0' + content).hexdigest()
+    actual = hashlib.sha1(b'blob ' + str(len(content)).encode() + bytes([0]) + content).hexdigest()
     if actual != oid: raise RuntimeError('public_blob_identity_not_verified')
     return content
 
