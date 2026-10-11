@@ -1,45 +1,45 @@
 {
   "schema": 1,
-  "generado_en": "2026-10-11T19:49:03.831397+00:00",
-  "code_sha": "b61138200d75e1d1baaacef91f534e73711bc349",
-  "run_id": "38169539654",
+  "generado_en": "2026-10-11T19:59:39.731073+00:00",
+  "code_sha": "b9a7376ed19c77da9efb6a65f25a2a1d7b05f7fc",
+  "run_id": "38170259463",
   "zona_horaria": "America/Hermosillo",
   "alcance": "Canario sintético aislado; no certifica todos los motores ni aceptación editorial",
   "checks": [
     {
       "id": "canario-reglas",
       "estado": "ok",
-      "revisado_en": "2026-10-11T19:49:03.831397+00:00",
-      "vence_en": "2026-10-13T07:49:03.831397+00:00",
+      "revisado_en": "2026-10-11T19:59:39.731073+00:00",
+      "vence_en": "2026-10-13T07:59:39.731073+00:00",
       "detalle": "Configuración leída; ninguna regla modificada"
     },
     {
       "id": "motor-voz",
       "estado": "ok",
-      "revisado_en": "2026-10-11T19:49:03.831397+00:00",
-      "vence_en": "2026-10-13T07:49:03.831397+00:00",
+      "revisado_en": "2026-10-11T19:59:39.731073+00:00",
+      "vence_en": "2026-10-13T07:59:39.731073+00:00",
       "detalle": "Kokoro real: WAV con señal y duración 2.877s"
     },
     {
       "id": "motor-escena",
       "estado": "ok",
-      "revisado_en": "2026-10-11T19:49:03.831397+00:00",
-      "vence_en": "2026-10-13T07:49:03.831397+00:00",
+      "revisado_en": "2026-10-11T19:59:39.731073+00:00",
+      "vence_en": "2026-10-13T07:59:39.731073+00:00",
       "detalle": "Parallax real 1080×1920 H264 2.000s; profundidad depth-anything-v2"
     },
     {
       "id": "motor-corte",
       "estado": "ok",
-      "revisado_en": "2026-10-11T19:49:03.831397+00:00",
-      "vence_en": "2026-10-13T07:49:03.831397+00:00",
+      "revisado_en": "2026-10-11T19:59:39.731073+00:00",
+      "vence_en": "2026-10-13T07:59:39.731073+00:00",
       "detalle": "Montador real: H264/AAC con audio, duración 3.633s"
     },
     {
       "id": "drive-transferencia",
-      "estado": "fallo",
-      "revisado_en": "2026-10-11T19:49:03.831397+00:00",
-      "vence_en": "2026-10-13T07:49:03.831397+00:00",
-      "detalle": "Transferencia o limpieza de la prueba sin confirmar"
+      "estado": "ok",
+      "revisado_en": "2026-10-11T19:59:39.731073+00:00",
+      "vence_en": "2026-10-13T07:59:39.731073+00:00",
+      "detalle": "Archivo de prueba subido, releído byte exacto y retiro a papelera confirmado"
     }
   ],
   "escrituras_negocio": 0,
