@@ -20,8 +20,15 @@ jobs:
           fetch-depth: 0
           filter: blob:none
           sparse-checkout: |
+            .github
+            datos
+            gas
             nube
             tests
+            docs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
