@@ -9,7 +9,7 @@ permissions:
 jobs:
   descubrir:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
       - uses: actions/setup-node@v4
         with:
@@ -93,6 +93,7 @@ jobs:
       - name: Verificar sintaxis
         run: python3 -m py_compile nube/comprobar_accesos.py
       - name: Comprobar conexiones reales y metadata de Modal
+        id: conexiones
         env:
           GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -100,3 +101,26 @@ jobs:
           MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
           MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
         run: python3 nube/comprobar_accesos.py
+      - name: Restablecer clase LTX existente cuando no se encuentra
+        if: steps.conexiones.outputs.modal_missing == 'true'
+        env:
+          MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+          MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+        run: modal deploy nube/modal_ltx.py
+      - name: Verificar lookup después del despliegue
+        if: steps.conexiones.outputs.modal_missing == 'true'
+        env:
+          MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+          MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import modal
+          try:
+              model = modal.Cls.from_name("sala-ltx", "LTX")
+              model.hydrate()
+          except Exception as exc:
+              print(json.dumps({"mode": "deployment_lookup", "ok": False, "code": type(exc).__name__, "gpuInvoked": False}))
+              raise SystemExit(2)
+          print(json.dumps({"mode": "deployment_lookup", "ok": True, "app": "sala-ltx", "class": "LTX", "gpuInvoked": False}))
+          PY

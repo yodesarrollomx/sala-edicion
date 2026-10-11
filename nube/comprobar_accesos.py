@@ -35,7 +35,7 @@ try:
         next_page = data.get("nextPageToken")
         if not next_page:
             break
-    wanted = ["models/gemini-2.5-flash-lite", "models/gemini-3.5-flash-image"]
+    wanted = ["models/gemini-2.5-flash-lite", "models/gemini-2.5-flash-image"]
     result["gemini"] = {"ok": status == 200, "status": status, "complete": not next_page,
                        "modelsListed": len(models), "requestedModels": {name: any(m.get("name") == name for m in models) for name in wanted},
                        "imageModels": [m.get("name") for m in models if "image" in m.get("name", "").lower()]}
@@ -56,4 +56,7 @@ try:
     result["modal"] = {"ok": True, "app": "sala-ltx", "class": "LTX", "metadataResolved": True, "gpuInvoked": False}
 except Exception as exc:
     result["modal"] = error(exc)
+    if type(exc).__name__ == "NotFoundError" and os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+            output.write("modal_missing=true\n")
 print(json.dumps(result, ensure_ascii=False))
