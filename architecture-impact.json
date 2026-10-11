@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-01.28-chinches-complementos",
+  "model_revision": "2026-10-11.c5-recovery-wait",
   "proposal_id": "CHG-PUBLICADORES-APP-001",
-  "summary": "Actualizar la propuesta de identidad publicadora de Sala sobre main, conservando los cambios posteriores: detección de PR duplicados y obligatoriedad de Arquitectura YOD y verificar. Token App solo al abrir PR; token del workflow para Git, checks, merge y publicación.",
+  "summary": "Actualizar la propuesta de identidad publicadora de Sala sobre main, conservando los cambios posteriores: detección de PR duplicados y obligatoriedad de Arquitectura YOD y verificar. Token App solo al abrir PR; token del workflow para Git, checks, merge y publicación. Conserva la confirmación de almacenamiento durable y la recuperación de versiones exactas integradas posteriormente.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",

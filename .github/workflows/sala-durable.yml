@@ -1,0 +1,37 @@
+name: Sala · regresiones de medios
+on:
+  pull_request:
+    paths: ['nube/**', 'tests/**', '.github/workflows/sala-durable.yml']
+  push:
+    branches: [main]
+    paths: ['nube/sala_ejecutor.py', 'tests/sala_durable_test.py', '.github/workflows/sala-durable.yml']
+permissions:
+  contents: read
+jobs:
+  regresiones:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          filter: blob:none
+          sparse-checkout: |
+            .github
+            datos
+            gas
+            nube
+            tests
+            docs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Regresiones sin APIs ni credenciales de producción
+        run: |
+          pip install --quiet google-auth requests pillow 'numpy<3'
+          python3 -m py_compile nube/sala_ejecutor.py nube/conciliar_medios.py
+          python3 -m unittest discover -s tests -p '*_test.py' -v
+          git diff --check HEAD^ HEAD

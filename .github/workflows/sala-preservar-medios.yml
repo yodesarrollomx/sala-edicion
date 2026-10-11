@@ -1,0 +1,46 @@
+name: Sala · conservar versiones sobrescritas
+on:
+  push:
+    branches: [codex/sala-conexiones-20261011]
+    paths: ['nube/preservar_medios.py', '.github/workflows/sala-preservar-medios.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sala-conexiones
+  cancel-in-progress: false
+jobs:
+  preservar:
+    if: github.repository == 'yodesarrollomx/sala-edicion' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          filter: blob:none
+          sparse-checkout: |
+            .github
+            datos
+            gas
+            nube
+            tests
+            docs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verificar conservación sin credenciales
+        run: |
+          pip install --quiet google-auth requests pillow 'numpy<3'
+          python3 -m py_compile nube/preservar_medios.py
+          python3 -m unittest discover -s tests -p 'sala_durable_test.py' -v
+          git diff --check HEAD^ HEAD
+      - name: Copiar versiones comprobadas sin cambiar los registros de producción
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: python3 nube/preservar_medios.py
