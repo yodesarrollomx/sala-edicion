@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: yodesarrollomx/yod-portal
-          ref: a629594fcf13d4db20d4e86fa9412e0ce1613bbf
+          ref: ca5d49de12bb8026618c891efc4ac2b6fe9a41f4
           path: .yod-atlas
           persist-credentials: false
           sparse-checkout-cone-mode: false
