@@ -5,6 +5,8 @@ import base64
 import hashlib
 import json
 import math
+import re
+import uuid
 import os
 from pathlib import Path
 import subprocess
@@ -50,18 +52,43 @@ def audio_correcto(path):
         raise ValueError("voz_silenciosa_o_invalida")
     return round(duration,3)
 
-def probar_drive(root,parent,client=drive):
+class DriveProbeError(RuntimeError):
+    pass
+
+class ProbeClient:
+    asegurar_carpeta=staticmethod(drive.asegurar_carpeta)
+    subir=staticmethod(drive.subir)
+    bajar=staticmethod(drive.bajar)
+
+    @staticmethod
+    def retirar(fid):
+        drive._peticion("PATCH",drive.API+"/files/"+fid,json={"trashed":True})
+        proof=drive._peticion("GET",drive.API+"/files/"+fid,params={"fields":"trashed"}).json()
+        if proof.get("trashed") is not True:
+            raise ValueError("retiro_no_confirmado")
+
+
+def probar_drive(root,parent,client=None):
     """Sólo se borra el ID del archivo nuevo de esta prueba, nunca originales."""
+    client=client or ProbeClient
     source=root/"canario-transferencia.txt"
     source.write_bytes(b"SALA canario aislado\n")
-    folder=client.asegurar_carpeta(parent,"_prueba_nube")
-    fid=client.subir(source,folder,"salud-"+os.environ.get("GITHUB_RUN_ID","local")+".txt")
+    stage="carpeta"
     try:
-        got=client.bajar(fid,root/"transferencia-leida.txt").read_bytes()
-        if got!=source.read_bytes():
-            raise ValueError("transferencia_diferente")
-    finally:
-        client.borrar(fid)
+        folder=client.asegurar_carpeta(parent,"_prueba_nube")
+        stage="subida"
+        fid=client.subir(source,folder,"salud-"+uuid.uuid4().hex+".txt")
+        stage="bajada"
+        try:
+            got=client.bajar(fid,root/"transferencia-leida.txt").read_bytes()
+            if got!=source.read_bytes():
+                raise ValueError("transferencia_diferente")
+        finally:
+            stage="retiro"
+            client.retirar(fid)
+    except Exception as exc:
+        code=re.search(r"\s(40[034]|429|5\d\d):",str(exc))
+        raise DriveProbeError(stage+("_http_"+code.group(1) if code else "_sin_confirmar")) from None
     return {"bytes":len(got),"sha256":hashlib.sha256(got).hexdigest(),"limpieza":True}
 
 def record(ident,ok,now,detail):
@@ -163,10 +190,11 @@ def main():
             if not parent: raise ValueError("drive_sin_raiz")
             proof=probar_drive(root,parent)
             checks.append(record("drive-transferencia",True,now,
-                "Archivo de prueba subido, releído byte exacto y retirado"))
-        except Exception:
+                "Archivo de prueba subido, releído byte exacto y retiro a papelera confirmado"))
+        except Exception as exc:
+            detail=str(exc) if isinstance(exc,DriveProbeError) else "raiz_sin_confirmar"
             checks.append(record("drive-transferencia",False,now,
-                "Transferencia o limpieza de la prueba sin confirmar"))
+                "Transferencia o retiro sin confirmar: "+detail))
     report={"schema":1,"generado_en":now,"code_sha":os.environ["GITHUB_SHA"],
             "run_id":os.environ["GITHUB_RUN_ID"],"zona_horaria":"America/Hermosillo",
             "alcance":"Canario sintético aislado; no certifica todos los motores ni aceptación editorial",

@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-11.salud-accesos",
   "proposal_id": "CHG-SALUD-ACCESOS-20261011",
-  "summary": "Lectura continua cada15min y canario aislado diario; publicar sólo estados técnicos en rama de datos.",
+  "summary": "Comprobar retiro del archivo temporal con papelera en unidad compartida; diagnóstico por fase sin IDs privados.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -12,8 +12,8 @@
     "EXT-MOTORES-MEDIA"
   ],
   "tests": [
-    "Regresiones de vídeo incompleto, resolución, reloj, comparación de bytes y limpieza.",
-    "CI completo de Sala con codecs reales; canario real separado y lectura pública del recibo."
+    "Fallos de subida/bajada/retiro y bytes distintos no quedan verdes; se retira únicamente el archivo recién creado.",
+    "CI completo y canario real en nube con recibo público sanitizado."
   ],
   "rollback": "Revertir módulos/horarios por PR; parar sólo nuevo canario. Conservar decisiones, medios y datos."
 }
