@@ -68,7 +68,7 @@ jobs:
       - name: Publicar y comprobar recibo exacto
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 nube/snapshots_online.py publicar
+        run: python3 nube/snapshots_online.py publicar --sha "$GITHUB_SHA"
       - name: Liberar mutex
         if: always()
         env:
