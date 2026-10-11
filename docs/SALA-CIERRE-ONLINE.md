@@ -14,7 +14,7 @@ Antes, `tpad` agregaba el mínimo completo incluso a escenas suficientemente lar
 
 ## Comparación
 
-Se toma el corte archivado de septiembre del mismo commit que su guion y láminas, con SHA256 de video acreditado previamente. La nube produce seis voces, seis escenas parallax y un corte usando esas entradas versionadas. Original, salida, guion y acuse se guardan exclusivamente en Drive privado y se descargan para comprobar bytes.
+Se toma el corte archivado de septiembre del mismo commit que su guion y cinco de sus seis láminas, con SHA256 de video acreditado previamente. La sexta ruta del guion falta también en ese commit: se busca por ruta exacta en el catálogo y, si no existe un original único y comprobable, se extrae una referencia visual del propio corte. Su procedencia y la comparación parcial quedan explícitas. La nube produce seis voces, seis escenas parallax y un corte; el guion se conserva. Original, salida, guion y acuse se guardan exclusivamente en Drive privado y se descargan para comprobar bytes.
 
 La comparación mide codecs, resolución y duración. Señala que parallax es 2.5D y registra el motor real. También contrasta las dos voces originales recuperadas con la nueva voz de la lámina uno; no presume que el guion de aquellas revisiones esté documentado. El archivo original no incluye un recibo completo de los insumos efectivos del montador Mac. La equivalencia visual y la aceptación editorial requieren revisar ambos videos; no se infieren de las medidas técnicas.
 

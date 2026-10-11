@@ -10,6 +10,7 @@ import tempfile
 import time
 from unittest.mock import patch
 import urllib.request
+import urllib.error
 
 import sala_cliente as sala
 import sala_drive as drive
@@ -41,6 +42,47 @@ def download(path, target):
     Path(target).parent.mkdir(parents=True,exist_ok=True)
     Path(target).write_bytes(raw)
     return raw
+
+def original_image(scene, target, baseline):
+    try:
+        raw=download(scene["lamina_src"],target)
+        return raw, {"tipo":"repositorio_original","source_sha":SOURCE_SHA,
+                     "misma_ruta_versionada":True}
+    except urllib.error.HTTPError as error:
+        require(error.code==404 and scene["n"]==6,"imagen_original_no_confirmada")
+    try:
+        catalog=sala.get("catalogo",fresco="1")
+        require(isinstance(catalog.get("catalogo"),dict),"catalogo_sin_contrato")
+        refs={}
+        for serial,item in catalog["catalogo"].items():
+            for revision in item.get("revisiones",[]):
+                routes=str(revision.get("rutas") or revision.get("ruta") or "").split("|")
+                if scene["lamina_src"] in routes and revision.get("original"):
+                    refs[str(revision["original"])]={"serial":serial,"revision":revision.get("r"),
+                                                    "huella":revision.get("huella")}
+        if len(refs)==1:
+            candidate=next(iter(refs))
+            drive.bajar(candidate,target)
+            raw=Path(target).read_bytes()
+            meta=drive._peticion("GET",drive.API+"/files/"+candidate,
+                params={"fields":"id,size,md5Checksum,trashed"}).json()
+            require(meta.get("trashed") is False and int(meta.get("size",0))==len(raw)
+                    and meta.get("md5Checksum")==hashlib.md5(raw).hexdigest(),"original_drive_diferente")
+            return raw, {"tipo":"original_catalogado_drive","drive_id":candidate,
+                         "identidad_catalogo":refs[candidate],"misma_ruta_versionada":False,
+                         "igualdad_con_insumo_del_corte_no_acreditada":True}
+    except Exception:
+        pass
+    # Una referencia del video original permite terminar la comparación PARCIAL;
+    # no se considera la foto de fuente ni se reemplaza el original en el negocio.
+    subprocess.run(["ffmpeg","-v","error","-y","-sseof","-1.5","-i",str(baseline),
+                    "-frames:v","1",str(target)],check=True,timeout=30)
+    raw=Path(target).read_bytes()
+    require(len(raw)>0,"referencia_del_corte_no_confirmada")
+    return raw, {"tipo":"frame_del_corte_original","offset_fin_s":1.5,
+                 "baseline_sha256":BASELINE_SHA256,"misma_ruta_versionada":False,
+                 "igualdad_con_insumo_del_corte_no_acreditada":True}
+
 
 def metadata(path):
     result=subprocess.run(["ffprobe","-v","error","-show_streams","-show_format",
@@ -100,7 +142,7 @@ def main():
                     n=str(scene["n"])
                     require(n in {"1","2","3","4","5","6"},"lamina_original_invalida")
                     photo=root/("entrada-L"+n+".png")
-                    original=download(scene["lamina_src"],photo)
+                    original,source_proof=original_image(scene,photo,baseline)
                     digest=hashlib.sha256(original).hexdigest()
                     text=" ".join(x["dice"] for x in scene["partes"])
                     evidence={"src":str(photo),"dice":text,"ve":scene.get("intencion","")}
@@ -114,7 +156,7 @@ def main():
                             "evidencia":{**evidence,"ruta_local":str(path)}})
                         files.append(store_file(path,folder))
                     inputs.append({"lamina":n,"source_path":scene["lamina_src"],"sha256":digest,
-                                   "partes":scene["partes"]})
+                                   "partes":scene["partes"],"procedencia":source_proof})
                     laminas.append({"item":n,"huella":digest[:8]})
                 cut=montador.ensamblar({"pieza":"apodo","evidencia":{"laminas":laminas}},
                                       rules,{},root,jobs)
@@ -139,8 +181,9 @@ def main():
                 "run_id":os.environ["GITHUB_RUN_ID"],"code_sha":os.environ["GITHUB_SHA"],
                 "tipo":"comparacion_aislada_original_con_nube","source_sha":SOURCE_SHA,
                 "baseline_sha256":BASELINE_SHA256,"guion_sha256":hashlib.sha256(script_raw).hexdigest(),
-                "insumos_originales_versionados":inputs,
-                "limite_original":"Corte archivado y guion/láminas del mismo commit. No se conserva un recibo del montador Mac con hashes de cada insumo usado; igualdad de ejecución original completa no acreditada.",
+                "insumos_originales":inputs,
+                "laminas_versionadas_en_mismo_commit":sum(x["procedencia"]["misma_ruta_versionada"] for x in inputs),
+                "limite_original":"Corte archivado y guion del mismo commit; cinco láminas originales disponibles. La sexta se documenta por catálogo o frame del corte, sin equivalencia de insumo presumida. No se conserva recibo del montador Mac con hashes de todos los insumos; comparación completa no acreditada.",
                 "motores":{"escena":"parallax_2_5d","voz":"kokoro","corte":"ffmpeg"},
                 "profundidad":depth,"comparacion":comparative,
                 "voces_originales_recuperadas":recovered,"archivos":files,"carpeta":folder,
@@ -156,6 +199,7 @@ def main():
                     out.write("carpeta="+folder+"\n")
             print("SALA_COMPARACION "+json.dumps({"ok":True,"laminas":len(inputs),
                 "archivos_privados_verificados":len(files)+1,"comparacion":comparative,
+                "laminas_originales_versionadas":report["laminas_versionadas_en_mismo_commit"],
                 "voces_l1_identicas":sum(x["bytes_identicos_a_voz_nube_l1"] for x in recovered),
                 "escrituras_negocio":0,"segundos":report["duracion_ejecucion_s"]},sort_keys=True))
         return 0
