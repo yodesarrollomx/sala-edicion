@@ -1,0 +1,94 @@
+name: Sala · recuperación de horarios
+run-name: YOD guardia · ${{ inputs.proceso }} · ${{ inputs.correlacion }}
+on:
+  workflow_dispatch:
+    inputs:
+      proceso:
+        description: Rutina actual autorizada
+        type: choice
+        required: true
+        default: revision
+        options: [revision, productor, mesa, arranque, semillero, ejecutor, chinches, maquinas, relevo, plan, canario]
+      correlacion:
+        description: Recibo del vigilante en nube
+        type: string
+        required: true
+permissions:
+  contents: write
+  actions: write
+  issues: write
+  pull-requests: write
+concurrency:
+  group: sala-vigilante-${{ inputs.proceso }}
+  cancel-in-progress: false
+jobs:
+  validar:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar ticket sin evaluar texto del solicitante
+        env:
+          CORRELACION: ${{ inputs.correlacion }}
+        run: |
+          [[ "$CORRELACION" =~ ^h-[0-9a-f-]{36}$ ]]
+  revision:
+    if: inputs.proceso == 'revision'
+    needs: validar
+    uses: ./.github/workflows/sala-revision.yml
+    secrets: inherit
+  productor:
+    if: inputs.proceso == 'productor'
+    needs: validar
+    uses: ./.github/workflows/sala-productor.yml
+    secrets: inherit
+  mesa:
+    if: inputs.proceso == 'mesa'
+    needs: validar
+    uses: ./.github/workflows/sala-mesa.yml
+    with:
+      modo: montar
+    secrets: inherit
+  arranque:
+    if: inputs.proceso == 'arranque'
+    needs: validar
+    uses: ./.github/workflows/sala-arranque.yml
+    with:
+      modo: arrancar
+    secrets: inherit
+  semillero:
+    if: inputs.proceso == 'semillero'
+    needs: validar
+    uses: ./.github/workflows/sala-arranque.yml
+    with:
+      modo: ideas
+    secrets: inherit
+  ejecutor:
+    if: inputs.proceso == 'ejecutor'
+    needs: validar
+    uses: ./.github/workflows/sala-ejecutor.yml
+    secrets: inherit
+  chinches:
+    if: inputs.proceso == 'chinches'
+    needs: validar
+    uses: ./.github/workflows/sala-chinches.yml
+    secrets: inherit
+  maquinas:
+    if: inputs.proceso == 'maquinas'
+    needs: validar
+    uses: ./.github/workflows/sala-maquinas.yml
+    secrets: inherit
+  relevo:
+    if: inputs.proceso == 'relevo'
+    needs: validar
+    uses: ./.github/workflows/sala-relevo.yml
+    secrets: inherit
+  plan:
+    if: inputs.proceso == 'plan'
+    needs: validar
+    uses: ./.github/workflows/sala-plan.yml
+    secrets: inherit
+  canario:
+    if: inputs.proceso == 'canario'
+    needs: validar
+    uses: ./.github/workflows/sala-salud-canario.yml
+    secrets: inherit

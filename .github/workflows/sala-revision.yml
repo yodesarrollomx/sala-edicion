@@ -1,5 +1,6 @@
 name: Revisión continua de la Sala
 on:
+  workflow_call:
   schedule:
     - cron: '5 14 * * *'  # 07:05 Hermosillo; se informa ejecución real por separado
     - cron: '7,22,37,52 * * * *'  # revisión agregada cada15min
