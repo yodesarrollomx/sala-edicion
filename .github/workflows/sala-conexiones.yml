@@ -1,0 +1,42 @@
+name: Sala · comprobar conexiones y medios
+on:
+  push:
+    branches: [codex/sala-conexiones-20261011]
+    paths: ['nube/conciliar_medios.py', '.github/workflows/sala-conexiones.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sala-conexiones
+  cancel-in-progress: false
+jobs:
+  comprobar:
+    if: github.repository == 'yodesarrollomx/sala-edicion' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout: |
+            nube
+            tests
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dependencias y contratos sin credenciales
+        run: |
+          pip install --quiet google-auth requests pillow
+          python3 -m py_compile nube/conciliar_medios.py
+          python3 nube/verificar.py
+          python3 -m unittest discover -s tests -p '*_test.py'
+          git diff --check
+      - name: Conciliar archivos existentes y guardar informe privado
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+          YOD_APP_ID: ${{ vars.YOD_PUBLISHER_APP_ID }}
+          YOD_APP_KEY: ${{ secrets.YOD_PUBLISHER_APP_PRIVATE_KEY }}
+        run: python3 nube/conciliar_medios.py --guardar-informe

@@ -1,17 +1,20 @@
 {
-  "model_revision": "2026-10-01.28-chinches-complementos",
-  "proposal_id": "CHG-SALA-PUBLICACION-001",
-  "summary": "Corregir la detección de tiras nuevas en el commit publicado tras el merge normal de un PR. Comparar HEAD con su primer padre mediante git diff: diff-tree omitía el merge y anunciaba que no había nada que montar. Se conservan las compuertas de contenido, archivos publicados y permisos de agente.",
+  "model_revision": "2026-10-11.c5-recovery-wait",
+  "proposal_id": "CHG-SALA-PRODUCCION-ACOTADA-001",
+  "summary": "Conciliar en lectura los medios heredados y las referencias durables de COLA con sus huellas, archivos existentes de Git/Pages y Drive autorizado. Guardar únicamente el informe privado de auditoría; no cambiar trabajos, decisiones, permisos ni publicaciones.",
   "components": [
     "SYS-SALA",
-    "GAS-SALA"
+    "GAS-SALA",
+    "SHEET-SALA",
+    "SVC-SALA-EJECUTOR",
+    "EXT-DRIVE"
   ],
   "tests": [
     "python3 nube/verificar.py",
+    "python3 -m py_compile nube/conciliar_medios.py",
+    "python3 -m unittest discover -s tests -p '*_test.py'",
     "git diff --check",
-    "python3 -m unittest discover -s tests -p sala_montaje_commit_test.py -v: commit simple, merge con dos padres, cambio de historia y referencia sin imagen; Git real y GAS doble.",
-    "Evidencia previa: Publicar la Sala 38093992004 omite una tira nueva en el merge b911364382471181863695d59506388f0a5c111e.",
-    "No se crean propuestas ni se marcan decisiones en producción para probar el cambio."
+    "Lectura real de referencias existentes, checksum del contenido descargado y acuse del informe privado; sin escrituras de negocio ni motores."
   ],
-  "rollback": "Revertir por PR la detección del commit y sus pruebas. Conservar todas las referencias, medios, propuestas y decisiones. No repetir publicaciones para probar."
+  "rollback": "Retirar por PR el diagnóstico y el pin del atlas. Conservar informes privados, cola, decisiones, medios e historial; sin restaurar datos."
 }
