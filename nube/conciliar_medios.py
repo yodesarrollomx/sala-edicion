@@ -235,8 +235,18 @@ def main():
                                      'drive_reference_unavailable') and j.get('expected_output_hash')}
         archive, errors, seen = [], [], {x['blob_sha'] for x in git_assets.values()}
         scanned, total, skipped, complete = 0, 0, 0, True
-        objects = git_output(['git', 'rev-list', '--objects', 'HEAD'],
-                                          cwd=ROOT).decode().splitlines()
+        # El diff raw identifica blobs desde los árboles. rev-list --objects puede
+        # descargar implícitamente todos los blobs en un clon parcial.
+        raw = git_output(['git', 'log', '--raw', '--no-renames', '--abbrev=40',
+                          '--format=', '-z', 'HEAD'], cwd=ROOT, no_lazy=True).decode().split(chr(0))
+        objects = []
+        for index, chunk in enumerate(raw[:-1]):
+            header = chunk.strip()
+            if not header.startswith(':'): continue
+            parts = header.split()
+            if len(parts) != 5 or not re.fullmatch(r'[a-f0-9]{40}', parts[3]) or parts[3] == '0' * 40:
+                continue
+            objects.append(parts[3] + ' ' + raw[index + 1])
         image_dirs = {str(pathlib.PurePosixPath(p).parent) for p in references if p}
         eligible = []
         for line in objects:
@@ -378,5 +388,5 @@ def main():
 if __name__ == '__main__':
     try: sys.exit(main())
     except Exception as error:
-        print(json.dumps({'ok': False, 'code': type(error).__name__, 'business_writes': 0}))
+        print(json.dumps({'ok': False, 'code': str(error) if str(error) in ('git_read_timeout', 'git_read_not_verified', 'queue_contract_missing', 'rules_contract_missing', 'catalog_contract_missing', 'folder_scan_bound', 'file_scan_bound', 'current_drive_root_required', 'private_report_save_not_verified') else type(error).__name__, 'business_writes': 0}))
         sys.exit(1)
