@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-11.plan-agregados-online",
   "proposal_id": "CHG-PLAN-AGREGADOS-ONLINE-20261011",
-  "summary": "Añadir respaldo autenticado Google Charts sólo ante API Sheets deshabilitada; validar encabezados/columnas y parsear JSON sin ejecutar código. Mantener permiso lector, contratos, métricas y diagnósticos privados.",
+  "summary": "Corregir el cableado del productor de agregados de Plan: enviar SHA de código aprobado al publicador, tras lectura y snapshot válidos. La lectura real ya confirmó agregados privados; publicación pendiente de nueva comprobación.",
   "components": [
     "SYS-YOD-OS",
     "SYS-SALA",
@@ -20,7 +20,8 @@
     "Dobles: lectura por columnas permitidas, cabeceras exactas, folios duplicados/rechazados, pruebas excluidas y cita sólo con confirmación registrada; sin PII o IDs privados en el DTO.",
     "Snapshot/recibo: hash exacto del archivo de agregados; consumidor rechaza recibos incompletos, corruptos o desactualizados y conserva último dato acreditado.",
     "Regresiones completas de Sala y leads/publicación Marketing; arquitectura central y CI obligatorios; ninguna escritura de prueba en hojas/CRM.",
-    "Regresiones de razón SERVICE_DISABLED y ausencia de fallback para permiso denegado; consultas GViz sólo de encabezados y columnas permitidas, sin token en URL ni eval."
+    "Regresiones de razón SERVICE_DISABLED y ausencia de fallback para permiso denegado; consultas GViz sólo de encabezados y columnas permitidas, sin token en URL ni eval.",
+    "Recorrido real Plan→snapshot→Pages con SHA explícito y recibo/hash exactos; verificar salida en la red, sin escritura en CRM."
   ],
   "rollback": "Revertir PR de lectura y consumidor; mantener los últimos snapshots confirmados y las hojas intactas. Retirar sólo el permiso lector específico si se añadió para esta ruta; no borrar CRM, medios o historial."
 }
