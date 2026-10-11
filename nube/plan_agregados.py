@@ -22,6 +22,7 @@ SHEETS = "https://sheets.googleapis.com/v4/spreadsheets/"
 MAX_ROWS = 50000
 MAX_BYTES = 8 * 1024 * 1024
 TAG = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
+READ_TRANSPORT = None
 FIELDS = ("Primer contacto", "Folio", "Tipo", "Estado", "Sesión agendada",
           "UTM campaign", "UTM content")
 
@@ -144,6 +145,14 @@ def sheet_get(suffix, params=None):
     except requests.RequestException:
         raise PlanError("sheets_red_sin_lectura") from None
     if response.status_code != 200:
+        try:
+            error = response.json().get("error", {})
+            reasons = {item.get("reason") for item in error.get("details", []) if isinstance(item, dict)}
+            reasons.update(item.get("reason") for item in error.get("errors", []) if isinstance(item, dict))
+        except (ValueError, AttributeError, TypeError):
+            reasons = set()
+        if reasons & {"SERVICE_DISABLED", "accessNotConfigured"}:
+            raise PlanError("sheets_api_no_habilitada")
         raise PlanError("sheets_http_" + str(response.status_code))
     if len(response.content) > MAX_BYTES:
         raise PlanError("sheets_respuesta_demasiado_grande")
@@ -179,9 +188,103 @@ def private_config():
         raise PlanError("fuente_privada_fuera_de_contrato")
     return source, file["parents"][0]
 
+
+def gviz_get(source, query):
+    """Protocolo de consulta Google Charts autenticado; sólo GET y columnas permitidas."""
+    url = "https://docs.google.com/spreadsheets/d/" + source["spreadsheet_id"] + "/gviz/tq"
+    try:
+        response = requests.get(url, params={"gid": source["sheet_id"], "headers": 1,
+            "tqx": "out:json", "tq": query},
+            headers={"Authorization": "Bearer " + drive._token()}, timeout=30,
+            allow_redirects=False)
+    except requests.RequestException:
+        raise PlanError("gviz_red_sin_lectura") from None
+    if response.status_code != 200 or len(response.content) > MAX_BYTES:
+        raise PlanError("gviz_sin_respuesta_valida")
+    try:
+        text = response.content.decode("utf-8-sig")
+        match = re.fullmatch(r"\s*(?:/\*O_o\*/\s*)?google\.visualization\.Query\.setResponse\((.*)\);\s*", text, re.S)
+        if not match:
+            raise ValueError()
+        payload = json.loads(match.group(1))
+        if payload.get("status") != "ok" or not isinstance(payload.get("table"), dict):
+            raise ValueError()
+    except (ValueError, TypeError, AttributeError, UnicodeError):
+        raise PlanError("gviz_contrato_no_confirmado") from None
+    return payload["table"]
+
+def gviz_value(cell, column_type):
+    if cell is None:
+        return ""
+    if not isinstance(cell, dict) or "v" not in cell:
+        raise PlanError("gviz_celda_incompleta")
+    value = cell["v"]
+    if value is None:
+        return ""
+    if column_type in {"date", "datetime"}:
+        match = re.fullmatch(r"Date\((\d{4}),(\d{1,2}),(\d{1,2})(?:,(\d{1,2}),(\d{1,2}),(\d{1,2}))?\)", str(value))
+        if not match:
+            raise PlanError("gviz_fecha_sin_contrato")
+        try:
+            nums = [int(x) if x is not None else 0 for x in match.groups()]
+            nums[1] += 1
+            return datetime(*nums).isoformat()
+        except ValueError:
+            raise PlanError("gviz_fecha_invalida") from None
+    if isinstance(value, (str, int, float, bool)):
+        return value
+    raise PlanError("gviz_valor_no_escalar")
+
+def read_gviz(source):
+    global READ_TRANSPORT
+    # limit0 devuelve sólo encabezados: no descargar datos de las columnas privadas.
+    table = gviz_get(source, "select * limit 0")
+    cols = table.get("cols")
+    if (not isinstance(cols, list) or not 1 <= len(cols) <= 256
+            or not isinstance(table.get("rows"), list) or table["rows"]):
+        raise PlanError("gviz_metadatos_no_confirmados")
+    headers = [col.get("label", "") if isinstance(col, dict) else "" for col in cols]
+    positions = header_positions(headers)
+    requested = [(field, cols[index]) for field, indices in positions.items() for index in indices]
+    ids = [col.get("id", "") for _, col in requested]
+    if (len(ids) != len(set(ids))
+            or any(not isinstance(x, str) or not re.fullmatch(r"[A-Z]{1,3}", x) for x in ids)):
+        raise PlanError("gviz_columnas_no_confirmadas")
+    body = gviz_get(source, "select " + ",".join(ids) + " limit " + str(MAX_ROWS + 1))
+    data_cols, rows = body.get("cols"), body.get("rows")
+    if (not isinstance(data_cols, list) or [col.get("id") for col in data_cols] != ids
+            or [col.get("label") for col in data_cols] != [col.get("label") for _, col in requested]
+            or not isinstance(rows, list) or len(rows) > MAX_ROWS):
+        raise PlanError("gviz_rangos_o_limites_no_confirmados")
+    output = []
+    for row in rows:
+        cells = row.get("c") if isinstance(row, dict) else None
+        if not isinstance(cells, list) or len(cells) != len(requested):
+            raise PlanError("gviz_fila_incompleta")
+        result = {}
+        for (field, col), cell in zip(requested, cells):
+            value = gviz_value(cell, col.get("type"))
+            if field in result and value not in ("", None):
+                if result[field] not in ("", None) and session_key(result[field]) != session_key(value):
+                    raise PlanError("columnas_duplicadas_contradictorias")
+                result[field] = value
+            else:
+                result.setdefault(field, value)
+        output.append(result)
+    READ_TRANSPORT = "gviz_autenticado"
+    return output
+
+
 def read_source(source):
+    global READ_TRANSPORT
     sid = source["spreadsheet_id"]
-    metadata = sheet_get(sid, {"fields": "properties(timeZone),sheets(properties)"})
+    try:
+        metadata = sheet_get(sid, {"fields": "properties(timeZone),sheets(properties)"})
+    except PlanError as exc:
+        if str(exc) == "sheets_api_no_habilitada":
+            return read_gviz(source)
+        raise
+    READ_TRANSPORT = "sheets_rest"
     matching = [item["properties"] for item in metadata.get("sheets", [])
                 if isinstance(item, dict) and isinstance(item.get("properties"), dict)
                 and item["properties"].get("sheetId") == source["sheet_id"]
@@ -250,7 +353,7 @@ def main():
         temp = DEST.with_suffix(".tmp")
         temp.write_text(json.dumps(output, ensure_ascii=False, sort_keys=True) + "\n")
         temp.replace(DEST)
-        report.update(estado="confirmado", conteos=output["conteos"])
+        report.update(estado="confirmado", conteos=output["conteos"], transporte=READ_TRANSPORT)
     except (PlanError, drive.DriveError):
         report["error"] = "lectura_plan_no_acreditada"
         if folder:
@@ -271,7 +374,7 @@ def main():
                     raise drive.DriveError("diagnostico_no_confirmado")
     except drive.DriveError:
         report["estado"] = "diagnostico_privado_no_confirmado"
-    print(json.dumps({"plan": report["estado"], "error": report.get("error"),
+    print(json.dumps({"plan": report["estado"], "transporte": report.get("transporte"), "error": report.get("error"),
                       "conteos": report.get("conteos")}, ensure_ascii=False))
     return 0 if report["estado"] == "confirmado" else 2
 
