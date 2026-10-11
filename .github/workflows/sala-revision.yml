@@ -1,7 +1,13 @@
-name: Revisión diaria de la Sala
+name: Revisión continua de la Sala
 on:
   schedule:
     - cron: '5 14 * * *'  # 07:05 Hermosillo; se informa ejecución real por separado
+    - cron: '7,22,37,52 * * * *'  # revisión agregada cada15min
+  push:
+    branches: [main]
+    paths:
+      - nube/revision_diaria.py
+      - .github/workflows/sala-revision.yml
   workflow_dispatch:
 permissions:
   contents: write

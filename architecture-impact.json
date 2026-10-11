@@ -1,22 +1,19 @@
 {
-  "model_revision": "2026-10-11.sala-cierre-online",
-  "proposal_id": "CHG-SALA-CIERRE-ONLINE-20261011",
-  "summary": "Revisión diaria observa ejecuciones iniciales aprobadas de Plan y los jobs reales anidados de productor/ejecutor del cierre; excluye comparación técnica, ramas ajenas y jobs omitidos.",
+  "model_revision": "2026-10-11.salud-accesos",
+  "proposal_id": "CHG-SALUD-ACCESOS-20261011",
+  "summary": "Lectura continua cada15min y canario aislado diario; publicar sólo estados técnicos en rama de datos.",
   "components": [
-    "SYS-YOD-OS",
     "SYS-SALA",
     "GAS-SALA",
-    "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
     "EXT-DRIVE",
-    "EXT-GMAIL"
+    "EXT-MOTORES-MEDIA"
   ],
   "tests": [
-    "Dos nuevas regresiones con dobles para main/push aprobado, nombres de workflows reutilizables, comparación técnica excluida, ramas ajenas y jobs skipped.",
-    "Suite completa183 con ffmpeg real, verificadores y contrato de cierre aprobado; publicación de revisión con recibo exacto.",
-    "No se cambian horarios, decisiones, configuración ni se solicita otro correo en esta entrega."
+    "Regresiones de vídeo incompleto, resolución, reloj, comparación de bytes y limpieza.",
+    "CI completo de Sala con codecs reales; canario real separado y lectura pública del recibo."
   ],
-  "rollback": "Revertir código mediante PR. Conservar triggers que ya funcionan, configuraciones, decisiones, originales, acuses y snapshots. No instalar GAS espejo ni resetear filas fallidas históricas."
+  "rollback": "Revertir módulos/horarios por PR; parar sólo nuevo canario. Conservar decisiones, medios y datos."
 }
