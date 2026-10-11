@@ -33,6 +33,35 @@ ella, la nube produce local pero no sube nada, y lo dice en cada corrida).
 **3. Pages por Actions.** `Settings → Pages → Source` = **GitHub Actions** (hoy está en
 «Deploy from a branch»). Sin ese cambio, `publicar.yml` corre y no sirve de nada.
 
+**4. Identidad de los PR automáticos.** Los procesos que generan archivos usan la
+GitHub App privada de publicación, instalada sólo en `sala-edicion` y `aurum-board`,
+con `Contents: read` y `Pull requests: write`. Configurar `YOD_PUBLISHER_APP_ID` como
+variable de Actions y `YOD_PUBLISHER_APP_PRIVATE_KEY` como secret. La instalación y
+la generación de la clave requieren al administrador de la organización.
+
+El workflow comprueba la configuración antes de producir y crea un token temporal
+justo antes de guardar, únicamente si hay archivos pendientes. El token se limita
+al repositorio actual, se revoca al acabar el job y sólo autentica la creación del
+PR. Git, consultas, checks, integración y publicación usan el `GITHUB_TOKEN` del
+workflow. La simulación y el helper sin cambios no necesitan token de la App.
+
+GitHub deja los workflows de PR creados con `GITHUB_TOKEN` pendientes de aprobación;
+un dispatch verde de Arquitectura no sustituye esos checks. La App permite que el
+evento de apertura inicie los workflows del PR. El publicador sigue exigiendo su
+dispatch del commit exacto, todos los checks obligatorios y la integración normal
+con `--match-head-commit`, antes de publicar y montar cartas. Los checks vacíos se
+esperan hasta el límite; si siguen ausentes o fallan, se conserva el PR y se detiene
+el montaje. [Comportamiento de GitHub](https://docs.github.com/en/enterprise-cloud@latest/actions/concepts/security/github_token).
+
+La corrección `CHG-PUBLICADORES-APP-001` incluye pruebas con dobles sin red. Su
+activación queda pendiente de instalar/configurar la App y observar una corrida
+real completa. Ante un PR antiguo pendiente de aprobación, un responsable revisa
+su commit y aprueba sus workflows en GitHub; instalar la App no cambia la identidad
+de ese PR. Se conserva el PR para recuperación y no se reintenta generación a
+ciegas. Rollback: revertir la corrección mediante PR, retirar la instalación o
+revocar la clave en coordinación con Aurum, y mantener los datos generados,
+Sheets y decisiones editoriales.
+
 ## Cómo probarlo, en este orden — NINGUNO se salta
 
 1. **Sonda** (`Actions → Sonda de la Sala → Run workflow`). Sólo lee. Confirma que el día

@@ -31,10 +31,10 @@ class PublicationError(RuntimeError):
     pass
 
 
-def execute(argv, *, cwd, input=None):
+def execute(argv, *, cwd, input=None, env=None):
     """Nunca imprimir stderr remoto: podría contener datos privados o credenciales."""
     try:
-        return subprocess.run(argv, cwd=cwd, input=input, text=True,
+        return subprocess.run(argv, cwd=cwd, input=input, env=env, text=True,
                               capture_output=True, timeout=120, check=False)
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise PublicationError(f"No se pudo completar {argv[0]} {argv[1]}.") from exc
@@ -55,17 +55,25 @@ class Publisher:
                 or not self.env.get("GH_TOKEN")):
             raise PublicationError("Se requiere el contexto y token de GitHub Actions.")
 
-    def command(self, argv, allowed=(0,), input=None):
-        result = self.runner(argv, cwd=self.cwd, input=input)
+    def command(self, argv, allowed=(0,), input=None, *, create_pr=False):
+        # El token de la App sólo llega al proceso que abre el PR. Git, checks,
+        # integración y dispatch conservan el token efímero del workflow.
+        env = {key: value for key, value in self.env.items() if key != "PR_CREATION_TOKEN"}
+        if create_pr:
+            env["GH_TOKEN"] = self.env["PR_CREATION_TOKEN"]
+        result = self.runner(argv, cwd=self.cwd, input=input, env=env)
         if result.returncode not in allowed:
             raise PublicationError(f"Falló {argv[0]} {argv[1]} (salida {result.returncode}).")
         return result.stdout
 
-    def api(self, endpoint, body=None):
+    def api(self, endpoint, body=None, *, create_pr=False):
+        if create_pr and (endpoint != f"repos/{self.repo}/pulls" or body is None):
+            raise PublicationError("La identidad de GitHub App sólo puede abrir el PR.")
         argv = ["gh", "api", "--method", "GET" if body is None else "POST", endpoint]
         if body is not None:
             argv += ["--input", "-"]
-        result = self.command(argv, input=None if body is None else json.dumps(body))
+        result = self.command(argv, input=None if body is None else json.dumps(body),
+                              create_pr=create_pr)
         try:
             return json.loads(result) if result.strip() else None
         except ValueError as exc:
@@ -100,6 +108,10 @@ class Publisher:
                 raise PublicationError("No se publican enlaces simbólicos generados.")
             changed.append(path)
         return changed
+
+    def prepare(self, process):
+        """Detectar cambios sin token de App ni mutaciones, antes de acuñarlo."""
+        return self.output(hubo="si" if self.changed_paths(process) else "no")
 
     def run_list(self, workflow, branch):
         result = self.api(f"repos/{self.repo}/actions/workflows/{workflow}/runs"
@@ -171,6 +183,10 @@ class Publisher:
         changed = self.changed_paths(process)
         if not changed and process != "mesa":
             return self.output(hubo="no")
+        if changed:
+            token = self.env.get("PR_CREATION_TOKEN", "")
+            if not token.strip() or token in (self.env.get("GH_TOKEN"), self.env.get("GITHUB_TOKEN")):
+                raise PublicationError("Falta una identidad independiente de GitHub App para abrir el PR.")
         # Sólo UNA propuesta pendiente por clase; evita desperdiciar créditos y crear
         # decenas de PR idénticos mientras GitHub exige aprobar su CI.
         existentes = self.api(f"repos/{self.repo}/pulls?state=open&per_page=100")
@@ -284,7 +300,7 @@ class Publisher:
                         "Propuesta: CHG-SALA-PUBLICACION-001. Requiere Arquitectura YOD y "
                         "los checks obligatorios sobre el commit exacto. El montaje espera "
                         "la publicación verificada. Rollback mediante PR; conservar registros del Sheet.",
-            })
+            }, create_pr=True)
             if not isinstance(pr, dict) or not isinstance(pr.get("number"), int):
                 raise PublicationError("GitHub no devolvió un PR válido.")
             number = pr["number"]
@@ -338,13 +354,15 @@ class Publisher:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("integrar", "publicar"))
+    parser.add_argument("action", choices=("preparar", "integrar", "publicar"))
     parser.add_argument("--proceso", required=True, choices=tuple(PATHS))
     parser.add_argument("--sha", default="")
     args = parser.parse_args()
     try:
         publisher = Publisher(Path(__file__).resolve().parent.parent)
-        if args.action == "integrar":
+        if args.action == "preparar":
+            publisher.prepare(args.proceso)
+        elif args.action == "integrar":
             publisher.integrate(args.proceso)
         else:
             publisher.publish(args.sha, args.proceso)

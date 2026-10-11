@@ -45,6 +45,17 @@ jobs:
       PIEZA: ${{ inputs.pieza }}
     steps:
       - uses: actions/checkout@v4
+      - name: Comprobar configuración de la identidad publicadora
+        if: env.MODO != 'simular'
+        env:
+          APP_ID: ${{ vars.YOD_PUBLISHER_APP_ID }}
+          APP_PRIVATE_KEY: ${{ secrets.YOD_PUBLISHER_APP_PRIVATE_KEY }}
+        run: |
+          if ! [[ "$APP_ID" =~ ^[0-9]+$ ]] || [ -z "$APP_PRIVATE_KEY" ]; then
+            echo '::error::Falta configurar la GitHub App publicadora antes de generar datos.'
+            exit 1
+          fi
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -90,11 +101,30 @@ jobs:
           pip install --quiet google-auth
           python3 nube/verificar.py
 
+      - name: Detectar los archivos generados pendientes
+        id: cambios
+        if: steps.mesa.outputs.codigo == '0' && env.MODO != 'simular'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/publicar_git.py preparar --proceso mesa
+
+      - name: Crear identidad temporal para abrir el PR
+        id: pr_app
+        if: steps.cambios.outputs.hubo == 'si'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
+        with:
+          app-id: ${{ vars.YOD_PUBLISHER_APP_ID }}
+          private-key: ${{ secrets.YOD_PUBLISHER_APP_PRIVATE_KEY }}
+          repositories: ${{ github.repository }}
+          permission-contents: read
+          permission-pull-requests: write
+
       - name: Guardar mediante PR y checks obligatorios
         id: guardar
         if: steps.mesa.outputs.codigo == '0' && env.MODO != 'simular'
         env:
           GH_TOKEN: ${{ github.token }}
+          PR_CREATION_TOKEN: ${{ steps.pr_app.outputs.token }}
         run: python3 nube/publicar_git.py integrar --proceso mesa
 
       - name: Publicar el commit integrado y esperar su corrida exacta
