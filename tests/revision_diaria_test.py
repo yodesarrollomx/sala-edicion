@@ -70,6 +70,19 @@ class ReviewTests(unittest.TestCase):
         self.assertEqual(result["productor"]["run_id"],"12")
         self.assertEqual(result["productor"]["termino"],"fin")
 
+    def test_guardian_dispatch_nested_jobs_are_observed(self):
+        class API:
+            def request(self, path):
+                if path.startswith("actions/runs?"):
+                    return {"workflow_runs": [{"id": 23, "head_branch": "main",
+                            "event": "workflow_dispatch", "path": ".github/workflows/sala-vigilante.yml"}]}
+                return {"jobs": [{"name": "chinches / puente", "status": "completed",
+                        "conclusion": "success", "started_at": "inicio", "completed_at": "fin"},
+                        {"name": "mesa / mesa", "status": "completed", "conclusion": "skipped"}]}
+        result = r.observe_runs(API())
+        self.assertEqual(set(result), {"chinches"})
+        self.assertEqual(result["chinches"]["run_id"], "23")
+
     def test_other_branch_and_skipped_job_do_not_accredit_execution(self):
         class API:
             def request(self,path):

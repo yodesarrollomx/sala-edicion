@@ -1,5 +1,6 @@
 name: Plan · lectura agregada en nube
 on:
+  workflow_call:
   schedule:
     - cron: "25 * * * *"
   workflow_dispatch:

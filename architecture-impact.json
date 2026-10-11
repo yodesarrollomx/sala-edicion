@@ -1,19 +1,39 @@
 {
-  "model_revision": "2026-10-11.salud-accesos",
-  "proposal_id": "CHG-SALUD-ACCESOS-20261011",
-  "summary": "Comprobar retiro del archivo temporal con papelera en unidad compartida; diagnóstico por fase sin IDs privados.",
+  "model_revision": "2026-10-11.horarios-render.1",
+  "proposal_id": "CHG-HORARIOS-NUBE-20261011",
+  "summary": "Puerta de recuperación correlacionada, sólo rutinas actuales, compuertas y candados originales. Observación de sus jobs en la revisión.",
   "components": [
+    "SYS-YOD-OS",
+    "SYS-CONTROL",
+    "SYS-POTENCIALES",
     "SYS-SALA",
     "GAS-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
+    "EXT-RENDER",
+    "SVC-AUTON-CLOUD",
+    "SVC-HORARIOS-CLOUD",
+    "STORE-HORARIOS-CLOUD",
+    "GAS-PLAN-POTENCIAL",
+    "SHEET-PLAN-POTENCIAL",
+    "SYS-PLAN-POTENCIAL",
     "EXT-DRIVE",
-    "EXT-MOTORES-MEDIA"
+    "EXT-MOTORES-MEDIA",
+    "SYS-TRACK",
+    "SYS-OBRA",
+    "SYS-OBRA-CLIENTE",
+    "GAS-PORTERO",
+    "EXT-GMAIL",
+    "SYS-MARKETING",
+    "SYS-DESPACHO",
+    "SYS-DESPACHO-3D",
+    "SHEET-SALA"
   ],
   "tests": [
-    "Fallos de subida/bajada/retiro y bytes distintos no quedan verdes; se retira únicamente el archivo recién creado.",
-    "CI completo y canario real en nube con recibo público sanitizado."
+    "python3 nube/verificar.py",
+    "python3 -m unittest discover -s tests -p revision_diaria_test.py",
+    "Workflow sólo manual/reusable en main; sin secrets de negocio en PR."
   ],
-  "rollback": "Revertir módulos/horarios por PR; parar sólo nuevo canario. Conservar decisiones, medios y datos."
+  "rollback": "Revertir puerta y reutilización/pin por PR. Conservar cron, datos y reservas privadas de Render."
 }

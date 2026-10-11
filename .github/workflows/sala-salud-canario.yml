@@ -1,5 +1,6 @@
 name: Sala · pruebas pequeñas de motores y Drive
 on:
+  workflow_call:
   schedule:
     - cron: '20 12 * * *'  # 05:20 Hermosillo
   push:
