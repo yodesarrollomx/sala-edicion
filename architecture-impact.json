@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-11.c5-recovery-wait",
   "proposal_id": "CHG-SALA-PRODUCCION-ACOTADA-001",
-  "summary": "Conservar los productos de Sala por hash, verificar metadata y bytes recuperados de Drive antes de confirmar HECHO, y apartar la ejecución cuando falta persistencia. Conciliar medios existentes en lectura y guardar el informe privado. Se preservan decisiones, cola histórica, originales y contratos de acceso. Se comprueban también archivos de Git y revisiones anteriores de Drive, sin restaurar ni cambiar la retención. Las versiones sobrescritas se conservan como copias comprobadas por hash, dejando un informe privado de sus referencias sin editar la cola. Para descargar una revisión antigua se conserva únicamente la que coincide con el MD5 completo del registro, sin modificar sus bytes.",
+  "summary": "Conservar los productos de Sala por hash, verificar metadata y bytes recuperados de Drive antes de confirmar HECHO, y apartar la ejecución cuando falta persistencia. Conciliar medios existentes en lectura y guardar el informe privado. Se preservan decisiones, cola histórica, originales y contratos de acceso. Se comprueban también archivos de Git y revisiones anteriores de Drive, sin restaurar ni cambiar la retención. Las versiones sobrescritas se conservan como copias comprobadas por hash, dejando un informe privado de sus referencias sin editar la cola. Para descargar una revisión antigua se conserva únicamente la que coincide con el MD5 completo del registro, sin modificar sus bytes. Se incorpora un diagnóstico manual de presencia de conexiones: GitHub evalúa booleanos y el proceso no recibe valores de secretos. No modifica credenciales, datos ni permisos.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -14,7 +14,8 @@
     "git diff --check",
     "python3 -m unittest discover -s tests -p '*_test.py'",
     "Siete regresiones de almacenamiento: versiones, reutilización sin sobrescritura, conflicto, descarga diferente, raíz ausente, fallo sin HECHO y acuse confirmado; Drive y motores sintéticos.",
-    "Conciliación real de medios existentes con descarga y hash, sin modificar trabajos ni decisiones."
+    "Conciliación real de medios existentes con descarga y hash, sin modificar trabajos ni decisiones.",
+    "Diagnóstico real 38133438975: indicadores de presencia ejecutados sin valores de secretos, sin llamadas comerciales ni escrituras."
   ],
-  "rollback": "Revertir por PR el ejecutor, la conciliación y el pin del atlas. Conservar archivos por hash, informes, cola, decisiones e historial. No restaurar ni borrar registros."
+  "rollback": "Revertir por PR el ejecutor, la conciliación y el pin del atlas. Conservar archivos por hash, informes, cola, decisiones e historial. No restaurar ni borrar registros. El diagnóstico puede retirarse revirtiendo únicamente su workflow; no elimina ni rota las credenciales."
 }
