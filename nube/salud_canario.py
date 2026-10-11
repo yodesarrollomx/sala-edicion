@@ -73,23 +73,29 @@ def probar_drive(root,parent,client=None):
     client=client or ProbeClient
     source=root/"canario-transferencia.txt"
     source.write_bytes(b"SALA canario aislado\n")
-    stage="carpeta"
-    try:
-        folder=client.asegurar_carpeta(parent,"_prueba_nube")
-        stage="subida"
-        fid=client.subir(source,folder,"salud-"+uuid.uuid4().hex+".txt")
-        stage="bajada"
+    def operation(stage,fn):
         try:
-            got=client.bajar(fid,root/"transferencia-leida.txt").read_bytes()
-            if got!=source.read_bytes():
-                raise ValueError("transferencia_diferente")
-        finally:
-            stage="retiro"
-            client.retirar(fid)
-    except Exception as exc:
-        code=re.search(r"\s(40[034]|429|5\d\d):",str(exc))
-        raise DriveProbeError(stage+("_http_"+code.group(1) if code else "_sin_confirmar")) from None
+            return fn()
+        except Exception as exc:
+            code=re.search(r"\s(40[034]|429|5\d\d):",str(exc))
+            raise DriveProbeError(stage+("_http_"+code.group(1) if code else "_sin_confirmar")) from None
+    folder=operation("carpeta",lambda:client.asegurar_carpeta(parent,"_prueba_nube"))
+    fid=operation("subida",lambda:client.subir(source,folder,"salud-"+uuid.uuid4().hex+".txt"))
+    try:
+        got=operation("bajada",lambda:client.bajar(fid,root/"transferencia-leida.txt")).read_bytes()
+        if got!=source.read_bytes():
+            raise DriveProbeError("bytes_distintos")
+    finally:
+        operation("retiro",lambda:client.retirar(fid))
     return {"bytes":len(got),"sha256":hashlib.sha256(got).hexdigest(),"limpieza":True}
+
+def corte_con_senal(path):
+    p=subprocess.run(["ffmpeg","-v","error","-i",str(path),"-vn","-f","s16le",
+                      "-ac","1","-ar","24000","pipe:1"],
+                     check=True,capture_output=True,timeout=45)
+    samples=np.frombuffer(p.stdout,dtype="<i2").astype(np.float64)/32768
+    if not samples.size or np.sqrt(np.mean(samples**2))<=0.001:
+        raise ValueError("corte_sin_senal_audio")
 
 def record(ident,ok,now,detail):
     t=datetime.fromisoformat(now.replace("Z","+00:00"))
@@ -179,6 +185,7 @@ def main():
                 cut=montador.ensamblar({"pieza":"saludcanario","evidencia":{
                     "laminas":[{"item":"1","huella":digest}]}},test_rules,{},root,queue)
                 seconds=video_correcto(metadata(cut),audio=True)
+                corte_con_senal(cut)
                 checks.append(record("motor-corte",True,now,
                     "Montador real: H264/AAC con audio, duración %.3fs"%seconds))
             except Exception:
