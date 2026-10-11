@@ -7,11 +7,6 @@ on:
       - nube/medios_reconexion.py
       - tests/medios_reconexion_test.py
       - .github/workflows/sala-medios-reconexion.yml
-  pull_request:
-    paths:
-      - nube/medios_reconexion.py
-      - tests/medios_reconexion_test.py
-      - .github/workflows/sala-medios-reconexion.yml
 permissions:
   contents: read
 jobs:
