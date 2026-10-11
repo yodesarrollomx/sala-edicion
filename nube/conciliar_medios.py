@@ -22,6 +22,23 @@ FIELDS = 'id,name,mimeType,size,md5Checksum,parents,trashed'
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 MAX_BINARY = 200 * 1024 * 1024
 
+def git_output(args, cwd=ROOT, *, no_lazy=False, timeout=90):
+    """Acota Git y sus procesos hijos; una descarga incierta no bloquea el informe."""
+    import signal
+    env = dict(os.environ)
+    if no_lazy: env['GIT_NO_LAZY_FETCH'] = '1'
+    process = subprocess.Popen(args, cwd=cwd, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, env=env, start_new_session=True)
+    try:
+        output, errors = process.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        os.killpg(process.pid, signal.SIGKILL)
+        process.communicate()
+        raise RuntimeError('git_read_timeout')
+    if process.returncode:
+        raise RuntimeError('git_read_not_verified')
+    return output
+
 def evidence_of(job):
     value = job.get('evidencia') or {}
     if isinstance(value, str):
@@ -127,7 +144,7 @@ def main():
         report['root_reads'].append({'root_id': root_id, 'folders': len(seen), 'errors': errors, 'complete': errors == 0})
     report['drive_files_scanned'] = len(inventory)
 
-    names = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', '-z', 'HEAD'], cwd=ROOT).decode().split('\0')
+    names = git_output(['git', 'ls-tree', '-r', '--name-only', '-z', 'HEAD'], cwd=ROOT).decode().split('\0')
     legacy = [j for j in jobs if j.get('estado') == 'hecho' and not evidence_of(j).get('drive_id') and not evidence_of(j).get('ruta_local')]
     references = {str(evidence_of(j).get('src') or '') for j in legacy}
     for job in legacy: references.update(evidence_of(job).get('candidatas') or [])
@@ -135,12 +152,12 @@ def main():
         if not name or not (name in references or re.search(r'\.(mp4|wav|mp3|ogg|m4a|webm|mov)$', name, re.I)): continue
         if pathlib.PurePosixPath(name).is_absolute() or '..' in pathlib.PurePosixPath(name).parts: continue
         object_name = 'HEAD:' + name
-        size = int(subprocess.check_output(['git', 'cat-file', '-s', object_name], cwd=ROOT))
+        size = int(git_output(['git', 'cat-file', '-s', object_name], cwd=ROOT))
         if size < 1 or size > MAX_BINARY: continue
-        data = subprocess.check_output(['git', 'cat-file', 'blob', object_name], cwd=ROOT)
+        data = git_output(['git', 'cat-file', 'blob', object_name], cwd=ROOT)
         git_assets[name] = {'bytes': len(data), 'md5': hashlib.md5(data).hexdigest(),
                             'sha256': hashlib.sha256(data).hexdigest(),
-                            'blob_sha': subprocess.check_output(['git', 'rev-parse', object_name], cwd=ROOT).decode().strip()}
+                            'blob_sha': git_output(['git', 'rev-parse', object_name], cwd=ROOT).decode().strip()}
     page_cache = {}
     def published(name):
         if name not in page_cache:
@@ -195,39 +212,59 @@ def main():
                                      'drive_reference_unavailable') and j.get('expected_output_hash')}
         archive, errors, seen = [], [], {x['blob_sha'] for x in git_assets.values()}
         scanned, total, skipped, complete = 0, 0, 0, True
-        objects = subprocess.check_output(['git', 'rev-list', '--objects', 'HEAD'],
+        objects = git_output(['git', 'rev-list', '--objects', 'HEAD'],
                                           cwd=ROOT).decode().splitlines()
+        image_dirs = {str(pathlib.PurePosixPath(p).parent) for p in references if p}
+        eligible = []
         for line in objects:
             oid, separator, path = line.partition(' ')
             if not separator or oid in seen or not re.search(r'[.](mp4|wav|mp3|ogg|m4a|webm|mov|png|jpg|jpeg)$', path, re.I):
                 continue
+            if re.search(r'[.](png|jpg|jpeg)$', path, re.I) and str(pathlib.PurePosixPath(path).parent) not in image_dirs:
+                continue
             seen.add(oid)
+            eligible.append((oid, path))
+        if len(eligible) > 1500:
+            complete = False
+            eligible = eligible[:1500]
+        print(json.dumps({'operation': 'git_history', 'objects_selected': len(eligible),
+                          'image_scope': 'canonical_output_directories'}), flush=True)
+        # Un fetch por lote evita abrir una conexión para cada objeto histórico.
+        for start in range(0, len(eligible), 50):
+            batch = [oid for oid, path in eligible[start:start + 50]]
+            try:
+                git_output(['git', '-c', 'fetch.negotiationAlgorithm=noop', 'fetch',
+                            '--no-tags', '--no-write-fetch-head', '--filter=blob:none',
+                            'origin', *batch], timeout=120)
+            except RuntimeError:
+                errors.append({'operation': 'git_archive_fetch', 'code': 'not_verified'})
+        for oid, path in eligible:
             if scanned >= 1500 or total >= 2 * 1024 ** 3:
                 complete = False
                 break
             try:
-                size = int(subprocess.check_output(['git', 'cat-file', '-s', oid], cwd=ROOT))
+                size = int(git_output(['git', 'cat-file', '-s', oid], cwd=ROOT, no_lazy=True))
                 if size < 1 or size > MAX_BINARY or total + size > 2 * 1024 ** 3:
                     skipped += 1
                     continue
-                data = subprocess.check_output(['git', 'cat-file', 'blob', oid], cwd=ROOT)
+                data = git_output(['git', 'cat-file', 'blob', oid], cwd=ROOT, no_lazy=True)
                 digest = hashlib.md5(data).hexdigest()
                 scanned += 1
                 total += len(data)
                 if not any(digest.startswith(value) for value in wanted): continue
                 proof = {'source': 'git_history', 'path': path, 'blob_sha': oid, 'bytes': len(data),
                          'md5': digest, 'sha256': hashlib.sha256(data).hexdigest(), 'download_verified': True}
-                commits = subprocess.check_output(
+                commits = git_output(
                     ['git', 'log', '-n', '20', '--format=%H', '--find-object=' + oid, 'HEAD', '--', path],
                     cwd=ROOT).decode().splitlines()
                 for commit in commits:
                     located = subprocess.run(['git', 'rev-parse', '--verify', commit + ':' + path],
-                                             cwd=ROOT, capture_output=True, text=True)
+                                             cwd=ROOT, capture_output=True, text=True, timeout=20)
                     if located.returncode == 0 and located.stdout.strip() == oid:
                         proof.update({'commit': commit, 'url': 'https://raw.githubusercontent.com/yodesarrollomx/sala-edicion/' + commit + '/' + urllib.parse.quote(path)})
                         break
                 archive.append(proof)
-            except (subprocess.SubprocessError, ValueError, OSError):
+            except (subprocess.SubprocessError, RuntimeError, ValueError, OSError):
                 errors.append({'operation': 'git_archive_read', 'code': 'not_verified'})
         revision_reads, revision_count = [], 0
         revision_files = {j.get('drive_id') for j in report['jobs']
@@ -276,7 +313,8 @@ def main():
             else: job['historical_match_ambiguous'] = True
         report['history'] = {'git_assets_scanned': scanned, 'git_bytes_scanned': total,
                              'git_scan_complete': complete and skipped == 0 and not errors,
-                             'git_assets_skipped': skipped, 'drive_revisions_scanned': revision_count,
+                             'git_assets_skipped': skipped, 'git_objects_selected': len(eligible),
+                             'git_image_scope': 'canonical_output_directories', 'drive_revisions_scanned': revision_count,
                              'drive_revision_reads': revision_reads, 'recovered_jobs': recovered, 'errors': errors}
     report['summary'] = dict(collections.Counter(j['status'] for j in report['jobs']))
     report['legacy_summary'] = dict(collections.Counter(j['status'] for j in report['jobs'] if j['legacy']))
