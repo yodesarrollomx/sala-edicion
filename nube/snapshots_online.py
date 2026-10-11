@@ -323,9 +323,11 @@ class Snapshots:
         while True:
             before, info = self._lock_info()
             busy = info and info["state"] == "held"
+            if busy and info["expires"] <= time.time():
+                busy = False
             if busy:
                 owner = self.api.request("actions/runs/" + str(info["run_id"]))
-                busy = owner["status"] != "completed" and info["expires"] > time.time()
+                busy = owner["status"] != "completed"
             if not busy:
                 payload = {"schema": SCHEMA, "state": "held", "run_id": self.run,
                            "attempt": self.attempt, "process": process,
@@ -641,6 +643,11 @@ class Snapshots:
         rid = state.get("prepared_id") or state["parent_id"]
         receipt = {"schema": SCHEMA, "code_sha": source, "data_sha": state["data_sha"],
                    "snapshot_id": rid, "run_id": self.run}
+        if self.repo.endswith("/aurum-board"):
+            metric_file = self.root / "metrics.json"
+            if not metric_file.is_file():
+                raise OnlineError("Métricas públicas ausentes")
+            receipt["metrics_sha256"] = digest(metric_file.read_bytes())
         ref = "heads/datos-online"
         try:
             before = self.api.request("git/ref/" + ref)["object"]["sha"]

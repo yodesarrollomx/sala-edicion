@@ -22,7 +22,7 @@ on:
         required: false
 permissions:
   contents: write
-  actions: read
+  actions: write
   pages: write
   id-token: write
 concurrency:
@@ -98,3 +98,9 @@ jobs:
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
           SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
         run: python3 sala_mesa.py --montar-commit
+
+      - name: Actualizar revisión diaria tras publicar código
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sala-revision.yml --ref main
