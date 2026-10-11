@@ -1,0 +1,110 @@
+name: Cierre y comparación Sala online
+on:
+  push:
+    branches: [main]
+    paths:
+      - nube/cierre_online.py
+      - nube/correo_estado.py
+      - nube/comparacion_online.py
+      - nube/sala_montador.py
+      - .github/workflows/sala-cierre-online.yml
+  workflow_dispatch:
+    inputs:
+      enviar_entrada:
+        description: Solicitar una entrada al correo ya configurado
+        type: boolean
+        default: false
+      reprogramar_correo:
+        description: Restablecer sólo correoDiario en America/Hermosillo
+        type: boolean
+        default: false
+      comparar:
+        description: Reproducir la comparación aislada de seis láminas
+        type: boolean
+        default: true
+permissions:
+  contents: write
+  actions: write
+  issues: write
+concurrency:
+  group: sala-cierre-online
+  cancel-in-progress: false
+jobs:
+  cierre:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verificar el cierre sin credenciales
+        run: |
+          pip install --quiet google-auth requests pillow 'numpy<3'
+          python3 nube/verificar.py
+          python3 -m unittest discover -s tests -p cierre_online_test.py -v
+          python3 -m py_compile nube/comparacion_online.py
+      - name: Comprobar Sala y pedir correo una sola vez
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+          ENVIAR_ENTRADA: ${{ github.event_name == 'push' || inputs.enviar_entrada }}
+          REPROGRAMAR_CORREO: ${{ inputs.reprogramar_correo }}
+        run: |
+          flags=()
+          [ "$ENVIAR_ENTRADA" = true ] && flags+=(--enviar-entrada)
+          [ "$REPROGRAMAR_CORREO" = true ] && flags+=(--reprogramar-correo)
+          python3 nube/cierre_online.py "${flags[@]}"
+  ciclo:
+    needs: cierre
+    uses: ./.github/workflows/sala-productor.yml
+    secrets: inherit
+  ejecutar:
+    needs: ciclo
+    uses: ./.github/workflows/sala-ejecutor.yml
+    secrets: inherit
+  comparar:
+    needs: cierre
+    if: github.event_name == 'push' || inputs.comparar
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      OMP_NUM_THREADS: '4'
+      MKL_NUM_THREADS: '4'
+      OPENBLAS_NUM_THREADS: '4'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Medios y codecs
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg espeak-ng
+          pip install --quiet google-auth requests pillow 'numpy<3' kokoro-onnx opencv-python-headless onnxruntime
+      - name: Caché de los modelos de voz y profundidad
+        uses: actions/cache@v4
+        with:
+          path: |
+            nube/.cache/kokoro
+            nube/.cache/depth
+          key: sala-comparacion-kokoro-depth-v1
+      - name: Pesos oficiales de voz
+        run: |
+          mkdir -p nube/.cache/kokoro
+          test -f nube/.cache/kokoro/kokoro-v1.0.onnx || curl -fsSL -o nube/.cache/kokoro/kokoro-v1.0.onnx https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/kokoro-v1.0.onnx
+          test -f nube/.cache/kokoro/voices-v1.0.bin || curl -fsSL -o nube/.cache/kokoro/voices-v1.0.bin https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/voices-v1.0.bin
+      - name: Comparar medios reales con el original archivado
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: python3 comparacion_online.py

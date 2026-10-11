@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 
 import sala_cliente as sala
 from snapshots_online import Snapshots, OnlineError
+from correo_estado import observar as observar_correo, workflows as observar_workflows
 
 ROOT = Path(__file__).resolve().parent.parent
 DEST = ROOT / "datos" / "revision.json"
@@ -101,8 +102,19 @@ def collect(previous, getter, api, now):
         output["rutinas_estado"] = "confirmada"
     except OnlineError:
         output["errores"].append("rutinas_sin_lectura_confirmada")
-    output["correo"] = {"estado": "disparador_pendiente_de_inventariar",
-                         "fuente": "Apps Script"}
+    try:
+        output["correo"] = observar_correo(getter("bitacora"), now)
+    except (sala.SalaError, ValueError):
+        output["correo"] = {**previous.get("correo", {}), "estado": "lectura_sin_confirmar",
+                            "fuente": "Apps Script", "recepcion_verificada": False}
+        output["errores"].append("correo_sin_lectura_confirmada")
+    try:
+        output["disparadores_nube"] = observar_workflows(api)
+        if not all(x["activo"] for x in output["disparadores_nube"]):
+            output["errores"].append("rutina_nube_desactivada")
+    except (OnlineError, ValueError, AttributeError):
+        output["disparadores_nube"] = previous.get("disparadores_nube", [])
+        output["errores"].append("disparadores_nube_sin_lectura_confirmada")
     return output
 
 

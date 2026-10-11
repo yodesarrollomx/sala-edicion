@@ -20,6 +20,7 @@ NO se arma — se declara qué falta, nunca se rellena con silencio o un cuadro 
 """
 
 import pathlib
+import math
 import subprocess
 import tempfile
 
@@ -85,17 +86,28 @@ def _bajar_de_drive(job, sufijo, destino_dir):
     return destino
 
 
-def _escena_a_cuadro(entrada, salida, segundos_min):
-    """Escala CUBRIENDO 1080×1920 (nunca `pad`: eso fue la «máscara» del 7-sep) y recorta el
-    sobrante centrado. Si la escena es más corta que la voz, se congela el último cuadro
-    (`tpad`) en vez de repetir el clip entero — más limpio que un loop visible."""
-    _correr([
-        'ffmpeg', '-y', '-i', str(entrada),
-        '-vf', ('scale=%d:%d:force_original_aspect_ratio=increase,crop=%d:%d,'
-                'tpad=stop_mode=clone:stop_duration=%.2f' % (ANCHO, ALTO, ANCHO, ALTO, segundos_min)),
-        '-an', str(salida),
-    ])
+def _duracion(ruta):
+    result = _correr(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                      "-of", "default=noprint_wrappers=1:nokey=1", str(ruta)])
+    try:
+        value = float(result.stdout.strip())
+    except (TypeError, ValueError):
+        raise MontadorError("duración del medio sin confirmar") from None
+    if not math.isfinite(value) or value <= 0:
+        raise MontadorError("duración del medio inválida")
+    return value
 
+
+def _escena_a_cuadro(entrada, salida, segundos_min):
+    """Cubrir el cuadro y congelar únicamente el tiempo que realmente falta."""
+    faltan = max(0.0, segundos_min - _duracion(entrada))
+    filtros = "scale=%d:%d:force_original_aspect_ratio=increase,crop=%d:%d,fps=30" % (
+        ANCHO, ALTO, ANCHO, ALTO)
+    if faltan:
+        filtros += ",tpad=stop_mode=clone:stop_duration=%.6f" % faltan
+    _correr(["ffmpeg", "-y", "-i", str(entrada), "-vf", filtros,
+             "-an", "-c:v", "libx264", "-pix_fmt", "yuv420p", str(salida)])
+    return _duracion(salida)
 
 def ensamblar(trabajo, reglas, cat, salida_dir, cola):
     """`trabajo` es la fila de COLA de etapa='corte'. `cola` es la COLA completa YA leída
@@ -111,12 +123,13 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
 
     margen = _regla(reglas, 'audio_margen_s')
     cola_audio = _regla(reglas, 'audio_cola_s')
-    xfade = _regla(reglas, 'audio_xfade_s')
-    fondo_vol = _regla(reglas, 'fondo_volumen')
+    if not all(math.isfinite(v) and v >= 0 for v in (margen, cola_audio)):
+        raise MontadorError('márgenes de audio inválidos')
 
     with tempfile.TemporaryDirectory() as tmp:
         tramos = []
-        for lam in laminas:
+        offset = 0.0
+        for numero, lam in enumerate(laminas):
             item, huella = str(lam['item']), str(lam['huella'])
             j_escena = _job_de(cola, familia, 'escena', item, huella)
             j_voz = _job_de(cola, familia, 'voz', item, huella)
@@ -139,19 +152,18 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
                 raise MontadorError(str(error)) from error
 
             voz_local = _bajar_de_drive(j_voz, '.wav', tmp)
-            dur = float(subprocess.run(
-                ['ffprobe', '-v', 'error', '-show_entries', 'format=duration',
-                 '-of', 'default=noprint_wrappers=1:nokey=1', str(voz_local)],
-                capture_output=True, text=True).stdout.strip() or 0)
-
+            dur = _duracion(voz_local)
             escena_local = _bajar_de_drive(j_escena, '.mp4', tmp)
             escena_cuadro = pathlib.Path(tmp) / ('%s-cuadro.mp4' % sala.slug_seguro(item))
-            _escena_a_cuadro(escena_local, escena_cuadro, dur + cola_audio)
+            entrada_silencio = margen if numero == 0 else 0.0
+            salida_silencio = margen if numero == len(laminas) - 1 else 0.0
+            segundos = _escena_a_cuadro(
+                escena_local, escena_cuadro, dur + cola_audio + entrada_silencio + salida_silencio)
+            tramos.append({'video': escena_cuadro, 'audio': voz_local,
+                           'inicio_audio': offset + entrada_silencio})
+            offset += segundos
 
-            tramos.append({'video': escena_cuadro, 'audio': voz_local})
-
-        # Concatenar: video sin cortes (concat demuxer) + audio con crossfade entre voces
-        # (audio_xfade_s) y colchón de silencio al inicio/fin (audio_margen_s).
+        # Concatenar escenas; conservar márgenes de inicio/fin y alinear audio a cada escena.
         lista = pathlib.Path(tmp) / 'lista.txt'
         lista.write_text('\n'.join("file '%s'" % t['video'] for t in tramos), encoding='utf-8')
         video_unido = pathlib.Path(tmp) / 'video.mp4'
@@ -161,29 +173,22 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
         entradas_audio = []
         for t in tramos:
             entradas_audio += ['-i', str(t['audio'])]
-        # El video unido (sin audio, -an en cada escena) es el input 0 de este ffmpeg; los
-        # audios de cada lámina entran DESPUÉS, así que su índice en el filtro es i+1, no i
-        # — mapear [0:a] cuando el input 0 no tiene audio es lo que rompía el filtro.
+        # Cada voz empieza en SU escena; no concatenar voces ignorando las colas de video.
         filtro_partes = []
         etiquetas = []
-        for i in range(len(tramos)):
-            idx = i + 1
-            filtro_partes.append('[%d:a]adelay=0|0[a%d]' % (idx, i))
+        for i, tramo in enumerate(tramos):
+            delay = round(tramo['inicio_audio'] * 1000)
+            filtro_partes.append('[%d:a]adelay=%d:all=1[a%d]' % (i + 1, delay, i))
             etiquetas.append('[a%d]' % i)
-        if len(tramos) > 1:
-            filtro_partes.append('%sconcat=n=%d:v=0:a=1[voces]' % (''.join(etiquetas), len(tramos)))
-            salida_voces = '[voces]'
-        else:
-            salida_voces = etiquetas[0]
         filtro_partes.append(
-            '%sapad=pad_dur=%.2f,adelay=%d|%d[audiofinal]'
-            % (salida_voces, margen, int(margen * 1000), int(margen * 1000)))
+            '%samix=inputs=%d:duration=longest:normalize=0,apad=whole_dur=%.6f,'
+            'atrim=duration=%.6f[audiofinal]' % (''.join(etiquetas), len(tramos), offset, offset))
         filtro = ';'.join(filtro_partes)
 
         salida = pathlib.Path(salida_dir) / ('%s-corte.mp4' % sala.slug_seguro(familia))
         salida.parent.mkdir(parents=True, exist_ok=True)
         _correr(['ffmpeg', '-y', '-i', str(video_unido), *entradas_audio,
                 '-filter_complex', filtro, '-map', '0:v', '-map', '[audiofinal]',
-                '-c:v', 'copy', '-c:a', 'aac', '-shortest', str(salida)])
+                '-c:v', 'copy', '-c:a', 'aac', '-t', '%.6f' % offset, str(salida)])
 
     return salida

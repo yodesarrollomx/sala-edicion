@@ -53,6 +53,17 @@ jobs:
       - name: Librerías de Python (Drive, HTTP, Kokoro)
         run: pip install --quiet google-auth requests kokoro-onnx numpy gradio_client opencv-python-headless onnxruntime modal
 
+      - name: Dependencias del respaldo de imagen CPU
+        run: |
+          pip install --quiet torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
+          pip install --quiet -r nube/imagen_cpu_requirements.txt
+
+      - name: Caché del modelo de imagen CPU
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface/hub
+          key: sala-imagen-tiny-sd-cad0bd7-v1
+
       - name: Caché de los pesos de Kokoro (~300 MB, se descargan una vez)
         id: cache-kokoro
         uses: actions/cache@v4
