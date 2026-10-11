@@ -4,6 +4,12 @@ on:
     branches: [codex/sala-accesos-20261011]
     paths: ['.github/workflows/sala-access-discovery.yml', 'nube/comprobar_accesos.py']
   workflow_dispatch:
+    inputs:
+      restablecer_modal:
+        description: 'Restablecer LTX después de configurar la facturación de Modal'
+        type: boolean
+        required: false
+        default: false
 permissions:
   contents: read
 jobs:
@@ -102,13 +108,13 @@ jobs:
           MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
         run: python3 nube/comprobar_accesos.py
       - name: Restablecer clase LTX existente cuando no se encuentra
-        if: steps.conexiones.outputs.modal_missing == 'true'
+        if: github.event_name == 'workflow_dispatch' && inputs.restablecer_modal && steps.conexiones.outputs.modal_missing == 'true'
         env:
           MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
           MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
         run: modal deploy nube/modal_ltx.py
       - name: Verificar lookup después del despliegue
-        if: steps.conexiones.outputs.modal_missing == 'true'
+        if: always() && github.event_name == 'workflow_dispatch' && inputs.restablecer_modal
         env:
           MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
           MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}

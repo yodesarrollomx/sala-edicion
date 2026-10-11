@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-11.c5-recovery-wait",
   "proposal_id": "CHG-SALA-PRODUCCION-ACOTADA-001",
-  "summary": "Conservar los productos de Sala por hash, verificar metadata y bytes recuperados de Drive antes de confirmar HECHO, y apartar la ejecución cuando falta persistencia. Conciliar medios existentes en lectura y guardar el informe privado. Se preservan decisiones, cola histórica, originales y contratos de acceso. Se comprueban también archivos de Git y revisiones anteriores de Drive, sin restaurar ni cambiar la retención. Las versiones sobrescritas se conservan como copias comprobadas por hash, dejando un informe privado de sus referencias sin editar la cola. Para descargar una revisión antigua se conserva únicamente la que coincide con el MD5 completo del registro, sin modificar sus bytes. El diagnóstico autenticado encontró que gemini-3.5-flash-image no existe en la lista disponible y que la clase sala-ltx/LTX no se encuentra. Se restaura el modelo por omisión documentado y disponible gemini-2.5-flash-image y se permite restablecer el mismo despliegue LTX únicamente ante NotFoundError. El lookup no ejecuta GPU; no se alteran reglas, compuertas, decisiones ni colas.",
+  "summary": "Conservar los productos de Sala por hash, verificar metadata y bytes recuperados de Drive antes de confirmar HECHO, y apartar la ejecución cuando falta persistencia. Conciliar medios existentes en lectura y guardar el informe privado. Se preservan decisiones, cola histórica, originales y contratos de acceso. Se comprueban también archivos de Git y revisiones anteriores de Drive, sin restaurar ni cambiar la retención. Las versiones sobrescritas se conservan como copias comprobadas por hash, dejando un informe privado de sus referencias sin editar la cola. Para descargar una revisión antigua se conserva únicamente la que coincide con el MD5 completo del registro, sin modificar sus bytes. Se corrige el modelo por omisión inexistente gemini-3.5-flash-image al modelo documentado y disponible gemini-2.5-flash-image. El diagnóstico comprueba conexiones con metadata; conserva cero escrituras editoriales y cero generación. La restauración opcional de sala-ltx/LTX queda explícita en workflow_dispatch, desactivada por omisión: el intento autorizado fue rechazado por Modal porque falta un método de pago para A10G. No se presenta ese motor como desplegado.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -16,8 +16,9 @@
     "python3 -m unittest discover -s tests -p '*_test.py'",
     "Siete regresiones de almacenamiento: versiones, reutilización sin sobrescritura, conflicto, descarga diferente, raíz ausente, fallo sin HECHO y acuse confirmado; Drive y motores sintéticos.",
     "Conciliación real de medios existentes con descarga y hash, sin modificar trabajos ni decisiones.",
-    "Ejecución38133740557: Drive, Gemini y Hugging Face HTTP200; listado de62modelos completo; modelo3.5 ausente y2.5 disponible; lookup LTX devolvió NotFoundError.",
-    "python3 nube/verificar.py; regresiones completas de medios; verificación de metadata después de restaurar sala-ltx/LTX, sin generación ni GPU."
+    "Ejecución 38133740557: Drive/Gemini/HF HTTP 200; lista completa de 62 modelos; modelo 3.5 ausente y 2.5 disponible; LTX NotFoundError.",
+    "Ejecución 38133928918: Modal rechazó el despliegue A10G por falta de método de pago; no se invocó GPU ni se generaron medios.",
+    "python3 nube/verificar.py; regresiones completas de medios; diagnóstico de presencia sin valores de secretos."
   ],
-  "rollback": "Revertir por PR el ejecutor, la conciliación y el pin del atlas. Conservar archivos por hash, informes, cola, decisiones e historial. No restaurar ni borrar registros. Revertir por PR el modelo por omisión y el workflow. No detener ni borrar apps o volúmenes existentes de Modal, medios, cola o decisiones."
+  "rollback": "Revertir por PR el ejecutor, la conciliación y el pin del atlas. Conservar archivos por hash, informes, cola, decisiones e historial. No restaurar ni borrar registros. Revertir por PR el modelo por omisión y el diagnóstico. Conservar apps, volúmenes, medios, cola y decisiones. No se cambia la facturación de Modal."
 }
