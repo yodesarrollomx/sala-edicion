@@ -63,7 +63,7 @@ def _gemini(texto, reglas, instruccion=None):
     # 23-sep: Google retiró gemini-2.5-flash-lite para cuentas nuevas (404 «no longer
     # available»). La REGLA manda, pero si su modelo ya no existe se prueba el siguiente.
     modelos = []
-    for m in (_regla(reglas, 'cerebro_modelo', ''), 'gemini-3.5-flash-lite', 'gemini-3.5-flash'):
+    for m in (_regla(reglas, 'cerebro_modelo', ''), 'gemini-2.5-flash-lite', 'gemini-2.5-flash'):
         if m and m not in modelos:
             modelos.append(m)
     ultimo = None

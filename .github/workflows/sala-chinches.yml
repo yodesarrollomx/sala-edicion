@@ -24,15 +24,34 @@ concurrency:
   group: sala-chinches
   cancel-in-progress: false
 
+env:
+  SALA_PUBLICADOR_MODO: snapshots
+
 jobs:
   puente:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: Hidratar último snapshot y serializar la publicación de datos
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SIMULAR: ${{ inputs.simular }}
+          MODO: ${{ inputs.modo }}
+        run: |
+          lock=--lock
+          [ "$SIMULAR" = true ] && lock=
+          [ "$MODO" = simular ] && lock=
+          python3 nube/snapshots_online.py bootstrap --proceso chinches $lock
 
       - name: Chinches del Sheet → issues, y cerradas → CUMPLIDO
         working-directory: nube
@@ -67,16 +86,22 @@ jobs:
           pip install --quiet google-auth requests pillow
           python3 nube/verificar.py
 
-      - name: Guardar mediante PR y checks obligatorios
+      - name: Guardar snapshot privado de datos ya validados
         id: guardar
         if: ${{ !inputs.simular }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 nube/publicar_git.py integrar --proceso chinches
 
-      - name: Publicar el commit integrado y esperar su corrida exacta
+      - name: Publicar datos y esperar su recibo exacto
         if: steps.guardar.outputs.hubo == 'si'
         env:
           GH_TOKEN: ${{ github.token }}
           MERGE_SHA: ${{ steps.guardar.outputs.merge_sha }}
         run: python3 nube/publicar_git.py publicar --proceso chinches --sha "$MERGE_SHA"
+
+      - name: Liberar el mutex incluso si hubo un fallo
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py liberar

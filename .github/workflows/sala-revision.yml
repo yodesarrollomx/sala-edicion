@@ -1,0 +1,55 @@
+name: Revisión diaria de la Sala
+on:
+  schedule:
+    - cron: '5 14 * * *'  # 07:05 Hermosillo; se informa ejecución real por separado
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: sala-revision-diaria
+  cancel-in-progress: false
+jobs:
+  revision:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Hidratar revisión anterior y adquirir mutex
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py bootstrap --proceso revision --lock
+      - name: Revisar cola y rutinas sin modificar decisiones
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: python3 nube/revision_diaria.py
+      - run: |
+          pip install --quiet google-auth requests pillow
+          python3 nube/verificar.py
+          python3 -m unittest discover -s tests -p revision_diaria_test.py
+      - name: Guardar revisión privada validada
+        id: snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py preparar --proceso revision
+      - name: Publicar revisión y confirmar recibo
+        if: steps.snapshot.outputs.hubo == 'si'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ steps.snapshot.outputs.merge_sha }}
+        run: python3 nube/snapshots_online.py publicar --sha "$SOURCE_SHA"
+      - name: Liberar mutex
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py liberar

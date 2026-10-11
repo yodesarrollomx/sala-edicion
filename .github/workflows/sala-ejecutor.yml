@@ -22,7 +22,7 @@ on:
         default: false
 
 permissions:
-  contents: read
+  contents: write
   issues: write
   actions: write   # para encadenarse a sí mismo si quedó trabajo
 
@@ -33,6 +33,7 @@ concurrency:
 
 jobs:
   ejecutor:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 60   # 28-sep: saturar — más trabajos por vuelta (el tope real lo pone nube_tope_minutos)
     steps:
@@ -41,8 +42,13 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Leer la versión de datos confirmada en nube
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py bootstrap
+
       - name: ffmpeg (el corte)
-        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg espeak-ng
 
       - name: Librerías de Python (Drive, HTTP, Kokoro)
         run: pip install --quiet google-auth requests kokoro-onnx numpy gradio_client opencv-python-headless onnxruntime modal

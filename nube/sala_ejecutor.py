@@ -156,7 +156,7 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                 avisos.append('wan_hf no disponible: %s' % (razon if not m else m['motor']))
             # 28-sep · modal_ltx: animación de IA REAL (LTX-Video en Modal, centavos por escena,
             # crédito gratis mensual de Modal). Entra si Wan no pudo; `escena_modal`=0 la apaga.
-            if ruta is None and str(reglas.get('escena_modal', '1')).strip() not in ('0', 'no', 'false'):
+            if ruta is None and str(reglas.get('escena_modal', '0')).strip() not in ('0', 'no', 'false'):
                 from motores import escena_modal
                 if escena_modal.disponible():
                     try:
@@ -169,7 +169,7 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
             if ruta is None and str(reglas.get('escena_parallax', '1')).strip() not in ('0', 'no', 'false'):
                 try:
                     from motores import escena_parallax
-                    ruta = escena_parallax.producir(trabajo, reglas, cat, SALIDA)
+                    ruta, extra = escena_parallax.producir_con_evidencia(trabajo, reglas, cat, SALIDA)
                     motor_usado = 'parallax'
                 except Exception as e:  # noqa: BLE001 — si falla, la cámara sigue saliendo
                     avisos.append('parallax: %s' % e)
@@ -180,6 +180,9 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                 from motores import escena_camara
                 ruta = escena_camara.producir(trabajo, reglas, cat, SALIDA)
                 motor_usado = 'camara'
+
+            extra['avisos_motores'] = [sala.redactar(str(a)) for a in avisos]
+            extra['generativa'] = motor_usado in ('wan_hf', 'modal_ltx')
 
         elif etapa == 'prospecto':
             from motores import prospecto

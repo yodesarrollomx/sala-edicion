@@ -762,7 +762,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='7d82fd2e00';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='e53d9ea089';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2041,6 +2041,7 @@ function pintarAjustes(){
       <p class="aviso" id="ajAviso"></p>
       <div id="ajRecados"></div></div>
     <div class="bloque-aj"><h4>Automáticos</h4><p>Lo que corre solo mientras nadie mira.</p><button class="secund" id="ajMaq">Ver qué está corriendo</button><div id="ajMaqLista"></div></div>`:''}
+    <div class="bloque-aj"><h4>Revisión diaria</h4><p>Estado confirmado de la producción y sus rutinas.</p><button class="secund" id="ajRevision">Ver revisión</button><div id="ajRevisionLista" aria-live="polite"></div></div>
     <div class="bloque-aj"><h4>Revisar la conexión</h4>
       <p>Si algo no se guarda, esto dice exactamente qué contesta el Sheet.</p>
       <button class="secund" style="margin-top:0" id="ajDiag">Probar mi conexión</button>
@@ -2050,10 +2051,34 @@ function pintarAjustes(){
   $('#ajGuia').onclick=()=>abrirGuia(true);
   const bm=$('#ajMaq'); if(bm) bm.onclick=pintarMaquinas;
   const bd=$('#ajDiag'); if(bd) bd.onclick=diagnostico;
+  const br=$('#ajRevision'); if(br) br.onclick=pintarRevisionDiaria;
   const env=$('#ajEnviar'); if(env) env.onclick=()=>mandarProduccion('RETRO',$('#ajMsg').value.trim()||'',true);
   const rd=$('#ajRonda'); if(rd) rd.onclick=()=>mandarProduccion('ENCARGO · corre la sala',$('#ajMsg').value.trim()||'Corre la sala.',false);
   pintarRecados();
 }
+
+async function pintarRevisionDiaria(){
+  const box=$('#ajRevisionLista'); if(!box)return;
+  box.textContent='Cargando revisión…';
+  try{
+    const response=await fetch('datos/revision.json?v='+Date.now(),{cache:'no-store'});
+    if(!response.ok)throw new Error('sin revisión');
+    const r=await response.json();
+    if(!r||r.schema!==1||!Array.isArray(r.rutinas))throw new Error('revisión incompleta');
+    const cuando=x=>x?new Date(x).toLocaleString('es-MX',{timeZone:'America/Hermosillo'}):'Sin confirmar';
+    const c=r.cola;
+    const lectura=r.cola_estado==='confirmada'?'Lectura confirmada':'Lectura sin confirmar; se conserva el último dato';
+    let html='<p><b>'+esc(lectura)+'</b><br>'+esc(cuando(r.cola_leida_en))+'</p>';
+    if(c)html+='<p>Cola acumulada: '+esc(c.total)+' trabajos · '+esc(c.pendiente)+' pendientes · '+esc(c.corriendo)+' en curso · '+esc(c.hecho)+' terminados · '+esc(c.fallo)+' con fallo histórico.</p>';
+    html+='<ul>'+r.rutinas.map(t=>{
+      const last=t.ultima, estado=!last?'Sin ejecución observada':last.status==='completed'?(last.conclusion==='success'?'Completada':last.conclusion==='failure'?'Requiere revisión':last.conclusion==='cancelled'?'Cancelada':last.conclusion||'Sin confirmar'):'En curso';
+      return '<li><b>'+esc(t.nombre)+'</b>: '+esc(t.frecuencia)+'. '+esc(estado)+(last?' · '+esc(cuando(last.termino||last.comenzo)):'')+'</li>';
+    }).join('')+'</ul>';
+    if((r.errores||[]).length)html+='<p>Hay lecturas pendientes de confirmar. Las cifras anteriores conservan su fecha.</p>';
+    box.innerHTML=html;
+  }catch(e){box.textContent='No se pudo confirmar la revisión diaria. Intenta nuevamente.';}
+}
+
 /* Diagnóstico de un toque: SOLO LEE (recurso=dia) y enseña la respuesta cruda.
    Nació el 4-sep porque 4 decisiones se quedaron en cola sin que nadie supiera por qué.
    8-sep: antes de verdad escribía una fila de prueba en DECISIONES — un botón de "probar" no debe guardar nada. */
