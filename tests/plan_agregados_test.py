@@ -151,5 +151,56 @@ class Aggregates(unittest.TestCase):
         del receipt["plan_sha256"]
         self.assertFalse(receipt_matches(receipt, **args, plan_sha256="c" * 64))
 
+
+    def test_api_deshabilitada_se_distingue_sin_mensaje_remoto(self):
+        response = type("Response", (), {"status_code": 403, "content": b"PRIVATE",
+            "json": lambda self: {"error": {"details": [{"reason": "SERVICE_DISABLED"}]}}})()
+        with patch.object(p.drive, "_token", return_value="fixture"), \
+             patch.object(p.requests, "get", return_value=response):
+            with self.assertRaises(p.PlanError) as ctx:
+                p.sheet_get("private")
+        self.assertEqual(str(ctx.exception), "sheets_api_no_habilitada")
+
+    def test_gviz_solo_se_usa_para_api_deshabilitada(self):
+        source = {"spreadsheet_id": "fixture_sheet", "sheet_id": 3, "sheet_title": "LEADS - POTENCIAL"}
+        with patch.object(p, "sheet_get", side_effect=p.PlanError("sheets_http_403")), \
+             patch.object(p, "read_gviz") as fallback:
+            with self.assertRaises(p.PlanError):
+                p.read_source(source)
+            fallback.assert_not_called()
+        with patch.object(p, "sheet_get", side_effect=p.PlanError("sheets_api_no_habilitada")), \
+             patch.object(p, "read_gviz", return_value=[]) as fallback:
+            self.assertEqual(p.read_source(source), [])
+            fallback.assert_called_once_with(source)
+
+    def test_gviz_primero_solo_metadatos_despues_columnas_permitidas(self):
+        labels = ["Primer contacto", "Folio", "Tipo", "Nombre", "Email", "Estado",
+                  "Sesión agendada", "Notas", "UTM campaign", "UTM content"]
+        cols = [{"id": chr(65 + i), "label": x, "type": "string"} for i, x in enumerate(labels)]
+        requested = [cols[i] for i in (0, 1, 2, 5, 6, 8, 9)]
+        row = lead()
+        body = {"cols": requested, "rows": [{"c": [{"v": row.get(c["label"], "")} for c in requested]}]}
+        with patch.object(p, "gviz_get", side_effect=[{"cols": cols, "rows": []}, body]) as api:
+            out = p.read_gviz({"spreadsheet_id": "fixture_sheet", "sheet_id": 3})
+        self.assertEqual(api.call_args_list[0].args[1], "select * limit 0")
+        self.assertEqual(api.call_args_list[1].args[1], "select A,B,C,F,G,I,J limit 50001")
+        self.assertNotIn("Nombre", out[0])
+        self.assertEqual(out[0]["Folio"], "POT-fixture-1")
+
+    def test_gviz_parser_no_ejecuta_javascript_y_no_envia_token_en_url(self):
+        raw = b'/*O_o*/\ngoogle.visualization.Query.setResponse({"status":"ok","table":{"cols":[],"rows":[]}});'
+        response = type("Response", (), {"status_code": 200, "content": raw})()
+        with patch.object(p.drive, "_token", return_value="SECRET_FIXTURE"), \
+             patch.object(p.requests, "get", return_value=response) as request:
+            self.assertEqual(p.gviz_get({"spreadsheet_id": "fixture_sheet", "sheet_id": 3}, "select * limit 0")["rows"], [])
+        self.assertNotIn("SECRET_FIXTURE", request.call_args.args[0])
+        self.assertNotIn("access_token", request.call_args.kwargs["params"])
+        self.assertFalse(request.call_args.kwargs["allow_redirects"])
+
+    def test_gviz_fecha_se_parsea_sin_eval_y_fecha_invalida_es_error(self):
+        self.assertEqual(p.gviz_value({"v": "Date(2026,6,1,10,0,0)"}, "datetime"), "2026-07-01T10:00:00")
+        with self.assertRaises(p.PlanError):
+            p.gviz_value({"v": "__import__('os').system('false')"}, "datetime")
+
 if __name__ == "__main__":
     unittest.main()
