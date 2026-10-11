@@ -1,20 +1,23 @@
 {
-  "model_revision": "2026-10-11.plan-verificado-medios-propuestos",
-  "proposal_id": "CHG-SALA-RECONECTAR-MEDIOS-20261011",
-  "summary": "Reconectar exclusivamente evidencia de dos voces originales ya recuperadas, con hashes, identidad exacta, lectura reciente y acuse privado. Ningún estado, decisión, motor o trabajo nuevo.",
+  "model_revision": "2026-10-11.sala-cierre-online",
+  "proposal_id": "CHG-SALA-CIERRE-ONLINE-20261011",
+  "summary": "Cerrar operación ya habilitada, observar correo diario real, solicitar entrada una vez y comparar guion/láminas originales con producción nube. Corregir tiempos del montador y dependencias CPU del ejecutor.",
   "components": [
     "SYS-YOD-OS",
     "SYS-SALA",
     "GAS-SALA",
     "SHEET-SALA",
+    "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
-    "EXT-DRIVE"
+    "EXT-DRIVE",
+    "EXT-GMAIL"
   ],
   "tests": [
-    "Dobles: hashes/tamaño/formato, filas únicas, coincidencia de MD5 y referencia original, evidencia no dict rechazada, idempotencia, conservación de campos, cambio concurrente y relectura posterior.",
-    "Ejecución real sólo sobre instrucciones privadas de recuperación ya aprobada; conteo/hash y acuse públicos sin referencias privadas, y evidencia completa en Drive privado.",
-    "PR y CI normales; cuenta de servicio/clave de agente sólo en main. Nunca secretos en PR. Si el endpoint no conserva evidencia o cambia la fila, fallar y no acreditar reconexión."
+    "Dobles: preflight, respaldo, acuse rechazado, rate-limit, efecto ambiguo sin reintentos, zona incorrecta y rutina desactivada.",
+    "Media real ffmpeg: escena larga no se alarga; segunda voz empieza en la segunda escena; pausas y duración completa comprobadas.",
+    "Comparación aislada de seis láminas: original archivado SHA256 exacto, guion/imagenes del mismo commit, motores reales y acuse privado byte-verificado. No escritura de decisiones/cola en la comparación.",
+    "CI y verificadores obligatorios sobre el head, pin del Atlas aprobado y publicación del frontend por separado."
   ],
-  "rollback": "Conservar copia privada del antes/después. Revertir worker y reconectar sólo la referencia técnica previa tras lectura reciente y revisión; no cambiar decisiones, estados, borrar recuperados ni restaurar hojas completas."
+  "rollback": "Revertir código mediante PR. Conservar triggers que ya funcionan, configuraciones, decisiones, originales, acuses y snapshots. No instalar GAS espejo ni resetear filas fallidas históricas."
 }
