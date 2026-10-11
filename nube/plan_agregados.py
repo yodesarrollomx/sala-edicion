@@ -203,7 +203,7 @@ def gviz_get(source, query):
         raise PlanError("gviz_sin_respuesta_valida")
     try:
         text = response.content.decode("utf-8-sig")
-        match = re.fullmatch(r"\\s*(?:/\\*O_o\\*/\\s*)?google\\.visualization\\.Query\\.setResponse\\((.*)\\);\\s*", text, re.S)
+        match = re.fullmatch(r"\s*(?:/\*O_o\*/\s*)?google\.visualization\.Query\.setResponse\((.*)\);\s*", text, re.S)
         if not match:
             raise ValueError()
         payload = json.loads(match.group(1))
@@ -222,7 +222,7 @@ def gviz_value(cell, column_type):
     if value is None:
         return ""
     if column_type in {"date", "datetime"}:
-        match = re.fullmatch(r"Date\\((\\d{4}),(\\d{1,2}),(\\d{1,2})(?:,(\\d{1,2}),(\\d{1,2}),(\\d{1,2}))?\\)", str(value))
+        match = re.fullmatch(r"Date\((\d{4}),(\d{1,2}),(\d{1,2})(?:,(\d{1,2}),(\d{1,2}),(\d{1,2}))?\)", str(value))
         if not match:
             raise PlanError("gviz_fecha_sin_contrato")
         try:
