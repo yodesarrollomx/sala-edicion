@@ -24,9 +24,9 @@ class CanaryTests(unittest.TestCase):
             def subir(self,*args): return "new-probe-only"
             def bajar(self,fid,path):
                 path.write_bytes(b"different");return path
-            def borrar(self,fid): events.append(fid)
+            def retirar(self,fid): events.append(fid)
         with tempfile.TemporaryDirectory() as tmp:
-            with self.assertRaises(ValueError):
+            with self.assertRaises(canario.DriveProbeError):
                 canario.probar_drive(Path(tmp),"synthetic-parent",Client())
         self.assertEqual(events,["new-probe-only"])
 
@@ -36,9 +36,9 @@ class CanaryTests(unittest.TestCase):
             def subir(self,*args): return "new-probe-only"
             def bajar(self,fid,path):
                 path.write_bytes(b"SALA canario aislado\n");return path
-            def borrar(self,fid): raise RuntimeError("synthetic cleanup rejection")
+            def retirar(self,fid): raise RuntimeError("synthetic cleanup rejection")
         with tempfile.TemporaryDirectory() as tmp:
-            with self.assertRaises(RuntimeError):
+            with self.assertRaises(canario.DriveProbeError):
                 canario.probar_drive(Path(tmp),"synthetic-parent",Client())
 
 if __name__=="__main__":
