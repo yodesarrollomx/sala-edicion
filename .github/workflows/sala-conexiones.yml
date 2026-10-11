@@ -34,7 +34,7 @@ jobs:
           python-version: '3.11'
       - name: Dependencias y contratos sin credenciales
         run: |
-          pip install --quiet google-auth requests pillow
+          pip install --quiet google-auth requests pillow 'numpy<3'
           python3 -m py_compile nube/conciliar_medios.py
           python3 nube/verificar.py
           python3 -m unittest discover -s tests -p '*_test.py'
@@ -46,4 +46,4 @@ jobs:
           GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
           YOD_APP_ID: ${{ vars.YOD_PUBLISHER_APP_ID }}
           YOD_APP_KEY: ${{ secrets.YOD_PUBLISHER_APP_PRIVATE_KEY }}
-        run: python3 nube/conciliar_medios.py --guardar-informe
+        run: python3 nube/conciliar_medios.py --guardar-informe --incluir-historia

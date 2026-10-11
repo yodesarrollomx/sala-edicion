@@ -188,6 +188,96 @@ def main():
             result['status'] = ('existing_outputs_located' if len(unique_hashes) == 1 else
                                 'ambiguous_output_hash' if len(unique_hashes) > 1 else 'not_located_in_scanned_sources')
         report['jobs'].append(result)
+    if '--incluir-historia' in sys.argv:
+        wanted = {j.get('expected_output_hash') for j in report['jobs']
+                  if j['status'] in ('not_located_in_scanned_sources',
+                                     'stored_content_differs_from_record',
+                                     'drive_reference_unavailable') and j.get('expected_output_hash')}
+        archive, errors, seen = [], [], {x['blob_sha'] for x in git_assets.values()}
+        scanned, total, skipped, complete = 0, 0, 0, True
+        objects = subprocess.check_output(['git', 'rev-list', '--objects', 'HEAD'],
+                                          cwd=ROOT).decode().splitlines()
+        for line in objects:
+            oid, separator, path = line.partition(' ')
+            if not separator or oid in seen or not re.search(r'[.](mp4|wav|mp3|ogg|m4a|webm|mov|png|jpg|jpeg)$', path, re.I):
+                continue
+            seen.add(oid)
+            if scanned >= 1500 or total >= 2 * 1024 ** 3:
+                complete = False
+                break
+            try:
+                size = int(subprocess.check_output(['git', 'cat-file', '-s', oid], cwd=ROOT))
+                if size < 1 or size > MAX_BINARY or total + size > 2 * 1024 ** 3:
+                    skipped += 1
+                    continue
+                data = subprocess.check_output(['git', 'cat-file', 'blob', oid], cwd=ROOT)
+                digest = hashlib.md5(data).hexdigest()
+                scanned += 1
+                total += len(data)
+                if not any(digest.startswith(value) for value in wanted): continue
+                proof = {'source': 'git_history', 'path': path, 'blob_sha': oid, 'bytes': len(data),
+                         'md5': digest, 'sha256': hashlib.sha256(data).hexdigest(), 'download_verified': True}
+                commits = subprocess.check_output(
+                    ['git', 'log', '-n', '20', '--format=%H', '--find-object=' + oid, 'HEAD', '--', path],
+                    cwd=ROOT).decode().splitlines()
+                for commit in commits:
+                    located = subprocess.run(['git', 'rev-parse', '--verify', commit + ':' + path],
+                                             cwd=ROOT, capture_output=True, text=True)
+                    if located.returncode == 0 and located.stdout.strip() == oid:
+                        proof.update({'commit': commit, 'url': 'https://raw.githubusercontent.com/yodesarrollomx/sala-edicion/' + commit + '/' + urllib.parse.quote(path)})
+                        break
+                archive.append(proof)
+            except (subprocess.SubprocessError, ValueError, OSError):
+                errors.append({'operation': 'git_archive_read', 'code': 'not_verified'})
+        revision_reads, revision_count = [], 0
+        revision_files = {j.get('drive_id') for j in report['jobs']
+                          if j['status'] == 'stored_content_differs_from_record' and j.get('drive_id')}
+        for fid in revision_files:
+            token, available, count = None, [], 0
+            try:
+                while True:
+                    params = {'pageSize': 100, 'fields': 'nextPageToken,revisions(id,size,md5Checksum,keepForever)'}
+                    if token: params['pageToken'] = token
+                    page = drive._peticion('GET', drive.API + '/files/' + fid + '/revisions', params=params).json()
+                    available.extend(page.get('revisions') or [])
+                    count += len(page.get('revisions') or [])
+                    token = page.get('nextPageToken')
+                    if not token or count >= 1000: break
+                revision_count += count
+                revision_reads.append({'file_id': fid, 'count': count, 'complete': not token})
+                for revision in available:
+                    digest = str(revision.get('md5Checksum') or '')
+                    if not digest or not any(digest.startswith(value) for value in wanted): continue
+                    size = int(revision.get('size') or 0)
+                    if size < 1 or size > MAX_BINARY: continue
+                    content = drive._peticion('GET', drive.API + '/files/' + fid + '/revisions/' + revision['id'],
+                                             params={'alt': 'media'}).content
+                    if len(content) != size or hashlib.md5(content).hexdigest() != digest: continue
+                    archive.append({'source': 'drive_history', 'drive_id': fid, 'revision_id': revision['id'],
+                                    'bytes': len(content), 'md5': digest,
+                                    'sha256': hashlib.sha256(content).hexdigest(),
+                                    'keep_forever': bool(revision.get('keepForever')), 'download_verified': True})
+            except (drive.DriveError, RuntimeError, ValueError):
+                revision_reads.append({'file_id': fid, 'code': 'revisions_unavailable'})
+        recovered = 0
+        for job in report['jobs']:
+            expected = job.get('expected_output_hash')
+            if not expected or job['status'] not in ('not_located_in_scanned_sources',
+                                                    'stored_content_differs_from_record',
+                                                    'drive_reference_unavailable'): continue
+            proofs = [p for p in archive if p['md5'].startswith(expected)]
+            if not proofs: continue
+            job['historical_matches'] = proofs
+            if len({p['md5'] for p in proofs}) == 1:
+                recovered += 1
+                if job['status'] == 'not_located_in_scanned_sources':
+                    job['prior_status'] = job['status']
+                    job['status'] = 'historical_output_located'
+            else: job['historical_match_ambiguous'] = True
+        report['history'] = {'git_assets_scanned': scanned, 'git_bytes_scanned': total,
+                             'git_scan_complete': complete and skipped == 0 and not errors,
+                             'git_assets_skipped': skipped, 'drive_revisions_scanned': revision_count,
+                             'drive_revision_reads': revision_reads, 'recovered_jobs': recovered, 'errors': errors}
     report['summary'] = dict(collections.Counter(j['status'] for j in report['jobs']))
     report['legacy_summary'] = dict(collections.Counter(j['status'] for j in report['jobs'] if j['legacy']))
     report['git_assets_scanned'] = len(git_assets)
@@ -216,6 +306,7 @@ def main():
                       'roots_complete': [x['complete'] for x in report['root_reads']],
                       'summary': report['summary'], 'legacy_summary': report['legacy_summary'],
                       'verified_drive_downloads': len(binary_cache),
+                      'history': {k: v for k, v in report.get('history', {}).items() if k not in ('drive_revision_reads', 'errors')},
                       'report_sha256': hashlib.sha256(output).hexdigest()}, sort_keys=True))
     return 0
 
