@@ -59,7 +59,7 @@ def gemini(receta, reglas):
     clave = os.environ.get('GEMINI_API_KEY', '').strip()
     if not clave:
         raise MotorError('falta GEMINI_API_KEY', intermitente=True)
-    modelo = str((reglas or {}).get('imagen_gemini_modelo') or 'gemini-3.5-flash-image').strip()
+    modelo = str((reglas or {}).get('imagen_gemini_modelo') or 'gemini-2.5-flash-image').strip()
     url = ('https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s'
            % (modelo, clave))
     cuerpo, _ = _pedir(url, {'contents': [{'parts': [{'text': receta}]}],
