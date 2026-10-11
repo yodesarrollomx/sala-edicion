@@ -24,7 +24,7 @@ def main():
     if not root: raise RuntimeError('drive_root_required')
     report = {'at': datetime.now(timezone.utc).isoformat(), 'queue_writes': 0,
               'decisions_changed': False, 'social_publications': 0,
-              'copies': [], 'unconfirmed': [], 'targets_checked': 0}
+              'copies': [], 'retained_revisions': [], 'unconfirmed': [], 'targets_checked': 0}
     metadata, revision_cache = {}, {}
     for job in jobs:
         if job.get('estado') != 'hecho': continue
@@ -42,7 +42,7 @@ def main():
         if fid not in revision_cache:
             available, token = [], None
             while True:
-                params = {'pageSize': 100, 'fields': 'nextPageToken,revisions(id,size,md5Checksum)'}
+                params = {'pageSize': 100, 'fields': 'nextPageToken,revisions(id,size,md5Checksum,keepForever)'}
                 if token: params['pageToken'] = token
                 page = drive._peticion('GET', drive.API + '/files/' + fid + '/revisions',
                                        params=params).json()
@@ -58,6 +58,17 @@ def main():
         revision = matches[0]
         size = int(revision.get('size') or 0)
         if size < 1 or size > 200 * 1024 * 1024: raise RuntimeError('revision_size_bound')
+        # Drive exige conservar una revisión antigua antes de descargar su contenido.
+        # Se cambia solo keepForever de la versión con el MD5 exacto; nunca sus bytes.
+        if not revision.get('keepForever'):
+            retained = drive._peticion('PATCH', drive.API + '/files/' + fid + '/revisions/' + revision['id'],
+                                       params={'fields': 'id,size,md5Checksum,keepForever'},
+                                       json={'keepForever': True}).json()
+            if (retained.get('id') != revision['id'] or retained.get('md5Checksum') != expected
+                    or not retained.get('keepForever')):
+                raise RuntimeError('revision_retention_not_confirmed')
+            report['retained_revisions'].append({'file_id': fid, 'revision_id': revision['id'],
+                                                'md5': expected, 'keep_forever': True})
         content = drive._peticion('GET', drive.API + '/files/' + fid + '/revisions/' + revision['id'],
                                  params={'alt': 'media'}).content
         if len(content) != size or hashlib.md5(content).hexdigest() != expected:
@@ -86,7 +97,7 @@ def main():
         check = drive._peticion('GET', drive.API + '/files/' + report_id, params={'alt': 'media'}).content
         if check != output: raise RuntimeError('private_report_not_verified')
     print(json.dumps({'ok': not report['unconfirmed'], 'queue_writes': 0, 'decisions_changed': False,
-                      'targets_checked': report['targets_checked'], 'copies_verified': len(report['copies']),
+                      'targets_checked': report['targets_checked'], 'copies_verified': len(report['copies']), 'versions_retained': len(report['retained_revisions']),
                       'unconfirmed': len(report['unconfirmed']), 'private_report_saved': True,
                       'report_sha256': hashlib.sha256(output).hexdigest()}))
     return 0 if not report['unconfirmed'] else 2

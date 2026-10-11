@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-11.c5-recovery-wait",
   "proposal_id": "CHG-SALA-PRODUCCION-ACOTADA-001",
-  "summary": "Conservar los productos de Sala por hash, verificar metadata y bytes recuperados de Drive antes de confirmar HECHO, y apartar la ejecución cuando falta persistencia. Conciliar medios existentes en lectura y guardar el informe privado. Se preservan decisiones, cola histórica, originales y contratos de acceso. Se comprueban también archivos de Git y revisiones anteriores de Drive, sin restaurar ni cambiar la retención. Las versiones sobrescritas se conservan como copias comprobadas por hash, dejando un informe privado de sus referencias sin editar la cola.",
+  "summary": "Conservar los productos de Sala por hash, verificar metadata y bytes recuperados de Drive antes de confirmar HECHO, y apartar la ejecución cuando falta persistencia. Conciliar medios existentes en lectura y guardar el informe privado. Se preservan decisiones, cola histórica, originales y contratos de acceso. Se comprueban también archivos de Git y revisiones anteriores de Drive, sin restaurar ni cambiar la retención. Las versiones sobrescritas se conservan como copias comprobadas por hash, dejando un informe privado de sus referencias sin editar la cola. Para descargar una revisión antigua se conserva únicamente la que coincide con el MD5 completo del registro, sin modificar sus bytes.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
