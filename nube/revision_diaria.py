@@ -12,6 +12,7 @@ from snapshots_online import Snapshots, OnlineError
 ROOT = Path(__file__).resolve().parent.parent
 DEST = ROOT / "datos" / "revision.json"
 ROUTINES = [
+    ("plan", "Atribución de Plan", "Cada hora", 24, "25 * * * *"),
     ("productor", "Productor", "Cada 20 minutos", 72, "10,30,50 * * * *"),
     ("ejecutor", "Voz, escena y corte", "Cada dos horas y al recibir trabajo", 12, "20 */2 * * *"),
     ("mesa", "Mesa de edición", "Cada hora y a las 05:40", 25, "35 * * * *; 40 12 * * *"),
