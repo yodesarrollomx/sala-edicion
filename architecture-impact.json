@@ -1,24 +1,20 @@
 {
   "model_revision": "2026-10-11.c5-recovery-wait",
-  "proposal_id": "CHG-SALA-PRODUCCION-ACOTADA-001",
-  "summary": "Conservar los productos de Sala por hash, verificar metadata y bytes recuperados de Drive antes de confirmar HECHO, y apartar la ejecución cuando falta persistencia. Conciliar medios existentes en lectura y guardar el informe privado. Se preservan decisiones, cola histórica, originales y contratos de acceso. Se comprueban también archivos de Git y revisiones anteriores de Drive, sin restaurar ni cambiar la retención. Las versiones sobrescritas se conservan como copias comprobadas por hash, dejando un informe privado de sus referencias sin editar la cola. Para descargar una revisión antigua se conserva únicamente la que coincide con el MD5 completo del registro, sin modificar sus bytes. Se corrige el modelo por omisión inexistente gemini-3.5-flash-image al modelo documentado y disponible gemini-2.5-flash-image. El diagnóstico comprueba conexiones con metadata; conserva cero escrituras editoriales y cero generación. La restauración opcional de sala-ltx/LTX queda explícita en workflow_dispatch, desactivada por omisión: el intento autorizado fue rechazado por Modal porque falta un método de pago para A10G. No se presenta ese motor como desplegado.",
+  "proposal_id": "CHG-PUBLICADORES-APP-001",
+  "summary": "Actualizar la propuesta de identidad publicadora de Sala sobre main, conservando los cambios posteriores: detección de PR duplicados y obligatoriedad de Arquitectura YOD y verificar. Token App solo al abrir PR; token del workflow para Git, checks, merge y publicación. Conserva la confirmación de almacenamiento durable y la recuperación de versiones exactas integradas posteriormente. Se actualiza sobre main del 11 de octubre, preservando el diagnóstico de conexiones integrado y la corrección del modelo de imagen de Sala. La operación del publicador todavía necesita instalar y configurar la App.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
-    "SHEET-SALA",
-    "SVC-SALA-EJECUTOR",
-    "EXT-DRIVE",
-    "EXT-MOTORES-MEDIA"
+    "EXT-ACTIONS",
+    "EXT-GITHUB-PUBLISHER-APP"
   ],
   "tests": [
     "python3 nube/verificar.py",
+    "python3 -m unittest discover -s tests -p publicar_git_test.py (37 regresiones con dobles)",
+    "Pruebas de transporte y catálogo integradas en Verificar la Sala",
+    "Separación de tokens, configuración ausente/reutilizada, checks vacíos y fallidos, PR duplicados y head exacto",
     "git diff --check",
-    "python3 -m unittest discover -s tests -p '*_test.py'",
-    "Siete regresiones de almacenamiento: versiones, reutilización sin sobrescritura, conflicto, descarga diferente, raíz ausente, fallo sin HECHO y acuse confirmado; Drive y motores sintéticos.",
-    "Conciliación real de medios existentes con descarga y hash, sin modificar trabajos ni decisiones.",
-    "Ejecución 38133740557: Drive/Gemini/HF HTTP 200; lista completa de 62 modelos; modelo 3.5 ausente y 2.5 disponible; LTX NotFoundError.",
-    "Ejecución 38133928918: Modal rechazó el despliegue A10G por falta de método de pago; no se invocó GPU ni se generaron medios.",
-    "python3 nube/verificar.py; regresiones completas de medios; diagnóstico de presencia sin valores de secretos."
+    "Comparación real, solo lectura, del token de Actions con y sin checks:read/statuses:read: los resultados REST del head existen; gh pr checks sigue vacío y las ejecuciones pull_request del bot continúan action_required."
   ],
-  "rollback": "Revertir por PR el ejecutor, la conciliación y el pin del atlas. Conservar archivos por hash, informes, cola, decisiones e historial. No restaurar ni borrar registros. Revertir por PR el modelo por omisión y el diagnóstico. Conservar apps, volúmenes, medios, cola y decisiones. No se cambia la facturación de Modal."
+  "rollback": "Revertir por PR el publicador y sus workflows, retirar de forma coordinada la configuración App. Conservar hojas, decisiones, medios, historial y PR pendientes. La integración y la activación real siguen pendientes de configurar la App."
 }
