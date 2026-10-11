@@ -185,7 +185,7 @@ def animar(imagen, destino, segundos):
     return destino, origen
 
 
-def producir(trabajo, reglas, cat, salida_dir):
+def producir_con_evidencia(trabajo, reglas, cat, salida_dir):
     familia = str(trabajo.get('pieza') or '')
     item = str(trabajo.get('item') or '')
     destino = pathlib.Path(salida_dir) / ('%s-L%s-escena.mp4'
@@ -193,5 +193,9 @@ def producir(trabajo, reglas, cat, salida_dir):
     with tempfile.TemporaryDirectory() as tmp:
         origen = pathlib.Path(tmp) / 'lamina.png'
         traer_imagen(trabajo, cat, origen)
-        ruta, _ = animar(origen, destino, _segundos(reglas))
-        return ruta
+        ruta, profundidad_origen = animar(origen, destino, _segundos(reglas))
+        return ruta, {'profundidad': profundidad_origen, 'generativa': False}
+
+
+def producir(trabajo, reglas, cat, salida_dir):
+    return producir_con_evidencia(trabajo, reglas, cat, salida_dir)[0]

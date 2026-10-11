@@ -342,6 +342,18 @@ def main():
     parser.add_argument("--proceso", required=True, choices=tuple(PATHS))
     parser.add_argument("--sha", default="")
     args = parser.parse_args()
+    if os.environ.get("SALA_PUBLICADOR_MODO") == "snapshots":
+        from snapshots_online import Snapshots, OnlineError
+        try:
+            cloud = Snapshots(Path(__file__).resolve().parent.parent)
+            if args.action == "integrar":
+                cloud.prepare(args.proceso)
+            else:
+                cloud.dispatch_publish(args.sha)
+        except OnlineError as exc:
+            print(f"::error::{exc}", file=sys.stderr)
+            return 1
+        return 0
     try:
         publisher = Publisher(Path(__file__).resolve().parent.parent)
         if args.action == "integrar":

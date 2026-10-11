@@ -38,12 +38,15 @@ def instancia():
 
 
 def generar(receta, reglas):
-    import torch
     seed = int(hashlib.sha256(receta.encode("utf-8")).hexdigest()[:8], 16)
     try:
         pipe = instancia()
+        import torch
+        tokens = pipe.tokenizer(receta[:900], truncation=True,
+                                max_length=pipe.tokenizer.model_max_length).input_ids
+        prompt = pipe.tokenizer.decode(tokens, skip_special_tokens=True)
         image = pipe(
-            prompt=receta[:900], negative_prompt="text, letters, words, logos, watermark",
+            prompt=prompt, negative_prompt="text, letters, words, logos, watermark",
             width=512, height=640, num_inference_steps=20, guidance_scale=7.5,
             generator=torch.Generator(device="cpu").manual_seed(seed)).images[0]
         if image.size != (512, 640):

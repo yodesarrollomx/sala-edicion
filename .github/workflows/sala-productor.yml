@@ -21,7 +21,7 @@ on:
 
 permissions:
   actions: write
-  contents: read
+  contents: write
   issues: write
 
 # Invariante 53: nunca dos productores a la vez.
@@ -31,12 +31,18 @@ concurrency:
 
 jobs:
   productor:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: Leer la versión de datos confirmada en nube
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py bootstrap
 
       - name: Abrir compuertas y encolar
         id: productor

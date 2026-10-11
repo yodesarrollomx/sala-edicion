@@ -355,6 +355,20 @@ def main():
     return 0
 
 
+_snapshot_verifier = None
+
+
+def _snapshot_publicado(ruta):
+    global _snapshot_verifier
+    from snapshots_online import Snapshots, OnlineError
+    try:
+        if _snapshot_verifier is None:
+            _snapshot_verifier = Snapshots(RAIZ)
+        return _snapshot_verifier.file_is_published(RAIZ / str(ruta))
+    except (OnlineError, ValueError, OSError):
+        return False
+
+
 def _existe_en_commit_publicado(ruta):
     """Solo rutas del repositorio, contenidas en el HEAD ya desplegado."""
     import subprocess
@@ -364,6 +378,9 @@ def _existe_en_commit_publicado(ruta):
             or not str(p).startswith('laminas/')
             or p.suffix.lower() not in ('.jpg', '.jpeg', '.png', '.webp')):
         return False
+    import os
+    if os.environ.get('SALA_PUBLICADOR_MODO') == 'snapshots':
+        return _snapshot_publicado(str(p))
     run = subprocess.run(['git', 'ls-tree', '-r', '--name-only', 'HEAD', '--', str(p)],
                          cwd=RAIZ, capture_output=True, text=True, timeout=10, check=False)
     return run.returncode == 0 and str(p) in run.stdout.splitlines()
@@ -388,11 +405,17 @@ def montar():
         tira = _leer(TIRAS / (c['tira_id'] + '.json'), None)
         if not isinstance(tira, dict):
             raise sala.SalaError('no se monta una carta sin su tira')
+        import os
+        if os.environ.get('SALA_PUBLICADOR_MODO') == 'snapshots' and not _snapshot_publicado(
+                'datos/tiras/' + c['tira_id'] + '.json'):
+            raise sala.SalaError('la tira no coincide con la versión publicada')
         try:
             validar_nuevas_tomas(tira)
         except ContenidoVetado as e:
             raise sala.SalaError(str(e)) from e
         r = sala.post('proponer', fecha=plan['fecha'], propuestas=[c['carta']], familia=c['familia'])
+        if not isinstance(r, dict) or not r.get('ok'):
+            raise sala.SalaError('GAS no confirmó el montaje; conservar plan')
         sala.avisar('✓ montada %s · retiradas: %s' % (c['tira_id'], ', '.join(r.get('retiradas_familia') or []) or '—'))
     return 0
 

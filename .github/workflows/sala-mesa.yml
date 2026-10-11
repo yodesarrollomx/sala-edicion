@@ -36,8 +36,12 @@ concurrency:
   group: sala-mesa
   cancel-in-progress: false
 
+env:
+  SALA_PUBLICADOR_MODO: snapshots
+
 jobs:
   mesa:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 70
     env:
@@ -45,12 +49,38 @@ jobs:
       PIEZA: ${{ inputs.pieza }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      - name: Hidratar último snapshot y serializar la publicación de datos
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SIMULAR: ${{ inputs.simular }}
+          MODO: ${{ inputs.modo }}
+        run: |
+          lock=--lock
+          [ "$SIMULAR" = true ] && lock=
+          [ "$MODO" = simular ] && lock=
+          python3 nube/snapshots_online.py bootstrap --proceso mesa $lock
+
       - name: Librerías (imagen y HTTP)
-        run: pip install --quiet pillow requests
+        run: |
+          pip install --quiet pillow requests
+          pip install --quiet torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
+          pip install --quiet -r nube/imagen_cpu_requirements.txt
+      - name: Caché del modelo generativo CPU verificado
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/huggingface/hub
+            nube/.cache/kokoro
+            nube/.cache/depth
+          key: sala-cpu-tiny-sd-cad0bd7-kokoro-depth-v1
 
       - name: Caché de la tipografía de la casa (Playfair Display, OFL)
         id: cache-fuentes
@@ -90,14 +120,14 @@ jobs:
           pip install --quiet google-auth
           python3 nube/verificar.py
 
-      - name: Guardar mediante PR y checks obligatorios
+      - name: Guardar snapshot privado de datos ya validados
         id: guardar
         if: steps.mesa.outputs.codigo == '0' && env.MODO != 'simular'
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 nube/publicar_git.py integrar --proceso mesa
 
-      - name: Publicar el commit integrado y esperar su corrida exacta
+      - name: Publicar datos y esperar su recibo exacto
         id: publicacion
         if: steps.guardar.outputs.hubo == 'si' || (steps.guardar.outputs.hubo == 'no' && env.MODO == 'montar')
         env:
@@ -105,11 +135,9 @@ jobs:
           MERGE_SHA: ${{ steps.guardar.outputs.merge_sha }}
         run: python3 nube/publicar_git.py publicar --proceso mesa --sha "$MERGE_SHA"
 
-      - name: Montar cartas ya publicadas (nunca un PR pendiente)
-        # Cuando hubo cambios, publicar.yml monta las tarjetas DESPUÉS de Pages.
-        # Solo recuperamos planes de material ya contenido en main si publicar
-        # verificó este mismo SHA. Un PR pendiente nunca llega al Sheet.
-        if: steps.mesa.outputs.codigo == '0' && env.MODO == 'montar' && steps.guardar.outputs.hubo == 'no' && steps.publicacion.outcome == 'success'
+      - name: Montar cartas de la versión pública confirmada
+        # El snapshot y cada archivo se verifican contra el recibo de Pages antes del POST.
+        if: steps.mesa.outputs.codigo == '0' && env.MODO == 'montar' && (steps.guardar.outputs.hubo == 'si' || steps.guardar.outputs.hubo == 'no') && steps.publicacion.outcome == 'success'
         working-directory: nube
         env:
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
@@ -131,3 +159,9 @@ jobs:
             echo '```'; python3 nube/limpiar_log.py mesa.log 40; echo '```'; } > comentario.md
           gh issue comment "$numero" --body-file comentario.md
           exit 1
+
+      - name: Liberar el mutex incluso si hubo un fallo
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py liberar

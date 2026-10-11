@@ -122,7 +122,12 @@ def hf(receta, reglas):
     return datos, 'jpg'
 
 
-MOTORES = {'cloudflare': cloudflare, 'gemini': gemini, 'pollinations': pollinations, 'hf': hf}
+def cpu(receta, reglas):
+    from motores.imagen_cpu import generar as generar_cpu
+    return generar_cpu(receta, reglas)
+
+
+MOTORES = {'cloudflare': cloudflare, 'gemini': gemini, 'pollinations': pollinations, 'hf': hf, 'cpu': cpu}
 
 
 SIN_LETRAS = ('. Photorealistic editorial photograph, natural light. Absolutely no text, '
@@ -139,6 +144,9 @@ def generar(receta, reglas):
     receta = receta.rstrip('. ') + SIN_LETRAS
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
                                     or 'cloudflare,gemini,pollinations,hf').split(',') if m.strip() in MOTORES]
+    if (orden and 'cpu' not in orden and str((reglas or {}).get(
+            'imagen_respaldo_cpu', '1')).strip() not in ('0', 'no', 'false')):
+        orden.append('cpu')
     avisos = []
     for nombre in orden:
         try:

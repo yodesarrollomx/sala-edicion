@@ -274,6 +274,14 @@ def montar():
     if not plan or not plan.get('cartas'):
         sala.avisar('nada que montar')
         return 0
+    import os
+    if os.environ.get('SALA_PUBLICADOR_MODO') == 'snapshots':
+        from sala_mesa import _snapshot_publicado
+        for c in plan['cartas']:
+            rutas = list((c.get('carta') or {}).get('laminas') or [])
+            rutas.append('datos/tiras/' + c['tira_id'] + '.json')
+            if not all(_snapshot_publicado(ruta) for ruta in rutas):
+                raise sala.SalaError('Arranque sin versión pública confirmada; no se monta')
     for c in plan['cartas']:
         tira = _leer(TIRAS / (c['tira_id'] + '.json'), None)
         if not isinstance(tira, dict):
@@ -282,7 +290,9 @@ def montar():
             exigir(tira, ruta='tira')
         except ContenidoVetado as e:
             raise sala.SalaError(str(e)) from e
-        sala.post('proponer', fecha=plan['fecha'], propuestas=[c['carta']], familia=c['familia'])
+        respuesta = sala.post('proponer', fecha=plan['fecha'], propuestas=[c['carta']], familia=c['familia'])
+        if not isinstance(respuesta, dict) or not respuesta.get('ok'):
+            raise sala.SalaError('GAS no confirmó el arranque; conservar plan')
         sala.avisar('✓ en tu mesa: %s' % c['tira_id'])
     return 0
 

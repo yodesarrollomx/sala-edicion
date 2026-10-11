@@ -28,8 +28,12 @@ concurrency:
   group: sala-mesa        # comparte candado con el montador: nunca dos escribiendo tiras a la vez
   cancel-in-progress: false
 
+env:
+  SALA_PUBLICADOR_MODO: snapshots
+
 jobs:
   arranque:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 70
     env:
@@ -43,12 +47,38 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      - name: Hidratar último snapshot y serializar la publicación de datos
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SIMULAR: ${{ inputs.simular }}
+          MODO: ${{ inputs.modo }}
+        run: |
+          lock=--lock
+          [ "$SIMULAR" = true ] && lock=
+          [ "$MODO" = simular ] && lock=
+          python3 nube/snapshots_online.py bootstrap --proceso arranque $lock
+
       - name: Librerías (imagen y HTTP)
-        run: pip install --quiet pillow requests
+        run: |
+          pip install --quiet pillow requests
+          pip install --quiet torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
+          pip install --quiet -r nube/imagen_cpu_requirements.txt
+      - name: Caché del modelo generativo CPU verificado
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/huggingface/hub
+            nube/.cache/kokoro
+            nube/.cache/depth
+          key: sala-cpu-tiny-sd-cad0bd7-kokoro-depth-v1
 
       - name: Caché de la tipografía de la casa (Playfair Display, OFL)
         id: cache-fuentes
@@ -85,14 +115,14 @@ jobs:
           pip install --quiet google-auth
           python3 nube/verificar.py
 
-      - name: Guardar mediante PR y checks obligatorios
+      - name: Guardar snapshot privado de datos ya validados
         id: guardar
         if: steps.arr.outputs.codigo == '0' && env.MODO != 'simular' && env.MODO != 'ideas'
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 nube/publicar_git.py integrar --proceso arranque
 
-      - name: Publicar el commit integrado y esperar su corrida exacta
+      - name: Publicar datos y esperar su recibo exacto
         if: steps.guardar.outputs.hubo == 'si'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -119,3 +149,9 @@ jobs:
             echo '```'; python3 nube/limpiar_log.py arranque.log 40; echo '```'; } > comentario.md
           gh issue comment "$numero" --body-file comentario.md
           exit 1
+
+      - name: Liberar el mutex incluso si hubo un fallo
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py liberar

@@ -59,3 +59,6 @@ jobs:
 
       - name: Montaje tras commits simples y merges, con Git real y GAS doble
         run: python3 -m unittest discover -s tests -p sala_montaje_commit_test.py -v
+
+      - name: Regresiones completas y publicación online con dobles
+        run: python3 -m unittest discover -s tests -p '*_test.py' -v
