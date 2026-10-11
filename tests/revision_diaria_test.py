@@ -54,6 +54,34 @@ class ReviewTests(unittest.TestCase):
         self.assertNotIn("no se copia", str(out))
         self.assertEqual(out["cola_estado"], "confirmada")
 
+    def test_real_nested_production_is_observed_on_main_push(self):
+        class API:
+            def request(self,path):
+                if path.startswith("actions/runs?"):
+                    return {"workflow_runs":[{"id":12,"head_branch":"main","event":"push",
+                                              "path":".github/workflows/sala-cierre-online.yml"}]}
+                return {"jobs":[
+                    {"name":"ciclo / productor","status":"completed","conclusion":"success",
+                     "started_at":"inicio","completed_at":"fin"},
+                    {"name":"ejecutar / ejecutor","status":"in_progress","conclusion":None},
+                    {"name":"comparar","status":"completed","conclusion":"success"}]}
+        result=r.observe_runs(API())
+        self.assertEqual(set(result),{"productor","ejecutor"})
+        self.assertEqual(result["productor"]["run_id"],"12")
+        self.assertEqual(result["productor"]["termino"],"fin")
+
+    def test_other_branch_and_skipped_job_do_not_accredit_execution(self):
+        class API:
+            def request(self,path):
+                if path.startswith("actions/runs?"):
+                    return {"workflow_runs":[
+                        {"id":1,"head_branch":"prueba","event":"push","path":".github/workflows/sala-plan.yml"},
+                        {"id":2,"head_branch":"main","event":"push","path":".github/workflows/sala-plan.yml"}]}
+                if path.startswith("actions/runs/1/"):
+                    raise AssertionError("rama de prueba no debe leerse como operación")
+                return {"jobs":[{"name":"plan","status":"completed","conclusion":"skipped"}]}
+        self.assertEqual(r.observe_runs(API()),{})
+
 
 if __name__ == "__main__":
     unittest.main()

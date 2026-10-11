@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-11.sala-cierre-online",
   "proposal_id": "CHG-SALA-CIERRE-ONLINE-20261011",
-  "summary": "Cerrar operación ya habilitada, observar correo diario real, solicitar entrada una vez y comparar guion/láminas originales con producción nube. Corregir tiempos del montador y dependencias CPU del ejecutor.",
+  "summary": "Revisión diaria observa ejecuciones iniciales aprobadas de Plan y los jobs reales anidados de productor/ejecutor del cierre; excluye comparación técnica, ramas ajenas y jobs omitidos.",
   "components": [
     "SYS-YOD-OS",
     "SYS-SALA",
@@ -14,10 +14,9 @@
     "EXT-GMAIL"
   ],
   "tests": [
-    "Dobles: preflight, respaldo, acuse rechazado, rate-limit, efecto ambiguo sin reintentos, zona incorrecta y rutina desactivada.",
-    "Media real ffmpeg: escena larga no se alarga; segunda voz empieza en la segunda escena; pausas y duración completa comprobadas.",
-    "Comparación aislada de seis láminas: original archivado SHA256 exacto, guion/imagenes del mismo commit, motores reales y acuse privado byte-verificado. No escritura de decisiones/cola en la comparación.",
-    "CI y verificadores obligatorios sobre el head, pin del Atlas aprobado y publicación del frontend por separado."
+    "Dos nuevas regresiones con dobles para main/push aprobado, nombres de workflows reutilizables, comparación técnica excluida, ramas ajenas y jobs skipped.",
+    "Suite completa183 con ffmpeg real, verificadores y contrato de cierre aprobado; publicación de revisión con recibo exacto.",
+    "No se cambian horarios, decisiones, configuración ni se solicita otro correo en esta entrega."
   ],
   "rollback": "Revertir código mediante PR. Conservar triggers que ya funcionan, configuraciones, decisiones, originales, acuses y snapshots. No instalar GAS espejo ni resetear filas fallidas históricas."
 }

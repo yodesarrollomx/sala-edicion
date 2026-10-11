@@ -47,11 +47,11 @@ def observe_runs(api):
         if not isinstance(response.get("workflow_runs"), list):
             raise OnlineError("Actions sin contrato")
         for run in response["workflow_runs"]:
-            if run.get("head_branch") != "main" or run.get("event") not in ("schedule", "workflow_dispatch"):
+            if run.get("head_branch") != "main" or run.get("event") not in ("schedule", "workflow_dispatch", "push"):
                 continue
             filename = str(run.get("path", "")).split("/")[-1]
             if filename not in {*(f"sala-{r[0]}.yml" for r in ROUTINES),
-                                 "sala-cada-hora.yml", "sala-diario.yml"}:
+                                 "sala-cada-hora.yml", "sala-diario.yml", "sala-cierre-online.yml"}:
                 continue
             jobs = api.request("actions/runs/" + str(run["id"]) + "/jobs?per_page=100").get("jobs")
             if not isinstance(jobs, list):
@@ -59,7 +59,7 @@ def observe_runs(api):
             for job in jobs:
                 if job.get("conclusion") == "skipped":
                     continue
-                name = str(job.get("name", "")).split(" / ")[0]
+                name = str(job.get("name", "")).split(" / ")[-1]
                 process = "chinches" if name in ("puente", "chinches") else name
                 if process in wanted and process not in result:
                     result[process] = {"run_id": str(run["id"]), "status": job.get("status"),
