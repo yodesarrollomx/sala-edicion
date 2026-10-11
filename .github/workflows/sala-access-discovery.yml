@@ -2,14 +2,14 @@ name: Localizar conexiones de Sala y Marketing
 on:
   push:
     branches: [codex/sala-accesos-20261011]
-    paths: ['.github/workflows/sala-access-discovery.yml']
+    paths: ['.github/workflows/sala-access-discovery.yml', 'nube/comprobar_accesos.py']
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   descubrir:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     steps:
       - uses: actions/setup-node@v4
         with:
@@ -81,3 +81,22 @@ jobs:
           const present=flags.filter(([,value])=>value==='true').map(([name])=>name.slice(8)).sort();
           console.log(JSON.stringify({mode:'presence_only',businessWrites:0,checked:flags.length,present,secretValuesReceived:false}));
           NODE
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            nube
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar clientes de lectura
+        run: pip install --quiet google-auth requests modal
+      - name: Verificar sintaxis
+        run: python3 -m py_compile nube/comprobar_accesos.py
+      - name: Comprobar conexiones reales y metadata de Modal
+        env:
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+          MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+        run: python3 nube/comprobar_accesos.py
