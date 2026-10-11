@@ -39,6 +39,27 @@ def git_output(args, cwd=ROOT, *, no_lazy=False, timeout=90):
         raise RuntimeError('git_read_not_verified')
     return output
 
+def public_blob(commit, path, oid, maximum=MAX_BINARY):
+    """Descarga por HTTP una ruta inmutable y verifica su identidad de blob Git."""
+    import requests
+    url = 'https://raw.githubusercontent.com/yodesarrollomx/sala-edicion/' + commit + '/' + urllib.parse.quote(path)
+    try:
+        with requests.get(url, timeout=(10, 30), stream=True) as response:
+            if response.status_code != 200: raise RuntimeError('public_blob_unavailable')
+            length = int(response.headers.get('Content-Length') or 0)
+            if length > maximum: raise RuntimeError('public_blob_size_bound')
+            chunks, size = [], 0
+            for chunk in response.iter_content(1024 * 1024):
+                size += len(chunk)
+                if size > maximum: raise RuntimeError('public_blob_size_bound')
+                chunks.append(chunk)
+    except requests.RequestException:
+        raise RuntimeError('public_blob_unavailable')
+    content = b''.join(chunks)
+    actual = hashlib.sha1(b'blob ' + str(len(content)).encode() + b'\\0' + content).hexdigest()
+    if actual != oid: raise RuntimeError('public_blob_identity_not_verified')
+    return content
+
 def evidence_of(job):
     value = job.get('evidencia') or {}
     if isinstance(value, str):
@@ -151,13 +172,15 @@ def main():
     for name in names:
         if not name or not (name in references or re.search(r'\.(mp4|wav|mp3|ogg|m4a|webm|mov)$', name, re.I)): continue
         if pathlib.PurePosixPath(name).is_absolute() or '..' in pathlib.PurePosixPath(name).parts: continue
-        object_name = 'HEAD:' + name
-        size = int(git_output(['git', 'cat-file', '-s', object_name], cwd=ROOT))
-        if size < 1 or size > MAX_BINARY: continue
-        data = git_output(['git', 'cat-file', 'blob', object_name], cwd=ROOT)
-        git_assets[name] = {'bytes': len(data), 'md5': hashlib.md5(data).hexdigest(),
-                            'sha256': hashlib.sha256(data).hexdigest(),
-                            'blob_sha': git_output(['git', 'rev-parse', object_name], cwd=ROOT).decode().strip()}
+        try:
+            oid = git_output(['git', 'rev-parse', 'HEAD:' + name], cwd=ROOT).decode().strip()
+            head = git_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip()
+            data = public_blob(head, name, oid)
+            if not data: continue
+            git_assets[name] = {'bytes': len(data), 'md5': hashlib.md5(data).hexdigest(),
+                                'sha256': hashlib.sha256(data).hexdigest(), 'blob_sha': oid}
+        except RuntimeError:
+            report['errors'].append({'operation': 'git_current_read', 'code': 'not_verified'})
     page_cache = {}
     def published(name):
         if name not in page_cache:
@@ -229,25 +252,26 @@ def main():
             eligible = eligible[:1500]
         print(json.dumps({'operation': 'git_history', 'objects_selected': len(eligible),
                           'image_scope': 'canonical_output_directories'}), flush=True)
-        # Un fetch por lote evita abrir una conexión para cada objeto histórico.
-        for start in range(0, len(eligible), 50):
-            batch = [oid for oid, path in eligible[start:start + 50]]
-            try:
-                git_output(['git', '-c', 'fetch.negotiationAlgorithm=noop', 'fetch',
-                            '--no-tags', '--no-write-fetch-head', '--filter=blob:none',
-                            'origin', *batch], timeout=120)
-            except RuntimeError:
-                errors.append({'operation': 'git_archive_fetch', 'code': 'not_verified'})
         for oid, path in eligible:
             if scanned >= 1500 or total >= 2 * 1024 ** 3:
                 complete = False
                 break
             try:
-                size = int(git_output(['git', 'cat-file', '-s', oid], cwd=ROOT, no_lazy=True))
-                if size < 1 or size > MAX_BINARY or total + size > 2 * 1024 ** 3:
+                commits = git_output(
+                    ['git', 'log', '--no-renames', '-n', '20', '--format=%H', '--find-object=' + oid, 'HEAD', '--', path],
+                    cwd=ROOT).decode().splitlines()
+                resolved = None
+                for commit in commits:
+                    located = subprocess.run(['git', 'rev-parse', '--verify', commit + ':' + path],
+                                             cwd=ROOT, capture_output=True, text=True, timeout=20)
+                    if located.returncode == 0 and located.stdout.strip() == oid:
+                        resolved = commit
+                        break
+                if not resolved: raise RuntimeError('archive_path_not_verified')
+                data = public_blob(resolved, path, oid, maximum=min(MAX_BINARY, 2 * 1024 ** 3 - total))
+                if not data:
                     skipped += 1
                     continue
-                data = git_output(['git', 'cat-file', 'blob', oid], cwd=ROOT, no_lazy=True)
                 digest = hashlib.md5(data).hexdigest()
                 scanned += 1
                 total += len(data)
@@ -255,7 +279,7 @@ def main():
                 proof = {'source': 'git_history', 'path': path, 'blob_sha': oid, 'bytes': len(data),
                          'md5': digest, 'sha256': hashlib.sha256(data).hexdigest(), 'download_verified': True}
                 commits = git_output(
-                    ['git', 'log', '-n', '20', '--format=%H', '--find-object=' + oid, 'HEAD', '--', path],
+                    ['git', 'log', '--no-renames', '-n', '20', '--format=%H', '--find-object=' + oid, 'HEAD', '--', path],
                     cwd=ROOT).decode().splitlines()
                 for commit in commits:
                     located = subprocess.run(['git', 'rev-parse', '--verify', commit + ':' + path],
@@ -319,6 +343,7 @@ def main():
     report['summary'] = dict(collections.Counter(j['status'] for j in report['jobs']))
     report['legacy_summary'] = dict(collections.Counter(j['status'] for j in report['jobs'] if j['legacy']))
     report['git_assets_scanned'] = len(git_assets)
+    report['git_current_scan_complete'] = not any(x.get('operation') == 'git_current_read' for x in report['errors'])
     report['verified_drive_downloads'] = len(binary_cache)
     report['full_report_contains_private_technical_references'] = True
     output = json.dumps(report, ensure_ascii=False, indent=2).encode()
@@ -341,6 +366,8 @@ def main():
                       'catalog_revisions': report['catalog_revisions'],
                       'catalog_revisions_with_identity': report['catalog_revisions_with_identity'],
                       'drive_files_scanned': report['drive_files_scanned'],
+                      'git_current_scan_complete': report['git_current_scan_complete'],
+                      'source_read_errors': len(report['errors']),
                       'roots_complete': [x['complete'] for x in report['root_reads']],
                       'summary': report['summary'], 'legacy_summary': report['legacy_summary'],
                       'verified_drive_downloads': len(binary_cache),
