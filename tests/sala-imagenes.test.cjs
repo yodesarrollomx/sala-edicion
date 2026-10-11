@@ -8,9 +8,12 @@ test('los scripts de Sala son JavaScript válido',()=>{
   assert.ok(blocks.length>0);
   blocks.forEach((source,i)=>assert.doesNotThrow(()=>new vm.Script(source,{filename:'sala-'+i+'.js'})));
 });
-test('Mesa nunca monta tarjetas creadas en un PR pendiente',()=>{
+test('Mesa sólo monta después de publicación confirmada y comprobación de archivos',()=>{
   assert.match(workflow,/id: publicacion/);
-  assert.match(workflow,/steps\.guardar\.outputs\.hubo == 'no' && steps\.publicacion\.outcome == 'success'/);
+  assert.match(workflow,/SALA_PUBLICADOR_MODO: snapshots/);
+  assert.match(workflow,/steps\.publicacion\.outcome == 'success'/);
+  assert.match(producer,/_snapshot_verifier\.file_is_published/);
+  assert.match(producer,/la tira no coincide con la versión publicada/);
   assert.match(producer,/def _existe_en_commit_publicado\(ruta\):/);
   assert.match(producer,/sin_publicar\s*=\s*\[/);
   assert.match(producer,/raise sala\.SalaError\(\s*'%d lámina\(s\) aún sin archivo en main/);
