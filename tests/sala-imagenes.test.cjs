@@ -16,7 +16,7 @@ test('Mesa sólo monta después de publicación confirmada y comprobación de ar
   assert.match(producer,/la tira no coincide con la versión publicada/);
   assert.match(producer,/def _existe_en_commit_publicado\(ruta\):/);
   assert.match(producer,/sin_publicar\s*=\s*\[/);
-  assert.match(producer,/raise sala\.SalaError\(\s*'%d lámina\(s\) aún sin archivo en main/);
+  assert.match(producer,/raise sala\.SalaError\(\s*'%d lámina\(s\) sin hash confirmado en la versión publicada/);
 });
 test('error de imagen ofrece botón real de reintento y bloqueo de aprobaciones',()=>{
   const snippet=block('function montarImagen(el,src,prioritaria=true,reintento=false){','function dobleToque(');

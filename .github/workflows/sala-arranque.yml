@@ -132,6 +132,8 @@ jobs:
       - name: Montar en la mesa
         if: steps.guardar.outputs.hubo == 'si'
         working-directory: nube
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -o pipefail
           python3 sala_arranque.py --montar 2>&1 | tee -a ../arranque.log
