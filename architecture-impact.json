@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-12.sala-imagen-evidencia.1",
   "proposal_id": "CHG-SALA-OPENAI-BROKER-20261012",
-  "summary": "El arranque de imágenes usa los motores por API vigentes; quitar instalación y caché del generador CPU ya retirado para reducir el tiempo del mutex compartido.",
+  "summary": "Aplicar el veto existente también a miniaturas del árbol de producción y prospectos, conservando datos, índices y elección histórica.",
   "components": [
     "SYS-YOD-OS",
     "SYS-CONTROL",
@@ -20,8 +20,9 @@
   "tests": [
     "git diff --check",
     "python3 nube/verificar.py",
-    "CI de Sala: regresiones, contratos y Arquitectura",
-    "Verificar que el arranque no instale imagen_cpu_requirements ni cargue el cache Tiny-SD; otras etapas conservan sus dependencias."
+    "node --test tests/sala-modelos.test.cjs",
+    "Regresión con selección sana aprobada, alternativa CPU y prospecto Pollinations; sólo se muestran fuentes permitidas y no se mutan datos.",
+    "CI existente de arquitectura, contratos y regresiones."
   ],
-  "rollback": "Revertir este cambio de dependencias por PR; conservar política de modelos, imágenes, recibos, votos, historia y las dependencias de voz/escena en sus workflows."
+  "rollback": "Revertir sólo el render por PR; conservar política, datos, índices originales, decisiones, imágenes e historia."
 }
