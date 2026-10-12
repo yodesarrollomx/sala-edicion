@@ -229,9 +229,29 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
         nota = 'Que se parezca a la lámina %s aprobada: mismos personajes, mismo lugar, misma luz.' % ref.get('n')
     for k in range(1, n_tomas + 1):
         try:
-            d, quien, av = cerebro.lamina(t.get('pieza') or slug, t.get('promesa'), lam.get('dice'),
-                                          lam.get('ve'), nota, veto, reglas, cola, k, ref_txt,
-                                          numero=lam.get('n'))
+            if lam.get('reemplazo_modelo') == POLITICA['revision']:
+                # Cambiar el generador no requiere reescribir el guion ni otra inferencia.
+                # El modelo de imagen recibe el mensaje visible como autoridad de la escena.
+                receta = (
+                    "Create a high-end architectural editorial photograph for this existing Spanish caption: "
+                    + json.dumps(str(lam.get('dice') or ''), ensure_ascii=False)
+                    + ". Show the caption's meaning literally with a concrete action and physical objects: "
+                    "site plans, architectural models, materials or the described work. "
+                    "People must interact with those objects; a generic couple posing or looking at each other is insufficient. "
+                    "Mexican architectural context, coherent professional full-frame 35mm photography, warm natural daylight, "
+                    "restrained beige and terracotta palette, accurate perspective and anatomically correct faces and hands. "
+                    "Keep all important subjects inside the central 4:5 region with space for the separate caption overlay. "
+                    "The approved reference below guides characters, lighting and style, not an unrelated pose. "
+                    + (ref_txt or "Consistent contemporary architectural documentary style.")
+                    + " Context from the original description: " + str(lam.get('ve') or '')
+                    + ". Output only the photograph, absolutely no text, letters, captions, signs, logos or watermarks.")
+                d = {'texto': str(lam.get('dice') or ''), 'receta': receta,
+                     'porque': 'Nueva fotografía desde el guion vigente; conserva exactamente el texto visible.'}
+                quien, av = 'guion-vigente', []
+            else:
+                d, quien, av = cerebro.lamina(t.get('pieza') or slug, t.get('promesa'), lam.get('dice'),
+                                              lam.get('ve'), nota, veto, reglas, cola, k, ref_txt,
+                                              numero=lam.get('n'))
             avisos += av
             exigir(d, reglas, 'candidata')
             # Un desacuerdo explícito entre imagen y texto corrige la imagen;
@@ -392,7 +412,7 @@ def piezas_por_prioridad(piezas, dia):
         key=lambda x: priority(x)[0], reverse=True)
 
 
-def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa=''):
+def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa='', modelo_imagen=None):
     state = "bloqueado" if fallidas and not generadas else (
         "parcial" if fallidas or limitadas else "al_dia")
     report = {"schema": 1, "estado": state,
@@ -400,7 +420,7 @@ def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, 
               "code_sha": __import__("os").environ.get("GITHUB_SHA"),
               "run_id": __import__("os").environ.get("GITHUB_RUN_ID"),
               "generadas": generadas, "reutilizadas": reutilizadas, "fallidas": fallidas,
-              "causa": causa, "modelo_imagen": imagen.MODELO_FLUX2,
+              "causa": causa, "modelo_imagen": modelo_imagen or imagen.MODELO_FLUX2,
               "limite_pendiente": limitadas, "cartas": cartas}
     dest = RAIZ / "datos" / "mesa-estado.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -594,7 +614,8 @@ def main():
         PLAN.write_text(json.dumps({'fecha': hoy, 'cartas': plan}, ensure_ascii=False, indent=1),
                         encoding='utf-8')
         guardar_estado_mesa(generadas, fallidas, limitadas, len(plan), reutilizadas,
-                            causa='cupo_imagen_agotado' if cupo_bloqueado else '')
+                            causa='cupo_imagen_agotado' if cupo_bloqueado else '',
+                            modelo_imagen=imagen.modelo_de(str(reglas.get('imagen_motores') or 'openai_broker').split(',')[0].strip(), reglas))
     # Preparación que falló por completo es un fallo real, no una mesa «al día».
     return 2 if fallidas and not plan and not args.simular else 0
 

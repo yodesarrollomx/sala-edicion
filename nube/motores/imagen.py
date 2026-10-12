@@ -87,7 +87,11 @@ def openai_broker(receta, reglas):
     """GPT Image en el servidor propio: la clave OpenAI permanece allí."""
     import hashlib
     import hmac
-    token = hmac.new(sala._clave().encode(), b'yod:sala:image-broker:v1', hashlib.sha256).hexdigest()
+    try:
+        credential = sala._clave()
+    except sala.SalaError:
+        raise MotorError('GPT Image: falta credencial técnica del agente', intermitente=True) from None
+    token = hmac.new(credential.encode(), b'yod:sala:image-broker:v1', hashlib.sha256).hexdigest()
     url = 'https://yod-cloud-room.onrender.com/sala/image'
     request_id = str((reglas or {}).get('_imagen_request_id') or hashlib.sha256(receta.encode()).hexdigest())
     # Reconcilia un resultado confirmado antes de pedir otra generación.
@@ -223,7 +227,7 @@ def generar(receta, reglas):
         raise MotorError(str(e)) from e
     receta = receta.rstrip('. ') + SIN_LETRAS
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
-                                    or 'cloudflare_flux2,gemini_pro').split(',') if m.strip() in MOTORES]
+                                    or 'openai_broker,cloudflare_flux2,gemini_pro').split(',') if m.strip() in MOTORES]
     # Veto de Dirección: ni el orden explícito ni el respaldo heredado lo reactivan.
     orden = [m for m in orden if not vetada({'motor': m})]
     avisos = []
