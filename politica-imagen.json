@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "revision": "2026-10-12.sin-tiny-sd.1",
+  "retirados": [
+    {
+      "motor": "cpu",
+      "modelo": "segmind/tiny-sd",
+      "aliases": [
+        "cpu_pequeno",
+        "tiny-sd"
+      ],
+      "motivo": "Retirado por Dirección de la generación y revisión de nuevas tomas."
+    }
+  ]
+}

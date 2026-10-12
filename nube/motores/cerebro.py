@@ -179,6 +179,13 @@ def lamina(pieza, promesa, dice, ve, nota, vetadas, reglas, cola=None, variante=
               'VARIANTE %d: propón una composición distinta a las anteriores.'
               % (pieza, promesa or '-', dice or '-', ve or '-', nota or '(sin nota)',
                  ', '.join(vetadas) or '-', referencia or '-', variante))
+    pedido += ('\nRELACIÓN TEXTO/IMAGEN: muestra una acción y un objeto concretos que demuestren '
+               'el mensaje de esta lámina. Una pareja posando o un atardecer genérico no bastan. '
+               'La referencia conserva estilo, personajes y luz, pero la acción y el encuadre '
+               'deben avanzar lo que dice el texto actual. Ubicación/terreno: plano, mapa sin letras '
+               'o límites del terreno; cálculo/potencial: análisis visible del sitio; expertos: '
+               'trabajo sobre un plano. Evita cuerpos superpuestos, caras duplicadas y manos deformadas. '
+               'Si la nota sólo rechaza la imagen, conserva exactamente el TEXTO ACTUAL.')
     avisos = []
     for nombre, fn in (('gemini', lambda: _gemini(pedido, reglas, con_estrategia(INSTRUCCION_LAMINA, reglas))),
                        ('openai', lambda: _openai(pedido, reglas, cola, con_estrategia(INSTRUCCION_LAMINA, reglas)))):

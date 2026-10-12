@@ -120,12 +120,15 @@ def decision_del_sheet(pid, fecha_tira):
     return dec, prop.get("laminas")
 
 
+from motores.politica_imagen import depurar_tira, para_revision, vetada
+
+
 def abiertas(tid, t, leer_sheet=True):
     """Correcciones vigentes y continuación del guion tras aprobar la primera."""
     dec, srcs = decision_del_sheet(tid, fecha_de(t)) if leer_sheet else ({}, None)
     if leer_sheet and dec is None:
         raise sala.SalaError("la tira no tiene fuente vigente en el Sheet")
-    work = produccion.resolver_tira(t, dec, {'laminas': srcs or []})
+    work, retiradas = depurar_tira(produccion.resolver_tira(t, dec, {'laminas': srcs or []}))
     mapa = work.get("mapa") or {str(i + 1): n for i, n in
                                 enumerate(work.get("decidir") or [])}
     marks = (dec or {}).get("laminas") or []
@@ -142,6 +145,8 @@ def abiertas(tid, t, leer_sheet=True):
         # La nota del rechazo pertenece a su versión; no rechaza también
         # las nuevas candidatas que aún nadie ha revisado.
         if not mark and lam.get("candidatas"):
+            if n in retiradas:
+                salida.append((lam, "depurar_modelo", note))
             continue
         note = note or str(lam.get("nota_previa") or "")
         salida.append((lam, mark or "pendiente", note))
@@ -192,6 +197,8 @@ def validar_nuevas_tomas(tira, reglas=None):
         candidatas = [c for c in lam.get('candidatas') or [] if c.get('motor')]
         if not candidatas:
             raise sala.SalaError('lámina %s sin tomas nuevas verificables' % n)
+        if any(vetada(c) for c in candidatas):
+            raise sala.SalaError('lámina %s contiene un modelo retirado' % n)
         exigir(candidatas, reglas, 'tomas nuevas L%s' % n)
     if numeros != encontradas:
         raise sala.SalaError('el mapa de láminas nuevas no coincide con la tira')
@@ -250,6 +257,80 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
     return tomas, avisos + avisos_comp
 
 
+
+
+def hidratar_tiras_activas(dia, lector=None):
+    """Recupera sólo fuentes publicadas que el backend vigente mantiene activas."""
+    import urllib.request
+    from concurrent.futures import ThreadPoolExecutor
+    from pathlib import PurePosixPath
+    def remoto(path):
+        req=urllib.request.Request('https://yodesarrollomx.github.io/sala-edicion/'+path,
+                                   headers={'Cache-Control':'no-cache'})
+        try:
+            with urllib.request.urlopen(req,timeout=30) as r:
+                raw=r.read(8*1024*1024+1)
+            if len(raw)>8*1024*1024:
+                raise ValueError('fuente demasiado grande')
+            return raw
+        except Exception as exc:
+            raise sala.SalaError('fuente publicada sin confirmar') from exc
+    lector=lector or remoto
+    faltan=[p['id'] for p in dia.get('propuestas',[])
+            if p.get('laminas') and not (TIRAS/(p['id']+'.json')).is_file()]
+    if not faltan:
+        return 0
+    index=json.loads(lector('datos/tiras/index.json'))
+    if not isinstance(index,list):
+        raise sala.SalaError('índice publicado sin contrato')
+    drafts={}
+    paths=set()
+    hashes={}
+    for pid in faltan:
+        if not produccion.PID.fullmatch(pid) or pid not in index:
+            continue
+        path='datos/tiras/'+pid+'.json'
+        raw=lector(path)
+        t=json.loads(raw)
+        if (not isinstance(t,dict) or not isinstance(t.get('laminas'),list)
+                or not t.get('laminas') or not t.get('pieza_slug')):
+            raise sala.SalaError('tira publicada sin contrato')
+        numbers=[l.get('n') for l in t['laminas']]
+        if len(numbers)!=len(set(numbers)) or any(not isinstance(n,int) or n<1 for n in numbers):
+            raise sala.SalaError('identidades de lámina inválidas')
+        for lam in t['laminas']:
+            candidates=lam.get('candidatas') or []
+            refs=[lam.get('src')]+[c.get(k) for c in candidates for k in ('src','original')]
+            for ref in refs:
+                if not ref:
+                    continue
+                pp=PurePosixPath(str(ref))
+                if (not str(ref).startswith('laminas/') or pp.is_absolute()
+                        or '..' in pp.parts or pp.suffix.lower() not in ('.png','.jpg','.jpeg','.webp')):
+                    raise sala.SalaError('ruta de imagen publicada no autorizada')
+                paths.add(str(ref))
+            for c in candidates:
+                if c.get('original') and c.get('huella'):
+                    hashes[c['original']]=str(c['huella'])
+        drafts[path]=raw
+    existing={p:(RAIZ/p).read_bytes() for p in paths if (RAIZ/p).is_file()}
+    missing=sorted(paths-set(existing))
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        downloaded=dict(zip(missing,pool.map(lector,missing)))
+    files={**existing,**downloaded}
+    for path,raw in files.items():
+        if not raw.startswith((b'\x89PNG',b'\xff\xd8',b'RIFF')):
+            raise sala.SalaError('archivo publicado sin formato de imagen')
+        if path in hashes and hashlib.md5(raw).hexdigest()!=hashes[path]:
+            raise sala.SalaError('huella de original publicado no coincide')
+    for path,raw in {**downloaded,**drafts}.items():
+        target=RAIZ/path
+        if not target.resolve().is_relative_to(RAIZ.resolve()):
+            raise sala.SalaError('ruta local no autorizada')
+        target.parent.mkdir(parents=True,exist_ok=True)
+        target.write_bytes(raw)
+    sala.avisar('fuentes publicadas activas recuperadas: %d tira(s)' % len(drafts))
+    return len(drafts)
 
 
 def tiras_vigentes(piezas, dia):
@@ -356,6 +437,8 @@ def main():
     plan, gastadas = [], 0
     generadas = fallidas = limitadas = reutilizadas = 0
 
+    if not args.sin_sheet:
+        hidratar_tiras_activas(contexto_produccion())
     piezas = tiras_por_pieza()
     if not args.sin_sheet:
         piezas = tiras_vigentes(piezas, contexto_produccion())
@@ -382,10 +465,14 @@ def main():
         carpeta = RAIZ / 'laminas' / nueva_id
         hecha = TIRAS / (nueva_id + '.json')
         dec_vigente, mostradas = decision_del_sheet(tid, fecha_de(t)) if not args.sin_sheet else ({}, None)
-        vigente = produccion.resolver_tira(t, dec_vigente, {'laminas': mostradas or []})
+        vigente, _ = depurar_tira(produccion.resolver_tira(t, dec_vigente, {'laminas': mostradas or []}))
         if hecha.is_file() and referencias_aprobadas(_leer(hecha, {}) or {}) != referencias_aprobadas(vigente):
             # La referencia cambió después de generar: versión nueva, sin pisar la anterior.
             nueva_id += '-' + hashlib.sha256(json.dumps(referencias_aprobadas(vigente)).encode()).hexdigest()[:6]
+            carpeta = RAIZ / 'laminas' / nueva_id
+            hecha = TIRAS / (nueva_id + '.json')
+        if hecha.is_file() and not para_revision(_leer(hecha, {}) or {}):
+            nueva_id += '-sin-tiny-sd'
             carpeta = RAIZ / 'laminas' / nueva_id
             hecha = TIRAS / (nueva_id + '.json')
         if hecha.is_file() and not args.simular:
@@ -413,6 +500,15 @@ def main():
             destino['marca_previa'], destino['nota_previa'] = marca, nota
             if args.simular:
                 decidir.append(lam['n'])
+                continue
+            if marca == 'depurar_modelo':
+                destino['candidatas'] = lam['candidatas']
+                destino['src'] = lam.get('src') or lam['candidatas'][0]['src']
+                destino['estado'] = 'rehecha'
+                destino['produccion_guardados'] = 1
+                destino['fecha'] = hoy
+                decidir.append(lam['n'])
+                sala.avisar('   ↺ modelo retirado depurado; se conservan las tomas permitidas')
                 continue
             if gastadas >= tope:
                 limitadas += 1
