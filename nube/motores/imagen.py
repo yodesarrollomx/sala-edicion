@@ -96,7 +96,10 @@ def openai_broker(receta, reglas):
         with urllib.request.urlopen(req, timeout=30) as r:
             result = json.load(r)
     except urllib.error.HTTPError as e:
-        raw = json.loads(e.read() or b'{}')
+        try:
+            raw = json.loads(e.read() or b'{}')
+        except ValueError:
+            raise MotorError('GPT Image: recibo sin confirmar (%s)' % e.code, intermitente=True) from None
         if e.code not in (404,409) or raw.get('error') not in ('not_confirmed', 'not_found'):
             raise MotorError('GPT Image: '+str(raw.get('error') or e.code), intermitente=True) from None
         result = None
