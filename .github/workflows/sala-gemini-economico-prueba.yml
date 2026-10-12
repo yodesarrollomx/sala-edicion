@@ -1,0 +1,60 @@
+name: Sala · comprobar Gemini económico con una imagen
+on:
+  push:
+    branches: [codex/sala-gemini-economico-prueba-20261012]
+    paths: [.github/workflows/sala-gemini-economico-prueba.yml]
+permissions:
+  contents: read
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - run: pip install --quiet requests pillow
+      - name: Verificar modelos y generar como máximo una fotografía sintética
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import base64,hashlib,io,json,os,sys
+          import requests
+          from PIL import Image
+          key=os.environ.get("GEMINI_API_KEY","").strip()
+          if not key:print("GEMINI_CUPO "+json.dumps({"configurada":False}));sys.exit(1)
+          print("::add-mask::"+key)
+          headers={"x-goog-api-key":key,"Content-Type":"application/json"}
+          prompt="Create one realistic architectural editorial photograph: a Mexican female architect and a middle-aged owner discuss three visibly different physical scale models for the same vacant urban site on a worktable. They point to the models and a blank plan, discussing tradeoffs. Warm neutral daylight, restrained beige and terracotta palette, accurate perspective and human anatomy, natural documentary 35mm photography. Keep essential subjects within the central 4:5 frame, with clear space for a separate caption overlay. Portrait 4:5. No text, letters, numbers, logos, signs or watermarks."
+          models=["gemini-nano-banana-2.1","gemini-3.1-flash-lite-image"]
+          confirmed=False
+          for model in models:
+              url="https://generativelanguage.googleapis.com/v1beta/models/"+model
+              try:
+                  catalog=requests.get(url,headers=headers,timeout=30)
+                  print("GEMINI_CATALOGO "+json.dumps({"modelo":model,"http":catalog.status_code,"generateContent":catalog.ok and "generateContent" in catalog.json().get("supportedGenerationMethods",[])}))
+                  if not catalog.ok:continue
+                  body={"contents":[{"parts":[{"text":prompt}]}],"generationConfig":{"responseModalities":["IMAGE"],"candidateCount":1,"maxOutputTokens":4096,"imageConfig":{"aspectRatio":"4:5","imageSize":"1K"}}}
+                  r=requests.post(url+":generateContent",headers=headers,json=body,timeout=220)
+              except requests.RequestException:
+                  print("GEMINI_CUPO "+json.dumps({"modelo":model,"estado":"respuesta_incierta_no_repetir"}));break
+              if not r.ok:
+                  err=r.json().get('error',{})
+                  limits=[]
+                  for detail in err.get('details',[]):
+                      for v in detail.get('violations',[]):
+                          limits.append({k:v.get(k) for k in ['quotaMetric','quotaId','quotaValue']})
+                  print("GEMINI_CUPO "+json.dumps({"modelo":model,"http":r.status_code,"estado":err.get("status"),"limites":limits,"imagenes_generadas":0,"escrituras_negocio":0}))
+                  if r.status_code>=500:break
+                  continue
+              result=r.json()
+              parts=result.get('candidates',[{}])[0].get('content',{}).get('parts',[])
+              image=next((p.get('inlineData') or p.get('inline_data') for p in parts if p.get('inlineData') or p.get('inline_data')),None)
+              if not image:
+                  print("GEMINI_CUPO "+json.dumps({"modelo":model,"http":200,"estado":"sin_imagen_no_repetir"}));break
+              raw=base64.b64decode(image['data']);im=Image.open(io.BytesIO(raw))
+              print("GEMINI_IMAGEN_CONFIRMADA "+json.dumps({"modelo":model,"dimensiones":im.size,"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"escrituras_negocio":0,"usage":{k:result.get("usageMetadata",{}).get(k) for k in ["promptTokenCount","candidatesTokenCount","totalTokenCount"]}}))
+              im.convert('RGB').save('prueba-gemini.jpg',quality=90)
+              im=im.convert('RGB');im.thumbnail((600,900));out=io.BytesIO();im.save(out,'JPEG',quality=88)
+              print("FOTO_BASE64 "+base64.b64encode(out.getvalue()).decode())
+              confirmed=True;break
+          if not confirmed:sys.exit(1)
+          PY
