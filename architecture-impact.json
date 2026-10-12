@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-12.sala-rehacer-flux.1",
-  "proposal_id": "CHG-SALA-REHACER-POLLINATIONS-20261012",
-  "summary": "Retirar Pollinations; reemitir fuentes afectadas de piezas activas con modelos nuevos, conservando historia y cuotas explícitas.",
+  "model_revision": "2026-10-12.sala-openai-broker.1",
+  "proposal_id": "CHG-SALA-OPENAI-BROKER-20261012",
+  "summary": "Puente GPT Image en servidor existente y recibos de producción; no exportar la clave del proveedor.",
   "components": [
     "SYS-YOD-OS",
     "SYS-CONTROL",
@@ -11,15 +11,19 @@
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
-    "EXT-MOTORES-MEDIA"
+    "EXT-MOTORES-MEDIA",
+    "SVC-AUTON-CLOUD",
+    "STORE-AUTON-ESTADO",
+    "EXT-OPENAI",
+    "EXT-RENDER"
   ],
   "tests": [
     "git diff --check",
     "python3 nube/verificar.py",
     "python3 -m unittest discover -s tests -p '*_test.py'",
     "node --test tests/*.cjs",
-    "Regresiones de fuentes retiradas, reemisión aprobada explícita, multipart FLUX2, cuota sin respaldos vetados y texto visible conservado.",
-    "Auditoría real de publicación y fuentes; Sala y Chinches autorizados, sin decisiones escritas."
+    "node --test tests/imagen-broker.test.mjs",
+    "Prueba real de imagen antes de activar motor en REGLAS."
   ],
-  "rollback": "Revertir por PR sin reactivar modelos retirados ni alterar decisiones, archivos o historia."
+  "rollback": "Desactivar únicamente SALA_IMAGE_ENABLED y revertir por PR; preservar recibos, volumen, decisiones y retiro. Sin cambios de planes, recursos, identidades ni metas de los autóns."
 }
