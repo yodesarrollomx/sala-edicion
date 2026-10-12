@@ -19,3 +19,9 @@ La API rechazó los modelos Gemini2.5 configurados. Se consultó su catálogo y 
 Mesa prioriza las decisiones más recientes, incluyendo la continuación de sus versiones. El estado agregado `datos/mesa-estado.json` informa generación, fallos y límite pendiente. Un fallo total sale con error; un resultado parcial se declara parcial. El workflow conserva ese fallo aunque no exista un issue de aviso.
 
 Dos llamadas a Mesa dentro del mismo run comparten su ID de publicación. Las pasadas adicionales ahora usan runs reales distintos, con contador acotado, y se solicitan sólo tras avance verificado de la pasada anterior. La revisión reconoce este recorrido y registra sus jobs reales.
+
+## Montaje con snapshot privado
+
+El montaje de Mesa y Arranque recibe GH_TOKEN del propio workflow para comprobar la versión publicada y los hashes del snapshot privado. Un comando que falla mantiene su código a través de tee. Error de lectura no se presenta como imagen inexistente ni como montaje exitoso.
+
+Una versión generada pero todavía sin montar no sustituye la fuente activa del Sheet. Mesa selecciona esa fuente y puede reutilizar su generación existente si conserva las mismas referencias aprobadas. Si cambió una referencia, crea otra versión. No vuelve a gastar en las mismas imágenes ni modifica originales. El informe de Mesa se transporta como output por ruta exacta datos/mesa-estado.json; la continuación exige su run de origen y avance generado o reutilizado.

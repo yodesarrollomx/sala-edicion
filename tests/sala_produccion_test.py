@@ -399,5 +399,71 @@ class BrainAvailabilityTests(unittest.TestCase):
         self.assertIn('"workflow","run","sala-recorrido.yml"', wf)
         self.assertIn('r.get("run_id")==os.environ["GITHUB_RUN_ID"]', wf)
 
+
+
+class PublishedRecoveryTests(unittest.TestCase):
+    def test_unmounted_new_tira_does_not_hide_active_parent(self):
+        with tempfile.TemporaryDirectory() as td, patch.object(mesa, "TIRAS", Path(td)):
+            (Path(td) / (P + ".json")).write_text(json.dumps(tira()))
+            orphan = tira()
+            orphan["base"] = P
+            chosen = mesa.tiras_vigentes({"pieza": ("orphan-nube-2026-10-11-123", orphan)}, day([card()], {P: yes()}))
+        self.assertEqual(chosen["pieza"][0], P)
+
+    def test_new_generated_files_are_reused_without_new_image_calls(self):
+        helper = MesaIntegrationTests()
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "datos" / "tiras").mkdir(parents=True)
+            (root / "datos" / "tiras" / (P + ".json")).write_text(json.dumps(tira()))
+            next_id, generated = helper.run_wave(root, P, tira(), yes())
+            same_id, reused = helper.run_wave(root, P, tira(), yes())
+            self.assertEqual(same_id, next_id)
+            self.assertEqual(reused, generated)
+            r = json.loads((root / "datos" / "mesa-estado.json").read_text())
+            self.assertEqual(r["generadas"], 0)
+            self.assertEqual(r["reutilizadas"], 1)
+            self.assertEqual(r["limite_pendiente"], 1)
+
+    def test_changed_approved_reference_creates_a_new_version(self):
+        helper = MesaIntegrationTests()
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "datos" / "tiras").mkdir(parents=True)
+            first_id, first = helper.run_wave(root, P, tira(), yes())
+            second_id, second = helper.run_wave(root, P, tira(), {"laminas": ["si"], "notas": ["[toma elegida: 1]"]})
+            self.assertNotEqual(first_id, second_id)
+            self.assertEqual(first["laminas"][0]["src"], "laminas/b.png")
+            self.assertEqual(second["laminas"][0]["src"], "laminas/a.png")
+
+    def test_snapshot_state_report_is_allowed_and_survives_archive_roundtrip(self):
+        import snapshots_online as online
+        raw = b'{"schema":1,"estado":"parcial","generadas":8}'
+        prefixes = online.SALA_PATHS["mesa"]
+        self.assertTrue(online.allowed("datos/mesa-estado.json", prefixes))
+        data, manifest = online.encode_archive("yodesarrollomx/sala-edicion", "a"*40,
+            {"datos/mesa-estado.json": raw}, [], prefixes)
+        _, files = online.decode_archive(data, "yodesarrollomx/sala-edicion", prefixes)
+        self.assertEqual(files["datos/mesa-estado.json"], raw)
+        self.assertFalse(online.allowed("datos/otra-hoja-privada.json", prefixes))
+
+    def test_montage_steps_receive_snapshot_identity_and_preserve_pipe_error(self):
+        repo = Path(__file__).resolve().parents[1]
+        for name, command in [("sala-mesa.yml", "sala_mesa.py --montar"),
+                              ("sala-arranque.yml", "sala_arranque.py --montar")]:
+            text = (repo / ".github" / "workflows" / name).read_text()
+            step = next(s for s in text.split("      - name:") if command in s)
+            self.assertIn("GH_TOKEN:", step)
+            self.assertIn("set -o pipefail", step)
+
+    def test_snapshot_read_error_is_explicit_not_missing_image(self):
+        from snapshots_online import OnlineError
+        class Fail:
+            def __init__(self, *a): pass
+            def file_is_published(self, p): raise OnlineError("no identity")
+        with patch("snapshots_online.Snapshots", Fail), patch.object(mesa, "_snapshot_verifier", None):
+            with self.assertRaises(sala.SalaError):
+                mesa._snapshot_publicado("laminas/prueba.jpg")
+
 if __name__ == "__main__":
     unittest.main()

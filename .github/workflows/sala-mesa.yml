@@ -140,9 +140,12 @@ jobs:
         if: steps.mesa.outputs.codigo == '0' && env.MODO == 'montar' && (steps.guardar.outputs.hubo == 'si' || steps.guardar.outputs.hubo == 'no') && steps.publicacion.outcome == 'success'
         working-directory: nube
         env:
+          GH_TOKEN: ${{ github.token }}
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
           SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
-        run: python3 sala_mesa.py --montar 2>&1 | tee -a ../mesa.log
+        run: |
+          set -o pipefail
+          python3 sala_mesa.py --montar 2>&1 | tee -a ../mesa.log
 
       - name: Avisar si algo falló
         if: failure() || steps.mesa.outputs.codigo != '0'
