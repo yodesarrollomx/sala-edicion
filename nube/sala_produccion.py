@@ -5,7 +5,6 @@ Reutiliza exclusivamente lecturas del GAS existente. No escribe decisiones ni
 reconstruye propuestas retiradas desde un archivo local.
 """
 import copy
-import datetime as dt
 import json
 from pathlib import Path
 import re
@@ -122,6 +121,18 @@ def resolver_tira(tira, decision, prop=None):
         note = str(notes[i] or "") if i < len(notes) else ""
         note = note or str((decision or {}).get("nota") or "")
         if mark == "no":
+            displayed = (prop or {}).get("laminas") or []
+            image = displayed[i] if i < len(displayed) else ""
+            if isinstance(image, dict):
+                image = image.get("src") or ""
+            # La nota corrige lo que el editor vio, no la foto anterior sustituida.
+            shown = next((c for c in lam.get("candidatas") or []
+                          if image and image in (c.get("src"), c.get("original"))), None)
+            if shown:
+                lam["src"] = str(shown.get("original") or shown.get("src"))
+                lam["dice"] = str(shown.get("dice") or lam.get("dice") or "")
+                if shown.get("ve"):
+                    lam["ve"] = str(shown["ve"])
             lam.update(estado="rechazada", marca_previa="no", nota_previa=note)
         elif mark == "si":
             candidates = lam.get("candidatas") or []

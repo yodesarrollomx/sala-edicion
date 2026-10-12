@@ -275,5 +275,33 @@ class MesaIntegrationTests(unittest.TestCase):
             self.assertEqual(result["decidir"], [1])
             self.assertEqual(result["laminas"][1], t["laminas"][1])
 
+
+
+class RejectionSourceTests(unittest.TestCase):
+    def test_rejection_reads_the_displayed_candidate_not_the_older_image(self):
+        t = tira()
+        got = prod.resolver_tira(t, {"laminas": ["no"], "notas": ["La imagen no cuadra con el texto"]},
+                                {"laminas": ["laminas/a.jpg"]})
+        self.assertEqual(got["laminas"][0]["src"], "laminas/a.png")
+        self.assertEqual(got["laminas"][0]["dice"], "Texto A")
+        self.assertEqual(t["laminas"][0]["src"], "laminas/vieja.png")
+
+    def test_image_mismatch_note_preserves_displayed_text(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            plan = {"texto": "Texto que el cerebro quiso cambiar", "receta": "Figura neutra", "porque": "Imagen corregida"}
+            lam = {"n": 1, "dice": "Texto aprobado visible", "ve": "Figura neutra"}
+            with patch.object(mesa, "RAIZ", root), patch.object(mesa, "vetadas", return_value=[]), \
+                 patch.object(mesa.cerebro, "lamina", return_value=(plan, "doble", [])), \
+                 patch.object(mesa.imagen, "generar", return_value=(b"sintetico", "png", "doble", [])), \
+                 patch("sala_compositor.componer") as compose:
+                png, jpg = root / "nueva.png", root / "nueva.jpg"
+                png.write_bytes(b"sintetico")
+                compose.return_value = (png, jpg)
+                candidates, _ = mesa.producir_tomas("pieza", {"pieza": "Sintética"}, lam,
+                    "La imagen no cuadra con el texto", {}, [], root, 1)
+            self.assertEqual(candidates[0]["dice"], "Texto aprobado visible")
+            self.assertEqual(compose.call_args.args[1], "Texto aprobado visible")
+
 if __name__ == "__main__":
     unittest.main()

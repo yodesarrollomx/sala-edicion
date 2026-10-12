@@ -124,7 +124,7 @@ def abiertas(tid, t, leer_sheet=True):
     dec, srcs = decision_del_sheet(tid, fecha_de(t)) if leer_sheet else ({}, None)
     if leer_sheet and dec is None:
         raise sala.SalaError("la tira no tiene fuente vigente en el Sheet")
-    work = produccion.resolver_tira(t, dec)
+    work = produccion.resolver_tira(t, dec, {'laminas': srcs or []})
     mapa = work.get("mapa") or {str(i + 1): n for i, n in
                                 enumerate(work.get("decidir") or [])}
     marks = (dec or {}).get("laminas") or []
@@ -222,7 +222,10 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                                           numero=lam.get('n'))
             avisos += av
             exigir(d, reglas, 'candidata')
-            texto = d['texto']
+            # Un desacuerdo explícito entre imagen y texto corrige la imagen;
+            # no convierte la nota en permiso para reescribir el texto mostrado.
+            solo_imagen = 'la imagen no cuadra con el texto' in normalizar(nota)
+            texto = str(lam.get('dice') or '') if solo_imagen else d['texto']
             problema = guardia(texto, veto)
             if problema:
                 avisos.append('toma %d: el texto propuesto %s; se queda el de la tira' % (k, problema))
@@ -320,8 +323,8 @@ def main():
                             for n in previa.get('decidir') or []],
                 'opciones': [], 'video': None, 'origen': previa.get('origen')}})
             continue
-        dec_vigente = decision_del_sheet(tid, fecha_de(t))[0] if not args.sin_sheet else {}
-        tira = produccion.resolver_tira(t, dec_vigente)
+        dec_vigente, mostradas = decision_del_sheet(tid, fecha_de(t)) if not args.sin_sheet else ({}, None)
+        tira = produccion.resolver_tira(t, dec_vigente, {'laminas': mostradas or []})
         decidir = []
         for lam, marca, nota in pend:
             sala.avisar('   L%s · %s · nota vigente de %d caracteres' %
