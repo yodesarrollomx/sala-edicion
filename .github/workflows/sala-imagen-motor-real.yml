@@ -34,7 +34,7 @@ jobs:
           if not isinstance(rules,dict): raise SystemExit("Reglas sin contrato")
           start=time.monotonic()
           raw,ext,motor,warnings=imagen.generar(
-              "A photorealistic editorial photograph of a person looking over undeveloped land at a warm sunset in Hermosillo, Mexico. Realistic natural light.",rules)
+              "A photorealistic editorial photograph of a person looking over undeveloped land at a warm sunset. Realistic natural light.",rules)
           im=Image.open(io.BytesIO(raw));im.verify()
           im=Image.open(io.BytesIO(raw))
           assert motor=="pollinations","No se ejercitó el respaldo corregido"
