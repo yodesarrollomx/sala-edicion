@@ -1,0 +1,53 @@
+name: Sala · catálogo real de modelos
+on:
+  push:
+    branches: [codex/sala-modelos-vigentes-20261012]
+    paths: [.github/workflows/sala-modelos-lectura.yml]
+permissions:
+  contents: read
+jobs:
+  modelos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Listar modelos y verificar respuesta sintética
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re, urllib.request, urllib.error
+          key=os.environ["GEMINI_API_KEY"]
+          headers={"x-goog-api-key":key,"Content-Type":"application/json"}
+          url="https://generativelanguage.googleapis.com/v1beta/models?pageSize=100"
+          with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=45) as r:
+              result=json.load(r)
+          models=[m["name"].removeprefix("models/") for m in result.get("models",[])
+                  if "generateContent" in m.get("supportedGenerationMethods",[])
+                  and "gemini" in m.get("name","") and "flash" in m.get("name","")
+                  and not any(x in m["name"] for x in ("tts","image","audio","live","robotics"))]
+          def version(name):
+              m=re.search(r"gemini-(\d+)(?:\.(\d+))?",name)
+              return tuple(map(int,(m.group(1),m.group(2) or "0"))) if m else (0,0)
+          ordered=sorted(models,key=lambda m:(version(m),"lite" in m,"preview" not in m),reverse=True)
+          probes=[]
+          for model in ordered[:4]:
+              body={"systemInstruction":{"parts":[{"text":"Return only JSON."}]},
+                    "contents":[{"parts":[{"text":"Synthetic health test. Return exactly {\"ok\":true}."}]}],
+                    "generationConfig":{"maxOutputTokens":512,"responseMimeType":"application/json"}}
+              req=urllib.request.Request("https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent",
+                                         headers=headers,data=json.dumps(body).encode(),method="POST")
+              try:
+                  with urllib.request.urlopen(req,timeout=90) as r: value=json.load(r)
+                  text="".join(p.get("text","") for p in value.get("candidates",[{}])[0].get("content",{}).get("parts",[])
+                               if not p.get("thought"))
+                  valid=json.loads(text)=={"ok":True}
+                  probes.append({"modelo":model,"respuesta_verificada":valid})
+                  if valid: break
+              except urllib.error.HTTPError as e:
+                  probes.append({"modelo":model,"http":e.code,"respuesta_verificada":False})
+              except Exception as e:
+                  probes.append({"modelo":model,"error_tipo":type(e).__name__,"respuesta_verificada":False})
+          print(json.dumps({"modelos":models,"pruebas_sinteticas":probes,
+                            "escrituras_negocio":0,"correos":0},ensure_ascii=False))
+          if not any(p["respuesta_verificada"] for p in probes): raise SystemExit(2)
+          PY
