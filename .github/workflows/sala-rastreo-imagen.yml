@@ -79,3 +79,7 @@ jobs:
               print("MESA_PUBLICA "+json.dumps({k:report.get(k) for k in ("estado","causa","generadas","fallidas","limite_pendiente","cartas","modelo_imagen","run_id","revisado_en")}))
           except Exception:print("MESA_PUBLICA "+json.dumps({"estado":"sin informe nuevo"}))
           PY
+      - name: Cosechar chinches de todos los tableros que escriben al buzón común
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sala-chinches.yml --ref main -f simular=false
