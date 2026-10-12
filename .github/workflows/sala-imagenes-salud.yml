@@ -35,33 +35,18 @@ jobs:
                   row={"proveedor":label,"tipo_error":type(e).__name__,"segundos":round(time.monotonic()-start,2),"imagen_verificada":False}
                   out.append(row);return row,None,None
           prompt="A simple gray cube centered on a clean white background. No text or letters."
-          account=os.environ.get("CF_ACCOUNT_ID");token=os.environ.get("CF_API_TOKEN")
-          if account and token:
-              row,body,typ=req("cloudflare","https://api.cloudflare.com/client/v4/accounts/"+account+
-                  "/ai/run/@cf/black-forest-labs/flux-1-schnell",{"prompt":prompt,"steps":1},
-                  {"Authorization":"Bearer "+token})
-              if body:
-                  if "json" in typ:
-                      try: raw=base64.b64decode((json.loads(body).get("result") or {}).get("image") or "")
-                      except Exception: raw=b""
-                  else: raw=body
-                  row["imagen_verificada"]=len(raw)>1024 and (raw.startswith(b"\xff\xd8") or raw.startswith(b"\x89PNG"))
-          else: out.append({"proveedor":"cloudflare","configurado":False})
           key=os.environ.get("GEMINI_API_KEY")
           if key:
-              row,body,typ=req("catalogo_gemini","https://generativelanguage.googleapis.com/v1beta/models?key="+key)
-              if body:
-                  names=[m["name"].removeprefix("models/") for m in json.loads(body).get("models",[])
-                         if "generateContent" in m.get("supportedGenerationMethods",[]) and "image" in m["name"]]
-                  row["modelos_imagen"]=names
-              row,body,typ=req("gemini_2_5_imagen","https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key="+key,
-                  {"contents":[{"parts":[{"text":prompt}]}],"generationConfig":{"responseModalities":["IMAGE","TEXT"]}})
-              if body:
-                  try:
-                      parts=json.loads(body).get("candidates",[{}])[0].get("content",{}).get("parts",[])
-                      raws=[base64.b64decode((p.get("inlineData") or p.get("inline_data") or {}).get("data") or "") for p in parts]
-                      row["imagen_verificada"]=any(len(r)>1024 and (r.startswith(b"\xff\xd8") or r.startswith(b"\x89PNG")) for r in raws)
-                  except Exception: row["imagen_verificada"]=False
+              for model in ["gemini-3.1-flash-lite-image","gemini-3.1-flash-image"]:
+                  row,body,typ=req(model,"https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent?key="+key,
+                      {"contents":[{"parts":[{"text":prompt}]}],"generationConfig":{"responseModalities":["IMAGE","TEXT"]}})
+                  if body:
+                      try:
+                          parts=json.loads(body).get("candidates",[{}])[0].get("content",{}).get("parts",[])
+                          raws=[base64.b64decode((p.get("inlineData") or p.get("inline_data") or {}).get("data") or "") for p in parts]
+                          row["imagen_verificada"]=any(len(r)>1024 and (r.startswith(b"\xff\xd8") or r.startswith(b"\x89PNG")) for r in raws)
+                      except Exception: row["imagen_verificada"]=False
+                  if row.get("imagen_verificada"): break
           else: out.append({"proveedor":"gemini","configurado":False})
           print("PROVEEDORES_META "+json.dumps({"pruebas":out,"escrituras_negocio":0,"prompts_sinteticos":True}))
           PY
