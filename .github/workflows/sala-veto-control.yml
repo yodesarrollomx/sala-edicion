@@ -1,84 +1,82 @@
-name: Sala · chinches y auditoría de modelos
+name: Sala · comprobar retiro publicado
 on:
   push:
     branches: [codex/sala-veto-modelo-control-20261012]
     paths: [.github/workflows/sala-veto-control.yml]
 permissions:
   contents: read
-  actions: write
 jobs:
-  auditar:
+  verificar:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 1b555ccad93b66fbc21432f7294061defc681a90
+          ref: 02b06521575ea6b938a7af7350dcae9bb6ea54ab
           persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - run: pip install --quiet requests
-      - name: Leer último snapshot privado
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python3 nube/snapshots_online.py bootstrap
-      - name: Relacionar decisiones actuales con motores sin publicar notas
+      - name: Comprobar publicación y proyección real de la siguiente revisión
         env:
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
           SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
           PYTHONPATH: nube
         run: |
           python3 - <<'PY'
-          import base64,collections,json,urllib.request
+          import hashlib,json,pathlib,re,subprocess,time,urllib.request
           import sala_cliente as sala
-          from sala_produccion import cargar,leer_tira
-          from motores._comun import toma_elegida
-          cache={}
-          def tirar(pid):
-              if pid not in cache:
-                  local=leer_tira(pid)
-                  if local: cache[pid]=local
-                  else:
-                      try:
-                          with urllib.request.urlopen("https://yodesarrollomx.github.io/sala-edicion/datos/tiras/"+pid+".json",timeout=30) as r:
-                              cache[pid]=json.load(r)
-                      except Exception: cache[pid]=None
-              return cache[pid]
-          ctx=cargar();decs=ctx["decisiones"]["propuestas"];props={p["id"]:p for p in ctx["propuestas"]}
-          stats=collections.defaultdict(lambda:{"aprobadas":0,"rechazos_exclusivos":0,"rechazos_compartidos":0})
-          by_slot=[];unassigned=0;missing=0
-          for pid,d in decs.items():
-              if pid not in props: continue
-              t=tirar(pid)
-              if not t: missing+=1;continue
-              mapa=t.get("mapa") or {str(i+1):v for i,v in enumerate(t.get("decidir",[]))}
-              lams={str(l["n"]):l for l in t.get("laminas",[])}
-              notes=d.get("notas") or d.get("notas_laminas") or []
-              for i,m in enumerate(d.get("laminas",[])):
-                  if m not in ("si","no"):continue
-                  l=lams.get(str(mapa.get(str(i+1),i+1)))
-                  if not l:continue
-                  cs=l.get("candidatas") or [];engines=sorted({c.get("motor") or "sin_procedencia" for c in cs})
-                  note=str(notes[i] or "") if i<len(notes) else ""
-                  selected=toma_elegida(note or d.get("nota") or "")
-                  if m=="si" and 0<selected<=len(cs): stats[cs[selected-1].get("motor") or "sin_procedencia"]["aprobadas"]+=1
-                  elif m=="no":
-                      for e in engines: stats[e]["rechazos_exclusivos" if len(engines)==1 else "rechazos_compartidos"]+=1
-                      if not engines:unassigned+=1
-                  if pid=="tu-terreno-tus-reglas-nube-2026-10-11-37000b":
-                      by_slot.append({"indice":i,"n":l["n"],"marca":m,"motores":engines,
-                                      "seleccion":selected if selected else None})
-          print("MODELOS_META "+json.dumps({"fecha":ctx["fecha"],"motores":dict(stats),
-              "sin_procedencia":unassigned,"fuentes_sin_tira":missing,"foco":by_slot}))
-          focus=tirar("tu-terreno-tus-reglas-nube-2026-10-11-37000b")
-          if focus:
-              mapa=focus.get("mapa") or {}
-              real=mapa.get("4",4)
-              lam=next((l for l in focus["laminas"] if str(l["n"])==str(real)),None)
-              if lam:
-                  for c in lam.get("candidatas",[]):
-                      print("FOCO_META "+json.dumps({"n":lam["n"],"motor":c.get("motor"),
-                            "cerebro":c.get("cerebro"),"titulo":c.get("titulo")}))
-                      src=c.get("src")
-                      if src and src.startswith("laminas/") and ".." not in src.split("/"):
-                          with urllib.request.urlopen("https://yodesarrollomx.github.io/sala-edicion/"+src,timeout=30) as r: raw=r.read()
-                          print("FOTO_BASE64 "+base64.b64encode(raw).decode())
+          from sala_produccion import cargar,resolver_tira
+          sala.enmascarar_en_actions()
+          base="https://yodesarrollomx.github.io/sala-edicion/"
+          def get(path):
+              req=urllib.request.Request(base+path,headers={"Cache-Control":"no-cache"})
+              with urllib.request.urlopen(req,timeout=30) as r: return r.read()
+          expected=pathlib.Path("politica-imagen.js").read_bytes()
+          expected_html=pathlib.Path("index.html").read_text()
+          seal=re.search("const SELLO_SALA='([^']+)'",expected_html).group(1)
+          end=time.time()+900
+          while time.time()<end:
+              try:
+                  actual=get("politica-imagen.js")
+                  html=get("index.html").decode()
+                  if actual==expected and ("const SELLO_SALA='"+seal+"'") in html:break
+              except Exception:pass
+              time.sleep(10)
+          else:raise SystemExit("Veto no publicado con versión exacta")
+          print("POLITICA_PUBLICA_META "+json.dumps({"code_sha":"02b06521575ea6b938a7af7350dcae9bb6ea54ab",
+              "sha256":hashlib.sha256(actual).hexdigest(),"sello":seal,"confirmada":True}))
+          def tira(pid):
+              if not re.fullmatch("[A-Za-z0-9_.-]+",pid):raise ValueError("id inválido")
+              try:return json.loads(get("datos/tiras/"+pid+".json"))
+              except Exception:return None
+          ctx=cargar(tira_reader=tira)
+          entries=[];missing=0
+          for p in ctx["propuestas"]:
+              if not p.get("laminas"):continue
+              t=tira(p["id"])
+              if not t:missing+=1;continue
+              d=ctx["decisiones"]["propuestas"].get(p["id"],{})
+              resolved=resolver_tira(t,d,p)
+              for l in resolved.get("laminas",[]):
+                  if l.get("estado")=="aprobada":continue
+                  entries.append({"estado":l.get("estado"),"src":l.get("src"),
+                                  "candidatas":[{k:c.get(k) for k in ("src","original","motor","modelo")}
+                                                for c in l.get("candidatas",[])]})
+          code="""const p=require('./politica-imagen.js');
+          let raw='';process.stdin.on('data',c=>raw+=c);process.stdin.on('end',()=>{
+           const rows=JSON.parse(raw);let before=0,after=0,wait=0,ok=0;
+           for(const l of rows){before+=l.candidatas.filter(p.vetada).length;
+            const cs=p.tomas(l);after+=cs.filter(p.vetada).length;
+            const src=p.srcLamina(l,l.src);
+            if(!src)wait++;else ok++;
+            if(l.candidatas.some(c=>p.vetada(c)&&(c.src===src||c.original===src)))throw Error('Foto vetada ofrecida');
+           }
+           console.log('VISTA_META '+JSON.stringify({laminas_pendientes:rows.length,
+             candidatas_retiradas:before,candidatas_vetadas_visibles:after,
+             con_toma_permitida:ok,en_espera:wait,escrituras_decisiones:0}));
+          });"""
+          subprocess.run(["node","-e",code],input=json.dumps(entries),text=True,check=True)
+          print("LECTURA_META "+json.dumps({"fecha":ctx["fecha"],"tarjetas_sin_tira":missing}))
           PY
