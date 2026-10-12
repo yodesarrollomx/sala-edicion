@@ -60,7 +60,7 @@ def gemini_pro(receta, reglas):
     return gemini(receta, dict(reglas or {}, imagen_gemini_modelo=MODELO_GEMINI_PRO))
 
 def modelo_de(motor, reglas=None):
-    return {'cloudflare_flux2': MODELO_FLUX2, 'gemini_pro': MODELO_GEMINI_PRO,
+    return {'openai_broker': 'gpt-image-1.5', 'cloudflare_flux2': MODELO_FLUX2, 'gemini_pro': MODELO_GEMINI_PRO,
             'cloudflare': '@cf/black-forest-labs/flux-1-schnell',
             'gemini': str((reglas or {}).get('imagen_gemini_modelo') or 'gemini-2.5-flash-image'),
             'pollinations': 'pollinations/flux', 'hf': 'black-forest-labs/FLUX.1-schnell',
@@ -68,12 +68,12 @@ def modelo_de(motor, reglas=None):
 
 
 
-def _pedir(url, cuerpo, cabeceras, quien):
+def _pedir(url, cuerpo, cabeceras, quien, espera=ESPERA):
     pet = urllib.request.Request(url, data=json.dumps(cuerpo).encode('utf-8'),
                                  headers=dict({'Content-Type': 'application/json'}, **cabeceras),
                                  method='POST')
     try:
-        with urllib.request.urlopen(pet, timeout=ESPERA) as r:
+        with urllib.request.urlopen(pet, timeout=espera) as r:
             return r.read(), r.headers.get('Content-Type', '')
     except urllib.error.HTTPError as e:
         crudo = e.read().decode('utf-8', 'replace')
@@ -82,6 +82,39 @@ def _pedir(url, cuerpo, cabeceras, quien):
     except urllib.error.URLError as e:
         raise MotorError('%s no contestó: %s' % (quien, sala.redactar(str(e))), intermitente=True)
 
+
+def openai_broker(receta, reglas):
+    """GPT Image en el servidor propio: la clave OpenAI permanece allí."""
+    import hashlib
+    import hmac
+    token = hmac.new(sala._clave().encode(), b'yod:sala:image-broker:v1', hashlib.sha256).hexdigest()
+    url = 'https://yod-cloud-room.onrender.com/sala/image'
+    request_id = str((reglas or {}).get('_imagen_request_id') or hashlib.sha256(receta.encode()).hexdigest())
+    # Reconcilia un resultado confirmado antes de pedir otra generación.
+    req = urllib.request.Request(url+'/result/'+request_id, headers={'Authorization': 'Bearer '+token})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            result = json.load(r)
+    except urllib.error.HTTPError as e:
+        try:
+            raw = json.loads(e.read() or b'{}')
+        except ValueError:
+            raise MotorError('GPT Image: recibo sin confirmar (%s)' % e.code, intermitente=True) from None
+        if e.code not in (404,409) or raw.get('error') not in ('not_confirmed', 'not_found'):
+            raise MotorError('GPT Image: '+str(raw.get('error') or e.code), intermitente=True) from None
+        result = None
+    except urllib.error.URLError:
+        raise MotorError('GPT Image: recibo sin confirmar', intermitente=True) from None
+    if result is None:
+        raw, _ = _pedir(url, {'request_id':request_id,'prompt':receta},
+                       {'Authorization':'Bearer '+token}, 'GPT Image', espera=240)
+        result = json.loads(raw)
+    if not result.get('ok') or result.get('model') != 'gpt-image-1.5':
+        raise MotorError('GPT Image contestó sin imagen confirmada', intermitente=True)
+    if isinstance(reglas, dict):
+        reglas['_receta_proveedor_sha256'] = result.get('recipe_sha')
+        reglas['_imagen_recibo_id'] = request_id
+    return base64.b64decode(result['image'], validate=True), 'png'
 
 def cloudflare(receta, reglas):
     cuenta = os.environ.get('CF_ACCOUNT_ID', '').strip()
@@ -173,7 +206,7 @@ def cpu(receta, reglas):
     return generar_cpu(receta, reglas)
 
 
-MOTORES = {'cloudflare_flux2': cloudflare_flux2, 'gemini_pro': gemini_pro,
+MOTORES = {'openai_broker': openai_broker, 'cloudflare_flux2': cloudflare_flux2, 'gemini_pro': gemini_pro,
            'cloudflare': cloudflare, 'gemini': gemini, 'pollinations': pollinations, 'hf': hf, 'cpu': cpu}
 
 

@@ -246,7 +246,9 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                     avisos.append('toma %d: el texto de la tira también %s — no se monta' % (k, guardia(texto, veto)))
                     continue
             exigir({'texto': texto}, reglas, 'texto elegido')
-            datos, ext, motor, av2 = imagen.generar(d['receta'], reglas)
+            reglas_imagen = dict(reglas, _imagen_request_id=hashlib.sha256(
+                (str(carpeta.relative_to(RAIZ)) + ':L%d-%d' % (lam['n'], k)).encode()).hexdigest())
+            datos, ext, motor, av2 = imagen.generar(d['receta'], reglas_imagen)
             avisos += av2
             with tempfile.NamedTemporaryFile(suffix='.' + ext) as tmp:
                 tmp.write(datos)
@@ -258,7 +260,8 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                           'generado_en': dt.datetime.now(dt.timezone.utc).isoformat(),
                           'run_id': __import__('os').environ.get('GITHUB_RUN_ID'),
                           'workflow': __import__('os').environ.get('GITHUB_WORKFLOW'),
-                          'receta_sha256': hashlib.sha256(d['receta'].encode()).hexdigest(),
+                          'receta_sha256': reglas_imagen.get('_receta_proveedor_sha256') or hashlib.sha256(d['receta'].encode()).hexdigest(),
+                          'recibo_imagen': reglas_imagen.get('_imagen_recibo_id'),
                           'huella': hashlib.md5(png.read_bytes()).hexdigest()})
         except imagen.CupoImagen as e:
             avisos.append('CUPO_IMAGEN_AGOTADO: %s' % e)
