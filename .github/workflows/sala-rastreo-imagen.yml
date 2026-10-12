@@ -1,4 +1,4 @@
-name: Sala · observar reemplazos reales en curso
+name: Sala · verificar GPT y recibos sin generar imágenes
 on:
   push:
     branches: [codex/sala-rastrear-rehacer-imagenes-20261012]
@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 4201e5ad4ae92ea49aeed6e5199570c9c13b85a1
+          ref: dde4ab0151c5cc36071882380afe7ecf495ecef6
           persist-credentials: false
       - run: pip install --quiet requests pillow
       - name: Contar recibos confirmados sin generar ni escribir decisiones
@@ -29,6 +29,9 @@ jobs:
           sala.enmascarar_en_actions()
           key=hmac.new(sala._clave().encode(),b'yod:sala:image-broker:v1',hashlib.sha256).hexdigest()
           print("::add-mask::"+key)
+          req=urllib.request.Request("https://yod-cloud-room.onrender.com/sala/image/status",headers={"Authorization":"Bearer "+key})
+          with urllib.request.urlopen(req,timeout=30) as r:health=json.load(r)
+          print("GPT_STATUS "+json.dumps({k:health.get(k) for k in ["ok","model","configured","provider_error","last_success","daily_attempts"]}))
           base="https://yodesarrollomx.github.io/sala-edicion/"
           def tira(pid):
               if not re.fullmatch("[A-Za-z0-9_.-]+",pid):raise ValueError("id inválido")
