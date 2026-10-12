@@ -8,47 +8,69 @@ permissions:
 jobs:
   entregas:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 18
     steps:
-      - name: Comprobar tiras, estado y fotografías publicadas
+      - name: Comprobar cierre del guion y conservación de tomas
         run: |
           python3 - <<'PY'
-          import base64, hashlib, json, time, urllib.request, urllib.error
+          import hashlib, json, time, urllib.request, urllib.error
           base="https://yodesarrollomx.github.io/sala-edicion/"
-          slugs=("doble-via","la-ruta-autonoma","la-identidad-no-se-improvisa","llamada-que-pasa","mesa-vacia")
+          targets={
+            "doble-via":"doble-via-nube-2026-10-11-5109dd",
+            "la-identidad-no-se-improvisa":"la-identidad-no-se-improvisa-nube-2026-10-11-b5db77",
+            "llamada-que-pasa":"llamada-que-pasa-nube-2026-10-11-11c518",
+            "mesa-vacia":"mesa-vacia-nube-2026-10-11-22107b"}
+          previous="la-ruta-autonoma-nube-2026-10-11-0cab8c"
           def get(path):
               req=urllib.request.Request(base+path,headers={"Cache-Control":"no-cache"})
               with urllib.request.urlopen(req,timeout=30) as r: return r.read()
-          end=time.time()+1200
-          found={}
+          def read(pid): return json.loads(get("datos/tiras/"+pid+".json"))
+          old=read(previous)
+          end=time.time()+900
+          final=None
           while time.time()<end:
               try:
                   ids=json.loads(get("datos/tiras/index.json"))
-                  for slug in slugs:
-                      for pid in ids:
-                          if not pid.startswith(slug+"-nube-2026-10-11-"): continue
-                          t=json.loads(get("datos/tiras/"+pid+".json"))
-                          if not all(n in t for n in ("mapa","laminas","guion")): continue
-                          found[slug]=(pid,t);break
-                  if len(found)==len(slugs): break
+                  for pid in ids:
+                      if not pid.startswith("la-ruta-autonoma-nube-2026-10-11-"): continue
+                      t=read(pid)
+                      if (t.get("base")==previous and len(t.get("laminas",[]))==6
+                          and len(t.get("guion",[]))==6 and t.get("decidir")==[2,3,4,5,6]):
+                          final=(pid,t);break
+                  if final: break
               except (OSError,ValueError,urllib.error.URLError): pass
               time.sleep(20)
-          print("ENTREGAS_META "+json.dumps({"encontradas":len(found),
-              "tiras":[{"slug":s,"id":p,"laminas":len(t["laminas"]),
-                        "guion":len(t["guion"]),"decidir":t.get("decidir",[])}
-                       for s,(p,t) in found.items()],"escrituras_negocio":0}))
-          for slug in ("la-identidad-no-se-improvisa","llamada-que-pasa","mesa-vacia"):
-              if slug not in found: continue
-              pid,t=found[slug]
-              for n in t.get("decidir",[]):
-                  lam=next(l for l in t["laminas"] if l["n"]==n)
-                  c=lam["candidatas"][0];path=c["src"]
-                  if not path.startswith("laminas/") or ".." in path.split("/") or not path.endswith(".jpg"):
-                      raise SystemExit("Ruta de medio inesperada")
-                  raw=get(path)
-                  print("FOTO_META "+json.dumps({"slug":slug,"src":path,"dice":c["dice"],
-                       "motor":c.get("motor"),"sha256":hashlib.sha256(raw).hexdigest(),"bytes":len(raw)}))
-                  print("FOTO_BASE64 "+base64.b64encode(raw).decode())
-                  break
-          if len(found)!=len(slugs): raise SystemExit(2)
+          if not final: raise SystemExit("No hay tira completa comprobada")
+          pid,t=final
+          old_l={str(l["n"]):l for l in old["laminas"]}
+          new_l={str(l["n"]):l for l in t["laminas"]}
+          def fingerprint(l):
+              return {"src":l.get("src"),"dice":l.get("dice"),
+                      "candidatas":[{"src":c.get("src"),"original":c.get("original"),
+                                     "dice":c.get("dice")} for c in l.get("candidatas",[])]}
+          assert new_l["1"].get("estado")=="aprobada"
+          for number in ["1","2","3","4"]:
+              assert fingerprint(new_l[number])==fingerprint(old_l[number]),"Cambió una toma conservada"
+          assert new_l["1"]["src"]=="laminas/la-ruta-autonoma-n2026-10-07/L1-1.png"
+          assert all(new_l[str(n)].get("estado")!="aprobada" for n in range(2,7))
+          targets["la-ruta-autonoma"]=pid
+          metas=[]
+          hashes=[]
+          for slug,p in targets.items():
+              tira=read(p)
+              metas.append({"slug":slug,"id":p,"laminas":len(tira["laminas"]),
+                            "guion":len(tira.get("guion",[])),"decidir":tira.get("decidir",[])})
+              for number in tira.get("decidir",[]):
+                  lam=next(l for l in tira["laminas"] if l["n"]==number)
+                  for c in lam.get("candidatas",[]):
+                      path=c["src"]
+                      assert path.startswith("laminas/") and ".." not in path.split("/")
+                      raw=get(path)
+                      assert len(raw)>1024 and (raw.startswith(b"\xff\xd8") or raw.startswith(b"\x89PNG"))
+                      hashes.append({"slug":slug,"n":number,"bytes":len(raw),
+                                     "sha256":hashlib.sha256(raw).hexdigest()})
+          print("CIERRE_META "+json.dumps({"encontradas":len(metas),"tiras":metas,
+              "toma_aprobada_conservada":True,"candidatas_anteriores_conservadas":3,
+              "escrituras_negocio":0}))
+          print("MEDIOS_META "+json.dumps(hashes))
           PY
