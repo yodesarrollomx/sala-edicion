@@ -1,0 +1,54 @@
+name: Sala · comprobar entregas públicas
+on:
+  push:
+    branches: [codex/sala-modelos-vigentes-20261012]
+    paths: [.github/workflows/sala-entregas-lectura.yml]
+permissions:
+  contents: read
+jobs:
+  entregas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Comprobar tiras, estado y fotografías publicadas
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, json, time, urllib.request, urllib.error
+          base="https://yodesarrollomx.github.io/sala-edicion/"
+          slugs=("doble-via","la-ruta-autonoma","la-identidad-no-se-improvisa","llamada-que-pasa","mesa-vacia")
+          def get(path):
+              req=urllib.request.Request(base+path,headers={"Cache-Control":"no-cache"})
+              with urllib.request.urlopen(req,timeout=30) as r: return r.read()
+          end=time.time()+1200
+          found={}
+          while time.time()<end:
+              try:
+                  ids=json.loads(get("datos/tiras/index.json"))
+                  for slug in slugs:
+                      for pid in ids:
+                          if not pid.startswith(slug+"-nube-2026-10-11-"): continue
+                          t=json.loads(get("datos/tiras/"+pid+".json"))
+                          if not all(n in t for n in ("mapa","laminas","guion")): continue
+                          found[slug]=(pid,t);break
+                  if len(found)==len(slugs): break
+              except (OSError,ValueError,urllib.error.URLError): pass
+              time.sleep(20)
+          print("ENTREGAS_META "+json.dumps({"encontradas":len(found),
+              "tiras":[{"slug":s,"id":p,"laminas":len(t["laminas"]),
+                        "guion":len(t["guion"]),"decidir":t.get("decidir",[])}
+                       for s,(p,t) in found.items()],"escrituras_negocio":0}))
+          for slug in ("la-identidad-no-se-improvisa","llamada-que-pasa","mesa-vacia"):
+              if slug not in found: continue
+              pid,t=found[slug]
+              for n in t.get("decidir",[]):
+                  lam=next(l for l in t["laminas"] if l["n"]==n)
+                  c=lam["candidatas"][0];path=c["src"]
+                  if not path.startswith("laminas/") or ".." in path.split("/") or not path.endswith(".jpg"):
+                      raise SystemExit("Ruta de medio inesperada")
+                  raw=get(path)
+                  print("FOTO_META "+json.dumps({"slug":slug,"src":path,"dice":c["dice"],
+                       "motor":c.get("motor"),"sha256":hashlib.sha256(raw).hexdigest(),"bytes":len(raw)}))
+                  print("FOTO_BASE64 "+base64.b64encode(raw).decode())
+                  break
+          if len(found)!=len(slugs): raise SystemExit(2)
+          PY
