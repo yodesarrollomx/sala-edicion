@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-12.sala-openai-broker.1",
-  "proposal_id": "CHG-SALA-OPENAI-BROKER-20261012",
-  "summary": "Activar GPT Image tras prueba real; mantener veto, recibos y texto visible; retirar dependencias CPU de la Mesa de imágenes.",
+  "model_revision": "2026-10-12.sala-imagen-publicacion.1",
+  "proposal_id": "CHG-SALA-IMAGEN-PUBLICACION-20261012",
+  "summary": "Neutralizar referencia heredada, recuperar imágenes confirmadas aun sin cupo y admitir el paquete nuevo con límites conservados.",
   "components": [
     "SYS-YOD-OS",
     "SYS-CONTROL",
@@ -22,8 +22,7 @@
     "python3 nube/verificar.py",
     "python3 -m unittest discover -s tests -p '*_test.py'",
     "node --test tests/imagen-broker.test.mjs",
-    "Prueba real38302218587: GPT Image1.5,1024x1536,PNG válido e inspección visual.",
-    "Publicación y montaje de los reemplazos pendientes sin votos del agente."
+    "Referencia con ubicación vetada; modo sólo recibo sin POST ni respaldo; límites de ZIP y descompresión existentes."
   ],
-  "rollback": "Revertir por PR preservando recibos, archivos, votos y retiro de modelos; volver al proveedor nuevo disponible con estado explícito."
+  "rollback": "Revertir por PR manteniendo fotos, recibos, decisiones y política de retiro. No borrar historia para reducir un paquete; límites de archivo, rutas y datos siguen vigentes."
 }

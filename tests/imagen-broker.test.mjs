@@ -54,3 +54,12 @@ test('una solicitud pendiente de otro proceso no se repite al reiniciar',async()
   assert.equal((await call(b)).status,409);
  });
 });
+
+test('diagnóstico de crédito expone código sin mensaje privado',async()=>{
+ await setup(async b=>{
+  const r=await call(b);assert.equal(r.status,429);assert.equal(r.body.provider_code,'insufficient_quota');
+  assert.ok(!JSON.stringify(r).includes('PRIVATE-ERROR-MESSAGE'));
+  const status=await call(b,{method:'GET',url:'/sala/image/status'});
+  assert.equal(status.body.provider_error.provider_code,'insufficient_quota');
+ },{fetchImpl:async()=>({ok:false,status:429,text:async()=>JSON.stringify({error:{code:'insufficient_quota',type:'quota',message:'PRIVATE-ERROR-MESSAGE'}})})});
+});

@@ -22,7 +22,10 @@ export function createSalaImageBroker({env=process.env,fetchImpl=globalThis.fetc
   const day=new Date(now()).toISOString().slice(0,10),budgetPath=join(root,'budget.json');
   const previous=await read(budgetPath),budget=previous?.day===day?previous:{day,attempts:0};
   if(!Number.isInteger(cap)||cap<1||cap>80||budget.attempts>=cap)return {status:429,body:{ok:false,error:'daily_limit'}};
-  budget.attempts++;await save(budgetPath,budget);
+  const interval=61000;
+  const delay=Math.max(0,Number(budget.last_started||0)+interval-now());
+  if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
+  budget.attempts++;budget.last_started=now();await save(budgetPath,budget);
   await save(p,{phase:'inflight',recipe_sha:sha,started:now()});
   let r;
   try{r=await fetchImpl('https://api.openai.com/v1/images/generations',{method:'POST',
@@ -32,9 +35,17 @@ export function createSalaImageBroker({env=process.env,fetchImpl=globalThis.fetc
    await save(p,{phase:'uncertain',recipe_sha:sha});return {status:503,body:{ok:false,error:'generation_uncertain_do_not_repeat'}};
   }
   if(!r.ok){
+   let error={};try{const raw=typeof r.text==='function'?await r.text():'';if(raw.length<100000)error=JSON.parse(raw).error||{};}catch{}
+   const safe=v=>typeof v==='string'&&/^[a-z0-9_]{1,80}$/i.test(v)?v:null;
+   const code=safe(error.code),type=safe(error.type);
+   const retry=Number(r.headers?.get?.('retry-after')||0);
+   const rate=code==='rate_limit_exceeded';
+   const metadata={provider_status:r.status,provider_code:code,provider_type:type,at:now()};
+   budget.last_error=metadata;await save(budgetPath,budget);
+   const phase=r.status>=500?'uncertain':'blocked';
+   await save(p,{phase,recipe_sha:sha,...metadata,retry_after:now()+(rate?Math.max(61000,retry*1000):3600000)});
    const status=r.status===429?429:503;
-   await save(p,{phase:'blocked',recipe_sha:sha,provider_status:r.status,retry_after:now()+3600000});
-   return {status,body:{ok:false,error:'provider_unavailable',provider_status:r.status}};
+   return {status,body:{ok:false,error:phase==='uncertain'?'generation_uncertain_do_not_repeat':'provider_unavailable',...metadata}};
   }
   let data;
   try{
@@ -46,12 +57,18 @@ export function createSalaImageBroker({env=process.env,fetchImpl=globalThis.fetc
   }
   const result={ok:true,model:MODEL,mime:'image/png',image:data,request_id:id,recipe_sha:sha,generated_at:new Date(now()).toISOString()};
   await save(p,{phase:'confirmed',recipe_sha:sha,result});
+  budget.last_error=null;budget.last_success=now();await save(budgetPath,budget);
   return {status:200,body:result};
  }
  async function handle(req,res){
   const token=String(req.headers.authorization||'').replace(/^Bearer /,'');
   if(!env.SALA_IMAGE_TOKEN||!timingSafeEqual(Buffer.from(hash(token),'hex'),Buffer.from(hash(env.SALA_IMAGE_TOKEN),'hex'))){send(res,401,{ok:false,error:'unauthorized'});return;}
-  if(req.method==='GET'&&req.url==='/sala/image/status'){send(res,enabled?200:503,{ok:enabled,model:MODEL,configured:enabled});return;}
+  if(req.method==='GET'&&req.url==='/sala/image/status'){
+   let budget=null;try{if(enabled)budget=await read(join(root,'budget.json'));}catch{}
+   send(res,enabled?200:503,{ok:enabled,model:MODEL,configured:enabled,
+     provider_error:budget?.last_error||null,last_success:budget?.last_success||null,
+     daily_attempts:budget?.day===new Date(now()).toISOString().slice(0,10)?budget.attempts:0});return;
+  }
   const match=req.method==='GET'&&/^\/sala\/image\/result\/([a-f0-9]{64})$/.exec(req.url||'');
   if(match&&enabled){
    try{

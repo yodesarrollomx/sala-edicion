@@ -46,4 +46,15 @@ class BrokerClienteTest(unittest.TestCase):
             with self.assertRaises(imagen.MotorError):imagen.openai_broker("Synthetic",{})
         post.assert_not_called()
 
+class SoloReciboTest(unittest.TestCase):
+    def test_sin_recibo_y_sin_cupo_no_genera_ni_usa_respaldo(self):
+        import io
+        error=urllib.error.HTTPError("https://synthetic.invalid",404,"not found",{},io.BytesIO(b'{"error":"not_confirmed"}'))
+        with patch.object(imagen.sala,"_clave",return_value="synthetic-agent"),\
+             patch.object(imagen.urllib.request,"urlopen",side_effect=error),patch.object(imagen,"_pedir") as post,\
+             patch.object(imagen,"cloudflare_flux2",side_effect=AssertionError("no respaldo")):
+            with self.assertRaises(imagen.ReciboNoConfirmado):
+                imagen.generar("Synthetic",{"_imagen_solo_recibo":True})
+        post.assert_not_called()
+
 if __name__=="__main__":unittest.main()
