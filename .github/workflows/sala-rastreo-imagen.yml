@@ -1,48 +1,70 @@
-name: Sala · comprobar GPT Image antes de activarlo
+name: Sala · observar reemplazos reales en curso
 on:
   push:
     branches: [codex/sala-rastrear-rehacer-imagenes-20261012]
     paths: [.github/workflows/sala-rastreo-imagen.yml]
 permissions:
   contents: read
-  actions: write
 jobs:
-  imagen:
+  observar:
     runs-on: ubuntu-latest
-    timeout-minutes: 16
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: c0ecc27f42351bba91afc1e770a44a05758c9e23
+          ref: 4201e5ad4ae92ea49aeed6e5199570c9c13b85a1
           persist-credentials: false
-      - run: pip install --quiet pillow requests
-      - name: Comprobar disponibilidad y una imagen real sin votos ni montaje
+      - run: pip install --quiet requests pillow
+      - name: Contar recibos confirmados sin generar ni escribir decisiones
         env:
           PYTHONPATH: nube
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
           SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
         run: |
           python3 - <<'PY'
-          import base64,hashlib,hmac,io,json,os,time,urllib.request,urllib.error
+          import base64,concurrent.futures,hashlib,hmac,io,json,re,urllib.request,urllib.error
           from PIL import Image
-          import sala_cliente as sala
-          from motores import imagen
+          import sala_cliente as sala,sala_mesa as mesa
+          from sala_produccion import cargar
           sala.enmascarar_en_actions()
           key=hmac.new(sala._clave().encode(),b'yod:sala:image-broker:v1',hashlib.sha256).hexdigest()
           print("::add-mask::"+key)
-          url="https://yod-cloud-room.onrender.com/sala/image/status"
-          end=time.time()+720
-          while time.time()<end:
+          base="https://yodesarrollomx.github.io/sala-edicion/"
+          def tira(pid):
+              if not re.fullmatch("[A-Za-z0-9_.-]+",pid):raise ValueError("id inválido")
+              with urllib.request.urlopen(base+"datos/tiras/"+pid+".json",timeout=30) as r:return json.load(r)
+          ctx=cargar(tira_reader=tira);mesa._contexto_produccion=ctx;targets=[]
+          for p in ctx["propuestas"]:
+              if not p.get("laminas"):continue
+              t=tira(p["id"]);pending=mesa.abiertas(p["id"],t)
+              if not pending:continue
+              slug=t["pieza_slug"]
+              new=slug+"-nube-"+sala.hoy_hermosillo()+"-"+hashlib.md5(json.dumps(
+                  {"base":p["id"],"laminas":[(l["n"],m,n,l.get("src"),l.get("dice")) for l,m,n in pending]},
+                  ensure_ascii=False).encode()).hexdigest()[:6]
+              for l,m,n in pending:
+                  if m!="reemplazar_modelo":continue
+                  rid=hashlib.sha256(("laminas/"+new+":L%d-1"%l["n"]).encode()).hexdigest()
+                  targets.append({"prop_id":p["id"],"n":l["n"],"rid":rid,"dice":l.get("dice")})
+          def status(t):
+              req=urllib.request.Request("https://yod-cloud-room.onrender.com/sala/image/result/"+t["rid"],headers={"Authorization":"Bearer "+key})
               try:
-                  with urllib.request.urlopen(urllib.request.Request(url,headers={"Authorization":"Bearer "+key}),timeout=20) as r:status=json.load(r)
-                  if status.get("ok"):break
-              except Exception:pass
-              time.sleep(10)
-          else:raise SystemExit("Puente de imágenes todavía no disponible")
-          print("BROKER_META "+json.dumps(status))
-          prompt="Professional high-end architectural documentary photograph, portrait composition with all important subjects in the central 4:5 area. A Mexican female architect and a middle-aged male landowner stand beside a large oak work table inside a warm contemporary architecture studio. She points at a detailed physical site model with three buildings and a landscaped courtyard, and he studies an unfolded blank cadastral plan. Candid working moment, distinct realistic faces, natural anatomically correct hands, precise miniature building geometry, warm window daylight, restrained beige and terracotta palette, crisp full-frame 35mm camera detail, clear materials and coherent perspective. No text, letters, captions, logos or watermark."
-          rules={"_imagen_request_id":hashlib.sha256(b"sala-gpt-image-prueba-arquitecta-20261012-v1").hexdigest()}
-          raw,ext=imagen.openai_broker(prompt,rules)
-          im=Image.open(io.BytesIO(raw)).convert("RGB");dim=im.size;im.thumbnail((640,960));out=io.BytesIO();im.save(out,"JPEG",quality=90)
-          print("IMAGEN_REAL_META "+json.dumps({"modelo":imagen.modelo_de("openai_broker"),"dimensiones":dim,"bytes":len(raw),"recibo":rules["_imagen_recibo_id"],"receta_sha":rules["_receta_proveedor_sha256"],"generadas":1,"escrituras_decisiones":0}))
-          print("FOTO_BASE64 "+base64.b64encode(out.getvalue()).decode())
+                  with urllib.request.urlopen(req,timeout=30) as r:result=json.load(r)
+                  if result.get("ok") and result.get("model")=="gpt-image-1.5":return t,result
+              except urllib.error.HTTPError as e:
+                  try:d=json.loads(e.read())
+                  except Exception:d={}
+                  if e.code not in (404,409):raise
+                  return t,{"ok":False,"error":d.get("error")}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:results=list(pool.map(status,targets))
+          good=[(t,r) for t,r in results if r.get("ok")]
+          print("PROGRESO_REAL "+json.dumps({"reemplazos_objetivo":len(targets),"recibos_confirmados":len(good),
+              "todavia_sin_recibo":len(targets)-len(good),"modelos":sorted({r["model"] for _,r in good}),
+              "nuevas_generaciones_por_observador":0,"escrituras_decisiones":0}))
+          print("RECIBOS_META "+json.dumps([{"prop_id":t["prop_id"],"n":t["n"],"request_id":t["rid"],"generated_at":r.get("generated_at")} for t,r in good]))
+          chosen=next(((t,r) for t,r in good if t["prop_id"].startswith("dato-tres-opiniones") and t["n"]==2),None)
+          if chosen:
+              t,r=chosen;im=Image.open(io.BytesIO(base64.b64decode(r["image"]))).convert("RGB");im.thumbnail((600,900));out=io.BytesIO();im.save(out,"JPEG",quality=90)
+              print("L2_NUEVA_META "+json.dumps({"dice":t["dice"],"modelo":r["model"],"fase":"generada; montaje lo confirma Mesa"},ensure_ascii=False))
+              print("FOTO_BASE64 "+base64.b64encode(out.getvalue()).decode())
           PY
