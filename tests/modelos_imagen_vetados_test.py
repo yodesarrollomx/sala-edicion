@@ -27,7 +27,7 @@ class VetoModelosTest(unittest.TestCase):
     def test_motor_permitido_sigue_funcionando(self):
         with patch.dict(imagen.MOTORES,{"cpu":lambda *x: self.fail("cpu vetado"),
                          "gemini_pro":lambda *x:(b"allowed","jpg")},clear=True):
-            result=imagen.generar("Synthetic object",{"imagen_motores":"cpu,pollinations"})
+            result=imagen.generar("Synthetic object",{"imagen_motores":"cpu,gemini_pro"})
         self.assertEqual(result[2],"gemini_pro")
 
     def test_depuracion_no_modifica_aprobado_ni_origen(self):

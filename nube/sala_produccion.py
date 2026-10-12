@@ -156,8 +156,14 @@ def resolver_tira(tira, decision, prop=None):
         elif i < len(firms) and firms[i]:
             # La fusión representa un BORRAR explícito como marca nula firmada.
             lam.update(estado="pendiente", marca_previa="")
-    from motores.politica_imagen import depurar_tira
-    return depurar_tira(result)[0]
+    from motores.politica_imagen import depurar_tira, requiere_reemplazo
+    # El retiro explícito afecta sólo sus fuentes; la depuración ordinaria
+    # de candidatas pendientes la conserva Mesa con su registro de cambios.
+    cleaned, _ = depurar_tira(result)
+    for i, lam in enumerate(result.get('laminas') or []):
+        if requiere_reemplazo(lam):
+            result['laminas'][i] = cleaned['laminas'][i]
+    return result
 
 
 def guion_faltante(tira):

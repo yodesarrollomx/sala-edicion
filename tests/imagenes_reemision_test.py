@@ -100,6 +100,16 @@ class ReemisionTest(unittest.TestCase):
                 imagen.generar("Synthetic object",{"imagen_motores":"pollinations,cpu,cloudflare_flux2"})
         self.assertEqual(calls,[])
 
+    def test_estado_de_cupo_se_publica_aunque_no_haya_tarjeta_generada(self):
+        import yaml
+        wf=yaml.safe_load((Path(__file__).resolve().parents[1]/".github/workflows/sala-mesa.yml").read_text())
+        steps=wf["jobs"]["mesa"]["steps"]
+        guardar=next(s for s in steps if s.get("id")=="guardar")
+        montaje=next(s for s in steps if s.get("name","").startswith("Montar cartas"))
+        self.assertIn("cupo_bloqueado == 'si'",guardar["if"])
+        self.assertNotIn("cupo_bloqueado",montaje["if"])
+        self.assertIn("outputs.codigo == '0'",montaje["if"])
+
     def test_modelo_pro_se_fija_sin_usar_regla_del_modelo_anterior(self):
         with patch.object(imagen,"gemini",return_value=(b"synthetic","png")) as api:
             imagen.gemini_pro("Synthetic",{"imagen_gemini_modelo":"old-model"})
