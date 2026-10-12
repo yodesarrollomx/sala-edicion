@@ -16,10 +16,6 @@ jobs:
           ref: 1b555ccad93b66fbc21432f7294061defc681a90
           persist-credentials: false
       - run: pip install --quiet requests
-      - name: Ejecutar Chinches solicitado por Dirección
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run sala-chinches.yml --ref main -f simular=false
       - name: Leer último snapshot privado
         env:
           GH_TOKEN: ${{ github.token }}
@@ -35,11 +31,23 @@ jobs:
           import sala_cliente as sala
           from sala_produccion import cargar,leer_tira
           from motores._comun import toma_elegida
+          cache={}
+          def tirar(pid):
+              if pid not in cache:
+                  local=leer_tira(pid)
+                  if local: cache[pid]=local
+                  else:
+                      try:
+                          with urllib.request.urlopen("https://yodesarrollomx.github.io/sala-edicion/datos/tiras/"+pid+".json",timeout=30) as r:
+                              cache[pid]=json.load(r)
+                      except Exception: cache[pid]=None
+              return cache[pid]
           ctx=cargar();decs=ctx["decisiones"]["propuestas"];props={p["id"]:p for p in ctx["propuestas"]}
           stats=collections.defaultdict(lambda:{"aprobadas":0,"rechazos_exclusivos":0,"rechazos_compartidos":0})
           by_slot=[];unassigned=0;missing=0
           for pid,d in decs.items():
-              t=leer_tira(pid)
+              if pid not in props: continue
+              t=tirar(pid)
               if not t: missing+=1;continue
               mapa=t.get("mapa") or {str(i+1):v for i,v in enumerate(t.get("decidir",[]))}
               lams={str(l["n"]):l for l in t.get("laminas",[])}
@@ -60,7 +68,7 @@ jobs:
                                       "seleccion":selected if selected else None})
           print("MODELOS_META "+json.dumps({"fecha":ctx["fecha"],"motores":dict(stats),
               "sin_procedencia":unassigned,"fuentes_sin_tira":missing,"foco":by_slot}))
-          focus=leer_tira("tu-terreno-tus-reglas-nube-2026-10-11-37000b")
+          focus=tirar("tu-terreno-tus-reglas-nube-2026-10-11-37000b")
           if focus:
               mapa=focus.get("mapa") or {}
               real=mapa.get("4",4)
