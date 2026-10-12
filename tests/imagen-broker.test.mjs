@@ -8,7 +8,8 @@ import {createSalaImageBroker} from '../nube/imagen_api_broker.mjs';
 const ID='a'.repeat(64),IMG=Buffer.alloc(100,7).toString('base64');
 async function setup(fn,extra={}){
  const dir=await mkdtemp(join(tmpdir(),'sala-broker-test-'));
- try{await fn(createSalaImageBroker({env:{SALA_IMAGE_ENABLED:'true',SALA_IMAGE_TOKEN:'synthetic-token',OPENAI_API_KEY:'synthetic-provider-key',YOD_PERSISTENT_STORAGE_CONFIRMED:'true',YOD_STATE_DIR:dir,...extra},fetchImpl:extra.fetchImpl||(async()=>({ok:true,status:200,text:async()=>JSON.stringify({data:[{b64_json:IMG}]})})),dir);}
+ const fetchImpl=extra.fetchImpl||(async()=>({ok:true,status:200,text:async()=>JSON.stringify({data:[{b64_json:IMG}]})}));
+ try{await fn(createSalaImageBroker({env:{SALA_IMAGE_ENABLED:'true',SALA_IMAGE_TOKEN:'synthetic-token',OPENAI_API_KEY:'synthetic-provider-key',YOD_PERSISTENT_STORAGE_CONFIRMED:'true',YOD_STATE_DIR:dir,...extra},fetchImpl}),dir);}
  finally{await rm(dir,{recursive:true,force:true});}
 }
 async function call(broker,{method='POST',url='/sala/image',token='synthetic-token',body={request_id:ID,prompt:'Synthetic scene'}}={}){
