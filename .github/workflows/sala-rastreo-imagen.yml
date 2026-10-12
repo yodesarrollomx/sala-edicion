@@ -1,0 +1,127 @@
+name: Sala · rastrear imagen y comprobar nuevos modelos
+on:
+  push:
+    branches: [codex/sala-rastrear-rehacer-imagenes-20261012]
+    paths: [.github/workflows/sala-rastreo-imagen.yml]
+permissions:
+  contents: read
+jobs:
+  origen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 02b06521575ea6b938a7af7350dcae9bb6ea54ab
+          persist-credentials: false
+      - run: pip install --quiet requests pillow
+      - name: Rastrear captura y modelos en cartas activas sin escribir decisiones
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          PYTHONPATH: nube
+        run: |
+          python3 - <<'PY'
+          import base64,collections,io,json,re,unicodedata,urllib.request
+          from PIL import Image
+          import sala_cliente as sala
+          from sala_produccion import cargar,resolver_tira
+          sala.enmascarar_en_actions()
+          base="https://yodesarrollomx.github.io/sala-edicion/"
+          def get(path):
+              with urllib.request.urlopen(urllib.request.Request(base+path,headers={"Cache-Control":"no-cache"}),timeout=30) as r:return r.read()
+          def tira(pid):
+              if not re.fullmatch("[A-Za-z0-9_.-]+",pid):raise ValueError("id inválido")
+              return json.loads(get("datos/tiras/"+pid+".json"))
+          ctx=cargar(tira_reader=tira)
+          print("LECTURA_META "+json.dumps({"fecha":ctx["fecha"],"cartas":len(ctx["propuestas"])}))
+          target="El tío sugiere locales, la vecina prefiere departamentos y cada familia aporta una idea distinta."
+          def norm(s):return " ".join(unicodedata.normalize("NFKD",str(s)).lower().split())
+          counts=collections.Counter();matches=0
+          for p in ctx["propuestas"]:
+              if not p.get("laminas"):continue
+              t=tira(p["id"]);d=ctx["decisiones"]["propuestas"].get(p["id"],{})
+              r=resolver_tira(t,d,p)
+              for l in r.get("laminas",[]):
+                  cs=l.get("candidatas") or []
+                  source=l.get("src")
+                  c=next((c for c in cs if source in (c.get("src"),c.get("original"))),{})
+                  counts[(str(c.get("motor") or l.get("motor") or "sin metadato"),str(l.get("estado")))]+=1
+                  strings=[l.get("texto"),l.get("caption"),l.get("frase"),*[(x.get("texto") or "") for x in cs]]
+                  if not any(norm(target) in norm(s) or "la vecina prefiere departamentos" in str(s).lower() for s in strings):continue
+                  matches+=1
+                  print("CAPTURA_ORIGEN "+json.dumps({"prop_id":p["id"],"titulo":p.get("titulo"),"n":l.get("n"),"estado":l.get("estado"),"src":source,"texto":l.get("texto"),"candidatas":[{k:c.get(k) for k in ("motor","modelo","src","original","huella","texto")} for c in cs],"meta_tira":{k:t.get(k) for k in ("fecha","pieza_slug","revision","origen","producida_por","run_id")}},ensure_ascii=False))
+                  for path in [source,c.get("original")]:
+                      if not path or not path.startswith("laminas/"):continue
+                      img=Image.open(io.BytesIO(get(path))).convert("RGB");img.thumbnail((480,640));out=io.BytesIO();img.save(out,"JPEG",quality=85)
+                      print("FOTO_BASE64 "+base64.b64encode(out.getvalue()).decode())
+          print("MODELOS_ACTIVOS "+json.dumps([{"motor":k[0],"estado":k[1],"laminas":v} for k,v in counts.items()]))
+          print("CAPTURA_COINCIDENCIAS "+str(matches))
+          if not matches:raise SystemExit("Texto de captura sin coincidencia; ampliar al guion público")
+          PY
+  modelos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 02b06521575ea6b938a7af7350dcae9bb6ea54ab
+          persist-credentials: false
+      - run: pip install --quiet requests pillow
+      - name: Probar calidad y acceso de APIs existentes con una escena sintética
+        env:
+          PYTHONPATH: nube
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          BFL_API_KEY: ${{ secrets.BFL_API_KEY }}
+          FAL_KEY: ${{ secrets.FAL_KEY }}
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import base64,io,json,os,urllib.error,urllib.request
+          from PIL import Image
+          import sala_cliente as sala
+          from motores import imagen
+          sala.enmascarar_en_actions()
+          print("LLAVES_PRESENTES "+json.dumps({k:bool(os.environ.get(k,"").strip()) for k in ("GEMINI_API_KEY","CF_ACCOUNT_ID","CF_API_TOKEN","HF_TOKEN","OPENAI_API_KEY","BFL_API_KEY","FAL_KEY","REPLICATE_API_TOKEN","POLLINATIONS_API_KEY")}))
+          prompt="High-end architectural editorial photography, vertical 4:5 composition. A Mexican family of four, distinct realistic faces and natural anatomically correct hands, sits around a wide oak dining table with an architect. They discuss three clearly different miniature architectural models: a storefront, a low-rise apartment building, and a house. An unfolded blank cadastral map and wooden rulers lie on the table. Candid documentary moment, warm daylight from a side window, sophisticated restrained beige and terracotta interior, crisp fine detail, accurate perspective, coherent shadow and material texture, shot on a professional full-frame camera, 35mm lens. No text, no letters, no logos, no watermarks."
+          def show(model,data):
+              im=Image.open(io.BytesIO(data)).convert("RGB");dim=im.size;im.thumbnail((600,750));b=io.BytesIO();im.save(b,"JPEG",quality=90)
+              print("MODELO_RESULTADO "+json.dumps({"modelo":model,"ok":True,"dimensiones":dim,"bytes":len(data)}))
+              print("FOTO_BASE64 "+base64.b64encode(b.getvalue()).decode())
+          key=os.environ.get("GEMINI_API_KEY","").strip()
+          catalog=[]
+          if key:
+              try:
+                  with urllib.request.urlopen("https://generativelanguage.googleapis.com/v1beta/models?key="+key,timeout=30) as r:cat=json.load(r)
+                  catalog=[m["name"].removeprefix("models/") for m in cat.get("models",[]) if "image" in m["name"] or "imagen" in m["name"]]
+                  print("CATALOGO_IMAGEN "+json.dumps(catalog))
+              except Exception as e:print("CATALOGO_ERROR "+sala.redactar(str(e)))
+          names=[x for x in ("gemini-3-pro-image","imagen-4.0-generate-001") if x in catalog]
+          for model in names:
+              try:
+                  if model.startswith("gemini"):
+                      data,_=imagen.gemini(prompt,{"imagen_gemini_modelo":model})
+                  else:
+                      raw,_=imagen._pedir("https://generativelanguage.googleapis.com/v1beta/models/"+model+":predict?key="+key,{"instances":[{"prompt":prompt}],"parameters":{"sampleCount":1,"aspectRatio":"4:5"}},{},"Imagen4")
+                      parsed=json.loads(raw);data=base64.b64decode(parsed["predictions"][0]["bytesBase64Encoded"])
+                  show(model,data)
+              except Exception as e:print("MODELO_RESULTADO "+json.dumps({"modelo":model,"ok":False,"error":sala.redactar(str(e))[:280]}))
+          if os.environ.get("CF_API_TOKEN","").strip():
+              model="@cf/black-forest-labs/flux-2-klein-9b"
+              try:
+                  raw,tipo=imagen._pedir("https://api.cloudflare.com/client/v4/accounts/"+os.environ["CF_ACCOUNT_ID"]+"/ai/run/"+model,{"prompt":prompt,"width":1024,"height":1280,"steps":25},{"Authorization":"Bearer "+os.environ["CF_API_TOKEN"]},"Cloudflare flux2")
+                  data=base64.b64decode(json.loads(raw)["result"]["image"]) if "json" in tipo else raw
+                  show(model,data)
+              except Exception as e:print("MODELO_RESULTADO "+json.dumps({"modelo":model,"ok":False,"error":sala.redactar(str(e))[:280]}))
+          if os.environ.get("OPENAI_API_KEY","").strip():
+              model="gpt-image-1.5"
+              try:
+                  raw,_=imagen._pedir("https://api.openai.com/v1/images/generations",{"model":model,"prompt":prompt,"size":"1024x1536","quality":"high","n":1},{"Authorization":"Bearer "+os.environ["OPENAI_API_KEY"]},"OpenAI imagen")
+                  show(model,base64.b64decode(json.loads(raw)["data"][0]["b64_json"]))
+              except Exception as e:print("MODELO_RESULTADO "+json.dumps({"modelo":model,"ok":False,"error":sala.redactar(str(e))[:280]}))
+          PY
