@@ -82,7 +82,7 @@ def pollinations(receta, reglas):
     diaria y Gemini no contesta). 4:5 como la lámina."""
     import random
     import urllib.parse
-    url = ('https://image.pollinations.ai/prompt/%s?width=1080&height=1440&model=flux&nologo=true'
+    url = ('https://image.pollinations.ai/prompt/%s?width=720&height=960&model=flux&nologo=true'
            '&private=true&seed=%d' % (urllib.parse.quote(receta[:1500]), random.randint(1, 10 ** 9)))
     try:
         with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'sala-yod'}),
@@ -94,8 +94,8 @@ def pollinations(receta, reglas):
         raise MotorError('Pollinations no contestó: %s' % sala.redactar(str(e)), intermitente=True)
     if 'image' not in tipo or len(datos) < 5000:
         raise MotorError('Pollinations contestó sin imagen (%s)' % tipo, intermitente=True)
-    # la cuenta gratis deja la marca «pollinations.ai» abajo a la derecha: se pide 90 px más alta
-    # y se recorta esa franja → queda 1080×1350 limpia (28-sep)
+    # El pedido720×960 fue verificado con el proveedor;1080×1440 respondió402.
+    # Se conserva el recorte a4:5 antes de componer al tamaño de la casa.
     try:
         import io
         from PIL import Image

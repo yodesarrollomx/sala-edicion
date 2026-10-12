@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-12.sala-decisiones.3",
-  "proposal_id": "CHG-SALA-DECISIONES-PRODUCCION-20261012",
-  "summary": "Dar identidad al montaje privado, conservar fallos reales y reutilizar generaciones desde la fuente activa; informe exacto en contrato de snapshot.",
+  "model_revision": "2026-10-12.sala-decisiones.4",
+  "proposal_id": "CHG-SALA-IMAGENES-RESPALDO-20261012",
+  "summary": "Corregir el tamaño de Pollinations verificado para que el respaldo pueda generar sin credenciales nuevas cuando los proveedores primarios están limitados.",
   "components": [
     "SYS-YOD-OS",
     "SYS-CONTROL",
@@ -17,9 +17,9 @@
   "tests": [
     "python3 nube/verificar.py",
     "python3 -m unittest discover -s tests -p '*_test.py' -v",
-    "41 regresiones específicas: fuente vigente, reutilización y referencia cambiada, identidad/pipeline de montaje y transporte del reporte",
-    "Recorrido real por Mesa, Productor, Ejecutor y Revisión después de integrar; sin correo ni publicación a redes.",
-    "git diff --check base HEAD"
+    "git diff --check base HEAD",
+    "API sintética38207824685: foto720×960 descargada/hash,2.76s;1080×1440 responde402.",
+    "Después de integrar: llamada sintética del motor real con regla/proveedores existentes, sin POST a negocio."
   ],
-  "rollback": "Revertir PR y workflow; mantener decisiones, fuentes, cola, medios y snapshots. No reencolar los fallos históricos."
+  "rollback": "Revertir tamaño mediante PR; conservar imágenes, candidatos, decisiones, medios, snapshots y cuotas."
 }
