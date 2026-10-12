@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-12.sala-decisiones.4",
-  "proposal_id": "CHG-SALA-IMAGENES-RESPALDO-20261012",
-  "summary": "Corregir el tamaño de Pollinations verificado para que el respaldo pueda generar sin credenciales nuevas cuando los proveedores primarios están limitados.",
+  "model_revision": "2026-10-12.sala-veto-tiny-sd.1",
+  "proposal_id": "CHG-SALA-VETO-TINY-SD-20261012",
+  "summary": "Retirar Tiny SD de generación y revisión; conservar decisiones e índices y recuperar fuentes activas publicadas para depurarlas.",
   "components": [
     "SYS-YOD-OS",
     "SYS-CONTROL",
@@ -11,15 +11,15 @@
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
-    "EXT-DRIVE",
     "EXT-MOTORES-MEDIA"
   ],
   "tests": [
+    "git diff --check",
     "python3 nube/verificar.py",
-    "python3 -m unittest discover -s tests -p '*_test.py' -v",
-    "git diff --check base HEAD",
-    "API sintética38207824685: foto720×960 descargada/hash,2.76s;1080×1440 responde402.",
-    "Después de integrar: llamada sintética del motor real con regla/proveedores existentes, sin POST a negocio."
+    "python3 -m unittest discover -s tests -p '*_test.py'",
+    "node --test tests/*.cjs",
+    "Regresiones de veto, opciones filtradas con índice original, referencias aprobadas, caché incompatible y fuentes activas con huella.",
+    "Ejecución real autorizada de Chinches, Mesa y revisión; no escribir decisiones."
   ],
-  "rollback": "Revertir tamaño mediante PR; conservar imágenes, candidatos, decisiones, medios, snapshots y cuotas."
+  "rollback": "Revertir mediante PR conservando registros e historia; reactivar el modelo exige revocación explícita del veto de Dirección."
 }

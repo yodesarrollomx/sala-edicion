@@ -18,6 +18,7 @@ import urllib.request
 
 import sala_cliente as sala
 from motores._comun import MotorError
+from motores.politica_imagen import vetada
 
 ESPERA = 120
 
@@ -144,9 +145,8 @@ def generar(receta, reglas):
     receta = receta.rstrip('. ') + SIN_LETRAS
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
                                     or 'cloudflare,gemini,pollinations,hf').split(',') if m.strip() in MOTORES]
-    if (orden and 'cpu' not in orden and str((reglas or {}).get(
-            'imagen_respaldo_cpu', '1')).strip() not in ('0', 'no', 'false')):
-        orden.append('cpu')
+    # Veto de Dirección: ni el orden explícito ni el respaldo heredado lo reactivan.
+    orden = [m for m in orden if not vetada({'motor': m})]
     avisos = []
     for nombre in orden:
         try:
