@@ -352,6 +352,7 @@ def main():
                 tira['laminas'].append(destino)
             destino['src'] = destino.get('src') or tomas[0]['src']
             destino['estado'] = 'rehecha'
+            destino['produccion_guardados'] = 1
             destino['candidatas'] = tomas
             destino['fecha'] = hoy
             decidir.append(lam['n'])
@@ -359,7 +360,8 @@ def main():
             continue
         # Un lote parcial no oculta las candidatas aún sin responder del lote anterior.
         decidir = sorted(set(decidir) | {l['n'] for l in tira['laminas']
-                         if l.get('estado') != 'aprobada' and l.get('candidatas')})
+                         if l.get('estado') != 'aprobada' and l.get('candidatas')
+                         and l.get('produccion_guardados') == 1})
         tira.update({'decidir': decidir, 'mapa': {str(i + 1): n for i, n in enumerate(decidir)},
                      'titulo': '%s · láminas para revisión (%d)' % (nombre, len(decidir)),
                      'nota': 'La tira conserva lo aprobado. Revisa las láminas señaladas: muestran '

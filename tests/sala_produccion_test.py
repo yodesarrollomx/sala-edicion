@@ -201,5 +201,79 @@ class MesaTests(unittest.TestCase):
         post.assert_not_called()
 
 
+
+
+class MesaIntegrationTests(unittest.TestCase):
+    def run_wave(self, root, pid, original, decision, cap=1):
+        def fake_images(slug, reference, lam, note, rules, queue, folder, count):
+            folder.mkdir(parents=True, exist_ok=True)
+            stem = folder / ("L%d-1" % lam["n"])
+            stem.with_suffix(".png").write_bytes(b"imagen-sintetica")
+            stem.with_suffix(".jpg").write_bytes(b"vista-sintetica")
+            return [{"src": str(stem.with_suffix(".jpg").relative_to(root)),
+                     "original": str(stem.with_suffix(".png").relative_to(root)),
+                     "motor": "doble", "dice": "Texto válido nuevo",
+                     "huella": hashlib.md5(b"imagen-sintetica").hexdigest()}], []
+        d = day([{"id": pid, "laminas": ["laminas/a.jpg"]}], {pid: decision})
+        rules = {"mesa_tope_laminas": str(cap), "mesa_tomas_por_lamina": "1"}
+        def get(resource, **kw):
+            return {"reglas": rules} if resource == "reglas" else {"cola": []}
+        with patch.object(sys, "argv", ["mesa", "--producir"]), \
+             patch.object(mesa, "RAIZ", root), \
+             patch.object(mesa, "TIRAS", root / "datos" / "tiras"), \
+             patch.object(mesa, "PLAN", root / "plan.json"), \
+             patch.object(mesa, "contexto_produccion", return_value=d), \
+             patch.object(mesa, "tiras_por_pieza", return_value={"pieza": (pid, original)}), \
+             patch.object(mesa, "publicadas", return_value=set()), \
+             patch.object(mesa, "producir_tomas", side_effect=fake_images), \
+             patch.object(prod, "peticiones_abiertas", return_value=False), \
+             patch.object(sala, "get", side_effect=get):
+            self.assertEqual(mesa.main(), 0)
+        plan = json.loads((root / "plan.json").read_text())
+        next_id = plan["cartas"][0]["tira_id"]
+        return next_id, json.loads((root / "datos" / "tiras" / (next_id + ".json")).read_text())
+
+    def test_two_limited_waves_preserve_approved_choice_and_unanswered_candidates(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "datos" / "tiras").mkdir(parents=True)
+            pid, first = self.run_wave(root, P, tira(), yes())
+            self.assertEqual(first["decidir"], [2])
+            self.assertEqual(first["laminas"][0]["estado"], "aprobada")
+            self.assertEqual(first["laminas"][0]["src"], "laminas/b.png")
+            image2 = first["laminas"][1]["candidatas"][0]["src"]
+            pid2, second = self.run_wave(root, pid, first, {})
+            self.assertEqual(second["decidir"], [2, 3])
+            self.assertEqual(second["laminas"][1]["candidatas"][0]["src"], image2)
+            self.assertNotEqual(pid, pid2)
+            self.assertTrue((root / image2).exists())
+            self.assertEqual(prod.guion_faltante(second), [])
+            self.assertTrue(all(l["estado"] != "aprobada" for l in second["laminas"][1:]))
+
+    def test_two_corrections_same_day_never_overwrite_prior_images(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "datos" / "tiras").mkdir(parents=True)
+            _, first = self.run_wave(root, P, tira(), {"laminas": ["no"], "notas": ["Primera corrección"]})
+            old_path = first["laminas"][0]["candidatas"][0]["src"]
+            old_bytes = (root / old_path).read_bytes()
+            _, second = self.run_wave(root, P, tira(), {"laminas": ["no"], "notas": ["Segunda corrección"]})
+            new_path = second["laminas"][0]["candidatas"][0]["src"]
+            self.assertNotEqual(old_path, new_path)
+            self.assertEqual((root / old_path).read_bytes(), old_bytes)
+
+    def test_unverified_historical_candidates_are_not_presented_as_new(self):
+        t = tira()
+        t["laminas"].append({"n": 2, "dice": "Historia conservada", "estado": "rehecha",
+                             "src": "laminas/historia.png", "candidatas": [
+                                 {"motor": "historia", "src": "laminas/historia.jpg",
+                                  "dice": "Hermosillo"}]})
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "datos" / "tiras").mkdir(parents=True)
+            _, result = self.run_wave(root, P, t, {"laminas": ["no"], "notas": ["Corrección vigente"]})
+            self.assertEqual(result["decidir"], [1])
+            self.assertEqual(result["laminas"][1], t["laminas"][1])
+
 if __name__ == "__main__":
     unittest.main()

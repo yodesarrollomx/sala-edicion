@@ -17,7 +17,7 @@
   "tests": [
     "python3 nube/verificar.py",
     "python3 -m unittest discover -s tests -p '*_test.py' -v",
-    "21 regresiones de tarjetas cerradas, selección, veto, guion, formato y notas actuales",
+    "24 regresiones de tarjetas cerradas, elección exacta, veto, guion, formato, notas recientes, lotes parciales y versiones sin sobrescritura",
     "Recorrido real por Mesa, Productor, Ejecutor y Revisión después de integrar; sin correo ni publicación a redes."
   ],
   "rollback": "Revertir PR y workflow; mantener decisiones, fuentes, cola, medios y snapshots. No reencolar los fallos históricos."
