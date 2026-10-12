@@ -1,35 +1,56 @@
-name: Sala · ronda de chinches y comprobación de acceso
+name: Sala · comprobar publicación y turno de actualización
 on:
   push:
     branches: [codex/sala-rastrear-rehacer-imagenes-20261012]
     paths: [.github/workflows/sala-rastreo-imagen.yml]
 permissions:
   contents: read
-  actions: write
+  actions: read
 jobs:
-  ronda:
+  comprobar:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: dde4ab0151c5cc36071882380afe7ecf495ecef6
-          persist-credentials: false
-      - name: Comprobar credencial alternativa existente sin exponerla
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          python3 - <<'PY'
-          import os
-          print("CREDENCIAL_GPT_ACTIONS_CONFIGURADA",bool(os.environ.get("OPENAI_API_KEY","").strip()))
-          PY
-      - name: Ejecutar puente real de chinches
+      - name: Identificar el proceso que conserva el turno sin modificarlo
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 - <<'PY'
-          import datetime,json,subprocess
-          started=datetime.datetime.now(datetime.timezone.utc).isoformat()
-          subprocess.run(["gh","workflow","run","sala-chinches.yml","--ref","main","-f","simular=false"],check=True)
-          print("RONDA_CHINCHES_SOLICITADA "+json.dumps({"desde":started,"modo":"real","workflow":"sala-chinches.yml"}))
+          import json,subprocess
+          def api(path):return json.loads(subprocess.run(["gh","api","repos/yodesarrollomx/sala-edicion/"+path],check=True,capture_output=True,text=True).stdout)
+          ref=api("git/ref/heads/runtime/online-data-lease")
+          info=json.loads(api("git/commits/"+ref["object"]["sha"])["message"])
+          run=api("actions/runs/"+str(info["run_id"]))
+          print("TURNO_REAL "+json.dumps({"state":info["state"],"run_id":info["run_id"],"process":info["process"],"workflow":run["name"],"status":run["status"]}))
+          PY
+      - uses: actions/checkout@v4
+        with:
+          ref: dde4ab0151c5cc36071882380afe7ecf495ecef6
+          filter: blob:none
+          sparse-checkout: nube
+          persist-credentials: false
+      - run: pip install --quiet requests pillow
+      - name: Verificar diez imágenes montadas y sus modelos en el sitio
+        env:
+          PYTHONPATH: nube
+        run: |
+          python3 - <<'PY'
+          import concurrent.futures,json,urllib.request
+          base="https://yodesarrollomx.github.io/sala-edicion/"
+          ids=["doble-via-nube-2026-10-12-cb73f9","la-identidad-no-se-improvisa-nube-2026-10-12-411a9f","manos-expertas-en-cada-metro-nube-2026-10-12-cad2bf"]
+          cards=[]
+          for pid in ids:
+              with urllib.request.urlopen(base+"datos/tiras/"+pid+".json",timeout=30) as r:t=json.load(r)
+              for l in t['laminas']:
+                  for c in l.get('candidatas') or []:
+                      if c.get("run_id")=="38310054319":cards.append(c)
+          def verify(c):
+              with urllib.request.urlopen(base+c["src"],timeout=30) as r:
+                  raw=r.read();return c["modelo"]=="gpt-image-1.5" and r.status==200 and raw.startswith(b"\xff\xd8\xff")
+          with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:results=list(pool.map(verify,cards))
+          report={"imagenes_montadas":len(cards),"archivos_publicos_verificados":sum(results),"modelos":sorted({c["modelo"] for c in cards}),"cartas":len(ids),"nuevas_generaciones":0,"votos_escritos":0}
+          print("PUBLICACION_REAL "+json.dumps(report))
+          if len(cards)!=10 or not all(results):raise SystemExit("Montaje incompleto")
+          with urllib.request.urlopen(base+"datos/mesa-estado.json",timeout=30) as r:state=json.load(r)
+          print("MESA_PUBLICA "+json.dumps(state))
           PY
