@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-12.sala-openai-broker.1",
   "proposal_id": "CHG-SALA-OPENAI-BROKER-20261012",
-  "summary": "Puente GPT Image en servidor existente y recibos de producción; no exportar la clave del proveedor.",
+  "summary": "Activar GPT Image tras prueba real; mantener veto, recibos y texto visible; retirar dependencias CPU de la Mesa de imágenes.",
   "components": [
     "SYS-YOD-OS",
     "SYS-CONTROL",
@@ -21,9 +21,9 @@
     "git diff --check",
     "python3 nube/verificar.py",
     "python3 -m unittest discover -s tests -p '*_test.py'",
-    "node --test tests/*.cjs",
     "node --test tests/imagen-broker.test.mjs",
-    "Prueba real de imagen antes de activar motor en REGLAS."
+    "Prueba real38302218587: GPT Image1.5,1024x1536,PNG válido e inspección visual.",
+    "Publicación y montaje de los reemplazos pendientes sin votos del agente."
   ],
-  "rollback": "Desactivar únicamente SALA_IMAGE_ENABLED y revertir por PR; preservar recibos, volumen, decisiones y retiro. Sin cambios de planes, recursos, identidades ni metas de los autóns."
+  "rollback": "Revertir por PR preservando recibos, archivos, votos y retiro de modelos; volver al proveedor nuevo disponible con estado explícito."
 }

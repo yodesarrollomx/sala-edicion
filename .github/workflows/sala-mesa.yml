@@ -71,17 +71,6 @@ jobs:
       - name: Librerías (imagen y HTTP)
         run: |
           pip install --quiet pillow requests
-          pip install --quiet torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
-          pip install --quiet -r nube/imagen_cpu_requirements.txt
-      - name: Caché del modelo generativo CPU verificado
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/huggingface/hub
-            nube/.cache/kokoro
-            nube/.cache/depth
-          key: sala-cpu-tiny-sd-cad0bd7-kokoro-depth-v1
-
       - name: Caché de la tipografía de la casa (Playfair Display, OFL)
         id: cache-fuentes
         uses: actions/cache@v4

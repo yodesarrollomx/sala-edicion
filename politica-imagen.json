@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2026-10-12.sin-pollinations.1",
+  "revision": "2026-10-12.sin-pollinations.gpt.1",
   "retirados": [
     {
       "motor": "cpu",
@@ -77,10 +77,15 @@
     "laminas/tu-terreno-tus-reglas-nube-2026-10-11-37000b/L5-1.png"
   ],
   "reemplazo": {
-    "modelo": "@cf/black-forest-labs/flux-2-klein-9b",
-    "respaldo": "gemini-3-pro-image",
+    "motor": "openai_broker",
+    "modelo": "gpt-image-1.5",
+    "respaldos": [
+      "@cf/black-forest-labs/flux-2-klein-9b",
+      "gemini-3-pro-image"
+    ],
     "conservar_texto": true,
     "orden_direccion": "2026-10-12",
-    "estado": "pendiente_cupo"
+    "estado": "prueba_real_confirmada",
+    "prueba": "38302218587"
   }
 }

@@ -392,7 +392,7 @@ def piezas_por_prioridad(piezas, dia):
         key=lambda x: priority(x)[0], reverse=True)
 
 
-def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa=''):
+def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa='', modelo_imagen=None):
     state = "bloqueado" if fallidas and not generadas else (
         "parcial" if fallidas or limitadas else "al_dia")
     report = {"schema": 1, "estado": state,
@@ -400,7 +400,7 @@ def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, 
               "code_sha": __import__("os").environ.get("GITHUB_SHA"),
               "run_id": __import__("os").environ.get("GITHUB_RUN_ID"),
               "generadas": generadas, "reutilizadas": reutilizadas, "fallidas": fallidas,
-              "causa": causa, "modelo_imagen": imagen.MODELO_FLUX2,
+              "causa": causa, "modelo_imagen": modelo_imagen or imagen.MODELO_FLUX2,
               "limite_pendiente": limitadas, "cartas": cartas}
     dest = RAIZ / "datos" / "mesa-estado.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -594,7 +594,8 @@ def main():
         PLAN.write_text(json.dumps({'fecha': hoy, 'cartas': plan}, ensure_ascii=False, indent=1),
                         encoding='utf-8')
         guardar_estado_mesa(generadas, fallidas, limitadas, len(plan), reutilizadas,
-                            causa='cupo_imagen_agotado' if cupo_bloqueado else '')
+                            causa='cupo_imagen_agotado' if cupo_bloqueado else '',
+                            modelo_imagen=imagen.modelo_de(str(reglas.get('imagen_motores') or 'openai_broker').split(',')[0].strip(), reglas))
     # Preparación que falló por completo es un fallo real, no una mesa «al día».
     return 2 if fallidas and not plan and not args.simular else 0
 
