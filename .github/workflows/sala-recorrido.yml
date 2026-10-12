@@ -1,0 +1,43 @@
+name: Sala · decisiones guardadas a producción
+on:
+  push:
+    branches: [main]
+    paths:
+      - nube/sala_produccion.py
+      - nube/sala_productor.py
+      - nube/sala_mesa.py
+      - .github/workflows/sala-recorrido.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+  issues: write
+  pull-requests: write
+concurrency:
+  group: sala-recorrido
+  cancel-in-progress: false
+jobs:
+  mesa:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/sala-mesa.yml
+    with:
+      modo: montar
+    secrets: inherit
+  mesa_resto:
+    needs: mesa
+    uses: ./.github/workflows/sala-mesa.yml
+    with:
+      modo: montar
+    secrets: inherit
+  productor:
+    needs: mesa_resto
+    uses: ./.github/workflows/sala-productor.yml
+    secrets: inherit
+  ejecutor:
+    needs: productor
+    uses: ./.github/workflows/sala-ejecutor.yml
+    secrets: inherit
+  revision:
+    needs: ejecutor
+    uses: ./.github/workflows/sala-revision.yml
+    secrets: inherit
