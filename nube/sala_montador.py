@@ -145,6 +145,9 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
             from sala_guion import cargar, desde_lamina, partes_de
             from motores._comun import MotorError
             try:
+                from motores.politica_imagen import fuente_retirada
+                if fuente_retirada(lamina_de(j_escena).get('src')):
+                    raise MontadorError('fuente de imagen retirada; espera reemplazo y nueva revisión')
                 for job in (j_escena, j_voz):
                     exigir({'dice': lamina_de(job).get('dice')}, reglas, 'corte')
                 partes_de(cargar(familia) or desde_lamina(j_voz), item, reglas)

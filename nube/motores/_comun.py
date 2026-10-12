@@ -85,6 +85,9 @@ def traer_imagen(trabajo, cat, destino):
     import sala_drive as drive
     lam = lamina_de(trabajo)
     src = lam['src']
+    from motores.politica_imagen import fuente_retirada
+    if fuente_retirada(src):
+        raise MotorError('fuente de imagen retirada por Dirección; espera su reemplazo y revisión', intermitente=True)
     if not src:
         raise MotorError('el trabajo %s no dice qué lámina es (ni evidencia.src ni tira)'
                          % trabajo.get('id'), intermitente=True)

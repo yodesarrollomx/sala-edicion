@@ -22,6 +22,51 @@ from motores.politica_imagen import vetada
 
 ESPERA = 120
 
+class CupoImagen(MotorError):
+    """Los proveedores nuevos agotaron cupo: no gastar recetas en el resto del lote."""
+    pass
+
+MODELO_FLUX2 = '@cf/black-forest-labs/flux-2-klein-9b'
+MODELO_GEMINI_PRO = 'gemini-3-pro-image'
+
+def cloudflare_flux2(receta, reglas):
+    """FLUX 2 Klein 9B: REST requiere multipart, no un JSON plano."""
+    import requests
+    cuenta = os.environ.get('CF_ACCOUNT_ID', '').strip()
+    token = os.environ.get('CF_API_TOKEN', '').strip()
+    if not cuenta or not token:
+        raise MotorError('faltan CF_ACCOUNT_ID / CF_API_TOKEN', intermitente=True)
+    url = 'https://api.cloudflare.com/client/v4/accounts/%s/ai/run/%s' % (cuenta, MODELO_FLUX2)
+    try:
+        r = requests.post(url, headers={'Authorization': 'Bearer ' + token},
+                          files={k: (None, str(v)) for k, v in
+                                 {'prompt': receta[:4000], 'width': 1024, 'height': 1280,
+                                  'steps': 8}.items()}, timeout=ESPERA)
+    except requests.RequestException as e:
+        raise MotorError('Cloudflare FLUX2 no contestó: ' + sala.redactar(str(e)),
+                         intermitente=True) from None
+    if r.status_code != 200:
+        raise MotorError('Cloudflare FLUX2 %s: %s' % (r.status_code, sala.redactar(r.text[:280])),
+                         intermitente=r.status_code in (429, 500, 502, 503, 504))
+    if 'json' not in r.headers.get('Content-Type', '').lower():
+        return r.content, 'png' if 'png' in r.headers.get('Content-Type', '') else 'jpg'
+    try:
+        data = r.json()['result']['image']
+        return base64.b64decode(data, validate=True), 'png'
+    except (KeyError, TypeError, ValueError):
+        raise MotorError('Cloudflare FLUX2 contestó sin imagen', intermitente=True) from None
+
+def gemini_pro(receta, reglas):
+    return gemini(receta, dict(reglas or {}, imagen_gemini_modelo=MODELO_GEMINI_PRO))
+
+def modelo_de(motor, reglas=None):
+    return {'cloudflare_flux2': MODELO_FLUX2, 'gemini_pro': MODELO_GEMINI_PRO,
+            'cloudflare': '@cf/black-forest-labs/flux-1-schnell',
+            'gemini': str((reglas or {}).get('imagen_gemini_modelo') or 'gemini-2.5-flash-image'),
+            'pollinations': 'pollinations/flux', 'hf': 'black-forest-labs/FLUX.1-schnell',
+            'cpu': 'segmind/tiny-sd'}.get(motor, motor)
+
+
 
 def _pedir(url, cuerpo, cabeceras, quien):
     pet = urllib.request.Request(url, data=json.dumps(cuerpo).encode('utf-8'),
@@ -128,7 +173,8 @@ def cpu(receta, reglas):
     return generar_cpu(receta, reglas)
 
 
-MOTORES = {'cloudflare': cloudflare, 'gemini': gemini, 'pollinations': pollinations, 'hf': hf, 'cpu': cpu}
+MOTORES = {'cloudflare_flux2': cloudflare_flux2, 'gemini_pro': gemini_pro,
+           'cloudflare': cloudflare, 'gemini': gemini, 'pollinations': pollinations, 'hf': hf, 'cpu': cpu}
 
 
 SIN_LETRAS = ('. Photorealistic editorial photograph, natural light. Absolutely no text, '
@@ -144,15 +190,18 @@ def generar(receta, reglas):
         raise MotorError(str(e)) from e
     receta = receta.rstrip('. ') + SIN_LETRAS
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
-                                    or 'cloudflare,gemini,pollinations,hf').split(',') if m.strip() in MOTORES]
+                                    or 'cloudflare_flux2,gemini_pro').split(',') if m.strip() in MOTORES]
     # Veto de Dirección: ni el orden explícito ni el respaldo heredado lo reactivan.
     orden = [m for m in orden if not vetada({'motor': m})]
     avisos = []
+    sin_cupo = False
     for nombre in orden:
         try:
             datos, ext = MOTORES[nombre](receta, reglas)
             return datos, ext, nombre, avisos
         except MotorError as e:
             avisos.append(str(e))
-    raise MotorError('ningún motor de imagen pudo: %s' % (' · '.join(avisos) or 'ninguno encendido'),
+            sin_cupo = sin_cupo or bool(__import__('re').search(r'\b429\b|daily free allocation|exceeded.*quota', str(e), __import__('re').I))
+    error = CupoImagen if sin_cupo else MotorError
+    raise error('ningún motor de imagen pudo: %s' % (' · '.join(avisos) or 'ninguno encendido'),
                      intermitente=True)

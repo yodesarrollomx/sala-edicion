@@ -114,15 +114,30 @@ jobs:
           python3 sala_mesa.py $bandera ${PIEZA:+--pieza "$PIEZA"} 2>&1 | tee ../mesa.log
           echo "codigo=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
 
+      - name: Identificar estado del cupo sin ocultar fallo de generación
+        id: disponibilidad
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path("datos/mesa-estado.json")
+          try:r=json.loads(p.read_text())
+          except (OSError,ValueError):r={}
+          blocked=(r.get("schema")==1 and r.get("run_id")==os.environ.get("GITHUB_RUN_ID")
+                   and r.get("estado")=="bloqueado" and r.get("causa")=="cupo_imagen_agotado")
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("cupo_bloqueado="+("si" if blocked else "no")+"\n")
+          PY
+
       - name: Verificar antes de publicar (las reglas del repo)
-        if: steps.mesa.outputs.codigo == '0' && env.MODO != 'simular'
+        if: (steps.mesa.outputs.codigo == '0' || steps.disponibilidad.outputs.cupo_bloqueado == 'si') && env.MODO != 'simular'
         run: |
           pip install --quiet google-auth
           python3 nube/verificar.py
 
       - name: Guardar snapshot privado de datos ya validados
         id: guardar
-        if: steps.mesa.outputs.codigo == '0' && env.MODO != 'simular'
+        if: (steps.mesa.outputs.codigo == '0' || steps.disponibilidad.outputs.cupo_bloqueado == 'si') && env.MODO != 'simular'
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 nube/publicar_git.py integrar --proceso mesa

@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-12.sala-veto-tiny-sd.1",
-  "proposal_id": "CHG-SALA-VETO-TINY-SD-20261012",
-  "summary": "Retirar Tiny SD de generación y revisión; conservar decisiones e índices y recuperar fuentes activas publicadas para depurarlas.",
+  "model_revision": "2026-10-12.sala-rehacer-flux.1",
+  "proposal_id": "CHG-SALA-REHACER-POLLINATIONS-20261012",
+  "summary": "Retirar Pollinations; reemitir fuentes afectadas de piezas activas con modelos nuevos, conservando historia y cuotas explícitas.",
   "components": [
     "SYS-YOD-OS",
     "SYS-CONTROL",
@@ -18,8 +18,8 @@
     "python3 nube/verificar.py",
     "python3 -m unittest discover -s tests -p '*_test.py'",
     "node --test tests/*.cjs",
-    "Regresiones de veto, opciones filtradas con índice original, referencias aprobadas, caché incompatible y fuentes activas con huella.",
-    "Ejecución real autorizada de Chinches, Mesa y revisión; no escribir decisiones."
+    "Regresiones de fuentes retiradas, reemisión aprobada explícita, multipart FLUX2, cuota sin respaldos vetados y texto visible conservado.",
+    "Auditoría real de publicación y fuentes; Sala y Chinches autorizados, sin decisiones escritas."
   ],
-  "rollback": "Revertir mediante PR conservando registros e historia; reactivar el modelo exige revocación explícita del veto de Dirección."
+  "rollback": "Revertir por PR sin reactivar modelos retirados ni alterar decisiones, archivos o historia."
 }
