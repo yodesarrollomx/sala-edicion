@@ -30,6 +30,7 @@ import sys
 import tempfile
 
 import sala_cliente as sala
+import sala_produccion as produccion
 from motores import cerebro, imagen
 from motores._comun import MotorError
 from contenido_reglas import ContenidoVetado, exigir, normalizar, prohibidas, ubicaciones
@@ -98,46 +99,56 @@ def fechas_montada(pid):
                   if any(str(p.get('id')) == pid for p in (h or {}).get('propuestas') or []))
 
 
+_contexto_produccion = None
+
+
+def contexto_produccion():
+    global _contexto_produccion
+    if _contexto_produccion is None:
+        _contexto_produccion = produccion.cargar()
+    return _contexto_produccion
+
+
 def decision_del_sheet(pid, fecha_tira):
-    """Lo que los editores marcaron sobre esa carta, por índice de carta. El Sheet manda."""
-    fechas = fechas_montada(pid) or ([fecha_tira] if fecha_tira else [])
-    for f in reversed(fechas):
-        try:
-            d = sala.get('dia', f=f) or {}
-        except sala.SalaError as e:
-            sala.avisar('  ⚠ no pude leer el día %s del Sheet: %s' % (f, e))
-            return None, None
-        dec = ((d.get('decisiones') or {}).get('propuestas') or {}).get(pid)
-        props = [p for p in d.get('propuestas') or [] if str(p.get('id')) == pid]
-        if dec or props:
-            return dec or {}, (props[0].get('laminas') if props else None)
-    return {}, None
+    """La decisión vigente, aunque la carta ya no figure en la mesa visual."""
+    dia = contexto_produccion()
+    prop = next((p for p in dia["propuestas"] if p["id"] == pid), None)
+    if prop is None:
+        return None, None
+    dec = dia["decisiones"]["propuestas"].get(pid) or {}
+    return dec, prop.get("laminas")
 
 
 def abiertas(tid, t, leer_sheet=True):
-    """[(lamina, marca, nota)] de las láminas que piden trabajo, ya con lo del Sheet encima."""
-    mapa = t.get('mapa') or {str(i + 1): n for i, n in enumerate(t.get('decidir') or [])}
+    """Correcciones vigentes y continuación del guion tras aprobar la primera."""
     dec, srcs = decision_del_sheet(tid, fecha_de(t)) if leer_sheet else ({}, None)
-    marcas = (dec or {}).get('laminas') or []
-    notas = (dec or {}).get('notas') or []
-    por_n = {}
-    for i, marca in enumerate(marcas):
-        n = mapa.get(str(i + 1))
-        if n is None and srcs and i < len(srcs):
-            n = next((l.get('n') for l in t['laminas'] if l.get('src') == srcs[i]), None)
-        if n is None:
-            n = i + 1
-        por_n[int(n)] = (str(marca or ''), str(notas[i] if i < len(notas) else '') or
-                         str((dec or {}).get('nota') or ''))
+    if leer_sheet and dec is None:
+        raise sala.SalaError("la tira no tiene fuente vigente en el Sheet")
+    work = produccion.resolver_tira(t, dec, {'laminas': srcs or []})
+    mapa = work.get("mapa") or {str(i + 1): n for i, n in
+                                enumerate(work.get("decidir") or [])}
+    marks = (dec or {}).get("laminas") or []
+    notes = (dec or {}).get("notas") or []
+    por_n = {int(mapa.get(str(i + 1), i + 1)): (str(mark or ""),
+             str(notes[i] or "") if i < len(notes) else str((dec or {}).get("nota") or ""))
+             for i, mark in enumerate(marks)}
     salida = []
-    for lam in t['laminas']:
-        n = int(lam.get('n') or 0)
-        marca, nota = por_n.get(n, ('', ''))
-        if marca == 'si' or (not marca and lam.get('estado') == 'aprobada'):
+    for lam in work["laminas"]:
+        n = int(lam.get("n") or 0)
+        mark, note = por_n.get(n, ("", ""))
+        if lam.get("estado") == "aprobada":
             continue
-        nota = nota or str(lam.get('nota_previa') or '') or \
-            str(((lam.get('versiones') or [{}])[-1]).get('nota') or '')
-        salida.append((lam, marca or lam.get('marca_previa') or 'pendiente', nota))
+        # La nota del rechazo pertenece a su versión; no rechaza también
+        # las nuevas candidatas que aún nadie ha revisado.
+        if not mark and lam.get("candidatas"):
+            continue
+        note = note or str(lam.get("nota_previa") or "")
+        salida.append((lam, mark or "pendiente", note))
+    first = next((l for l in work["laminas"] if str(l.get("n")) == "1"), None)
+    if first and first.get("estado") == "aprobada":
+        for lam in produccion.guion_faltante(work):
+            lam.update(estado="pendiente", version=1, src="")
+            salida.append((lam, "pendiente", ""))
     return salida
 
 
@@ -211,7 +222,10 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                                           numero=lam.get('n'))
             avisos += av
             exigir(d, reglas, 'candidata')
-            texto = d['texto']
+            # Un desacuerdo explícito entre imagen y texto corrige la imagen;
+            # no convierte la nota en permiso para reescribir el texto mostrado.
+            solo_imagen = 'la imagen no cuadra con el texto' in normalizar(nota)
+            texto = str(lam.get('dice') or '') if solo_imagen else d['texto']
             problema = guardia(texto, veto)
             if problema:
                 avisos.append('toma %d: el texto propuesto %s; se queda el de la tira' % (k, problema))
@@ -246,6 +260,11 @@ def main():
     ap.add_argument('--sin-sheet', action='store_true', help='no leer el Sheet (pruebas locales)')
     args = ap.parse_args()
     sala.enmascarar_en_actions()
+    global _contexto_produccion
+    _contexto_produccion = None
+    if produccion.peticiones_abiertas():
+        sala.avisar('PASO 0: peticiones abiertas; Mesa no produce ni monta.')
+        return 0
 
     if args.montar:
         return montar()
@@ -260,6 +279,12 @@ def main():
         except sala.SalaError as e:
             sala.avisar('✗ no pude leer REGLAS/COLA: %s — «no contestó» no es «no hay nada»' % e)
             return 2
+    if not args.sin_sheet:
+        try:
+            contexto_produccion()
+        except sala.SalaError:
+            sala.avisar('fuente de decisiones sin confirmar; Mesa no produce.')
+            return 2
     n_tomas = int(float(str(reglas.get('mesa_tomas_por_lamina') or 2)))
     tope = int(float(str(reglas.get('mesa_tope_laminas') or 8)))
     ya_salieron = publicadas()
@@ -273,14 +298,19 @@ def main():
         if nombre.lower() in ya_salieron:
             sala.avisar('· %s: ya publicada, no vuelve a la mesa' % nombre)
             continue
+        if not args.sin_sheet:
+            live = {p['id'] for p in contexto_produccion()['propuestas']}
+            if tid not in live:
+                continue
         pend = abiertas(tid, t, leer_sheet=not args.sin_sheet)
         if not pend:
             sala.avisar('· %s (%s): todas sus láminas aprobadas — nada que rehacer' % (nombre, tid))
             continue
         sala.avisar('▶ %s · tira %s · %d lámina(s) abiertas' % (nombre, tid, len(pend)))
         nueva_id = '%s-nube-%s-%s' % (slug, hoy, hashlib.md5(
-            json.dumps([(l['n'], n) for l, _, n in pend], ensure_ascii=False).encode()).hexdigest()[:6])
-        carpeta = RAIZ / 'laminas' / ('%s-n%s' % (slug, hoy))
+            json.dumps({'base': tid, 'laminas': [(l['n'], m, n, l.get('src'), l.get('dice'))
+                        for l, m, n in pend]}, ensure_ascii=False).encode()).hexdigest()[:6])
+        carpeta = RAIZ / 'laminas' / nueva_id
         hecha = TIRAS / (nueva_id + '.json')
         if hecha.is_file() and not args.simular:
             # Idempotente: la tira de hoy con estas mismas notas ya se produjo (y se revisó);
@@ -293,11 +323,15 @@ def main():
                             for n in previa.get('decidir') or []],
                 'opciones': [], 'video': None, 'origen': previa.get('origen')}})
             continue
-        tira = json.loads(json.dumps(t))
+        dec_vigente, mostradas = decision_del_sheet(tid, fecha_de(t)) if not args.sin_sheet else ({}, None)
+        tira = produccion.resolver_tira(t, dec_vigente, {'laminas': mostradas or []})
         decidir = []
         for lam, marca, nota in pend:
-            sala.avisar('   L%s · %s · nota: «%s»' % (lam.get('n'), marca, (nota or '(sin nota)')[:140]))
-            destino = next(l for l in tira['laminas'] if l.get('n') == lam.get('n'))
+            sala.avisar('   L%s · %s · nota vigente de %d caracteres' %
+                        (lam.get('n'), marca, len(nota or '')))
+            destino = next((l for l in tira['laminas'] if l.get('n') == lam.get('n')), None)
+            if destino is None:
+                destino = dict(lam)
             destino['marca_previa'], destino['nota_previa'] = marca, nota
             if args.simular:
                 decidir.append(lam['n'])
@@ -310,23 +344,31 @@ def main():
                 sala.avisar('   ↺ nunca se decidió: se vuelve a montar con sus tomas')
                 decidir.append(lam['n'])
                 continue
-            tomas, avisos = producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas)
+            tomas, avisos = producir_tomas(slug, tira, lam, nota, reglas, cola, carpeta, n_tomas)
             gastadas += 1
             for a in avisos:
                 sala.avisar('     ⚠ %s' % a)
             if not tomas:
                 sala.avisar('   ✗ sin tomas para L%s: se queda pendiente' % lam['n'])
                 continue
+            if destino not in tira['laminas']:
+                tira['laminas'].append(destino)
+            destino['src'] = destino.get('src') or tomas[0]['src']
             destino['estado'] = 'rehecha'
+            destino['produccion_guardados'] = 1
             destino['candidatas'] = tomas
             destino['fecha'] = hoy
             decidir.append(lam['n'])
         if not decidir:
             continue
+        # Un lote parcial no oculta las candidatas aún sin responder del lote anterior.
+        decidir = sorted(set(decidir) | {l['n'] for l in tira['laminas']
+                         if l.get('estado') != 'aprobada' and l.get('candidatas')
+                         and l.get('produccion_guardados') == 1})
         tira.update({'decidir': decidir, 'mapa': {str(i + 1): n for i, n in enumerate(decidir)},
-                     'titulo': '%s · rehechas con tus notas (%d)' % (nombre, len(decidir)),
-                     'nota': 'La pieza completa. Sólo las láminas marcadas piden respuesta: en cada '
-                             'una vienen tomas nuevas hechas con tu última nota. Elige con «Ésta».',
+                     'titulo': '%s · láminas para revisión (%d)' % (nombre, len(decidir)),
+                     'nota': 'La tira conserva lo aprobado. Revisa las láminas señaladas: muestran '
+                             'su continuación y las correcciones con tus notas. Elige con «Ésta».',
                      'origen': 'rehecha-de %s' % tid, 'fecha': hoy, 'base': tid})
         # Los textos anteriores se conservan como historia; la compuerta revisa
         # exclusivamente las tomas recién producidas y sus textos visibles.

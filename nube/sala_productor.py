@@ -30,6 +30,7 @@ import sys
 
 import sala_catalogo as catalogo
 import sala_cliente as sala
+import sala_produccion as produccion
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 MANIFIESTO = RAIZ / 'datos' / 'manifiesto.json'
@@ -151,6 +152,16 @@ def planear(dia, cola, reglas, cat=None):
         if not isinstance(laminas, list) or not laminas:
             continue
         marcas = marcas_de(dia, pid)
+        if tira:
+            try:
+                tira = produccion.resolver_tira(tira,
+                    ((dia.get('decisiones') or {}).get('propuestas') or {}).get(pid), p)
+            except sala.SalaError:
+                diario.append('propuesta sin toma/identidad confirmada; no se encola')
+                continue
+            if not produccion.es_video(tira):
+                diario.append('formato de imágenes: continúa en Mesa, sin trabajos de video')
+                continue
         estados = []
 
         for i, lam in enumerate(laminas):
@@ -206,9 +217,22 @@ def planear(dia, cola, reglas, cat=None):
                 n = str(lt.get('n'))
                 ok = por_n.get(n) == 'si' or (n not in por_n and lt.get('estado') == 'aprobada')
                 (listas if ok else faltan).append(lt)
-            if faltan:
-                diario.append('el corte de %s NO se abre: láminas sin aprobar %s'
-                              % (familia, [l.get('n') for l in faltan]))
+            # Toda rama aprobada avanza, incluso fuera de la tarjeta actual.
+            for lt in listas:
+                n, h = str(lt.get('n')), huella_insumo(lt, cat)[0]
+                for etapa in ('escena', 'voz'):
+                    tid = '%s:%s:%s:%s' % (familia, etapa, n, h)
+                    if tid in ya or tid in nuevos_ids:
+                        continue
+                    nuevos.append({'id': tid, 'pieza': familia, 'etapa': etapa, 'item': n,
+                                   'estado': 'pendiente', 'prioridad': 5, 'pidio': 'productor-nube',
+                                   'evidencia': {'de': pid, 'lamina': n, 'n_real': True,
+                                                 **datos_lamina(lt)}})
+                    nuevos_ids.add(tid)
+            ausentes = produccion.guion_faltante(tira)
+            if faltan or ausentes:
+                diario.append('el corte de %s NO se abre: %d sin aprobar, %d por producir'
+                              % (familia, len(faltan), len(ausentes)))
                 continue
             lam_ev = []
             for lt in listas:
@@ -307,7 +331,7 @@ def main():
                     'para la Mac (invariante 54). Aquí sólo se encola.' % (ejecuta, de_donde))
 
     try:
-        dia = sala.get('dia', fresco='1')
+        dia = produccion.cargar()
         cola = (sala.get('cola') or {}).get('cola') or []
     except sala.SalaError as e:
         sala.avisar('✗ no pude leer el día o la COLA: %s' % e)
@@ -327,6 +351,10 @@ def main():
                     '8 seriales el 8-sep).')
         return 2
 
+    resumen_fuente = dia.get('_produccion') or {}
+    sala.avisar('fuente de producción: %d visibles, %d recuperadas, %d sin fuente vigente; %d sí, %d no'
+                % tuple(resumen_fuente.get(k, 0) for k in
+                        ('visibles', 'recuperadas', 'fuentes_no_vigentes', 'si', 'no')))
     nuevos, diario = planear(dia, cola, reglas, cat)
     sala.avisar('día %s · %d propuesta(s) · COLA con %d trabajo(s)'
                 % (dia.get('fecha'), len(dia.get('propuestas') or []), len(cola)))
@@ -334,7 +362,7 @@ def main():
         sala.avisar('   · %s' % linea)
 
     if not nuevos:
-        sala.avisar('✓ nada nuevo que encolar. La COLA ya refleja lo decidido.')
+        sala.avisar('✓ sin trabajos nuevos para las fuentes vigentes; revisar correcciones y compuertas en Mesa.')
         return 0
 
     if args.simular:
