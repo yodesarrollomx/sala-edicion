@@ -1,4 +1,4 @@
-name: Sala · comprobar publicación y turno de actualización
+name: Sala · auditoría final de fuentes vigentes
 on:
   push:
     branches: [codex/sala-rastrear-rehacer-imagenes-20261012]
@@ -33,6 +33,8 @@ jobs:
       - name: Verificar diez imágenes montadas y sus modelos en el sitio
         env:
           PYTHONPATH: nube
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
         run: |
           python3 - <<'PY'
           import concurrent.futures,json,urllib.request
@@ -53,4 +55,25 @@ jobs:
           if len(cards)!=10 or not all(results):raise SystemExit("Montaje incompleto")
           with urllib.request.urlopen(base+"datos/mesa-estado.json",timeout=30) as r:state=json.load(r)
           print("MESA_PUBLICA "+json.dumps(state))
+          import sala_cliente as sala,sala_mesa as mesa
+          from sala_produccion import cargar,resolver_tira
+          from motores.politica_imagen import depurar_tira,vetada,fuente_retirada,requiere_reemplazo,POLITICA
+          sala.enmascarar_en_actions()
+          def tira(pid):
+              with urllib.request.urlopen(base+"datos/tiras/"+pid+".json",timeout=30) as r:return json.load(r)
+          ctx=cargar(tira_reader=tira);mesa._contexto_produccion=ctx
+          counts={'propuestas_vigentes':0,'laminas_vigentes':0,'opciones_retiradas_visibles':0,'fuentes_retiradas_aprobadas_elegibles':0,'sustituciones_pendientes':0,'tomas_gpt_en_fuentes_vigentes':0}
+          for p in ctx['propuestas']:
+              if not p.get('laminas'):continue
+              t=tira(p['id']);d=ctx['decisiones']['propuestas'].get(p['id']) or {}
+              t,_=depurar_tira(resolver_tira(t,d,p));counts['propuestas_vigentes']+=1
+              for l in t.get('laminas') or []:
+                  counts['laminas_vigentes']+=1
+                  counts['sustituciones_pendientes']+=int(requiere_reemplazo(l))
+                  counts['fuentes_retiradas_aprobadas_elegibles']+=int(l.get('estado')=='aprobada' and fuente_retirada(l.get('src')))
+                  for c in l.get('candidatas') or []:
+                      counts['opciones_retiradas_visibles']+=int(vetada(c))
+                      counts['tomas_gpt_en_fuentes_vigentes']+=int(c.get('modelo')=='gpt-image-1.5')
+          print("FUENTES_VIGENTES "+json.dumps(counts))
+          if counts['opciones_retiradas_visibles'] or counts['fuentes_retiradas_aprobadas_elegibles']:raise SystemExit('Fuente vetada todavía activa')
           PY
