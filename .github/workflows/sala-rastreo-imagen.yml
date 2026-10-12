@@ -1,4 +1,4 @@
-name: Sala · verificar retiro y reemisión publicados
+name: Sala · comprobar GPT Image antes de activarlo
 on:
   push:
     branches: [codex/sala-rastrear-rehacer-imagenes-20261012]
@@ -7,79 +7,42 @@ permissions:
   contents: read
   actions: write
 jobs:
-  publicacion:
+  imagen:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 16
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 94ecdf77d4c6a3bba7ffd9ce82587c6100fc2e64
+          ref: c0ecc27f42351bba91afc1e770a44a05758c9e23
           persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - run: pip install --quiet requests pillow
-      - name: Verificar script exacto y las fuentes reales en todos los puntos de revisión
+      - run: pip install --quiet pillow requests
+      - name: Comprobar disponibilidad y una imagen real sin votos ni montaje
         env:
-          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
-          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
           PYTHONPATH: nube
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
         run: |
           python3 - <<'PY'
-          import collections,hashlib,json,pathlib,re,subprocess,time,urllib.request
+          import base64,hashlib,hmac,io,json,os,time,urllib.request,urllib.error
+          from PIL import Image
           import sala_cliente as sala
-          from sala_produccion import cargar,resolver_tira
-          from motores.politica_imagen import fuente_retirada
+          from motores import imagen
           sala.enmascarar_en_actions()
-          base="https://yodesarrollomx.github.io/sala-edicion/"
-          def get(path):
-              req=urllib.request.Request(base+path,headers={"Cache-Control":"no-cache"})
-              with urllib.request.urlopen(req,timeout=30) as r:return r.read()
-          expected=pathlib.Path("politica-imagen.js").read_bytes()
-          seal=re.search("const SELLO_SALA='([^']+)'",pathlib.Path("index.html").read_text()).group(1)
-          end=time.time()+600
+          key=hmac.new(sala._clave().encode(),b'yod:sala:image-broker:v1',hashlib.sha256).hexdigest()
+          print("::add-mask::"+key)
+          url="https://yod-cloud-room.onrender.com/sala/image/status"
+          end=time.time()+720
           while time.time()<end:
               try:
-                  actual=get("politica-imagen.js")
-                  html=get("index.html").decode()
-                  if actual==expected and ("const SELLO_SALA='"+seal+"'") in html:break
+                  with urllib.request.urlopen(urllib.request.Request(url,headers={"Authorization":"Bearer "+key}),timeout=20) as r:status=json.load(r)
+                  if status.get("ok"):break
               except Exception:pass
               time.sleep(10)
-          else:raise SystemExit("Versión exacta todavía no publicada")
-          print("POLITICA_PUBLICA_META "+json.dumps({"code_sha":"94ecdf77d4c6a3bba7ffd9ce82587c6100fc2e64","sha256":hashlib.sha256(actual).hexdigest(),"sello":seal,"confirmada":True}))
-          def tira(pid):
-              if not re.fullmatch("[A-Za-z0-9_.-]+",pid):raise ValueError("id inválido")
-              return json.loads(get("datos/tiras/"+pid+".json"))
-          ctx=cargar(tira_reader=tira)
-          raw=[];ready=[];pending=[]
-          for prop in ctx["propuestas"]:
-              if not prop.get("laminas"):continue
-              t=tira(prop["id"]);d=ctx["decisiones"]["propuestas"].get(prop["id"],{})
-              resolved=resolver_tira(t,d,prop)
-              for l in t.get("laminas",[]):raw.append({"estado":l.get("estado"),"src":l.get("src"),"candidatas":[{k:c.get(k) for k in ("motor","modelo","src","original")} for c in l.get("candidatas",[])]})
-              for l in resolved.get("laminas",[]):
-                  if l.get("reemplazo_modelo"):pending.append({"prop_id":prop["id"],"n":l.get("n"),"motivo":"modelo_retirado"})
-                  if l.get("estado")=="aprobada":ready.append(l.get("src"))
-          assert not any(fuente_retirada(s) for s in ready),"Fuente retirada aún elegible para producción"
-          js="""const p=require('./politica-imagen.js');let raw='';process.stdin.on('data',c=>raw+=c);
-          process.stdin.on('end',()=>{const rows=JSON.parse(raw);let bad=0,wait=0,ok=0;
-           for(const l of rows){const cs=p.tomas(l),src=p.srcLamina(l,l.src);
-            bad+=cs.filter(p.vetada).length;
-            if(p.fuenteRetirada(src))throw Error('Fuente retirada visible');
-            if(src)ok++;else wait++;
-           }
-           console.log('VISTA_META '+JSON.stringify({laminas:rows.length,opciones_vetadas_visibles:bad,
-            imagenes_en_espera:wait,con_imagen_permitida:ok,escrituras_decisiones:0}));
-          });"""
-          subprocess.run(["node","-e",js],input=json.dumps(raw),text=True,check=True)
-          print("PRODUCCION_META "+json.dumps({"reemplazos_pendientes":len(pending),"fuentes_aprobadas_permitidas":len(ready),"fuentes_retiradas_elegibles":0,"escrituras_decisiones":0}))
-          print("REEMPLAZOS_PENDIENTES "+json.dumps(pending))
-          try:
-              report=json.loads(get("datos/mesa-estado.json"))
-              print("MESA_PUBLICA "+json.dumps({k:report.get(k) for k in ("estado","causa","generadas","fallidas","limite_pendiente","cartas","modelo_imagen","run_id","revisado_en")}))
-          except Exception:print("MESA_PUBLICA "+json.dumps({"estado":"sin informe nuevo"}))
+          else:raise SystemExit("Puente de imágenes todavía no disponible")
+          print("BROKER_META "+json.dumps(status))
+          prompt="High-end architectural editorial photograph, portrait composition. A Mexican family of four sits with an architect around a wide oak table discussing three different miniature architectural models: a storefront, a low-rise apartment building and a family house. The uncle points to the storefront while a neighbor points to apartments, showing their differing ideas. A blank cadastral plan and wooden rulers on the table. Distinct realistic faces, natural anatomically correct hands, candid documentary interaction, accurate perspective, warm window daylight in an elegant beige interior, crisp fine detail, professional full-frame 35mm photography. No letters, captions, text, logos or watermarks."
+          rules={"_imagen_request_id":hashlib.sha256(b"sala-gpt-image-prueba-20261012-v1").hexdigest()}
+          raw,ext=imagen.openai_broker(prompt,rules)
+          im=Image.open(io.BytesIO(raw)).convert("RGB");dim=im.size;im.thumbnail((640,960));out=io.BytesIO();im.save(out,"JPEG",quality=90)
+          print("IMAGEN_REAL_META "+json.dumps({"modelo":imagen.modelo_de("openai_broker"),"dimensiones":dim,"bytes":len(raw),"recibo":rules["_imagen_recibo_id"],"receta_sha":rules["_receta_proveedor_sha256"],"generadas":1,"escrituras_decisiones":0}))
+          print("FOTO_BASE64 "+base64.b64encode(out.getvalue()).decode())
           PY
-      - name: Cosechar chinches de todos los tableros que escriben al buzón común
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run sala-chinches.yml --ref main -f simular=false
