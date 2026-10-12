@@ -1,35 +1,35 @@
-name: Sala · diagnóstico de proveedor sin generar imágenes
+name: Sala · ronda de chinches y comprobación de acceso
 on:
   push:
     branches: [codex/sala-rastrear-rehacer-imagenes-20261012]
     paths: [.github/workflows/sala-rastreo-imagen.yml]
 permissions:
   contents: read
+  actions: write
 jobs:
-  observar:
+  ronda:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
           ref: dde4ab0151c5cc36071882380afe7ecf495ecef6
           persist-credentials: false
-      - run: pip install --quiet requests pillow
-      - name: Contar recibos confirmados sin generar ni escribir decisiones
+      - name: Comprobar credencial alternativa existente sin exponerla
         env:
-          PYTHONPATH: nube
-          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
-          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           python3 - <<'PY'
-          import base64,concurrent.futures,hashlib,hmac,io,json,re,urllib.request,urllib.error
-          from PIL import Image
-          import sala_cliente as sala,sala_mesa as mesa
-          from sala_produccion import cargar
-          sala.enmascarar_en_actions()
-          key=hmac.new(sala._clave().encode(),b'yod:sala:image-broker:v1',hashlib.sha256).hexdigest()
-          print("::add-mask::"+key)
-          req=urllib.request.Request("https://yod-cloud-room.onrender.com/sala/image/status",headers={"Authorization":"Bearer "+key})
-          with urllib.request.urlopen(req,timeout=30) as r:health=json.load(r)
-          print("GPT_STATUS "+json.dumps({k:health.get(k) for k in ["ok","model","configured","provider_error","last_success","daily_attempts"]}))
+          import os
+          print("CREDENCIAL_GPT_ACTIONS_CONFIGURADA",bool(os.environ.get("OPENAI_API_KEY","").strip()))
+          PY
+      - name: Ejecutar puente real de chinches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import datetime,json,subprocess
+          started=datetime.datetime.now(datetime.timezone.utc).isoformat()
+          subprocess.run(["gh","workflow","run","sala-chinches.yml","--ref","main","-f","simular=false"],check=True)
+          print("RONDA_CHINCHES_SOLICITADA "+json.dumps({"desde":started,"modo":"real","workflow":"sala-chinches.yml"}))
           PY
