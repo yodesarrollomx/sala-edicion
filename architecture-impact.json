@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-12.sala-imagen-publicacion.1",
-  "proposal_id": "CHG-SALA-IMAGEN-PUBLICACION-20261012",
-  "summary": "Neutralizar referencia heredada, recuperar imágenes confirmadas aun sin cupo y admitir el paquete nuevo con límites conservados.",
+  "model_revision": "2026-10-12.sala-imagen-evidencia.1",
+  "proposal_id": "CHG-SALA-OPENAI-BROKER-20261012",
+  "summary": "El arranque de imágenes usa los motores por API vigentes; quitar instalación y caché del generador CPU ya retirado para reducir el tiempo del mutex compartido.",
   "components": [
     "SYS-YOD-OS",
     "SYS-CONTROL",
@@ -20,9 +20,8 @@
   "tests": [
     "git diff --check",
     "python3 nube/verificar.py",
-    "python3 -m unittest discover -s tests -p '*_test.py'",
-    "node --test tests/imagen-broker.test.mjs",
-    "Referencia con ubicación vetada; modo sólo recibo sin POST ni respaldo; límites de ZIP y descompresión existentes."
+    "CI de Sala: regresiones, contratos y Arquitectura",
+    "Verificar que el arranque no instale imagen_cpu_requirements ni cargue el cache Tiny-SD; otras etapas conservan sus dependencias."
   ],
-  "rollback": "Revertir por PR manteniendo fotos, recibos, decisiones y política de retiro. No borrar historia para reducir un paquete; límites de archivo, rutas y datos siguen vigentes."
+  "rollback": "Revertir este cambio de dependencias por PR; conservar política de modelos, imágenes, recibos, votos, historia y las dependencias de voz/escena en sus workflows."
 }
