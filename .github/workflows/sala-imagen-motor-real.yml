@@ -1,0 +1,63 @@
+name: Sala · motor de imagen real y revisión de tira
+on:
+  push:
+    branches: [codex/sala-modelos-vigentes-20261012]
+    paths: [.github/workflows/sala-imagen-motor-real.yml]
+permissions:
+  contents: read
+jobs:
+  motor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 1b555ccad93b66fbc21432f7294061defc681a90
+          persist-credentials: false
+      - run: pip install --quiet pillow requests
+      - name: Llamar motor con REGLAS frescas y sin POST a negocio
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          PYTHONPATH: nube
+        run: |
+          python3 - <<'PY'
+          import hashlib,io,json,time
+          from PIL import Image
+          import sala_cliente as sala
+          from motores import imagen
+          rules=(sala.get("reglas") or {}).get("reglas")
+          if not isinstance(rules,dict): raise SystemExit("Reglas sin contrato")
+          start=time.monotonic()
+          raw,ext,motor,warnings=imagen.generar(
+              "A photorealistic editorial photograph of a person looking over undeveloped land at a warm sunset in Hermosillo, Mexico. Realistic natural light.",rules)
+          im=Image.open(io.BytesIO(raw));im.verify()
+          im=Image.open(io.BytesIO(raw))
+          assert motor=="pollinations","No se ejercitó el respaldo corregido"
+          assert len(raw)>5000 and 0.79<=im.width/im.height<=0.81
+          print("MOTOR_REAL_META "+json.dumps({"motor":motor,"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),
+              "dimensiones":[im.width,im.height],"segundos":round(time.monotonic()-start,2),
+              "reglas_confirmadas":True,"avisos_proveedores":len(warnings),"escrituras_negocio":0}))
+          PY
+      - name: Identificar motor de las dos láminas nuevas y descargar muestra
+        run: |
+          python3 - <<'PY'
+          import base64,hashlib,json,urllib.request
+          base="https://yodesarrollomx.github.io/sala-edicion/"
+          pid="la-ruta-autonoma-nube-2026-10-11-3648fb"
+          def get(path):
+              with urllib.request.urlopen(urllib.request.Request(base+path,headers={"Cache-Control":"no-cache"}),timeout=30) as r:
+                  return r.read()
+          t=json.loads(get("datos/tiras/"+pid+".json"))
+          for number in [5,6]:
+              l=next(l for l in t["laminas"] if l["n"]==number)
+              print("LAMINA_META "+json.dumps({"n":number,"estado":l.get("estado"),"motores":[c.get("motor") for c in l.get("candidatas",[])]}))
+              if l.get("candidatas"):
+                  raw=get(l["candidatas"][0]["src"])
+                  print("FOTO_META "+json.dumps({"n":number,"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest()}))
+                  print("FOTO_BASE64 "+base64.b64encode(raw).decode())
+          PY
