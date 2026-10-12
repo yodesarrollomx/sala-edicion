@@ -29,4 +29,11 @@ class GuionVigenteTest(unittest.TestCase):
             self.assertIn("concrete action and physical objects",image.call_args.args[0])
             self.assertRegex(image.call_args.args[1]["_imagen_request_id"],"^[a-f0-9]{64}$")
 
+class ReferenciaVigenteTest(unittest.TestCase):
+    def test_neutraliza_ubicacion_historica_sin_cambiar_caption(self):
+        value=mesa.contexto_visual("Una familia revisa planos en Hermosillo con luz natural")
+        self.assertNotIn("Hermosillo",value)
+        self.assertIn("familia revisa planos",value)
+        self.assertEqual(mesa.contexto_visual("Mesa con planos y luz natural"),"Mesa con planos y luz natural")
+
 if __name__=="__main__":unittest.main()

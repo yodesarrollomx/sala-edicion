@@ -218,18 +218,25 @@ def referencia(t):
     return None
 
 
-def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
+def contexto_visual(texto):
+    """Una referencia histórica no vuelve a introducir ubicaciones o dinero vetados."""
+    value = str(texto or '')
+    for location in prohibidas(value):
+        value = re.sub(re.escape(location), 'el lugar del proyecto', value, flags=re.I)
+    return '' if prohibidas(value) or DINERO.search(value) else value
+
+def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas, solo_recibo=False):
     from sala_compositor import componer, avisos as avisos_comp
     veto = vetadas(slug)
     tomas, avisos = [], []
     ref = referencia(t)
-    ref_txt = ('Lámina %s aprobada — dice «%s»; muestra: %s' % (ref.get('n'), ref.get('dice'), ref.get('ve') or '(sin descripción)')
+    ref_txt = ('Lámina %s aprobada — referencia visual: %s' % (ref.get('n'), contexto_visual(ref.get('ve')))
                if ref and ref.get('n') != lam.get('n') else '')
     if not nota and ref_txt:
         nota = 'Que se parezca a la lámina %s aprobada: mismos personajes, mismo lugar, misma luz.' % ref.get('n')
     for k in range(1, n_tomas + 1):
         try:
-            if lam.get('reemplazo_modelo') == POLITICA['revision']:
+            if lam.get('reemplazo_modelo') == POLITICA['revision'] or solo_recibo:
                 # Cambiar el generador no requiere reescribir el guion ni otra inferencia.
                 # El modelo de imagen recibe el mensaje visible como autoridad de la escena.
                 receta = (
@@ -243,7 +250,7 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                     "Keep all important subjects inside the central 4:5 region with space for the separate caption overlay. "
                     "The approved reference below guides characters, lighting and style, not an unrelated pose. "
                     + (ref_txt or "Consistent contemporary architectural documentary style.")
-                    + " Context from the original description: " + str(lam.get('ve') or '')
+                    + " Context from the original description: " + contexto_visual(lam.get('ve'))
                     + ". Output only the photograph, absolutely no text, letters, captions, signs, logos or watermarks.")
                 d = {'texto': str(lam.get('dice') or ''), 'receta': receta,
                      'porque': 'Nueva fotografía desde el guion vigente; conserva exactamente el texto visible.'}
@@ -267,7 +274,8 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                     continue
             exigir({'texto': texto}, reglas, 'texto elegido')
             reglas_imagen = dict(reglas, _imagen_request_id=hashlib.sha256(
-                (str(carpeta.relative_to(RAIZ)) + ':L%d-%d' % (lam['n'], k)).encode()).hexdigest())
+                (str(carpeta.relative_to(RAIZ)) + ':L%d-%d' % (lam['n'], k)).encode()).hexdigest(),
+                _imagen_solo_recibo=solo_recibo)
             datos, ext, motor, av2 = imagen.generar(d['receta'], reglas_imagen)
             avisos += av2
             with tempfile.NamedTemporaryFile(suffix='.' + ext) as tmp:
@@ -283,6 +291,9 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                           'receta_sha256': reglas_imagen.get('_receta_proveedor_sha256') or hashlib.sha256(d['receta'].encode()).hexdigest(),
                           'recibo_imagen': reglas_imagen.get('_imagen_recibo_id'),
                           'huella': hashlib.md5(png.read_bytes()).hexdigest()})
+        except imagen.ReciboNoConfirmado:
+            avisos.append('RECIBO_NO_CONFIRMADO: toma aún pendiente, sin nueva generación')
+            break
         except imagen.CupoImagen as e:
             avisos.append('CUPO_IMAGEN_AGOTADO: %s' % e)
             break
@@ -546,10 +557,7 @@ def main():
                 decidir.append(lam['n'])
                 sala.avisar('   ↺ modelo retirado depurado; se conservan las tomas permitidas')
                 continue
-            if cupo_bloqueado:
-                limitadas += 1
-                sala.avisar('   ⏸ sin cupo del nuevo generador; continúa pendiente, sin volver al modelo retirado')
-                continue
+            solo_recibo = cupo_bloqueado
             if gastadas >= tope:
                 limitadas += 1
                 sala.avisar('   ⏸ tope de %d láminas por corrida; ésta queda para mañana' % tope)
@@ -559,12 +567,16 @@ def main():
                 sala.avisar('   ↺ nunca se decidió: se vuelve a montar con sus tomas')
                 decidir.append(lam['n'])
                 continue
-            tomas, avisos = producir_tomas(slug, tira, lam, nota, reglas, cola, carpeta, n_tomas)
+            tomas, avisos = producir_tomas(slug, tira, lam, nota, reglas, cola, carpeta, n_tomas, solo_recibo=solo_recibo)
             gastadas += 1
-            cupo_bloqueado = any(str(a).startswith('CUPO_IMAGEN_AGOTADO:') for a in avisos)
+            cupo_bloqueado = cupo_bloqueado or any(str(a).startswith('CUPO_IMAGEN_AGOTADO:') for a in avisos)
             for a in avisos:
                 sala.avisar('     ⚠ %s' % a)
             if not tomas:
+                if solo_recibo:
+                    limitadas += 1
+                    sala.avisar('   ⏸ sin recibo confirmado para L%s; permanece pendiente' % lam['n'])
+                    continue
                 fallidas += 1
                 sala.avisar('   ✗ sin tomas para L%s: se queda pendiente' % lam['n'])
                 continue

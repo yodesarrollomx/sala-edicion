@@ -26,6 +26,9 @@ class CupoImagen(MotorError):
     """Los proveedores nuevos agotaron cupo: no gastar recetas en el resto del lote."""
     pass
 
+class ReciboNoConfirmado(MotorError):
+    pass
+
 MODELO_FLUX2 = '@cf/black-forest-labs/flux-2-klein-9b'
 MODELO_GEMINI_PRO = 'gemini-3-pro-image'
 
@@ -110,6 +113,8 @@ def openai_broker(receta, reglas):
     except urllib.error.URLError:
         raise MotorError('GPT Image: recibo sin confirmar', intermitente=True) from None
     if result is None:
+        if (reglas or {}).get('_imagen_solo_recibo'):
+            raise ReciboNoConfirmado('toma aún sin recibo confirmado', intermitente=True)
         raw, _ = _pedir(url, {'request_id':request_id,'prompt':receta},
                        {'Authorization':'Bearer '+token}, 'GPT Image', espera=240)
         result = json.loads(raw)
@@ -228,6 +233,8 @@ def generar(receta, reglas):
     receta = receta.rstrip('. ') + SIN_LETRAS
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
                                     or 'openai_broker,cloudflare_flux2,gemini_pro').split(',') if m.strip() in MOTORES]
+    if (reglas or {}).get('_imagen_solo_recibo'):
+        orden = ['openai_broker']
     # Veto de Dirección: ni el orden explícito ni el respaldo heredado lo reactivan.
     orden = [m for m in orden if not vetada({'motor': m})]
     avisos = []
@@ -236,6 +243,8 @@ def generar(receta, reglas):
         try:
             datos, ext = MOTORES[nombre](receta, reglas)
             return datos, ext, nombre, avisos
+        except ReciboNoConfirmado:
+            raise
         except MotorError as e:
             avisos.append(str(e))
             sin_cupo = sin_cupo or bool(__import__('re').search(r'\b429\b|daily free allocation|exceeded.*quota', str(e), __import__('re').I))
