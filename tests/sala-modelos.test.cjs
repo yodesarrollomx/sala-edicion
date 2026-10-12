@@ -43,3 +43,23 @@ test("miniatura sin tira y URL absoluta tampoco muestran una fuente retirada",()
  assert.equal(p.srcLamina(null,"https://yodesarrollomx.github.io/sala-edicion/"+src+"?v=1"),"");
  assert.match(p.mensajeEspera({src},src),/retirada/);
 });
+
+test("árbol de producción oculta modelos retirados sin cambiar la elección histórica",()=>{
+ const html=fs.readFileSync("index.html","utf8");
+ const start=html.indexOf("function ramaLaminas("),end=html.indexOf("\nfunction ramaEtapaCola",start);
+ assert.ok(start>=0&&end>start);
+ const render=new Function("POLITICA_IMAGEN","laminaAbierta","esc","ligera","evidenciaSrc","colorPunto",
+   html.slice(start,end)+";return ramaLaminas;")(p,()=>null,String,x=>x,f=>f.src,()=> "gris");
+ const retired=p.policy.fuentes_retiradas[0];
+ const tira={laminas:[{n:2,version:1,estado:"aprobada",src:"healthy.png",
+   candidatas:[{motor:"cpu",src:"retired-cpu.jpg"},{motor:"cloudflare",src:"healthy.jpg"}]}]};
+ const before=JSON.stringify(tira);
+ const out=render(tira,[{item:"2-1",motor:"pollinations",src:retired,estado:"hecho"},
+   {item:"2-2",motor:"cloudflare",src:"queue-healthy.jpg",estado:"hecho"}]);
+ assert.ok(!out.includes("retired-cpu.jpg"));
+ assert.ok(!out.includes(retired));
+ assert.ok(out.includes("healthy.jpg")&&out.includes("queue-healthy.jpg"));
+ assert.ok(out.includes("candidata 2"));
+ assert.equal(p.tomas(tira.laminas[0])[0].indiceOriginal,1);
+ assert.equal(JSON.stringify(tira),before);
+});
