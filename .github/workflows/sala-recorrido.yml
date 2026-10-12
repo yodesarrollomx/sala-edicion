@@ -68,7 +68,7 @@ jobs:
           if not 0<=n<=2: raise SystemExit("Número de pasadas inválido")
           r=json.loads(Path("datos/mesa-estado.json").read_text())
           if (n and r.get("run_id")==os.environ["GITHUB_RUN_ID"]
-              and r.get("generadas",0)>0 and r.get("limite_pendiente",0)>0):
+              and (r.get("generadas",0)>0 or r.get("reutilizadas",0)>0) and r.get("limite_pendiente",0)>0):
               subprocess.run(["gh","workflow","run","sala-recorrido.yml","--ref","main",
                               "-f","pasadas_restantes="+str(n-1)],check=True)
               print(json.dumps({"siguiente_pasada_solicitada":True,"pasadas_restantes":n-1}))

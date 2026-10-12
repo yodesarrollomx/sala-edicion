@@ -34,7 +34,7 @@ MAX_FILE = 25 * 1024 * 1024
 MAX_FILES = 10000
 SALA_PATHS = {
     "arranque": ("laminas/", "datos/tiras/", "datos/arranque.json"),
-    "mesa": ("laminas/", "datos/tiras/"),
+    "mesa": ("laminas/", "datos/tiras/", "datos/mesa-estado.json"),
     "relevo": ("datos/manifiesto.json",),
     "maquinas": ("datos/maquinas.json",),
     "chinches": ("datos/encargos.json", "datos/piezas.json", "datos/motores_puntaje.json"),

@@ -251,6 +251,30 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
 
 
 
+
+def tiras_vigentes(piezas, dia):
+    """Seleccionar la fuente del Sheet, incluso si ya hay una versión sin montar."""
+    live = {p["id"] for p in dia.get("propuestas", [])}
+    result = {}
+    for slug, (pid, t) in piezas.items():
+        if pid in live:
+            result[slug] = (pid, t)
+            continue
+        alternatives = []
+        for source in live:
+            raw = _leer(TIRAS / (source + ".json"), {}) or {}
+            if str(raw.get("pieza_slug") or "") == slug:
+                alternatives.append((source, raw))
+        if alternatives:
+            result[slug] = max(alternatives, key=lambda x: (fecha_de(x[1]), x[0]))
+    return result
+
+
+def referencias_aprobadas(tira):
+    return sorted((str(l.get("n")), str(l.get("src") or ""), str(l.get("dice") or ""))
+                  for l in tira.get("laminas", []) if l.get("estado") == "aprobada")
+
+
 def piezas_por_prioridad(piezas, dia):
     """Primero decisiones recientes y la continuación de sus versiones."""
     decisions = (dia.get("decisiones") or {}).get("propuestas") or {}
@@ -273,14 +297,14 @@ def piezas_por_prioridad(piezas, dia):
         key=lambda x: priority(x)[0], reverse=True)
 
 
-def guardar_estado_mesa(generadas, fallidas, limitadas, cartas):
+def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0):
     state = "bloqueado" if fallidas and not generadas else (
         "parcial" if fallidas or limitadas else "al_dia")
     report = {"schema": 1, "estado": state,
               "revisado_en": dt.datetime.now(dt.timezone.utc).isoformat(),
               "code_sha": __import__("os").environ.get("GITHUB_SHA"),
               "run_id": __import__("os").environ.get("GITHUB_RUN_ID"),
-              "generadas": generadas, "fallidas": fallidas,
+              "generadas": generadas, "reutilizadas": reutilizadas, "fallidas": fallidas,
               "limite_pendiente": limitadas, "cartas": cartas}
     dest = RAIZ / "datos" / "mesa-estado.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -330,9 +354,12 @@ def main():
     ya_salieron = publicadas()
     hoy = sala.hoy_hermosillo()
     plan, gastadas = [], 0
-    generadas = fallidas = limitadas = 0
+    generadas = fallidas = limitadas = reutilizadas = 0
 
-    orden = piezas_por_prioridad(tiras_por_pieza(), contexto_produccion() if not args.sin_sheet else {})
+    piezas = tiras_por_pieza()
+    if not args.sin_sheet:
+        piezas = tiras_vigentes(piezas, contexto_produccion())
+    orden = piezas_por_prioridad(piezas, contexto_produccion() if not args.sin_sheet else {})
     for slug, (tid, t) in orden:
         if args.pieza and slug != args.pieza:
             continue
@@ -354,10 +381,20 @@ def main():
                         for l, m, n in pend]}, ensure_ascii=False).encode()).hexdigest()[:6])
         carpeta = RAIZ / 'laminas' / nueva_id
         hecha = TIRAS / (nueva_id + '.json')
+        dec_vigente, mostradas = decision_del_sheet(tid, fecha_de(t)) if not args.sin_sheet else ({}, None)
+        vigente = produccion.resolver_tira(t, dec_vigente, {'laminas': mostradas or []})
+        if hecha.is_file() and referencias_aprobadas(_leer(hecha, {}) or {}) != referencias_aprobadas(vigente):
+            # La referencia cambió después de generar: versión nueva, sin pisar la anterior.
+            nueva_id += '-' + hashlib.sha256(json.dumps(referencias_aprobadas(vigente)).encode()).hexdigest()[:6]
+            carpeta = RAIZ / 'laminas' / nueva_id
+            hecha = TIRAS / (nueva_id + '.json')
         if hecha.is_file() and not args.simular:
             # Idempotente: la tira de hoy con estas mismas notas ya se produjo (y se revisó);
             # montar no vuelve a gastar cuota ni cambia las tomas que el editor va a ver.
             previa = _leer(hecha, {}) or {}
+            validar_nuevas_tomas(previa, reglas)
+            reutilizadas += 1
+            limitadas += len(produccion.guion_faltante(previa))
             sala.avisar('   ↺ la tira %s ya existe: se reusa sin volver a producir' % nueva_id)
             plan.append({'familia': slug, 'tira_id': nueva_id, 'carta': {
                 'id': nueva_id, 'titulo': previa.get('titulo'), 'tipo': 'laminas',
@@ -365,8 +402,7 @@ def main():
                             for n in previa.get('decidir') or []],
                 'opciones': [], 'video': None, 'origen': previa.get('origen')}})
             continue
-        dec_vigente, mostradas = decision_del_sheet(tid, fecha_de(t)) if not args.sin_sheet else ({}, None)
-        tira = produccion.resolver_tira(t, dec_vigente, {'laminas': mostradas or []})
+        tira = vigente
         decidir = []
         for lam, marca, nota in pend:
             sala.avisar('   L%s · %s · nota vigente de %d caracteres' %
@@ -439,7 +475,7 @@ def main():
         PLAN.parent.mkdir(parents=True, exist_ok=True)
         PLAN.write_text(json.dumps({'fecha': hoy, 'cartas': plan}, ensure_ascii=False, indent=1),
                         encoding='utf-8')
-        guardar_estado_mesa(generadas, fallidas, limitadas, len(plan))
+        guardar_estado_mesa(generadas, fallidas, limitadas, len(plan), reutilizadas)
     # Preparación que falló por completo es un fallo real, no una mesa «al día».
     return 2 if fallidas and not plan and not args.simular else 0
 
@@ -454,7 +490,9 @@ def _snapshot_publicado(ruta):
         if _snapshot_verifier is None:
             _snapshot_verifier = Snapshots(RAIZ)
         return _snapshot_verifier.file_is_published(RAIZ / str(ruta))
-    except (OnlineError, ValueError, OSError):
+    except OnlineError:
+        raise sala.SalaError('no se pudo leer o acreditar el snapshot privado de publicación') from None
+    except (ValueError, OSError):
         return False
 
 
@@ -488,7 +526,7 @@ def montar():
                    if not _existe_en_commit_publicado(ruta)]
     if sin_publicar:
         raise sala.SalaError(
-            '%d lámina(s) aún sin archivo en main; no se monta ninguna carta de '
+            '%d lámina(s) sin hash confirmado en la versión publicada; no se monta ninguna carta de '
             'este lote y se conservan las decisiones previas' % len(sin_publicar))
     for c in plan['cartas']:
         tira = _leer(TIRAS / (c['tira_id'] + '.json'), None)
