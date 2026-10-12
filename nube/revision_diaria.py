@@ -51,7 +51,7 @@ def observe_runs(api):
                 continue
             filename = str(run.get("path", "")).split("/")[-1]
             if filename not in {*(f"sala-{r[0]}.yml" for r in ROUTINES),
-                                 "sala-cada-hora.yml", "sala-diario.yml", "sala-cierre-online.yml", "sala-vigilante.yml"}:
+                                 "sala-cada-hora.yml", "sala-diario.yml", "sala-cierre-online.yml", "sala-vigilante.yml", "sala-recorrido.yml"}:
                 continue
             jobs = api.request("actions/runs/" + str(run["id"]) + "/jobs?per_page=100").get("jobs")
             if not isinstance(jobs, list):

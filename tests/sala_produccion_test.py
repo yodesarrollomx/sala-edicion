@@ -303,5 +303,101 @@ class RejectionSourceTests(unittest.TestCase):
             self.assertEqual(candidates[0]["dice"], "Texto aprobado visible")
             self.assertEqual(compose.call_args.args[1], "Texto aprobado visible")
 
+
+
+class ProductionStatusTests(unittest.TestCase):
+    def test_recent_saved_decisions_precede_old_alphabetical_backlog(self):
+        old = "antigua-nube-2026-09-30-123"
+        d = day(decisions={old: dict(yes(), heredada="2026-09-30"), P: yes()})
+        order = mesa.piezas_por_prioridad({"a-vieja": (old, tira()), "z-reciente": (P, tira())}, d)
+        self.assertEqual(order[0][0], "z-reciente")
+
+    def test_second_wave_inherits_priority_of_its_saved_base(self):
+        t = tira()
+        t["base"] = P
+        old = "antigua-nube-2026-09-30-123"
+        d = day(decisions={old: dict(yes(), heredada="2026-09-30"), P: yes()})
+        order = mesa.piezas_por_prioridad({"a-vieja": (old, tira()), "z-segunda": ("nueva-123", t)}, d)
+        self.assertEqual(order[0][0], "z-segunda")
+
+    def test_all_failed_images_fail_the_run_and_publish_blocked_state(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "datos" / "tiras").mkdir(parents=True)
+            d = day([card()], {P: yes()})
+            with patch.object(sys, "argv", ["mesa", "--producir"]), \
+                 patch.object(mesa, "RAIZ", root), patch.object(mesa, "TIRAS", root / "datos" / "tiras"), \
+                 patch.object(mesa, "PLAN", root / "plan.json"), \
+                 patch.object(mesa, "contexto_produccion", return_value=d), \
+                 patch.object(mesa, "tiras_por_pieza", return_value={"pieza": (P, tira())}), \
+                 patch.object(mesa, "publicadas", return_value=set()), \
+                 patch.object(mesa, "producir_tomas", return_value=([], ["sin modelo disponible"])), \
+                 patch.object(prod, "peticiones_abiertas", return_value=False), \
+                 patch.object(sala, "get", side_effect=lambda r, **k: {"reglas": {}} if r=="reglas" else {"cola": []}):
+                self.assertEqual(mesa.main(), 2)
+            r = json.loads((root / "datos" / "mesa-estado.json").read_text())
+            self.assertEqual(r["estado"], "bloqueado")
+            self.assertEqual(r["generadas"], 0)
+            self.assertEqual(r["fallidas"], 2)
+            self.assertNotIn("nota", r)
+            self.assertNotIn("propuestas", r)
+
+    def test_partial_work_is_reported_partial_not_as_whole_success(self):
+        with tempfile.TemporaryDirectory() as td, patch.object(mesa, "RAIZ", Path(td)):
+            self.assertEqual(mesa.guardar_estado_mesa(2, 1, 3, 1), "parcial")
+            r = json.loads((Path(td) / "datos" / "mesa-estado.json").read_text())
+            self.assertEqual(r["estado"], "parcial")
+            self.assertEqual(r["limite_pendiente"], 3)
+
+
+class BrainAvailabilityTests(unittest.TestCase):
+    def test_default_uses_live_light_alias_not_retired_model(self):
+        import os
+        from motores import cerebro
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "sintetica"}), \
+             patch.object(cerebro, "_post_json", return_value={"candidates": [
+                 {"content": {"parts": [{"text": "respuesta"}]}}]}) as call:
+            self.assertEqual(cerebro._gemini("sintético", {}), "respuesta")
+        self.assertIn("/gemini-flash-lite-latest:generateContent", call.call_args.args[0])
+        self.assertNotIn("2.5", call.call_args.args[0])
+
+    def test_transient_primary_uses_verified_gemini_fallback(self):
+        import os
+        from motores import cerebro
+        from motores._comun import MotorError
+        effects = [MotorError("Gemini 503", intermitente=True),
+                   {"candidates": [{"content": {"parts": [{"text": "respuesta"}]}}]}]
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "sintetica"}), \
+             patch.object(cerebro, "_post_json", side_effect=effects) as call:
+            self.assertEqual(cerebro._gemini("sintético", {}), "respuesta")
+        self.assertEqual(call.call_count, 2)
+        self.assertIn("gemini-3.6-flash", call.call_args.args[0])
+
+    def test_thought_text_is_not_mixed_with_final_json(self):
+        import os
+        from motores import cerebro
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "sintetica"}), \
+             patch.object(cerebro, "_post_json", return_value={"candidates": [
+                 {"content": {"parts": [{"thought": True, "text": "{\"razonamiento\":1}"},
+                                       {"text": "{\"receta\":\"final\"}"}]}}]}):
+            self.assertEqual(cerebro._json_de(cerebro._gemini("sintético", {})),
+                             {"receta": "final"})
+
+    def test_non_transient_authorization_error_is_not_bypassed(self):
+        import os
+        from motores import cerebro
+        from motores._comun import MotorError
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "sintetica"}), \
+             patch.object(cerebro, "_post_json", side_effect=MotorError("Gemini 403")) as call:
+            with self.assertRaises(MotorError):
+                cerebro._gemini("sintético", {})
+        self.assertEqual(call.call_count, 1)
+
+    def test_recorrido_does_not_repeat_mesa_with_the_same_run_id(self):
+        wf = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "sala-recorrido.yml").read_text()
+        self.assertEqual(wf.count("uses: ./.github/workflows/sala-mesa.yml"), 1)
+        self.assertIn('"workflow","run","sala-recorrido.yml"', wf)
+        self.assertIn('r.get("run_id")==os.environ["GITHUB_RUN_ID"]', wf)
+
 if __name__ == "__main__":
     unittest.main()

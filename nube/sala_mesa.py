@@ -22,6 +22,7 @@ Uso:
 """
 
 import argparse
+import datetime as dt
 import hashlib
 import json
 import pathlib
@@ -249,6 +250,45 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
     return tomas, avisos + avisos_comp
 
 
+
+def piezas_por_prioridad(piezas, dia):
+    """Primero decisiones recientes y la continuación de sus versiones."""
+    decisions = (dia.get("decisiones") or {}).get("propuestas") or {}
+    def priority(item):
+        slug, (pid, t) = item
+        date, seen = "", set()
+        while pid and pid not in seen:
+            seen.add(pid)
+            d = decisions.get(pid) or {}
+            if any(m in ("si", "no") for m in d.get("laminas", [])):
+                date = max(date, str(d.get("heredada") or dia.get("fecha") or ""))
+            pid = str(t.get("base") or "")
+            if not pid or not produccion.PID.fullmatch(pid):
+                break
+            t = _leer(TIRAS / (pid + ".json"), {}) or {}
+        return date, slug
+    # Fecha descendente; desempate estable por slug, para no priorizar el alfabeto viejo.
+    return sorted(piezas.items(), key=lambda x: x[0]) if not dia else sorted(
+        sorted(piezas.items(), key=lambda x: x[0]),
+        key=lambda x: priority(x)[0], reverse=True)
+
+
+def guardar_estado_mesa(generadas, fallidas, limitadas, cartas):
+    state = "bloqueado" if fallidas and not generadas else (
+        "parcial" if fallidas or limitadas else "al_dia")
+    report = {"schema": 1, "estado": state,
+              "revisado_en": dt.datetime.now(dt.timezone.utc).isoformat(),
+              "code_sha": __import__("os").environ.get("GITHUB_SHA"),
+              "run_id": __import__("os").environ.get("GITHUB_RUN_ID"),
+              "generadas": generadas, "fallidas": fallidas,
+              "limite_pendiente": limitadas, "cartas": cartas}
+    dest = RAIZ / "datos" / "mesa-estado.json"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+    sala.avisar("estado Mesa:", json.dumps(report, ensure_ascii=False))
+    return state
+
+
 def main():
     ap = argparse.ArgumentParser(description='El montador de la mesa de la Sala.')
     g = ap.add_mutually_exclusive_group(required=True)
@@ -290,8 +330,10 @@ def main():
     ya_salieron = publicadas()
     hoy = sala.hoy_hermosillo()
     plan, gastadas = [], 0
+    generadas = fallidas = limitadas = 0
 
-    for slug, (tid, t) in sorted(tiras_por_pieza().items()):
+    orden = piezas_por_prioridad(tiras_por_pieza(), contexto_produccion() if not args.sin_sheet else {})
+    for slug, (tid, t) in orden:
         if args.pieza and slug != args.pieza:
             continue
         nombre = str(t.get('pieza') or slug)
@@ -337,6 +379,7 @@ def main():
                 decidir.append(lam['n'])
                 continue
             if gastadas >= tope:
+                limitadas += 1
                 sala.avisar('   ⏸ tope de %d láminas por corrida; ésta queda para mañana' % tope)
                 continue
             if marca != 'no' and str(reglas.get('mesa_remontar_sin_decidir') or '0') == '1' \
@@ -349,12 +392,14 @@ def main():
             for a in avisos:
                 sala.avisar('     ⚠ %s' % a)
             if not tomas:
+                fallidas += 1
                 sala.avisar('   ✗ sin tomas para L%s: se queda pendiente' % lam['n'])
                 continue
             if destino not in tira['laminas']:
                 tira['laminas'].append(destino)
             destino['src'] = destino.get('src') or tomas[0]['src']
             destino['estado'] = 'rehecha'
+            generadas += 1
             destino['produccion_guardados'] = 1
             destino['candidatas'] = tomas
             destino['fecha'] = hoy
@@ -394,7 +439,9 @@ def main():
         PLAN.parent.mkdir(parents=True, exist_ok=True)
         PLAN.write_text(json.dumps({'fecha': hoy, 'cartas': plan}, ensure_ascii=False, indent=1),
                         encoding='utf-8')
-    return 0
+        guardar_estado_mesa(generadas, fallidas, limitadas, len(plan))
+    # Preparación que falló por completo es un fallo real, no una mesa «al día».
+    return 2 if fallidas and not plan and not args.simular else 0
 
 
 _snapshot_verifier = None

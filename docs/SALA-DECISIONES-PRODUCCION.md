@@ -8,6 +8,14 @@ La toma elegida fija imagen, texto y huella del trabajo. Mesa conserva esas apro
 
 El Productor abre una rama aprobada aunque las demás sigan pendientes. El corte exige todas las láminas del guion producidas y aprobadas. Los carruseles permanecen como imágenes. Peticiones abiertas, editores y reglas conservan sus compuertas.
 
-`Sala · decisiones guardadas a producción` encadena dos pasadas de Mesa respetando el límite por corrida, Productor, Ejecutor y Revisión. Se dispara al publicar una corrección de este recorrido y conserva botón manual. Los horarios existentes continúan. Encolar, guardar un archivo durable y publicar una revisión se acreditan por separado; una prueba de motores aislados no acredita decisiones transferidas.
+`Sala · decisiones guardadas a producción` encadena Mesa, Productor, Ejecutor y Revisión. Si hubo avance y trabajo limitado, solicita como máximo dos pasadas adicionales en runs independientes. Se dispara al publicar una corrección de este recorrido y conserva botón manual. Los horarios existentes continúan. Encolar, guardar un archivo durable y publicar una revisión se acreditan por separado; una prueba de motores aislados no acredita decisiones transferidas.
 
 Verificaciones: `python3 nube/verificar.py` y regresiones sintéticas `tests/sala_produccion_test.py`, además de las suites existentes. La operación real sólo comienza con código integrado y decisiones ya existentes; no se inventan marcas, proyectos o correos para probar.
+
+## Bloqueos observados y corregidos
+
+La API rechazó los modelos Gemini2.5 configurados. Se consultó su catálogo y se verificaron por respuesta sintética el alias ligero vigente y un respaldo estable. La configuración de producción se actualizó y releió; los defaults ya no proponen modelos retirados. Pensamiento y texto final del modelo se separan.
+
+Mesa prioriza las decisiones más recientes, incluyendo la continuación de sus versiones. El estado agregado `datos/mesa-estado.json` informa generación, fallos y límite pendiente. Un fallo total sale con error; un resultado parcial se declara parcial. El workflow conserva ese fallo aunque no exista un issue de aviso.
+
+Dos llamadas a Mesa dentro del mismo run comparten su ID de publicación. Las pasadas adicionales ahora usan runs reales distintos, con contador acotado, y se solicitan sólo tras avance verificado de la pasada anterior. La revisión reconoce este recorrido y registra sus jobs reales.

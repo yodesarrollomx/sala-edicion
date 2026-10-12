@@ -32,6 +32,16 @@ jobs:
             nube
             tests
             docs
+      - name: Comprobar cambios de Git sin errores de espacio
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [[ "$BASE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            git fetch --no-tags --depth=1 origin "$BASE_SHA"
+            git diff --check "$BASE_SHA" HEAD
+          else
+            git diff --check
+          fi
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'

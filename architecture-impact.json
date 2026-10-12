@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-12.sala-decisiones.1",
+  "model_revision": "2026-10-12.sala-decisiones.2",
   "proposal_id": "CHG-SALA-DECISIONES-PRODUCCION-20261012",
-  "summary": "Recuperar las tarjetas contestadas desde fuentes activas, seguir la toma elegida y notas actuales, completar guion como borradores y abrir sólo ramas aprobadas en su formato.",
+  "summary": "Priorizar decisiones recientes, usar modelos vigentes comprobados y señalar preparación bloqueada/parcial; cada pasada va en un run nuevo con recibos únicos.",
   "components": [
     "SYS-YOD-OS",
     "SYS-CONTROL",
@@ -17,8 +17,9 @@
   "tests": [
     "python3 nube/verificar.py",
     "python3 -m unittest discover -s tests -p '*_test.py' -v",
-    "26 regresiones: lectura vigente, elección, vetos, guion, formatos, notas, ondas parciales, archivos inmutables y texto conservado al corregir la imagen",
-    "Recorrido real por Mesa, Productor, Ejecutor y Revisión después de integrar; sin correo ni publicación a redes."
+    "35 regresiones de fuentes, elección, guion, notas, inmutabilidad, prioridad, bloqueos y disponibilidad de modelos",
+    "Recorrido real por Mesa, Productor, Ejecutor y Revisión después de integrar; sin correo ni publicación a redes.",
+    "git diff --check base HEAD"
   ],
   "rollback": "Revertir PR y workflow; mantener decisiones, fuentes, cola, medios y snapshots. No reencolar los fallos históricos."
 }

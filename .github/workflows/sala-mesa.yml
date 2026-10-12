@@ -154,7 +154,7 @@ jobs:
           titulo="🔎 Vigía · Sala de Edición"
           numero=$(gh issue list --search "in:title \"$titulo\"" --state open \
                    --json number,title --jq ".[] | select(.title==\"$titulo\") | .number" | head -n1)
-          [ -z "$numero" ] && exit 0
+          [ -z "$numero" ] && exit 1
           { echo "## 🔴 El montador de la mesa falló — $(date -u '+%Y-%m-%d %H:%M UTC')"; echo;
             echo '```'; python3 nube/limpiar_log.py mesa.log 40; echo '```'; } > comentario.md
           gh issue comment "$numero" --body-file comentario.md
