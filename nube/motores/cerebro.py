@@ -60,10 +60,11 @@ def _gemini(texto, reglas, instruccion=None):
     clave = os.environ.get('GEMINI_API_KEY', '').strip()
     if not clave:
         raise MotorError('falta GEMINI_API_KEY', intermitente=True)
-    # 23-sep: Google retiró gemini-2.5-flash-lite para cuentas nuevas (404 «no longer
-    # available»). La REGLA manda, pero si su modelo ya no existe se prueba el siguiente.
+    # Configuración explícita primero; alias ligero vigente y modelo estable
+    # comprobados mediante catálogo y respuesta sintética de la misma API.
     modelos = []
-    for m in (_regla(reglas, 'cerebro_modelo', ''), 'gemini-2.5-flash-lite', 'gemini-2.5-flash'):
+    for m in (_regla(reglas, 'cerebro_modelo', 'gemini-flash-lite-latest'),
+              'gemini-flash-lite-latest', 'gemini-3.6-flash'):
         if m and m not in modelos:
             modelos.append(m)
     ultimo = None
@@ -76,12 +77,13 @@ def _gemini(texto, reglas, instruccion=None):
             break
         except MotorError as e:
             ultimo = e
-            if ' 404' not in str(e) and ' 400' not in str(e):
+            if ' 404' not in str(e) and ' 400' not in str(e) and not e.intermitente:
                 raise
     else:
         raise ultimo
     try:
-        return ''.join(p.get('text', '') for p in r['candidates'][0]['content']['parts']).strip()
+        return ''.join(p.get('text', '') for p in r['candidates'][0]['content']['parts']
+                       if not p.get('thought')).strip()
     except (KeyError, IndexError):
         raise MotorError('Gemini contestó sin texto', intermitente=True)
 

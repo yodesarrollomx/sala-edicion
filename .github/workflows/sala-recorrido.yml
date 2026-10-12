@@ -6,8 +6,14 @@ on:
       - nube/sala_produccion.py
       - nube/sala_productor.py
       - nube/sala_mesa.py
+      - nube/motores/cerebro.py
       - .github/workflows/sala-recorrido.yml
   workflow_dispatch:
+    inputs:
+      pasadas_restantes:
+        description: Pasadas adicionales, de 0 a 2
+        type: number
+        default: 1
 permissions:
   contents: write
   actions: write
@@ -23,14 +29,8 @@ jobs:
     with:
       modo: montar
     secrets: inherit
-  mesa_resto:
-    needs: mesa
-    uses: ./.github/workflows/sala-mesa.yml
-    with:
-      modo: montar
-    secrets: inherit
   productor:
-    needs: mesa_resto
+    needs: mesa
     uses: ./.github/workflows/sala-productor.yml
     secrets: inherit
   ejecutor:
@@ -41,3 +41,37 @@ jobs:
     needs: ejecutor
     uses: ./.github/workflows/sala-revision.yml
     secrets: inherit
+  continuar:
+    needs: revision
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Leer el último recibo publicado
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py bootstrap
+      - name: Continuar en otro run si el lote avanzó y alcanzó su límite
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PASADAS: ${{ github.event_name == 'push' && '1' || inputs.pasadas_restantes }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          n=int(os.environ.get("PASADAS") or "0")
+          if not 0<=n<=2: raise SystemExit("Número de pasadas inválido")
+          r=json.loads(Path("datos/mesa-estado.json").read_text())
+          if (n and r.get("run_id")==os.environ["GITHUB_RUN_ID"]
+              and r.get("generadas",0)>0 and r.get("limite_pendiente",0)>0):
+              subprocess.run(["gh","workflow","run","sala-recorrido.yml","--ref","main",
+                              "-f","pasadas_restantes="+str(n-1)],check=True)
+              print(json.dumps({"siguiente_pasada_solicitada":True,"pasadas_restantes":n-1}))
+          else:
+              print(json.dumps({"siguiente_pasada_solicitada":False}))
+          PY
