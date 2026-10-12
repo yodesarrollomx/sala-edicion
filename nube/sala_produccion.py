@@ -156,7 +156,8 @@ def resolver_tira(tira, decision, prop=None):
         elif i < len(firms) and firms[i]:
             # La fusión representa un BORRAR explícito como marca nula firmada.
             lam.update(estado="pendiente", marca_previa="")
-    return result
+    from motores.politica_imagen import depurar_tira
+    return depurar_tira(result)[0]
 
 
 def guion_faltante(tira):

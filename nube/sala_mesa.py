@@ -120,7 +120,7 @@ def decision_del_sheet(pid, fecha_tira):
     return dec, prop.get("laminas")
 
 
-from motores.politica_imagen import depurar_tira, para_revision, vetada
+from motores.politica_imagen import depurar_tira, para_revision, vetada, POLITICA
 
 
 def abiertas(tid, t, leer_sheet=True):
@@ -141,6 +141,10 @@ def abiertas(tid, t, leer_sheet=True):
         n = int(lam.get("n") or 0)
         mark, note = por_n.get(n, ("", ""))
         if lam.get("estado") == "aprobada":
+            continue
+        if lam.get("reemplazo_modelo") == POLITICA["revision"]:
+            note = (note + " La imagen no cuadra con el texto. Sustituir el modelo retirado; conservar exactamente el texto visible.").strip()
+            salida.append((lam, "reemplazar_modelo", note))
             continue
         # La nota del rechazo pertenece a su versión; no rechaza también
         # las nuevas candidatas que aún nadie ha revisado.
@@ -250,8 +254,15 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas):
                 png, jpg = componer(tmp.name, texto, carpeta / ('L%d-%d.png' % (lam['n'], k)))
             tomas.append({'src': str(jpg.relative_to(RAIZ)), 'original': str(png.relative_to(RAIZ)),
                           'titulo': chr(64 + k), 'texto': str(d.get('porque') or '')[:160],
-                          'dice': texto, 'motor': motor, 'cerebro': quien,
+                          'dice': texto, 'motor': motor, 'modelo': imagen.modelo_de(motor, reglas), 'cerebro': quien,
+                          'generado_en': dt.datetime.now(dt.timezone.utc).isoformat(),
+                          'run_id': __import__('os').environ.get('GITHUB_RUN_ID'),
+                          'workflow': __import__('os').environ.get('GITHUB_WORKFLOW'),
+                          'receta_sha256': hashlib.sha256(d['receta'].encode()).hexdigest(),
                           'huella': hashlib.md5(png.read_bytes()).hexdigest()})
+        except imagen.CupoImagen as e:
+            avisos.append('CUPO_IMAGEN_AGOTADO: %s' % e)
+            break
         except (MotorError, ContenidoVetado) as e:
             avisos.append('toma %d: %s' % (k, e))
     return tomas, avisos + avisos_comp
@@ -378,7 +389,7 @@ def piezas_por_prioridad(piezas, dia):
         key=lambda x: priority(x)[0], reverse=True)
 
 
-def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0):
+def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa=''):
     state = "bloqueado" if fallidas and not generadas else (
         "parcial" if fallidas or limitadas else "al_dia")
     report = {"schema": 1, "estado": state,
@@ -386,6 +397,7 @@ def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0):
               "code_sha": __import__("os").environ.get("GITHUB_SHA"),
               "run_id": __import__("os").environ.get("GITHUB_RUN_ID"),
               "generadas": generadas, "reutilizadas": reutilizadas, "fallidas": fallidas,
+              "causa": causa, "modelo_imagen": imagen.MODELO_FLUX2,
               "limite_pendiente": limitadas, "cartas": cartas}
     dest = RAIZ / "datos" / "mesa-estado.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -436,6 +448,7 @@ def main():
     hoy = sala.hoy_hermosillo()
     plan, gastadas = [], 0
     generadas = fallidas = limitadas = reutilizadas = 0
+    cupo_bloqueado = False
 
     if not args.sin_sheet:
         hidratar_tiras_activas(contexto_produccion())
@@ -472,7 +485,7 @@ def main():
             carpeta = RAIZ / 'laminas' / nueva_id
             hecha = TIRAS / (nueva_id + '.json')
         if hecha.is_file() and not para_revision(_leer(hecha, {}) or {}):
-            nueva_id += '-sin-tiny-sd'
+            nueva_id += '-' + hashlib.sha256(POLITICA['revision'].encode()).hexdigest()[:6]
             carpeta = RAIZ / 'laminas' / nueva_id
             hecha = TIRAS / (nueva_id + '.json')
         if hecha.is_file() and not args.simular:
@@ -510,6 +523,10 @@ def main():
                 decidir.append(lam['n'])
                 sala.avisar('   ↺ modelo retirado depurado; se conservan las tomas permitidas')
                 continue
+            if cupo_bloqueado:
+                limitadas += 1
+                sala.avisar('   ⏸ sin cupo del nuevo generador; continúa pendiente, sin volver al modelo retirado')
+                continue
             if gastadas >= tope:
                 limitadas += 1
                 sala.avisar('   ⏸ tope de %d láminas por corrida; ésta queda para mañana' % tope)
@@ -521,6 +538,7 @@ def main():
                 continue
             tomas, avisos = producir_tomas(slug, tira, lam, nota, reglas, cola, carpeta, n_tomas)
             gastadas += 1
+            cupo_bloqueado = any(str(a).startswith('CUPO_IMAGEN_AGOTADO:') for a in avisos)
             for a in avisos:
                 sala.avisar('     ⚠ %s' % a)
             if not tomas:
@@ -529,7 +547,8 @@ def main():
                 continue
             if destino not in tira['laminas']:
                 tira['laminas'].append(destino)
-            destino['src'] = destino.get('src') or tomas[0]['src']
+            destino['src'] = tomas[0]['src']
+            destino.pop('reemplazo_modelo', None)
             destino['estado'] = 'rehecha'
             generadas += 1
             destino['produccion_guardados'] = 1
@@ -571,7 +590,8 @@ def main():
         PLAN.parent.mkdir(parents=True, exist_ok=True)
         PLAN.write_text(json.dumps({'fecha': hoy, 'cartas': plan}, ensure_ascii=False, indent=1),
                         encoding='utf-8')
-        guardar_estado_mesa(generadas, fallidas, limitadas, len(plan), reutilizadas)
+        guardar_estado_mesa(generadas, fallidas, limitadas, len(plan), reutilizadas,
+                            causa='cupo_imagen_agotado' if cupo_bloqueado else '')
     # Preparación que falló por completo es un fallo real, no una mesa «al día».
     return 2 if fallidas and not plan and not args.simular else 0
 

@@ -26,16 +26,16 @@ class VetoModelosTest(unittest.TestCase):
 
     def test_motor_permitido_sigue_funcionando(self):
         with patch.dict(imagen.MOTORES,{"cpu":lambda *x: self.fail("cpu vetado"),
-                         "pollinations":lambda *x:(b"allowed","jpg")},clear=True):
+                         "gemini_pro":lambda *x:(b"allowed","jpg")},clear=True):
             result=imagen.generar("Synthetic object",{"imagen_motores":"cpu,pollinations"})
-        self.assertEqual(result[2],"pollinations")
+        self.assertEqual(result[2],"gemini_pro")
 
     def test_depuracion_no_modifica_aprobado_ni_origen(self):
         original={"laminas":[
             {"n":1,"estado":"aprobada","src":"approved.png","seleccion":{"toma":2},
              "candidatas":[{"motor":"cpu","src":"approved.png"}]},
             {"n":2,"estado":"rehecha","src":"bad.png","candidatas":[
-                {"motor":"cpu","src":"bad.png"},{"motor":"pollinations","src":"good.jpg"}]},
+                {"motor":"cpu","src":"bad.png"},{"motor":"gemini_pro","src":"good.jpg"}]},
             {"n":3,"estado":"rehecha","src":"bad2.png","candidatas":[{"motor":"cpu","src":"bad2.png"}]}]}
         baseline=copy.deepcopy(original)
         cleaned,changed=politica.depurar_tira(original)

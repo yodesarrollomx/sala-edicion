@@ -172,6 +172,10 @@ def planear(dia, cola, reglas, cat=None):
             ver, de_donde = huella_insumo(lam_t or (lam if isinstance(lam, dict) else {}), cat)
             extra = {'n_real': True, **datos_lamina(lam_t)} if lam_t else datos_lamina(lam)
 
+            if lam_t and lam_t.get('reemplazo_modelo'):
+                estados[-1] = 'pendiente'
+                diario.append('lámina %s: fuente retirada por Dirección; espera nueva toma y revisión' % item)
+                continue
             if marca == 'si':
                 # Invariante 51: se abre ESTA rama, sin esperar a las hermanas.
                 for etapa in ('escena', 'voz'):
@@ -215,7 +219,7 @@ def planear(dia, cola, reglas, cat=None):
             listas, faltan = [], []
             for lt in tira.get('laminas') or []:
                 n = str(lt.get('n'))
-                ok = por_n.get(n) == 'si' or (n not in por_n and lt.get('estado') == 'aprobada')
+                ok = not lt.get('reemplazo_modelo') and (por_n.get(n) == 'si' or (n not in por_n and lt.get('estado') == 'aprobada'))
                 (listas if ok else faltan).append(lt)
             # Toda rama aprobada avanza, incluso fuera de la tarjeta actual.
             for lt in listas:
