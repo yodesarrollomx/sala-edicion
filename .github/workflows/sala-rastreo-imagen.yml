@@ -1,4 +1,4 @@
-name: Sala · verificar GPT y recibos sin generar imágenes
+name: Sala · diagnóstico de proveedor sin generar imágenes
 on:
   push:
     branches: [codex/sala-rastrear-rehacer-imagenes-20261012]
@@ -32,42 +32,4 @@ jobs:
           req=urllib.request.Request("https://yod-cloud-room.onrender.com/sala/image/status",headers={"Authorization":"Bearer "+key})
           with urllib.request.urlopen(req,timeout=30) as r:health=json.load(r)
           print("GPT_STATUS "+json.dumps({k:health.get(k) for k in ["ok","model","configured","provider_error","last_success","daily_attempts"]}))
-          base="https://yodesarrollomx.github.io/sala-edicion/"
-          def tira(pid):
-              if not re.fullmatch("[A-Za-z0-9_.-]+",pid):raise ValueError("id inválido")
-              with urllib.request.urlopen(base+"datos/tiras/"+pid+".json",timeout=30) as r:return json.load(r)
-          ctx=cargar(tira_reader=tira);mesa._contexto_produccion=ctx;targets=[]
-          for p in ctx["propuestas"]:
-              if not p.get("laminas"):continue
-              t=tira(p["id"]);pending=mesa.abiertas(p["id"],t)
-              if not pending:continue
-              slug=t["pieza_slug"]
-              new=slug+"-nube-"+sala.hoy_hermosillo()+"-"+hashlib.md5(json.dumps(
-                  {"base":p["id"],"laminas":[(l["n"],m,n,l.get("src"),l.get("dice")) for l,m,n in pending]},
-                  ensure_ascii=False).encode()).hexdigest()[:6]
-              for l,m,n in pending:
-                  if m!="reemplazar_modelo":continue
-                  rid=hashlib.sha256(("laminas/"+new+":L%d-1"%l["n"]).encode()).hexdigest()
-                  targets.append({"prop_id":p["id"],"n":l["n"],"rid":rid,"dice":l.get("dice")})
-          def status(t):
-              req=urllib.request.Request("https://yod-cloud-room.onrender.com/sala/image/result/"+t["rid"],headers={"Authorization":"Bearer "+key})
-              try:
-                  with urllib.request.urlopen(req,timeout=30) as r:result=json.load(r)
-                  if result.get("ok") and result.get("model")=="gpt-image-1.5":return t,result
-              except urllib.error.HTTPError as e:
-                  try:d=json.loads(e.read())
-                  except Exception:d={}
-                  if e.code not in (404,409):raise
-                  return t,{"ok":False,"error":d.get("error")}
-          with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:results=list(pool.map(status,targets))
-          good=[(t,r) for t,r in results if r.get("ok")]
-          print("PROGRESO_REAL "+json.dumps({"reemplazos_objetivo":len(targets),"recibos_confirmados":len(good),
-              "todavia_sin_recibo":len(targets)-len(good),"modelos":sorted({r["model"] for _,r in good}),
-              "nuevas_generaciones_por_observador":0,"escrituras_decisiones":0}))
-          print("RECIBOS_META "+json.dumps([{"prop_id":t["prop_id"],"n":t["n"],"request_id":t["rid"],"generated_at":r.get("generated_at")} for t,r in good]))
-          chosen=next(((t,r) for t,r in good if t["prop_id"].startswith("dato-tres-opiniones") and t["n"]==2),None)
-          if chosen:
-              t,r=chosen;im=Image.open(io.BytesIO(base64.b64decode(r["image"]))).convert("RGB");im.thumbnail((600,900));out=io.BytesIO();im.save(out,"JPEG",quality=90)
-              print("L2_NUEVA_META "+json.dumps({"dice":t["dice"],"modelo":r["model"],"fase":"generada; montaje lo confirma Mesa"},ensure_ascii=False))
-              print("FOTO_BASE64 "+base64.b64encode(out.getvalue()).decode())
           PY
