@@ -293,7 +293,7 @@ def hidratar_tiras_activas(dia, lector=None):
         raw=lector(path)
         t=json.loads(raw)
         if (not isinstance(t,dict) or not isinstance(t.get('laminas'),list)
-                or not t.get('pieza_slug')):
+                or not t.get('laminas') or not t.get('pieza_slug')):
             raise sala.SalaError('tira publicada sin contrato')
         numbers=[l.get('n') for l in t['laminas']]
         if len(numbers)!=len(set(numbers)) or any(not isinstance(n,int) or n<1 for n in numbers):

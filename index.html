@@ -1216,7 +1216,7 @@ async function subirCola(){
    texto, cuáles ya aprobó y cuál se está rehaciendo. Así la carta nunca llega sola. ══ */
 const TIRAS={}; let TIRAS_HAY=null;
 const POLITICA_IMAGEN=globalThis.SalaPoliticaImagen||{tomas:()=>[],srcLamina:(l,s,ok)=>ok||l&&l.estado==='aprobada'?s:''};
-function fuenteLamina(t,l,src){return POLITICA_IMAGEN.srcLamina(l,src||l&&l.src||'')}
+function fuenteLamina(l,src){return POLITICA_IMAGEN.srcLamina(l,src||l&&l.src||'')}
 async function cargarTira(pid){
   if(pid in TIRAS) return TIRAS[pid];
   // el índice evita pedir tiras que no existen (404 en la consola por cada carta suelta)
@@ -1258,7 +1258,7 @@ function pintarTira(x){
   c.hidden=false;
   c.innerHTML=`<div class="tira-cab"><b>${esc(t.pieza)}</b> · tira completa de ${t.laminas.length}${t.direccion?`<button class="guia-b" id="verDir">Hoja de dirección</button>`:''}<button class="guia-b" id="verGuia">Ver el guion</button></div>
     <div class="tira-fila">${t.laminas.map(l=>{ const m=marcaTira(x,t,l), cambio=m==='no', ok=!cambio&&(l.estado==='aprobada'||m==='si'); return `<button class="tl ${ok?'ok':''} ${cambio?'cambio':''} ${act&&l.n===act.n?'aqui':''}" data-n="${l.n}" aria-label="Lámina ${l.n}">
-      <img src="${esc(ligera(fuenteLamina(t,l,l.src)))}" alt="" loading="lazy"><span>${l.n}${cambio?' ✗':ok?' ✓':''}</span></button>`}).join('')}</div>`;
+      <img src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="" loading="lazy"><span>${l.n}${cambio?' ✗':ok?' ✓':''}</span></button>`}).join('')}</div>`;
   c.querySelectorAll('.tl').forEach(b=>b.onclick=()=>verLamina(t,+b.dataset.n));
   $('#verGuia').onclick=()=>verGuia(t);
   const bd=$('#verDir'); if(bd) bd.onclick=()=>verDireccion(t);
@@ -1272,7 +1272,7 @@ function verDireccion(t){
   hoja(`<h3>Hoja de dirección · ${esc(t.pieza||'')}</h3>
     ${d.promesa?`<p class="promesa"><b>La promesa:</b> ${esc(d.promesa)}</p>`:''}
     <div class="lista-r">${es.map(e=>{ const l=(t.laminas||[]).find(z=>z.n===e.n); return `<div class="fila-r">
-      ${l?`<img class="th" src="${esc(ligera(fuenteLamina(t,l,l.src)))}" alt="" loading="lazy">`:'<div class="th"></div>'}
+      ${l?`<img class="th" src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="" loading="lazy">`:'<div class="th"></div>'}
       <div class="txt"><b>Lámina ${e.n}</b><small><b>Se ve:</b> ${esc(e.se_ve||'')}</small>
         <small><b>Entiende:</b> ${esc(e.entiende||'')}</small><em>Por qué va aquí: ${esc(e.por_que||'')}</em></div></div>`}).join('')}</div>`,'direccion');
 }
@@ -1286,7 +1286,7 @@ function verLamina(t,n){
     ${reab?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(dec[t.base].notas[n-1]||'')}»</p><button class="secund" id="quitarReab">Quitar la petición</button>`:''}
     ${(!reab&&l.estado==='aprobada'&&DECIDE()&&t.base)?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
     ${(em&&DECIDE())?(em.m==='no'?`<p style="color:var(--no)"><b>Ya pediste cambio hoy:</b> «${esc(em.nota||'')}»</p><button class="secund" id="cambiarMesa">Cambiar la nota</button>`:`<p style="font-size:13px;color:var(--gris)">${em.m==='si'?'Hoy la aprobaste. Si la quieres mejorar, pide el cambio aquí.':'Está en tu mesa de hoy. Puedes decidirla desde aquí.'}</p><button class="secund" id="cambiarMesa">Pedir cambio a esta lámina</button>`):''}
-    <img src="${esc(ligera(fuenteLamina(t,l,l.src)))}" alt="Lámina ${n}" style="width:100%;border-radius:14px;background:#141210">
+    <img src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="Lámina ${n}" style="width:100%;border-radius:14px;background:#141210">
     <p style="margin-top:12px"><b>Dice:</b> ${esc((l.dice||'').replace(' / ',' · '))}</p>
     ${l.ve?`<p><b>Se ve:</b> ${esc(l.ve)}</p>`:''}
     ${notaDeLamina(t,l)?`<p style="color:var(--no)"><b>La nota:</b> «${esc(notaDeLamina(t,l))}»</p>`:''}`,'lamina'+n);
@@ -1365,7 +1365,7 @@ async function verGuia(t){
     </div>`;
   const cuadro=l=>{ const gg=deG(l.n), nota=notaDeLamina(t,l), ok=l.estado==='aprobada';
     return `<article class="sb-cuadro" data-n="${l.n}">
-      <div class="sb-img"><img src="${esc(ligera(fuenteLamina(t,l,l.src)))}" alt="Lámina ${l.n}" loading="lazy"><span>${l.n}</span></div>
+      <div class="sb-img"><img src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="Lámina ${l.n}" loading="lazy"><span>${l.n}</span></div>
       <div class="sb-txt">
         <span class="chipm ${ok?'si':'pend'}">${ok?'Aprobada':'Por decidir / se rehízo'}</span>
         <p class="sb-dice">«${esc((l.dice||gg.dice||'').replace(' / ',' · '))}»</p>
@@ -1727,7 +1727,7 @@ function filasRespuestas(compacto){
     const t=Object.values(TIRAS).find(z=>z&&z.base===pid)||TIRAS[pid]||null;
     const M=TIRAS[pid]?mapaDe(TIRAS[pid]):null, nReal=M?(M[String(i+1)]||i+1):(i+1);
     const l=t&&(t.laminas||[]).find(z=>z.n===nReal);
-    return `<div class="fila-r">${l?`<img class="th" src="${esc(ligera(fuenteLamina(t,l,l.src)))}" alt="" loading="lazy">`:'<div class="th"></div>'}<div class="txt"><b>${esc((t&&t.pieza)||d._tira||tituloDe(pid))}</b><small>lámina ${nReal} · pediste cambio</small>${d.notas[i]?`<em>«${esc(d.notas[i])}»</em>`:''}</div>
+    return `<div class="fila-r">${l?`<img class="th" src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="" loading="lazy">`:'<div class="th"></div>'}<div class="txt"><b>${esc((t&&t.pieza)||d._tira||tituloDe(pid))}</b><small>lámina ${nReal} · pediste cambio</small>${d.notas[i]?`<em>«${esc(d.notas[i])}»</em>`:''}</div>
       <div class="acc"><span class="chipm no">Cambio</span>${!compacto&&DECIDE()?`<button data-quitar="${esc(pid)}:${i}">Quitar</button>`:''}</div></div>` }).join('')).join('');
   // 8-sep: `reF` (el atraso de reaperturas de días pasados) iba PEGADO a lo de hoy: «Mis
   // respuestas» abría con 54 filas cuando él había decidido 4. Va aparte y con su nombre.
@@ -2317,7 +2317,7 @@ function ramaLaminas(t,prospectos){
     const deLaCola=(porLamina[l.n]||[]).map(f=>({src:evidenciaSrc(f),tt:`candidata ${(String(f.item||'').split('-')[1]||'')} · ${f.estado||'pendiente'}`,col:colorPunto(f.estado)}));
     const todas=[...deLaTira,...deLaCola];
     const sub=todas.length?`<div class="prod-subhojas">${todas.map(c=>`<div class="prod-hoja" title="${esc(c.tt)}"><span class="prod-punto ${c.col}"></span>${c.src?`<img src="${esc(ligera(c.src))}" alt="" loading="lazy">`:''}<span class="tt">${esc(c.tt.split(' · ')[0])}</span></div>`).join('')}</div>`:'';
-    return `<div class="prod-hoja" title="${esc(txt)}"><span class="prod-punto ${col}"></span>${l.src?`<img src="${esc(ligera(fuenteLamina(t,l,l.src)))}" alt="" loading="lazy">`:''}<span class="tt">L${l.n} · v${l.version||1}</span></div>${sub}`;
+    return `<div class="prod-hoja" title="${esc(txt)}"><span class="prod-punto ${col}"></span>${l.src?`<img src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="" loading="lazy">`:''}<span class="tt">L${l.n} · v${l.version||1}</span></div>${sub}`;
   }).join('');
   return `<div class="prod-rama"><b>Láminas</b><div class="prod-hojas">${hojas}</div></div>`;
 }
@@ -2522,7 +2522,7 @@ async function pintarLinea(piezas,destino,compacto){
     // 23-sep: la misma Línea, corta, arriba de Hoy y del Árbol — «no vi nada de lo nuevo»: vivía sólo en Producción
     const html=`<div class="ln-mini"><h4>Producción ahora</h4><p class="rel">${esc(rel)}</p>
       <div class="ln-tarjetas">${filas.map(f=>{ const l=((f.z.tira&&f.z.tira.laminas)||[]).find(x=>x.src);
-        return `<button class="ln-mfila" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}>${l?`<img class="ln-portada" loading="lazy" alt="" src="${esc(ligera(fuenteLamina(t,l,l.src)))}">`:'<span class="ln-portada vacia">sin lámina aún</span>'}<b>${esc(f.z.nombre)}</b>
+        return `<button class="ln-mfila" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}>${l?`<img class="ln-portada" loading="lazy" alt="" src="${esc(ligera(fuenteLamina(l,l.src)))}">`:'<span class="ln-portada vacia">sin lámina aún</span>'}<b>${esc(f.z.nombre)}</b>
         <div class="ln-barra">${f.segs.map(s=>`<div class="ln-seg ${s.c}${s.aqui?' aqui':''}"><i></i></div>`).join('')}</div>
         <span class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span> ${esc(f.que)} <span class="cuando">${esc(f.cuando.split(' · Además')[0])}</span></span><span class="ln-accion">${f.paso!=null?'Decidir →':'Ver →'}</span></button>`}).join('')}</div>
       <button class="secund ln-vertodo" data-irprod>Ver todo en Producción →</button></div>`;
@@ -2779,7 +2779,7 @@ function fichaPublicacion(clave){
     <div class="dos"><div><b>${N_(k.reach)}</b><span>alcance</span></div><div><b>${N_(k.interacciones)}</b><span>interacciones</span></div><div><b>${e?N_(e.leads):'–'}</b><span>leads</span></div></div>
     <span class="arb-vered ${esc(c.color)}"><i></i>${esc(c.veredicto)}</span><p class="arb-razon">${esc(c.razon)}${m.mejor?` · el mejor ${esc((m.formato||'').toLowerCase())}: <a href="${esc(m.mejor.permalink||'#')}" target="_blank" rel="noopener">«${esc(m.mejor.titulo)}»</a> (${m.mejor.alcance})`:''}</p>
     <div class="pasos">
-      ${t?pasoHTML('Láminas','hecho',`<div class="arb-vers">${(t.laminas||[]).map(l=>`<div class="arb-ver"><img src="${esc(ligera(fuenteLamina(t,l,l.src)))}" alt="" loading="lazy"><b>L${l.n}</b><small>v${l.version||1}</small></div>`).join('')}</div>`):''}
+      ${t?pasoHTML('Láminas','hecho',`<div class="arb-vers">${(t.laminas||[]).map(l=>`<div class="arb-ver"><img src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="" loading="lazy"><b>L${l.n}</b><small>v${l.version||1}</small></div>`).join('')}</div>`):''}
       ${pasoHTML('Publicada','hecho',q?`${(q.imagenes||[]).length?`<div class="arb-vers">${q.imagenes.map((im,i)=>`<div class="arb-ver"><img src="${esc(im)}" alt="" loading="lazy"><b>${i+1}</b></div>`).join('')}</div>`:''}<p class="arb-cap">${esc(q.caption||'').replace(/\n/g,' · ')}</p>`:'')}
       ${pasoHTML('Medición','hecho',`<small>${c.dias} días · ${(c.historia.IG||[]).length} medición(es)</small>`)}
       ${pasoHTML('Siguiente',c.color==='rojo'?'falta':'hecho',`<small>${c.color==='rojo'?'cambiar de forma o cortar':c.color==='oro'?'ajustar gancho o imagen antes de repetir':'seguir por aquí'}</small>`)}
@@ -2800,7 +2800,7 @@ async function fichaPieza(nombre){
     ${terminada&&t?`<button class="listo" id="fVerHist">▶ Verla como historia</button>`:''}
     <div class="pasos">
       ${pasoHTML('Guion',t?'hecho':'falta',t?`<small>${esc(t.promesa||'')}</small>`:'')}
-      ${pasoHTML('Láminas',t?(abiertas.length?'proceso':'hecho'):'falta',t?`<div class="arb-vers">${(t.laminas||[]).map(l=>{const ab=laminaAbierta(t,l);return `<div class="arb-ver ${ab?'abierta':''}"><img src="${esc(ligera(fuenteLamina(t,l,l.src)))}" alt="" loading="lazy"><b>L${l.n}</b><small>${ab?(ab.tipo==='no'?'cambio':'por decidir'):'✓'}</small></div>`}).join('')}</div>`:'')}
+      ${pasoHTML('Láminas',t?(abiertas.length?'proceso':'hecho'):'falta',t?`<div class="arb-vers">${(t.laminas||[]).map(l=>{const ab=laminaAbierta(t,l);return `<div class="arb-ver ${ab?'abierta':''}"><img src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="" loading="lazy"><b>L${l.n}</b><small>${ab?(ab.tipo==='no'?'cambio':'por decidir'):'✓'}</small></div>`}).join('')}</div>`:'')}
       ${pasoHTML('Escenas',est(g.escena),`<small>${(g.escena||[]).filter(x=>/hecho/i.test(x.estado)).length} de ${(g.escena||[]).length||6}</small>`)}
       ${pasoHTML('Voces',est(g.voz),`<small>${(g.voz||[]).filter(x=>/hecho/i.test(x.estado)).length} de ${(g.voz||[]).length||6}</small>`)}
       ${pasoHTML('Corte',est(g.corte),'')}
