@@ -251,6 +251,7 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas, solo_reci
                     "The approved reference below guides characters, lighting and style, not an unrelated pose. "
                     + (ref_txt or "Consistent contemporary architectural documentary style.")
                     + " Context from the original description: " + contexto_visual(lam.get('ve'))
+                    + ". Editor visual correction notes, for composition only: " + contexto_visual(nota)
                     + ". Output only the photograph, absolutely no text, letters, captions, signs, logos or watermarks.")
                 d = {'texto': str(lam.get('dice') or ''), 'receta': receta,
                      'porque': 'Nueva fotografía desde el guion vigente; conserva exactamente el texto visible.'}
@@ -567,7 +568,10 @@ def main():
                 sala.avisar('   ↺ nunca se decidió: se vuelve a montar con sus tomas')
                 decidir.append(lam['n'])
                 continue
-            tomas, avisos = producir_tomas(slug, tira, lam, nota, reglas, cola, carpeta, n_tomas, solo_recibo=solo_recibo)
+            if solo_recibo:
+                tomas, avisos = producir_tomas(slug, tira, lam, nota, reglas, cola, carpeta, n_tomas, solo_recibo=True)
+            else:
+                tomas, avisos = producir_tomas(slug, tira, lam, nota, reglas, cola, carpeta, n_tomas)
             gastadas += 1
             cupo_bloqueado = cupo_bloqueado or any(str(a).startswith('CUPO_IMAGEN_AGOTADO:') for a in avisos)
             for a in avisos:
