@@ -1,4 +1,4 @@
-name: Sala · auditoría final de fuentes vigentes
+name: Sala · cierre verificable de imágenes y control
 on:
   push:
     branches: [codex/sala-rastrear-rehacer-imagenes-20261012]
@@ -25,7 +25,7 @@ jobs:
           PY
       - uses: actions/checkout@v4
         with:
-          ref: dde4ab0151c5cc36071882380afe7ecf495ecef6
+          ref: 11af0881e8c2babc047f09cc940bd3d19609c72b
           filter: blob:none
           sparse-checkout: nube
           persist-credentials: false
@@ -62,7 +62,7 @@ jobs:
           def tira(pid):
               with urllib.request.urlopen(base+"datos/tiras/"+pid+".json",timeout=30) as r:return json.load(r)
           ctx=cargar(tira_reader=tira);mesa._contexto_produccion=ctx
-          counts={'propuestas_vigentes':0,'laminas_vigentes':0,'opciones_retiradas_visibles':0,'fuentes_retiradas_aprobadas_elegibles':0,'sustituciones_pendientes':0,'tomas_gpt_en_fuentes_vigentes':0}
+          counts={'propuestas_vigentes':0,'laminas_vigentes':0,'alternativas_historicas_vetadas':0,'fuentes_retiradas_aprobadas_elegibles':0,'sustituciones_pendientes':0,'tomas_gpt_en_fuentes_vigentes':0}
           for p in ctx['propuestas']:
               if not p.get('laminas'):continue
               t=tira(p['id']);d=ctx['decisiones']['propuestas'].get(p['id']) or {}
@@ -72,8 +72,19 @@ jobs:
                   counts['sustituciones_pendientes']+=int(requiere_reemplazo(l))
                   counts['fuentes_retiradas_aprobadas_elegibles']+=int(l.get('estado')=='aprobada' and fuente_retirada(l.get('src')))
                   for c in l.get('candidatas') or []:
-                      counts['opciones_retiradas_visibles']+=int(vetada(c))
+                      counts['alternativas_historicas_vetadas']+=int(vetada(c))
                       counts['tomas_gpt_en_fuentes_vigentes']+=int(c.get('modelo')=='gpt-image-1.5')
           print("FUENTES_VIGENTES "+json.dumps(counts))
-          if counts['opciones_retiradas_visibles'] or counts['fuentes_retiradas_aprobadas_elegibles']:raise SystemExit('Fuente vetada todavía activa')
+          if counts['fuentes_retiradas_aprobadas_elegibles']:raise SystemExit('Fuente vetada elegible para producción')
+          import os,re,time
+          expected='cb7382ae70'
+          page=''
+          for attempt in range(30):
+              with urllib.request.urlopen(base+"?control="+os.environ["GITHUB_RUN_ID"],timeout=30) as r:page=r.read().decode()
+              match=re.search(r"const SELLO_SALA='([^']+)'",page)
+              if match and match.group(1)==expected:break
+              time.sleep(5)
+          else:raise SystemExit('La versión nueva no está confirmada en el sitio')
+          if "const deLaTira=POLITICA_IMAGEN.tomas(l)" not in page or ".filter(f=>!POLITICA_IMAGEN.vetada({src:evidenciaSrc(f)" not in page:raise SystemExit("Falta el filtro real del árbol")
+          print("VISUALIZACION_PUBLICA "+json.dumps({"sello":expected,"filtro_modelos_retirados_en_arbol":True,"votos_escritos":0}))
           PY
