@@ -1,0 +1,50 @@
+name: Sala · comprobar respaldo de imagen existente
+on:
+  push:
+    branches: [codex/sala-modelos-vigentes-20261012]
+    paths: [.github/workflows/sala-imagen-respaldo.yml]
+permissions:
+  contents: read
+jobs:
+  respaldo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: pip install --quiet huggingface_hub pillow
+      - name: Probar inferencia con credencial existente
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import hashlib,io,json,os,time,urllib.request,urllib.error
+          out=[]
+          token=os.environ.get("HF_TOKEN")
+          prompt="A gray cube centered on a plain white background, no text."
+          if token:
+              from huggingface_hub import InferenceClient
+              for provider in ["hf-inference","auto"]:
+                  start=time.monotonic()
+                  try:
+                      im=InferenceClient(provider=provider,api_key=token,timeout=25).text_to_image(
+                          prompt,model="black-forest-labs/FLUX.1-schnell",width=512,height=512,num_inference_steps=4)
+                      buf=io.BytesIO();im.save(buf,format="PNG");raw=buf.getvalue()
+                      out.append({"proveedor":"hf_"+provider,"imagen_verificada":True,"bytes":len(raw),
+                                  "sha256":hashlib.sha256(raw).hexdigest(),"segundos":round(time.monotonic()-start,2)})
+                      break
+                  except Exception as e:
+                      status=getattr(getattr(e,"response",None),"status_code",None)
+                      out.append({"proveedor":"hf_"+provider,"imagen_verificada":False,"tipo_error":type(e).__name__,
+                                  "http":status,"segundos":round(time.monotonic()-start,2)})
+          else: out.append({"proveedor":"hf","configurado":False})
+          start=time.monotonic()
+          try:
+              req=urllib.request.Request("https://image.pollinations.ai/prompt/gray%20cube?width=512&height=512&model=flux&nologo=true",
+                                         headers={"User-Agent":"sala-yod"})
+              with urllib.request.urlopen(req,timeout=20) as r: raw=r.read();typ=r.headers.get("Content-Type","")
+              out.append({"proveedor":"pollinations","imagen_verificada":"image" in typ and len(raw)>1024,
+                          "bytes":len(raw),"segundos":round(time.monotonic()-start,2)})
+          except Exception as e:
+              out.append({"proveedor":"pollinations","imagen_verificada":False,"tipo_error":type(e).__name__,
+                          "http":getattr(e,"code",None),"segundos":round(time.monotonic()-start,2)})
+          print("RESPALDO_META "+json.dumps({"pruebas":out,"escrituras_negocio":0,"prompts_sinteticos":True}))
+          PY
