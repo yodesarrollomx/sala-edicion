@@ -5,6 +5,7 @@ on:
     paths: [.github/workflows/sala-veto-control.yml]
 permissions:
   contents: read
+  actions: write
 jobs:
   verificar:
     runs-on: ubuntu-latest
@@ -18,6 +19,10 @@ jobs:
         with:
           node-version: '22'
       - run: pip install --quiet requests
+      - name: Confirmar cumplimiento en Chinches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sala-chinches.yml --ref main -f simular=false
       - name: Comprobar publicación y proyección real de la siguiente revisión
         env:
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
