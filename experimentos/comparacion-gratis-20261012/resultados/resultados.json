@@ -4,15 +4,34 @@
   "seed": 74103,
   "run_id": "38329443469",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38329443469",
-  "fecha_utc": "2026-10-13T00:54:01Z",
+  "fecha_utc": "2026-10-13T00:54:06Z",
   "opciones": [
     {
       "n": 1,
       "nombre": "Z-Image Turbo",
       "modelo": "Tongyi-MAI/Z-Image-Turbo",
       "tipo": "hf",
-      "estado": "pendiente",
-      "imagen": null
+      "estado": "falló la generación",
+      "imagen": null,
+      "disponibilidad": {
+        "http": 200,
+        "stage": "RUNNING",
+        "host": "https://tongyi-mai-z-image-turbo.hf.space",
+        "sdk": "gradio",
+        "private": false
+      },
+      "endpoint": "/generate",
+      "parametros": {
+        "prompt": "Photorealistic editorial photograph of a Mexican family of exactly three adults a woman aged 65, a man aged 45 and a woman aged 35, sitting around a wooden dining table and discussing a simple architectural floor plan. Contemporary modest home in Sonora, warm neutral plaster walls, natural window light, authentic everyday clothing, candid interaction, realistic facial proportions and skin texture, anatomically correct hands. Vertical portrait composition, documentary photography, restrained colors, no illustration, no cartoon, no plastic skin, no letters, no captions, no logos, no watermark.",
+        "resolution": 1024,
+        "seed": 74103,
+        "steps": 8,
+        "shift": 3.0,
+        "random_seed": false,
+        "gallery_images": []
+      },
+      "detalle": "Value: 1024 is not in the list of choices: ['1024x1024 ( 1:1 )', '1152x896 ( 9:7 )', '896x1152 ( 7:9 )', '1152x864 ( 4:3 )', '864x1152 ( 3:4 )', '1248x832 ( 3:2 )', '832x1248 ( 2:3 )', '1280x720 ( 16:9 )', '720x1280 ( 9:16 )', '1344x576 ( 21:9 )', '576x1344 ( 9:21 )', '1280x1280 ( 1:1 )', '1440x1120 ( 9:7 )', '1120x1440 ( 7:9 )', '1472x1104 ( 4:3 )', '1104x1472 ( 3:4 )', '1536x1024 ( 3:2 )', '1024x1536 ( 2:3 )', '1536x864 ( 16:9 )', '864x1536 ( 9:16 )', '1680x720 ( 21:9 )', '720x1680 ( 9:21 )', '1536x1536 ( 1:1 )', '1728x1344 ( 9:7 )', '1344x1728 ( 7:9 )', '1728x1296 ( 4:3 )', '1296x1728 ( 3:4 )', '1872x1248 ( 3:2 )', '1248x1872 ( 2:3 )', '2048x1152 ( 16:9 )', '1152x2048 ( 9:16 )', '2016x864 ( 21:9 )', '864x2016 ( 9:21 )']",
+      "segundos": 1.1
     },
     {
       "n": 2,
