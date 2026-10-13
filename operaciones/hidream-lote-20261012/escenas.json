@@ -1,0 +1,149 @@
+[
+  {
+    "slug": "dato-tres-opiniones",
+    "pieza": "Tres opiniones, tres números distintos",
+    "laminas": [
+      {
+        "n": 2,
+        "dice": "El tío sugiere locales, el vecino opina que mejor departamentos y todos tienen una versión distinta.",
+        "ve": "Un hombre señalando con entusiasmo hacia un terreno baldío mientras conversa con otra persona."
+      },
+      {
+        "n": 3,
+        "dice": "En Yo Desarrollo preferimos calcular metros cuadrados, vialidades y restricciones reales antes de opinar.",
+        "ve": "Un equipo revisando mapas catastrales y planos arquitectónicos en una mesa luminosa."
+      },
+      {
+        "n": 4,
+        "dice": "Descubrimos los giros permitidos y el potencial exacto que la ley permite construir en tu espacio.",
+        "ve": "Una proyección clara y moderna sobre un terreno soleado, mostrando volúmenes posibles de edificación."
+      },
+      {
+        "n": 5,
+        "dice": "Conozcamos la ubicación de tu terreno para elaborar tu Plan de Potencial Personalizado.",
+        "ve": "Una videollamada en una laptop donde se observa un terreno sonorense y un plano digital."
+      }
+    ]
+  },
+  {
+    "slug": "doble-via",
+    "pieza": "Doble vía",
+    "laminas": [
+      {
+        "n": 1,
+        "dice": "¿Y si ese terreno familiar guarda un potencial que aún no ves?",
+        "ve": "Una pareja mayor mirando un terreno baldío al atardecer en Hermosillo, con luz cálida."
+      }
+    ]
+  },
+  {
+    "slug": "el-arquitecto-invisible",
+    "pieza": "El arquitecto invisible",
+    "laminas": [
+      {
+        "n": 3,
+        "dice": "Nosotros proponemos trazar la ruta exacta antes de mover la primera piedra.",
+        "ve": "Equipo de Yo Desarrollo mostrando mapas técnicos y esquemas claros a un cliente."
+      },
+      {
+        "n": 4,
+        "dice": "El Plan de Potencial Personalizado define los metros cuadrados viables y los giros ideales.",
+        "ve": "Plano detallado de Hermosillo iluminado por el sol de la tarde sobre una mesa de trabajo."
+      },
+      {
+        "n": 5,
+        "dice": "Con esta guía clara, Don Roberto coordina a su equipo sin pisar la obra todos los días.",
+        "ve": "Don Roberto sonriendo mientras conversa relajado por teléfono en su porche."
+      },
+      {
+        "n": 6,
+        "dice": "Descubre qué puede ser tu suelo con una videollamada para crear tu Plan de Potencial.",
+        "ve": "Smartphone mostrando una cita agendada con el equipo de Yo Desarrollo en Hermosillo."
+      }
+    ]
+  },
+  {
+    "slug": "la-ruta-autonoma",
+    "pieza": "La ruta autónoma",
+    "laminas": [
+      {
+        "n": 5,
+        "dice": "El resultado es un panorama claro para decidir el siguiente paso con total tranquilidad.",
+        "ve": "El dueño sonriendo al mirar los resultados calculados, con el terreno al fondo bañado por la luz del día."
+      },
+      {
+        "n": 6,
+        "dice": "Conozcamos la ubicación de tu espacio para armar tu Plan de Potencial Personalizado.",
+        "ve": "Una videollamada en una pantalla limpia mostrando a una especialista de Yo Desarrollo junto a planos claros."
+      }
+    ]
+  },
+  {
+    "slug": "llamada-entregable",
+    "pieza": "Así se ve el entregable",
+    "laminas": [
+      {
+        "n": 2,
+        "dice": "Aquí mostramos los metros cuadrados exactos que permite la norma municipal en tu zona.",
+        "ve": "Primer plano de una pantalla mostrando un plano con polígonos claros y áreas calculadas."
+      },
+      {
+        "n": 3,
+        "dice": "Agregamos los giros comerciales y habitacionales que realmente caben y funcionan aquí.",
+        "ve": "La misma pantalla deslizando hacia una sección con iconos de comercios y viviendas."
+      },
+      {
+        "n": 4,
+        "dice": "También integramitros clave: agua, drenaje, vialidad y cajones de estacionamiento necesarios.",
+        "ve": "Un esquema técnico sencillo y limpio señalando servicios y accesos en el mapa."
+      },
+      {
+        "n": 5,
+        "dice": "Proponemos armar tu Plan de Potencial Personalizado con la ubicación exacta de tu terreno.",
+        "ve": "Manos cerrando la laptop con una sonrisa en una sala iluminada de Hermosillo."
+      }
+    ]
+  },
+  {
+    "slug": "mesa-vacia",
+    "pieza": "La Mesa Vacía",
+    "laminas": [
+      {
+        "n": 6,
+        "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
+        "ve": null
+      }
+    ]
+  },
+  {
+    "slug": "tu-terreno-tus-reglas",
+    "pieza": "Tu terreno, tus reglas",
+    "laminas": [
+      {
+        "n": 1,
+        "dice": "¿Y si descubres todo lo que tu terreno en Hermosillo puede llegar a ser?",
+        "ve": "Una pareja mirando un plano impreso sobre el cofre de una camioneta, con el sol del atardecer en Hermosillo."
+      },
+      {
+        "n": 2,
+        "dice": "Don Carlos dudaba entre vender, rentar o construir locales comerciales en su esquina.",
+        "ve": "Don Carlos señalando un terreno baldío bardeado con malla, conversando con su hija en una tarde cálida."
+      },
+      {
+        "n": 3,
+        "dice": "Nosotros analizamos la norma, los metros cuadrados posibles y los giros que realmente caben.",
+        "ve": "Un plano catastral digital abierto en una tablet junto a una taza de café humeante en una mesa de madera."
+      },
+      {
+        "n": 4,
+        "dice": "Todo el estudio técnico se queda con él para decidir con calma, decida lo que decida.",
+        "ve": "Don Carlos guardando una carpeta ordenada en su portafolio, sonriendo tranquilo con su familia."
+      },
+      {
+        "n": 5,
+        "dice": "Conozcamos tu ubicación para entregarte tu Plan de Potencial Personalizado.",
+        "ve": "Un teléfono celular mostrando la ubicación satelital de Hermosillo con un marcador brillante."
+      }
+    ]
+  }
+]
