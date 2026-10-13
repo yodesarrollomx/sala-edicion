@@ -14,7 +14,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 5 | Ovis-Image 7B | sin cupo | — |
 | 6 | Kolors | sin cupo | — |
 | 7 | Stable Diffusion 3.5 Large | falló la generación | — |
-| 8 | Playground v2.5 | pendiente | — |
+| 8 | Playground v2.5 | falló la generación | — |
 | 9 | PixArt-Sigma | pendiente | — |
 | 10 | Lucid Origin | sin cupo | — |
 | 11 | Phoenix 1.0 | sin cupo | — |
@@ -73,7 +73,9 @@ Value 1280 is greater than maximum value 1024.
 
 ### 08. Playground v2.5
 
-**Estado:** pendiente
+**Estado:** falló la generación
+
+'parameter_name'
 
 ### 09. PixArt-Sigma
 

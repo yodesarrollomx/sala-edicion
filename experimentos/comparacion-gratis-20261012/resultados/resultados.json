@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38329443469",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38329443469",
-  "fecha_utc": "2026-10-13T00:54:44Z",
+  "fecha_utc": "2026-10-13T00:54:51Z",
   "opciones": [
     {
       "n": 1,
@@ -212,8 +212,17 @@
       "nombre": "Playground v2.5",
       "modelo": "playgroundai/playground-v2.5",
       "tipo": "hf",
-      "estado": "pendiente",
-      "imagen": null
+      "estado": "falló la generación",
+      "imagen": null,
+      "disponibilidad": {
+        "http": 200,
+        "stage": "RUNNING",
+        "host": "https://playgroundai-playground-v2-5.hf.space",
+        "sdk": "gradio",
+        "private": false
+      },
+      "detalle": "'parameter_name'",
+      "segundos": 0.6
     },
     {
       "n": 9,

@@ -1,0 +1,330 @@
+{
+  "/load_example": {
+    "parameters": [
+      {
+        "name": null,
+        "label": "parameter_23",
+        "default": null,
+        "type": {
+          "type": "integer",
+          "description": "index of selected example"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Prompt",
+        "type": {
+          "type": "string"
+        },
+        "python_type": {
+          "type": "str",
+          "description": ""
+        },
+        "component": "Textbox"
+      },
+      {
+        "label": "Result",
+        "type": {
+          "$defs": {
+            "FileData": {
+              "properties": {
+                "path": {
+                  "title": "Path",
+                  "type": "string"
+                },
+                "url": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Url"
+                },
+                "size": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Size"
+                },
+                "orig_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Orig Name"
+                },
+                "mime_type": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mime Type"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "title": "FileData",
+              "type": "object"
+            },
+            "GalleryImage": {
+              "properties": {
+                "image": {
+                  "$ref": "#/$defs/FileData"
+                },
+                "caption": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Caption"
+                }
+              },
+              "required": [
+                "image"
+              ],
+              "title": "GalleryImage",
+              "type": "object"
+            }
+          },
+          "items": {
+            "$ref": "#/$defs/GalleryImage"
+          },
+          "title": "GalleryData",
+          "type": "array"
+        },
+        "python_type": {
+          "type": "List[Dict(image: filepath, caption: str | None)]",
+          "description": ""
+        },
+        "component": "Gallery"
+      },
+      {
+        "label": "Seed",
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "python_type": {
+          "type": "float",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "component": "Slider"
+      }
+    ]
+  },
+  "/run": {
+    "parameters": [
+      {
+        "name": null,
+        "label": "Prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": null,
+        "label": "Negative prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": null,
+        "label": "Use negative prompt",
+        "default": null,
+        "type": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": null,
+        "label": "Seed",
+        "default": null,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        }
+      },
+      {
+        "name": null,
+        "label": "Width",
+        "default": null,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 256 and 1536"
+        }
+      },
+      {
+        "name": null,
+        "label": "Height",
+        "default": null,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 256 and 1536"
+        }
+      },
+      {
+        "name": null,
+        "label": "Guidance Scale",
+        "default": null,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0.1 and 20"
+        }
+      },
+      {
+        "name": null,
+        "label": "Randomize seed",
+        "default": null,
+        "type": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Result",
+        "type": {
+          "$defs": {
+            "FileData": {
+              "properties": {
+                "path": {
+                  "title": "Path",
+                  "type": "string"
+                },
+                "url": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Url"
+                },
+                "size": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Size"
+                },
+                "orig_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Orig Name"
+                },
+                "mime_type": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mime Type"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "title": "FileData",
+              "type": "object"
+            },
+            "GalleryImage": {
+              "properties": {
+                "image": {
+                  "$ref": "#/$defs/FileData"
+                },
+                "caption": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Caption"
+                }
+              },
+              "required": [
+                "image"
+              ],
+              "title": "GalleryImage",
+              "type": "object"
+            }
+          },
+          "items": {
+            "$ref": "#/$defs/GalleryImage"
+          },
+          "title": "GalleryData",
+          "type": "array"
+        },
+        "python_type": {
+          "type": "List[Dict(image: filepath, caption: str | None)]",
+          "description": ""
+        },
+        "component": "Gallery"
+      },
+      {
+        "label": "Seed",
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "python_type": {
+          "type": "float",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "component": "Slider"
+      }
+    ]
+  }
+}
