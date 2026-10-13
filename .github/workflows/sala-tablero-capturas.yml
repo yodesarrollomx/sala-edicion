@@ -1,0 +1,32 @@
+name: Capturas verificadas del tablero
+on:
+  push:
+    branches: [codex/sala-tablero-evidencia-20261013]
+    paths: ['.github/workflows/sala-tablero-capturas.yml']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_SHA: 6691ec8556fde8df63b33442163175d399778f36
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github
+            operaciones
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet pillow
+      - run: python3 operaciones/tablero-20261013/capturas.py
+      - run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add operaciones/tablero-20261013
+          git diff --cached --quiet || git commit -m 'Guardar capturas sintéticas de los tres niveles del tablero'
+          git push origin HEAD:codex/sala-tablero-evidencia-20261013
