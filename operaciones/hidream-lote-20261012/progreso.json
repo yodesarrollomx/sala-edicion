@@ -1,8 +1,8 @@
 {
   "modelo": "HiDream-I1-Dev",
   "objetivo": 21,
-  "generadas": 9,
-  "generadas_en_esta_fase": 1,
+  "generadas": 11,
+  "generadas_en_esta_fase": 3,
   "recuperadas": 0,
   "montadas": [
     {
@@ -28,6 +28,13 @@
       "anteriores": [
         "el-arquitecto-invisible-nube-2026-10-12-f81194",
         "el-arquitecto-invisible-nube-2026-10-12-5b72e0"
+      ]
+    },
+    {
+      "pieza": "La ruta autónoma",
+      "laminas_nuevas": 2,
+      "tiras": [
+        "la-ruta-autonoma-nube-2026-10-12-6e0f16"
       ]
     }
   ],
