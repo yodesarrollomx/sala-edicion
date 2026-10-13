@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38329893978",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38329893978",
-  "fecha_utc": "2026-10-13T00:59:46Z",
+  "fecha_utc": "2026-10-13T00:59:58Z",
   "opciones": [
     {
       "n": 1,
@@ -237,8 +237,27 @@
         "sdk": "gradio",
         "private": false
       },
-      "detalle": "'parameter_name'",
-      "segundos": 0.6
+      "segundos": 0.7,
+      "intentos_anteriores": [
+        {
+          "estado": "falló la generación",
+          "detalle": "'parameter_name'",
+          "http": null,
+          "segundos": 0.6
+        }
+      ],
+      "endpoint": "/run",
+      "parametros": [
+        "Photorealistic editorial photograph of a Mexican family of exactly three adults a woman aged 65, a man aged 45 and a woman aged 35, sitting around a wooden dining table and discussing a simple architectural floor plan. Contemporary modest home in Sonora, warm neutral plaster walls, natural window light, authentic everyday clothing, candid interaction, realistic facial proportions and skin texture, anatomically correct hands. Vertical portrait composition, documentary photography, restrained colors, no illustration, no cartoon, no plastic skin, no letters, no captions, no logos, no watermark.",
+        "text, letters, captions, logos, watermark, cartoon, illustration, plastic skin, deformed hands",
+        true,
+        74103,
+        832,
+        1024,
+        4.5,
+        false
+      ],
+      "detalle": "httpx.Client() got multiple values for keyword argument 'timeout'"
     },
     {
       "n": 9,

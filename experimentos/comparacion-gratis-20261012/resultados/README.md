@@ -75,7 +75,7 @@ You have exceeded your free ZeroGPU quota (65s requested vs. 78s left). Try agai
 
 **Estado:** falló la generación
 
-'parameter_name'
+httpx.Client() got multiple values for keyword argument 'timeout'
 
 ### 09. PixArt-Sigma
 
