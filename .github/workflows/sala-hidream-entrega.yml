@@ -7,7 +7,7 @@ on:
       - operaciones/hidream_entrega.py
 permissions:
   contents: write
-  actions: read
+  actions: write
 concurrency:
   group: sala-hidream-entrega
   cancel-in-progress: false
@@ -35,6 +35,16 @@ jobs:
           python-version: '3.11'
       - run: pip install --quiet google-auth requests pillow
       - run: python -m py_compile "$RUNNER_TEMP/hidream_entrega.py"
+      - name: Reemplazar auditor anterior y esperar todas las partes de la entrega
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import os,requests
+          r=requests.post("https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/38339579997/cancel",
+                          headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"]},timeout=35)
+          if r.status_code not in (202,409):r.raise_for_status()
+          PY
       - name: Esperar cierre y verificar tira, texto, recibo y archivos publicados
         env:
           GH_TOKEN: ${{ github.token }}

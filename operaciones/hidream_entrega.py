@@ -37,9 +37,18 @@ def save(name,data):
     r=requests.put(url,headers=HEADERS,json=body,timeout=45);r.raise_for_status()
 sala.enmascarar_en_actions()
 CORRECTION_RUN="38339043819"
+COVER_RUN="38341608972"
 def correction_file(name):
     try:
         r=api("contents/operaciones/hidream-correccion-texto-20261012/"+name,params={"ref":BRANCH})
+        return json.loads(base64.b64decode(r["content"]))
+    except requests.HTTPError as exc:
+        if exc.response.status_code==404:return None
+        raise
+
+def cover_file(name):
+    try:
+        r=api("contents/operaciones/hidream-portada-final-20261012/"+name,params={"ref":BRANCH})
         return json.loads(base64.b64decode(r["content"]))
     except requests.HTTPError as exc:
         if exc.response.status_code==404:return None
@@ -48,7 +57,9 @@ deadline=time.monotonic()+6600
 while time.monotonic()<deadline:
     principal=get_file("cierre.json")
     correction=correction_file("cierre.json")
-    if principal and str(principal.get("run_id"))==RUN and correction and str(correction.get("run_id"))==CORRECTION_RUN:break
+    cover=cover_file("cierre.json")
+    if (principal and str(principal.get("run_id"))==RUN and correction and str(correction.get("run_id"))==CORRECTION_RUN
+            and cover and str(cover.get("run_id"))==COVER_RUN):break
     state=api("actions/runs/"+CORRECTION_RUN)
     if state["status"]=="completed" and not correction:
         raise RuntimeError("La corrección terminó sin cierre; conservar fotos y revisar el fallo")
@@ -60,11 +71,20 @@ for newer in correction.get("montadas") or []:
     if not prior:raise RuntimeError("La corrección no corresponde al lote")
     prior["anteriores"]=prior.get("anteriores",[])+prior["tiras"]
     prior["tiras"]=newer["tiras"]
-confirmed_total=principal["generadas"]+correction["generadas"]
+for newer in cover.get("montadas") or []:
+    prior=next((m for m in final["montadas"] if m["pieza"]==newer["pieza"]),None)
+    if not prior:raise RuntimeError("Portada fuera del lote")
+    prior["anteriores"]=prior.get("anteriores",[])+prior["tiras"]
+    prior["tiras"]=newer["tiras"]
+    prior["laminas_nuevas"]+=newer["laminas_nuevas"]
+final["generadas"]+=cover["generadas"]
+final["pendientes"]=cover["pendientes"]
+confirmed_total=principal["generadas"]+correction["generadas"]+cover["generadas"]
 inventory=get_file("inventario-inicial.json")
 if not inventory or inventory.get("pendientes")!=21:raise RuntimeError("Inventario inicial de otra operación")
 expected=get_file("textos-vigentes.json") or {}
 expected.update(correction_file("textos-vigentes.json") or {})
+expected.update(cover_file("textos-vigentes.json") or {})
 targets={q["pieza"]:q for q in inventory["piezas"]}
 cloud=Snapshots(ROOT);cloud.bootstrap("mesa",False)
 mesa._contexto_produccion=None
@@ -130,7 +150,8 @@ total=sum(x["cantidad"] for x in checks)
 if total!=final["generadas"]:raise RuntimeError("Cuenta de imágenes montadas no coincide con las generadas")
 report={"modelo":"HiDream-I1-Dev","run_produccion":RUN,"verificado_en":dt.datetime.now(dt.timezone.utc).isoformat(),
         "generadas_y_montadas":total,"fotos_total_generadas":confirmed_total,"pendientes":final["pendientes"],"detenido":final["detenido"],
-        "run_correccion":CORRECTION_RUN,"fotos_corregidas":correction["generadas"],"pendientes_tipografia":correction.get("pendientes",0),
+        "run_correccion":CORRECTION_RUN,"run_portada":COVER_RUN,"fotos_corregidas":correction["generadas"],
+        "candidata_texto_portada":cover_file("textos-vigentes.json"),"pendientes_tipografia":correction.get("pendientes",0),
         "causa":final["causa"],"fallos_laminas":final.get("fallos_laminas",[]),"piezas":checks,"decisiones_editoriales_escritas":0,
         "segundos_fotos":[p["segundos"] for x in checks for p in x["laminas"]],
         "observacion_visual":"Las primeras cuatro pruebas se conservan como alternativas Anterior; las fotos corregidas son la propuesta principal."}
