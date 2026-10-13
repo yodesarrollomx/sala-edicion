@@ -8,5 +8,10 @@
     "dice": "Nosotros analizamos metros cuadrados, vialidades y restricciones reales en lugar de adivinar.",
     "n": 3,
     "slug": "dato-tres-opiniones"
+  },
+  "dato-tres-opiniones:4": {
+    "dice": "La norma revela los metros cuadrados y los giros exactos permitidos.",
+    "n": 4,
+    "slug": "dato-tres-opiniones"
   }
 }
