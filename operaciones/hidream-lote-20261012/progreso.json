@@ -1,9 +1,9 @@
 {
   "modelo": "HiDream-I1-Dev",
   "objetivo": 21,
-  "generadas": 5,
-  "solicitadas_nuevas": 1,
-  "recuperadas": 4,
+  "generadas": 7,
+  "generadas_en_esta_fase": 2,
+  "recuperadas": 0,
   "montadas": [
     {
       "pieza": "Tres opiniones, tres números distintos",
@@ -18,10 +18,17 @@
       "tiras": [
         "doble-via-nube-2026-10-12-6f2f2a"
       ]
+    },
+    {
+      "pieza": "El arquitecto invisible",
+      "laminas_nuevas": 2,
+      "tiras": [
+        "el-arquitecto-invisible-nube-2026-10-12-f81194"
+      ]
     }
   ],
-  "detenido": false,
-  "causa": "",
-  "run_id": "38335109256",
+  "detenido": true,
+  "causa": "HiDream no entregó foto: Error: No image name in successful response",
+  "run_id": "38336377009",
   "fecha_hmo": "2026-10-12"
 }
