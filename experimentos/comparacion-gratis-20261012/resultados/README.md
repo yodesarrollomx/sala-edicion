@@ -13,7 +13,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 4 | SANA-Sprint | generada | [Abrir original](04-sana-sprint.png) |
 | 5 | Ovis-Image 7B | sin cupo | — |
 | 6 | Kolors | sin cupo | — |
-| 7 | Stable Diffusion 3.5 Large | falló la generación | — |
+| 7 | Stable Diffusion 3.5 Large | sin cupo | — |
 | 8 | Playground v2.5 | falló la generación | — |
 | 9 | PixArt-Sigma | sin cupo | — |
 | 10 | Lucid Origin | sin cupo | — |
@@ -67,9 +67,9 @@ You have exceeded your free ZeroGPU quota (112s requested vs. 78s left). Try aga
 
 ### 07. Stable Diffusion 3.5 Large
 
-**Estado:** falló la generación
+**Estado:** sin cupo
 
-Value 1280 is greater than maximum value 1024.
+You have exceeded your free ZeroGPU quota (65s requested vs. 78s left). Try again in 3:05:57. Subscribe to Hugging Face PRO to get 25 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU
 
 ### 08. Playground v2.5
 

@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38329893978",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38329893978",
-  "fecha_utc": "2026-10-13T00:59:35Z",
+  "fecha_utc": "2026-10-13T00:59:46Z",
   "opciones": [
     {
       "n": 1,
@@ -192,7 +192,7 @@
       "nombre": "Stable Diffusion 3.5 Large",
       "modelo": "stabilityai/stable-diffusion-3.5-large",
       "tipo": "hf",
-      "estado": "falló la generación",
+      "estado": "sin cupo",
       "imagen": null,
       "disponibilidad": {
         "http": 200,
@@ -202,18 +202,26 @@
         "private": false
       },
       "endpoint": "/infer",
-      "parametros": {
-        "prompt": "Photorealistic editorial photograph of a Mexican family of exactly three adults a woman aged 65, a man aged 45 and a woman aged 35, sitting around a wooden dining table and discussing a simple architectural floor plan. Contemporary modest home in Sonora, warm neutral plaster walls, natural window light, authentic everyday clothing, candid interaction, realistic facial proportions and skin texture, anatomically correct hands. Vertical portrait composition, documentary photography, restrained colors, no illustration, no cartoon, no plastic skin, no letters, no captions, no logos, no watermark.",
-        "negative_prompt": "text, letters, captions, logos, watermark, cartoon, illustration, plastic skin, deformed hands",
-        "seed": 74103,
-        "randomize_seed": false,
-        "width": 1024,
-        "height": 1280,
-        "guidance_scale": 4.5,
-        "num_inference_steps": 40
-      },
-      "detalle": "Value 1280 is greater than maximum value 1024.",
-      "segundos": 1.1
+      "parametros": [
+        "Photorealistic editorial photograph of a Mexican family of exactly three adults a woman aged 65, a man aged 45 and a woman aged 35, sitting around a wooden dining table and discussing a simple architectural floor plan. Contemporary modest home in Sonora, warm neutral plaster walls, natural window light, authentic everyday clothing, candid interaction, realistic facial proportions and skin texture, anatomically correct hands. Vertical portrait composition, documentary photography, restrained colors, no illustration, no cartoon, no plastic skin, no letters, no captions, no logos, no watermark.",
+        "text, letters, captions, logos, watermark, cartoon, illustration, plastic skin, deformed hands",
+        74103,
+        false,
+        832,
+        1024,
+        4.5,
+        28
+      ],
+      "segundos": 1.3,
+      "intentos_anteriores": [
+        {
+          "estado": "falló la generación",
+          "detalle": "Value 1280 is greater than maximum value 1024.",
+          "http": null,
+          "segundos": 1.1
+        }
+      ],
+      "detalle": "You have exceeded your free ZeroGPU quota (65s requested vs. 78s left). Try again in 3:05:57. Subscribe to Hugging Face PRO to get 25 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU"
     },
     {
       "n": 8,
