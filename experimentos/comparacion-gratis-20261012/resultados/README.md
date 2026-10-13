@@ -9,7 +9,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 |---|---|---|---|
 | 1 | Z-Image Turbo | falló la generación | — |
 | 2 | Qwen-Image 2.1 | pendiente | — |
-| 3 | Krea 2 Turbo | pendiente | — |
+| 3 | Krea 2 Turbo | sin cupo | — |
 | 4 | SANA-Sprint | generada | [Abrir original](04-sana-sprint.png) |
 | 5 | Ovis-Image 7B | pendiente | — |
 | 6 | Kolors | sin cupo | — |
@@ -39,7 +39,9 @@ Value: 1024 is not in the list of choices: ['1024x1024 ( 1:1 )', '1152x896 ( 9:7
 
 ### 03. Krea 2 Turbo
 
-**Estado:** pendiente
+**Estado:** sin cupo
+
+You have exceeded your free ZeroGPU quota (90s requested vs. 33s left). Try again in 3:11:21. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU
 
 ### 04. SANA-Sprint
 

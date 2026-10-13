@@ -1,0 +1,489 @@
+{
+  "/on_model_change": {
+    "parameters": [
+      {
+        "name": "model",
+        "label": "Model",
+        "default": "Turbo",
+        "type": {
+          "enum": [
+            "Turbo",
+            "Raw"
+          ],
+          "title": "Radio",
+          "type": "string"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Steps",
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 50"
+        },
+        "python_type": {
+          "type": "float",
+          "description": "numeric value between 1 and 50"
+        },
+        "component": "Slider"
+      },
+      {
+        "label": "Guidance scale",
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0.0 and 10.0"
+        },
+        "python_type": {
+          "type": "float",
+          "description": "numeric value between 0.0 and 10.0"
+        },
+        "component": "Slider"
+      },
+      {
+        "label": "Negative prompt",
+        "type": {
+          "type": "string"
+        },
+        "python_type": {
+          "type": "str",
+          "description": ""
+        },
+        "component": "Textbox"
+      }
+    ]
+  },
+  "/on_resolution_change": {
+    "parameters": [
+      {
+        "name": "label",
+        "label": "Resolution",
+        "default": "Square · 1024",
+        "type": {
+          "enum": [
+            "Square · 1024",
+            "Portrait · 1024",
+            "Landscape · 1024",
+            "Square · 2K"
+          ],
+          "title": "Radio",
+          "type": "string"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Width",
+        "type": {
+          "type": "number",
+          "description": "numeric value between 512 and 2048"
+        },
+        "python_type": {
+          "type": "float",
+          "description": "numeric value between 512 and 2048"
+        },
+        "component": "Slider"
+      },
+      {
+        "label": "Height",
+        "type": {
+          "type": "number",
+          "description": "numeric value between 512 and 2048"
+        },
+        "python_type": {
+          "type": "float",
+          "description": "numeric value between 512 and 2048"
+        },
+        "component": "Slider"
+      }
+    ]
+  },
+  "/generate": {
+    "parameters": [
+      {
+        "name": "prompt",
+        "label": "Prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "negative_prompt",
+        "label": "Negative prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "model",
+        "label": "Model",
+        "default": "Turbo",
+        "type": {
+          "enum": [
+            "Turbo",
+            "Raw"
+          ],
+          "title": "Radio",
+          "type": "string"
+        }
+      },
+      {
+        "name": "steps",
+        "label": "Steps",
+        "default": 8,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 50"
+        }
+      },
+      {
+        "name": "guidance",
+        "label": "Guidance scale",
+        "default": 0.0,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0.0 and 10.0"
+        }
+      },
+      {
+        "name": "width",
+        "label": "Width",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 512 and 2048"
+        }
+      },
+      {
+        "name": "height",
+        "label": "Height",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 512 and 2048"
+        }
+      },
+      {
+        "name": "seed",
+        "label": "Seed",
+        "default": 0,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        }
+      },
+      {
+        "name": "randomize",
+        "label": "Randomize seed",
+        "default": true,
+        "type": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Result",
+        "type": {
+          "properties": {
+            "path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Path to a local file",
+              "title": "Path"
+            },
+            "url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Publicly available url or base64 encoded image",
+              "title": "Url"
+            },
+            "size": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Size of image in bytes",
+              "title": "Size"
+            },
+            "orig_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Original filename",
+              "title": "Orig Name"
+            },
+            "mime_type": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "mime type of image",
+              "title": "Mime Type"
+            },
+            "is_stream": {
+              "default": false,
+              "description": "Can always be set to False",
+              "title": "Is Stream",
+              "type": "boolean"
+            },
+            "meta": {
+              "additionalProperties": true,
+              "default": {
+                "_type": "gradio.FileData"
+              },
+              "title": "Meta",
+              "type": "object"
+            }
+          },
+          "title": "ImageData",
+          "type": "object",
+          "additional_description": "A local filepath or publicly available URL."
+        },
+        "python_type": {
+          "type": "filepath",
+          "description": ""
+        },
+        "component": "Image"
+      },
+      {
+        "label": "Seed",
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "python_type": {
+          "type": "float",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "component": "Slider"
+      }
+    ]
+  },
+  "/generate_1": {
+    "parameters": [
+      {
+        "name": "prompt",
+        "label": "Prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "negative_prompt",
+        "label": "Negative prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "model",
+        "label": "Model",
+        "default": "Turbo",
+        "type": {
+          "enum": [
+            "Turbo",
+            "Raw"
+          ],
+          "title": "Radio",
+          "type": "string"
+        }
+      },
+      {
+        "name": "steps",
+        "label": "Steps",
+        "default": 8,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 50"
+        }
+      },
+      {
+        "name": "guidance",
+        "label": "Guidance scale",
+        "default": 0.0,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0.0 and 10.0"
+        }
+      },
+      {
+        "name": "width",
+        "label": "Width",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 512 and 2048"
+        }
+      },
+      {
+        "name": "height",
+        "label": "Height",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 512 and 2048"
+        }
+      },
+      {
+        "name": "seed",
+        "label": "Seed",
+        "default": 0,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        }
+      },
+      {
+        "name": "randomize",
+        "label": "Randomize seed",
+        "default": true,
+        "type": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Result",
+        "type": {
+          "properties": {
+            "path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Path to a local file",
+              "title": "Path"
+            },
+            "url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Publicly available url or base64 encoded image",
+              "title": "Url"
+            },
+            "size": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Size of image in bytes",
+              "title": "Size"
+            },
+            "orig_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Original filename",
+              "title": "Orig Name"
+            },
+            "mime_type": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "mime type of image",
+              "title": "Mime Type"
+            },
+            "is_stream": {
+              "default": false,
+              "description": "Can always be set to False",
+              "title": "Is Stream",
+              "type": "boolean"
+            },
+            "meta": {
+              "additionalProperties": true,
+              "default": {
+                "_type": "gradio.FileData"
+              },
+              "title": "Meta",
+              "type": "object"
+            }
+          },
+          "title": "ImageData",
+          "type": "object",
+          "additional_description": "A local filepath or publicly available URL."
+        },
+        "python_type": {
+          "type": "filepath",
+          "description": ""
+        },
+        "component": "Image"
+      },
+      {
+        "label": "Seed",
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "python_type": {
+          "type": "float",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "component": "Slider"
+      }
+    ]
+  }
+}
