@@ -4,16 +4,22 @@
   "seed": 74103,
   "run_id": "38330387449",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38330387449",
-  "fecha_utc": "2026-10-13T04:11:01Z",
+  "fecha_utc": "2026-10-13T04:11:23Z",
   "opciones": [
     {
       "n": 1,
       "nombre": "Z-Image Turbo",
       "modelo": "mrfakename/Z-Image-Turbo",
       "tipo": "hf",
-      "estado": "sin cupo",
-      "imagen": null,
-      "disponibilidad": {},
+      "estado": "generada",
+      "imagen": "01-z-image-turbo.png",
+      "disponibilidad": {
+        "http": 200,
+        "stage": "RUNNING",
+        "host": "https://mrfakename-z-image-turbo.hf.space",
+        "sdk": "gradio",
+        "private": false
+      },
       "endpoint": "/generate_image",
       "parametros": [
         "Photorealistic editorial photograph of a Mexican family of exactly three adults a woman aged 65, a man aged 45 and a woman aged 35, sitting around a wooden dining table and discussing a simple architectural floor plan. Contemporary modest home in Sonora, warm neutral plaster walls, natural window light, authentic everyday clothing, candid interaction, realistic facial proportions and skin texture, anatomically correct hands. Vertical portrait composition, documentary photography, restrained colors, no illustration, no cartoon, no plastic skin, no letters, no captions, no logos, no watermark.",
@@ -23,7 +29,7 @@
         74103,
         false
       ],
-      "segundos": 2.0,
+      "segundos": 5.3,
       "intentos_anteriores": [
         {
           "estado": "falló la generación",
@@ -36,13 +42,25 @@
           "detalle": "You have exceeded your free ZeroGPU quota (60s requested vs. 78s left). Try again in 3:06:08. Subscribe to Hugging Face PRO to get 25 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU",
           "http": null,
           "segundos": 2.3
+        },
+        {
+          "estado": "sin cupo",
+          "detalle": "You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try again in 3:02:59. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU",
+          "http": null,
+          "segundos": 2.0
         }
       ],
       "demo_original": "Tongyi-MAI/Z-Image-Turbo",
       "detalle_demo": "Mismos pesos oficiales Tongyi-MAI/Z-Image-Turbo; demo comunitario con reserva de GPU menor, usando el mismo token y cupo.",
-      "detalle": "You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try again in 3:02:59. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU",
       "reintento_programado_utc": "2026-10-13T04:08:00Z",
-      "reintento_programado_hmo": "2026-10-12 21:08"
+      "reintento_programado_hmo": "2026-10-12 21:08",
+      "vista": "01-z-image-turbo.jpg",
+      "resolucion": [
+        832,
+        1024
+      ],
+      "sha256": "a85eb6e215de8ec7ae27b6ea974c24568cf7fa422ad670b23c71dd2e88568baa",
+      "bytes": 980488
     },
     {
       "n": 2,

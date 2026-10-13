@@ -7,7 +7,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 
 | # | Motor | Resultado | Foto |
 |---|---|---|---|
-| 1 | Z-Image Turbo | sin cupo | — |
+| 1 | Z-Image Turbo | generada | [Abrir original](01-z-image-turbo.png) |
 | 2 | Qwen-Image 2.1 | generada | [Abrir original](02-qwen-image-2-1.png) |
 | 3 | Krea 2 Turbo | generada | [Abrir original](03-krea-2-turbo.png) |
 | 4 | SANA-Sprint | generada | [Abrir original](04-sana-sprint.png) |
@@ -29,9 +29,11 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 
 ### 01. Z-Image Turbo
 
-**Estado:** sin cupo
+**Estado:** generada
 
-You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try again in 3:02:59. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU
+![Z-Image Turbo](01-z-image-turbo.jpg)
+
+[Abrir original PNG](01-z-image-turbo.png)
 
 ### 02. Qwen-Image 2.1
 
