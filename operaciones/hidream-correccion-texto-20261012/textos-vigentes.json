@@ -13,5 +13,10 @@
     "dice": "La norma revela los metros cuadrados y los giros exactos permitidos.",
     "n": 4,
     "slug": "dato-tres-opiniones"
+  },
+  "dato-tres-opiniones:5": {
+    "dice": "Proponemos revisar juntos la ubicación para iniciar tu Plan de Potencial Personalizado.",
+    "n": 5,
+    "slug": "dato-tres-opiniones"
   }
 }
