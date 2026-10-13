@@ -53,5 +53,10 @@
     "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
     "n": 6,
     "slug": "mesa-vacia"
+  },
+  "tu-terreno-tus-reglas:1": {
+    "dice": "¿Y si descubres todo lo que tu terreno en Hermosillo puede llegar a ser?",
+    "n": 1,
+    "slug": "tu-terreno-tus-reglas"
   }
 }
