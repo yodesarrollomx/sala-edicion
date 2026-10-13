@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-13.sala-tablero-hidream.1",
-  "proposal_id": "CHG-SALA-CHINCHE-297-TEMA-20261013",
-  "summary": "Chinche #297 (CHN-20261013-0930-3863): agregar a la Sala el botón ☀️/🌙 que ya tienen las demás pantallas, usando la misma preferencia localStorage «yod_tema» del Portero del YOD OS (claro/oscuro → data-theme light/dark), sincronizada por evento storage y siguiendo al sistema si no se ha elegido. Solo presentación; sin cambios de datos, sesiones, roles, GAS ni Sheet.",
+  "proposal_id": "CHG-SALA-TABLERO-HIDREAM-20261013",
+  "summary": "Dentro de la propuesta vigente del tablero «Hoy» (CHG-SALA-TABLERO-HIDREAM-20261013): chinche #297 (CHN-20261013-0930-3863), botón ☀️/🌙 en la Sala con la misma preferencia localStorage «yod_tema» del Portero del YOD OS (claro/oscuro → data-theme light/dark), sincronizada por evento storage. Solo presentación; sin cambios de datos, sesiones, roles, GAS ni Sheet.",
   "components": [
     "SYS-SALA",
     "SYS-YOD-OS"
