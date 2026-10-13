@@ -1,22 +1,22 @@
 {
   "modelo": "HiDream-I1-Dev",
-  "generadas": 2,
+  "generadas": 3,
   "ultima": {
     "schema": 1,
-    "request_id": "431f8fa55f56e23507957b7aee7fa05896ad29c64774929ec2480429af2dd342",
+    "request_id": "871a09d8641df22ff69aab1f91cdac8dd0b809184fb21b1d0015e71fb486f108",
     "motor": "hidream_demo",
     "modelo": "HiDream-I1-Dev",
     "space": "HiDream-ai/HiDream-I1-Dev",
-    "receta_sha256": "4e22c61192e69f49c2357186f381c1ed5d4ada14b05b6c17c12e712806df7bd8",
-    "imagen_sha256": "8f3068588f280e21941e24c038de39cb631182d9d19f5ab60c694e6896361aea",
+    "receta_sha256": "c578818024148c142d8992ca307761104fcd9946c5c835f533ef43454ee4ff6d",
+    "imagen_sha256": "f14730aaf3060d53124d46287fcbe7fd655998c856980bb9e05e6b0560fda65b",
     "resolucion": [
       880,
       1168
     ],
     "seed": 8888,
-    "segundos": 54.1,
+    "segundos": 35.3,
     "run_id": "38334295442",
-    "generado_en": "2026-10-13T01:59:59.004080+00:00"
+    "generado_en": "2026-10-13T02:00:37.990990+00:00"
   },
   "run_id": "38334295442"
 }
