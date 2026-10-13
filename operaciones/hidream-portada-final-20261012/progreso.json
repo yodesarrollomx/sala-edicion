@@ -1,0 +1,20 @@
+{
+  "modelo": "HiDream-I1-Dev",
+  "objetivo": 1,
+  "generadas": 1,
+  "generadas_en_esta_fase": 1,
+  "recuperadas": 0,
+  "montadas": [
+    {
+      "pieza": "Tu terreno, tus reglas",
+      "laminas_nuevas": 1,
+      "tiras": [
+        "tu-terreno-tus-reglas-nube-2026-10-12-77e7ad"
+      ]
+    }
+  ],
+  "detenido": false,
+  "causa": "",
+  "run_id": "38341608972",
+  "fecha_hmo": "2026-10-12"
+}
