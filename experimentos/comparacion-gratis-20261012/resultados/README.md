@@ -31,7 +31,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 
 **Estado:** sin cupo
 
-You have exceeded your free ZeroGPU quota (60s requested vs. 78s left). Try again in 3:06:08. Subscribe to Hugging Face PRO to get 25 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU
+You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try again in 3:02:59. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU
 
 ### 02. Qwen-Image 2.1
 
