@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "publicaciones_sinteticas": 6,
+  "laminas": 36,
+  "escritorio": 1440,
+  "movil": 390,
+  "seleccion_indice_original": true,
+  "swipe_aprobar": true,
+  "pinch_alejar": true,
+  "embed_portal": true,
+  "lector_agente_sin_votos": true,
+  "code_sha": "d57680edd7f5b14cb8d6b30c47884ee2b29f3cab",
+  "run": 38348854798
+}
