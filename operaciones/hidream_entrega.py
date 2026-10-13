@@ -142,14 +142,25 @@ for mounted in final["montadas"]:
             Image.open(io.BytesIO(jpg)).verify();Image.open(io.BytesIO(png)).verify()
             check={"n":number,"modelo":c["modelo"],"jpg":SITE+c["src"],"png":SITE+c["original"],
                    "foto_sha256":receipt["imagen_sha256"],"segundos":receipt["segundos"],
-                   "texto_preservado":True,"tira_activa":True,"recibo_confirmado":True}
+                   "texto_preservado":not bool(expected.get(key,{}).get("dice_anterior")),
+                   "cambio_texto_propuesto":bool(expected.get(key,{}).get("dice_anterior")),
+                   "tira_activa":True,"recibo_confirmado":True}
             checked.append(check)
             previews.append((mounted["pieza"],number,jpg))
         checks.append({"pieza":mounted["pieza"],"tira":tid,"cantidad":len(checked),"laminas":checked})
+cola_actual=[]
+mesa.hidratar_tiras_activas(day)
+familias=mesa.tiras_vigentes(mesa.tiras_por_pieza(),day)
+publicadas=mesa.publicadas()
+for slug,(pid,t) in mesa.piezas_por_prioridad(familias,day):
+    if str(t.get("pieza") or slug).lower() in publicadas:continue
+    nums=[int(l["n"]) for l,m,n in mesa.abiertas(pid,t,True) if m in ("no","reemplazar_modelo")]
+    if nums:cola_actual.append({"pieza":str(t.get("pieza") or slug),"tira":pid,"laminas":nums,"cantidad":len(nums)})
 total=sum(x["cantidad"] for x in checks)
 if total!=final["generadas"]:raise RuntimeError("Cuenta de imágenes montadas no coincide con las generadas")
 report={"modelo":"HiDream-I1-Dev","run_produccion":RUN,"verificado_en":dt.datetime.now(dt.timezone.utc).isoformat(),
-        "generadas_y_montadas":total,"fotos_total_generadas":confirmed_total,"pendientes":final["pendientes"],"detenido":final["detenido"],
+        "generadas_y_montadas":total,"fotos_total_generadas":confirmed_total,
+        "pendientes_rehacer_actuales":sum(x["cantidad"] for x in cola_actual),"cola_rehacer_actual":cola_actual,"pendientes":final["pendientes"],"detenido":final["detenido"],
         "run_correccion":CORRECTION_RUN,"run_portada":COVER_RUN,"fotos_corregidas":correction["generadas"],
         "candidata_texto_portada":cover_file("textos-vigentes.json"),"pendientes_tipografia":correction.get("pendientes",0),
         "causa":final["causa"],"fallos_laminas":final.get("fallos_laminas",[]),"piezas":checks,"decisiones_editoriales_escritas":0,

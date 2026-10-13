@@ -41,7 +41,7 @@ jobs:
         run: |
           python - <<'PY'
           import os,requests
-          r=requests.post("https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/38339579997/cancel",
+          r=requests.post("https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/38341968277/cancel",
                           headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"]},timeout=35)
           if r.status_code not in (202,409):r.raise_for_status()
           PY
