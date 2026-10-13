@@ -138,13 +138,55 @@ def generar_hidream(receta,reglas):
         STOP["generadas"]+=1
         reglas["_receta_proveedor_sha256"]=recipe;reglas["_imagen_recibo_id"]=rid
         emit("HIDREAM_FOTO_CONFIRMADA",receipt)
-        publicar_resumen("generacion",{"modelo":MODEL,"generadas":STOP["generadas"],"ultima":receipt,"run_id":os.environ["GITHUB_RUN_ID"]})
+        publicar_resumen("generacion",{"modelo":MODEL,"generadas":STOP["generadas"]+STOP["recuperadas"],"solicitadas_nuevas":STOP["generadas"],"ultima":receipt,"run_id":os.environ["GITHUB_RUN_ID"]})
         return data,"png",MOTOR,[]
     except Exception as e:
         STOP.update(detenido=True,causa=limpiar(e))
         if re.search(r"429|quota|rate.limit|resource.exhaust|cupo",str(e),re.I):
             raise imagen.CupoImagen("HiDream: "+STOP["causa"],intermitente=True) from None
         raise MotorError("HiDream detenido: "+STOP["causa"],intermitente=True) from None
+
+
+def recuperar_confirmadas():
+    """Restaurar sólo los cuatro recibos y PNG originales; nunca solicitar otra foto."""
+    import zipfile
+    artifact=11784535639
+    headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json"}
+    url="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]+"/actions/artifacts/"+str(artifact)+"/zip"
+    response=requests.get(url,headers=headers,timeout=90)
+    response.raise_for_status()
+    raw=response.content
+    if hashlib.sha256(raw).hexdigest()!="f4aa8836c15c0ecf2f19b04061fc9d62275e1f89f4d5060094da5c22b3a5e7a3":
+        raise RuntimeError("Artefacto de recuperación no coincide")
+    folder=ROOT/"laminas"/"recibos-hidream"
+    folder.mkdir(parents=True,exist_ok=True)
+    archive=zipfile.ZipFile(io.BytesIO(raw))
+    allowed={}
+    for entry in archive.infolist():
+        name=Path(entry.filename).name
+        if "/recibos-hidream/" not in "/"+entry.filename:continue
+        if not re.fullmatch(r"[0-9a-f]{64}\.(?:json|png)",name):continue
+        if entry.file_size>25*1024*1024:raise RuntimeError("Recibo de recuperación demasiado grande")
+        if name in allowed:raise RuntimeError("Recibo de recuperación duplicado")
+        allowed[name]=archive.read(entry)
+    restored=[]
+    for name,data in allowed.items():
+        if not name.endswith(".json"):continue
+        receipt=json.loads(data)
+        rid=name[:-5]
+        png=allowed.get(rid+".png")
+        if (receipt.get("request_id")!=rid or receipt.get("modelo")!=MODEL or png is None
+                or hashlib.sha256(png).hexdigest()!=receipt.get("imagen_sha256")):
+            raise RuntimeError("Identidad del recibo recuperado inválida")
+        if receipt.get("run_id")!="38334295442":raise RuntimeError("Recibo de otra operación")
+        Image.open(io.BytesIO(png)).verify()
+        for leaf,value in ((name,data),(rid+".png",png)):
+            dest=folder/leaf
+            if dest.exists() and dest.read_bytes()!=value:raise RuntimeError("Recibo existente distinto")
+            dest.write_bytes(value)
+        restored.append(rid)
+    if len(restored)!=4:raise RuntimeError("No se recuperaron exactamente las cuatro fotos confirmadas")
+    emit("HIDREAM_RECUPERACION",{"recibos_confirmados":len(restored),"artefacto":artifact,"sin_solicitar_generacion":True})
 
 def instalar_perfil():
     mesa.abiertas=filtro_abiertas
@@ -186,10 +228,11 @@ def main():
         cloud.bootstrap("mesa",True)
         queue=pendientes()
         total=sum(q["cantidad"] for q in queue)
+        recuperar_confirmadas()
         emit("HIDREAM_LOTE",{"pendientes":total,"piezas":queue,"modelo":MODEL,"una_toma_por_lamina":True})
         for round_number,item in enumerate(queue,1):
             if STOP["detenido"]:break
-            before=STOP["generadas"]
+            before=STOP["generadas"]+STOP["recuperadas"]
             code=llamar_mesa("--producir","--pieza",item["slug"])
             plan=mesa._leer(mesa.PLAN,{}) or {}
             cartas=plan.get("cartas") or []
@@ -197,14 +240,14 @@ def main():
                 emit("HIDREAM_PIEZA_SIN_CARTA",{"pieza":item["pieza"],"codigo":code})
                 continue
             verificar_codigo_y_datos()
-            cloud.attempt=int(os.environ.get("GITHUB_RUN_ATTEMPT","1"))*1000+round_number
+            cloud.attempt=str(int(os.environ.get("GITHUB_RUN_ATTEMPT","1"))*1000+round_number)
             cloud.prepare("mesa")
             cloud.dispatch_publish(cloud.head())
             if llamar_mesa("--montar")!=0:raise RuntimeError("Mesa no confirmó el montaje")
             ids=[c["tira_id"] for c in cartas]
-            mounted.append({"pieza":item["pieza"],"laminas_nuevas":STOP["generadas"]-before,"tiras":ids})
+            mounted.append({"pieza":item["pieza"],"laminas_nuevas":STOP["generadas"]+STOP["recuperadas"]-before,"tiras":ids})
             emit("HIDREAM_PIEZA_MONTADA",mounted[-1])
-            progreso={"modelo":MODEL,"objetivo":total,"generadas":STOP["generadas"],"recuperadas":STOP["recuperadas"],
+            progreso={"modelo":MODEL,"objetivo":total,"generadas":STOP["generadas"]+STOP["recuperadas"],"solicitadas_nuevas":STOP["generadas"],"recuperadas":STOP["recuperadas"],
                       "montadas":mounted,"detenido":STOP["detenido"],"causa":STOP["causa"],
                       "run_id":os.environ["GITHUB_RUN_ID"],"fecha_hmo":sala.hoy_hermosillo()}
             (TECH/"progreso.json").write_text(json.dumps(progreso,ensure_ascii=False,indent=2)+"\n")
@@ -214,7 +257,7 @@ def main():
             cloud.bootstrap("mesa",True)
             mesa._snapshot_verifier=None
         remaining=pendientes()
-        final={"modelo":MODEL,"objetivo_inicial":total,"generadas":STOP["generadas"],"recuperadas":STOP["recuperadas"],
+        final={"modelo":MODEL,"objetivo_inicial":total,"generadas":STOP["generadas"]+STOP["recuperadas"],"solicitadas_nuevas":STOP["generadas"],"recuperadas":STOP["recuperadas"],
                "montadas":mounted,"pendientes":sum(q["cantidad"] for q in remaining),"cola_restante":remaining,
                "detenido":STOP["detenido"],"causa":STOP["causa"],"run_id":os.environ["GITHUB_RUN_ID"],
                "decisiones_editoriales_escritas":0,"codigo_main":cloud.head()}
