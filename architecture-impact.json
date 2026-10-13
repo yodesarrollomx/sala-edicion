@@ -1,26 +1,14 @@
 {
   "model_revision": "2026-10-13.sala-tablero-hidream.1",
-  "proposal_id": "CHG-SALA-TABLERO-HIDREAM-20261013",
-  "summary": "Convertir Hoy en tablero por publicaciones con fondos translúcidos, tira completa, zoom por niveles, estados editoriales y producción diferenciados, conteo de intentos e historial y elección de candidatas por carrusel/gestos. Integrar HiDream-I1-Dev gratuito en Mesa/Arranque/Ejecutor, recibos idempotentes y fotografía sin texto incrustado. Preservar sesiones, roles, decisiones, veto de modelos y snapshot privado; ninguna aprobación automática ni respaldo de pago implícito.",
+  "proposal_id": "CHG-SALA-CHINCHE-297-TEMA-20261013",
+  "summary": "Chinche #297 (CHN-20261013-0930-3863): agregar a la Sala el botón ☀️/🌙 que ya tienen las demás pantallas, usando la misma preferencia localStorage «yod_tema» del Portero del YOD OS (claro/oscuro → data-theme light/dark), sincronizada por evento storage y siguiendo al sistema si no se ha elegido. Solo presentación; sin cambios de datos, sesiones, roles, GAS ni Sheet.",
   "components": [
     "SYS-SALA",
-    "GAS-SALA",
-    "SHEET-SALA",
-    "SVC-SALA-PRODUCTOR",
-    "SVC-SALA-EJECUTOR",
-    "EXT-MOTORES-MEDIA",
-    "EXT-ACTIONS",
-    "SYS-YOD-OS",
-    "SYS-CONTROL",
-    "SYS-TRACK",
-    "SYS-OBRA",
-    "SYS-OBRA-CLIENTE"
+    "SYS-YOD-OS"
   ],
   "tests": [
-    "python3 nube/verificar.py; git diff --check; regresiones Python y Node existentes.",
-    "Pruebas aisladas de recibo/cache/hash/seed/rate limit/reintento y rechazo de payloads de HiDream sin credenciales ni red.",
-    "Playwright con fuentes sintéticas: desktop/móvil/iframe, columnas/tira completa/guion/intención/historial, carrusel, gesto arriba, zoom atrás, selección original y sobre editorial, lector/agente sin votos.",
-    "Publicación por PR y recibo exacto; comprobación pública de archivos/código y lectura de datos existentes; sin decisiones de prueba en producción."
+    "python3 nube/sellar_sala.py; python3 nube/verificar.py (13 pruebas, todo en orden).",
+    "Playwright 390px embed=1: claro por defecto con sistema claro; clic → data-theme=dark, fondo #131316 y yod_tema=oscuro."
   ],
-  "rollback": "Revertir PR frontend/adaptador y restaurar sólo configuración previa registrada si Dirección lo requiere. No restaurar ni borrar fotos, votos, textos, Sheets, versiones, propuestas, sesiones o snapshots."
+  "rollback": "Revertir el PR (bloque #temaSala en index.html). No toca datos, decisiones, sesiones ni Sheets."
 }
