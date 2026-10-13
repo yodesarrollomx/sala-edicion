@@ -1,0 +1,45 @@
+name: Verificar fotos HiDream en la sala publicada
+on:
+  push:
+    branches: [codex/sala-hidream-lote-20261012]
+    paths:
+      - .github/workflows/sala-hidream-auditar.yml
+      - operaciones/hidream_auditar.py
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: sala-hidream-auditar
+  cancel-in-progress: false
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout: |
+            operaciones
+            nube
+            datos
+      - name: Conservar auditor temporal y leer con código de main
+        run: |
+          cp operaciones/hidream_auditar.py "$RUNNER_TEMP/hidream_auditar.py"
+          git fetch --no-tags origin main
+          git checkout --detach origin/main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet google-auth requests pillow
+      - run: python -m py_compile "$RUNNER_TEMP/hidream_auditar.py"
+      - name: Esperar cierre y verificar tira, texto, recibo y archivos publicados
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          SALA_PUBLICADOR_MODO: snapshots
+          PYTHONUNBUFFERED: '1'
+        run: python "$RUNNER_TEMP/hidream_auditar.py"
