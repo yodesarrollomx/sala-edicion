@@ -1,0 +1,58 @@
+name: Ajustar instrucciones visuales tras publicar Doble vía
+on:
+  push:
+    branches: [codex/sala-hidream-lote-20261012]
+    paths: [.github/workflows/sala-hidream-ajustar.yml]
+permissions:
+  actions: write
+  contents: write
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet requests
+      - name: Conservar lo publicado, pausar el lote y leer sus guiones visuales
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import base64,json,os,time
+          import requests
+          api="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]
+          branch="codex/sala-hidream-lote-20261012";prefix="operaciones/hidream-lote-20261012/"
+          headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json"}
+          def read(name):
+              r=requests.get(api+"/contents/"+prefix+name,headers=headers,params={"ref":branch},timeout=35)
+              if r.status_code==404:return None
+              r.raise_for_status();return json.loads(base64.b64decode(r.json()["content"]))
+          deadline=time.monotonic()+600
+          while time.monotonic()<deadline:
+              p=read("progreso.json") or {}
+              if str(p.get("run_id"))=="38335109256" and sum(x["laminas_nuevas"] for x in p["montadas"])>=5:break
+              state=requests.get(api+"/actions/runs/38335109256",headers=headers,timeout=35)
+              state.raise_for_status()
+              if state.json()["status"]=="completed":raise RuntimeError("Lote terminó antes del ajuste; conservar resultados")
+              time.sleep(10)
+          else:raise RuntimeError("Doble vía no confirmó montaje a tiempo")
+          r=requests.post(api+"/actions/runs/38335109256/cancel",headers=headers,timeout=35)
+          if r.status_code not in (202,409):r.raise_for_status()
+          inventory=read("inventario.json")
+          scenes=[]
+          for item in inventory["piezas"]:
+              r=requests.get("https://yodesarrollomx.github.io/sala-edicion/datos/tiras/"+item["fuente"]+".json",timeout=35)
+              r.raise_for_status();t=r.json()
+              scenes.append({"slug":item["slug"],"pieza":item["pieza"],
+                  "laminas":[{"n":l["n"],"dice":l.get("dice"),"ve":l.get("ve")} for l in t["laminas"] if l["n"] in item["laminas"]]})
+          url=api+"/contents/"+prefix+"escenas.json"
+          old=requests.get(url,headers=headers,params={"ref":branch},timeout=35)
+          body={"branch":branch,"message":"HiDream: escenas originales para corregir instrucciones visuales",
+                "content":base64.b64encode((json.dumps(scenes,ensure_ascii=False,indent=2)+"\n").encode()).decode()}
+          if old.status_code==200:body["sha"]=old.json()["sha"]
+          elif old.status_code!=404:old.raise_for_status()
+          r=requests.put(url,headers=headers,json=body,timeout=35);r.raise_for_status()
+          print("HIDREAM_AJUSTE "+json.dumps({"montadas":p["montadas"],"escenas":scenes},ensure_ascii=False),flush=True)
+          PY
