@@ -14,7 +14,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 5 | Ovis-Image 7B | generada | [Abrir original](05-ovis-image-7b.png) |
 | 6 | Kolors | falló la generación | — |
 | 7 | Stable Diffusion 3.5 Large | generada | [Abrir original](07-stable-diffusion-3-5-large.png) |
-| 8 | Playground v2.5 | sin cupo | — |
+| 8 | Playground v2.5 | generada | [Abrir original](08-playground-v2-5.png) |
 | 9 | PixArt-Sigma | generada | [Abrir original](09-pixart-sigma.png) |
 | 10 | Lucid Origin | sin cupo | — |
 | 11 | Phoenix 1.0 | sin cupo | — |
@@ -81,9 +81,11 @@ You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try agai
 
 ### 08. Playground v2.5
 
-**Estado:** sin cupo
+**Estado:** generada
 
-'You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try again in 3:02:46. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU'
+![Playground v2.5](08-playground-v2-5.jpg)
+
+[Abrir original PNG](08-playground-v2-5.png)
 
 ### 09. PixArt-Sigma
 

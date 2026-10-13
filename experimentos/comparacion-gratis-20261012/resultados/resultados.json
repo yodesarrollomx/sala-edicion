@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38330387449",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38330387449",
-  "fecha_utc": "2026-10-13T04:10:39Z",
+  "fecha_utc": "2026-10-13T04:11:01Z",
   "opciones": [
     {
       "n": 1,
@@ -305,8 +305,8 @@
       "nombre": "Playground v2.5",
       "modelo": "playgroundai/playground-v2.5",
       "tipo": "hf",
-      "estado": "sin cupo",
-      "imagen": null,
+      "estado": "generada",
+      "imagen": "08-playground-v2-5.png",
       "disponibilidad": {
         "http": 200,
         "stage": "RUNNING",
@@ -314,7 +314,7 @@
         "sdk": "gradio",
         "private": false
       },
-      "segundos": 1.5,
+      "segundos": 7.3,
       "intentos_anteriores": [
         {
           "estado": "falló la generación",
@@ -327,6 +327,12 @@
           "detalle": "httpx.Client() got multiple values for keyword argument 'timeout'",
           "http": null,
           "segundos": 0.7
+        },
+        {
+          "estado": "sin cupo",
+          "detalle": "'You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try again in 3:02:46. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU'",
+          "http": null,
+          "segundos": 1.5
         }
       ],
       "endpoint": "/run",
@@ -340,9 +346,15 @@
         4.5,
         false
       ],
-      "detalle": "'You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try again in 3:02:46. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU'",
       "reintento_programado_utc": "2026-10-13T04:08:00Z",
-      "reintento_programado_hmo": "2026-10-12 21:08"
+      "reintento_programado_hmo": "2026-10-12 21:08",
+      "vista": "08-playground-v2-5.jpg",
+      "resolucion": [
+        832,
+        1024
+      ],
+      "sha256": "e0ced6d67dbcc87e9f1d842e171b2b31bf0ba039a391b582093acba410b283eb",
+      "bytes": 1113940
     },
     {
       "n": 9,
