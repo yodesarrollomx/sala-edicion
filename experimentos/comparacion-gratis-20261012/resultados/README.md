@@ -17,7 +17,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 8 | Playground v2.5 | pendiente | — |
 | 9 | PixArt-Sigma | pendiente | — |
 | 10 | Lucid Origin | sin cupo | — |
-| 11 | Phoenix 1.0 | pendiente | — |
+| 11 | Phoenix 1.0 | sin cupo | — |
 | 12 | Kandinsky 3.1 | pendiente | — |
 | 13 | HiDream-I1 Dev | pendiente | — |
 | 14 | Ideogram | pendiente | — |
@@ -69,7 +69,9 @@ Cloudflare HTTP 429: {"errors":[{"message":"AiError: AiError: you have used up y
 
 ### 11. Phoenix 1.0
 
-**Estado:** pendiente
+**Estado:** sin cupo
+
+Cloudflare HTTP 429: {"errors":[{"message":"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (f0d16f66-8c29-45f4-bc36-8ae1ecfa2381)","code":4006}],"success":false,"result":{},"messages":[]}
 
 ### 12. Kandinsky 3.1
 
