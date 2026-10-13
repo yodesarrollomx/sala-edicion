@@ -1,0 +1,43 @@
+name: Evidencia de tablero y HiDream
+on:
+  push:
+    branches: [codex/sala-tablero-evidencia-20261013]
+    paths: ['.github/workflows/sala-tablero-evidencia.yml', 'operaciones/tablero-20261013/comprobar.py']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_SHA: fc73b0aa5538d0fb686c0bf18b91d2fbc1759b56
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github
+            operaciones
+      - uses: actions/checkout@v4
+        with:
+          ref: fc73b0aa5538d0fb686c0bf18b91d2fbc1759b56
+          path: _codigo-temporal
+          sparse-checkout: |
+            nube
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet requests pillow gradio_client
+      - name: Una foto sintética por el adaptador instalado y recuperar el recorrido
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python3 operaciones/tablero-20261013/comprobar.py
+      - name: Guardar evidencia en rama separada; nunca integrar en main
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add operaciones/tablero-20261013
+          git diff --cached --quiet || git commit -m 'Evidencia aislada del tablero y adaptador gratuito'
+          git push origin HEAD:codex/sala-tablero-evidencia-20261013
