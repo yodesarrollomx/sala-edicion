@@ -38,5 +38,10 @@
     "dice": "Estudiamos los m² permitidos, los giros y el estacionamiento exacto.",
     "n": 3,
     "slug": "llamada-entregable"
+  },
+  "llamada-entregable:4": {
+    "dice": "Integramos los metros clave: agua, drenaje, vialidad y cajones de estacionamiento necesarios.",
+    "n": 4,
+    "slug": "llamada-entregable"
   }
 }
