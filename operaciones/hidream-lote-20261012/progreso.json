@@ -1,8 +1,8 @@
 {
   "modelo": "HiDream-I1-Dev",
   "objetivo": 21,
-  "generadas": 4,
-  "solicitadas_nuevas": 0,
+  "generadas": 5,
+  "solicitadas_nuevas": 1,
   "recuperadas": 4,
   "montadas": [
     {
@@ -10,6 +10,13 @@
       "laminas_nuevas": 4,
       "tiras": [
         "dato-tres-opiniones-nube-2026-10-12-aef0ed"
+      ]
+    },
+    {
+      "pieza": "Doble vía",
+      "laminas_nuevas": 1,
+      "tiras": [
+        "doble-via-nube-2026-10-12-6f2f2a"
       ]
     }
   ],
