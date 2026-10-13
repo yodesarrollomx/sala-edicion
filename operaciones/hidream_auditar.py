@@ -13,7 +13,7 @@ PREFIX="operaciones/hidream-lote-20261012/"
 SITE="https://yodesarrollomx.github.io/sala-edicion/"
 HEADERS={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json"}
 API="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]
-RUN="38337296576"
+RUN="38338150745"
 def api(path,**kw):
     r=requests.get(API+"/"+path,headers=HEADERS,timeout=45,**kw)
     r.raise_for_status();return r.json()
@@ -108,7 +108,7 @@ total=sum(x["cantidad"] for x in checks)
 if total!=final["generadas"]:raise RuntimeError("Cuenta de imágenes montadas no coincide con las generadas")
 report={"modelo":"HiDream-I1-Dev","run_produccion":RUN,"verificado_en":dt.datetime.now(dt.timezone.utc).isoformat(),
         "generadas_y_montadas":total,"pendientes":final["pendientes"],"detenido":final["detenido"],
-        "causa":final["causa"],"piezas":checks,"decisiones_editoriales_escritas":0,
+        "causa":final["causa"],"fallos_laminas":final.get("fallos_laminas",[]),"piezas":checks,"decisiones_editoriales_escritas":0,
         "segundos_fotos":[p["segundos"] for x in checks for p in x["laminas"]],
         "observacion_visual":"Las primeras cuatro candidatas incluyen texto añadido por el generador; están pendientes de revisión humana."}
 save("verificacion.json",(json.dumps(report,ensure_ascii=False,indent=2)+"\n").encode())
