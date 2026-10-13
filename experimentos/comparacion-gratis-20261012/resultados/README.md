@@ -11,7 +11,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 2 | Qwen-Image 2.1 | sin cupo | — |
 | 3 | Krea 2 Turbo | sin cupo | — |
 | 4 | SANA-Sprint | generada | [Abrir original](04-sana-sprint.png) |
-| 5 | Ovis-Image 7B | sin cupo | — |
+| 5 | Ovis-Image 7B | generada | [Abrir original](05-ovis-image-7b.png) |
 | 6 | Kolors | falló la generación | — |
 | 7 | Stable Diffusion 3.5 Large | sin cupo | — |
 | 8 | Playground v2.5 | sin cupo | — |
@@ -55,9 +55,11 @@ You have exceeded your free ZeroGPU quota (90s requested vs. 33s left). Try agai
 
 ### 05. Ovis-Image 7B
 
-**Estado:** sin cupo
+**Estado:** generada
 
-You have exceeded your free ZeroGPU quota (112s requested vs. 78s left). Try again in 3:11:06. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU
+![Ovis-Image 7B](05-ovis-image-7b.jpg)
+
+[Abrir original PNG](05-ovis-image-7b.png)
 
 ### 06. Kolors
 
