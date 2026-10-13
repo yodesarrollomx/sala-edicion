@@ -35,6 +35,7 @@ async function prepare(browser,width,role="editor",mobile=false){
    else if(u.pathname==="/datos/tiras/index.json")value=Object.keys(tiras);
    else if(u.pathname.startsWith("/datos/tiras/"))value=tiras[u.pathname.split("/").pop().replace(".json","")]||{};
    else if(u.pathname==="/datos/piezas.json")value={};
+   else if(u.pathname.endsWith("/index.json"))value=[];
    await route.fulfill({json:value});return;
   }
   await route.continue();
