@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38330161283",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38330161283",
-  "fecha_utc": "2026-10-13T01:02:44Z",
+  "fecha_utc": "2026-10-13T01:02:56Z",
   "opciones": [
     {
       "n": 1,
@@ -229,7 +229,7 @@
       "nombre": "Playground v2.5",
       "modelo": "playgroundai/playground-v2.5",
       "tipo": "hf",
-      "estado": "falló la generación",
+      "estado": "sin cupo",
       "imagen": null,
       "disponibilidad": {
         "http": 200,
@@ -238,13 +238,19 @@
         "sdk": "gradio",
         "private": false
       },
-      "segundos": 0.7,
+      "segundos": 1.5,
       "intentos_anteriores": [
         {
           "estado": "falló la generación",
           "detalle": "'parameter_name'",
           "http": null,
           "segundos": 0.6
+        },
+        {
+          "estado": "falló la generación",
+          "detalle": "httpx.Client() got multiple values for keyword argument 'timeout'",
+          "http": null,
+          "segundos": 0.7
         }
       ],
       "endpoint": "/run",
@@ -258,7 +264,7 @@
         4.5,
         false
       ],
-      "detalle": "httpx.Client() got multiple values for keyword argument 'timeout'"
+      "detalle": "'You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try again in 3:02:46. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU'"
     },
     {
       "n": 9,
