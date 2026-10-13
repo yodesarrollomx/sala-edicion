@@ -1,0 +1,73 @@
+name: Corregir letras añadidas en las primeras cuatro pruebas HiDream
+on:
+  push:
+    branches: [codex/sala-hidream-lote-20261012]
+    paths:
+      - .github/workflows/sala-hidream-corregir-texto.yml
+      - operaciones/hidream_corregir_texto.py
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: sala-hidream-corregir-texto
+  cancel-in-progress: false
+jobs:
+  producir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout: |
+            operaciones
+            .github
+            nube
+            datos
+            tests
+            gas
+            docs
+      - name: Conservar operador temporal y usar sólo código aprobado de main
+        run: |
+          mkdir -p "$RUNNER_TEMP/hidream-code"
+          cp operaciones/hidream_corregir_texto.py "$RUNNER_TEMP/hidream-code/hidream_corregir_texto.py"
+          git fetch --no-tags origin main
+          git checkout --detach origin/main
+          git diff --check
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Preparar clientes, composición y lectura de snapshots
+        run: pip install --quiet google-auth requests pillow gradio_client
+      - name: Validar operador
+        run: python -m py_compile "$RUNNER_TEMP/hidream-code/hidream_corregir_texto.py"
+      - name: Preparar tipografía de la casa
+        run: |
+          mkdir -p nube/.cache/fuentes
+          curl -fsSL -o 'nube/.cache/fuentes/PlayfairDisplay[wght].ttf' 'https://github.com/google/fonts/raw/main/ofl/playfairdisplay/PlayfairDisplay%5Bwght%5D.ttf'
+          curl -fsSL -o 'nube/.cache/fuentes/PlayfairDisplay-Italic[wght].ttf' 'https://github.com/google/fonts/raw/main/ofl/playfairdisplay/PlayfairDisplay-Italic%5Bwght%5D.ttf'
+      - name: Rehacer, publicar y montar cada pieza con HiDream hasta terminar o detenerse
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SALA_PUBLICADOR_MODO: snapshots
+          PYTHONUNBUFFERED: '1'
+        run: python "$RUNNER_TEMP/hidream-code/hidream_corregir_texto.py" producir
+      - name: Liberar mutex en cualquier terminación
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SALA_PUBLICADOR_MODO: snapshots
+        run: python nube/snapshots_online.py liberar
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hidream-correccion-texto-recibos
+          path: |
+            ${{ runner.temp }}/hidream-operacion/*.json
+            laminas/recibos-hidream/
+          retention-days: 30
