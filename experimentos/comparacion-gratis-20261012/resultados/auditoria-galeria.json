@@ -1,0 +1,43 @@
+{
+  "utc": "2026-10-13T01:09:27Z",
+  "galeria_http": 200,
+  "tarjetas": 15,
+  "imagenes_verificadas": [
+    {
+      "n": 4,
+      "motor": "SANA-Sprint",
+      "http": 200,
+      "sha256": "9b71a09e675ddea3829283916b495898a18ffb9bea41b92541f66b9924e55ed3",
+      "resolucion": [
+        1024,
+        1280
+      ],
+      "original": "https://yod-prueba-15-imagenes-gratis.onrender.com/04-sana-sprint.png",
+      "generacion_run_id": "38329443469"
+    },
+    {
+      "n": 13,
+      "motor": "HiDream-I1 Dev",
+      "http": 200,
+      "sha256": "b041d505b12d489b3110f8cee2d62f0dc965943f60f82139b082ecbc1d70c9ad",
+      "resolucion": [
+        880,
+        1168
+      ],
+      "original": "https://yod-prueba-15-imagenes-gratis.onrender.com/13-hidream-i1-dev.png",
+      "generacion_run_id": "38329443469"
+    }
+  ],
+  "modelo_metadatos_proveedor": [
+    {
+      "seed": "0",
+      "model": "HiDream-I1-Dev",
+      "generated_by": "HiDream-I1-Dev Generator"
+    }
+  ],
+  "reintento_utc": "2026-10-13T04:08:00Z",
+  "reintento_hmo": "2026-10-12 21:08",
+  "reintento_run_id": "38330387449",
+  "writes_business": 0,
+  "production_changed": false
+}
