@@ -18,7 +18,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 9 | PixArt-Sigma | sin cupo | — |
 | 10 | Lucid Origin | sin cupo | — |
 | 11 | Phoenix 1.0 | sin cupo | — |
-| 12 | Kandinsky 3.1 | pendiente | — |
+| 12 | Kandinsky 3.1 | requiere registro | — |
 | 13 | HiDream-I1 Dev | generada | [Abrir original](13-hidream-i1-dev.png) |
 | 14 | Ideogram | pendiente | — |
 | 15 | Adobe Firefly nativo | pendiente | — |
@@ -97,7 +97,9 @@ Cloudflare HTTP 429: {"errors":[{"message":"AiError: AiError: you have used up y
 
 ### 12. Kandinsky 3.1
 
-**Estado:** pendiente
+**Estado:** requiere registro
+
+El API necesita API-key y Secret-key de Fusion Brain. No están instaladas. Se comprobó el portal sin registrar ni contratar un plan.
 
 ### 13. HiDream-I1 Dev
 

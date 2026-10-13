@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38329443469",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38329443469",
-  "fecha_utc": "2026-10-13T00:56:27Z",
+  "fecha_utc": "2026-10-13T00:57:11Z",
   "opciones": [
     {
       "n": 1,
@@ -285,8 +285,12 @@
       "nombre": "Kandinsky 3.1",
       "modelo": "fusionbrain",
       "tipo": "kandinsky",
-      "estado": "pendiente",
-      "imagen": null
+      "estado": "requiere registro",
+      "imagen": null,
+      "credencial": false,
+      "detalle": "El API necesita API-key y Secret-key de Fusion Brain. No están instaladas. Se comprobó el portal sin registrar ni contratar un plan.",
+      "portal": "HTTPSConnectionPool(host='fusionbrain.ai', port=443): Max retries exceeded with url: /en/developers/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='fusionbrain.ai', port=443) at 0x7f020cb25eb0>, 'Connection to fusionbrain.ai timed out. (connect timeout=35)'))",
+      "segundos": 35.5
     },
     {
       "n": 13,
