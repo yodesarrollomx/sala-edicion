@@ -1,8 +1,8 @@
 {
   "modelo": "HiDream-I1-Dev",
   "objetivo": 21,
-  "generadas": 11,
-  "generadas_en_esta_fase": 3,
+  "generadas": 15,
+  "generadas_en_esta_fase": 7,
   "recuperadas": 0,
   "montadas": [
     {
@@ -35,6 +35,13 @@
       "laminas_nuevas": 2,
       "tiras": [
         "la-ruta-autonoma-nube-2026-10-12-6e0f16"
+      ]
+    },
+    {
+      "pieza": "Así se ve el entregable",
+      "laminas_nuevas": 4,
+      "tiras": [
+        "llamada-entregable-nube-2026-10-12-50060f"
       ]
     }
   ],
