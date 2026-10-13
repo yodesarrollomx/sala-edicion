@@ -1,0 +1,120 @@
+{
+  "modelo": "HiDream-I1-Dev",
+  "run_produccion": "38336377009",
+  "verificado_en": "2026-10-13T02:31:40.955534+00:00",
+  "generadas_y_montadas": 7,
+  "pendientes": 14,
+  "detenido": true,
+  "causa": "HiDream no entregó foto: Error: No image name in successful response",
+  "piezas": [
+    {
+      "pieza": "Tres opiniones, tres números distintos",
+      "tira": "dato-tres-opiniones-nube-2026-10-12-aef0ed",
+      "cantidad": 4,
+      "laminas": [
+        {
+          "n": 2,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/dato-tres-opiniones-nube-2026-10-12-aef0ed/L2-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/dato-tres-opiniones-nube-2026-10-12-aef0ed/L2-1.png",
+          "foto_sha256": "b2b693b085ded93e3c13bd4ce60e41f0f42d0c922cf49194833a2740ecc0aba5",
+          "segundos": 44.0,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 3,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/dato-tres-opiniones-nube-2026-10-12-aef0ed/L3-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/dato-tres-opiniones-nube-2026-10-12-aef0ed/L3-1.png",
+          "foto_sha256": "8f3068588f280e21941e24c038de39cb631182d9d19f5ab60c694e6896361aea",
+          "segundos": 54.1,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 4,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/dato-tres-opiniones-nube-2026-10-12-aef0ed/L4-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/dato-tres-opiniones-nube-2026-10-12-aef0ed/L4-1.png",
+          "foto_sha256": "f14730aaf3060d53124d46287fcbe7fd655998c856980bb9e05e6b0560fda65b",
+          "segundos": 35.3,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 5,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/dato-tres-opiniones-nube-2026-10-12-aef0ed/L5-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/dato-tres-opiniones-nube-2026-10-12-aef0ed/L5-1.png",
+          "foto_sha256": "00d1f2494f7647acd43fcca94271b5dd08911cb0f60ffd78c93e1b1d7971e2fb",
+          "segundos": 33.5,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        }
+      ]
+    },
+    {
+      "pieza": "Doble vía",
+      "tira": "doble-via-nube-2026-10-12-6f2f2a",
+      "cantidad": 1,
+      "laminas": [
+        {
+          "n": 1,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/doble-via-nube-2026-10-12-6f2f2a/L1-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/doble-via-nube-2026-10-12-6f2f2a/L1-1.png",
+          "foto_sha256": "d0713d90562bab371c8ccf00fdf3790b0cb33e94da14fe04beddc15820093fc9",
+          "segundos": 74.3,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        }
+      ]
+    },
+    {
+      "pieza": "El arquitecto invisible",
+      "tira": "el-arquitecto-invisible-nube-2026-10-12-f81194",
+      "cantidad": 2,
+      "laminas": [
+        {
+          "n": 3,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/el-arquitecto-invisible-nube-2026-10-12-f81194/L3-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/el-arquitecto-invisible-nube-2026-10-12-f81194/L3-1.png",
+          "foto_sha256": "ae4b4b4535010bf6e304eaa970981d14e4e0b06dc0e782118ae4a01e42cb38be",
+          "segundos": 23.8,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 4,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/el-arquitecto-invisible-nube-2026-10-12-f81194/L4-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/el-arquitecto-invisible-nube-2026-10-12-f81194/L4-1.png",
+          "foto_sha256": "e961f0d409f5988f4c59ce22aa25d561f0638093aa4907e9093a26e1a5c668a3",
+          "segundos": 25.7,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        }
+      ]
+    }
+  ],
+  "decisiones_editoriales_escritas": 0,
+  "segundos_fotos": [
+    44.0,
+    54.1,
+    35.3,
+    33.5,
+    74.3,
+    23.8,
+    25.7
+  ],
+  "observacion_visual": "Las primeras cuatro candidatas incluyen texto añadido por el generador; están pendientes de revisión humana."
+}
