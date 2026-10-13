@@ -20,7 +20,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 11 | Phoenix 1.0 | sin cupo | — |
 | 12 | Kandinsky 3.1 | requiere registro | — |
 | 13 | HiDream-I1 Dev | generada | [Abrir original](13-hidream-i1-dev.png) |
-| 14 | Ideogram | pendiente | — |
+| 14 | Ideogram | acceso bloqueado | — |
 | 15 | Adobe Firefly nativo | pendiente | — |
 
 ## Imágenes obtenidas
@@ -111,7 +111,9 @@ El API necesita API-key y Secret-key de Fusion Brain. No están instaladas. Se c
 
 ### 14. Ideogram
 
-**Estado:** pendiente
+**Estado:** acceso bloqueado
+
+El proveedor respondió HTTP 403 al navegador de nube; no se recibió una imagen.
 
 ### 15. Adobe Firefly nativo
 

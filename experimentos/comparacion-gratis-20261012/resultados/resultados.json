@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38329443469",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38329443469",
-  "fecha_utc": "2026-10-13T00:57:11Z",
+  "fecha_utc": "2026-10-13T00:57:25Z",
   "opciones": [
     {
       "n": 1,
@@ -326,8 +326,12 @@
       "nombre": "Ideogram",
       "modelo": "https://ideogram.ai/",
       "tipo": "web",
-      "estado": "pendiente",
-      "imagen": null
+      "estado": "acceso bloqueado",
+      "imagen": null,
+      "http": 403,
+      "titulo": "Un momento…",
+      "detalle": "El proveedor respondió HTTP 403 al navegador de nube; no se recibió una imagen.",
+      "segundos": 6.8
     },
     {
       "n": 15,
