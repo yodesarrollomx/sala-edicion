@@ -1,17 +1,16 @@
 {
   "fecha_hmo": "2026-10-12",
   "modelo": "HiDream-I1-Dev",
-  "pendientes": 14,
+  "pendientes": 13,
   "piezas": [
     {
       "slug": "el-arquitecto-invisible",
-      "fuente": "el-arquitecto-invisible-nube-2026-10-12-f81194",
+      "fuente": "el-arquitecto-invisible-nube-2026-10-12-5b72e0",
       "pieza": "El arquitecto invisible",
       "laminas": [
-        5,
         6
       ],
-      "cantidad": 2
+      "cantidad": 1
     },
     {
       "slug": "la-ruta-autonoma",
@@ -58,6 +57,6 @@
       "cantidad": 5
     }
   ],
-  "run_id": "38337296576",
+  "run_id": "38338150745",
   "codigo_main": "11af0881e8c2babc047f09cc940bd3d19609c72b"
 }
