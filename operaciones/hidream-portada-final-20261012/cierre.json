@@ -1,0 +1,24 @@
+{
+  "modelo": "HiDream-I1-Dev",
+  "objetivo_inicial": 1,
+  "generadas": 1,
+  "generadas_en_esta_fase": 1,
+  "recuperadas": 0,
+  "montadas": [
+    {
+      "pieza": "Tu terreno, tus reglas",
+      "laminas_nuevas": 1,
+      "tiras": [
+        "tu-terreno-tus-reglas-nube-2026-10-12-77e7ad"
+      ]
+    }
+  ],
+  "pendientes": 0,
+  "cola_restante": [],
+  "detenido": false,
+  "causa": "",
+  "run_id": "38341608972",
+  "decisiones_editoriales_escritas": 0,
+  "fallos_laminas": [],
+  "codigo_main": "11af0881e8c2babc047f09cc940bd3d19609c72b"
+}
