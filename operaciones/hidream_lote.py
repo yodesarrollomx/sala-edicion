@@ -21,6 +21,29 @@ TECH=Path(os.environ["RUNNER_TEMP"])/"hidream-operacion"
 TECH.mkdir(exist_ok=True)
 STOP={"detenido":False,"causa":"","generadas":0,"recuperadas":0}
 CLIENT=None
+PHOTO_CONTEXT=""
+PROMPTS={
+  "el-arquitecto-invisible:3": "Three architects and an older male property owner sit around a large wooden worktable. An architect uses a pencil to trace a clear route on a physical architectural site plan while the client and colleagues follow the proposal. A small building model and material samples make the discussion concrete.",
+  "el-arquitecto-invisible:4": "Close-up documentary photograph of a detailed site plan, scale ruler and a clean small architectural massing model on a sunlit studio desk. An architect measures a building footprint and compares feasible building volumes. All plan lines are abstract geometric drawings, with no labels or readable lettering.",
+  "el-arquitecto-invisible:5": "An older property owner in a light linen shirt coordinates a construction project by telephone while sitting comfortably on his home's shaded porch. A closed architectural folder rests on the table beside him. He looks relaxed and confident, with no construction site visible in the foreground.",
+  "el-arquitecto-invisible:6": "Over-the-shoulder photograph of a property owner taking a live video call with a professional architect on a smartphone. The architect's face and a small physical building model are visible on the screen. The owner sits at a tidy desk with a site plan and pencil; screen interfaces are minimal, unlabeled and without lettering.",
+  "la-ruta-autonoma:5": "A mature landowner stands beside his open undeveloped lot, calmly studying an architectural site plan held in both hands. His expression is quietly satisfied as he decides how to use the land. The real lot and warm daylight are clearly visible behind him; no numbers or readable marks appear on the plan.",
+  "la-ruta-autonoma:6": "A laptop on a clean worktable shows a female architectural specialist in a live video call. She points to a small physical site model and a geometric site plan in her studio. A property owner's hands, a pencil and a map with an unlabeled marked site are in the foreground.",
+  "llamada-entregable:2": "Close-up real photograph of an architect's hand using a scale ruler on a site plan displayed on a professional tablet. Clear geometric building footprints and translucent area polygons illustrate the permitted building area. The screen is entirely graphical, without any readable labels, numbers or interface text.",
+  "llamada-entregable:3": "A property owner and an architect review a physical scale model on a table. One side of the model contains small storefront building volumes and the other contains residential apartment volumes, arranged coherently on the same site. Their hands point to the two possible uses; the model and faces are realistic, with no shop signs or writing.",
+  "llamada-entregable:4": "Aerial-angle real photograph of a neat physical architectural site model on a table. The model clearly shows a road entrance, parking bays, water connections and underground drainage routes represented with simple blue pipes. An architect's hand indicates the road connection; everything is graphical and has no labels or text.",
+  "llamada-entregable:5": "A property owner and a female architect at a warm sunlit table finish reviewing a marked site location on a tablet beside a physical architectural folder. The architect closes the laptop and the owner points to the land parcel on an unlabeled map. The mood is practical and welcoming.",
+  "mesa-vacia:6": "Three adult siblings enter a quiet family meeting room together with relaxed expressions. They sit around a wooden table without argument; an architectural folder and a small scale model of their shared land sit in the center. A mediator welcomes them from the far side of the table. The scene conveys an easy family agreement through natural gestures.",
+  "tu-terreno-tus-reglas:1": "A middle-aged couple stand beside a parked pickup truck at the edge of their undeveloped land. They examine a large printed architectural site plan spread across the hood, pointing to possible future building volumes. Golden afternoon light, warm arid landscape, realistic clothing and calm hopeful expressions.",
+  "tu-terreno-tus-reglas:2": "An older father and his adult daughter stand next to a fenced vacant corner lot. The father points toward the land while they discuss possible storefront construction. A physical site plan and three small unmarked building models rest on a portable table nearby, suggesting different options without any written signs.",
+  "tu-terreno-tus-reglas:3": "Architectural documentary close-up of a digital cadastral site map on a tablet, a scale ruler, pencil and a small physical site model on a wooden desk beside a steaming coffee cup. An architect's hand compares the allowed building footprint with geometric blocks representing feasible commercial and residential uses. All display contents are graphical and unlabeled.",
+  "tu-terreno-tus-reglas:4": "A mature father places a neatly organized architectural study folder into his briefcase while his adult daughter and wife sit nearby at a bright family table. He appears calm and confident that the technical study is his to keep. A scale model and rolled drawings remain on the table, with no printed writing visible.",
+  "tu-terreno-tus-reglas:5": "An architect and a landowner sit at a clean wooden table and identify the exact land parcel on a smartphone showing a satellite-style aerial map with a simple location pin. A physical site plan and an architectural folder lie beside it. The screen contains only imagery and a pin, no place names, labels or readable text."
+}
+PREVIOUS=[]
+BASE_COUNT=0
+CAPTIONS={}
+
 ABRIR_ORIGINAL=mesa.abiertas
 GENERAR_TOMAS_ORIGINAL=mesa.producir_tomas
 MODELO_ORIGINAL=imagen.modelo_de
@@ -45,6 +68,14 @@ def publicar_resumen(nombre,value):
     elif old.status_code!=404:raise RuntimeError("No se pudo leer recibo técnico GitHub")
     response=requests.put(base,headers=headers,json=body,timeout=45)
     response.raise_for_status()
+
+
+def leer_resumen(nombre):
+    base="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]+"/contents/operaciones/hidream-lote-20261012/"+nombre+".json"
+    headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json"}
+    r=requests.get(base,headers=headers,params={"ref":BRANCH},timeout=40)
+    r.raise_for_status()
+    return json.loads(__import__("base64").b64decode(r.json()["content"]))
 
 def pendientes():
     if produccion.peticiones_abiertas():
@@ -74,6 +105,12 @@ def reglas_operacion(recurso,**kwargs):
         r.setdefault("reglas",{}).update(imagen_motores=MOTOR,mesa_tomas_por_lamina="1",mesa_tope_laminas="100")
     return r
 def tomas_con_texto_vigente(slug,t,lam,nota,reglas,cola,carpeta,n_tomas,solo_recibo=False):
+    global PHOTO_CONTEXT
+    key=slug+":"+str(lam["n"])
+    if key not in PROMPTS:raise RuntimeError("Lámina sin descripción visual específica")
+    PHOTO_CONTEXT=PROMPTS[key]
+    CAPTIONS[key]={"dice":str(lam.get("dice") or ""),"n":lam["n"],"slug":slug}
+    publicar_resumen("textos-vigentes",CAPTIONS)
     visual=copy.deepcopy(lam)
     visual["reemplazo_modelo"]=POLITICA["revision"]
     return GENERAR_TOMAS_ORIGINAL(slug,t,visual,nota,reglas,cola,carpeta,1,solo_recibo=solo_recibo)
@@ -83,7 +120,15 @@ def generar_hidream(receta,reglas):
     from gradio_client import Client
     from contenido_reglas import exigir
     exigir(receta,reglas,"receta HiDream")
-    prompt=receta.rstrip(". ")+imagen.SIN_LETRAS
+    if not PHOTO_CONTEXT:raise MotorError("Sin descripción visual de la lámina")
+    prompt=("A single realistic high-end architectural documentary photograph. Photograph only. "
+            "No typography, no titles, no captions, no letters, no words, no logos, no watermarks. "
+            +PHOTO_CONTEXT+
+            " Professional full-frame 35mm photography, warm natural daylight, restrained beige and terracotta palette, "
+            "natural adult faces and anatomically correct hands, accurate architectural perspective. "
+            "Keep the key scene in the central 4:5 region and leave quiet lower foreground for a later separate overlay. "
+            "Any screens, papers and folders must have abstract graphics only, with absolutely no readable lettering.")
+    exigir(prompt,reglas,"fotografía HiDream sin tipografía")
     rid=str(reglas.get("_imagen_request_id") or hashlib.sha256(prompt.encode()).hexdigest())
     if not re.fullmatch(r"[0-9a-f]{64}",rid):raise MotorError("Identidad de generación inválida")
     folder=ROOT/"laminas"/"recibos-hidream"
@@ -133,60 +178,18 @@ def generar_hidream(receta,reglas):
         receipt={"schema":1,"request_id":rid,"motor":MOTOR,"modelo":MODEL,"space":SPACE,
                  "receta_sha256":recipe,"imagen_sha256":hashlib.sha256(data).hexdigest(),
                  "resolucion":list(im.size),"seed":info.get("seed"),"segundos":round(time.monotonic()-start,1),
-                 "run_id":os.environ["GITHUB_RUN_ID"],"generado_en":dt.datetime.now(dt.timezone.utc).isoformat()}
+                 "run_id":os.environ["GITHUB_RUN_ID"],"generado_en":dt.datetime.now(dt.timezone.utc).isoformat(),"instrucciones_visuales":"fotografia-sin-tipografia-v2"}
         path.write_bytes(data);receipt_path.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
         STOP["generadas"]+=1
         reglas["_receta_proveedor_sha256"]=recipe;reglas["_imagen_recibo_id"]=rid
         emit("HIDREAM_FOTO_CONFIRMADA",receipt)
-        publicar_resumen("generacion",{"modelo":MODEL,"generadas":STOP["generadas"]+STOP["recuperadas"],"solicitadas_nuevas":STOP["generadas"],"ultima":receipt,"run_id":os.environ["GITHUB_RUN_ID"]})
+        publicar_resumen("generacion",{"modelo":MODEL,"generadas":BASE_COUNT+STOP["generadas"]+STOP["recuperadas"],"generadas_en_esta_fase":STOP["generadas"],"ultima":receipt,"run_id":os.environ["GITHUB_RUN_ID"]})
         return data,"png",MOTOR,[]
     except Exception as e:
         STOP.update(detenido=True,causa=limpiar(e))
         if re.search(r"429|quota|rate.limit|resource.exhaust|cupo",str(e),re.I):
             raise imagen.CupoImagen("HiDream: "+STOP["causa"],intermitente=True) from None
         raise MotorError("HiDream detenido: "+STOP["causa"],intermitente=True) from None
-
-
-def recuperar_confirmadas():
-    """Restaurar sólo los cuatro recibos y PNG originales; nunca solicitar otra foto."""
-    import zipfile
-    artifact=11784535639
-    headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json"}
-    url="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]+"/actions/artifacts/"+str(artifact)+"/zip"
-    response=requests.get(url,headers=headers,timeout=90)
-    response.raise_for_status()
-    raw=response.content
-    if hashlib.sha256(raw).hexdigest()!="f4aa8836c15c0ecf2f19b04061fc9d62275e1f89f4d5060094da5c22b3a5e7a3":
-        raise RuntimeError("Artefacto de recuperación no coincide")
-    folder=ROOT/"laminas"/"recibos-hidream"
-    folder.mkdir(parents=True,exist_ok=True)
-    archive=zipfile.ZipFile(io.BytesIO(raw))
-    allowed={}
-    for entry in archive.infolist():
-        name=Path(entry.filename).name
-        if "/recibos-hidream/" not in "/"+entry.filename:continue
-        if not re.fullmatch(r"[0-9a-f]{64}\.(?:json|png)",name):continue
-        if entry.file_size>25*1024*1024:raise RuntimeError("Recibo de recuperación demasiado grande")
-        if name in allowed:raise RuntimeError("Recibo de recuperación duplicado")
-        allowed[name]=archive.read(entry)
-    restored=[]
-    for name,data in allowed.items():
-        if not name.endswith(".json"):continue
-        receipt=json.loads(data)
-        rid=name[:-5]
-        png=allowed.get(rid+".png")
-        if (receipt.get("request_id")!=rid or receipt.get("modelo")!=MODEL or png is None
-                or hashlib.sha256(png).hexdigest()!=receipt.get("imagen_sha256")):
-            raise RuntimeError("Identidad del recibo recuperado inválida")
-        if receipt.get("run_id")!="38334295442":raise RuntimeError("Recibo de otra operación")
-        Image.open(io.BytesIO(png)).verify()
-        for leaf,value in ((name,data),(rid+".png",png)):
-            dest=folder/leaf
-            if dest.exists() and dest.read_bytes()!=value:raise RuntimeError("Recibo existente distinto")
-            dest.write_bytes(value)
-        restored.append(rid)
-    if len(restored)!=4:raise RuntimeError("No se recuperaron exactamente las cuatro fotos confirmadas")
-    emit("HIDREAM_RECUPERACION",{"recibos_confirmados":len(restored),"artefacto":artifact,"sin_solicitar_generacion":True})
 
 def instalar_perfil():
     mesa.abiertas=filtro_abiertas
@@ -211,8 +214,13 @@ def verificar_codigo_y_datos():
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("modo",choices=["inventario","producir"]);args=ap.parse_args()
+    global PREVIOUS,BASE_COUNT
     sala.enmascarar_en_actions()
     cloud=Snapshots(ROOT)
+    os.environ["GITHUB_SHA"]=cloud.head()
+    prior=leer_resumen("previo")
+    PREVIOUS=prior["montadas"]
+    BASE_COUNT=sum(x["laminas_nuevas"] for x in PREVIOUS)
     if args.modo=="inventario":
         cloud.bootstrap("mesa",False)
         queue=pendientes()
@@ -223,16 +231,15 @@ def main():
         publicar_resumen("inventario",value)
         return
     instalar_perfil()
-    mounted=[]
+    mounted=copy.deepcopy(PREVIOUS)
     try:
         cloud.bootstrap("mesa",True)
         queue=pendientes()
-        total=sum(q["cantidad"] for q in queue)
-        recuperar_confirmadas()
+        total=BASE_COUNT+sum(q["cantidad"] for q in queue)
         emit("HIDREAM_LOTE",{"pendientes":total,"piezas":queue,"modelo":MODEL,"una_toma_por_lamina":True})
         for round_number,item in enumerate(queue,1):
             if STOP["detenido"]:break
-            before=STOP["generadas"]+STOP["recuperadas"]
+            before=STOP["generadas"]
             code=llamar_mesa("--producir","--pieza",item["slug"])
             plan=mesa._leer(mesa.PLAN,{}) or {}
             cartas=plan.get("cartas") or []
@@ -245,9 +252,9 @@ def main():
             cloud.dispatch_publish(cloud.head())
             if llamar_mesa("--montar")!=0:raise RuntimeError("Mesa no confirmó el montaje")
             ids=[c["tira_id"] for c in cartas]
-            mounted.append({"pieza":item["pieza"],"laminas_nuevas":STOP["generadas"]+STOP["recuperadas"]-before,"tiras":ids})
+            mounted.append({"pieza":item["pieza"],"laminas_nuevas":STOP["generadas"]-before,"tiras":ids})
             emit("HIDREAM_PIEZA_MONTADA",mounted[-1])
-            progreso={"modelo":MODEL,"objetivo":total,"generadas":STOP["generadas"]+STOP["recuperadas"],"solicitadas_nuevas":STOP["generadas"],"recuperadas":STOP["recuperadas"],
+            progreso={"modelo":MODEL,"objetivo":total,"generadas":BASE_COUNT+STOP["generadas"]+STOP["recuperadas"],"generadas_en_esta_fase":STOP["generadas"],"recuperadas":STOP["recuperadas"],
                       "montadas":mounted,"detenido":STOP["detenido"],"causa":STOP["causa"],
                       "run_id":os.environ["GITHUB_RUN_ID"],"fecha_hmo":sala.hoy_hermosillo()}
             (TECH/"progreso.json").write_text(json.dumps(progreso,ensure_ascii=False,indent=2)+"\n")
@@ -257,7 +264,7 @@ def main():
             cloud.bootstrap("mesa",True)
             mesa._snapshot_verifier=None
         remaining=pendientes()
-        final={"modelo":MODEL,"objetivo_inicial":total,"generadas":STOP["generadas"]+STOP["recuperadas"],"solicitadas_nuevas":STOP["generadas"],"recuperadas":STOP["recuperadas"],
+        final={"modelo":MODEL,"objetivo_inicial":total,"generadas":BASE_COUNT+STOP["generadas"]+STOP["recuperadas"],"generadas_en_esta_fase":STOP["generadas"],"recuperadas":STOP["recuperadas"],
                "montadas":mounted,"pendientes":sum(q["cantidad"] for q in remaining),"cola_restante":remaining,
                "detenido":STOP["detenido"],"causa":STOP["causa"],"run_id":os.environ["GITHUB_RUN_ID"],
                "decisiones_editoriales_escritas":0,"codigo_main":cloud.head()}
