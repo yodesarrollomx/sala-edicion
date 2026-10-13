@@ -28,5 +28,10 @@
     "dice": "Basta compartir la ubicación para iniciar tu Plan de Potencial Personalizado en una videollamada.",
     "n": 6,
     "slug": "la-ruta-autonoma"
+  },
+  "llamada-entregable:2": {
+    "dice": "Proponemos calcular los metros cuadrados exactos que permite la norma municipal vigente.",
+    "n": 2,
+    "slug": "llamada-entregable"
   }
 }
