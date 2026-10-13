@@ -12,7 +12,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 3 | Krea 2 Turbo | sin cupo | — |
 | 4 | SANA-Sprint | generada | [Abrir original](04-sana-sprint.png) |
 | 5 | Ovis-Image 7B | sin cupo | — |
-| 6 | Kolors | sin cupo | — |
+| 6 | Kolors | falló la generación | — |
 | 7 | Stable Diffusion 3.5 Large | sin cupo | — |
 | 8 | Playground v2.5 | sin cupo | — |
 | 9 | PixArt-Sigma | sin cupo | — |
@@ -61,9 +61,9 @@ You have exceeded your free ZeroGPU quota (112s requested vs. 78s left). Try aga
 
 ### 06. Kolors
 
-**Estado:** sin cupo
+**Estado:** falló la generación
 
-'You have exceeded your free ZeroGPU quota (300s requested vs. 82s left). Try again in 3:11:42. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU'
+'TypeError'
 
 ### 07. Stable Diffusion 3.5 Large
 
