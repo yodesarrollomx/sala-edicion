@@ -1,8 +1,8 @@
 {
   "modelo": "HiDream-I1-Dev",
   "objetivo": 21,
-  "generadas": 15,
-  "generadas_en_esta_fase": 7,
+  "generadas": 16,
+  "generadas_en_esta_fase": 8,
   "recuperadas": 0,
   "montadas": [
     {
@@ -42,6 +42,13 @@
       "laminas_nuevas": 4,
       "tiras": [
         "llamada-entregable-nube-2026-10-12-50060f"
+      ]
+    },
+    {
+      "pieza": "La Mesa Vacía",
+      "laminas_nuevas": 1,
+      "tiras": [
+        "mesa-vacia-nube-2026-10-12-9d1b1a"
       ]
     }
   ],
