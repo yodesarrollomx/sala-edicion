@@ -1,29 +1,8 @@
 {
   "fecha_hmo": "2026-10-12",
   "modelo": "HiDream-I1-Dev",
-  "pendientes": 21,
+  "pendientes": 16,
   "piezas": [
-    {
-      "slug": "dato-tres-opiniones",
-      "fuente": "dato-tres-opiniones-nube-2026-10-12-7efce5",
-      "pieza": "Tres opiniones, tres números distintos",
-      "laminas": [
-        2,
-        3,
-        4,
-        5
-      ],
-      "cantidad": 4
-    },
-    {
-      "slug": "doble-via",
-      "fuente": "doble-via-nube-2026-10-12-cb73f9",
-      "pieza": "Doble vía",
-      "laminas": [
-        1
-      ],
-      "cantidad": 1
-    },
     {
       "slug": "el-arquitecto-invisible",
       "fuente": "el-arquitecto-invisible-nube-2026-10-12-5d478a",
@@ -81,6 +60,6 @@
       "cantidad": 5
     }
   ],
-  "run_id": "38335109256",
+  "run_id": "38336377009",
   "codigo_main": "11af0881e8c2babc047f09cc940bd3d19609c72b"
 }
