@@ -15,7 +15,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 6 | Kolors | falló la generación | — |
 | 7 | Stable Diffusion 3.5 Large | sin cupo | — |
 | 8 | Playground v2.5 | sin cupo | — |
-| 9 | PixArt-Sigma | sin cupo | — |
+| 9 | PixArt-Sigma | generada | [Abrir original](09-pixart-sigma.png) |
 | 10 | Lucid Origin | sin cupo | — |
 | 11 | Phoenix 1.0 | sin cupo | — |
 | 12 | Kandinsky 3.1 | requiere registro | — |
@@ -79,9 +79,11 @@ You have exceeded your free ZeroGPU quota (65s requested vs. 78s left). Try agai
 
 ### 09. PixArt-Sigma
 
-**Estado:** sin cupo
+**Estado:** generada
 
-'You have exceeded your free ZeroGPU quota (180s requested vs. 78s left). Try again in 3:10:44. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU'
+![PixArt-Sigma](09-pixart-sigma.jpg)
+
+[Abrir original PNG](09-pixart-sigma.png)
 
 ### 10. Lucid Origin
 

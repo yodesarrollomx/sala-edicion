@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38330387449",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38330387449",
-  "fecha_utc": "2026-10-13T04:08:14Z",
+  "fecha_utc": "2026-10-13T04:08:34Z",
   "opciones": [
     {
       "n": 1,
@@ -295,8 +295,8 @@
       "nombre": "PixArt-Sigma",
       "modelo": "PixArt-alpha/PixArt-Sigma",
       "tipo": "hf",
-      "estado": "sin cupo",
-      "imagen": null,
+      "estado": "generada",
+      "imagen": "09-pixart-sigma.png",
       "disponibilidad": {
         "http": 200,
         "stage": "RUNNING",
@@ -305,26 +305,40 @@
         "private": false
       },
       "endpoint": "/run",
-      "parametros": {
-        "prompt": "Photorealistic editorial photograph of a Mexican family of exactly three adults a woman aged 65, a man aged 45 and a woman aged 35, sitting around a wooden dining table and discussing a simple architectural floor plan. Contemporary modest home in Sonora, warm neutral plaster walls, natural window light, authentic everyday clothing, candid interaction, realistic facial proportions and skin texture, anatomically correct hands. Vertical portrait composition, documentary photography, restrained colors, no illustration, no cartoon, no plastic skin, no letters, no captions, no logos, no watermark.",
-        "negative_prompt": "text, letters, captions, logos, watermark, cartoon, illustration, plastic skin, deformed hands",
-        "style": "(No style)",
-        "use_negative_prompt": "text, letters, captions, logos, watermark, cartoon, illustration, plastic skin, deformed hands",
-        "num_imgs": 1,
-        "seed": 74103,
-        "width": 1024,
-        "height": 1280,
-        "schedule": "DPM-Solver",
-        "dpms_guidance_scale": 4.5,
-        "sas_guidance_scale": 3,
-        "dpms_inference_steps": 20,
-        "sas_inference_steps": 20,
-        "randomize_seed": false
-      },
-      "detalle": "'You have exceeded your free ZeroGPU quota (180s requested vs. 78s left). Try again in 3:10:44. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU'",
-      "segundos": 0.9,
+      "parametros": [
+        "Photorealistic editorial photograph of a Mexican family of exactly three adults a woman aged 65, a man aged 45 and a woman aged 35, sitting around a wooden dining table and discussing a simple architectural floor plan. Contemporary modest home in Sonora, warm neutral plaster walls, natural window light, authentic everyday clothing, candid interaction, realistic facial proportions and skin texture, anatomically correct hands. Vertical portrait composition, documentary photography, restrained colors, no illustration, no cartoon, no plastic skin, no letters, no captions, no logos, no watermark.",
+        "text, letters, captions, logos, watermark, cartoon, illustration, plastic skin, deformed hands",
+        "(No style)",
+        true,
+        1,
+        74103,
+        832,
+        1024,
+        "DPM-Solver",
+        4.5,
+        3,
+        20,
+        20,
+        false
+      ],
+      "segundos": 11.0,
       "reintento_programado_utc": "2026-10-13T04:08:00Z",
-      "reintento_programado_hmo": "2026-10-12 21:08"
+      "reintento_programado_hmo": "2026-10-12 21:08",
+      "intentos_anteriores": [
+        {
+          "estado": "sin cupo",
+          "detalle": "'You have exceeded your free ZeroGPU quota (180s requested vs. 78s left). Try again in 3:10:44. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU'",
+          "http": null,
+          "segundos": 0.9
+        }
+      ],
+      "vista": "09-pixart-sigma.jpg",
+      "resolucion": [
+        832,
+        1024
+      ],
+      "sha256": "923353e934fab7e9ad3e1062d92832258d9c0c82304d4f8e29c2c5f6460ae013",
+      "bytes": 1045016
     },
     {
       "n": 10,
