@@ -59,13 +59,13 @@ async function touch(page,points,type){const session=await page.context().newCDP
   await p.waitForSelector('#tableroHoy[data-level="publicacion"]');
   assert.equal(await p.locator(".bt-frame").count(),6);
   await p.locator('[data-info="intencion"]').click();
-  await p.waitForSelector("#tablero-intencion");
-  assert.match(await p.locator("#tablero-intencion").innerText(),/Entender la decisión/);
+  await p.waitForSelector('.velo[data-id="tablero-intencion"]');
+  assert.match(await p.locator('.velo[data-id="tablero-intencion"]').innerText(),/Entender la decisión/);
   await p.keyboard.press("Escape");
   await p.locator('[data-history="2"]').click();
-  await p.waitForSelector("#tablero-historial");
-  assert.match(await p.locator("#tablero-historial").innerText(),/7|8|9/);
-  assert.equal(await p.locator('#tablero-historial img[src*="bad"]').count(),0);
+  await p.waitForSelector('.velo[data-id="tablero-historial"]');
+  assert.match(await p.locator('.velo[data-id="tablero-historial"]').innerText(),/7|8|9/);
+  assert.equal(await p.locator('.velo[data-id="tablero-historial"] img[src*="bad"]').count(),0);
   await p.keyboard.press("Escape");
   await p.screenshot({path:out+"/02-publicacion-desktop.png",fullPage:true});
   await p.locator('[data-lamina="2"]').click();

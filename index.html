@@ -764,7 +764,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='18183f001c';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='7d66099784';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2174,12 +2174,12 @@ function abrirEntrar(){
 function abrirGuia(forzar){
   if(!forzar&&localStorage.getItem('sala_guia')) return;
   const P=DECIDE()?[
-    ['Esta es tu mesa','Cada carta es una lámina o una pregunta de Producción. Tú solo dices Aprobar o Pedir cambio.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="m8 13 3 3 5-6"/></svg>'],
-    ['Pedir cambio = orden de trabajo','Una línea tuya y Producción la rehace. Aprobar la deja lista y no vuelve a preguntarse.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'],
+    ['Tus publicaciones en un tablero','Cada columna reúne una publicación y todas sus láminas. Tócala para acercarte; abre una lámina para comparar sus opciones.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="m8 13 3 3 5-6"/></svg>'],
+    ['Amarillo, verde y rojo','Amarillo: por revisar. Elige una fotografía y apruébala con el botón o un gesto hacia arriba. Verde: aprobada. Rojo: cambio pedido con tu nota.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'],
     ['Todo se guarda solo','La píldora de arriba dice «Guardado ✓» cuando ya subió. En «Publicaciones» ves qué pasó con cada pieza.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>']
   ]:[
     ['Esta es la mesa de edición','Aquí ves las láminas y preguntas que Producción les manda a Alejandro y a Sayri, y qué decidieron en cada una.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="m8 13 3 3 5-6"/></svg>'],
-    ['Tu acceso es de solo lectura','Puedes recorrer las cartas con Anterior y Siguiente y ampliar cualquier lámina. Las decisiones las toma él.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>'],
+    ['Tu acceso es de solo lectura','Puedes acercarte a cada publicación, comparar fotografías y consultar el guion y su historial. Tu acceso conserva las decisiones de los editores.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>'],
     ['Publicaciones','Ahí está lo que Producción trae en camino y la historia completa de cada pieza.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>']
   ];
   let n=0; const t=document.createElement('div'); t.className='tour'; document.body.appendChild(t); bloquear(true);

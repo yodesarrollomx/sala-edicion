@@ -133,3 +133,12 @@ body.sala-turno .bt-return{display:inline-block}
 }
 @media(prefers-reduced-motion:reduce){.bt-light.produccion{animation:none}}
 .bt-retry-label{position:absolute;inset:20% 6%;display:grid;place-items:center;text-align:center;background:var(--tarjeta);color:var(--tinta);font-size:12px;border-radius:12px;padding:12px}
+
+#tableroHoy[data-level="tablero"] .bt-frames{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#tableroHoy[data-level="tablero"] .bt-frame-meta>.bt-dot{font-size:0;gap:0}
+#tableroHoy[data-level="tablero"] .bt-frame-meta>.bt-dot:before{width:6px;height:6px}
+#tableroHoy[data-level="tablero"] .bt-caption{font-size:9px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:24px}
+#tableroHoy[data-level="tablero"] .bt-signatures{display:none}
+#tableroHoy[data-transition="true"] .bt-column,#tableroHoy[data-transition="true"] .bt-choice{animation:bt-enter .22s ease-out}
+@keyframes bt-enter{from{opacity:.6;transform:scale(.98) translateY(5px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){#tableroHoy .bt-column,#tableroHoy .bt-choice{animation:none}}

@@ -26,6 +26,7 @@ const S={groups:[],focus:null,choice:null,filter:"todas",busy:false,loaded:false
 const tones=["184,137,86","116,157,142","130,148,186","177,135,157","162,163,112","164,138,190","110,167,180"];
 const eligible=()=>DECIDE()&&(!D||!D._respaldo||VISTA_DOC);
 function group(){return S.groups.find(g=>g.id===S.focus);}
+function tone(g){let h=0;for(const c of g.id)h=(h*31+c.charCodeAt(0))>>>0;return tones[h%tones.length];}
 function markData(g,l){
  const key=Object.keys(mapaDe(g.t)).find(k=>Number(mapaDe(g.t)[k])===Number(l.n));
  const i=key===undefined?-1:Number(key)-1;
@@ -77,18 +78,20 @@ function card(g,l){
 }
 function render(){
  if(!D)return;
+ const previousLevel=root.dataset.level;
  document.body.classList.add("sala-tablero");
  const f=group(),cg=S.choice&&S.groups.find(g=>g.id===S.choice.group),cl=cg&&(cg.t.laminas||[]).find(l=>Number(l.n)===S.choice.n);
  const vg=f?[f]:visible(),pending=S.groups.reduce((n,g)=>n+counts(g).amarillo,0);
  const oldX=root.querySelector(".bt-pan")?.scrollLeft||0;
  root.dataset.level=S.choice?"opciones":f?"publicacion":"tablero";
+ root.dataset.transition=String(previousLevel!==root.dataset.level);
  root.innerHTML=`<div class="bt-heading"><div><span class="bt-eyebrow">SALA DE EDICIÓN</span><h1>${f?esc(f.t.pieza||f.p.titulo):"Tus publicaciones, de un vistazo"}</h1><p>${f?"Tira completa · toca una lámina para comparar sus opciones.":S.groups.length+" publicaciones · "+pending+" láminas por revisar"}</p></div>
  <div class="bt-heading-actions"><button data-refresh ${S.busy?"disabled":""}>${S.busy?"Actualizando…":"↻ Actualizar"}</button><button data-legacy>Revisión paso a paso</button></div></div>
  <div class="bt-bar"><div class="bt-legend"><span class="bt-dot amarillo">Revisar</span><span class="bt-dot verde">Aprobada</span><span class="bt-dot rojo">Cambio pedido</span><span class="bt-dot produccion">Producción</span></div>
  <div class="bt-levels"><button data-back ${!f?"disabled":""} aria-label="Alejar, volver al tablero">−</button><span>${S.choice?"3 · Opciones":f?"2 · Publicación":"1 · Tablero"}</span><button data-zoom aria-label="Acercar">${S.choice?"↗":"+"}</button></div></div>
  <div class="bt-nav">${f?`<button data-back>← Todas las publicaciones</button><button data-next>Ir a la siguiente por revisar →</button>`:
  `<div class="bt-filters">${["todas","atencion","produccion"].map(k=>`<button data-filter="${k}" class="${S.filter===k?"on":""}" aria-pressed="${S.filter===k}">${k==="todas"?"Todas":k==="atencion"?"Necesitan atención":"En producción"}</button>`).join("")}</div><span class="bt-hint">Toca una columna para acercarte · doble clic en una lámina para elegir</span>`}</div>
- <div class="bt-pan" tabindex="0" aria-label="Tablero de publicaciones"><div class="bt-columns">${vg.map((g,i)=>`<section class="bt-column" style="--bt-tone:${tones[S.groups.indexOf(g)%tones.length]}" data-column="${esc(g.id)}">${header(g)}<div class="bt-frames">${(g.t.laminas||[]).map(l=>card(g,l)).join("")}${g.ejes.map(p=>`<button class="bt-other" data-eje="${esc(p.id)}">${esc(p.titulo||"Revisión de guion o producción")} →</button>`).join("")}</div></section>`).join("")||`<div class="bt-empty"><h2>${S.loaded?"No hay publicaciones en este filtro":"Cargando las publicaciones…"}</h2><p>${S.loaded?"Las decisiones y el historial siguen guardados. Elige Todas para volver.":"Leyendo la tira completa de cada publicación."}</p></div>`}</div></div>
+ <div class="bt-pan" tabindex="0" aria-label="Tablero de publicaciones"><div class="bt-columns">${vg.map((g,i)=>`<section class="bt-column" style="--bt-tone:${tone(g)}" data-column="${esc(g.id)}">${header(g)}<div class="bt-frames">${(g.t.laminas||[]).map(l=>card(g,l)).join("")}${g.ejes.map(p=>`<button class="bt-other" data-eje="${esc(p.id)}">${esc(p.titulo||"Revisión de guion o producción")} →</button>`).join("")}</div></section>`).join("")||`<div class="bt-empty"><h2>${S.loaded?"No hay publicaciones en este filtro":"Cargando las publicaciones…"}</h2><p>${S.loaded?"Las decisiones y el historial siguen guardados. Elige Todas para volver.":"Leyendo la tira completa de cada publicación."}</p></div>`}</div></div>
  <p class="bt-bottom">El número ↺ cuenta los intentos de cada lámina. Amarillo pide tu revisión; azul indica trabajo en la nube. Usa +/−, la rueda sobre una imagen o dos dedos para acercar y alejar.</p>
  <p class="bt-notice" role="status" aria-live="polite">${esc(S.notice)}</p>`;
  root.querySelector(".bt-pan").scrollLeft=oldX;
