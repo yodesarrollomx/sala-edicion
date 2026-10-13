@@ -1,9 +1,11 @@
 {
   "modelo": "HiDream-I1-Dev",
   "run_produccion": "38338150745",
-  "verificado_en": "2026-10-13T03:46:00.164993+00:00",
+  "verificado_en": "2026-10-13T03:48:10.516172+00:00",
   "generadas_y_montadas": 21,
   "fotos_total_generadas": 25,
+  "pendientes_rehacer_actuales": 0,
+  "cola_rehacer_actual": [],
   "pendientes": 0,
   "detenido": false,
   "run_correccion": "38339043819",
@@ -36,6 +38,7 @@
           "foto_sha256": "1539d0d316cef8526d73b39ed35d6a359a1d7489d356922fe0e51438b9ef93bc",
           "segundos": 26.7,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -47,6 +50,7 @@
           "foto_sha256": "764b6420fcf818deeb4bdd9f2beda95d6dd0ca3ebf747c538c9475cda2bb2712",
           "segundos": 70.9,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -58,6 +62,7 @@
           "foto_sha256": "a708816feaa58f0048729291a714e160747fc01771181ec3711a0bf8314cdf4f",
           "segundos": 75.6,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -69,6 +74,7 @@
           "foto_sha256": "b86d105cc15388a4ce2e39fe144bf15a4fd6019a5b9e2ceb418f294aa984f0e4",
           "segundos": 55.9,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         }
@@ -87,6 +93,7 @@
           "foto_sha256": "d0713d90562bab371c8ccf00fdf3790b0cb33e94da14fe04beddc15820093fc9",
           "segundos": 74.3,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         }
@@ -105,6 +112,7 @@
           "foto_sha256": "ae4b4b4535010bf6e304eaa970981d14e4e0b06dc0e782118ae4a01e42cb38be",
           "segundos": 23.8,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -116,6 +124,7 @@
           "foto_sha256": "e961f0d409f5988f4c59ce22aa25d561f0638093aa4907e9093a26e1a5c668a3",
           "segundos": 25.7,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -127,6 +136,7 @@
           "foto_sha256": "44ea1daed0c62d946cb903dbecc5c6a523d2fd01e4cb327ff40ea82ff76a6a46",
           "segundos": 26.1,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -138,6 +148,7 @@
           "foto_sha256": "eacea8c41c8e48ab6b658a98c277e4f20627abafc7b5c22773027bc61034125a",
           "segundos": 48.4,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         }
@@ -156,6 +167,7 @@
           "foto_sha256": "f60d65f216c2975b6f1cf2142f84589a9f55defa14365a36b3b8a120d560dd36",
           "segundos": 111.4,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -167,6 +179,7 @@
           "foto_sha256": "bef609d5280ce48a8f32f5c7b1099d8fc516f5eb5dba10b6b0b25721846d1812",
           "segundos": 110.4,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         }
@@ -185,6 +198,7 @@
           "foto_sha256": "26ecae475293806975a01716997aae36d00b3241d0821649d97c6cdc6be247de",
           "segundos": 120.3,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -196,6 +210,7 @@
           "foto_sha256": "7733d002b1cf17c4d864f5b3c4d23092dabd72e805d46c78b333b12280f47762",
           "segundos": 151.1,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -207,6 +222,7 @@
           "foto_sha256": "3a7a7f6307222b08ef9d31980d4b88e2c6c07f285a2b5b26326e29d013b2add1",
           "segundos": 90.0,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -218,6 +234,7 @@
           "foto_sha256": "ba6413d34be5f5301d228df1d3787259800ba4db4f1333f728ef0d078c89686f",
           "segundos": 41.9,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         }
@@ -236,6 +253,7 @@
           "foto_sha256": "55d350cbd201e6a95cf25bf67cf8d48cb0c464c64140ad213e45663afb332a44",
           "segundos": 67.4,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         }
@@ -253,7 +271,8 @@
           "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-77e7ad/L1-1.png",
           "foto_sha256": "689facd8484a7da75baaa82757acd0fad328fd74df85be3876fd362481b24db4",
           "segundos": 26.5,
-          "texto_preservado": true,
+          "texto_preservado": false,
+          "cambio_texto_propuesto": true,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -265,6 +284,7 @@
           "foto_sha256": "d2d62e8164e7421b56cd3d079a4e75e54541fd16abe2a1a3ba2c2b24ae5c1226",
           "segundos": 46.2,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -276,6 +296,7 @@
           "foto_sha256": "1d627dfc502c7e826eff0856fb525027b859b0567b5580942fa47fd39ff4ddbb",
           "segundos": 99.0,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -287,6 +308,7 @@
           "foto_sha256": "df40fff1458150644bfd7539ceed386cb0496567aa0502984ea2386700c6c8d0",
           "segundos": 35.5,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         },
@@ -298,6 +320,7 @@
           "foto_sha256": "11b52e1888e8fa447355d63c2af60b1f1c0155e458fef9bebea0c86ac167eeec",
           "segundos": 33.8,
           "texto_preservado": true,
+          "cambio_texto_propuesto": false,
           "tira_activa": true,
           "recibo_confirmado": true
         }
