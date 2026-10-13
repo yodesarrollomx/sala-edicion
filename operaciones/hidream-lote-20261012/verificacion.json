@@ -1,11 +1,12 @@
 {
   "modelo": "HiDream-I1-Dev",
-  "run_produccion": "38337296576",
-  "verificado_en": "2026-10-13T02:43:19.070794+00:00",
-  "generadas_y_montadas": 8,
-  "pendientes": 13,
-  "detenido": true,
-  "causa": "HiDream no entregó foto: Error: No image name in successful response",
+  "run_produccion": "38338150745",
+  "verificado_en": "2026-10-13T03:23:22.759701+00:00",
+  "generadas_y_montadas": 20,
+  "pendientes": 1,
+  "detenido": false,
+  "causa": "",
+  "fallos_laminas": [],
   "piezas": [
     {
       "pieza": "Tres opiniones, tres números distintos",
@@ -78,8 +79,8 @@
     },
     {
       "pieza": "El arquitecto invisible",
-      "tira": "el-arquitecto-invisible-nube-2026-10-12-5b72e0",
-      "cantidad": 3,
+      "tira": "el-arquitecto-invisible-nube-2026-10-12-639837",
+      "cantidad": 4,
       "laminas": [
         {
           "n": 3,
@@ -113,6 +114,166 @@
           "texto_preservado": true,
           "tira_activa": true,
           "recibo_confirmado": true
+        },
+        {
+          "n": 6,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/el-arquitecto-invisible-nube-2026-10-12-639837/L6-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/el-arquitecto-invisible-nube-2026-10-12-639837/L6-1.png",
+          "foto_sha256": "eacea8c41c8e48ab6b658a98c277e4f20627abafc7b5c22773027bc61034125a",
+          "segundos": 48.4,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        }
+      ]
+    },
+    {
+      "pieza": "La ruta autónoma",
+      "tira": "la-ruta-autonoma-nube-2026-10-12-6e0f16",
+      "cantidad": 2,
+      "laminas": [
+        {
+          "n": 5,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/la-ruta-autonoma-nube-2026-10-12-6e0f16/L5-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/la-ruta-autonoma-nube-2026-10-12-6e0f16/L5-1.png",
+          "foto_sha256": "f60d65f216c2975b6f1cf2142f84589a9f55defa14365a36b3b8a120d560dd36",
+          "segundos": 111.4,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 6,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/la-ruta-autonoma-nube-2026-10-12-6e0f16/L6-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/la-ruta-autonoma-nube-2026-10-12-6e0f16/L6-1.png",
+          "foto_sha256": "bef609d5280ce48a8f32f5c7b1099d8fc516f5eb5dba10b6b0b25721846d1812",
+          "segundos": 110.4,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        }
+      ]
+    },
+    {
+      "pieza": "Así se ve el entregable",
+      "tira": "llamada-entregable-nube-2026-10-12-50060f",
+      "cantidad": 4,
+      "laminas": [
+        {
+          "n": 2,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/llamada-entregable-nube-2026-10-12-50060f/L2-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/llamada-entregable-nube-2026-10-12-50060f/L2-1.png",
+          "foto_sha256": "26ecae475293806975a01716997aae36d00b3241d0821649d97c6cdc6be247de",
+          "segundos": 120.3,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 3,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/llamada-entregable-nube-2026-10-12-50060f/L3-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/llamada-entregable-nube-2026-10-12-50060f/L3-1.png",
+          "foto_sha256": "7733d002b1cf17c4d864f5b3c4d23092dabd72e805d46c78b333b12280f47762",
+          "segundos": 151.1,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 4,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/llamada-entregable-nube-2026-10-12-50060f/L4-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/llamada-entregable-nube-2026-10-12-50060f/L4-1.png",
+          "foto_sha256": "3a7a7f6307222b08ef9d31980d4b88e2c6c07f285a2b5b26326e29d013b2add1",
+          "segundos": 90.0,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 5,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/llamada-entregable-nube-2026-10-12-50060f/L5-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/llamada-entregable-nube-2026-10-12-50060f/L5-1.png",
+          "foto_sha256": "ba6413d34be5f5301d228df1d3787259800ba4db4f1333f728ef0d078c89686f",
+          "segundos": 41.9,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        }
+      ]
+    },
+    {
+      "pieza": "La Mesa Vacía",
+      "tira": "mesa-vacia-nube-2026-10-12-9d1b1a",
+      "cantidad": 1,
+      "laminas": [
+        {
+          "n": 6,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/mesa-vacia-nube-2026-10-12-9d1b1a/L6-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/mesa-vacia-nube-2026-10-12-9d1b1a/L6-1.png",
+          "foto_sha256": "55d350cbd201e6a95cf25bf67cf8d48cb0c464c64140ad213e45663afb332a44",
+          "segundos": 67.4,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        }
+      ]
+    },
+    {
+      "pieza": "Tu terreno, tus reglas",
+      "tira": "tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7",
+      "cantidad": 4,
+      "laminas": [
+        {
+          "n": 2,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7/L2-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7/L2-1.png",
+          "foto_sha256": "d2d62e8164e7421b56cd3d079a4e75e54541fd16abe2a1a3ba2c2b24ae5c1226",
+          "segundos": 46.2,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 3,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7/L3-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7/L3-1.png",
+          "foto_sha256": "1d627dfc502c7e826eff0856fb525027b859b0567b5580942fa47fd39ff4ddbb",
+          "segundos": 99.0,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 4,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7/L4-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7/L4-1.png",
+          "foto_sha256": "df40fff1458150644bfd7539ceed386cb0496567aa0502984ea2386700c6c8d0",
+          "segundos": 35.5,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
+        {
+          "n": 5,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7/L5-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7/L5-1.png",
+          "foto_sha256": "11b52e1888e8fa447355d63c2af60b1f1c0155e458fef9bebea0c86ac167eeec",
+          "segundos": 33.8,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
         }
       ]
     }
@@ -126,7 +287,19 @@
     74.3,
     23.8,
     25.7,
-    26.1
+    26.1,
+    48.4,
+    111.4,
+    110.4,
+    120.3,
+    151.1,
+    90.0,
+    41.9,
+    67.4,
+    46.2,
+    99.0,
+    35.5,
+    33.8
   ],
   "observacion_visual": "Las primeras cuatro candidatas incluyen texto añadido por el generador; están pendientes de revisión humana."
 }
