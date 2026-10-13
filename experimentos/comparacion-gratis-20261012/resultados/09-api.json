@@ -1,0 +1,272 @@
+{
+  "/run": {
+    "parameters": [
+      {
+        "name": "prompt",
+        "label": "Prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "negative_prompt",
+        "label": "Negative prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "style",
+        "label": "Image Style",
+        "default": "(No style)",
+        "type": {
+          "enum": [
+            "(No style)",
+            "Cinematic",
+            "Photographic",
+            "Anime",
+            "Manga",
+            "Digital Art",
+            "Pixel art",
+            "Fantasy art",
+            "Neonpunk",
+            "3D Model"
+          ],
+          "title": "Radio",
+          "type": "string"
+        }
+      },
+      {
+        "name": "use_negative_prompt",
+        "label": "Use negative prompt",
+        "default": false,
+        "type": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "num_imgs",
+        "label": "Num Images",
+        "default": 1,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 8"
+        }
+      },
+      {
+        "name": "seed",
+        "label": "Seed",
+        "default": 0,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        }
+      },
+      {
+        "name": "width",
+        "label": "Width",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 256 and 6000"
+        }
+      },
+      {
+        "name": "height",
+        "label": "Height",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 256 and 6000"
+        }
+      },
+      {
+        "name": "schedule",
+        "label": "Sampler Schedule",
+        "default": "DPM-Solver",
+        "type": {
+          "enum": [
+            "DPM-Solver",
+            "SA-Solver"
+          ],
+          "title": "Radio",
+          "type": "string"
+        }
+      },
+      {
+        "name": "dpms_guidance_scale",
+        "label": "DPM-Solver Guidance scale",
+        "default": 4.5,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 10"
+        }
+      },
+      {
+        "name": "sas_guidance_scale",
+        "label": "SA-Solver Guidance scale",
+        "default": 3,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 10"
+        }
+      },
+      {
+        "name": "dpms_inference_steps",
+        "label": "DPM-Solver inference steps",
+        "default": 14,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 5 and 40"
+        }
+      },
+      {
+        "name": "sas_inference_steps",
+        "label": "SA-Solver inference steps",
+        "default": 25,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 10 and 40"
+        }
+      },
+      {
+        "name": "randomize_seed",
+        "label": "Randomize seed",
+        "default": true,
+        "type": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Result",
+        "type": {
+          "$defs": {
+            "FileData": {
+              "properties": {
+                "path": {
+                  "title": "Path",
+                  "type": "string"
+                },
+                "url": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Url"
+                },
+                "size": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Size"
+                },
+                "orig_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Orig Name"
+                },
+                "mime_type": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mime Type"
+                },
+                "is_stream": {
+                  "default": false,
+                  "title": "Is Stream",
+                  "type": "boolean"
+                },
+                "meta": {
+                  "default": {
+                    "_type": "gradio.FileData"
+                  },
+                  "title": "Meta",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "title": "FileData",
+              "type": "object"
+            },
+            "GalleryImage": {
+              "properties": {
+                "image": {
+                  "$ref": "#/$defs/FileData"
+                },
+                "caption": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Caption"
+                }
+              },
+              "required": [
+                "image"
+              ],
+              "title": "GalleryImage",
+              "type": "object"
+            }
+          },
+          "items": {
+            "$ref": "#/$defs/GalleryImage"
+          },
+          "title": "GalleryData",
+          "type": "array"
+        },
+        "python_type": {
+          "type": "List[Dict(image: filepath, caption: str | None)]",
+          "description": ""
+        },
+        "component": "Gallery"
+      },
+      {
+        "label": "Seed",
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "python_type": {
+          "type": "float",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "component": "Slider"
+      }
+    ]
+  }
+}
