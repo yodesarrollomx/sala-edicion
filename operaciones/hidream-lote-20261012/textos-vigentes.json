@@ -68,5 +68,10 @@
     "dice": "Nosotros calculamos los metros cuadrados posibles y los giros que verdaderamente caben.",
     "n": 3,
     "slug": "tu-terreno-tus-reglas"
+  },
+  "tu-terreno-tus-reglas:4": {
+    "dice": "Nosotros entregamos el estudio técnico completo para decidir con calma en familia.",
+    "n": 4,
+    "slug": "tu-terreno-tus-reglas"
   }
 }
