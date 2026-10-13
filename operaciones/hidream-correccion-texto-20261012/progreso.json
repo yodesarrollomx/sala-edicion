@@ -1,0 +1,20 @@
+{
+  "modelo": "HiDream-I1-Dev",
+  "objetivo": 4,
+  "generadas": 4,
+  "generadas_en_esta_fase": 4,
+  "recuperadas": 0,
+  "montadas": [
+    {
+      "pieza": "Tres opiniones, tres números distintos",
+      "laminas_nuevas": 4,
+      "tiras": [
+        "dato-tres-opiniones-nube-2026-10-12-91a9fc"
+      ]
+    }
+  ],
+  "detenido": false,
+  "causa": "",
+  "run_id": "38339043819",
+  "fecha_hmo": "2026-10-12"
+}
