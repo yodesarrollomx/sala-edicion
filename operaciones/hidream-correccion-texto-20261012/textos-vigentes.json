@@ -3,5 +3,10 @@
     "dice": "El tío sugiere locales, la vecina prefiere departamentos y cada familia aporta una idea distinta.",
     "n": 2,
     "slug": "dato-tres-opiniones"
+  },
+  "dato-tres-opiniones:3": {
+    "dice": "Nosotros analizamos metros cuadrados, vialidades y restricciones reales en lugar de adivinar.",
+    "n": 3,
+    "slug": "dato-tres-opiniones"
   }
 }
