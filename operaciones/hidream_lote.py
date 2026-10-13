@@ -21,7 +21,11 @@ TECH=Path(os.environ["RUNNER_TEMP"])/"hidream-operacion"
 TECH.mkdir(exist_ok=True)
 STOP={"detenido":False,"causa":"","generadas":0,"recuperadas":0}
 CLIENT=None
+PHOTO_KEY=""
 PHOTO_CONTEXT=""
+SIN_ARCHIVO_CONSECUTIVAS=0
+FALLOS_LAMINAS=[]
+class SinArchivoHiDream(Exception):pass
 PROMPTS={
   "el-arquitecto-invisible:3": "Three architects and an older male property owner sit around a large wooden worktable. An architect uses a pencil to trace a clear route on a physical architectural site plan while the client and colleagues follow the proposal. A small building model and material samples make the discussion concrete.",
   "el-arquitecto-invisible:4": "Close-up documentary photograph of a detailed site plan, scale ruler and a clean small architectural massing model on a sunlit studio desk. An architect measures a building footprint and compares feasible building volumes. All plan lines are abstract geometric drawings, with no labels or readable lettering.",
@@ -105,8 +109,9 @@ def reglas_operacion(recurso,**kwargs):
         r.setdefault("reglas",{}).update(imagen_motores=MOTOR,mesa_tomas_por_lamina="1",mesa_tope_laminas="100")
     return r
 def tomas_con_texto_vigente(slug,t,lam,nota,reglas,cola,carpeta,n_tomas,solo_recibo=False):
-    global PHOTO_CONTEXT
+    global PHOTO_CONTEXT,PHOTO_KEY
     key=slug+":"+str(lam["n"])
+    PHOTO_KEY=key
     if key not in PROMPTS:raise RuntimeError("Lámina sin descripción visual específica")
     PHOTO_CONTEXT=PROMPTS[key]
     CAPTIONS[key]={"dice":str(lam.get("dice") or ""),"n":lam["n"],"slug":slug}
@@ -116,7 +121,7 @@ def tomas_con_texto_vigente(slug,t,lam,nota,reglas,cola,carpeta,n_tomas,solo_rec
     return GENERAR_TOMAS_ORIGINAL(slug,t,visual,nota,reglas,cola,carpeta,1,solo_recibo=solo_recibo)
 
 def generar_hidream(receta,reglas):
-    global CLIENT
+    global CLIENT,SIN_ARCHIVO_CONSECUTIVAS
     from gradio_client import Client
     from contenido_reglas import exigir
     exigir(receta,reglas,"receta HiDream")
@@ -152,10 +157,10 @@ def generar_hidream(receta,reglas):
             if "token" in sig.parameters:kw["token"]=os.environ.get("HF_TOKEN") or None
             elif "hf_token" in sig.parameters:kw["hf_token"]=os.environ.get("HF_TOKEN") or None
             CLIENT=Client(SPACE,**kw)
-        seed=int(rid[:8],16)%(2**31)
+        seed=int(rid[:8],16)%1000000
         start=time.monotonic()
         for intento in range(2):
-            job=CLIENT.submit(prompt,"3:4",seed,api_name="/generate_with_status")
+            job=CLIENT.submit(prompt,"3:4",(seed+intento)%1000000,api_name="/generate_with_status")
             try:out=job.result(timeout=300)
             except Exception:
                 try:job.cancel()
@@ -167,6 +172,8 @@ def generar_hidream(receta,reglas):
                 emit("HIDREAM_REINTENTO_ACOTADO",{"modelo":MODEL,"causa":limpiar(status),"intento":2})
                 time.sleep(8)
                 continue
+            if "No image name in successful response" in str(status):
+                raise SinArchivoHiDream("HiDream respondió sin archivo tras dos intentos")
             raise RuntimeError("HiDream no entregó foto: "+limpiar(status))
         info=out[3] or {}
         if info.get("model")!=MODEL:raise RuntimeError("HiDream declaró otro modelo; no se presenta como "+MODEL)
@@ -186,10 +193,20 @@ def generar_hidream(receta,reglas):
                  "run_id":os.environ["GITHUB_RUN_ID"],"generado_en":dt.datetime.now(dt.timezone.utc).isoformat(),"instrucciones_visuales":"fotografia-sin-tipografia-v2"}
         path.write_bytes(data);receipt_path.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
         STOP["generadas"]+=1
+        SIN_ARCHIVO_CONSECUTIVAS=0
         reglas["_receta_proveedor_sha256"]=recipe;reglas["_imagen_recibo_id"]=rid
         emit("HIDREAM_FOTO_CONFIRMADA",receipt)
         publicar_resumen("generacion",{"modelo":MODEL,"generadas":BASE_COUNT+STOP["generadas"]+STOP["recuperadas"],"generadas_en_esta_fase":STOP["generadas"],"ultima":receipt,"run_id":os.environ["GITHUB_RUN_ID"]})
         return data,"png",MOTOR,[]
+    except SinArchivoHiDream as e:
+        SIN_ARCHIVO_CONSECUTIVAS+=1
+        fault={"lamina":PHOTO_KEY,"causa":limpiar(e),"intentos":2}
+        FALLOS_LAMINAS.append(fault)
+        emit("HIDREAM_LAMINA_SIN_ARCHIVO",fault)
+        publicar_resumen("fallos-laminas",FALLOS_LAMINAS)
+        if SIN_ARCHIVO_CONSECUTIVAS>=2:
+            STOP.update(detenido=True,causa="Dos láminas consecutivas sin archivo tras cuatro intentos; servicio no confirmó más imágenes")
+        raise MotorError(str(e),intermitente=True) from None
     except Exception as e:
         STOP.update(detenido=True,causa=limpiar(e))
         if re.search(r"429|quota|rate.limit|resource.exhaust|cupo",str(e),re.I):
@@ -242,6 +259,9 @@ def main():
         cloud.bootstrap("mesa",True)
         queue=pendientes()
         total=BASE_COUNT+sum(q["cantidad"] for q in queue)
+        publicar_resumen("inventario",{"fecha_hmo":sala.hoy_hermosillo(),"modelo":MODEL,
+            "pendientes":sum(q["cantidad"] for q in queue),"piezas":queue,
+            "run_id":os.environ["GITHUB_RUN_ID"],"codigo_main":cloud.head()})
         emit("HIDREAM_LOTE",{"pendientes":total,"piezas":queue,"modelo":MODEL,"una_toma_por_lamina":True})
         for round_number,item in enumerate(queue,1):
             if STOP["detenido"]:break
@@ -280,7 +300,7 @@ def main():
         final={"modelo":MODEL,"objetivo_inicial":total,"generadas":BASE_COUNT+STOP["generadas"]+STOP["recuperadas"],"generadas_en_esta_fase":STOP["generadas"],"recuperadas":STOP["recuperadas"],
                "montadas":mounted,"pendientes":sum(q["cantidad"] for q in remaining),"cola_restante":remaining,
                "detenido":STOP["detenido"],"causa":STOP["causa"],"run_id":os.environ["GITHUB_RUN_ID"],
-               "decisiones_editoriales_escritas":0,"codigo_main":cloud.head()}
+               "decisiones_editoriales_escritas":0,"fallos_laminas":FALLOS_LAMINAS,"codigo_main":cloud.head()}
         (TECH/"cierre.json").write_text(json.dumps(final,ensure_ascii=False,indent=2)+"\n")
         publicar_resumen("cierre",final);emit("HIDREAM_CIERRE",final)
     finally:cloud.release()
