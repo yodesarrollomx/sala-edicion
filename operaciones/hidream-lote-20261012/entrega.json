@@ -1,13 +1,24 @@
 {
   "modelo": "HiDream-I1-Dev",
   "run_produccion": "38338150745",
-  "verificado_en": "2026-10-13T03:35:25.785739+00:00",
-  "generadas_y_montadas": 20,
-  "fotos_total_generadas": 24,
-  "pendientes": 1,
+  "verificado_en": "2026-10-13T03:46:00.164993+00:00",
+  "generadas_y_montadas": 21,
+  "fotos_total_generadas": 25,
+  "pendientes": 0,
   "detenido": false,
   "run_correccion": "38339043819",
+  "run_portada": "38341608972",
   "fotos_corregidas": 4,
+  "candidata_texto_portada": {
+    "tu-terreno-tus-reglas:1": {
+      "dice": "¿Y si descubres todo lo que tu terreno puede llegar a ser?",
+      "dice_anterior": "¿Y si descubres todo lo que tu terreno en Hermosillo puede llegar a ser?",
+      "n": 1,
+      "slug": "tu-terreno-tus-reglas",
+      "motivo": "Candidata sin ubicación vetada; conserva el texto anterior como historia",
+      "aprobado": false
+    }
+  },
   "pendientes_tipografia": 0,
   "causa": "",
   "fallos_laminas": [],
@@ -232,9 +243,20 @@
     },
     {
       "pieza": "Tu terreno, tus reglas",
-      "tira": "tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7",
-      "cantidad": 4,
+      "tira": "tu-terreno-tus-reglas-nube-2026-10-12-77e7ad",
+      "cantidad": 5,
       "laminas": [
+        {
+          "n": 1,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-77e7ad/L1-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/tu-terreno-tus-reglas-nube-2026-10-12-77e7ad/L1-1.png",
+          "foto_sha256": "689facd8484a7da75baaa82757acd0fad328fd74df85be3876fd362481b24db4",
+          "segundos": 26.5,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
+        },
         {
           "n": 2,
           "modelo": "HiDream-I1-Dev",
@@ -300,6 +322,7 @@
     90.0,
     41.9,
     67.4,
+    26.5,
     46.2,
     99.0,
     35.5,
