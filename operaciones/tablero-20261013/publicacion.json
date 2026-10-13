@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "code_sha": "8be2246fcba8c300affad2a12f5d5c8e1e9acb26",
+  "archivos_publicados_verificados": [
+    "index.html",
+    "tablero-sala.js",
+    "tablero-sala.css",
+    "politica-imagen.json"
+  ],
+  "modelo_configurado": "HiDream-I1-Dev",
+  "motor_configurado": "hidream_demo",
+  "simulacion_mesa": 0,
+  "cartas_que_prepararia": 4,
+  "tiras_activas_inspeccionadas": 9,
+  "laminas_inspeccionadas": 50,
+  "candidatas_hidream": 25,
+  "decisiones_escritas": 0,
+  "recibo_pages_confirmado": true,
+  "disponibilidad_gratuita": "sin cuota diaria garantizada"
+}
