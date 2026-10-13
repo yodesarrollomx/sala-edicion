@@ -26,13 +26,13 @@ jobs:
           python - <<'PY'
           import base64,io,json,os,time
           import requests
-          from PIL import Image,ImageOps,ImageDraw
+          from PIL import Image,ImageOps,ImageDraw,ImageFont
           branch="codex/sala-hidream-lote-20261012"
           prefix="operaciones/hidream-lote-20261012/"
           api="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]
           site="https://yodesarrollomx.github.io/sala-edicion/"
           headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json"}
-          run="38335109256";cache={};last=0
+          run="38336377009";cache={};last=0
           def read(name):
               r=requests.get(api+"/contents/"+prefix+name,headers=headers,params={"ref":branch},timeout=40)
               if r.status_code==404:return None
@@ -51,18 +51,20 @@ jobs:
                           for tid in item["tiras"]:
                               t=json.loads(public("datos/tiras/"+tid+".json"))
                               for lam in t["laminas"]:
-                                  if lam["n"] not in (t.get("decidir") or []):continue
-                                  c=next(c for c in lam["candidatas"] if c.get("motor")=="hidream_demo")
+                                  c=next((c for c in lam.get("candidatas") or [] if c.get("motor")=="hidream_demo"),None)
+                                  if c is None:continue
                                   if c["src"] not in cache:cache[c["src"]]=public(c["src"])
                                   images.append((item["pieza"],lam["n"],cache[c["src"]]))
                       cols=4;w=270;h=380
                       grid=Image.new("RGB",(cols*w,((len(images)+cols-1)//cols)*h),"#f3eee6")
                       draw=ImageDraw.Draw(grid)
+                      try:font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",12)
+                      except OSError:font=ImageFont.load_default()
                       for i,(title,n,raw) in enumerate(images):
                           pic=ImageOps.contain(Image.open(io.BytesIO(raw)).convert("RGB"),(w-12,h-42))
                           x=(i%cols)*w;y=(i//cols)*h
                           grid.paste(pic,(x+(w-pic.width)//2,y+6))
-                          draw.text((x+7,y+h-30),(title+" · L"+str(n))[:37],fill="#15120c")
+                          draw.text((x+7,y+h-30),(title+" · L"+str(n))[:37],fill="#15120c",font=font)
                       out=io.BytesIO();grid.save(out,"JPEG",quality=86,optimize=True)
                       name=prefix+"avance-fotos.jpg";url=api+"/contents/"+name
                       r=requests.get(url,headers=headers,params={"ref":branch},timeout=40)

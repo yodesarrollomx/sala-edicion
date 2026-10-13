@@ -3,7 +3,7 @@
 import base64,datetime as dt,hashlib,io,json,os,re,sys,time
 from pathlib import Path
 import requests
-from PIL import Image,ImageOps,ImageDraw
+from PIL import Image,ImageOps,ImageDraw,ImageFont
 ROOT=Path.cwd();sys.path.insert(0,str(ROOT/"nube"))
 import sala_cliente as sala
 import sala_mesa as mesa
@@ -13,7 +13,7 @@ PREFIX="operaciones/hidream-lote-20261012/"
 SITE="https://yodesarrollomx.github.io/sala-edicion/"
 HEADERS={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json"}
 API="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]
-RUN="38335109256"
+RUN="38336377009"
 def api(path,**kw):
     r=requests.get(API+"/"+path,headers=HEADERS,timeout=45,**kw)
     r.raise_for_status();return r.json()
@@ -43,8 +43,9 @@ while time.monotonic()<deadline:
     if state["status"]=="completed":raise RuntimeError("El lote terminó sin cierre; conservar fotos y revisar el fallo")
     time.sleep(25)
 else:raise RuntimeError("Lote sin cierre a tiempo")
-inventory=get_file("inventario.json")
-if not inventory or str(inventory.get("run_id"))!=RUN:raise RuntimeError("Inventario de otra ejecución")
+inventory=get_file("inventario-inicial.json")
+if not inventory or inventory.get("pendientes")!=21:raise RuntimeError("Inventario inicial de otra operación")
+expected=get_file("textos-vigentes.json") or {}
 targets={q["pieza"]:q for q in inventory["piezas"]}
 cloud=Snapshots(ROOT);cloud.bootstrap("mesa",False)
 mesa._contexto_produccion=None
@@ -58,7 +59,7 @@ for mounted in final["montadas"]:
         tira=json.loads(public("datos/tiras/"+tid+".json"))
         base=json.loads(public("datos/tiras/"+item["fuente"]+".json"))
         if tira.get("base")!=item["fuente"]:raise RuntimeError("Tira enlazada a otra fuente")
-        newnums=set(tira.get("decidir") or [])
+        newnums={l["n"] for l in tira["laminas"] if any(c.get("motor")=="hidream_demo" for c in l.get("candidatas") or [])}
         if not newnums or not newnums.issubset(set(item["laminas"])):raise RuntimeError("El lote tocó láminas ajenas")
         mesa.validar_nuevas_tomas(tira)
         old={l["n"]:l for l in base["laminas"]}
@@ -70,7 +71,15 @@ for mounted in final["montadas"]:
             if len(options)!=1:raise RuntimeError("No hay exactamente una foto HiDream en L"+str(number))
             c=options[0]
             if c.get("modelo")!="HiDream-I1-Dev":raise RuntimeError("Otro modelo declarado")
-            if c.get("dice")!=old[number].get("dice"):raise RuntimeError("Se modificó el texto visible")
+            key=item["slug"]+":"+str(number)
+            expected_text=expected.get(key,{}).get("dice")
+            previous_texts={str(old[number].get("dice") or "")}
+            for field in ("candidatas","versiones"):
+                previous_texts.update(str(v.get("dice") or "") for v in old[number].get(field) or [])
+            if expected_text is not None:
+                if c.get("dice")!=expected_text:raise RuntimeError("Se modificó el texto vigente de la sala")
+            elif str(c.get("dice") or "") not in previous_texts:
+                raise RuntimeError("El texto no pertenece a la fuente previa")
             rid=c.get("recibo_imagen") or ""
             if not re.fullmatch(r"[0-9a-f]{64}",rid):raise RuntimeError("Foto sin recibo verificable")
             receipt=json.loads(public("laminas/recibos-hidream/"+rid+".json"))
@@ -91,18 +100,21 @@ if total!=final["generadas"]:raise RuntimeError("Cuenta de imágenes montadas no
 report={"modelo":"HiDream-I1-Dev","run_produccion":RUN,"verificado_en":dt.datetime.now(dt.timezone.utc).isoformat(),
         "generadas_y_montadas":total,"pendientes":final["pendientes"],"detenido":final["detenido"],
         "causa":final["causa"],"piezas":checks,"decisiones_editoriales_escritas":0,
-        "segundos_fotos":[p["segundos"] for x in checks for p in x["laminas"]]}
+        "segundos_fotos":[p["segundos"] for x in checks for p in x["laminas"]],
+        "observacion_visual":"Las primeras cuatro candidatas incluyen texto añadido por el generador; están pendientes de revisión humana."}
 save("verificacion.json",(json.dumps(report,ensure_ascii=False,indent=2)+"\n").encode())
 if previews:
     columns=4;width=270;height=380
     grid=Image.new("RGB",(columns*width,((len(previews)+columns-1)//columns)*height),"#f3eee6")
     draw=ImageDraw.Draw(grid)
+    try:font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",12)
+    except OSError:font=ImageFont.load_default()
     for i,(title,num,jpg) in enumerate(previews):
         x=(i%columns)*width;y=(i//columns)*height
         pic=ImageOps.contain(Image.open(io.BytesIO(jpg)).convert("RGB"),(width-12,height-42))
         grid.paste(pic,(x+(width-pic.width)//2,y+6))
         label=title+" · L"+str(num)
-        draw.text((x+7,y+height-30),label[:37],fill="#15120c")
+        draw.text((x+7,y+height-30),label[:37],fill="#15120c",font=font)
     out=io.BytesIO();grid.save(out,"JPEG",quality=85,optimize=True)
     save("vista-lote.jpg",out.getvalue())
 print("HIDREAM_AUDITORIA "+json.dumps(report,ensure_ascii=False),flush=True)
