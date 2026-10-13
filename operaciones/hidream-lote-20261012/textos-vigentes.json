@@ -73,5 +73,10 @@
     "dice": "Nosotros entregamos el estudio técnico completo para decidir con calma en familia.",
     "n": 4,
     "slug": "tu-terreno-tus-reglas"
+  },
+  "tu-terreno-tus-reglas:5": {
+    "dice": "Proponemos revisar tu ubicación exacta para entregarte tu Plan de Potencial Personalizado.",
+    "n": 5,
+    "slug": "tu-terreno-tus-reglas"
   }
 }
