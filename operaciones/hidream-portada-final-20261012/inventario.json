@@ -1,0 +1,18 @@
+{
+  "fecha_hmo": "2026-10-12",
+  "modelo": "HiDream-I1-Dev",
+  "pendientes": 1,
+  "piezas": [
+    {
+      "slug": "tu-terreno-tus-reglas",
+      "fuente": "tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7",
+      "pieza": "Tu terreno, tus reglas",
+      "laminas": [
+        1
+      ],
+      "cantidad": 1
+    }
+  ],
+  "run_id": "38341608972",
+  "codigo_main": "11af0881e8c2babc047f09cc940bd3d19609c72b"
+}
