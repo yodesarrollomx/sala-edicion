@@ -1,8 +1,8 @@
 {
   "modelo": "HiDream-I1-Dev",
   "objetivo_inicial": 21,
-  "generadas": 8,
-  "generadas_en_esta_fase": 1,
+  "generadas": 20,
+  "generadas_en_esta_fase": 12,
   "recuperadas": 0,
   "montadas": [
     {
@@ -21,74 +21,60 @@
     },
     {
       "pieza": "El arquitecto invisible",
-      "laminas_nuevas": 3,
+      "laminas_nuevas": 4,
       "tiras": [
-        "el-arquitecto-invisible-nube-2026-10-12-5b72e0"
+        "el-arquitecto-invisible-nube-2026-10-12-639837"
       ],
       "anteriores": [
-        "el-arquitecto-invisible-nube-2026-10-12-f81194"
+        "el-arquitecto-invisible-nube-2026-10-12-f81194",
+        "el-arquitecto-invisible-nube-2026-10-12-5b72e0"
+      ]
+    },
+    {
+      "pieza": "La ruta autónoma",
+      "laminas_nuevas": 2,
+      "tiras": [
+        "la-ruta-autonoma-nube-2026-10-12-6e0f16"
+      ]
+    },
+    {
+      "pieza": "Así se ve el entregable",
+      "laminas_nuevas": 4,
+      "tiras": [
+        "llamada-entregable-nube-2026-10-12-50060f"
+      ]
+    },
+    {
+      "pieza": "La Mesa Vacía",
+      "laminas_nuevas": 1,
+      "tiras": [
+        "mesa-vacia-nube-2026-10-12-9d1b1a"
+      ]
+    },
+    {
+      "pieza": "Tu terreno, tus reglas",
+      "laminas_nuevas": 4,
+      "tiras": [
+        "tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7"
       ]
     }
   ],
-  "pendientes": 13,
+  "pendientes": 1,
   "cola_restante": [
     {
-      "slug": "el-arquitecto-invisible",
-      "fuente": "el-arquitecto-invisible-nube-2026-10-12-5b72e0",
-      "pieza": "El arquitecto invisible",
-      "laminas": [
-        6
-      ],
-      "cantidad": 1
-    },
-    {
-      "slug": "la-ruta-autonoma",
-      "fuente": "la-ruta-autonoma-nube-2026-10-11-3648fb",
-      "pieza": "La ruta autónoma",
-      "laminas": [
-        5,
-        6
-      ],
-      "cantidad": 2
-    },
-    {
-      "slug": "llamada-entregable",
-      "fuente": "llamada-entregable-nube-2026-10-11-70dca7",
-      "pieza": "Así se ve el entregable",
-      "laminas": [
-        2,
-        3,
-        4,
-        5
-      ],
-      "cantidad": 4
-    },
-    {
-      "slug": "mesa-vacia",
-      "fuente": "mesa-vacia-nube-2026-10-11-22107b",
-      "pieza": "La Mesa Vacía",
-      "laminas": [
-        6
-      ],
-      "cantidad": 1
-    },
-    {
       "slug": "tu-terreno-tus-reglas",
-      "fuente": "tu-terreno-tus-reglas-nube-2026-10-11-37000b",
+      "fuente": "tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7",
       "pieza": "Tu terreno, tus reglas",
       "laminas": [
-        1,
-        2,
-        3,
-        4,
-        5
+        1
       ],
-      "cantidad": 5
+      "cantidad": 1
     }
   ],
-  "detenido": true,
-  "causa": "HiDream no entregó foto: Error: No image name in successful response",
-  "run_id": "38337296576",
+  "detenido": false,
+  "causa": "",
+  "run_id": "38338150745",
   "decisiones_editoriales_escritas": 0,
+  "fallos_laminas": [],
   "codigo_main": "11af0881e8c2babc047f09cc940bd3d19609c72b"
 }
