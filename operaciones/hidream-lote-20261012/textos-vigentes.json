@@ -3,5 +3,10 @@
     "dice": "Nosotros proponemos trazar la ruta exacta antes de mover la primera piedra.",
     "n": 3,
     "slug": "el-arquitecto-invisible"
+  },
+  "el-arquitecto-invisible:4": {
+    "dice": "El Plan de Potencial Personalizado define los metros cuadrados viables y los giros ideales.",
+    "n": 4,
+    "slug": "el-arquitecto-invisible"
   }
 }
