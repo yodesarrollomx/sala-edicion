@@ -1,8 +1,8 @@
 {
   "modelo": "HiDream-I1-Dev",
   "objetivo_inicial": 21,
-  "generadas": 7,
-  "generadas_en_esta_fase": 2,
+  "generadas": 8,
+  "generadas_en_esta_fase": 1,
   "recuperadas": 0,
   "montadas": [
     {
@@ -21,23 +21,25 @@
     },
     {
       "pieza": "El arquitecto invisible",
-      "laminas_nuevas": 2,
+      "laminas_nuevas": 3,
       "tiras": [
+        "el-arquitecto-invisible-nube-2026-10-12-5b72e0"
+      ],
+      "anteriores": [
         "el-arquitecto-invisible-nube-2026-10-12-f81194"
       ]
     }
   ],
-  "pendientes": 14,
+  "pendientes": 13,
   "cola_restante": [
     {
       "slug": "el-arquitecto-invisible",
-      "fuente": "el-arquitecto-invisible-nube-2026-10-12-f81194",
+      "fuente": "el-arquitecto-invisible-nube-2026-10-12-5b72e0",
       "pieza": "El arquitecto invisible",
       "laminas": [
-        5,
         6
       ],
-      "cantidad": 2
+      "cantidad": 1
     },
     {
       "slug": "la-ruta-autonoma",
@@ -86,7 +88,7 @@
   ],
   "detenido": true,
   "causa": "HiDream no entregó foto: Error: No image name in successful response",
-  "run_id": "38336377009",
+  "run_id": "38337296576",
   "decisiones_editoriales_escritas": 0,
   "codigo_main": "11af0881e8c2babc047f09cc940bd3d19609c72b"
 }
