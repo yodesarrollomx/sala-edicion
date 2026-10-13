@@ -1,0 +1,24 @@
+{
+  "modelo": "HiDream-I1-Dev",
+  "objetivo_inicial": 4,
+  "generadas": 4,
+  "generadas_en_esta_fase": 4,
+  "recuperadas": 0,
+  "montadas": [
+    {
+      "pieza": "Tres opiniones, tres números distintos",
+      "laminas_nuevas": 4,
+      "tiras": [
+        "dato-tres-opiniones-nube-2026-10-12-91a9fc"
+      ]
+    }
+  ],
+  "pendientes": 0,
+  "cola_restante": [],
+  "detenido": false,
+  "causa": "",
+  "run_id": "38339043819",
+  "decisiones_editoriales_escritas": 0,
+  "fallos_laminas": [],
+  "codigo_main": "11af0881e8c2babc047f09cc940bd3d19609c72b"
+}
