@@ -154,14 +154,19 @@ def generar_hidream(receta,reglas):
             CLIENT=Client(SPACE,**kw)
         seed=int(rid[:8],16)%(2**31)
         start=time.monotonic()
-        job=CLIENT.submit(prompt,"3:4",seed,api_name="/generate_with_status")
-        try:out=job.result(timeout=300)
-        except Exception:
-            try:job.cancel()
-            except Exception:pass
-            raise
-        if not isinstance(out,(list,tuple)) or len(out)<4 or not out[0]:
+        for intento in range(2):
+            job=CLIENT.submit(prompt,"3:4",seed,api_name="/generate_with_status")
+            try:out=job.result(timeout=300)
+            except Exception:
+                try:job.cancel()
+                except Exception:pass
+                raise
+            if isinstance(out,(list,tuple)) and len(out)>=4 and out[0]:break
             status=out[2] if isinstance(out,(list,tuple)) and len(out)>2 else "sin imagen"
+            if intento==0 and "No image name in successful response" in str(status):
+                emit("HIDREAM_REINTENTO_ACOTADO",{"modelo":MODEL,"causa":limpiar(status),"intento":2})
+                time.sleep(8)
+                continue
             raise RuntimeError("HiDream no entregó foto: "+limpiar(status))
         info=out[3] or {}
         if info.get("model")!=MODEL:raise RuntimeError("HiDream declaró otro modelo; no se presenta como "+MODEL)
@@ -214,13 +219,14 @@ def verificar_codigo_y_datos():
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("modo",choices=["inventario","producir"]);args=ap.parse_args()
-    global PREVIOUS,BASE_COUNT
+    global PREVIOUS,BASE_COUNT,CAPTIONS
     sala.enmascarar_en_actions()
     cloud=Snapshots(ROOT)
     os.environ["GITHUB_SHA"]=cloud.head()
     prior=leer_resumen("previo")
     PREVIOUS=prior["montadas"]
     BASE_COUNT=sum(x["laminas_nuevas"] for x in PREVIOUS)
+    CAPTIONS=leer_resumen("textos-vigentes")
     if args.modo=="inventario":
         cloud.bootstrap("mesa",False)
         queue=pendientes()
@@ -252,7 +258,14 @@ def main():
             cloud.dispatch_publish(cloud.head())
             if llamar_mesa("--montar")!=0:raise RuntimeError("Mesa no confirmó el montaje")
             ids=[c["tira_id"] for c in cartas]
-            mounted.append({"pieza":item["pieza"],"laminas_nuevas":STOP["generadas"]-before,"tiras":ids})
+            prior_piece=next((m for m in mounted if m["pieza"]==item["pieza"]),None)
+            new_mount={"pieza":item["pieza"],
+                       "laminas_nuevas":STOP["generadas"]-before+(prior_piece["laminas_nuevas"] if prior_piece else 0),
+                       "tiras":ids}
+            if prior_piece:
+                new_mount["anteriores"]=prior_piece.get("anteriores",[])+prior_piece["tiras"]
+                mounted=[m for m in mounted if m["pieza"]!=item["pieza"]]
+            mounted.append(new_mount)
             emit("HIDREAM_PIEZA_MONTADA",mounted[-1])
             progreso={"modelo":MODEL,"objetivo":total,"generadas":BASE_COUNT+STOP["generadas"]+STOP["recuperadas"],"generadas_en_esta_fase":STOP["generadas"],"recuperadas":STOP["recuperadas"],
                       "montadas":mounted,"detenido":STOP["detenido"],"causa":STOP["causa"],

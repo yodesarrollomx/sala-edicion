@@ -1,9 +1,9 @@
 {
   "modelo": "HiDream-I1-Dev",
-  "objetivo": 21,
-  "generadas": 5,
-  "solicitadas_nuevas": 1,
-  "recuperadas": 4,
+  "objetivo_inicial": 21,
+  "generadas": 7,
+  "generadas_en_esta_fase": 2,
+  "recuperadas": 0,
   "montadas": [
     {
       "pieza": "Tres opiniones, tres números distintos",
@@ -18,10 +18,75 @@
       "tiras": [
         "doble-via-nube-2026-10-12-6f2f2a"
       ]
+    },
+    {
+      "pieza": "El arquitecto invisible",
+      "laminas_nuevas": 2,
+      "tiras": [
+        "el-arquitecto-invisible-nube-2026-10-12-f81194"
+      ]
     }
   ],
-  "detenido": false,
-  "causa": "",
-  "run_id": "38335109256",
-  "fecha_hmo": "2026-10-12"
+  "pendientes": 14,
+  "cola_restante": [
+    {
+      "slug": "el-arquitecto-invisible",
+      "fuente": "el-arquitecto-invisible-nube-2026-10-12-f81194",
+      "pieza": "El arquitecto invisible",
+      "laminas": [
+        5,
+        6
+      ],
+      "cantidad": 2
+    },
+    {
+      "slug": "la-ruta-autonoma",
+      "fuente": "la-ruta-autonoma-nube-2026-10-11-3648fb",
+      "pieza": "La ruta autónoma",
+      "laminas": [
+        5,
+        6
+      ],
+      "cantidad": 2
+    },
+    {
+      "slug": "llamada-entregable",
+      "fuente": "llamada-entregable-nube-2026-10-11-70dca7",
+      "pieza": "Así se ve el entregable",
+      "laminas": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "cantidad": 4
+    },
+    {
+      "slug": "mesa-vacia",
+      "fuente": "mesa-vacia-nube-2026-10-11-22107b",
+      "pieza": "La Mesa Vacía",
+      "laminas": [
+        6
+      ],
+      "cantidad": 1
+    },
+    {
+      "slug": "tu-terreno-tus-reglas",
+      "fuente": "tu-terreno-tus-reglas-nube-2026-10-11-37000b",
+      "pieza": "Tu terreno, tus reglas",
+      "laminas": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "cantidad": 5
+    }
+  ],
+  "detenido": true,
+  "causa": "HiDream no entregó foto: Error: No image name in successful response",
+  "run_id": "38336377009",
+  "decisiones_editoriales_escritas": 0,
+  "codigo_main": "11af0881e8c2babc047f09cc940bd3d19609c72b"
 }
