@@ -267,7 +267,7 @@ def hf(row,token,metadata):
     from gradio_client import Client
     meta=metadata.get(row["modelo"],{})
     row["disponibilidad"]=meta
-    kwargs={"verbose":False,"httpx_kwargs":{"timeout":45},"download_files":str(OUT/"descargas")}
+    kwargs={"verbose":False,"download_files":str(OUT/"descargas")}
     sig=inspect.signature(Client)
     if "token" in sig.parameters:kwargs["token"]=token
     elif "hf_token" in sig.parameters:kwargs["hf_token"]=token
@@ -384,10 +384,14 @@ def main():
     log("DEMOS",metadata)
     publish()
     # Primero dos proveedores ya autenticados; HF se ordena para reservar el demo de duración más alta antes de consumir el cupo.
-    order=[1,7,8]
+    order=[1,8]
     for n in order:
         row=ROWS[n-1]
         row.setdefault("intentos_anteriores",[]).append({k:row.get(k) for k in ("estado","detalle","http","segundos")})
+        if n==1:
+            row["demo_original"]="Tongyi-MAI/Z-Image-Turbo"
+            row["modelo"]="mrfakename/Z-Image-Turbo"
+            row["detalle_demo"]="Mismos pesos oficiales Tongyi-MAI/Z-Image-Turbo; demo comunitario con reserva de GPU menor, usando el mismo token y cupo."
         row["estado"]="ejecutando";row.pop("detalle",None)
         start=time.monotonic()
         log("PRUEBA",{"n":n,"motor":row["nombre"],"estado":"ejecutando"})
