@@ -21,7 +21,7 @@ class GuionVigenteTest(unittest.TestCase):
                  patch.object(mesa.imagen,"generar",return_value=(b"synthetic","png","openai_broker",[])) as image,\
                  patch.object(sala_compositor,"componer",side_effect=compose),patch.object(sala_compositor,"avisos",[]):
                 rows,_=mesa.producir_tomas("synthetic",{"pieza":"Synthetic","laminas":[]},lam,
-                    "La imagen no cuadra con el texto",{},[],folder,1)
+                    "La imagen no cuadra con el texto",{"imagen_motores":"openai_broker"},[],folder,1)
             self.assertEqual(len(rows),1)
             self.assertEqual(rows[0]["dice"],lam["dice"])
             self.assertEqual(rows[0]["modelo"],"gpt-image-1.5")

@@ -26,6 +26,10 @@ class CupoImagen(MotorError):
     """Los proveedores nuevos agotaron cupo: no gastar recetas en el resto del lote."""
     pass
 
+class ServicioImagen(MotorError):
+    """Servicio gratuito sin disponibilidad; detener lote sin activar pago."""
+    pass
+
 class ReciboNoConfirmado(MotorError):
     pass
 
@@ -63,7 +67,7 @@ def gemini_pro(receta, reglas):
     return gemini(receta, dict(reglas or {}, imagen_gemini_modelo=MODELO_GEMINI_PRO))
 
 def modelo_de(motor, reglas=None):
-    return {'openai_broker': 'gpt-image-1.5', 'cloudflare_flux2': MODELO_FLUX2, 'gemini_pro': MODELO_GEMINI_PRO,
+    return {'hidream_demo': 'HiDream-I1-Dev', 'openai_broker': 'gpt-image-1.5', 'cloudflare_flux2': MODELO_FLUX2, 'gemini_pro': MODELO_GEMINI_PRO,
             'cloudflare': '@cf/black-forest-labs/flux-1-schnell',
             'gemini': str((reglas or {}).get('imagen_gemini_modelo') or 'gemini-2.5-flash-image'),
             'pollinations': 'pollinations/flux', 'hf': 'black-forest-labs/FLUX.1-schnell',
@@ -215,7 +219,12 @@ def cpu(receta, reglas):
     return generar_cpu(receta, reglas)
 
 
-MOTORES = {'openai_broker': openai_broker, 'cloudflare_flux2': cloudflare_flux2, 'gemini_pro': gemini_pro,
+def hidream_demo(receta, reglas):
+    from motores.imagen_hidream import generar as generar_hidream
+    return generar_hidream(receta, reglas)
+
+
+MOTORES = {'hidream_demo': hidream_demo, 'openai_broker': openai_broker, 'cloudflare_flux2': cloudflare_flux2, 'gemini_pro': gemini_pro,
            'cloudflare': cloudflare, 'gemini': gemini, 'pollinations': pollinations, 'hf': hf, 'cpu': cpu}
 
 
@@ -232,9 +241,9 @@ def generar(receta, reglas):
         raise MotorError(str(e)) from e
     receta = receta.rstrip('. ') + SIN_LETRAS
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
-                                    or 'openai_broker,cloudflare_flux2,gemini_pro').split(',') if m.strip() in MOTORES]
+                                    or 'hidream_demo').split(',') if m.strip() in MOTORES]
     if (reglas or {}).get('_imagen_solo_recibo'):
-        orden = ['openai_broker']
+        orden = [m for m in orden if m in ('hidream_demo', 'openai_broker')]
     # Veto de Dirección: ni el orden explícito ni el respaldo heredado lo reactivan.
     orden = [m for m in orden if not vetada({'motor': m})]
     avisos = []
@@ -244,6 +253,8 @@ def generar(receta, reglas):
             datos, ext = MOTORES[nombre](receta, reglas)
             return datos, ext, nombre, avisos
         except ReciboNoConfirmado:
+            raise
+        except (CupoImagen, ServicioImagen):
             raise
         except MotorError as e:
             avisos.append(str(e))

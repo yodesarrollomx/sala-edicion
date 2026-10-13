@@ -236,7 +236,11 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas, solo_reci
         nota = 'Que se parezca a la lámina %s aprobada: mismos personajes, mismo lugar, misma luz.' % ref.get('n')
     for k in range(1, n_tomas + 1):
         try:
-            if lam.get('reemplazo_modelo') == POLITICA['revision'] or solo_recibo:
+            if 'hidream_demo' in str(reglas.get('imagen_motores') or 'hidream_demo').split(','):
+                d, quien, av = cerebro.fotografia_guion(
+                    str(lam.get('dice') or ''), contexto_visual(lam.get('ve')),
+                    contexto_visual(nota), ref_txt, reglas, k)
+            elif lam.get('reemplazo_modelo') == POLITICA['revision'] or solo_recibo:
                 # Cambiar el generador no requiere reescribir el guion ni otra inferencia.
                 # El modelo de imagen recibe el mensaje visible como autoridad de la escena.
                 receta = (
@@ -294,6 +298,9 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas, solo_reci
                           'huella': hashlib.md5(png.read_bytes()).hexdigest()})
         except imagen.ReciboNoConfirmado:
             avisos.append('RECIBO_NO_CONFIRMADO: toma aún pendiente, sin nueva generación')
+            break
+        except imagen.ServicioImagen as e:
+            avisos.append('SERVICIO_IMAGEN_NO_DISPONIBLE: %s' % e)
             break
         except imagen.CupoImagen as e:
             avisos.append('CUPO_IMAGEN_AGOTADO: %s' % e)
@@ -484,6 +491,7 @@ def main():
     plan, gastadas = [], 0
     generadas = fallidas = limitadas = reutilizadas = 0
     cupo_bloqueado = False
+    servicio_bloqueado = False
 
     if not args.sin_sheet:
         hidratar_tiras_activas(contexto_produccion())
@@ -573,7 +581,8 @@ def main():
             else:
                 tomas, avisos = producir_tomas(slug, tira, lam, nota, reglas, cola, carpeta, n_tomas)
             gastadas += 1
-            cupo_bloqueado = cupo_bloqueado or any(str(a).startswith('CUPO_IMAGEN_AGOTADO:') for a in avisos)
+            servicio_bloqueado = servicio_bloqueado or any(str(a).startswith('SERVICIO_IMAGEN_NO_DISPONIBLE:') for a in avisos)
+            cupo_bloqueado = cupo_bloqueado or servicio_bloqueado or any(str(a).startswith('CUPO_IMAGEN_AGOTADO:') for a in avisos)
             for a in avisos:
                 sala.avisar('     ⚠ %s' % a)
             if not tomas:
@@ -630,8 +639,8 @@ def main():
         PLAN.write_text(json.dumps({'fecha': hoy, 'cartas': plan}, ensure_ascii=False, indent=1),
                         encoding='utf-8')
         guardar_estado_mesa(generadas, fallidas, limitadas, len(plan), reutilizadas,
-                            causa='cupo_imagen_agotado' if cupo_bloqueado else '',
-                            modelo_imagen=imagen.modelo_de(str(reglas.get('imagen_motores') or 'openai_broker').split(',')[0].strip(), reglas))
+                            causa='servicio_imagen_no_disponible' if servicio_bloqueado else ('cupo_imagen_agotado' if cupo_bloqueado else ''),
+                            modelo_imagen=imagen.modelo_de(str(reglas.get('imagen_motores') or 'hidream_demo').split(',')[0].strip(), reglas))
     # Preparación que falló por completo es un fallo real, no una mesa «al día».
     return 2 if fallidas and not plan and not args.simular else 0
 

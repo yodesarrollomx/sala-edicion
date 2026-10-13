@@ -1,0 +1,55 @@
+name: Tablero Sala · navegador y generador
+on:
+  push:
+    branches: [codex/sala-tablero-20261013]
+    paths-ignore: ['tests/evidencia-tablero/**', 'operaciones/**']
+  pull_request:
+    paths:
+      - 'tablero-sala.*'
+      - 'tests/tablero-sala*'
+      - 'nube/motores/imagen_hidream.py'
+      - 'tests/imagen_hidream_test.py'
+permissions:
+  contents: read
+jobs:
+  navegador:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github
+            datos
+            gas
+            nube
+            tests
+            docs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet google-auth requests pillow numpy
+      - name: Sellar versión preparada en rama
+        if: github.event_name == 'push'
+        run: python3 nube/sellar_sala.py
+      - name: Pruebas de generador sin red
+        run: python3 -m unittest discover -s tests -p imagen_hidream_test.py -v
+      - name: Reglas de producción
+        run: python3 nube/verificar.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/tablero-sala.test.cjs tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs tests/sala-modelos.test.cjs
+      - name: Navegador Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+      - name: Interacción escritorio y móvil sin escribir al Sheet
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/tablero-http.log" 2>&1 &
+          node tests/tablero-sala.browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tablero-sala-recorrido
+          path: tests/evidencia-tablero

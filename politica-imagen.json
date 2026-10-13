@@ -77,15 +77,13 @@
     "laminas/tu-terreno-tus-reglas-nube-2026-10-11-37000b/L5-1.png"
   ],
   "reemplazo": {
-    "motor": "openai_broker",
-    "modelo": "gpt-image-1.5",
-    "respaldos": [
-      "@cf/black-forest-labs/flux-2-klein-9b",
-      "gemini-3-pro-image"
-    ],
+    "motor": "hidream_demo",
+    "modelo": "HiDream-I1-Dev",
+    "respaldos": [],
     "conservar_texto": true,
-    "orden_direccion": "2026-10-12",
+    "orden_direccion": "2026-10-13",
     "estado": "prueba_real_confirmada",
-    "prueba": "38302218587"
+    "prueba": "38342683066",
+    "disponibilidad": "Space gratuito; límite diario no publicado. Sin respaldo de pago implícito."
   }
 }

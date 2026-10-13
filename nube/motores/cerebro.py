@@ -202,3 +202,46 @@ def lamina(pieza, promesa, dice, ve, nota, vetadas, reglas, cola=None, variante=
     # hizo que FLUX dibujara hojas con letras sin sentido. Mejor no producir que producir basura.
     raise MotorError('sin cerebro disponible (%s): la lámina espera a la próxima corrida'
                      % ' · '.join(avisos)[:300], intermitente=True)
+
+
+def fotografia_guion(dice, ve, nota, referencia, reglas, variante=1):
+    """Foto sin caption: Gemini gratuito si responde; descripción visual local si no.
+    Nunca llama al respaldo de pago ni copia la frase que compone la casa.
+    """
+    import re
+    context = str(ve or '').strip()[:800]
+    caption = str(dice or '').strip()
+    # El guion explica la intención al traductor; el caption nunca se manda al generador.
+    pedido = json.dumps({'visual': context, 'intencion': caption,
+                         'correccion_visual': str(nota or '')[:600], 'referencia': referencia,
+                         'variante': variante}, ensure_ascii=False)
+    instruction = ('Describe ONE literal architectural editorial photograph in English, under 100 words. '
+                   'Show the specific action and physical objects in visual. Use intention only to choose '
+                   'the scene, NEVER repeat or translate its caption as visible writing. Preserve the '
+                   'reference characters, natural light and location. For variant change framing. '
+                   'No typography, no text, no words, labels, signs, money or watermarks. '
+                   'Return only JSON {"scene":"..."}; never include caption text.')
+    avisos = []
+    try:
+        d = _json_de(_gemini(pedido, reglas, instruction))
+        scene = str((d or {}).get('scene') or '').strip()
+        if scene and (not caption or caption.casefold() not in scene.casefold()):
+            exigir(scene, reglas, 'escena fotográfica')
+            return {'texto': caption, 'receta': scene, 'porque': 'Fotografía desde la acción del guion; texto compuesto por separado.'}, 'gemini', avisos
+    except (MotorError, ContenidoVetado) as e:
+        avisos.append(str(e))
+    # La descripción visual del guion es la fuente; no se sustituye por una pareja posando.
+    visual = re.sub(r'["“”].*?["“”]', '', context)
+    visual = re.sub(r'\b(texto|caption|t[ií]tulo|letrero|tipograf[ií]a)\s*:.*', '', visual, flags=re.I)
+    if caption:
+        visual = visual.replace(caption, '')
+    if not visual.strip():
+        raise MotorError('HiDream: falta descripción visual del guion; espera corrección', intermitente=True)
+    scene = ('High-end architectural documentary photograph. Concrete action and physical objects '
+             'from this scene description: ' + visual.strip() + '. ' +
+             ('Approved character and lighting reference: ' + str(referencia or '')[:400] + '. ' if referencia else '') +
+             ('Different close-up composition. ' if variante % 2 == 0 else 'Natural medium-wide composition. ') +
+             'Professional 35mm photography, natural warm daylight, realistic anatomy, beige and terracotta palette. '
+             'Leave the lower central area clear for a separate overlay. No printed text, signs, lettering or logos.')
+    exigir(scene, reglas, 'escena visual')
+    return {'texto': caption, 'receta': scene, 'porque': 'Descripción visual vigente; conserva el texto separado.'}, 'guion-visual', avisos

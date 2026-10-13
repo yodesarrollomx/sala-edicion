@@ -647,7 +647,7 @@ html.cargando #actualizando{display:flex}
 .barra-sin-entrar{position:sticky;top:0;left:0;right:0;z-index:25;display:flex;align-items:center;
   justify-content:center;gap:8px;text-align:center;background:var(--no-suave);color:var(--no);
   border-bottom:1px solid var(--no);font-weight:600;font-size:13.5px;line-height:1.35;padding:10px 16px}
-</style></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
+</style><link rel="stylesheet" href="tablero-sala.css?v=20261013-1"></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
 <script src="politica-imagen.js?v=sin-pollinations-gpt-20261012"></script>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
 
@@ -669,6 +669,7 @@ html.cargando #actualizando{display:flex}
       <p class="sub" id="subt"></p>
       <div class="fila-estado"><span class="estado" id="estado" role="status" aria-live="polite"><i></i><span>Preparando…</span></span><button class="btn-entrar" id="btnEntrar" hidden>Entrar</button><button class="btn-entrar" id="btnReintentar" hidden>Reintentar ahora</button></div>
     </div>
+    <div id="tableroHoy" aria-label="Tablero de la sala"></div>
     <div class="mazo">
       <div class="bolas" id="bolas" aria-hidden="true"></div>
       <button class="verresp" id="verresp" hidden>ver mis respuestas</button>
@@ -873,6 +874,7 @@ function irVista(v){
   document.body.dataset.vista=v;
   document.querySelectorAll('#puertas button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   window.scrollTo(0,0);
+  if(v==='hoy'&&window.SalaTablero&&!document.body.classList.contains('sala-turno')) window.SalaTablero.refresh();
   if(v==='pub'){ pintarPublicaciones() } if(v==='aj'){ pintarAjustes() } if(v==='hoy'){ pintarPanel() } if(v==='prod'){ pintarProduccion() } if(v==='arbol'){ pintarArbol() }
 }
 document.querySelectorAll('#puertas button').forEach(b=>b.onclick=()=>{ cerrarCapas(); irVista(b.dataset.v) });
@@ -3070,6 +3072,7 @@ function reintentarSheet(n){            // se insiste cada 20 s hasta 30 veces; 
 }
 function montar(d){
   D=d; fecha=D.fecha||''; pintarFecha(fecha);
+  queueMicrotask(()=>{ if(window.SalaTablero) window.SalaTablero.refresh() });
   // 8-sep: si el Sheet manda una llave renovada (entré con la anterior, dentro del periodo de gracia),
   // la Sala la guarda sola y no vuelve a fallar cuando la vieja caduque. Nunca se muestra en pantalla.
   if(d.clave_nueva&&typeof d.clave_nueva==='string'&&d.clave_nueva.length>=8){
@@ -3152,7 +3155,7 @@ $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 $('#deshacer').onclick=()=>{ if(!candadoLibre()||!hist.length) return; irA(hist.pop()) };
 $('#verresp').onclick=abrirRespuestas; $('#btnEntrar').onclick=abrirEntrar;
 $('#btnReintentar').onclick=async()=>{ pintarEstado('subiendo','Reintentando…'); await subirCola(); await subir(); };
-document.addEventListener('keydown',e=>{ if(CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.key==='ArrowRight'&&$('#btnSi')&&$('#btnSi').hidden) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
+document.addEventListener('keydown',e=>{ if(document.body.classList.contains('sala-tablero')||CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.key==='ArrowRight'&&$('#btnSi')&&$('#btnSi').hidden) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
   if(e.key==='ArrowRight') decidir('si'); if(e.key==='ArrowLeft') decidir('no') });
 const _bProdAct=$('#prodActualizar'); if(_bProdAct) _bProdAct.onclick=()=>{ _tCola=_tFab=_tIdeas=0; pintarProduccion() };
 setInterval(()=>{ if(document.body.dataset.vista==='prod') pintarProduccion() },60000);   // solo relee datos; nunca el estado de un botón
@@ -3161,4 +3164,5 @@ setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subir
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); _tSubir=null; subir() } } });
 window.addEventListener('resize',()=>{ if(DECIDE()) pintarPanel(); else pintarPanelMira() });
 </script>
+<script src="tablero-sala.js?v=20261013-1"></script>
 </body></html>

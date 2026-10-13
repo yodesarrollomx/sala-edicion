@@ -1,0 +1,22 @@
+name: Sellar tablero Sala
+on:
+  push:
+    branches: [codex/sala-tablero-20261013]
+    paths: [index.html]
+permissions:
+  contents: write
+jobs:
+  sellar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 nube/sellar_sala.py
+      - run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || git commit -m 'Sellar la nueva entrada del tablero'
+          git push origin HEAD:codex/sala-tablero-20261013
