@@ -1,0 +1,467 @@
+{
+  "/generate_with_status": {
+    "parameters": [
+      {
+        "name": "prompt",
+        "label": "Prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "aspect_ratio",
+        "label": "Aspect Ratio",
+        "default": "4:3",
+        "type": {
+          "enum": [
+            "1:1",
+            "3:4",
+            "4:3",
+            "9:16",
+            "16:9"
+          ],
+          "title": "Radio",
+          "type": "string"
+        }
+      },
+      {
+        "name": "seed",
+        "label": "Seed (use -1 for random)",
+        "default": 82706,
+        "type": {
+          "type": "number"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Generated Image",
+        "type": {
+          "properties": {
+            "path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Path to a local file",
+              "title": "Path"
+            },
+            "url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Publicly available url or base64 encoded image",
+              "title": "Url"
+            },
+            "size": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Size of image in bytes",
+              "title": "Size"
+            },
+            "orig_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Original filename",
+              "title": "Orig Name"
+            },
+            "mime_type": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "mime type of image",
+              "title": "Mime Type"
+            },
+            "is_stream": {
+              "default": false,
+              "description": "Can always be set to False",
+              "title": "Is Stream",
+              "type": "boolean"
+            },
+            "meta": {
+              "additionalProperties": true,
+              "default": {
+                "_type": "gradio.FileData"
+              },
+              "title": "Meta",
+              "type": "object"
+            }
+          },
+          "title": "ImageData",
+          "type": "object",
+          "additional_description": "For input, either path or url must be provided. For output, path is always provided."
+        },
+        "python_type": {
+          "type": "dict(path: str | None (Path to a local file), url: str | None (Publicly available url or base64 encoded image), size: int | None (Size of image in bytes), orig_name: str | None (Original filename), mime_type: str | None (mime type of image), is_stream: bool (Can always be set to False), meta: dict(str, Any))",
+          "description": ""
+        },
+        "component": "Image"
+      },
+      {
+        "label": "Seed Used",
+        "type": {
+          "type": "number"
+        },
+        "python_type": {
+          "type": "float",
+          "description": ""
+        },
+        "component": "Number"
+      },
+      {
+        "label": "value_15",
+        "type": {
+          "type": "string"
+        },
+        "python_type": {
+          "type": "str",
+          "description": ""
+        },
+        "component": "Markdown"
+      },
+      {
+        "label": "Details",
+        "type": {
+          "type": {},
+          "description": "any valid json"
+        },
+        "python_type": {
+          "type": "str | float | bool | list | dict",
+          "description": "any valid json"
+        },
+        "component": "Json"
+      }
+    ]
+  },
+  "/clear_outputs": {
+    "parameters": [],
+    "returns": [
+      {
+        "label": "Generated Image",
+        "type": {
+          "properties": {
+            "path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Path to a local file",
+              "title": "Path"
+            },
+            "url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Publicly available url or base64 encoded image",
+              "title": "Url"
+            },
+            "size": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Size of image in bytes",
+              "title": "Size"
+            },
+            "orig_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Original filename",
+              "title": "Orig Name"
+            },
+            "mime_type": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "mime type of image",
+              "title": "Mime Type"
+            },
+            "is_stream": {
+              "default": false,
+              "description": "Can always be set to False",
+              "title": "Is Stream",
+              "type": "boolean"
+            },
+            "meta": {
+              "additionalProperties": true,
+              "default": {
+                "_type": "gradio.FileData"
+              },
+              "title": "Meta",
+              "type": "object"
+            }
+          },
+          "title": "ImageData",
+          "type": "object",
+          "additional_description": "For input, either path or url must be provided. For output, path is always provided."
+        },
+        "python_type": {
+          "type": "dict(path: str | None (Path to a local file), url: str | None (Publicly available url or base64 encoded image), size: int | None (Size of image in bytes), orig_name: str | None (Original filename), mime_type: str | None (mime type of image), is_stream: bool (Can always be set to False), meta: dict(str, Any))",
+          "description": ""
+        },
+        "component": "Image"
+      },
+      {
+        "label": "Seed Used",
+        "type": {
+          "type": "number"
+        },
+        "python_type": {
+          "type": "float",
+          "description": ""
+        },
+        "component": "Number"
+      },
+      {
+        "label": "value_15",
+        "type": {
+          "type": "string"
+        },
+        "python_type": {
+          "type": "str",
+          "description": ""
+        },
+        "component": "Markdown"
+      },
+      {
+        "label": "Details",
+        "type": {
+          "type": {},
+          "description": "any valid json"
+        },
+        "python_type": {
+          "type": "str | float | bool | list | dict",
+          "description": "any valid json"
+        },
+        "component": "Json"
+      }
+    ]
+  },
+  "/get_final_item": {
+    "parameters": [
+      {
+        "name": "param_0",
+        "label": "Prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "param_1",
+        "label": "Aspect Ratio",
+        "default": "4:3",
+        "type": {
+          "enum": [
+            "1:1",
+            "3:4",
+            "4:3",
+            "9:16",
+            "16:9"
+          ],
+          "title": "Radio",
+          "type": "string"
+        }
+      },
+      {
+        "name": "param_2",
+        "label": "Seed (use -1 for random)",
+        "default": 82706,
+        "type": {
+          "type": "number"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Generated Image",
+        "type": {
+          "properties": {
+            "path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Path to a local file",
+              "title": "Path"
+            },
+            "url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Publicly available url or base64 encoded image",
+              "title": "Url"
+            },
+            "size": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Size of image in bytes",
+              "title": "Size"
+            },
+            "orig_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Original filename",
+              "title": "Orig Name"
+            },
+            "mime_type": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "mime type of image",
+              "title": "Mime Type"
+            },
+            "is_stream": {
+              "default": false,
+              "description": "Can always be set to False",
+              "title": "Is Stream",
+              "type": "boolean"
+            },
+            "meta": {
+              "additionalProperties": true,
+              "default": {
+                "_type": "gradio.FileData"
+              },
+              "title": "Meta",
+              "type": "object"
+            }
+          },
+          "title": "ImageData",
+          "type": "object",
+          "additional_description": "For input, either path or url must be provided. For output, path is always provided."
+        },
+        "python_type": {
+          "type": "dict(path: str | None (Path to a local file), url: str | None (Publicly available url or base64 encoded image), size: int | None (Size of image in bytes), orig_name: str | None (Original filename), mime_type: str | None (mime type of image), is_stream: bool (Can always be set to False), meta: dict(str, Any))",
+          "description": ""
+        },
+        "component": "Image"
+      },
+      {
+        "label": "Seed Used",
+        "type": {
+          "type": "number"
+        },
+        "python_type": {
+          "type": "float",
+          "description": ""
+        },
+        "component": "Number"
+      },
+      {
+        "label": "value_15",
+        "type": {
+          "type": "string"
+        },
+        "python_type": {
+          "type": "str",
+          "description": ""
+        },
+        "component": "Markdown"
+      },
+      {
+        "label": "Details",
+        "type": {
+          "type": {},
+          "description": "any valid json"
+        },
+        "python_type": {
+          "type": "str | float | bool | list | dict",
+          "description": "any valid json"
+        },
+        "component": "Json"
+      }
+    ]
+  }
+}
