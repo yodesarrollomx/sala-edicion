@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38329443469",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38329443469",
-  "fecha_utc": "2026-10-13T00:54:30Z",
+  "fecha_utc": "2026-10-13T00:54:37Z",
   "opciones": [
     {
       "n": 1,
@@ -129,8 +129,26 @@
       "nombre": "Ovis-Image 7B",
       "modelo": "ATH-MaaS/Ovis-Image-7B",
       "tipo": "hf",
-      "estado": "pendiente",
-      "imagen": null
+      "estado": "sin cupo",
+      "imagen": null,
+      "disponibilidad": {
+        "http": 200,
+        "stage": "RUNNING",
+        "host": "https://ath-maas-ovis-image-7b.hf.space",
+        "sdk": "gradio",
+        "private": false
+      },
+      "endpoint": "/generate",
+      "parametros": {
+        "prompt": "Photorealistic editorial photograph of a Mexican family of exactly three adults a woman aged 65, a man aged 45 and a woman aged 35, sitting around a wooden dining table and discussing a simple architectural floor plan. Contemporary modest home in Sonora, warm neutral plaster walls, natural window light, authentic everyday clothing, candid interaction, realistic facial proportions and skin texture, anatomically correct hands. Vertical portrait composition, documentary photography, restrained colors, no illustration, no cartoon, no plastic skin, no letters, no captions, no logos, no watermark.",
+        "img_height": 1280,
+        "img_width": 1024,
+        "seed": 74103,
+        "steps": 50,
+        "guidance_scale": 5.0
+      },
+      "detalle": "You have exceeded your free ZeroGPU quota (112s requested vs. 78s left). Try again in 3:11:06. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU",
+      "segundos": 1.1
     },
     {
       "n": 6,

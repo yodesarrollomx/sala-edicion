@@ -1,0 +1,155 @@
+{
+  "/generate": {
+    "parameters": [
+      {
+        "name": "prompt",
+        "label": "Prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "img_height",
+        "label": "Image Height",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 256 and 2048"
+        }
+      },
+      {
+        "name": "img_width",
+        "label": "Image Width",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 256 and 2048"
+        }
+      },
+      {
+        "name": "seed",
+        "label": "Seed",
+        "default": 42,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        }
+      },
+      {
+        "name": "steps",
+        "label": "Number of inference steps",
+        "default": 50,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 100"
+        }
+      },
+      {
+        "name": "guidance_scale",
+        "label": "Guidance Scale",
+        "default": 5.0,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 14"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Result",
+        "type": {
+          "properties": {
+            "path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Path to a local file",
+              "title": "Path"
+            },
+            "url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Publicly available url or base64 encoded image",
+              "title": "Url"
+            },
+            "size": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Size of image in bytes",
+              "title": "Size"
+            },
+            "orig_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Original filename",
+              "title": "Orig Name"
+            },
+            "mime_type": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "mime type of image",
+              "title": "Mime Type"
+            },
+            "is_stream": {
+              "default": false,
+              "description": "Can always be set to False",
+              "title": "Is Stream",
+              "type": "boolean"
+            },
+            "meta": {
+              "additionalProperties": true,
+              "default": {
+                "_type": "gradio.FileData"
+              },
+              "title": "Meta",
+              "type": "object"
+            }
+          },
+          "title": "ImageData",
+          "type": "object",
+          "additional_description": "For input, either path or url must be provided. For output, path is always provided."
+        },
+        "python_type": {
+          "type": "dict(path: str | None (Path to a local file), url: str | None (Publicly available url or base64 encoded image), size: int | None (Size of image in bytes), orig_name: str | None (Original filename), mime_type: str | None (mime type of image), is_stream: bool (Can always be set to False), meta: dict(str, Any))",
+          "description": ""
+        },
+        "component": "Image"
+      }
+    ]
+  }
+}
