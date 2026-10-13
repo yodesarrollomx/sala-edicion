@@ -70,7 +70,7 @@ jobs:
 
       - name: Librerías (imagen y HTTP)
         run: |
-          pip install --quiet pillow requests
+          pip install --quiet pillow requests gradio_client
       - name: Caché de la tipografía de la casa (Playfair Display, OFL)
         id: cache-fuentes
         uses: actions/cache@v4
@@ -113,7 +113,7 @@ jobs:
           try:r=json.loads(p.read_text())
           except (OSError,ValueError):r={}
           blocked=(r.get("schema")==1 and r.get("run_id")==os.environ.get("GITHUB_RUN_ID")
-                   and r.get("estado")=="bloqueado" and r.get("causa")=="cupo_imagen_agotado")
+                   and r.get("estado")=="bloqueado" and r.get("causa") in ("cupo_imagen_agotado","servicio_imagen_no_disponible"))
           with open(os.environ["GITHUB_OUTPUT"],"a") as f:
               f.write("cupo_bloqueado="+("si" if blocked else "no")+"\n")
           PY

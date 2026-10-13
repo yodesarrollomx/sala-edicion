@@ -40,8 +40,13 @@ def producir(trabajo, reglas, cat, salida_dir, cola=None):
     n, _, variante = item.partition('-')
     lam = lamina_de(trabajo)
     base = _receta_base(familia, n)
-    texto, quien, avisos = cerebro.receta(base, lam['ve'], lam['dice'], lam['nota'],
-                                          reglas, cola, int(variante or 1))
+    if 'hidream_demo' in str(reglas.get('imagen_motores') or 'hidream_demo').split(','):
+        d, quien, avisos = cerebro.fotografia_guion(lam['dice'], lam['ve'], lam['nota'], '', reglas,
+                                                    int(variante or 1))
+        texto = d['receta']
+    else:
+        texto, quien, avisos = cerebro.receta(base, lam['ve'], lam['dice'], lam['nota'],
+                                              reglas, cola, int(variante or 1))
     datos, ext, motor, avisos_img = imagen.generar(texto, reglas)
     destino = pathlib.Path(salida_dir) / ('%s-L%s-prospecto.%s'
                                           % (sala.slug_seguro(familia), sala.slug_seguro(item), ext))

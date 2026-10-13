@@ -1,28 +1,26 @@
 {
-  "model_revision": "2026-10-12.sala-imagen-evidencia.1",
-  "proposal_id": "CHG-SALA-OPENAI-BROKER-20261012",
-  "summary": "Aplicar el veto existente también a miniaturas del árbol de producción y prospectos, conservando datos, índices y elección histórica.",
+  "model_revision": "2026-10-13.sala-tablero-hidream.1",
+  "proposal_id": "CHG-SALA-TABLERO-HIDREAM-20261013",
+  "summary": "Convertir Hoy en tablero por publicaciones con fondos translúcidos, tira completa, zoom por niveles, estados editoriales y producción diferenciados, conteo de intentos e historial y elección de candidatas por carrusel/gestos. Integrar HiDream-I1-Dev gratuito en Mesa/Arranque/Ejecutor, recibos idempotentes y fotografía sin texto incrustado. Preservar sesiones, roles, decisiones, veto de modelos y snapshot privado; ninguna aprobación automática ni respaldo de pago implícito.",
   "components": [
-    "SYS-YOD-OS",
-    "SYS-CONTROL",
     "SYS-SALA",
     "GAS-SALA",
     "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
-    "EXT-ACTIONS",
     "EXT-MOTORES-MEDIA",
-    "SVC-AUTON-CLOUD",
-    "STORE-AUTON-ESTADO",
-    "EXT-OPENAI",
-    "EXT-RENDER"
+    "EXT-ACTIONS",
+    "SYS-YOD-OS",
+    "SYS-CONTROL",
+    "SYS-TRACK",
+    "SYS-OBRA",
+    "SYS-OBRA-CLIENTE"
   ],
   "tests": [
-    "git diff --check",
-    "python3 nube/verificar.py",
-    "node --test tests/sala-modelos.test.cjs",
-    "Regresión con selección sana aprobada, alternativa CPU y prospecto Pollinations; sólo se muestran fuentes permitidas y no se mutan datos.",
-    "CI existente de arquitectura, contratos y regresiones."
+    "python3 nube/verificar.py; git diff --check; regresiones Python y Node existentes.",
+    "Pruebas aisladas de recibo/cache/hash/seed/rate limit/reintento y rechazo de payloads de HiDream sin credenciales ni red.",
+    "Playwright con fuentes sintéticas: desktop/móvil/iframe, columnas/tira completa/guion/intención/historial, carrusel, gesto arriba, zoom atrás, selección original y sobre editorial, lector/agente sin votos.",
+    "Publicación por PR y recibo exacto; comprobación pública de archivos/código y lectura de datos existentes; sin decisiones de prueba en producción."
   ],
-  "rollback": "Revertir sólo el render por PR; conservar política, datos, índices originales, decisiones, imágenes e historia."
+  "rollback": "Revertir PR frontend/adaptador y restaurar sólo configuración previa registrada si Dirección lo requiere. No restaurar ni borrar fotos, votos, textos, Sheets, versiones, propuestas, sesiones o snapshots."
 }

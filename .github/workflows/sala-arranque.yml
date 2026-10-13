@@ -68,7 +68,7 @@ jobs:
 
       - name: Librerías (imagen y HTTP)
         run: |
-          pip install --quiet pillow requests
+          pip install --quiet pillow requests gradio_client
       - name: Caché de la tipografía de la casa (Playfair Display, OFL)
         id: cache-fuentes
         uses: actions/cache@v4
