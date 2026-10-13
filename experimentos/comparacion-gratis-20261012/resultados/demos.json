@@ -1,4 +1,11 @@
 {
+  "Qwen/Qwen-Image-2.1": {
+    "http": 200,
+    "stage": "RUNNING",
+    "host": "https://qwen-qwen-image-2-1.hf.space",
+    "sdk": "gradio",
+    "private": false
+  },
   "Tongyi-MAI/Z-Image-Turbo": {
     "http": 200,
     "stage": "RUNNING",
@@ -20,17 +27,17 @@
     "sdk": "gradio",
     "private": false
   },
-  "Qwen/Qwen-Image-2.1": {
-    "http": 200,
-    "stage": "RUNNING",
-    "host": "https://qwen-qwen-image-2-1.hf.space",
-    "sdk": "gradio",
-    "private": false
-  },
   "Efficient-Large-Model/SanaSprint": {
     "http": 200,
     "stage": "RUNNING",
     "host": "https://efficient-large-model-sanasprint.hf.space",
+    "sdk": "gradio",
+    "private": false
+  },
+  "gokaygokay/Kolors": {
+    "http": 200,
+    "stage": "RUNNING",
+    "host": "https://gokaygokay-kolors.hf.space",
     "sdk": "gradio",
     "private": false
   },
@@ -41,10 +48,10 @@
     "sdk": "gradio",
     "private": false
   },
-  "gokaygokay/Kolors": {
+  "HiDream-ai/HiDream-I1-Dev": {
     "http": 200,
     "stage": "RUNNING",
-    "host": "https://gokaygokay-kolors.hf.space",
+    "host": "https://hidream-ai-hidream-i1-dev.hf.space",
     "sdk": "gradio",
     "private": false
   },
@@ -59,13 +66,6 @@
     "http": 200,
     "stage": "RUNNING",
     "host": "https://pixart-alpha-pixart-sigma.hf.space",
-    "sdk": "gradio",
-    "private": false
-  },
-  "HiDream-ai/HiDream-I1-Dev": {
-    "http": 200,
-    "stage": "RUNNING",
-    "host": "https://hidream-ai-hidream-i1-dev.hf.space",
     "sdk": "gradio",
     "private": false
   }
