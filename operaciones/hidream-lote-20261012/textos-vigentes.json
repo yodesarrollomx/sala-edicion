@@ -43,5 +43,10 @@
     "dice": "Integramos los metros clave: agua, drenaje, vialidad y cajones de estacionamiento necesarios.",
     "n": 4,
     "slug": "llamada-entregable"
+  },
+  "llamada-entregable:5": {
+    "dice": "Proponemos entregarte la ubicación exacta y los metros cuadrados viables en tu pantalla.",
+    "n": 5,
+    "slug": "llamada-entregable"
   }
 }
