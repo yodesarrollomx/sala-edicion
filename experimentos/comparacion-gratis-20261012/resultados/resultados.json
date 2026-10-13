@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38330387449",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38330387449",
-  "fecha_utc": "2026-10-13T04:10:08Z",
+  "fecha_utc": "2026-10-13T04:10:39Z",
   "opciones": [
     {
       "n": 1,
@@ -255,8 +255,8 @@
       "nombre": "Stable Diffusion 3.5 Large",
       "modelo": "stabilityai/stable-diffusion-3.5-large",
       "tipo": "hf",
-      "estado": "sin cupo",
-      "imagen": null,
+      "estado": "generada",
+      "imagen": "07-stable-diffusion-3-5-large.png",
       "disponibilidad": {
         "http": 200,
         "stage": "RUNNING",
@@ -275,18 +275,30 @@
         4.5,
         28
       ],
-      "segundos": 1.3,
+      "segundos": 17.7,
       "intentos_anteriores": [
         {
           "estado": "falló la generación",
           "detalle": "Value 1280 is greater than maximum value 1024.",
           "http": null,
           "segundos": 1.1
+        },
+        {
+          "estado": "sin cupo",
+          "detalle": "You have exceeded your free ZeroGPU quota (65s requested vs. 78s left). Try again in 3:05:57. Subscribe to Hugging Face PRO to get 25 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU",
+          "http": null,
+          "segundos": 1.3
         }
       ],
-      "detalle": "You have exceeded your free ZeroGPU quota (65s requested vs. 78s left). Try again in 3:05:57. Subscribe to Hugging Face PRO to get 25 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU",
       "reintento_programado_utc": "2026-10-13T04:08:00Z",
-      "reintento_programado_hmo": "2026-10-12 21:08"
+      "reintento_programado_hmo": "2026-10-12 21:08",
+      "vista": "07-stable-diffusion-3-5-large.jpg",
+      "resolucion": [
+        832,
+        1024
+      ],
+      "sha256": "1ced075aad64e2b542c7f8b1c988e025376603729a15d058b3cddc13e4c678d0",
+      "bytes": 919615
     },
     {
       "n": 8,

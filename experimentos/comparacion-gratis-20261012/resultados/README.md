@@ -13,7 +13,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 4 | SANA-Sprint | generada | [Abrir original](04-sana-sprint.png) |
 | 5 | Ovis-Image 7B | generada | [Abrir original](05-ovis-image-7b.png) |
 | 6 | Kolors | falló la generación | — |
-| 7 | Stable Diffusion 3.5 Large | sin cupo | — |
+| 7 | Stable Diffusion 3.5 Large | generada | [Abrir original](07-stable-diffusion-3-5-large.png) |
 | 8 | Playground v2.5 | sin cupo | — |
 | 9 | PixArt-Sigma | generada | [Abrir original](09-pixart-sigma.png) |
 | 10 | Lucid Origin | sin cupo | — |
@@ -73,9 +73,11 @@ You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try agai
 
 ### 07. Stable Diffusion 3.5 Large
 
-**Estado:** sin cupo
+**Estado:** generada
 
-You have exceeded your free ZeroGPU quota (65s requested vs. 78s left). Try again in 3:05:57. Subscribe to Hugging Face PRO to get 25 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU
+![Stable Diffusion 3.5 Large](07-stable-diffusion-3-5-large.jpg)
+
+[Abrir original PNG](07-stable-diffusion-3-5-large.png)
 
 ### 08. Playground v2.5
 
