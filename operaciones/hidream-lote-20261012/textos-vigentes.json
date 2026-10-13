@@ -23,5 +23,10 @@
     "dice": "El resultado es un panorama claro para decidir el siguiente paso con total tranquilidad.",
     "n": 5,
     "slug": "la-ruta-autonoma"
+  },
+  "la-ruta-autonoma:6": {
+    "dice": "Basta compartir la ubicación para iniciar tu Plan de Potencial Personalizado en una videollamada.",
+    "n": 6,
+    "slug": "la-ruta-autonoma"
   }
 }
