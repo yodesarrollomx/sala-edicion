@@ -5,7 +5,7 @@ on:
     paths: [.github/workflows/sala-hidream-avance.yml]
 permissions:
   contents: write
-  actions: read
+  actions: write
 jobs:
   avance:
     runs-on: ubuntu-latest
@@ -19,6 +19,16 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install --quiet requests pillow
+      - name: Reemplazar sólo el visor anterior
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import os,requests
+          url="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/38338293417/cancel"
+          r=requests.post(url,headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"]},timeout=35)
+          if r.status_code not in (202,409):r.raise_for_status()
+          PY
       - name: Crear vista de las fotos ya publicadas, sin generar ni montar
         env:
           GH_TOKEN: ${{ github.token }}
@@ -42,7 +52,8 @@ jobs:
               r.raise_for_status();return r.content
           deadline=time.monotonic()+5400
           while time.monotonic()<deadline:
-              progress=read("cierre.json") or read("progreso.json")
+              finished=read("cierre.json")
+              progress=finished if finished and str(finished.get("run_id"))==run else read("progreso.json")
               if progress and str(progress.get("run_id"))==run:
                   count=sum(x["laminas_nuevas"] for x in progress["montadas"])
                   if count!=last:
