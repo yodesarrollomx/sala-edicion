@@ -58,5 +58,10 @@
     "dice": "¿Y si descubres todo lo que tu terreno en Hermosillo puede llegar a ser?",
     "n": 1,
     "slug": "tu-terreno-tus-reglas"
+  },
+  "tu-terreno-tus-reglas:2": {
+    "dice": "Carlos y Sofía evaluaban si vender, rentar o construir locales en su esquina.",
+    "n": 2,
+    "slug": "tu-terreno-tus-reglas"
   }
 }
