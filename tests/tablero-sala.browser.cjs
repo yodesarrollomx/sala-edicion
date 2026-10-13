@@ -64,7 +64,7 @@ async function touch(page,points,type){const session=await page.context().newCDP
   await p.keyboard.press("Escape");
   await p.locator('[data-history="2"]').click();
   await p.waitForSelector('.velo[data-id="tablero-historial"]');
-  assert.match(await p.locator('.velo[data-id="tablero-historial"]').innerText(),/7|8|9/);
+  assert.match(await p.locator('.velo[data-id="tablero-historial"]').innerText(),/10 intentos/);
   assert.equal(await p.locator('.velo[data-id="tablero-historial"] img[src*="bad"]').count(),0);
   await p.keyboard.press("Escape");
   await p.screenshot({path:out+"/02-publicacion-desktop.png",fullPage:true});

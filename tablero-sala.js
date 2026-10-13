@@ -220,7 +220,7 @@ api.refresh=refresh;api.render=render;
 const returnButton=document.createElement("button");returnButton.className="bt-return";returnButton.textContent="← Volver al tablero";returnButton.onclick=()=>{document.body.classList.remove("sala-turno");render();};document.getElementById("vHoy").prepend(returnButton);
 let wheelTotal=0,lastWheel=0;
 root.addEventListener("wheel",e=>{
- if(CAPAS.some(c=>!c.id.startsWith("tablero-")))return;
+ if(CAPAS.some(c=>!["tablero-publicacion","tablero-opciones"].includes(c.id)))return;
  const photo=e.target.closest(".bt-photo,.bt-hero");
  if(!photo&&!e.ctrlKey&&!e.metaKey)return;
  if(Date.now()-lastWheel>400)wheelTotal=0;lastWheel=Date.now();wheelTotal+=e.deltaY;
@@ -232,7 +232,7 @@ root.addEventListener("touchstart",e=>{if(e.touches.length===2){S.pinch={d:Math.
 root.addEventListener("touchmove",e=>{if(e.touches.length!==2||!S.pinch)return;e.preventDefault();const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY),r=d/S.pinch.d;if(r<.78){S.pinch=null;back();}else if(r>1.25){const id=S.pinch.g;S.pinch=null;if(!S.focus)open(S.groups.find(g=>g.id===id)||visible()[0]);else if(!S.choice)chooseFrame(group(),group().t.laminas[0]?.n);}},{passive:false});
 root.addEventListener("touchend",()=>{S.pinch=null;});
 document.addEventListener("keydown",e=>{
- if(!document.body.classList.contains("sala-tablero")||document.body.dataset.vista!=="hoy"||e.target.closest("textarea,input")||CAPAS.some(c=>!c.id.startsWith("tablero-")))return;
+ if(!document.body.classList.contains("sala-tablero")||document.body.dataset.vista!=="hoy"||e.target.closest("textarea,input")||CAPAS.some(c=>!["tablero-publicacion","tablero-opciones"].includes(c.id)))return;
  if(S.choice&&(e.key==="ArrowLeft"||e.key==="ArrowRight")){e.preventDefault();e.stopImmediatePropagation();moveOption(e.key==="ArrowLeft"?-1:1);}
  if(e.key==="Tab"&&S.choice){const buttons=[...root.querySelectorAll(".bt-choice button:not(:disabled),.bt-choice [tabindex]")];if(e.shiftKey&&document.activeElement===buttons[0]){e.preventDefault();buttons[buttons.length-1]?.focus();}else if(!e.shiftKey&&document.activeElement===buttons[buttons.length-1]){e.preventDefault();buttons[0]?.focus();}}
 },true);
