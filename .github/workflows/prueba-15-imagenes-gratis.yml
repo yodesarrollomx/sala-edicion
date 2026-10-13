@@ -1,0 +1,53 @@
+name: Prueba real de 15 generadores gratuitos
+on:
+  push:
+    branches: [codex/prueba-15-imagenes-gratis-20261012]
+    paths:
+      - .github/workflows/prueba-15-imagenes-gratis.yml
+      - experimentos/comparacion-gratis-20261012/prueba.py
+permissions:
+  contents: write
+concurrency:
+  group: prueba-15-generadores-gratis
+  cancel-in-progress: false
+jobs:
+  comparar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            experimentos
+            .github
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar clientes y navegador de prueba
+        run: |
+          pip install --quiet requests pillow gradio_client playwright
+          python -m playwright install --with-deps chromium
+      - name: Validar script sintácticamente y cambios
+        run: |
+          git diff --check HEAD^ HEAD
+          python -m py_compile experimentos/comparacion-gratis-20261012/prueba.py
+      - name: Generar una muestra por opción con el mismo encargo
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          KANDINSKY_API_KEY: ${{ secrets.KANDINSKY_API_KEY }}
+          KANDINSKY_SECRET_KEY: ${{ secrets.KANDINSKY_SECRET_KEY }}
+          PRUEBA_BRANCH: codex/prueba-15-imagenes-gratis-20261012
+          PYTHONUNBUFFERED: '1'
+        run: python experimentos/comparacion-gratis-20261012/prueba.py
+      - name: Conservar fotos, galería y recibos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: comparacion-15-imagenes-gratis
+          path: experimentos/comparacion-gratis-20261012/resultados/
+          if-no-files-found: warn
+          retention-days: 30
