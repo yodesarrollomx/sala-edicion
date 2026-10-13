@@ -10,7 +10,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 1 | Z-Image Turbo | falló la generación | — |
 | 2 | Qwen-Image 2.1 | pendiente | — |
 | 3 | Krea 2 Turbo | pendiente | — |
-| 4 | SANA-Sprint | pendiente | — |
+| 4 | SANA-Sprint | generada | [Abrir original](04-sana-sprint.png) |
 | 5 | Ovis-Image 7B | pendiente | — |
 | 6 | Kolors | sin cupo | — |
 | 7 | Stable Diffusion 3.5 Large | pendiente | — |
@@ -24,6 +24,8 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 15 | Adobe Firefly nativo | pendiente | — |
 
 ## Imágenes obtenidas
+
+![Comparación](comparacion.jpg)
 
 ### 01. Z-Image Turbo
 
@@ -41,7 +43,11 @@ Value: 1024 is not in the list of choices: ['1024x1024 ( 1:1 )', '1152x896 ( 9:7
 
 ### 04. SANA-Sprint
 
-**Estado:** pendiente
+**Estado:** generada
+
+![SANA-Sprint](04-sana-sprint.jpg)
+
+[Abrir original PNG](04-sana-sprint.png)
 
 ### 05. Ovis-Image 7B
 
