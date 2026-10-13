@@ -8,5 +8,10 @@
     "dice": "El Plan de Potencial Personalizado define los metros cuadrados viables y los giros ideales.",
     "n": 4,
     "slug": "el-arquitecto-invisible"
+  },
+  "el-arquitecto-invisible:5": {
+    "dice": "Con esta guía clara, Alejandro coordina a su equipo sin pisar la obra diario.",
+    "n": 5,
+    "slug": "el-arquitecto-invisible"
   }
 }
