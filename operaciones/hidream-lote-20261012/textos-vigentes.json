@@ -48,5 +48,10 @@
     "dice": "Proponemos entregarte la ubicación exacta y los metros cuadrados viables en tu pantalla.",
     "n": 5,
     "slug": "llamada-entregable"
+  },
+  "mesa-vacia:6": {
+    "dice": "Nadie tuvo que pelear. Los hermanos llegaron solos.",
+    "n": 6,
+    "slug": "mesa-vacia"
   }
 }
