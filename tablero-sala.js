@@ -208,15 +208,17 @@ function bind(){
 async function refresh(live=false){
  if(S.busy)return;S.busy=true;render();
  try{
-  if(live&&ENTRADO()){const d=await traer(fecha,1,20000,true);if(d&&!d._respaldo&&!d.error)aplicarDia(d);else S.notice="No se confirmó una lectura nueva del Sheet; conservé lo que ya tenías.";}
-  const props=(D&&(D._todas||D.propuestas))||[],all=await Promise.all(props.map(async p=>({p,t:await cargarTira(p.id)}))),map=new Map();
+  if(live&&ENTRADO()){_tCola=0;traerCola();const d=await traer(fecha,1,20000,true);if(d&&!d._respaldo&&!d.error)aplicarDia(d);else S.notice="No se confirmó una lectura nueva del Sheet; conservé lo que ya tenías.";}
+  const props=(D&&(D._todas||D.propuestas))||[];
+  if(live){for(const p of props)delete TIRAS[p.id];}
+  const all=await Promise.all(props.map(async p=>({p,t:await cargarTira(p.id)}))),map=new Map();
   for(const {p,t}of all){if(!t||!(t.laminas||[]).length)continue;const id=t.pieza_slug||normSlug(t.pieza||p.pieza||p.titulo);let g=map.get(id);if(!g){g={id,pid:p.id,p,t,ejes:[]};map.set(id,g);}else if((D.propuestas||[]).some(x=>x.id===p.id)&&!dec[g.pid])map.set(id,{id,pid:p.id,p,t,ejes:g.ejes});}
-  for(const {p,t}of all){if(t&&(t.laminas||[]).length)continue;const id=p.pieza_slug||normSlug(p.pieza||String(p.titulo||"").split(" · ")[0]);const g=map.get(id);if(g)g.ejes.push(p);}
+  for(const {p,t}of all){if(t&&(t.laminas||[]).length)continue;const id=p.pieza_slug||normSlug(p.pieza||String(p.titulo||"").split(" · ")[0]);const g=map.get(id)||[...map.values()].find(x=>normSlug(x.t.pieza)===id);if(g)g.ejes.push(p);else map.set(id,{id,pid:p.id,p,t:{pieza:p.pieza||p.titulo,pieza_slug:id,laminas:[]},ejes:[p]});}
   S.groups=[...map.values()];S.loaded=true;if(S.focus&&!group()){S.focus=null;S.choice=null;}
  }catch(e){S.notice="No pude actualizar el tablero. Tu revisión sigue conservada. Usa Actualizar.";}
  finally{S.busy=false;render();}
 }
-api.refresh=refresh;api.render=render;
+api.refresh=refresh;api.render=render;api.produccionActualizada=()=>{if(!S.choice)render();};
 const returnButton=document.createElement("button");returnButton.className="bt-return";returnButton.textContent="← Volver al tablero";returnButton.onclick=()=>{document.body.classList.remove("sala-turno");render();};document.getElementById("vHoy").prepend(returnButton);
 let wheelTotal=0,lastWheel=0;
 root.addEventListener("wheel",e=>{

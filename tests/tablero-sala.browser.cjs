@@ -25,7 +25,7 @@ async function prepare(browser,width,role="editor",mobile=false){
   if(u.hostname==="script.google.com"||u.hostname==="script.googleusercontent.com"){
    if(req.method()==="POST"){const body=JSON.parse(req.postData()||"{}");writes.push(body);await route.fulfill({json:{ok:true}});return;}
    const resource=u.searchParams.get("recurso");
-   await route.fulfill({json:resource==="dia"?day(role):resource==="cola"?{cola:[{pieza:"synthetic-1",etapa:"voz",estado:"corriendo",item:"2"}]}:resource==="entrada"?{ok:true,rol:role}: {ok:true,reglas:{},propuestas:[]}});return;
+   await route.fulfill({json:resource==="dia"?day(role):resource==="cola"?{ok:true,cola:[{pieza:"synthetic-1",etapa:"voz",estado:"corriendo",item:"2"}]}:resource==="entrada"?{ok:true,rol:role}: {ok:true,reglas:{},propuestas:[]}});return;
   }
   if(u.hostname!=="127.0.0.1"){await route.fulfill({status:200,contentType:req.resourceType()==="stylesheet"?"text/css":"application/javascript",body:""});return;}
   if(/\/laminas\/.*\.(jpg|png)$/.test(u.pathname)){await route.fulfill({contentType:"image/svg+xml",body:svg});return;}
@@ -55,6 +55,7 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   assert.equal(await p.locator(".bt-frame").count(),36);
   assert.equal(await p.locator(".bt-frame.verde").count(),6);
   assert.ok(await p.locator(".bt-attempts").first().isVisible());
+  await p.waitForSelector(".bt-counts .bt-dot.produccion");
   await p.screenshot({path:out+"/01-tablero-desktop.png",fullPage:true});
   await p.locator('[data-open="synthetic-0"]').click();
   await p.waitForSelector('#tableroHoy[data-level="publicacion"]');

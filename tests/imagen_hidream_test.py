@@ -46,8 +46,15 @@ class HiDreamTest(unittest.TestCase):
         self.assertEqual(calls,[])
         with tempfile.TemporaryDirectory() as td,patch.object(hi,"RAIZ",Path(td)),patch.object(hi,"_client",side_effect=AssertionError("no red")):
             with self.assertRaises(imagen.ReciboNoConfirmado):hi.generar("photo",{"_imagen_solo_recibo":True})
-    def test_modelo_falso_y_archivo_invalidos_se_bloquean(self):
+    def test_archivo_invalido_se_bloquea(self):
         with self.assertRaises(MotorError):hi.validar(b"not image"*1000)
+    def test_texto_solo_cambia_por_peticion_explicita(self):
+        with patch.object(cerebro,"_gemini",return_value='{"scene":"Architects compare scale models","texto":"El plan abre una ruta clara"}'):
+            d,_,_=cerebro.fotografia_guion("Un caption anterior","Maquetas","Que diga una ruta clara","",{},1)
+        self.assertEqual(d["texto"],"El plan abre una ruta clara")
+        self.assertNotIn(d["texto"],d["receta"])
+        with patch.object(cerebro,"_gemini",side_effect=MotorError("sin cuota")):
+            with self.assertRaises(MotorError):cerebro.fotografia_guion("Anterior","Maquetas","Que diga una ruta clara","",{},1)
     def test_descripcion_visual_no_envia_caption_ni_cerebro_pagado(self):
         caption="Cuatro opiniones sobre nuestro proyecto"
         with patch.object(cerebro,"_gemini",side_effect=MotorError("sin cuota")),patch.object(cerebro,"_openai",side_effect=AssertionError("sin pago")):

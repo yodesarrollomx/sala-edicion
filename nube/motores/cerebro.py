@@ -211,6 +211,7 @@ def fotografia_guion(dice, ve, nota, referencia, reglas, variante=1):
     import re
     context = str(ve or '').strip()[:800]
     caption = str(dice or '').strip()
+    edita_texto = bool(re.search(r'cambi\w*.*texto|texto no engancha|texto m[aá]s concreto|que diga|reescrib\w*.*texto|quita.*pregunta', str(nota or ''), re.I))
     # El guion explica la intención al traductor; el caption nunca se manda al generador.
     pedido = json.dumps({'visual': context, 'intencion': caption,
                          'correccion_visual': str(nota or '')[:600], 'referencia': referencia,
@@ -221,15 +222,21 @@ def fotografia_guion(dice, ve, nota, referencia, reglas, variante=1):
                    'reference characters, natural light and location. For variant change framing. '
                    'No typography, no text, no words, labels, signs, money or watermarks. '
                    'Return only JSON {"scene":"..."}; never include caption text.')
+    if edita_texto:
+        instruction += (' The editor explicitly asks for a caption change. Also return texto: the corrected Spanish caption, '
+                        'one idea, at most14 words, no money, locations or promises. Only change what the note requests. '
+                        'Never put texto into scene.')
     avisos = []
     try:
         d = _json_de(_gemini(pedido, reglas, instruction))
         scene = str((d or {}).get('scene') or '').strip()
         if scene and (not caption or caption.casefold() not in scene.casefold()):
             exigir(scene, reglas, 'escena fotográfica')
-            return {'texto': caption, 'receta': scene, 'porque': 'Fotografía desde la acción del guion; texto compuesto por separado.'}, 'gemini', avisos
+            return {'texto': str(d.get('texto') or caption).strip() if edita_texto else caption, 'receta': scene, 'porque': 'Fotografía desde la acción del guion; texto compuesto por separado.'}, 'gemini', avisos
     except (MotorError, ContenidoVetado) as e:
         avisos.append(str(e))
+    if edita_texto:
+        raise MotorError('Corrección explícita de texto pendiente: no respondió el traductor gratuito', intermitente=True)
     # La descripción visual del guion es la fuente; no se sustituye por una pareja posando.
     visual = re.sub(r'["“”].*?["“”]', '', context)
     visual = re.sub(r'\b(texto|caption|t[ií]tulo|letrero|tipograf[ií]a)\s*:.*', '', visual, flags=re.I)
