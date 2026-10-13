@@ -1,0 +1,16 @@
+name: Reiniciar lote HiDream antes de generar
+on:
+  push:
+    branches: [codex/sala-hidream-lote-20261012]
+    paths: [.github/workflows/sala-hidream-supervision.yml]
+permissions:
+  actions: write
+  contents: read
+jobs:
+  relevar-operador:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detener la primera versión para usar identificadores únicos de snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST repos/yodesarrollomx/sala-edicion/actions/runs/38334008159/cancel

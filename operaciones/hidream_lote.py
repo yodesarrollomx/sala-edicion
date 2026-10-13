@@ -138,6 +138,7 @@ def generar_hidream(receta,reglas):
         STOP["generadas"]+=1
         reglas["_receta_proveedor_sha256"]=recipe;reglas["_imagen_recibo_id"]=rid
         emit("HIDREAM_FOTO_CONFIRMADA",receipt)
+        publicar_resumen("generacion",{"modelo":MODEL,"generadas":STOP["generadas"],"ultima":receipt,"run_id":os.environ["GITHUB_RUN_ID"]})
         return data,"png",MOTOR,[]
     except Exception as e:
         STOP.update(detenido=True,causa=limpiar(e))
@@ -186,7 +187,7 @@ def main():
         queue=pendientes()
         total=sum(q["cantidad"] for q in queue)
         emit("HIDREAM_LOTE",{"pendientes":total,"piezas":queue,"modelo":MODEL,"una_toma_por_lamina":True})
-        for item in queue:
+        for round_number,item in enumerate(queue,1):
             if STOP["detenido"]:break
             before=STOP["generadas"]
             code=llamar_mesa("--producir","--pieza",item["slug"])
@@ -196,6 +197,7 @@ def main():
                 emit("HIDREAM_PIEZA_SIN_CARTA",{"pieza":item["pieza"],"codigo":code})
                 continue
             verificar_codigo_y_datos()
+            cloud.attempt=int(os.environ.get("GITHUB_RUN_ATTEMPT","1"))*1000+round_number
             cloud.prepare("mesa")
             cloud.dispatch_publish(cloud.head())
             if llamar_mesa("--montar")!=0:raise RuntimeError("Mesa no confirmó el montaje")

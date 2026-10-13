@@ -114,5 +114,7 @@ jobs:
         if: always()
         with:
           name: hidream-recibos-operacion
-          path: ${{ runner.temp }}/hidream-operacion/*.json
+          path: |
+            ${{ runner.temp }}/hidream-operacion/*.json
+            laminas/recibos-hidream/
           retention-days: 30
