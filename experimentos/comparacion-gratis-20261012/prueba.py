@@ -201,15 +201,29 @@ def param_value(p,row):
     default=p.get("parameter_default") if p.get("parameter_has_default") else None
     schema=p.get("type") or {}
     enum=schema.get("enum",[]) if isinstance(schema,dict) else []
+    if enum:
+        if "model" in low:
+            return next((x for x in enum if "turbo" in str(x).lower()),default if default in enum else enum[0])
+        if "resolution" in low or "width x height" in low:
+            return next((x for x in enum if "864x1152" in str(x)),default if default in enum else enum[0])
+        if "aspect" in low or "ratio" in low:
+            return next((x for x in enum if "4:5" in str(x)),next((x for x in enum if "3:4" in str(x)),default if default in enum else enum[0]))
+        if row["n"]==2 and "quality" in low and "speed" in enum:return "speed"
+        return default if default in enum else enum[0]
+    if "negative" in low and (schema.get("type")=="boolean" or "use negative" in low):return True
     if any(s in low for s in ("negative prompt","negative text")):return NEGATIVE
     if "prompt" in low and not any(s in low for s in ("extend","enhance","enable")):return PROMPT
     if any(s in low for s in ("enable extend","prompt extend","enable enhance","enhance prompt")):return False
     if "custom size" in low:return True
-    if "quality" in low:return "speed" if not enum or "speed" in enum else enum[0]
+    if "quality" in low:return "speed" if row["n"]==2 else default
     if "random" in low:return False
     if "seed" in low:return 74103
-    if "width" in low:return 1024
-    if "height" in low:return 1280
+    if "width" in low or "height" in low:
+        target=832 if "width" in low else 1024
+        desc=schema.get("description","") if isinstance(schema,dict) else ""
+        bounds=re.search(r"between ([0-9.]+) and ([0-9.]+)",desc)
+        if bounds:target=max(int(float(bounds.group(1))),min(target,int(float(bounds.group(2)))))
+        return target
     if "aspect" in low:
         choices=enum or []
         return next((x for x in choices if str(x) in ("4:5","Portrait (4:5)")),
@@ -225,10 +239,11 @@ def param_value(p,row):
         if row["n"]==3:return 8
         if row["n"]==4:return default if default is not None else 2
         if row["n"]==9:return 20
-        return 28 if default is None else default
+        return 28
     if any(s in low for s in ("num images","num outputs","batch size")):return 1
     if any(s in low for s in ("input images","image paths","output gallery","gallery")):return []
     if "image" in low and not any(s in low for s in ("guidance","size")):return default
+    if "guidance" in low:return default if default is not None else 4.5
     if "log dir" in low:return default or "./generation_logs_paper_case"
     if default is not None:return default
     if enum:return enum[0]
@@ -271,17 +286,17 @@ def hf(row,token,metadata):
         names=[generate] if generate else names
         if prepare:
             ep=eps[prepare]
-            values={p["parameter_name"]:param_value(p,row) for p in ep.get("parameters",[])}
+            values=[param_value(p,row) for p in ep.get("parameters",[])]
             log("HF_PREPARAR",{"n":row["n"],"endpoint":prepare})
-            client.submit(api_name=prepare,**values).result(timeout=180)
+            client.submit(*values,api_name=prepare).result(timeout=180)
     chosen=names[0]
     if not chosen or score_endpoint(chosen,eps[chosen])<15:raise RuntimeError("No se identificó función generadora de imagen")
     ep=eps[chosen]
-    values={p["parameter_name"]:param_value(p,row) for p in ep.get("parameters",[])}
+    values=[param_value(p,row) for p in ep.get("parameters",[])]
     row["endpoint"]=chosen
     row["parametros"]=values
     log("HF_GENERAR",{"n":row["n"],"endpoint":chosen,"parametros":values})
-    job=client.submit(api_name=chosen,**values)
+    job=client.submit(*values,api_name=chosen)
     try:result=job.result(timeout=240)
     except Exception:
         try:job.cancel()
@@ -349,6 +364,12 @@ def web(row):
 
 def main():
     log("PRUEBA_15_INICIO",{"run_id":RUN,"modelos":15,"encargo":PROMPT,"escrituras_negocio":0})
+    previous=OUT/"resultados.json"
+    if previous.exists():
+        saved=json.loads(previous.read_text(encoding="utf-8"))
+        for old in saved.get("opciones",[]):
+            n=old.get("n",0)
+            if 1<=n<=15:ROWS[n-1].update(old)
     token,auth=get_hf_token()
     (OUT/"acceso-hf.json").write_text(json.dumps(auth,ensure_ascii=False,indent=2)+"\n")
     spaces=[r["modelo"] for r in ROWS if r["tipo"]=="hf"]
@@ -363,9 +384,12 @@ def main():
     log("DEMOS",metadata)
     publish()
     # Primero dos proveedores ya autenticados; HF se ordena para reservar el demo de duración más alta antes de consumir el cupo.
-    order=[10,11,6,1,4,3,2,5,7,8,9,13,12,14,15]
+    order=[1,7,8]
     for n in order:
-        row=ROWS[n-1];row["estado"]="ejecutando";start=time.monotonic()
+        row=ROWS[n-1]
+        row.setdefault("intentos_anteriores",[]).append({k:row.get(k) for k in ("estado","detalle","http","segundos")})
+        row["estado"]="ejecutando";row.pop("detalle",None)
+        start=time.monotonic()
         log("PRUEBA",{"n":n,"motor":row["nombre"],"estado":"ejecutando"})
         try:
             if row["tipo"]=="cf":cf(row)
