@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "modelo": "HiDream-I1-Dev",
+  "motor": "hidream_demo",
+  "segundos": 165.59,
+  "cache_verificada": true,
+  "sha256": "ede1a1c81efa906a574625a6d8026fa6e6ec2bb6afbd84c4d7e457b516d24732",
+  "costo_monetario": 0,
+  "prueba_sintetica": true,
+  "decisiones_escritas": 0
+}
