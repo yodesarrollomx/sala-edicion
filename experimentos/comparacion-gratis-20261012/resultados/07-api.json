@@ -1,0 +1,183 @@
+{
+  "/infer": {
+    "parameters": [
+      {
+        "name": "prompt",
+        "label": "Prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "negative_prompt",
+        "label": "Negative prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "seed",
+        "label": "Seed",
+        "default": 0,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        }
+      },
+      {
+        "name": "randomize_seed",
+        "label": "Randomize seed",
+        "default": true,
+        "type": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "width",
+        "label": "Width",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 512 and 1024"
+        }
+      },
+      {
+        "name": "height",
+        "label": "Height",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 512 and 1024"
+        }
+      },
+      {
+        "name": "guidance_scale",
+        "label": "Guidance scale",
+        "default": 4.5,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0.0 and 7.5"
+        }
+      },
+      {
+        "name": "num_inference_steps",
+        "label": "Number of inference steps",
+        "default": 40,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 50"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Result",
+        "type": {
+          "properties": {
+            "path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Path to a local file",
+              "title": "Path"
+            },
+            "url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Publicly available url or base64 encoded image",
+              "title": "Url"
+            },
+            "size": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Size of image in bytes",
+              "title": "Size"
+            },
+            "orig_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Original filename",
+              "title": "Orig Name"
+            },
+            "mime_type": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "mime type of image",
+              "title": "Mime Type"
+            },
+            "is_stream": {
+              "default": false,
+              "description": "Can always be set to False",
+              "title": "Is Stream",
+              "type": "boolean"
+            },
+            "meta": {
+              "additionalProperties": true,
+              "default": {
+                "_type": "gradio.FileData"
+              },
+              "title": "Meta",
+              "type": "object"
+            }
+          },
+          "title": "ImageData",
+          "type": "object",
+          "additional_description": "A local filepath or publicly available URL."
+        },
+        "python_type": {
+          "type": "filepath",
+          "description": ""
+        },
+        "component": "Image"
+      },
+      {
+        "label": "Seed",
+        "type": {
+          "type": "number",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "python_type": {
+          "type": "float",
+          "description": "numeric value between 0 and 2147483647"
+        },
+        "component": "Slider"
+      }
+    ]
+  }
+}
