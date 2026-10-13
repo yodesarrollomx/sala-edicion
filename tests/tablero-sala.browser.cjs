@@ -45,7 +45,8 @@ async function prepare(browser,width,role="editor",mobile=false){
  await page.evaluate(()=>{if(typeof cerrarCapas==="function")cerrarCapas();});
  return {page,context,writes,errors};
 }
-async function touch(page,points,type){const session=await page.context().newCDPSession(page);await session.send("Input.dispatchTouchEvent",{type,touchPoints:points});await session.detach();}
+const sessions=new WeakMap();
+async function touch(page,points,type){let session=sessions.get(page);if(!session){session=await page.context().newCDPSession(page);sessions.set(page,session);}await session.send("Input.dispatchTouchEvent",{type,touchPoints:points});}
 (async()=>{
  const b=await chromium.launch({headless:true});
  try{
@@ -67,6 +68,11 @@ async function touch(page,points,type){const session=await page.context().newCDP
   assert.match(await p.locator('.velo[data-id="tablero-historial"]').innerText(),/10 intentos/);
   assert.equal(await p.locator('.velo[data-id="tablero-historial"] img[src*="bad"]').count(),0);
   await p.keyboard.press("Escape");
+  await p.locator('[data-info="guion"]').click();
+  await p.waitForSelector('.velo[data-id="guia-tira"]');
+  assert.equal(await p.locator('.velo[data-id="guia-tira"] .sb-cuadro').count(),6);
+  await p.keyboard.press("Escape");
+  await p.waitForSelector('#tableroHoy[data-level="publicacion"]');
   await p.screenshot({path:out+"/02-publicacion-desktop.png",fullPage:true});
   await p.locator('[data-lamina="2"]').click();
   await p.waitForSelector(".bt-choice");
@@ -81,6 +87,15 @@ async function touch(page,points,type){const session=await page.context().newCDP
   assert.match(chosen.notas[0],/\[toma elegida: 3\]/);
   assert.notEqual(chosen.laminas[1],"si");
   await p.screenshot({path:out+"/03-carrusel-desktop.png",fullPage:true});
+  await p.locator("[data-close-choice]").click();
+  await p.waitForSelector('#tableroHoy[data-level="publicacion"]');
+  await p.locator('[data-lamina="3"]').click();
+  await p.locator('[data-vote="no"]').click();
+  await p.locator("#notaT").fill("Cambiar sólo la iluminación");
+  await p.locator("#notaOk").click();
+  await p.waitForFunction(()=>document.querySelector(".bt-choice-copy .bt-dot")?.textContent==="Cambio pedido");
+  assert.equal(d.writes.filter(x=>x.accion==="decidir").length,2);
+  assert.equal(d.writes.filter(x=>x.accion==="decidir")[1].propuestas["synthetic-0"].laminas[1],"no");
   await p.locator("[data-close-choice]").click();
   await p.waitForSelector('#tableroHoy[data-level="publicacion"]');
   await p.keyboard.press("Escape");
