@@ -48,8 +48,8 @@ test("árbol de producción oculta modelos retirados sin cambiar la elección hi
  const html=fs.readFileSync("index.html","utf8");
  const start=html.indexOf("function ramaLaminas("),end=html.indexOf("\nfunction ramaEtapaCola",start);
  assert.ok(start>=0&&end>start);
- const render=new Function("POLITICA_IMAGEN","laminaAbierta","esc","ligera","evidenciaSrc","colorPunto",
-   html.slice(start,end)+";return ramaLaminas;")(p,()=>null,String,x=>x,f=>f.src,()=> "gris");
+ const render=new Function("POLITICA_IMAGEN","laminaAbierta","esc","ligera","evidenciaSrc","colorPunto","fuenteLamina",
+   html.slice(start,end)+";return ramaLaminas;")(p,()=>null,String,x=>x,f=>f.src,()=> "gris",(l,src)=>p.srcLamina(l,src));
  const retired=p.policy.fuentes_retiradas[0];
  const tira={laminas:[{n:2,version:1,estado:"aprobada",src:"healthy.png",
    candidatas:[{motor:"cpu",src:"retired-cpu.jpg"},{motor:"cloudflare",src:"healthy.jpg"}]}]};
