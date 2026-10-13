@@ -63,5 +63,10 @@
     "dice": "Carlos y Sofía evaluaban si vender, rentar o construir locales en su esquina.",
     "n": 2,
     "slug": "tu-terreno-tus-reglas"
+  },
+  "tu-terreno-tus-reglas:3": {
+    "dice": "Nosotros calculamos los metros cuadrados posibles y los giros que verdaderamente caben.",
+    "n": 3,
+    "slug": "tu-terreno-tus-reglas"
   }
 }
