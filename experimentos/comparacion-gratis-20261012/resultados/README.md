@@ -8,7 +8,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | # | Motor | Resultado | Foto |
 |---|---|---|---|
 | 1 | Z-Image Turbo | sin cupo | — |
-| 2 | Qwen-Image 2.1 | sin cupo | — |
+| 2 | Qwen-Image 2.1 | generada | [Abrir original](02-qwen-image-2-1.png) |
 | 3 | Krea 2 Turbo | sin cupo | — |
 | 4 | SANA-Sprint | generada | [Abrir original](04-sana-sprint.png) |
 | 5 | Ovis-Image 7B | generada | [Abrir original](05-ovis-image-7b.png) |
@@ -35,9 +35,11 @@ You have exceeded your free ZeroGPU quota (90s requested vs. 78s left). Try agai
 
 ### 02. Qwen-Image 2.1
 
-**Estado:** sin cupo
+**Estado:** generada
 
-You have exceeded your free ZeroGPU quota (86s requested vs. 78s left). Try again in 3:11:13. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU
+![Qwen-Image 2.1](02-qwen-image-2-1.jpg)
+
+[Abrir original PNG](02-qwen-image-2-1.png)
 
 ### 03. Krea 2 Turbo
 

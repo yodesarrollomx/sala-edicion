@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38330387449",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38330387449",
-  "fecha_utc": "2026-10-13T04:09:12Z",
+  "fecha_utc": "2026-10-13T04:09:44Z",
   "opciones": [
     {
       "n": 1,
@@ -49,8 +49,8 @@
       "nombre": "Qwen-Image 2.1",
       "modelo": "Qwen/Qwen-Image-2.1",
       "tipo": "hf",
-      "estado": "sin cupo",
-      "imagen": null,
+      "estado": "generada",
+      "imagen": "02-qwen-image-2-1.png",
       "disponibilidad": {
         "http": 200,
         "stage": "RUNNING",
@@ -59,20 +59,34 @@
         "private": false
       },
       "endpoint": "/generate_request",
-      "parametros": {
-        "original_prompt": "Photorealistic editorial photograph of a Mexican family of exactly three adults a woman aged 65, a man aged 45 and a woman aged 35, sitting around a wooden dining table and discussing a simple architectural floor plan. Contemporary modest home in Sonora, warm neutral plaster walls, natural window light, authentic everyday clothing, candid interaction, realistic facial proportions and skin texture, anatomically correct hands. Vertical portrait composition, documentary photography, restrained colors, no illustration, no cartoon, no plastic skin, no letters, no captions, no logos, no watermark.",
-        "enable_extend": false,
-        "custom_size": true,
-        "log_dir": "./generation_logs_paper_case",
-        "seed": 74103,
-        "height": 1280,
-        "width": 1024,
-        "negative_prompt": "text, letters, captions, logos, watermark, cartoon, illustration, plastic skin, deformed hands"
-      },
-      "detalle": "You have exceeded your free ZeroGPU quota (86s requested vs. 78s left). Try again in 3:11:13. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU",
-      "segundos": 2.1,
+      "parametros": [
+        "Photorealistic editorial photograph of a Mexican family of exactly three adults a woman aged 65, a man aged 45 and a woman aged 35, sitting around a wooden dining table and discussing a simple architectural floor plan. Contemporary modest home in Sonora, warm neutral plaster walls, natural window light, authentic everyday clothing, candid interaction, realistic facial proportions and skin texture, anatomically correct hands. Vertical portrait composition, documentary photography, restrained colors, no illustration, no cartoon, no plastic skin, no letters, no captions, no logos, no watermark.",
+        false,
+        true,
+        "./generation_logs_paper_case",
+        74103,
+        1024,
+        832,
+        "text, letters, captions, logos, watermark, cartoon, illustration, plastic skin, deformed hands"
+      ],
+      "segundos": 20.0,
       "reintento_programado_utc": "2026-10-13T04:08:00Z",
-      "reintento_programado_hmo": "2026-10-12 21:08"
+      "reintento_programado_hmo": "2026-10-12 21:08",
+      "intentos_anteriores": [
+        {
+          "estado": "sin cupo",
+          "detalle": "You have exceeded your free ZeroGPU quota (86s requested vs. 78s left). Try again in 3:11:13. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU",
+          "http": null,
+          "segundos": 2.1
+        }
+      ],
+      "vista": "02-qwen-image-2-1.jpg",
+      "resolucion": [
+        832,
+        1024
+      ],
+      "sha256": "bb7aff07eab7837d9d070cc42893a3c9bfa7e5856463f458d9a36f8e3035685a",
+      "bytes": 1220371
     },
     {
       "n": 3,
