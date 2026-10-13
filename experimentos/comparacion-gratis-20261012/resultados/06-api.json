@@ -1,0 +1,210 @@
+{
+  "/generate_image": {
+    "parameters": [
+      {
+        "name": "prompt",
+        "label": "Prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "negative_prompt",
+        "label": "Negative Prompt",
+        "default": null,
+        "type": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "height",
+        "label": "Height",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 512 and 2048"
+        }
+      },
+      {
+        "name": "width",
+        "label": "Width",
+        "default": 1024,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 512 and 2048"
+        }
+      },
+      {
+        "name": "num_inference_steps",
+        "label": "Number of Inference Steps",
+        "default": 20,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 20 and 50"
+        }
+      },
+      {
+        "name": "guidance_scale",
+        "label": "Guidance Scale",
+        "default": 5,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 20"
+        }
+      },
+      {
+        "name": "num_images_per_prompt",
+        "label": "Number of images per prompt",
+        "default": 1,
+        "type": {
+          "type": "number",
+          "description": "numeric value between 1 and 4"
+        }
+      },
+      {
+        "name": "use_random_seed",
+        "label": "Use Random Seed",
+        "default": true,
+        "type": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "seed",
+        "label": "Seed",
+        "default": 0,
+        "type": {
+          "type": "number"
+        }
+      }
+    ],
+    "returns": [
+      {
+        "label": "Result",
+        "type": {
+          "$defs": {
+            "FileData": {
+              "properties": {
+                "path": {
+                  "title": "Path",
+                  "type": "string"
+                },
+                "url": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Url"
+                },
+                "size": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Size"
+                },
+                "orig_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Orig Name"
+                },
+                "mime_type": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mime Type"
+                },
+                "is_stream": {
+                  "default": false,
+                  "title": "Is Stream",
+                  "type": "boolean"
+                },
+                "meta": {
+                  "default": {
+                    "_type": "gradio.FileData"
+                  },
+                  "title": "Meta",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "title": "FileData",
+              "type": "object"
+            },
+            "GalleryImage": {
+              "properties": {
+                "image": {
+                  "$ref": "#/$defs/FileData"
+                },
+                "caption": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Caption"
+                }
+              },
+              "required": [
+                "image"
+              ],
+              "title": "GalleryImage",
+              "type": "object"
+            }
+          },
+          "items": {
+            "$ref": "#/$defs/GalleryImage"
+          },
+          "title": "GalleryData",
+          "type": "array"
+        },
+        "python_type": {
+          "type": "List[Dict(image: filepath, caption: str | None)]",
+          "description": ""
+        },
+        "component": "Gallery"
+      },
+      {
+        "label": "Seed Used",
+        "type": {
+          "type": "number"
+        },
+        "python_type": {
+          "type": "float",
+          "description": ""
+        },
+        "component": "Number"
+      }
+    ]
+  }
+}

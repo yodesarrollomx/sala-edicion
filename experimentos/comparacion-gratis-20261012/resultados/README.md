@@ -12,7 +12,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 3 | Krea 2 Turbo | pendiente | — |
 | 4 | SANA-Sprint | pendiente | — |
 | 5 | Ovis-Image 7B | pendiente | — |
-| 6 | Kolors | pendiente | — |
+| 6 | Kolors | sin cupo | — |
 | 7 | Stable Diffusion 3.5 Large | pendiente | — |
 | 8 | Playground v2.5 | pendiente | — |
 | 9 | PixArt-Sigma | pendiente | — |
@@ -47,7 +47,9 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 
 ### 06. Kolors
 
-**Estado:** pendiente
+**Estado:** sin cupo
+
+'You have exceeded your free ZeroGPU quota (300s requested vs. 82s left). Try again in 3:11:42. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU'
 
 ### 07. Stable Diffusion 3.5 Large
 
