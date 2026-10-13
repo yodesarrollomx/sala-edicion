@@ -1,0 +1,10 @@
+{
+  "tu-terreno-tus-reglas:1": {
+    "dice": "¿Y si descubres todo lo que tu terreno puede llegar a ser?",
+    "dice_anterior": "¿Y si descubres todo lo que tu terreno en Hermosillo puede llegar a ser?",
+    "n": 1,
+    "slug": "tu-terreno-tus-reglas",
+    "motivo": "Candidata sin ubicación vetada; conserva el texto anterior como historia",
+    "aprobado": false
+  }
+}
