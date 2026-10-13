@@ -33,5 +33,10 @@
     "dice": "Proponemos calcular los metros cuadrados exactos que permite la norma municipal vigente.",
     "n": 2,
     "slug": "llamada-entregable"
+  },
+  "llamada-entregable:3": {
+    "dice": "Estudiamos los m² permitidos, los giros y el estacionamiento exacto.",
+    "n": 3,
+    "slug": "llamada-entregable"
   }
 }
