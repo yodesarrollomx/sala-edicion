@@ -1,0 +1,42 @@
+name: Verificar entrega de la galería de 15 generadores
+on:
+  push:
+    branches: [codex/prueba-15-imagenes-gratis-20261012]
+    paths:
+      - .github/workflows/prueba-15-galeria-verificar.yml
+      - experimentos/comparacion-gratis-20261012/auditar_galeria.py
+permissions:
+  contents: write
+  actions: read
+jobs:
+  comprobar-galeria:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+          sparse-checkout: |
+            experimentos
+            .github
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar verificación visual y HTTP
+        run: |
+          pip install --quiet requests pillow playwright
+          python -m playwright install --with-deps chromium
+      - name: Verificar originales, hashes y galería en móvil
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git diff --check HEAD^ HEAD
+          python -m py_compile experimentos/comparacion-gratis-20261012/auditar_galeria.py
+          python experimentos/comparacion-gratis-20261012/auditar_galeria.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: auditoria-galeria-15-generadores
+          path: experimentos/comparacion-gratis-20261012/resultados/
+          retention-days: 30
