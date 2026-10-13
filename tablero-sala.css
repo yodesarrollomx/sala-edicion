@@ -132,3 +132,4 @@ body.sala-turno .bt-return{display:inline-block}
  .bt-choice-copy .bt-tools{margin:10px 0}
 }
 @media(prefers-reduced-motion:reduce){.bt-light.produccion{animation:none}}
+.bt-retry-label{position:absolute;inset:20% 6%;display:grid;place-items:center;text-align:center;background:var(--tarjeta);color:var(--tinta);font-size:12px;border-radius:12px;padding:12px}

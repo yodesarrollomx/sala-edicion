@@ -38,7 +38,11 @@ function markData(g,l){
  if(g.t.base&&dec[g.t.base]&&dec[g.t.base].laminas[l.n-1]==="no")marks.push("no");
  return {i,marks,mine,fs,nota:local&&i>=0?local.notas[i]||"":(f.notas||[])[i]||""};
 }
-function status(g,l){return estado(l,markData(g,l).marks);}
+function status(g,l){const md=markData(g,l);
+ // El voto de otro editor no cierra tu revisión; el rechazo de cualquiera manda.
+ const marks=eligible()&&md.i>=0&&dec[g.pid]&&!md.mine&&l.estado!=="aprobada"?md.marks.filter(m=>m==="no"):md.marks;
+ return estado(l,marks);
+}
 function options(l){
  const c=POLITICA_IMAGEN.tomas(l);
  if(c.length)return c;
@@ -159,6 +163,7 @@ function vote(m){
   const before=String(note??d.notas[md.i]??"").replace(/\s*\[toma elegida: \d+\]/g,"").trim();
   d.laminas[md.i]=m;d.notas[md.i]=m==="si"?before+(o.indiceOriginal===null?"":(before?" ":"")+"[toma elegida: "+(o.indiceOriginal+1)+"]"):before;
   if(d._borrar)delete d._borrar[md.i];
+  if(!pasos.some(x=>x.tipo==="lamina"&&x.pid===g.pid&&x.i===md.i)){pasos.push({tipo:"lamina",pid:g.pid,i:md.i,p:g.p});lockeadas=lockeadas.filter(x=>!(x.pid===g.pid&&x.i===md.i));}
   guardarBorrador();programarSubida();subir();
   S.notice=m==="si"?"Opción elegida. El indicador de guardado confirma su envío al Sheet.":"Cambio pedido. La nota viaja con tu revisión.";render();
  };
@@ -168,7 +173,7 @@ function bind(){
  const gs=id=>S.groups.find(x=>x.id===id);
  root.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>open(gs(b.dataset.open)));
  root.querySelectorAll("[data-lamina]").forEach(b=>{
-  b.onclick=()=>{const g=gs(b.dataset.group);if(!S.focus)open(g,Number(b.dataset.lamina));else chooseFrame(g,Number(b.dataset.lamina));};
+  b.onclick=()=>{const failed=b.querySelector("img[data-failed]");if(failed){failed.removeAttribute("data-failed");b.querySelector(".bt-retry-label")?.remove();failed.src=failed.src.split("?")[0]+"?reintentar="+Date.now();return;}const g=gs(b.dataset.group);if(!S.focus)open(g,Number(b.dataset.lamina));else chooseFrame(g,Number(b.dataset.lamina));};
   b.ondblclick=e=>{e.preventDefault();const g=gs(b.dataset.group);open(g,Number(b.dataset.lamina),true);};
  });
  root.querySelectorAll("[data-info]").forEach(b=>b.onclick=()=>info(gs(b.dataset.group),0,b.dataset.info));
@@ -186,6 +191,11 @@ function bind(){
  root.querySelector("[data-refresh]")?.addEventListener("click",()=>refresh(true));
  root.querySelector("[data-legacy]")?.addEventListener("click",()=>{cerrarCapas();document.body.classList.remove("sala-tablero");document.body.classList.add("sala-turno");pintarCartas();});
  root.querySelectorAll("[data-eje]").forEach(b=>b.onclick=()=>{cerrarCapas();document.body.classList.remove("sala-tablero");document.body.classList.add("sala-turno");const k=pasos.findIndex(x=>x.pid===b.dataset.eje);if(k>=0){idx=k;irVista("hoy");pintarCartas();}});
+ root.querySelectorAll(".bt-photo img,.bt-main-photo").forEach(im=>{im.onerror=()=>{
+  im.dataset.failed="1";const parent=im.parentElement;if(parent.querySelector(".bt-retry-label"))return;
+  const label=document.createElement(parent.classList.contains("bt-hero")?"button":"span");label.className="bt-retry-label";label.textContent="Foto sin cargar · reintentar";parent.appendChild(label);
+  if(label.tagName==="BUTTON")label.onclick=()=>{label.remove();im.removeAttribute("data-failed");im.src=im.src.split("?")[0]+"?reintentar="+Date.now();};
+ };});
  const hero=root.querySelector(".bt-hero");if(hero){
   let p=null;hero.addEventListener("pointerdown",e=>{if(e.isPrimary){p={x:e.clientX,y:e.clientY,id:e.pointerId};hero.setPointerCapture(e.pointerId);}});
   hero.addEventListener("pointercancel",()=>{p=null;});
