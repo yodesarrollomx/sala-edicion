@@ -32,7 +32,7 @@ jobs:
           api="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]
           site="https://yodesarrollomx.github.io/sala-edicion/"
           headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json"}
-          run="38336377009";cache={};last=0
+          run="38337296576";cache={};last=0
           def read(name):
               r=requests.get(api+"/contents/"+prefix+name,headers=headers,params={"ref":branch},timeout=40)
               if r.status_code==404:return None

@@ -13,7 +13,7 @@ PREFIX="operaciones/hidream-lote-20261012/"
 SITE="https://yodesarrollomx.github.io/sala-edicion/"
 HEADERS={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json"}
 API="https://api.github.com/repos/"+os.environ["GITHUB_REPOSITORY"]
-RUN="38336377009"
+RUN="38337296576"
 def api(path,**kw):
     r=requests.get(API+"/"+path,headers=HEADERS,timeout=45,**kw)
     r.raise_for_status();return r.json()
@@ -58,7 +58,16 @@ for mounted in final["montadas"]:
         if tid not in active:raise RuntimeError("Tira generada no está activa en la sala: "+tid)
         tira=json.loads(public("datos/tiras/"+tid+".json"))
         base=json.loads(public("datos/tiras/"+item["fuente"]+".json"))
-        if tira.get("base")!=item["fuente"]:raise RuntimeError("Tira enlazada a otra fuente")
+        ancestor=tira
+        seen={tid}
+        for depth in range(12):
+            parent=ancestor.get("base")
+            if parent==item["fuente"]:break
+            if not parent or parent in seen or not re.fullmatch(r"[A-Za-z0-9_.-]+",parent):
+                raise RuntimeError("Tira enlazada a otra fuente")
+            seen.add(parent)
+            ancestor=json.loads(public("datos/tiras/"+parent+".json"))
+        else:raise RuntimeError("Cadena de versiones demasiado larga")
         newnums={l["n"] for l in tira["laminas"] if any(c.get("motor")=="hidream_demo" for c in l.get("candidatas") or [])}
         if not newnums or not newnums.issubset(set(item["laminas"])):raise RuntimeError("El lote tocó láminas ajenas")
         mesa.validar_nuevas_tomas(tira)
