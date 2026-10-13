@@ -1,9 +1,9 @@
 {
   "modelo": "HiDream-I1-Dev",
-  "run_produccion": "38336377009",
-  "verificado_en": "2026-10-13T02:31:40.955534+00:00",
-  "generadas_y_montadas": 7,
-  "pendientes": 14,
+  "run_produccion": "38337296576",
+  "verificado_en": "2026-10-13T02:43:19.070794+00:00",
+  "generadas_y_montadas": 8,
+  "pendientes": 13,
   "detenido": true,
   "causa": "HiDream no entregó foto: Error: No image name in successful response",
   "piezas": [
@@ -78,8 +78,8 @@
     },
     {
       "pieza": "El arquitecto invisible",
-      "tira": "el-arquitecto-invisible-nube-2026-10-12-f81194",
-      "cantidad": 2,
+      "tira": "el-arquitecto-invisible-nube-2026-10-12-5b72e0",
+      "cantidad": 3,
       "laminas": [
         {
           "n": 3,
@@ -102,6 +102,17 @@
           "texto_preservado": true,
           "tira_activa": true,
           "recibo_confirmado": true
+        },
+        {
+          "n": 5,
+          "modelo": "HiDream-I1-Dev",
+          "jpg": "https://yodesarrollomx.github.io/sala-edicion/laminas/el-arquitecto-invisible-nube-2026-10-12-5b72e0/L5-1.jpg",
+          "png": "https://yodesarrollomx.github.io/sala-edicion/laminas/el-arquitecto-invisible-nube-2026-10-12-5b72e0/L5-1.png",
+          "foto_sha256": "44ea1daed0c62d946cb903dbecc5c6a523d2fd01e4cb327ff40ea82ff76a6a46",
+          "segundos": 26.1,
+          "texto_preservado": true,
+          "tira_activa": true,
+          "recibo_confirmado": true
         }
       ]
     }
@@ -114,7 +125,8 @@
     33.5,
     74.3,
     23.8,
-    25.7
+    25.7,
+    26.1
   ],
   "observacion_visual": "Las primeras cuatro candidatas incluyen texto añadido por el generador; están pendientes de revisión humana."
 }
