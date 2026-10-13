@@ -4,7 +4,7 @@
   "seed": 74103,
   "run_id": "38329443469",
   "run_url": "https://github.com/yodesarrollomx/sala-edicion/actions/runs/38329443469",
-  "fecha_utc": "2026-10-13T00:57:25Z",
+  "fecha_utc": "2026-10-13T00:57:40Z",
   "opciones": [
     {
       "n": 1,
@@ -338,8 +338,12 @@
       "nombre": "Adobe Firefly nativo",
       "modelo": "https://firefly.adobe.com/generate/image",
       "tipo": "web",
-      "estado": "pendiente",
-      "imagen": null
+      "estado": "requiere sesión web",
+      "imagen": null,
+      "http": 200,
+      "titulo": "Adobe Firefly",
+      "detalle": "El acceso gratuito se ofrece dentro de una sesión de cuenta del proveedor. El navegador de ejecución no tiene esa sesión; no se recibió una imagen generada.",
+      "segundos": 7.0
     }
   ],
   "negocio_modificado": false

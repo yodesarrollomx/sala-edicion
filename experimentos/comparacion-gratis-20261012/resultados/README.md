@@ -21,7 +21,7 @@ No se han montado en la Sala ni cuentan como decisiones del editor.
 | 12 | Kandinsky 3.1 | requiere registro | — |
 | 13 | HiDream-I1 Dev | generada | [Abrir original](13-hidream-i1-dev.png) |
 | 14 | Ideogram | acceso bloqueado | — |
-| 15 | Adobe Firefly nativo | pendiente | — |
+| 15 | Adobe Firefly nativo | requiere sesión web | — |
 
 ## Imágenes obtenidas
 
@@ -117,7 +117,9 @@ El proveedor respondió HTTP 403 al navegador de nube; no se recibió una imagen
 
 ### 15. Adobe Firefly nativo
 
-**Estado:** pendiente
+**Estado:** requiere sesión web
+
+El acceso gratuito se ofrece dentro de una sesión de cuenta del proveedor. El navegador de ejecución no tiene esa sesión; no se recibió una imagen generada.
 
 ## Encargo común
 
