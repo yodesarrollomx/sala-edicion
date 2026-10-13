@@ -1,8 +1,8 @@
 {
   "modelo": "HiDream-I1-Dev",
   "objetivo": 21,
-  "generadas": 16,
-  "generadas_en_esta_fase": 8,
+  "generadas": 20,
+  "generadas_en_esta_fase": 12,
   "recuperadas": 0,
   "montadas": [
     {
@@ -49,6 +49,13 @@
       "laminas_nuevas": 1,
       "tiras": [
         "mesa-vacia-nube-2026-10-12-9d1b1a"
+      ]
+    },
+    {
+      "pieza": "Tu terreno, tus reglas",
+      "laminas_nuevas": 4,
+      "tiras": [
+        "tu-terreno-tus-reglas-nube-2026-10-12-dc4aa7"
       ]
     }
   ],
