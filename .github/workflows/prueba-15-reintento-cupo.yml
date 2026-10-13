@@ -1,0 +1,48 @@
+name: Reintento de imágenes al renovar el cupo gratuito
+on:
+  push:
+    branches: [codex/prueba-15-imagenes-gratis-20261012]
+    paths:
+      - .github/workflows/prueba-15-reintento-cupo.yml
+      - experimentos/comparacion-gratis-20261012/reintento_cupo.py
+permissions:
+  contents: write
+concurrency:
+  group: prueba-15-reintento-cupo
+  cancel-in-progress: false
+jobs:
+  esperar-y-generar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 260
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+          sparse-checkout: |
+            experimentos
+            .github
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar cliente gratuito
+        run: pip install --quiet requests pillow gradio_client
+      - name: Validar script y cambios
+        run: |
+          git diff --check HEAD^ HEAD
+          python -m py_compile experimentos/comparacion-gratis-20261012/reintento_cupo.py
+      - name: Esperar hasta 21:08 Hmo y probar los motores sin muestra
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          PRUEBA_BRANCH: codex/prueba-15-imagenes-gratis-20261012
+          PYTHONUNBUFFERED: '1'
+        run: python experimentos/comparacion-gratis-20261012/reintento_cupo.py
+      - name: Conservar resultados del reintento
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: comparacion-15-reintento-cupo
+          path: experimentos/comparacion-gratis-20261012/resultados/
+          if-no-files-found: warn
+          retention-days: 30
