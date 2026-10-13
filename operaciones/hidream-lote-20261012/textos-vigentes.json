@@ -18,5 +18,10 @@
     "dice": "Proponemos agendar una videollamada para conocer tu Plan de Potencial Personalizado.",
     "n": 6,
     "slug": "el-arquitecto-invisible"
+  },
+  "la-ruta-autonoma:5": {
+    "dice": "El resultado es un panorama claro para decidir el siguiente paso con total tranquilidad.",
+    "n": 5,
+    "slug": "la-ruta-autonoma"
   }
 }
