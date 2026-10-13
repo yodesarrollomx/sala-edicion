@@ -3,7 +3,7 @@
 Mismo encargo: tres adultos mexicanos revisando un plano en una casa. Fotos sintéticas de comparación.
 No se han montado en la Sala ni cuentan como decisiones del editor.
 
-[Ejecución y evidencia](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38329893978)
+[Ejecución y evidencia](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38330161283)
 
 | # | Motor | Resultado | Foto |
 |---|---|---|---|

@@ -1,22 +1,8 @@
 {
-  "Qwen/Qwen-Image-2.1": {
+  "Efficient-Large-Model/SanaSprint": {
     "http": 200,
     "stage": "RUNNING",
-    "host": "https://qwen-qwen-image-2-1.hf.space",
-    "sdk": "gradio",
-    "private": false
-  },
-  "Tongyi-MAI/Z-Image-Turbo": {
-    "http": 200,
-    "stage": "RUNNING",
-    "host": "https://tongyi-mai-z-image-turbo.hf.space",
-    "sdk": "gradio",
-    "private": false
-  },
-  "ATH-MaaS/Ovis-Image-7B": {
-    "http": 200,
-    "stage": "RUNNING",
-    "host": "https://ath-maas-ovis-image-7b.hf.space",
+    "host": "https://efficient-large-model-sanasprint.hf.space",
     "sdk": "gradio",
     "private": false
   },
@@ -27,10 +13,24 @@
     "sdk": "gradio",
     "private": false
   },
-  "Efficient-Large-Model/SanaSprint": {
+  "Tongyi-MAI/Z-Image-Turbo": {
     "http": 200,
     "stage": "RUNNING",
-    "host": "https://efficient-large-model-sanasprint.hf.space",
+    "host": "https://tongyi-mai-z-image-turbo.hf.space",
+    "sdk": "gradio",
+    "private": false
+  },
+  "Qwen/Qwen-Image-2.1": {
+    "http": 200,
+    "stage": "RUNNING",
+    "host": "https://qwen-qwen-image-2-1.hf.space",
+    "sdk": "gradio",
+    "private": false
+  },
+  "ATH-MaaS/Ovis-Image-7B": {
+    "http": 200,
+    "stage": "RUNNING",
+    "host": "https://ath-maas-ovis-image-7b.hf.space",
     "sdk": "gradio",
     "private": false
   },
@@ -48,13 +48,6 @@
     "sdk": "gradio",
     "private": false
   },
-  "HiDream-ai/HiDream-I1-Dev": {
-    "http": 200,
-    "stage": "RUNNING",
-    "host": "https://hidream-ai-hidream-i1-dev.hf.space",
-    "sdk": "gradio",
-    "private": false
-  },
   "playgroundai/playground-v2.5": {
     "http": 200,
     "stage": "RUNNING",
@@ -66,6 +59,13 @@
     "http": 200,
     "stage": "RUNNING",
     "host": "https://pixart-alpha-pixart-sigma.hf.space",
+    "sdk": "gradio",
+    "private": false
+  },
+  "HiDream-ai/HiDream-I1-Dev": {
+    "http": 200,
+    "stage": "RUNNING",
+    "host": "https://hidream-ai-hidream-i1-dev.hf.space",
     "sdk": "gradio",
     "private": false
   }
