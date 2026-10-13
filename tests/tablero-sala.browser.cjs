@@ -12,7 +12,7 @@ const tiras={};const propuestas=titles.map((pieza,k)=>{
 });
 function day(role){return {fecha:"2026-10-13",rol:role,quien:"Alejandro",version:"synthetic",propuestas:JSON.parse(JSON.stringify(propuestas)),decisiones:{editores:[],propuestas:{}}};}
 const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350"><rect width="1080" height="1350" fill="#c5b7a3"/><rect x="90" y="480" width="900" height="360" rx="30" fill="#f5edde"/><path d="M180 750 440 550 650 710 870 610" stroke="#b88159" stroke-width="35" fill="none"/><circle cx="330" cy="300" r="90" fill="#565b54"/><circle cx="720" cy="300" r="85" fill="#626964"/></svg>';
-async function prepare(browser,width,role="editor",mobile=false){
+async function prepare(browser,width,role="editor",mobile=false,embedded=false){
  const context=await browser.newContext({viewport:{width,height:mobile?844:1000},isMobile:mobile,hasTouch:mobile});
  const page=await context.newPage(),writes=[],errors=[];
  page.on("pageerror",e=>errors.push(String(e)));
@@ -29,6 +29,7 @@ async function prepare(browser,width,role="editor",mobile=false){
   }
   if(u.hostname!=="127.0.0.1"){await route.fulfill({status:200,contentType:req.resourceType()==="stylesheet"?"text/css":"application/javascript",body:""});return;}
   if(/\/laminas\/.*\.(jpg|png)$/.test(u.pathname)){await route.fulfill({contentType:"image/svg+xml",body:svg});return;}
+  if(u.pathname==="/fixture-parent"){await route.fulfill({contentType:"text/html",body:'<html><body style="margin:0"><iframe src="/?embed=1" style="width:100%;height:650px;border:0" title="Sala en el portal"></iframe></body></html>'});return;}
   if(u.pathname.includes("/datos/")){
    let value={};
    if(u.pathname==="/datos/manifiesto.json")value=day(role);
@@ -40,11 +41,12 @@ async function prepare(browser,width,role="editor",mobile=false){
   }
   await route.continue();
  });
- await page.goto("http://127.0.0.1:8765/");
- await page.waitForSelector(".bt-column",{timeout:30000});
+ await page.goto("http://127.0.0.1:8765/"+(embedded?"fixture-parent":""));
+ const view=embedded?page.frames().find(f=>f.parentFrame()):page;
+ await view.waitForSelector(".bt-column",{timeout:30000});
  // La bienvenida, si estaba visible, se cierra con su botón sin tocar datos.
- await page.evaluate(()=>{if(typeof cerrarCapas==="function")cerrarCapas();});
- return {page,context,writes,errors};
+ await view.evaluate(()=>{if(typeof cerrarCapas==="function")cerrarCapas();});
+ return {page,view,context,writes,errors};
 }
 const sessions=new WeakMap();
 async function touch(page,points,type){let session=sessions.get(page);if(!session){session=await page.context().newCDPSession(page);sessions.set(page,session);}await session.send("Input.dispatchTouchEvent",{type,touchPoints:points});}
@@ -129,6 +131,13 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   assert.deepEqual(m.errors,[]);
   await m.context.close();
 
+  const embedded=await prepare(b,820,"editor",false,true),frame=embedded.view;
+  assert.equal(await frame.locator(".bt-column").count(),6);
+  await frame.locator('[data-open="synthetic-0"]').click();await frame.locator('[data-lamina="2"]').click();
+  await frame.waitForSelector(".bt-choice");
+  assert.ok(await frame.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  await embedded.page.screenshot({path:out+"/06-sala-en-portal.png",fullPage:true});
+  assert.deepEqual(embedded.errors,[]);await embedded.context.close();
   for(const role of ["lector","agente"]){
    const r=await prepare(b,390,role,true),page=r.page;
    await page.locator('[data-open="synthetic-0"]').click();await page.locator('[data-lamina="2"]').click();
@@ -136,7 +145,7 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    assert.equal(r.writes.filter(x=>x.accion==="decidir").length,0);
    await r.context.close();
   }
-  fs.writeFileSync(out+"/resultado.json",JSON.stringify({ok:true,publicaciones_sinteticas:6,laminas:36,escritorio:1440,movil:390,seleccion_indice_original:true,swipe_aprobar:true,pinch_alejar:true,lector_agente_sin_votos:true},null,2));
+  fs.writeFileSync(out+"/resultado.json",JSON.stringify({ok:true,publicaciones_sinteticas:6,laminas:36,escritorio:1440,movil:390,seleccion_indice_original:true,swipe_aprobar:true,pinch_alejar:true,embed_portal:true,lector_agente_sin_votos:true},null,2));
   console.log("PASS tablero/tira/carrusel, roles, selección, swipe, pinch y conservación");
  }finally{await b.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
