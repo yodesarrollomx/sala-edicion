@@ -28,8 +28,13 @@ DIGEST = re.compile(r"^[0-9a-f]{64}$")
 PREFIX = "yod-online-"
 KIND = "yod-online-public-data"
 LOCK_REF = "heads/runtime/online-data-lease"
-MAX_ZIP = 200 * 1024 * 1024
-MAX_PLAIN = 500 * 1024 * 1024
+# Sala sin producir desde 13-oct: el snapshot acumulado llegó a 208.4 MB y cada carta
+# nueva superaba 200 MiB (mesa fallaba en «Guardar snapshot» y saltaba productor/ejecutor).
+# 450 MiB mantiene sitio Pages (láminas en git ~464 MB + snapshot) bajo el límite de 1 GB.
+# Aviso temprano al 75 % para compactar/sacar medios antes de volver a atorarse.
+MAX_ZIP = 450 * 1024 * 1024
+MAX_PLAIN = 900 * 1024 * 1024
+AVISO_ZIP = int(MAX_ZIP * 0.75)
 MAX_FILE = 25 * 1024 * 1024
 MAX_FILES = 10000
 SALA_PATHS = {
@@ -110,6 +115,9 @@ def encode_archive(repo, source_sha, files, deleted, prefixes):
     result = buf.getvalue()
     if len(result) > MAX_ZIP:
         raise OnlineError("Snapshot comprimido demasiado grande")
+    if len(result) > AVISO_ZIP:
+        print(f"::warning::Snapshot online en {len(result) // (1024 * 1024)} MiB de "
+              f"{MAX_ZIP // (1024 * 1024)} MiB: compactar o sacar medios antes de llegar al límite.")
     return result, manifest
 
 

@@ -101,6 +101,19 @@ class ArchiveTests(unittest.TestCase):
             with self.assertRaises(so.OnlineError):
                 so.decode_archive(self.data, self.repo, self.prefixes)
 
+    def test_room_and_early_warning(self):
+        # La mesa se atoró con un snapshot acumulado de 208.4 MB contra 200 MiB.
+        self.assertGreaterEqual(so.MAX_ZIP, 400 * 1024 * 1024)
+        self.assertLess(so.AVISO_ZIP, so.MAX_ZIP)
+        out = io.StringIO()
+        with patch.object(so, "AVISO_ZIP", 1), patch("sys.stdout", out):
+            so.encode_archive(self.repo, "a" * 40, {self.path: b'{"x": 1}'}, [], self.prefixes)
+        self.assertIn("::warning::Snapshot online", out.getvalue())
+        quiet = io.StringIO()
+        with patch("sys.stdout", quiet):
+            so.encode_archive(self.repo, "a" * 40, {self.path: b'{"x": 1}'}, [], self.prefixes)
+        self.assertEqual(quiet.getvalue(), "")
+
     def test_deletion_contract(self):
         raw, _ = so.encode_archive(self.repo, "a" * 40, {}, [self.path], self.prefixes)
         m, files = so.decode_archive(raw, self.repo, self.prefixes)

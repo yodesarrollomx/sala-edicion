@@ -1,14 +1,15 @@
 {
   "model_revision": "2026-10-13.sala-tablero-hidream.1",
-  "proposal_id": "CHG-SALA-TABLERO-HIDREAM-20261013",
-  "summary": "Dentro de la propuesta vigente del tablero «Hoy» (CHG-SALA-TABLERO-HIDREAM-20261013): chinche #297 (CHN-20261013-0930-3863), botón ☀️/🌙 en la Sala con la misma preferencia localStorage «yod_tema» del Portero del YOD OS (claro/oscuro → data-theme light/dark), sincronizada por evento storage. Solo presentación; sin cambios de datos, sesiones, roles, GAS ni Sheet.",
+  "proposal_id": "CHG-SALA-ONLINE-20261011",
+  "summary": "Dentro del sistema online de la Sala (CHG-SALA-ONLINE-20261011): la mesa fallaba desde 13-oct en «Guardar snapshot privado» porque el snapshot acumulado (208.4 MB) más cualquier carta nueva superaba MAX_ZIP=200 MiB; al fallar la mesa se saltaban productor, ejecutor y revisión. Sube MAX_ZIP a 450 MiB (MAX_PLAIN 900 MiB), manteniendo el sitio Pages bajo 1 GB, y avisa con ::warning:: al 75 % para compactar o sacar medios antes de volver a atorarse. Sin cambios de datos, decisiones, permisos ni workflows.",
   "components": [
-    "SYS-SALA",
-    "SYS-YOD-OS"
+    "SYS-SALA"
   ],
   "tests": [
-    "python3 nube/sellar_sala.py; python3 nube/verificar.py (13 pruebas, todo en orden).",
-    "Playwright 390px embed=1: claro por defecto con sistema claro; clic → data-theme=dark, fondo #131316 y yod_tema=oscuro."
+    "python3 -m unittest discover -s tests -p 'snapshots_online_test.py' (incluye aviso al 75 %)",
+    "python3 -m unittest discover -s tests -p 'publicar_git_test.py'",
+    "python3 nube/verificar.py",
+    "verificar-impacto.cjs del atlas fijado 38e85a4f"
   ],
-  "rollback": "Revertir el PR (bloque #temaSala en index.html). No toca datos, decisiones, sesiones ni Sheets."
+  "rollback": "Revertir el PR (constantes MAX_ZIP/MAX_PLAIN/AVISO_ZIP en nube/snapshots_online.py y su prueba). La mesa vuelve a fallar con cartas nuevas; no toca datos ni snapshots existentes."
 }
