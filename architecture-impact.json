@@ -1,15 +1,14 @@
 {
   "model_revision": "2026-10-13.sala-tablero-hidream.1",
-  "proposal_id": "CHG-SALA-ONLINE-20261011",
-  "summary": "Dentro del sistema online de la Sala (CHG-SALA-ONLINE-20261011): la mesa fallaba desde 13-oct en «Guardar snapshot privado» porque el snapshot acumulado (208.4 MB) más cualquier carta nueva superaba MAX_ZIP=200 MiB; al fallar la mesa se saltaban productor, ejecutor y revisión. Sube MAX_ZIP a 450 MiB (MAX_PLAIN 900 MiB), manteniendo el sitio Pages bajo 1 GB, y avisa con ::warning:: al 75 % para compactar o sacar medios antes de volver a atorarse. Sin cambios de datos, decisiones, permisos ni workflows.",
+  "proposal_id": "CHG-SALA-TABLERO-HIDREAM-20261013",
+  "summary": "Dentro de la propuesta vigente del tablero «Hoy» (CHG-SALA-TABLERO-HIDREAM-20261013): chinche #279 (CHN-20261012-0822-bedc). El visor ampliado ahora deja pasar entre la lámina y sus tomas (o entre las opciones con imagen de un eje) con ‹ ›, flechas del teclado, y elegir con «Elegir ésta» sin salir y volver a entrar; elegir reutiliza el mismo botón «Ésta»/«Elegir ésta» de la carta (mismas validaciones y nota [toma elegida]). También centra la lámina en el visor (el grid duplicaba el centrado). Solo presentación; sin cambios de datos, sesiones, roles, GAS ni Sheet.",
   "components": [
     "SYS-SALA"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p 'snapshots_online_test.py' (incluye aviso al 75 %)",
-    "python3 -m unittest discover -s tests -p 'publicar_git_test.py'",
-    "python3 nube/verificar.py",
-    "verificar-impacto.cjs del atlas fijado 38e85a4f"
+    "node --test tests/sala-imagenes.test.cjs tests/imagen-broker.test.mjs: firma opcional de galería y navegación/elección explícita/cierre con DOM sintético; no sustituye QA visual.",
+    "python3 nube/sellar_sala.py; python3 nube/verificar.py (13 pruebas, todo en orden).",
+    "Playwright 390px y 1280px embed=1 con láminas reales del repo: abrirZoom con galería muestra «Lámina actual 1 de 2», › cambia a la toma 2 (L1→L3), ← regresa, «Elegir ésta» llama al mismo elegir de la carta y cierra el visor; sin galería no aparece la barra; sin desbordamiento horizontal ni errores de página."
   ],
-  "rollback": "Revertir el PR (constantes MAX_ZIP/MAX_PLAIN/AVISO_ZIP en nube/snapshots_online.py y su prueba). La mesa vuelve a fallar con cartas nuevas; no toca datos ni snapshots existentes."
+  "rollback": "Revertir el PR (visor con galería de #279 en index.html). No toca datos, decisiones, sesiones ni Sheets."
 }
