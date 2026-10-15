@@ -109,6 +109,9 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    assert.equal(shortlist.writes.length,0);
    await sp.reload();await sp.waitForSelector('.bt-column');await sp.evaluate(()=>cerrarCapas());await abrirFinalistas();
    assert.equal(await sp.locator('[data-finalista][aria-pressed="true"]').count(),2);
+   const finalStyle=await sp.locator('[data-finalista]').first().evaluate(el=>({bg:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color}));
+   assert.equal(finalStyle.bg,'rgb(35, 78, 66)','finalistas seleccionadas deben contrastar con texto blanco');
+   assert.equal(finalStyle.color,'rgb(255, 255, 255)');
    await sp.locator('[data-next-option]').click();
    assert.equal(await sp.locator('.bt-choice-copy h2').innerText(),'Texto específico de la toma B');
    await sp.locator('[data-compare]').click();
