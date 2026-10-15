@@ -1,0 +1,35 @@
+name: Auditar cortes fallidos sin reencolar
+on:
+  workflow_dispatch:
+permissions:
+  # GitHub exige visibilidad de escritura para recuperar releases draft privados.
+  # ReadOnlyGitHub bloquea las mutaciones, uploads y cualquier petición distinta de GET.
+  contents: write
+  pages: read
+  actions: read
+concurrency:
+  group: sala-ejecutor
+  cancel-in-progress: false
+jobs:
+  auditar:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Instalar clientes de lectura y acuse privado
+        run: pip install --quiet requests google-auth
+      - name: Verificar compuertas con datos sintéticos
+        run: python3 -m unittest discover -s tests -p auditar_fallos_test.py -v
+      - name: Auditar fuentes y medios sin cambiar COLA
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: python3 nube/auditar_fallos.py

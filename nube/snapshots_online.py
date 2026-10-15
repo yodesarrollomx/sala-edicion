@@ -190,10 +190,19 @@ def decode_archive(data, repo, prefixes, expected_hash=None, expected_data=None)
 
 
 def receipt_matches(receipt, *, code_sha, data_sha, snapshot_id, run_id, plan_sha256=None):
-    return (isinstance(receipt, dict) and receipt.get("schema") == SCHEMA
-            and receipt.get("code_sha") == code_sha and receipt.get("data_sha") == data_sha
-            and receipt.get("snapshot_id") == snapshot_id and receipt.get("run_id") == run_id
-            and (plan_sha256 is None or receipt.get("plan_sha256") == plan_sha256))
+    return not receipt_differences(receipt, code_sha=code_sha, data_sha=data_sha,
+                                  snapshot_id=snapshot_id, run_id=run_id, plan_sha256=plan_sha256)
+
+
+def receipt_differences(receipt, *, code_sha, data_sha, snapshot_id, run_id, plan_sha256=None):
+    """Sólo nombres fijos de campos; nunca valores ni cuerpos recibidos."""
+    if not isinstance(receipt, dict):
+        return ["tipo_recibo"]
+    expected = {"schema": SCHEMA, "code_sha": code_sha, "data_sha": data_sha,
+                "snapshot_id": snapshot_id, "run_id": run_id}
+    if plan_sha256 is not None:
+        expected["plan_sha256"] = plan_sha256
+    return [field for field, value in expected.items() if receipt.get(field) != value]
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -791,6 +800,7 @@ class Snapshots:
         dest = Path(destination).resolve()
         if dest == self.root or self.root in dest.parents:
             raise OnlineError("El bundle debe estar fuera del checkout")
+        self.plan_hash_for_receipt()  # Detectar cambios posteriores a stage antes de publicar.
         files = self.site_files()  # Fallar antes de tocar un bundle anterior.
         if dest.exists():
             shutil.rmtree(dest)
@@ -801,28 +811,50 @@ class Snapshots:
             shutil.copyfile(path, target)
         return self.output(bundle="si")
 
+    def plan_hash_for_receipt(self):
+        plan_file = self.root / "datos" / "plan-agregados.json"
+        actual = digest(plan_file.read_bytes()) if plan_file.is_file() else None
+        staged = self.state(required=False).get("staged_receipt")
+        if isinstance(staged, dict) and staged.get("plan_sha256") != actual:
+            raise OnlineError("El plan local cambió después de stage; campo=plan_sha256")
+        return actual
+
     def verify_receipt(self, sha, data_sha, snapshot_id, run_id, timeout=300):
+        expected_plan = self.plan_hash_for_receipt()
         site = self.api.request("pages")["html_url"].rstrip("/") + "/"
         parsed = urllib.parse.urlsplit(site)
         if parsed.scheme != "https" or parsed.username or parsed.password:
             raise OnlineError("Sitio Pages sin HTTPS")
-        plan_file = self.root / "datos" / "plan-agregados.json"
-        expected_plan = digest(plan_file.read_bytes()) if plan_file.is_file() else None
         deadline = self.clock() + timeout
+        diagnostic = "sin_respuesta"
+        previous = None
         while self.clock() < deadline:
-            url = site + "version-online.json?run=" + urllib.parse.quote(run_id)
+            # Cada lectura tiene una clave distinta: no fijar una respuesta vieja
+            # de un edge durante toda la espera de propagación del deployment.
+            query = urllib.parse.urlencode({"run": run_id, "check": str(time.time_ns())})
+            url = site + "version-online.json?" + query
             try:
                 req = urllib.request.Request(url, headers={"Cache-Control": "no-cache"})
                 with urllib.request.urlopen(req, timeout=30) as response:
                     receipt = json.loads(response.read(32768))
-                if receipt_matches(receipt, code_sha=sha, data_sha=data_sha,
-                                   snapshot_id=snapshot_id, run_id=run_id,
-                                   plan_sha256=expected_plan):
+                differences = receipt_differences(receipt, code_sha=sha, data_sha=data_sha,
+                                                 snapshot_id=snapshot_id, run_id=run_id,
+                                                 plan_sha256=expected_plan)
+                if not differences:
                     return receipt
-            except (ValueError, OSError, urllib.error.URLError):
-                pass
+                diagnostic = "campos=" + ",".join(differences)
+            except urllib.error.HTTPError as exc:
+                diagnostic = ("http=" + str(exc.code)
+                              if type(exc.code) is int and 100 <= exc.code <= 599 else "http_error")
+            except (ValueError, UnicodeError):
+                diagnostic = "json_invalido"
+            except (OSError, urllib.error.URLError):
+                diagnostic = "transporte"
+            if diagnostic != previous:
+                print("::warning::ONLINE_RECEIPT " + diagnostic)
+                previous = diagnostic
             self.sleep(5)
-        raise OnlineError("El sitio no acredita la versión exacta")
+        raise OnlineError("El sitio no acredita la versión exacta; " + diagnostic)
 
     def confirm(self):
         state = self.state()

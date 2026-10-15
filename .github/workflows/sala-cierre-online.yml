@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - nube/cierre_online.py
+      - nube/sala_cliente.py
       - nube/correo_estado.py
       - nube/comparacion_online.py
       - nube/sala_montador.py

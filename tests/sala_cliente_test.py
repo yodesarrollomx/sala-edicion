@@ -194,5 +194,99 @@ class MetadataTest(unittest.TestCase):
         self.assertNotIn("PRIVATE",json.dumps(data))
 
 
+class FakeClock:
+    def __init__(self):self.now=0
+    def monotonic(self):return self.now
+    def sleep(self,seconds):self.now+=seconds
+
+
+class Read404BudgetTests(unittest.TestCase):
+    def setUp(self):
+        self.clock=FakeClock()
+        self.patches=[mock.patch.dict(os.environ,{"SALA_GAS_EXEC":"https://example.invalid/exec",
+                                                 "SALA_CLAVE_AGENTE":"synthetic"}),
+                      mock.patch.object(cliente.time,"monotonic",self.clock.monotonic),
+                      mock.patch.object(cliente.time,"sleep",self.clock.sleep)]
+        for patcher in self.patches:
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def transport(self,steps):
+        calls=[]
+        def request(url,body,timeout):
+            calls.append((body,timeout))
+            seconds,result=steps[len(calls)-1]
+            self.clock.now+=seconds if seconds is not None else timeout
+            if isinstance(result,Exception):raise result
+            return result
+        return calls,request
+
+    def test_fresh_json_after_404_recovers_inside_original_budget(self):
+        for resource,response in (("cola",'{"cola":[{"id":"synthetic","estado":"pendiente"}]}'),
+                                  ("reglas",'{"reglas":{"nube_ejecuta_etapas":"voz"},"motores":[]}')):
+            self.clock.now=0
+            calls,transport=self.transport([(60,cliente.SalaError("timeout",codigo="sala_tiempo_agotado")),
+                (35,cliente.SalaError("http",codigo="sala_http_404")),(2.4,response)])
+            with self.subTest(resource=resource),mock.patch.object(cliente,"_curl",side_effect=transport), \
+                 mock.patch.object(cliente,"avisar") as public_log,mock.patch.object(cliente,"sonda_get") as probe:
+                result=cliente.get(resource)
+            self.assertEqual(result,json.loads(response))
+            self.assertEqual(calls,[(None,60),(None,60),(None,20)])
+            self.assertLessEqual(self.clock.now,122)
+            self.assertEqual(self.clock.now,99.4)
+            self.assertNotIn("synthetic",str(public_log.call_args))
+            probe.assert_not_called()
+
+    def test_exhausted_budget_does_not_open_additional_period(self):
+        calls,transport=self.transport([(60,cliente.SalaError("http",codigo="sala_http_404")),
+                                       (60,cliente.SalaError("http",codigo="sala_http_404"))])
+        with mock.patch.object(cliente,"_curl",side_effect=transport),self.assertRaises(cliente.SalaError) as raised:
+            cliente.get("cola")
+        self.assertEqual(len(calls),2)
+        self.assertEqual(self.clock.now,122)
+        self.assertEqual(raised.exception.codigo,"sala_http_404")
+
+    def test_final_get_can_only_use_remaining_budget(self):
+        error=cliente.SalaError("http",codigo="sala_http_404")
+        calls,transport=self.transport([(60,error),(52.5,error),(None,error)])
+        with mock.patch.object(cliente,"_curl",side_effect=transport),self.assertRaises(cliente.SalaError) as raised:
+            cliente.get("cola")
+        self.assertEqual(calls,[(None,60),(None,60),(None,7.5)])
+        self.assertEqual(self.clock.now,122)
+        self.assertEqual(raised.exception.metadatos["intentos"],3)
+        self.assertEqual(raised.exception.metadatos["duracion_total_ms"],122000)
+
+    def test_other_error_keeps_two_attempts_even_with_budget_left(self):
+        for code in ("sala_http_403","sala_tiempo_agotado","sala_contrato_lectura","sala_clave_rechazada"):
+            self.clock.now=0
+            error=cliente.SalaError("synthetic",codigo=code)
+            calls,transport=self.transport([(1,error),(1,error)])
+            with self.subTest(code=code),mock.patch.object(cliente,"_curl",side_effect=transport), \
+                 self.assertRaises(cliente.SalaError):cliente.get("cola")
+            self.assertEqual(len(calls),2)
+
+    def test_third_response_must_satisfy_original_contract(self):
+        error=cliente.SalaError("http",codigo="sala_http_404")
+        calls,transport=self.transport([(1,error),(1,error),(1,'{"cola":null}')])
+        with mock.patch.object(cliente,"_curl",side_effect=transport),self.assertRaises(cliente.SalaError) as raised:
+            cliente.get("cola")
+        self.assertEqual(len(calls),3)
+        self.assertEqual(raised.exception.codigo,"sala_contrato_lectura")
+
+    def test_post_404_is_never_retried_or_recovered(self):
+        calls,transport=self.transport([(1,cliente.SalaError("http",codigo="sala_http_404"))])
+        with mock.patch.object(cliente,"_curl",side_effect=transport), \
+             mock.patch.object(cliente,"_leer_sheet") as recover,self.assertRaises(cliente.SalaError):
+            cliente.post("produccion",estado="synthetic")
+        self.assertEqual(len(calls),1)
+        self.assertIsNotNone(calls[0][0])
+        recover.assert_not_called()
+
+    def test_other_resources_do_not_receive_new_recovery(self):
+        with mock.patch.object(cliente,"_leer_sheet",side_effect=AssertionError("recovery fuera de alcance")), \
+             mock.patch.object(cliente,"_curl",return_value='{"ok":true}'):
+            self.assertEqual(cliente.get("catalogo"),{"ok":True})
+
+
 if __name__ == "__main__":
     unittest.main()

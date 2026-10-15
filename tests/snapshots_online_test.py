@@ -147,6 +147,16 @@ class ArchiveTests(unittest.TestCase):
         for key, value in expected.items():
             self.assertFalse(so.receipt_matches({**receipt, key: str(value) + "x"}, **expected))
 
+    def test_receipt_differences_never_return_untrusted_values_or_keys(self):
+        expected = {"code_sha": "a" * 40, "data_sha": "b" * 64,
+                    "snapshot_id": 12, "run_id": "34", "plan_sha256": "c" * 64}
+        receipt = {"schema": 1, **expected}
+        self.assertEqual(so.receipt_differences(receipt, **expected), [])
+        for field in ("schema", *expected):
+            changed = {**receipt, field: "PRIVATE_REMOTE_VALUE", "PRIVATE_REMOTE_KEY": "PRIVATE"}
+            self.assertEqual(so.receipt_differences(changed, **expected), [field])
+        self.assertEqual(so.receipt_differences(["PRIVATE"], **expected), ["tipo_recibo"])
+
 
 class FakeGitHub:
     def __init__(self, main):
@@ -581,6 +591,84 @@ class LifecycleTests(unittest.TestCase):
         with patch.object(self.s, "verify_receipt", return_value={"ok": True}):
             self.s.confirm()
         self.assertTrue(self.s.file_is_published(self.path))
+
+    def test_plan_drift_after_stage_blocks_bundle_and_confirmation_before_network(self):
+        plan = self.root / "datos/plan-agregados.json"
+        plan.write_bytes(b'{"synthetic":1}\n')
+        self.s.stage(self.s.head())
+        plan.write_bytes(b'{"synthetic":2}\n')
+        bundle = Path(self.tmp.name) / "site"
+        with patch.object(self.api, "request") as request:
+            with self.assertRaisesRegex(so.OnlineError, "campo=plan_sha256"):
+                self.s.build_site(bundle)
+            with self.assertRaisesRegex(so.OnlineError, "campo=plan_sha256"):
+                self.s.confirm()
+        request.assert_not_called()
+        self.assertFalse(bundle.exists())
+        self.assertNotIn("published_receipt", self.s.state())
+
+    def test_bundle_preserves_staged_plan_hash_exactly(self):
+        plan = self.root / "datos/plan-agregados.json"
+        plan.write_bytes(b'{"synthetic":1}\n')
+        self.s.stage(self.s.head())
+        staged = self.s.state()["staged_receipt"]
+        bundle = Path(self.tmp.name) / "site"
+        self.s.build_site(bundle)
+        self.assertEqual(so.digest((bundle / "datos/plan-agregados.json").read_bytes()),
+                         staged["plan_sha256"])
+        self.assertEqual(json.loads((bundle / "version-online.json").read_bytes()), staged)
+
+    def test_stale_receipt_retries_with_fresh_url_and_safe_field_diagnostic(self):
+        plan = self.root / "datos/plan-agregados.json"
+        plan.write_bytes(b'{"synthetic":1}\n')
+        self.s.stage(self.s.head())
+        expected = self.s.state()["staged_receipt"]
+        stale = {**expected, "plan_sha256": "PRIVATE_REMOTE_VALUE"}
+        urls, elapsed, output = [], [0], io.StringIO()
+        replies = [stale, expected]
+        def opened(req, **kwargs):
+            urls.append(req.full_url)
+            return io.BytesIO(so.canonical(replies.pop(0)))
+        def advance(seconds):
+            elapsed[0] += seconds
+        with patch.object(self.api, "request", return_value={"html_url": "https://example.invalid/sala/"}), \
+                patch.object(so.urllib.request, "urlopen", side_effect=opened), \
+                patch.object(so.time, "time_ns", side_effect=[1, 2]), \
+                patch.object(self.s, "clock", side_effect=lambda: elapsed[0]), \
+                patch.object(self.s, "sleep", side_effect=advance), patch("sys.stdout", output):
+            receipt = self.s.verify_receipt(self.s.head(), expected["data_sha"], 0, self.s.run, timeout=10)
+        self.assertEqual(receipt, expected)
+        self.assertNotEqual(urls[0], urls[1])
+        self.assertTrue(all("run=12" in url for url in urls))
+        self.assertIn("campos=plan_sha256", output.getvalue())
+        self.assertNotIn("PRIVATE_REMOTE_VALUE", output.getvalue())
+
+    def test_receipt_timeout_reports_http_json_or_transport_without_remote_details(self):
+        self.s.stage(self.s.head())
+        expected = self.s.state()["staged_receipt"]
+        variants = [(so.urllib.error.HTTPError("https://private.invalid/secret", 503,
+                                              "PRIVATE_REMOTE_VALUE", {}, None), "http=503"),
+                    (OSError("PRIVATE_REMOTE_VALUE"), "transporte"),
+                    (b"PRIVATE_REMOTE_VALUE", "json_invalido")]
+        for reply, diagnostic in variants:
+            elapsed, output = [0], io.StringIO()
+            def opened(req, **kwargs):
+                if isinstance(reply, Exception):
+                    raise reply
+                return io.BytesIO(reply)
+            def advance(seconds):
+                elapsed[0] += seconds
+            with self.subTest(diagnostic=diagnostic), \
+                    patch.object(self.api, "request", return_value={"html_url": "https://example.invalid/sala/"}), \
+                    patch.object(so.urllib.request, "urlopen", side_effect=opened), \
+                    patch.object(self.s, "clock", side_effect=lambda: elapsed[0]), \
+                    patch.object(self.s, "sleep", side_effect=advance), patch("sys.stdout", output):
+                with self.assertRaises(so.OnlineError) as caught:
+                    self.s.verify_receipt(self.s.head(), expected["data_sha"], 0, self.s.run, timeout=1)
+            self.assertIn(diagnostic, str(caught.exception))
+            combined = output.getvalue() + str(caught.exception)
+            self.assertNotIn("PRIVATE_REMOTE_VALUE", combined)
+            self.assertNotIn("private.invalid", combined)
 
     def test_confirm_failure_never_marks_published(self):
         out, release = self.prepare()
