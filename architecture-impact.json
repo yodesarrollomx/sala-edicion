@@ -9,7 +9,8 @@
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
-    "EXT-DRIVE"
+    "EXT-DRIVE",
+    "EXT-GMAIL"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p \"*_test.py\"",
