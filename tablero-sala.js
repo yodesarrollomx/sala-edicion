@@ -17,7 +17,26 @@ function estado(l,marks){
  return "amarillo";
 }
 const labels={amarillo:"Por revisar",verde:"Aprobada",rojo:"Cambio pedido",produccion:"En producción"};
-const api={intentos,estado,fotoKey};
+function textoToma(l,o){return o&&o.dice||l.dice||"Lámina "+l.n;}
+function preseleccion(storage,context,opciones){
+ const ids=opciones.map(o=>JSON.stringify([o.indiceOriginal,fotoKey(o),o.recibo_imagen||"",o.dice||""]));
+ const key="sala_finalistas_v1:"+JSON.stringify([context.quien,context.pid,context.n,context.version,context.dice||"",ids]);
+ function leer(){
+  const raw=storage.getItem(key),a=raw===null?[]:JSON.parse(raw);
+  if(!Array.isArray(a)||a.length>2||a.some(x=>!ids.includes(x))||new Set(a).size!==a.length)throw Error("Preselección inválida");
+  return a;
+ }
+ function cambiar(i){
+  if(!["editor","editor2"].includes(context.quien)||!ids[i])throw Error("No disponible");
+  const a=leer(),id=ids[i],next=a.includes(id)?a.filter(x=>x!==id):[...a,id];
+  if(next.length>2)return {ok:false,limite:true,indices:a.map(x=>ids.indexOf(x))};
+  storage.setItem(key,JSON.stringify(next));
+  if(JSON.stringify(leer())!==JSON.stringify(next))throw Error("Guardado sin confirmar");
+  return {ok:true,indices:next.map(x=>ids.indexOf(x))};
+ }
+ return {leer:()=>leer().map(x=>ids.indexOf(x)),cambiar};
+}
+const api={intentos,estado,fotoKey,textoToma,preseleccion};
 if(typeof module==="object"&&module.exports)module.exports=api;
 if(typeof document==="undefined")return;
 const root=document.getElementById("tableroHoy");if(!root)return;
@@ -156,18 +175,22 @@ function renderChoice(g,l){
  c.k=k;
  const writable=eligible()&&md.i>=0&&!!dec[g.pid]&&l.estado!=="aprobada";
  const box=document.createElement("div");box.className="bt-choice";box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");box.setAttribute("aria-label","Elegir fotografía de lámina "+l.n);
- const frames=g.t.laminas||[],pos=frames.findIndex(x=>Number(x.n)===Number(l.n)),other=os.length>1?os[k===0?1:0]:null;
+ let finalistas=[],finalistasError=false;
+ try{finalistas=preseleccion(localStorage,{quien:ROL(),pid:g.pid,n:l.n,version:l.version||null,dice:l.dice},os).leer();}catch(e){finalistasError=true;}
+ const frames=g.t.laminas||[],pos=frames.findIndex(x=>Number(x.n)===Number(l.n));
+ const otherIndex=finalistas.length===2&&finalistas.includes(k)?finalistas.find(i=>i!==k):(k===0?1:0),other=os[otherIndex];
  const intention=l.entiende||l.por_que||g.t.direccion?.promesa||g.t.promesa||g.p.porque||"";
  const chosen=/\[toma elegida: (\d+)\]/.exec(md.nota||"");
  box.innerHTML=`<div class="bt-choice-top"><button data-back>← Tira completa</button><div class="bt-book-title"><span class="bt-eyebrow">LIBRO DE REVISIÓN</span><strong>${esc(g.t.pieza||g.id)}</strong></div><button data-close-choice aria-label="Cerrar opciones">×</button></div>
  <nav class="bt-page-rail" aria-label="Páginas de esta publicación">${frames.map(x=>`<button data-page="${x.n}" aria-label="Revisar lámina ${x.n}" aria-current="${Number(x.n)===Number(l.n)?"page":"false"}" class="${Number(x.n)===Number(l.n)?"on":""}"><span class="bt-dot ${status(g,x)}">${String(x.n).padStart(2,"0")}</span></button>`).join("")}<span>Página ${pos+1} de ${frames.length}</span></nav>
  <div class="bt-choice-content"><div class="bt-carousel" tabindex="0" aria-label="Opciones; flechas para cambiar, botón para aprobar">
  <div class="bt-image-heading"><span class="bt-eyebrow">${c.compare?"COMPARACIÓN DE TOMAS":"LA IMAGEN"}</span>${os.length>1?`<button data-compare aria-pressed="${!!c.compare}">${c.compare?"Ver una toma":"Comparar lado a lado"}</button>`:""}</div>
- <div class="bt-image-stage ${c.compare&&other?"is-comparing":""}"><figure><div class="bt-hero">${o?img(o.src||o.original,"Opción "+(k+1),"bt-main-photo"):`<div class="bt-sin-foto">No hay una toma disponible todavía</div>`}<span class="bt-lamina">L${l.n}</span></div><figcaption>${os.length?"Toma "+(k+1)+" · En revisión":"Esperando imagen"}${chosen&&o&&Number(chosen[1])===o.indiceOriginal+1?" · Tu elección":""}</figcaption></figure>${c.compare&&other?`<figure class="bt-comparison"><div>${img(other.src||other.original,"Toma de referencia")}</div><figcaption>Toma ${k===0?2:1} · Referencia</figcaption></figure>`:""}</div>
+ <div class="bt-image-stage ${c.compare&&other?"is-comparing":""}"><figure><div class="bt-hero">${o?img(o.src||o.original,"Opción "+(k+1),"bt-main-photo"):`<div class="bt-sin-foto">No hay una toma disponible todavía</div>`}<span class="bt-lamina">L${l.n}</span></div><figcaption>${os.length?"Toma "+(k+1)+" · En revisión":"Esperando imagen"}${chosen&&o&&Number(chosen[1])===o.indiceOriginal+1?" · Tu elección":""}</figcaption></figure>${c.compare&&other?`<figure class="bt-comparison"><div>${img(other.src||other.original,"Toma de referencia")}</div><figcaption>Toma ${otherIndex+1} · Referencia</figcaption></figure>`:""}</div>
  <div class="bt-pager"><button data-prev-option aria-label="Opción anterior" ${k<=0?"disabled":""}>←</button><span>${os.length?"Opción "+(k+1)+" de "+os.length:"En producción"}</span><button data-next-option aria-label="Opción siguiente" ${k>=os.length-1?"disabled":""}>→</button></div>
  <div class="bt-thumbs">${os.map((x,i)=>`<button data-option="${i}" aria-label="Ver opción ${i+1}" aria-pressed="${i===k}" class="${i===k?"on":""}">${img(x.src||x.original,"Opción "+(i+1))}<span>${i+1}</span></button>`).join("")}</div>
  <button class="bt-enlarge" data-full-photo ${!o?"disabled":""}>Ampliar</button></div>
- <div class="bt-choice-copy"><span class="bt-dot ${st}">${labels[st]}</span><span class="bt-eyebrow bt-section-label">EL MENSAJE</span><h2>${esc(l.dice||"Lámina "+l.n)}</h2>
+ <div class="bt-choice-copy"><span class="bt-dot ${st}">${labels[st]}</span><span class="bt-eyebrow bt-section-label">EL MENSAJE DE ESTA TOMA</span><h2>${esc(textoToma(l,o))}</h2>
+ ${writable&&os.length>1?`<section class="bt-finalistas" aria-label="Preselección de finalistas"><span class="bt-eyebrow">CONSERVA HASTA DOS FINALISTAS</span><div class="bt-tools">${os.map((x,i)=>`<button data-finalista="${i}" aria-pressed="${finalistas.includes(i)}">${finalistas.includes(i)?"✓ ":""}Toma ${i+1}</button>`).join("")}</div><p>${finalistasError?"No pude recuperar la preselección local.":finalistas.length+" de 2 guardadas en este navegador."} Preseleccionar no aprueba ni produce.</p></section>`:""}
  ${intention?`<div class="bt-intention"><span class="bt-eyebrow">QUÉ DEBE TRANSMITIR</span><p>${esc(intention)}</p></div>`:""}
  ${(o&&o.texto)||l.ve?`<details class="bt-scene"><summary>Dirección de la imagen</summary><p>${esc(o&&o.texto||l.ve)}</p></details>`:""}
  <div class="bt-tools"><button data-info="guion" data-group="${esc(g.id)}">Guion completo</button><button data-info="intencion" data-group="${esc(g.id)}">Intención</button><button data-history="${l.n}" data-group="${esc(g.id)}">↺ ${intentos(l)} intentos</button></div>
@@ -180,6 +203,16 @@ function renderChoice(g,l){
  root.appendChild(box);
 }
 function moveOption(delta){if(!S.choice)return;const g=S.groups.find(x=>x.id===S.choice.group),l=g.t.laminas.find(x=>Number(x.n)===S.choice.n);S.choice.k=Math.min(Math.max(0,S.choice.k+delta),Math.max(0,options(l).length-1));render();}
+function conservarFinalista(i){
+ if(!S.choice||!eligible())return;
+ const g=S.groups.find(x=>x.id===S.choice.group),l=g&&g.t.laminas.find(x=>Number(x.n)===S.choice.n);
+ if(!l||l.estado==="aprobada"||markData(g,l).i<0||!dec[g.pid])return;
+ try{
+  const r=preseleccion(localStorage,{quien:ROL(),pid:g.pid,n:l.n,version:l.version||null,dice:l.dice},options(l)).cambiar(i);
+  S.notice=r.ok?"Preselección guardada en este navegador. Aún no has aprobado esta toma.":"Ya conservaste dos finalistas. Quita una antes de añadir otra.";
+ }catch(e){S.notice="No pude guardar la preselección. No quedó confirmada; tus decisiones siguen conservadas.";}
+ render();
+}
 function ampliarOpciones(){
  if(!S.choice)return;
  const {group:gid,n,k}=S.choice,g=S.groups.find(x=>x.id===gid),l=g&&g.t.laminas.find(x=>Number(x.n)===n);
@@ -232,8 +265,16 @@ function bind(){
  root.querySelectorAll("[data-next]").forEach(b=>b.onclick=next);
  root.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{S.filter=b.dataset.filter;render();});
  root.querySelectorAll("[data-option]").forEach(b=>b.onclick=()=>{S.choice.k=Number(b.dataset.option);render();});
+ root.querySelectorAll("[data-finalista]").forEach(b=>b.onclick=()=>conservarFinalista(Number(b.dataset.finalista)));
  root.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>chooseFrame(gs(S.choice.group),Number(b.dataset.page)));
- root.querySelector("[data-compare]")?.addEventListener("click",()=>{S.choice.compare=!S.choice.compare;render();});
+ root.querySelector("[data-compare]")?.addEventListener("click",()=>{
+  S.choice.compare=!S.choice.compare;
+  if(S.choice.compare){
+   const g=gs(S.choice.group),l=g.t.laminas.find(x=>Number(x.n)===S.choice.n);
+   try{const picks=preseleccion(localStorage,{quien:ROL(),pid:g.pid,n:l.n,version:l.version||null,dice:l.dice},options(l)).leer();if(picks.length===2&&!picks.includes(S.choice.k))S.choice.k=picks[0];}catch(e){}
+  }
+  render();
+ });
  root.querySelector("[data-prev-option]")?.addEventListener("click",()=>moveOption(-1));
  root.querySelector("[data-next-option]")?.addEventListener("click",()=>moveOption(1));
  root.querySelectorAll("[data-vote]").forEach(b=>b.onclick=()=>vote(b.dataset.vote));

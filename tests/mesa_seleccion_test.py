@@ -61,6 +61,8 @@ class SelectionCountsTests(unittest.TestCase):
         self.assertEqual(counts['tiras_preparadas'], 0)
         self.assertEqual((opens, motors, posts), (0, 0, 0))
         self.assertEqual(plan['cartas'], [])
+        self.assertEqual(report['laminas_preparadas'], 0)
+        self.assertEqual(report['tomas_obtenidas'], 0)
         exposed = json.dumps([report, logs], ensure_ascii=False)
         for private in ('privado-a', 'privado-b', 'eje-privado', 'Cliente reservado',
                         'Título privado', 'categoría confidencial', 'Nota privada', 'Texto reservado'):
@@ -137,7 +139,7 @@ class SelectionCountsTests(unittest.TestCase):
             folder = root / 'datos' / 'tiras'
             folder.mkdir(parents=True)
             (folder / (P + '.json')).write_text(json.dumps(tira()))
-            _, generated = MesaIntegrationTests().run_wave(root, P, tira(), yes(), cap=1)
+            _, generated = MesaIntegrationTests().run_wave(root, P, tira(), yes(), cap=1, variants=2)
             report = json.loads((root / 'datos' / 'mesa-estado.json').read_text())
         counts = report['seleccion']
         self.assertEqual(counts['propuestas_vivas'], 1)
@@ -146,6 +148,9 @@ class SelectionCountsTests(unittest.TestCase):
         self.assertEqual(counts['laminas_abiertas'], 2)
         self.assertEqual(counts['tiras_preparadas'], 1)
         self.assertEqual((report['generadas'], report['limite_pendiente']), (1, 1))
+        self.assertEqual(report['laminas_preparadas'], 1)
+        self.assertEqual(report['tomas_obtenidas'], 2)
+        self.assertEqual(report['tiras_reutilizadas'], 0)
         self.assertEqual(generated['decidir'], [2])
         self.assertEqual(generated['laminas'][0]['estado'], 'aprobada')
 

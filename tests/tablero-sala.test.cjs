@@ -1,6 +1,26 @@
 const test=require("node:test"),assert=require("node:assert/strict");
 const board=require("../tablero-sala.js");
 const fs=require("node:fs"),vm=require("node:vm");
+test("dos finalistas sobreviven a recarga; una tercera no desplaza ni aprueba",()=>{
+ const mem=new Map(),storage={getItem:k=>mem.has(k)?mem.get(k):null,setItem:(k,v)=>mem.set(k,v)};
+ const context={quien:'editor',pid:'sintetica',n:3,version:2};
+ const opts=[1,3,4].map(i=>({src:`toma${i}.jpg`,indiceOriginal:i,recibo_imagen:'r'+i}));
+ let shortlist=board.preseleccion(storage,context,opts);
+ assert.deepEqual(shortlist.cambiar(0).indices,[0]);assert.deepEqual(shortlist.cambiar(2).indices,[0,2]);
+ assert.equal(shortlist.cambiar(1).limite,true);
+ shortlist=board.preseleccion(storage,context,opts);assert.deepEqual(shortlist.leer(),[0,2]);
+ assert.deepEqual(shortlist.cambiar(0).indices,[2]);assert.deepEqual(shortlist.cambiar(1).indices,[2,1]);
+ for(const delta of [{quien:'editor2'},{pid:'otra'},{n:4},{version:3},{dice:'texto nuevo'}])assert.deepEqual(board.preseleccion(storage,{...context,...delta},opts).leer(),[]);
+ assert.deepEqual(board.preseleccion(storage,context,[{...opts[0],recibo_imagen:'nuevo'},...opts.slice(1)]).leer(),[]);
+ for(const quien of ['lector','agente'])assert.throws(()=>board.preseleccion(storage,{...context,quien},opts).cambiar(0));
+});
+test("una preselección sin almacenamiento confirmado no anuncia éxito",()=>{
+ const ctx={quien:'editor',pid:'sintetica',n:1,version:1},opts=[{src:'a.jpg',indiceOriginal:2}];
+ assert.throws(()=>board.preseleccion({getItem:()=>null,setItem(){throw Error('lleno');}},ctx,opts).cambiar(0));
+ assert.throws(()=>board.preseleccion({getItem:()=>null,setItem(){}},ctx,opts).cambiar(0));
+ assert.throws(()=>board.preseleccion({getItem:()=>'{inválido'},ctx,opts).leer());
+ assert.equal(board.textoToma({dice:'texto base'},{dice:'texto de B'}),'texto de B');
+});
 test("el rechazo de cualquiera manda sobre un sí y sobre el estado histórico",()=>{
  assert.equal(board.estado({estado:"aprobada",src:"a.jpg"},["si","no"]),"rojo");
  assert.equal(board.estado({src:"a.jpg"},["si"]),"verde");

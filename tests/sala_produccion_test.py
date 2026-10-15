@@ -205,7 +205,7 @@ class MesaTests(unittest.TestCase):
 
 
 class MesaIntegrationTests(unittest.TestCase):
-    def run_wave(self, root, pid, original, decision, cap=1):
+    def run_wave(self, root, pid, original, decision, cap=1, variants=1):
         def fake_images(slug, reference, lam, note, rules, queue, folder, count):
             folder.mkdir(parents=True, exist_ok=True)
             stem = folder / ("L%d-1" % lam["n"])
@@ -214,7 +214,7 @@ class MesaIntegrationTests(unittest.TestCase):
             return [{"src": str(stem.with_suffix(".jpg").relative_to(root)),
                      "original": str(stem.with_suffix(".png").relative_to(root)),
                      "motor": "doble", "dice": "Texto válido nuevo",
-                     "huella": hashlib.md5(b"imagen-sintetica").hexdigest()}], []
+                     "huella": hashlib.md5(b"imagen-sintetica").hexdigest()} for _ in range(variants)], []
         d = day([{"id": pid, "laminas": ["laminas/a.jpg"]}], {pid: decision})
         rules = {"mesa_tope_laminas": str(cap), "mesa_tomas_por_lamina": "1"}
         def get(resource, **kw):
