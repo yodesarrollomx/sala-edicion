@@ -804,7 +804,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='6a24a07c83';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='b66ebe5923';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1858,7 +1858,7 @@ function abrirZoom(src,opc){
   if(zg){ pintarCual();
     zg.querySelector('.zg-ant').onclick=e=>{ e.stopPropagation(); irA(gi-1) };
     zg.querySelector('.zg-sig').onclick=e=>{ e.stopPropagation(); irA(gi+1) };
-    zg.querySelector('.zg-elegir').onclick=e=>{ e.stopPropagation(); const g=gal[gi]; cerrarCapa(id); if(typeof g.elegir==='function') g.elegir() };
+    zg.querySelector('.zg-elegir').onclick=e=>{ e.stopPropagation(); const g=gal[gi]; cerrarCapa(id); if(typeof g.elegir==='function') g.elegir(img) };
   }
   const teclas=e=>{ if(!zg) return; if(e.key==='ArrowLeft'){ e.preventDefault(); irA(gi-1) } else if(e.key==='ArrowRight'){ e.preventDefault(); irA(gi+1) } };
   addEventListener('keydown',teclas);
@@ -3237,5 +3237,5 @@ setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subir
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); _tSubir=null; subir() } } });
 window.addEventListener('resize',()=>{ if(DECIDE()) pintarPanel(); else pintarPanelMira() });
 </script>
-<script src="tablero-sala.js?v=20261013-1"></script>
+<script src="tablero-sala.js?v=20261015-279"></script>
 </body></html>

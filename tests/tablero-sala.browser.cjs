@@ -81,9 +81,16 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await p.locator('[data-lamina="2"]').click();
   await p.waitForSelector(".bt-choice");
   assert.match(await p.locator(".bt-pager").innerText(),/1 de 2/);
-  await p.locator("[data-next-option]").click();
-  await p.waitForFunction(()=>document.querySelector(".bt-main-photo")?.naturalWidth>0);
-  await p.locator('[data-vote="si"]').click();
+  await p.locator("[data-full-photo]").click();
+  await p.waitForSelector(".zoom.galeria .zg");
+  await p.locator(".zoom .zg-sig").click();
+  await p.waitForFunction(()=>document.querySelector(".zoom img")?.naturalWidth>0);
+  assert.match(await p.locator(".zoom .zg-cual").innerText(),/2 de 2/);
+  assert.equal(d.writes.filter(x=>x.accion==="decidir").length,0);
+  await p.keyboard.press("ArrowLeft");assert.match(await p.locator(".zoom .zg-cual").innerText(),/1 de 2/);
+  await p.keyboard.press("ArrowRight");assert.match(await p.locator(".zoom .zg-cual").innerText(),/2 de 2/);
+  await p.waitForFunction(()=>document.querySelector(".zoom img")?.naturalWidth>0);
+  await p.locator(".zoom .zg-elegir").click();
   await p.waitForFunction(()=>document.querySelector(".bt-choice-copy .bt-dot")?.textContent==="Aprobada");
   assert.equal(d.writes.filter(x=>x.accion==="decidir").length,1);
   const chosen=d.writes.find(x=>x.accion==="decidir").propuestas["synthetic-0"];
@@ -142,6 +149,9 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    const r=await prepare(b,390,role,true),page=r.page;
    await page.locator('[data-open="synthetic-0"]').click();await page.locator('[data-lamina="2"]').click();
    assert.ok(await page.locator('[data-vote="si"]').isDisabled());assert.ok(await page.locator('[data-vote="no"]').isDisabled());
+   await page.locator('[data-full-photo]').click();await page.waitForSelector('.zoom.galeria');
+   assert.equal(await page.locator('.zoom .zg-elegir').isVisible(),false);
+   await page.locator('.zoom .zg-sig').click();assert.match(await page.locator('.zoom .zg-cual').innerText(),/2 de 2/);
    assert.equal(r.writes.filter(x=>x.accion==="decidir").length,0);
    await r.context.close();
   }
