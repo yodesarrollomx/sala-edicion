@@ -30,3 +30,22 @@ test("conteo conserva intentos y no duplica original PNG, miniatura JPG y candid
  assert.equal(board.intentos(l),7);
  assert.equal(board.intentos({src:"a.jpg",candidatas:[{src:"a.jpg",original:"a.png"},{src:"b.jpg",original:"b.png"}]}),2);
 });
+test("los controles dentro de la foto reciben su clic y los gestos de la imagen siguen funcionando",()=>{
+ const source=fs.readFileSync(require.resolve("../tablero-sala.js"),"utf8");
+ const start=source.indexOf("function bind(){"),end=source.indexOf("async function refresh(",start);
+ const listeners={},captures=[],moves=[],votes=[];
+ const hero={addEventListener:(name,fn)=>listeners[name]=fn,setPointerCapture:id=>captures.push(id)};
+ const ctx={root:{querySelectorAll:()=>[],querySelector:q=>q===".bt-hero"?hero:null},S:{groups:[]},moveOption:n=>moves.push(n),vote:m=>votes.push(m)};
+ vm.runInNewContext(source.slice(start,end)+"\nthis.bind=bind;",ctx);ctx.bind();
+ const control={closest:()=>({tagName:"BUTTON"})},photo={closest:()=>null};
+ listeners.pointerdown({target:control,isPrimary:true,pointerId:1,clientX:100,clientY:200});
+ listeners.pointerup({target:control,pointerId:1,clientX:100,clientY:200});
+ assert.deepEqual(captures,[],'capturar el botón retargeta el clic al lienzo y omite Reintentar');
+ assert.deepEqual(votes,[]);assert.deepEqual(moves,[]);
+ listeners.pointerdown({target:photo,isPrimary:true,pointerId:2,clientX:100,clientY:200});
+ listeners.pointerup({target:photo,pointerId:2,clientX:20,clientY:200});
+ assert.deepEqual(captures,[2]);assert.deepEqual(moves,[1]);
+ listeners.pointerdown({target:photo,isPrimary:true,pointerId:3,clientX:100,clientY:200});
+ listeners.pointerup({target:photo,pointerId:3,clientX:100,clientY:80});
+ assert.deepEqual(votes,['si']);
+});

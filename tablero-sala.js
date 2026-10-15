@@ -218,7 +218,7 @@ function bind(){
   if(label.tagName==="BUTTON")label.onclick=()=>reintentarFoto(im);
  };});
  const hero=root.querySelector(".bt-hero");if(hero){
-  let p=null;hero.addEventListener("pointerdown",e=>{if(e.isPrimary){p={x:e.clientX,y:e.clientY,id:e.pointerId};hero.setPointerCapture(e.pointerId);}});
+  let p=null;hero.addEventListener("pointerdown",e=>{if(e.target.closest("button,a,input,textarea,select,[role=button]"))return;if(e.isPrimary){p={x:e.clientX,y:e.clientY,id:e.pointerId};hero.setPointerCapture(e.pointerId);}});
   hero.addEventListener("pointercancel",()=>{p=null;});
   hero.addEventListener("pointerup",e=>{if(!p||p.id!==e.pointerId)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p=null;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3)moveOption(dx<0?1:-1);else if(dy< -95&&Math.abs(dx)<45)vote("si");});
  }

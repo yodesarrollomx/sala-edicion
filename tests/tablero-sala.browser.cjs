@@ -198,6 +198,7 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    assert.equal(r.writes.length,0,'ni una imagen ya descargada permite aprobar si el pin falló');
    assert.match(await choice.locator('.bt-notice').innerText(),/Espera a que cargue/);
    media.mode='public';await choice.locator('.bt-hero .bt-retry-label').waitFor();await choice.locator('.bt-hero .bt-retry-label').click();
+   await view.waitForFunction(()=>SalaMedios.estado()==='listo');
    await view.waitForFunction(()=>document.querySelector('.bt-choice .bt-main-photo')?.naturalWidth===72);
    assert.equal(await view.evaluate(()=>SalaMedios.estado()),'listo');
    assert.ok(r.releaseReads.length>=2);assert.deepEqual(r.errors,[]);
