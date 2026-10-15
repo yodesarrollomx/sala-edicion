@@ -28,6 +28,7 @@ jobs:
           sparse-checkout: |
             /nube/mantenimiento_queued.py
             /nube/snapshots_online.py
+            /nube/revisiones_presentacion.py
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'

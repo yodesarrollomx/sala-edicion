@@ -30,6 +30,7 @@ jobs:
             /medios-publicos.js
             /nube/medios_publicos.py
             /nube/snapshots_online.py
+            /nube/revisiones_presentacion.py
             /nube/sonda_medios_publicos.py
       - uses: actions/setup-python@v5
         with:
@@ -63,6 +64,7 @@ jobs:
             /medios-publicos.js
             /nube/medios_publicos.py
             /nube/snapshots_online.py
+            /nube/revisiones_presentacion.py
             /nube/sonda_medios_publicos.py
       - uses: actions/setup-python@v5
         with:
