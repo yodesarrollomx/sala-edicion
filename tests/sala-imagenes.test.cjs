@@ -111,7 +111,7 @@ test('la aprobación real del tablero comprueba el manifiesto aun con la foto ca
   const source=fs.readFileSync('tablero-sala.js','utf8');
   const vote=source.slice(source.indexOf('function vote('),source.indexOf('async function reintentarFoto('));
   let ready=false,writes=0;
-  const context={S:{choice:{group:'g',n:1,k:0},groups:[{id:'g',pid:'p',t:{laminas:[{n:1,estado:'rehecha'}]}}]},
+  const context={ROL:()=> 'editor',api:{contexto:()=>({pid:'p',lamina:1,version:1})},S:{choice:{group:'g',n:1,k:0},groups:[{id:'g',pid:'p',t:{laminas:[{n:1,estado:'rehecha'}]}}]},
     eligible:()=>true,markData:()=>({i:0}),options:()=>[{src:'laminas/synthetic/L1.png',indiceOriginal:null}],
     dec:{p:{laminas:[''],notas:['']}},mediosDisponibles:()=>ready,root:{querySelector:()=>({complete:true,naturalWidth:72})},
     pasos:[],lockeadas:[],guardarBorrador(){},programarSubida(){},subir(){writes++;},render(){}};
@@ -174,7 +174,7 @@ test('galería sintética navega por teclado y elige sólo por clic explícito',
     matchMedia:()=>({matches:false}),setTimeout:()=>1,clearTimeout(){},
     addEventListener:(name,fn)=>listeners.set(name,fn),removeEventListener:name=>listeners.delete(name),
     abrirCapa:(_,fn)=>cleanup=fn,cerrarCapa:()=>cleanup(),
-    document:{body:{appendChild:z=>layer=z},createElement(){return {classList:{add(){}},
+    document:{body:{appendChild:z=>layer=z},createElement(){return {dataset:{},classList:{add(){}},
       querySelector(q){return q==='img'?img:q==='.zg'?(this.innerHTML.includes('class="zg"')?gallery:null):nodes[q]},
       addEventListener(){},remove(){this.removed=true}}}}};
   vm.runInNewContext(block('function abrirZoom(src,opc){','/* ══ final / vacío')+'\nthis.open=abrirZoom;',ctx);

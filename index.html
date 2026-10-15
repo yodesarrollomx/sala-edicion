@@ -658,7 +658,10 @@ html.cargando #actualizando{display:flex}
 .barra-sin-entrar{position:sticky;top:0;left:0;right:0;z-index:25;display:flex;align-items:center;
   justify-content:center;gap:8px;text-align:center;background:var(--no-suave);color:var(--no);
   border-bottom:1px solid var(--no);font-weight:600;font-size:13.5px;line-height:1.35;padding:10px 16px}
+/* Al revisar dictado, sólo el aviso más reciente queda visible. */
+body > .chn-aviso:has(~ .chn-aviso){display:none!important}
 </style><link rel="stylesheet" href="tablero-sala.css?v=20261015-editorial"></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
+<script src="sala-correcciones.js?v=20261015-4"></script>
 <script src="politica-imagen.js?v=sin-pollinations-gpt-20261012"></script>
 <script src="medios-publicos.js?v=20261015-1"></script>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
@@ -806,7 +809,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='d58e7390f5';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='690ffb94be';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1245,12 +1248,15 @@ async function subir(){
   if(_pendiente) subir();
 }
 async function subirCola(){
+  await conciliarCorrecciones();
   const q=leerLS('sala_cola',[]); if(!q.length||!ENTRADO()) return;
   // sólo sube lo que firmó QUIEN está entrando ahora; lo ajeno se queda esperando a su dueño
   const mio=q.filter(e=>!e.quien||e.quien===ROL()), ajeno=q.filter(e=>e.quien&&e.quien!==ROL());
   mio.forEach(e=>{if(!e.clave)e.clave=CLAVE()});
   const resto=[...ajeno];
   for(const envio of mio){
+    // Colas anteriores no tienen checkpoint: podrían haberse escrito ya. Conservar, no reenviar.
+    if(envio.accion==='produccion'){resto.push(envio);continue;}
     try{ const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(envio)});
       const j=await leerJSON(r);
       if(!r.ok||!j||j.ok!==true){ if(j&&/no encontr|solo lee|solo el agente/i.test(String(j.error||''))){ guard.ultimoError='El Sheet rechazó un envío guardado: «'+String(j.error)+'»'; continue } throw 0 } }
@@ -1433,8 +1439,8 @@ async function verGuia(t){
       if(!txt){ av.textContent='Escribe primero el cambio.'; return }
       const d=new Date(), p2=k=>String(k).padStart(2,'0'), id='CHN-'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes())+'-'+Math.random().toString(16).slice(2,6);
       av.textContent='Mandando…'; b.disabled=true;
-      try{ await mandarProduccion('ENCARGO · chinche · '+nombre, JSON.stringify({id,texto:`[Storyboard] «${nombre}» · lámina ${n}: ${txt}`,tipo:'guion',vista:'hoy',carta:{pieza:nombre,lamina:+n},url:location.href}), false);
-        av.textContent='✓ Anotado para la lámina '+n+'. Llega a Producción (📌) en menos de una hora.'; c.querySelector('textarea').value='' }
+      try{ const envio=await mandarProduccion('ENCARGO · chinche · '+nombre, JSON.stringify({id,texto:`[Storyboard] «${nombre}» · lámina ${n}: ${txt}`,tipo:'guion',vista:'hoy',carta:{pieza:nombre,pid:Object.keys(TIRAS).find(k=>TIRAS[k]===t)||null,lamina:+n,version:(lams.find(l=>l.n===+n)||{}).version||null,src:(lams.find(l=>l.n===+n)||{}).src||null},url:location.href}), false);
+        av.textContent=envio.mensaje; if(envio.estado==='recibido')c.querySelector('textarea').value=''  }
       catch(e){ av.textContent='No se pudo mandar: '+(e&&e.message||e); b.disabled=false } } });
 }
 /* ══ pintado de Hoy ══ */
@@ -1470,12 +1476,12 @@ function fichaGuion(x,nombre){
     <h4 style="margin:14px 0 6px">¿Cambiamos el guion?</h4>
     <textarea id="guTxt" style="width:100%;min-height:80px" placeholder="Qué cambia: el mensaje, una lámina, el orden… Producción ajusta lo que siga (láminas, voz, video) para que cumpla."></textarea>
     <button class="listo" id="guOk" style="margin-top:8px">Pedir cambio al guion</button><p id="guAv" class="arb-sub"></p></div>`,'guion');
-  v.querySelector('#guOk').onclick=async()=>{ const txt=(v.querySelector('#guTxt').value||'').trim(), av=v.querySelector('#guAv');
-    if(!txt){ av.textContent='Escribe primero qué cambia.'; return }
+  v.querySelector('#guOk').onclick=async()=>{ v.querySelector('#guOk').disabled=true; const txt=(v.querySelector('#guTxt').value||'').trim(), av=v.querySelector('#guAv');
+    if(!txt){ av.textContent='Escribe primero qué cambia.'; v.querySelector('#guOk').disabled=false; return }
     const d=new Date(), p2=n=>String(n).padStart(2,'0'), id='CHN-'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes())+'-'+Math.random().toString(16).slice(2,6);
     av.textContent='Mandando…';
-    try{ await mandarProduccion('ENCARGO · chinche · '+nombre, JSON.stringify({id,texto:`[Cambio de guion] «${nombre}»: ${txt} — y adapta en cascada lo que ya no cumpla (láminas, voz, video, copy).`,tipo:'guion',vista:'hoy',carta:{pieza:nombre,pid:x.pid},url:location.href}), false);
-      av.textContent='✓ Anotado. Llega a Producción en menos de una hora (📌) y lo que siga se rehace para cumplir el guion nuevo.'; v.querySelector('#guTxt').value='' }
+    try{ const envio=await mandarProduccion('ENCARGO · chinche · '+nombre, JSON.stringify({id,texto:`[Cambio de guion] «${nombre}»: ${txt} — y adapta en cascada lo que ya no cumpla (láminas, voz, video, copy).`,tipo:'guion',vista:'hoy',carta:{pieza:nombre,pid:x.pid},url:location.href}), false);
+      av.textContent=envio.mensaje; if(envio.estado==='recibido')v.querySelector('#guTxt').value=''  }
     catch(e){ av.textContent='No se pudo mandar: '+(e&&e.message||e) } };
 }
 function luegoDe(x){
@@ -1546,7 +1552,7 @@ function pintarCartas(){
       const _tC=tiraDe(x), _lC=_tC?laminaTira(_tC,src,nLamina(x)):null;
       const _cands=POLITICA_IMAGEN.tomas(_lC);
       src=POLITICA_IMAGEN.srcLamina(_lC,src);
-      const candHTML=_cands.length?`<div class="cand-fila">${_cands.map((o,k)=>`<div class="cand-item"><img src="${esc(ligera(o.src||''))}" alt="" loading="lazy" data-amp="${esc(o.src||'')}">${o.titulo?`<b>${esc(o.titulo)}</b>`:''}${o.modelo?`<small>${esc(o.modelo)}</small>`:''}<button type="button" data-cand="${o.indiceOriginal}">Ésta</button></div>`).join('')}</div>`:'';
+      const candHTML=_cands.length?`<div class="cand-fila">${_cands.map((o,k)=>`<div class="cand-item"><img src="${esc(ligera(o.src||''))}" alt="" loading="lazy" data-amp="${esc(o.src||'')}">${o.titulo?`<b>${esc(o.titulo)}</b>`:''}${o.modelo?`<small>${esc(o.modelo)}</small>`:''}<button type="button" data-cand="${o.indiceOriginal}">Aprobar esta toma</button></div>`).join('')}</div>`:'';
       el.innerHTML=`${versionHTML(x)}${otrosHTML(x)}<div class="lienzo">
           <div class="cargando">cargando lámina…</div>
           ${serialDe(src)?`<span class="serie">${esc(serialDe(src))}</span>`:``}
@@ -1592,7 +1598,7 @@ function pintarCartas(){
           : m==='audio' ? `<audio src="${esc(o.src)}" controls preload="none" style="width:100%;margin-bottom:8px"></audio>`
           : m==='video' ? `<video src="${esc(o.src)}" controls playsinline preload="metadata" style="width:100%;max-height:300px;border-radius:10px;display:block;margin-bottom:8px"></video>`
           : `<img src="${esc(ligera(o.src))}" alt="" style="width:100%;max-height:230px;object-fit:cover;object-position:center 30%;border-radius:10px;display:block;margin-bottom:8px;cursor:zoom-in" data-amp="${esc(o.src)}">`;
-        return `<div class="op">${vista}<h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Elegir ésta</button></div>` }).join('');
+        return `<div class="op">${vista}<h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Aprobar esta opción</button></div>` }).join('');
       // 15-sep, su reclamo textual: «no me está mostrando mucho ni para qué ni imágenes; no me dejó claro
       // qué tenía que decidir ni para qué». Una carta de eje ahora SIEMPRE abre diciendo qué se decide y
       // para qué sirve (`porque`), y si la decisión es sobre una imagen, la imagen de referencia va arriba
@@ -1832,7 +1838,7 @@ function abrirZoom(src,opc){
   if(gal.length) src=gal[gi].src;
   let fuentes=fuentesImagen(src,[ligera(src),original(src),src]);
   const z=document.createElement('div'); z.className='zoom';
-  z.innerHTML=`<img alt="Lámina ampliada"><button class="zx">${ICO_VOLVER}Volver</button><div class="zoom-error" hidden style="position:absolute;z-index:4;max-width:min(92vw,360px);padding:24px;border-radius:16px;background:#28231c;color:#fff;text-align:center"><p>La imagen de esta revisión todavía no está disponible. Puedes reintentar sin cerrar la Sala.</p><button type="button" class="reintentar-zoom" style="min-height:44px;padding:8px 18px;border-radius:12px">Reintentar imagen</button></div><div class="zt">${matchMedia('(hover:hover)').matches?'Rueda o doble clic para acercar · arrastra para mover':'Pellizca o doble toque para acercar · desliza para mover'}</div>${gal.length>1?`<div class="zg" role="group" aria-label="Comparar tomas"><button type="button" class="zg-ant" aria-label="Toma anterior">‹</button><span class="zg-cual" aria-live="polite"><b></b><small></small></span><button type="button" class="zg-sig" aria-label="Toma siguiente">›</button><button type="button" class="zg-elegir">Elegir ésta</button></div>`:''}`;
+  z.innerHTML=`<img alt="Lámina ampliada"><button class="zx">${ICO_VOLVER}Volver</button><div class="zoom-error" hidden style="position:absolute;z-index:4;max-width:min(92vw,360px);padding:24px;border-radius:16px;background:#28231c;color:#fff;text-align:center"><p>La imagen de esta revisión todavía no está disponible. Puedes reintentar sin cerrar la Sala.</p><button type="button" class="reintentar-zoom" style="min-height:44px;padding:8px 18px;border-radius:12px">Reintentar imagen</button></div><div class="zt">${matchMedia('(hover:hover)').matches?'Rueda o doble clic para acercar · arrastra para mover':'Pellizca o doble toque para acercar · desliza para mover'}</div>${gal.length>1?`<div class="zg" role="group" aria-label="Comparar tomas"><button type="button" class="zg-ant" aria-label="Toma anterior">‹</button><span class="zg-cual" aria-live="polite"><b></b><small></small></span><button type="button" class="zg-sig" aria-label="Toma siguiente">›</button><button type="button" class="zg-elegir">Aprobar esta opción</button></div>`:''}`;
   if(gal.length>1) z.classList.add('galeria');
   document.body.appendChild(z);
   const img=z.querySelector('img'), aviso=z.querySelector('.zoom-error'); let s=1,tx=0,ty=0,base=1,W=0,H=0;
@@ -1857,13 +1863,14 @@ function abrirZoom(src,opc){
   proxima();
   const id='zoom'+Date.now();
   const zg=z.querySelector('.zg');
-  const pintarCual=()=>{ if(!zg) return; const g=gal[gi];
+  const pintarCual=()=>{ z.dataset.fuente=gal.length?gal[gi].src:src; if(!zg) return; const g=gal[gi];
     zg.querySelector('.zg-cual b').textContent=g.titulo||('Toma '+(gi+1));
     zg.querySelector('.zg-cual small').textContent=(gi+1)+' de '+gal.length;
     zg.querySelector('.zg-elegir').hidden=typeof g.elegir!=='function' };
   const irA=k=>{ gi=(k+gal.length)%gal.length; fuentes=fuentesImagen(gal[gi].src,[ligera(gal[gi].src),original(gal[gi].src),gal[gi].src]);
     pos=0; recargar=false; aviso.hidden=true; proxima(); pintarCual() };
-  if(zg){ pintarCual();
+  pintarCual();
+  if(zg){
     zg.querySelector('.zg-ant').onclick=e=>{ e.stopPropagation(); irA(gi-1) };
     zg.querySelector('.zg-sig').onclick=e=>{ e.stopPropagation(); irA(gi+1) };
     zg.querySelector('.zg-elegir').onclick=e=>{ e.stopPropagation(); const g=gal[gi]; cerrarCapa(id); if(typeof g.elegir==='function') g.elegir(img) };
@@ -2204,6 +2211,9 @@ async function diagnostico(){
   pon();
 }
 async function pintarRecados(){
+  const local=$('#ajRecadosLocal')||(()=>{const parent=$('#ajRecados');if(!parent)return null;const node=document.createElement('div');node.id='ajRecadosLocal';parent.before(node);return node;})();
+  if(local){try{local.innerHTML=correcciones().listar().filter(r=>r.quien===ROL()).reverse().map(r=>{const d=SalaCorrecciones.detalle(r.body.detalle);return `<p><b>${esc((d.texto||d.nota||r.body.pieza).slice(0,100))}</b><br>${esc(SalaCorrecciones.mensaje(r))}</p>`;}).join('');const antiguos=leerLS('sala_cola',[]).filter(e=>e.accion==='produccion');if(antiguos.length)local.innerHTML+=`<p>${antiguos.length} recados anteriores conservados, pendientes de verificar. No se reenviarán automáticamente.</p>`;}catch(e){local.textContent='No pude leer los envíos guardados en este aparato.';}}
+
   const c=$('#ajRecados'); if(!c) return;
   try{
     const r=await fetch('datos/encargos.json?v='+Date.now()); if(!r.ok) return;
@@ -2212,29 +2222,36 @@ async function pintarRecados(){
        como JSON crudo, y un «en curso» de hace una semana seguía diciendo «la ronda la lanza
        Alejandro» —ese archivo lo escribía la Mac y desde la mudanza a la nube nadie lo actualiza—.
        Ahora: uno por chinche (gana la fila más nueva), su texto, y lo viejo se dice «atorado». */
-    const lee=e=>{ const q=String(e.que), id=(q.match(/"id":"([^"]+)"/)||[])[1], tx=(q.match(/"texto":"((?:[^"\\]|\\.)*)/)||[])[1];
-      return {id:id||q, texto:tx?tx.replace(/\\n/g,' ').replace(/\\"/g,'"'):q} };
+    const lee=e=>{try{const q=typeof e.que==='string'?JSON.parse(e.que):e.que;return {id:q.id,texto:q.texto||'Corrección'};}catch(error){return {id:String(e.que),texto:String(e.que)};}};
     const porId=new Map(); (j.encargos||[]).filter(e=>e.que).forEach(e=>{ const x=lee(e); porId.set(x.id,Object.assign({},e,{texto:x.texto})) });
     const dias=e=>{ const d=Date.parse(e.cuando||''); return isNaN(d)?0:(Date.now()-d)/864e5 };
-    const l=[...porId.values()].slice(-3).reverse();
+    const l=[...porId.values()].reverse();
     if(!l.length) return;
     c.innerHTML=`<p style="margin:12px 0 6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--guia);font-weight:600">Tus recados</p>`+
       l.map(e=>{ const viejo=e.estado==='en curso'&&dias(e)>2, cls=e.estado==='cumplida'?'bien':(e.estado==='en curso'&&!viejo)?'duda':'mal';
-        const txt=e.estado==='cumplida'?'Hecho':viejo?('Atorado desde el '+esc(e.cuando||'')+' · nadie lo terminó; vuelve a clavarlo o pídelo en «Mandar a Claude»'):e.estado==='en curso'?('Tomado'+(e.tomado?' a las '+esc(e.tomado):'')):'Atorado';
-        return `<div class="maq ${cls}"><b><i></i>${esc((e.texto||'').slice(0,90))}</b><small>${txt}${e.cuando&&!viejo?' · pedido el '+esc(e.cuando):''}</small></div>` }).join('');
+        const txt=e.estado==='cumplida'?'Corrección técnica verificada':e.estado==='entregada'?'Resultado verificado · falta confirmar registro':e.estado==='por verificar'?'Cerrado · resultado por verificar':viejo?('Atorado desde el '+esc(e.cuando||'')+' · nadie lo terminó; consulta su seguimiento; conserva el mismo encargo'):e.estado==='en curso'?('Tomado'+(e.tomado?' a las '+esc(e.tomado):'')):'Atorado';
+        return `<div class="maq ${cls}"><b><i></i>${esc((e.texto||'').slice(0,90))}</b><small>${txt}${e.cuando&&!viejo?' · pedido el '+esc(e.cuando):''}</small>${/^https:\/\/github\.com\/yodesarrollomx\/[a-zA-Z0-9_.-]+\/(issues|pull)\/\d+$/.test(e.resultado&&e.resultado.url||e.issue||'')?`<a href="${esc(e.resultado&&e.resultado.url||e.issue)}" target="_blank" rel="noopener">Ver seguimiento</a>`:''}</div>` }).join('');
   }catch(e){}
 }
-async function mandarProduccion(pieza,txt,esMensaje){
-  // 15-sep: fuera de Ajustes no existe #ajAviso y esto tronaba ANTES del fetch: 4 chinches suyas se quedaron en su Chrome sin llegar al Sheet.
-  const av=$('#ajAviso')||{set textContent(v){}, get textContent(){return ''}}; if(esMensaje&&!txt){ av.textContent='Escribe el mensaje primero.'; return }
-  const envio={accion:'produccion',clave:CLAVE(),fecha,pieza,estado:'pendiente',detalle:txt,enlace:''};
-  if(!ENTRADO()){ encolar(envio); av.textContent='Quedó anotado aquí; sube cuando entres.'; return }
-  av.textContent='Anotando…';
-  try{ const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(envio)}); const j=await leerJSON(r);
-    if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||'');
-    av.textContent=(esMensaje?'Mensaje anotado':'Ronda pedida')+' a las '+hora()+'. El recado ya está en el Sheet; te aviso aquí abajo cuando Producción lo tome.'; setTimeout(pintarRecados,1000); $('#ajMsg').value='' }
-  catch(e){ if(/solo el agente|solo lee/i.test(String(e.message))){ av.textContent='Tu acceso no puede escribirle a Producción.'; return } encolar(envio); av.textContent='Sin señal: quedó en cola y sube solo.' }
+let _correcciones;
+function correcciones(){
+ if(!_correcciones)_correcciones=SalaCorrecciones.crear({storage:localStorage,owner:()=>ROL(),authorized:()=>ENTRADO()&&DECIDE(),uuid,
+  post:async body=>{const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({...body,clave:CLAVE()})});const j=await leerJSON(r);if(!r.ok)throw Error('Respuesta no confirmada');return j;},
+  read:async()=>{const r=await fetch(GAS()+'?recurso=dia&fresco=1&clave='+encodeURIComponent(CLAVE()));if(!r.ok)throw Error('Sin lectura');return leerJSON(r);}});
+ return _correcciones;
 }
+async function conciliarCorrecciones(){
+ try{const rows=await correcciones().conciliar();for(const r of rows)if(r.estado==='recibido'&&r.chinche)chincheMandada(r.chinche);}catch(e){}
+}
+async function mandarProduccion(pieza,txt,esMensaje,quien){
+ const av=$('#ajAviso');
+ if(esMensaje&&!txt){const r={estado:'local',mensaje:'Escribe el mensaje primero.'};if(av)av.textContent=r.mensaje;return r;}
+ const result=await correcciones().enviar({accion:'produccion',fecha,pieza,estado:'pendiente',detalle:txt,enlace:'',quien});
+ result.mensaje=SalaCorrecciones.mensaje(result);if(av)av.textContent=result.mensaje;
+ if(result.estado==='recibido'){const input=$('#ajMsg');if(input)input.value='';pintarRecados().catch(()=>{});}
+ return result;
+}
+
 async function pintarMaquinas(){
   const c=$('#ajMaqLista'); c.innerHTML='<p style="color:var(--guia);font-size:13px">Cargando…</p>';
   if(!MAQ){ try{ MAQ=await (await fetch('datos/maquinas.json?v='+Date.now())).json() }catch(e){} }
@@ -2258,7 +2275,7 @@ function abrirGuia(forzar){
   if(!forzar&&localStorage.getItem('sala_guia')) return;
   const P=DECIDE()?[
     ['Tus publicaciones en un tablero','Cada columna reúne una publicación y todas sus láminas. Tócala para acercarte; abre una lámina para comparar sus opciones.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="m8 13 3 3 5-6"/></svg>'],
-    ['Amarillo, verde y rojo','Amarillo: por revisar. Elige una fotografía y apruébala con el botón o un gesto hacia arriba. Verde: aprobada. Rojo: cambio pedido con tu nota.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'],
+    ['Amarillo, verde y rojo','Amarillo: por revisar. Elige una fotografía y apruébala con el botón con el botón «Aprobar esta toma». Verde: aprobada. Rojo: cambio pedido con tu nota.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'],
     ['Todo se guarda solo','La píldora de arriba dice «Guardado ✓» cuando ya subió. En «Publicaciones» ves qué pasó con cada pieza.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>']
   ]:[
     ['Esta es la mesa de edición','Aquí ves las láminas y preguntas que Producción les manda a Alejandro y a Sayri, y qué decidieron en cada una.','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="m8 13 3 3 5-6"/></svg>'],
@@ -2601,7 +2618,7 @@ async function pintarLinea(piezas,destino,compacto){
     recados=[...por.values()].filter(e=>e.estado==='en curso'&&(Date.now()-Date.parse(e.cuando||''))/864e5>2) }catch(e){}
   const propuestas=(IDEAS||[]).filter(i=>/propuesta/i.test(i.estado||''));
   const pend=[];
-  recados.forEach(e=>pend.push(`<b>Recado atorado</b> desde el ${esc(fechaCorta(e.cuando))}: «${esc(String(e.texto).slice(0,110))}» — vuelve a clavarlo o pídelo con «Mandar a Claude».`));
+  recados.forEach(e=>pend.push(`<b>Recado atorado</b> desde el ${esc(fechaCorta(e.cuando))}: «${esc(String(e.texto).slice(0,110))}» — consulta el seguimiento del mismo encargo.`));
   if(propuestas.length) pend.push(`<b>${propuestas.length} ideas propuestas</b> esperando que elijas (en la pestaña Árbol, abajo): ${esc(propuestas.slice(0,4).map(i=>i.titulo).join(' · '))}${propuestas.length>4?'…':''}.`);
   const seg=s=>`<div class="ln-seg ${s.c}${s.aqui?' aqui':''}"><i></i><span>${esc(s.txt)}</span></div>`;
   if(compacto){
@@ -2851,9 +2868,9 @@ async function fichaIdeaProd(nombre){
     const d=new Date(), p2=n=>String(n).padStart(2,'0'), id='CHN-'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes())+'-'+Math.random().toString(16).slice(2,6);
     const etiqueta={cambio:'Pedir cambio',nombre:'Cambiar nombre',propuesta:'Propuesta'}[tipo];
     b.disabled=true; av.textContent='Mandando…';
-    try{ await mandarProduccion('ENCARGO · chinche · '+nombre, JSON.stringify({id,texto:`[${etiqueta}] «${nombre}»: ${txt}`,tipo:'ficha',vista:'produccion',carta:{pieza:nombre},url:location.href}), false);
-      av.textContent='✓ Anotado. En menos de una hora se vuelve un pedido de Producción (📌) y te avisa aquí mismo en «Tus recados».'; v.querySelector('#fiTxt').value='' }
-    catch(e){ av.textContent='No se pudo mandar: '+(e&&e.message||e) } finally{ b.disabled=false } });
+    try{ const envio=await mandarProduccion('ENCARGO · chinche · '+nombre, JSON.stringify({id,texto:`[${etiqueta}] «${nombre}»: ${txt}`,tipo:'ficha',vista:'produccion',carta:{pieza:nombre},url:location.href}), false);
+      av.textContent=envio.mensaje; if(envio.estado==='recibido')v.querySelector('#fiTxt').value=''  }
+    catch(e){ av.textContent='No se pudo mandar: '+(e&&e.message||e) } finally{ /* El estado del envío queda visible; no duplicar el mismo pedido. */ } });
 }
 function pasoHTML(nombre,estado,cuerpo){ return `<div class="paso ${estado}"><i></i><div><b>${esc(nombre)}</b>${cuerpo||''}</div></div>` }
 function fichaPublicacion(clave){
@@ -2945,24 +2962,29 @@ setInterval(()=>{ try{ const r=(typeof pasos!=='undefined'&&pasos.length&&typeof
    (3) la Sala sabe QUÉ tiene enfrente (pieza, lámina, carta, fruto) y lo clava como dato exacto;
    (4) cada chinche sale al Sheet como «ENCARGO · chinche» y /sala la cosecha sin esperar un zip.
    El script es el mismo del portal (mismo origen): una sola Chinche, no dos. */
-function chincheContexto(){
-  const v=document.body.dataset.vista||''; const x=(typeof pasos!=='undefined'&&pasos[idx])||null;
-  const capa=document.querySelector('.velo .hoja'); const fichaTit=capa&&capa.querySelector('h3')?capa.querySelector('h3').textContent:'';
-  return { vista:v, popup:capa?(fichaTit||'abierto'):'', carta:x?{pid:x.pid,tipo:x.tipo,lamina:x.tipo==='lamina'?nLamina(x):null,pieza:piezaDe(x)}:null };
+function chincheContexto(op){
+ const v=document.body.dataset.vista||'';let el=null;
+ try{el=op&&op.css?document.querySelector(op.css):null;}catch(e){}
+ const tab=v==='hoy'&&document.body.classList.contains('sala-tablero')&&window.SalaTablero?SalaTablero.contexto(el):null;
+ const x=(v==='hoy'&&document.body.classList.contains('sala-turno')&&typeof pasos!=='undefined'&&pasos[idx])||null;
+ const l=x&&x.tipo==='lamina'?laminaTira(tiraDe(x),x.p.laminas[x.i],nLamina(x)):null;
+ const capa=document.querySelector('.velo .hoja');const titulo=capa&&capa.querySelector('h3');
+ return {rol:ROL(),vista:v,popup:titulo?titulo.textContent:'',carta:tab||(x?{pid:x.pid,tipo:x.tipo,lamina:l?l.n:x.tipo==='lamina'?nLamina(x):null,pieza:piezaDe(x),version:l&&l.version||null,src:l&&(l.original||l.src)||null}:null)};
 }
-function chincheClavada(ch){
-  const c=chincheContexto();
-  const det=JSON.stringify({id:ch.id,texto:ch.texto,tipo:ch.tipo,vista:c.vista,popup:c.popup,carta:c.carta,
-    elemento:ch.elemento?{css:ch.elemento.css,texto:ch.elemento.texto,seccion:ch.elemento.seccion}:null,url:ch.url});
-  try{ mandarProduccion('ENCARGO · chinche · '+(c.carta&&c.carta.pieza?c.carta.pieza:(c.popup||c.vista)), det, false).then(()=>chincheMandada(ch.id)) }catch(e){}
+async function chincheClavada(ch){
+ const c=ch.contexto||(ch.elemento&&ch.elemento.valores)||{vista:ch.vista||'',carta:null};
+ const det=JSON.stringify({id:ch.id,creado:ch.creado||null,texto:ch.texto,tipo:ch.tipo,captura:ch.captura||null,quien:ch.quien||'',vista:c.vista||ch.vista,popup:c.popup||'',carta:c.carta||null,
+  elemento:ch.elemento?{css:ch.elemento.css,texto:ch.elemento.texto,seccion:ch.elemento.seccion}:null,url:String(ch.url||'').split(/[?#]/)[0]});
+ const r=await mandarProduccion('ENCARGO · chinche · '+(c.carta&&c.carta.pieza?c.carta.pieza:(c.popup||c.vista||'sala')),det,false,c.rol);
+ if(r.estado==='recibido')chincheMandada(ch.id);return r;
 }
 // 15-sep: «quita las alertas de chinches». Una chinche que ya llegó al Sheet se marca «mandada» en la base local
 // de la Chinche (misma que usa el portal): baja de la pastilla y queda en gris al fondo de la pila, como las del OS.
-function chincheMandada(id){ try{ const r=indexedDB.open('yodChinche'); r.onsuccess=()=>{ const db=r.result; const tx=db.transaction('chinches','readwrite'); const st=tx.objectStore('chinches'); const g=st.get(id); g.onsuccess=()=>{ const c=g.result; if(!c) return; c.estado='mandada'; c.mandada=new Date().toISOString(); st.put(c); }; tx.oncomplete=()=>{ try{ const n=Math.max(0,(parseInt(localStorage.getItem('yod_chinche_n')||'0',10)||0)-1); localStorage.setItem('yod_chinche_n',String(n)); const p=document.querySelector('button[aria-label="Pendientes de cambio"]'); if(p) p.textContent=n?'📌'+n:'📌'; }catch(e){} } } }catch(e){} }
-(function(){ const s=document.createElement('script'); s.src='/yod-portal/chinche.js?v=ch9';
+function chincheMandada(id){ try{ const r=indexedDB.open('yodChinche'); r.onsuccess=()=>{ const db=r.result; const tx=db.transaction('chinches','readwrite'); const st=tx.objectStore('chinches'); const g=st.get(id); let cambio=false; g.onsuccess=()=>{ const c=g.result; if(!c) return; if(c.estado==='mandada')return; cambio=true; c.estado='mandada'; c.mandada=new Date().toISOString(); st.put(c); }; tx.oncomplete=()=>{ if(!cambio)return; try{ const n=Math.max(0,(parseInt(localStorage.getItem('yod_chinche_n')||'0',10)||0)-1); localStorage.setItem('yod_chinche_n',String(n)); const p=document.querySelector('button[aria-label="Pendientes de cambio"]'); if(p) p.textContent=n?'📌'+n:'📌'; }catch(e){} } } }catch(e){} }
+(function(){ const s=document.createElement('script'); s.src='/yod-portal/chinche.js?v=sala-p4-20261015';
   s.onload=()=>{ try{ window.YODChinche&&YODChinche.init({pantalla:'sala', vista:()=>chincheContexto().vista,
-      seccion:()=>{ const c=chincheContexto(); return c.popup?('pop-up: '+c.popup):(c.carta?('carta '+c.carta.pid+(c.carta.lamina?' · lámina '+c.carta.lamina:'')):c.vista) },
-      valores:()=>chincheContexto(), alClavar:chincheClavada}) }catch(e){ console.warn('chinche',e) } };
+      seccion:()=>{ const c=chincheContexto(); return c.popup?('pop-up: '+c.popup):(c.carta?((c.carta.pieza||'Publicación')+(c.carta.lamina?' · lámina '+c.carta.lamina:'')+(c.carta.version?' · versión '+c.carta.version:'')):c.vista) },
+      valores:op=>chincheContexto(op), alClavar:chincheClavada}) }catch(e){ console.warn('chinche',e) } };
   document.head.appendChild(s) })();
 
 /* ══ EDITAR desde el árbol (15-sep). Alejandro: «quiero poder cambiar todo: las guías de las 5 ramas, la
@@ -2985,8 +3007,8 @@ async function editarNodo(ref){
   $('#edOk').onclick=async()=>{ const av=$('#edAv'); av.textContent='Guardando…';
     const fila={nivel:n.nivel||'pieza',id:n.id,padre:n.nivel==='pieza'?$('#edPad').value:(n.padre||''),titulo:$('#edTit').value.trim(),bajada:$('#edBaj').value.trim(),orden:n.orden||99,estado:n.nivel==='pieza'?$('#edEst').value.trim():(n.estado||''),nota:n.nota||''};
     try{ const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({accion:'arbol',clave:CLAVE(),forzar:1,filas:[fila]})}); const j=await leerJSON(r); if(!r.ok||!j||j.ok!==true) throw new Error((j&&j.error)||'no guardó');
-      const nota=$('#edNota').value.trim(); if(nota) await mandarProduccion('ENCARGO · edición · '+(fila.titulo||n.id), JSON.stringify({nodo:n.id,titulo:fila.titulo,nota}), false);
-      av.textContent='Guardado en el Sheet'+(nota?' · tu nota ya está en Producción':''); ARBOL=null; setTimeout(()=>{ cerrarCapas(); pintarArbol(true) },700);
+      const nota=$('#edNota').value.trim(); let envio; if(nota) envio=await mandarProduccion('ENCARGO · edición · '+(fila.titulo||n.id), JSON.stringify({nodo:n.id,titulo:fila.titulo,nota}), false);
+      av.textContent='Guardado en el Sheet'+(envio?' · '+envio.mensaje:''); ARBOL=null; setTimeout(()=>{ cerrarCapas(); pintarArbol(true) },700);
     }catch(e){ av.textContent='No se guardó: '+String(e.message||e).slice(0,80) } };
 }
 
@@ -3022,8 +3044,8 @@ async function pintarIdeas(temas){
   const pi=$('#proponIdeas'); if(pi) pi.onclick=async()=>{ pi.disabled=true;
     // viaja como las chinches: fila «ENCARGO · ideas» en el Sheet → el puente dispara el semillero en ese momento
     const d=new Date(), p=n=>String(n).padStart(2,'0'), id='CHN-'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'-'+Math.random().toString(16).slice(2,6);
-    await mandarProduccion('ENCARGO · ideas',JSON.stringify({id,texto:'Proponme ideas nuevas: 3 por cada rama viva y una premisa candidata.',vista:'arbol'}),false);
-    const a=$('#proponAviso'); if(a) a.textContent='Pedido. En menos de una hora aparecen aquí las ideas nuevas (el semillero corre en cuanto el puente lo ve).' };
+    const envio=await mandarProduccion('ENCARGO · ideas',JSON.stringify({id,texto:'Proponme ideas nuevas: 3 por cada rama viva y una premisa candidata.',vista:'arbol'}),false);
+    const a=$('#proponAviso'); if(a) a.textContent=envio.mensaje };
   c.querySelectorAll('[data-prem]').forEach(b=>b.onclick=async()=>{ const n=cands.find(x=>x.id===b.dataset.prem); if(!n) return;
     if(b.dataset.est==='viva'&&vivas>=5){ alert('Ya hay cinco premisas vivas. Corta una antes de abrir otra.'); return }
     b.disabled=true;
@@ -3248,5 +3270,5 @@ setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subir
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); _tSubir=null; subir() } } });
 window.addEventListener('resize',()=>{ if(DECIDE()) pintarPanel(); else pintarPanelMira() });
 </script>
-<script src="tablero-sala.js?v=20261015-editorial"></script>
+<script src="tablero-sala.js?v=20261015-correcciones"></script>
 </body></html>

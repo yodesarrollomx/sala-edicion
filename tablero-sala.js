@@ -23,6 +23,21 @@ if(typeof document==="undefined")return;
 const root=document.getElementById("tableroHoy");if(!root)return;
 window.SalaTablero=api;
 const S={groups:[],focus:null,choice:null,filter:"todas",busy:false,loaded:false,last:null,notice:"",pinch:null};
+api.contexto=function(el){
+ const card=el&&el.closest&&el.closest('[data-group]');
+ const gid=card&&card.dataset.group||(S.choice&&S.choice.group)||S.focus;
+ const g=S.groups.find(x=>x.id===gid);if(!g)return null;
+ const frame=el&&el.closest&&el.closest('[data-frame]');
+ const n=frame?Number(frame.dataset.frame):(S.choice&&S.choice.group===gid?S.choice.n:null);
+ const l=(g.t.laminas||[]).find(x=>Number(x.n)===n);
+ const k=S.choice&&S.choice.group===gid&&S.choice.n===n?S.choice.k:null;
+ const zoom=document.querySelector('.zoom[data-fuente]');
+ const z=zoom&&l?options(l).find(o=>fotoKey(o)===fotoKey({src:zoom.dataset.fuente})):null;
+ const o=z||(l&&k!==null?options(l)[k]:null);
+ return {pid:g.pid,pieza:g.t.pieza||g.id,tipo:'lamina',lamina:n,version:l&&l.version||null,
+  src:o&&(o.original||o.src)||l&&(l.original||l.src)||null,toma:o?o.indiceOriginal:null,
+  recibo:o&&o.recibo_imagen||l&&l.recibo_imagen||null};
+};
 const tones=["184,137,86","116,157,142","130,148,186","177,135,157","162,163,112","164,138,190","110,167,180"];
 const eligible=()=>DECIDE()&&(!D||!D._respaldo||VISTA_DOC);
 function group(){return S.groups.find(g=>g.id===S.focus);}
@@ -184,7 +199,11 @@ function vote(m,zoomPhoto){
  if(!d||md.i<0||l.estado==="aprobada")return;
  const image=zoomPhoto||root.querySelector(".bt-main-photo");
  if(m==="si"&&(!mediosDisponibles()||!o||!image||!image.complete||!image.naturalWidth)){S.notice="Espera a que cargue esta fotografía antes de aprobarla.";render();return;}
+ const identity=JSON.stringify(api.contexto()),owner=ROL();
  const apply=note=>{
+  if(!eligible()||ROL()!==owner||JSON.stringify(api.contexto())!==identity||dec[g.pid]!==d){S.notice="La versión o sesión cambió. Abre de nuevo la lámina antes de decidir.";render();return;}
+  if(m==='no'&&!String(note||'').trim()){S.notice="Escribe qué debe cambiar.";render();return;}
+
   S.last={pid:g.pid,i:md.i,marca:d.laminas[md.i],nota:d.notas[md.i]};
   const before=String(note??d.notas[md.i]??"").replace(/\s*\[toma elegida: \d+\]/g,"").trim();
   d.laminas[md.i]=m;d.notas[md.i]=m==="si"?before+(o.indiceOriginal===null?"":(before?" ":"")+"[toma elegida: "+(o.indiceOriginal+1)+"]"):before;

@@ -10,7 +10,7 @@ Qué hace, cada hora:
   2. Por cada chinche sin issue, abre un issue 📌 con etiqueta `chinche` en este repo (el texto
      textual, la vista, el elemento y la página) y apunta `ENCARGO TOMADO · chinche` en el Sheet.
      El revisor trabaja esos issues: corrige, verifica, publica y cierra.
-  3. Por cada issue `chinche` cerrado como completado, apunta `ENCARGO CUMPLIDO · chinche` en el
+  3. Por cada cierre enlazado a PR integrado, checks y publicación verificados, apunta `ENCARGO CUMPLIDO · chinche` en el
      Sheet. El checkpoint previo y la lectura posterior por id/evento evitan repetir
      un append ambiguo; sólo el recibo verificado obtiene la etiqueta `en-sheet`.
   4. Reescribe `datos/encargos.json` (lo que leen «Tus recados» y la Línea) desde los issues.
@@ -25,6 +25,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import tempfile
 
 import sala_cliente as sala
 
@@ -126,7 +127,7 @@ def apuntar_una_vez(it, evento, estado, pendiente, confirmado, primer_intento=Fa
     try:
         post_produccion_una_vez(pieza=evento, estado=estado,
                                detalle=json.dumps({'id': cid, 'issue': it['url'],
-                                                   'recibo_clave': clave}, ensure_ascii=False),
+                                                   'recibo_clave': clave, 'resultado': it.get('resultado')}, ensure_ascii=False),
                                enlace=it['url'])
     except sala.SalaError as e:
         sala.avisar('⚠ respuesta de escritura no concluyente · %s: %s' % (cid, e))
@@ -146,7 +147,9 @@ def completado(it):
 
 def estado_encargo(it):
     if completado(it):
-        return 'cumplida'
+        if it.get('resultado') and 'en-sheet' in it.get('etiquetas', []):
+            return 'cumplida'
+        return 'entregada' if it.get('resultado') else 'por verificar'
     return 'no realizada' if it.get('state') == 'CLOSED' else 'en curso'
 
 
@@ -241,29 +244,64 @@ def chinches_del_sheet(produccion):
 
 
 def cuerpo_issue(cid, c):
-    L = ['# Encargo desde la Sala de Edición · 1 cambio',
-         'Alejandro · %s · clavada en %s (llegó por el puente `nube/sala_chinches.py`)'
-         % (c['fecha'], ('el tablero ' + c['vista']) if c.get('repo') else 'la Sala'),
-         'Repo: yodesarrollomx/%s' % (c.get('repo') or 'sala-edicion'), '',
-         '## 1 · %s · vista "%s"' % (c.get('repo') or 'sala-edicion', c['vista'] or '—')]
-    if c['url']:
-        L.append('- **Página:** %s' % c['url'])
-    L += ['', '**Dice Alejandro:** "%s"' % c['texto'], '']
-    if c['seccion']:
-        L.append('- **Sección:** %s' % c['seccion'])
-    if c['css']:
-        L.append('- **Elemento:** `%s`' % c['css'])
-    if c['dice']:
-        L.append('- **Dice el elemento:** "%s"' % c['dice'])
-    if c['popup']:
-        L.append('- **Pop-up abierto:** %s' % c['popup'])
-    if c.get('codigo'):
-        L.append('- **Dónde vive en el código:** %s' % c['codigo'])
-    if c['carta']:
-        L.append('- **Carta:** `%s`' % json.dumps(c['carta'], ensure_ascii=False)[:300])
-    L += ['- id %s' % cid, '',
-          '> Al cerrar este issue como completado, el puente apunta «ENCARGO CUMPLIDO» en el Sheet.']
-    return '\n'.join(L)
+    # El issue es público; texto, autor, captura y contexto permanecen en PRODUCCION.
+    return ('# Corrección recibida en Sala\n\n- id %s\n\n'
+            'Consultar la solicitud y su contexto en la bandeja privada PRODUCCION. '
+            'No copiar notas, capturas ni datos privados al issue.\n\n'
+            'El cierre requiere resultado verificable; cerrar como completado no aprueba '
+            'láminas. La aprobación editorial permanece en Sala.\n') % cid
+
+
+def crear_issue(titulo, cuerpo, etiquetas):
+    with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', suffix='.md') as f:
+        f.write(cuerpo)
+        f.flush()
+        return gh('issue', 'create', '--title', titulo, '--body-file', f.name,
+                  '--label', etiquetas).strip()
+
+
+def resultado_verificado(it):
+    """Cierre enlazado a PR integrado y checks exitosos de SU head, no texto libre.
+
+    Acredita entrega técnica; nunca aprobación editorial ni despliegue GAS.
+    Error/ausencia de evidencia conserva «por verificar». No muta GitHub.
+    """
+    if not completado(it):
+        return None
+    match = re.fullmatch(r'https://github.com/(yodesarrollomx/[a-zA-Z0-9_.-]+)/issues/(\d+)', it.get('url', ''))
+    if not match:
+        return None
+    repo, number = match.groups()
+    if repo != 'yodesarrollomx/sala-edicion':
+        return None
+    try:
+        events = json.loads(gh('api', 'repos/%s/issues/%s/timeline?per_page=100' % (repo, number)))
+        closes = [e for e in events if e.get('event') == 'closed']
+        sha = closes[-1].get('commit_id') if closes else None
+        if not sha or not re.fullmatch(r'[0-9a-f]{40}', sha):
+            return None
+        prs = json.loads(gh('api', 'repos/%s/commits/%s/pulls' % (repo, sha)))
+        for pr in prs:
+            if not pr.get('merged_at') or pr.get('merge_commit_sha') != sha or pr.get('base', {}).get('repo', {}).get('full_name') != repo:
+                continue
+            head = pr.get('head', {}).get('sha')
+            if not head or not re.fullmatch(r'[0-9a-f]{40}', head):
+                continue
+            checks = json.loads(gh('api', 'repos/%s/commits/%s/check-runs?per_page=100' % (repo, head)))
+            rows = checks.get('check_runs') or []
+            if checks.get('total_count') != len(rows) or not rows or any(c.get('status') != 'completed' or c.get('conclusion') not in ('success', 'skipped', 'neutral') for c in rows) or not any(c.get('conclusion') == 'success' for c in rows):
+                continue
+            # La corrección de Sala debe además tener una publicación exitosa de ese merge.
+            if repo == 'yodesarrollomx/sala-edicion':
+                runs = json.loads(gh('api', 'repos/%s/actions/workflows/publicar.yml/runs?head_sha=%s&status=success' % (repo, sha)))
+                if not any(r.get('head_sha') == sha and r.get('conclusion') == 'success' and r.get('event') == 'push' for r in runs.get('workflow_runs', [])):
+                    continue
+            return {'tipo': 'pr_verificado', 'url': pr['html_url'], 'commit': sha, 'head': head,
+                    'checks': [c['name'] for c in rows if c.get('conclusion') == 'success'],
+                    'aprobacion_editorial': False}
+    except (RuntimeError, ValueError, KeyError, TypeError):
+        return None
+    return None
 
 
 def refrescar_piezas(simular):
@@ -331,14 +369,12 @@ def main():
     for cid, c in sorted(enSheet.items()):
         if cid in porId:
             continue
-        titulo = '📌 %s · %s' % (c['vista'] if c.get('repo') else 'sala · ' + (c['vista'] or 'sala'),
-                                 re.sub(r'\s+', ' ', c['texto'])[:70])
+        titulo = '📌 Corrección de Sala · ' + cid
         sala.avisar('  + %s · %s' % (cid, titulo))
         nuevas += 1
         if args.simular:
             continue
-        url = gh('issue', 'create', '--title', titulo, '--body', cuerpo_issue(cid, c),
-                 '--label', 'chinche,chinche-tomado-pendiente').strip()
+        url = crear_issue(titulo, cuerpo_issue(cid, c), 'chinche,chinche-tomado-pendiente')
         it = {'number': int(url.rstrip('/').split('/')[-1]), 'url': url, 'chn': cid,
               'etiquetas': ['chinche', 'chinche-tomado-pendiente'], 'state': 'OPEN'}
         apuntar_una_vez(it, 'ENCARGO TOMADO · chinche', 'en curso',
@@ -369,7 +405,8 @@ def main():
 
     cumplidas = 0
     for it in issues:
-        if not it['chn'] or not completado(it) \
+        it['resultado'] = resultado_verificado(it)
+        if not it['chn'] or not it['resultado'] \
                 or 'en-sheet' in it['etiquetas']:
             continue
         sala.avisar('  ✓ cumplida · %s · %s' % (it['chn'], it['url']))
@@ -382,13 +419,15 @@ def main():
 
     # «Tus recados» y la Línea leen este archivo: su verdad ahora son los issues
     if not args.simular:
+        results = {it['chn']: it.get('resultado') for it in issues}
         issues = issues_chinche()
         regs = []
         for it in sorted([i for i in issues if i['chn']], key=lambda i: i['createdAt']):
+            it['resultado'] = results.get(it['chn'])
             c = enSheet.get(it['chn']) or {}
-            txt = c.get('texto') or re.sub(r'^📌\s*sala\s*·\s*[^·]*·\s*', '', it['title'])
+            txt = 'Corrección ' + it['chn']
             regs.append({'que': json.dumps({'id': it['chn'], 'texto': txt}, ensure_ascii=False),
-                         'estado': estado_encargo(it),
+                         'estado': estado_encargo(it), 'resultado': it.get('resultado'),
                          'cuando': c.get('fecha') or it['createdAt'][:10],
                          'tomado': it['createdAt'][11:16], 'issue': it['url']})
         nuevo = {'_que_es': 'Las chinches de la Sala y su estado, desde sus issues (nube/sala_chinches.py).',
