@@ -1,0 +1,81 @@
+name: Sala · sonda técnica de medios públicos
+on:
+  workflow_dispatch:
+    inputs:
+      aplicar:
+        description: 'Publicar únicamente PNG técnico y comprobar reentrada; false sólo inspecciona'
+        type: boolean
+        required: false
+        default: false
+permissions: {}
+concurrency:
+  group: sala-sonda-medios-publicos
+  cancel-in-progress: false
+jobs:
+  inspeccionar:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.aplicar != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /index.html
+            /medios-publicos.js
+            /nube/medios_publicos.py
+            /nube/snapshots_online.py
+            /nube/sonda_medios_publicos.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Comprobar lector desplegado y repositorio público sin mutaciones
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 nube/sonda_medios_publicos.py --salida "$RUNNER_TEMP/sonda-medios-publicos.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sonda-medios-publicos-inspeccion
+          path: ${{ runner.temp }}/sonda-medios-publicos.json
+          if-no-files-found: error
+          retention-days: 14
+  aplicar:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.aplicar == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /index.html
+            /medios-publicos.js
+            /nube/medios_publicos.py
+            /nube/snapshots_online.py
+            /nube/sonda_medios_publicos.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet pillow
+      - name: Publicar y comprobar sólo el PNG técnico neutro
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 nube/sonda_medios_publicos.py --aplicar --salida "$RUNNER_TEMP/sonda-medios-publicos.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sonda-medios-publicos-aplicada
+          path: ${{ runner.temp }}/sonda-medios-publicos.json
+          if-no-files-found: error
+          retention-days: 14

@@ -58,7 +58,8 @@ class ProductionReadTests(unittest.TestCase):
             return day(date=kw["f"]) if kw.get("f") else day(decisions={P: yes()})
         got = prod.cargar(getter, lambda p: tira())
         self.assertEqual(got["propuestas"], [])
-        self.assertEqual(got["_produccion"]["fuentes_no_vigentes"], 1)
+        self.assertEqual(got["_produccion"]["fuentes_sin_acreditar"], 1)
+        self.assertIsNone(got["_produccion"]["fuentes_no_vigentes"])
 
     def test_network_error_cannot_become_empty_aligned_queue(self):
         def getter(resource, **kw):
@@ -223,6 +224,7 @@ class MesaIntegrationTests(unittest.TestCase):
              patch.object(mesa, "TIRAS", root / "datos" / "tiras"), \
              patch.object(mesa, "PLAN", root / "plan.json"), \
              patch.object(mesa, "contexto_produccion", return_value=d), \
+             patch.object(mesa, "hidratar_tiras_activas", return_value=0), \
              patch.object(mesa, "tiras_por_pieza", return_value={"pieza": (pid, original)}), \
              patch.object(mesa, "publicadas", return_value=set()), \
              patch.object(mesa, "producir_tomas", side_effect=fake_images), \
@@ -329,6 +331,7 @@ class ProductionStatusTests(unittest.TestCase):
                  patch.object(mesa, "RAIZ", root), patch.object(mesa, "TIRAS", root / "datos" / "tiras"), \
                  patch.object(mesa, "PLAN", root / "plan.json"), \
                  patch.object(mesa, "contexto_produccion", return_value=d), \
+                 patch.object(mesa, "hidratar_tiras_activas", return_value=0), \
                  patch.object(mesa, "tiras_por_pieza", return_value={"pieza": (P, tira())}), \
                  patch.object(mesa, "publicadas", return_value=set()), \
                  patch.object(mesa, "producir_tomas", return_value=([], ["sin modelo disponible"])), \

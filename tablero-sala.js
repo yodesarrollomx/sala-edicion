@@ -173,7 +173,7 @@ function vote(m,zoomPhoto){
  const g=S.groups.find(x=>x.id===S.choice.group),l=g.t.laminas.find(x=>Number(x.n)===S.choice.n),md=markData(g,l),d=dec[g.pid],o=options(l)[S.choice.k];
  if(!d||md.i<0||l.estado==="aprobada")return;
  const image=zoomPhoto||root.querySelector(".bt-main-photo");
- if(m==="si"&&(!o||!image||!image.complete||!image.naturalWidth)){S.notice="Espera a que cargue esta fotografía antes de aprobarla.";render();return;}
+ if(m==="si"&&(!mediosDisponibles()||!o||!image||!image.complete||!image.naturalWidth)){S.notice="Espera a que cargue esta fotografía antes de aprobarla.";render();return;}
  const apply=note=>{
   S.last={pid:g.pid,i:md.i,marca:d.laminas[md.i],nota:d.notas[md.i]};
   const before=String(note??d.notas[md.i]??"").replace(/\s*\[toma elegida: \d+\]/g,"").trim();
@@ -185,11 +185,16 @@ function vote(m,zoomPhoto){
  };
  if(m==="no"){pedirNota(note=>{apply(note);},md.nota.replace(/\s*\[toma elegida: \d+\]/g,""));}else apply();
 }
+async function reintentarFoto(im){
+ if(typeof SalaMedios!=="undefined"&&!mediosDisponibles()){await SalaMedios.cargar();render();return;}
+ im.removeAttribute("data-failed");im.parentElement.querySelector(".bt-retry-label")?.remove();
+ im.src=typeof SalaMedios!=="undefined"?SalaMedios.reintentar(im.src):im.src.split("?")[0]+"?reintentar="+Date.now();
+}
 function bind(){
  const gs=id=>S.groups.find(x=>x.id===id);
  root.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>open(gs(b.dataset.open)));
  root.querySelectorAll("[data-lamina]").forEach(b=>{
-  b.onclick=()=>{const failed=b.querySelector("img[data-failed]");if(failed){failed.removeAttribute("data-failed");b.querySelector(".bt-retry-label")?.remove();failed.src=failed.src.split("?")[0]+"?reintentar="+Date.now();return;}const g=gs(b.dataset.group);if(!S.focus)open(g,Number(b.dataset.lamina));else chooseFrame(g,Number(b.dataset.lamina));};
+  b.onclick=()=>{const failed=b.querySelector("img[data-failed]");if(failed){reintentarFoto(failed);return;}const g=gs(b.dataset.group);if(!S.focus)open(g,Number(b.dataset.lamina));else chooseFrame(g,Number(b.dataset.lamina));};
   b.ondblclick=e=>{e.preventDefault();const g=gs(b.dataset.group);open(g,Number(b.dataset.lamina),true);};
  });
  root.querySelectorAll("[data-info]").forEach(b=>b.onclick=()=>info(gs(b.dataset.group),0,b.dataset.info));
@@ -210,7 +215,7 @@ function bind(){
  root.querySelectorAll(".bt-photo img,.bt-main-photo").forEach(im=>{im.onerror=()=>{
   im.dataset.failed="1";const parent=im.parentElement;if(parent.querySelector(".bt-retry-label"))return;
   const label=document.createElement(parent.classList.contains("bt-hero")?"button":"span");label.className="bt-retry-label";label.textContent="Foto sin cargar · reintentar";parent.appendChild(label);
-  if(label.tagName==="BUTTON")label.onclick=()=>{label.remove();im.removeAttribute("data-failed");im.src=im.src.split("?")[0]+"?reintentar="+Date.now();};
+  if(label.tagName==="BUTTON")label.onclick=()=>reintentarFoto(im);
  };});
  const hero=root.querySelector(".bt-hero");if(hero){
   let p=null;hero.addEventListener("pointerdown",e=>{if(e.isPrimary){p={x:e.clientX,y:e.clientY,id:e.pointerId};hero.setPointerCapture(e.pointerId);}});

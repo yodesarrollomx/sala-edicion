@@ -5,8 +5,11 @@ on:
     paths-ignore: ['tests/evidencia-tablero/**', 'operaciones/**']
   pull_request:
     paths:
+      - 'index.html'
+      - 'medios-publicos.js'
       - 'tablero-sala.*'
       - 'tests/tablero-sala*'
+      - 'tests/sala-imagenes.test.cjs'
       - 'nube/motores/imagen_hidream.py'
       - 'tests/imagen_hidream_test.py'
 permissions:

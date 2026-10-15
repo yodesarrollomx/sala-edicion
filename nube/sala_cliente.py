@@ -56,7 +56,7 @@ CODIGOS_DIAGNOSTICO = frozenset({"sala_sin_confirmar", "sala_clave_ausente", "sa
     "sala_permiso_rechazado", "sala_recurso_no_disponible", "sala_rechazada", "sala_contrato_lectura", "sala_tiempo_agotado",
     "sala_red_sin_confirmar", "sala_transporte_sin_confirmar", "sala_telemetria_sin_confirmar"}
     | {"sala_http_" + str(x) for x in HTTP_DIAGNOSTICO})
-RECURSOS_DIAGNOSTICO = frozenset({"dia", "cola", "reglas", "catalogo", "bitacora", "envios", "expedientes", "prompts"})
+RECURSOS_DIAGNOSTICO = frozenset({"dia", "produccion", "cola", "reglas", "catalogo", "bitacora", "envios", "expedientes", "prompts"})
 TIPOS_RESPUESTA = frozenset({"vacia", "html", "no_json", "json_objeto", "json_no_objeto", "json_error", "sin_respuesta"})
 
 
@@ -253,6 +253,7 @@ def _validar_lectura(recurso, datos):
     """Una respuesta incompleta no acredita un día, cola o reglas vacíos."""
     campos = {
         'dia': (('propuestas', list), ('decisiones', dict)),
+        'produccion': (('propuestas', list), ('decisiones', dict)),
         'cola': (('cola', list),),
         'reglas': (('reglas', dict), ('motores', list)),
     }

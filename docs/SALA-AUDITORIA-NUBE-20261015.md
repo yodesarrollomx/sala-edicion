@@ -144,3 +144,29 @@ presupuesto de 900 MiB. No se amplía ese límite ni se borran históricos. La
 continuidad de producción necesita una migración de medios verificada antes
 de agotar esa capacidad. El [inventario de chinches](SALA-CHINCHES-CORTE-20261015.md)
 separa reparaciones técnicas de decisiones editoriales y aceptación pendiente.
+
+## Resultado posterior a PR308
+
+[308](https://github.com/yodesarrollomx/sala-edicion/pull/308) se integró en
+`e4da08887e45e984be8ea945ce607db464b0fb52`, con cinco controles de CI aprobados
+sobre su head exacto y 394 pruebas Python, 18 Node y 13 verificaciones locales.
+La publicación [38688574369](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38688574369)
+acreditó el código nuevo. Plan
+[38688574251](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38688574251)
+y su publicación [38688736093](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38688736093)
+acreditaron un snapshot nuevo, no sólo la republicación de datos anteriores.
+El [Cierre38688574178](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38688574178)
+completó preflight, Productor y Ejecutor: 14 fuentes, 29 decisiones afirmativas,
+153 trabajos existentes y ninguno nuevo; cero pendientes ejecutables. No hubo
+operaciones de correo ni escrituras de negocio en el preflight.
+Revisión [38688731578](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38688731578)
+y su publicación [38689030877](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38689030877)
+también terminaron correctamente, con snapshot 413460646. Esto acredita el
+recorrido observado; no producción nueva, entrega del próximo correo ni
+estabilidad de siete días. La causa exacta del incidente anterior sigue
+sin confirmarse.
+
+La QA pública posterior encontró otro texto ambiguo: contar publicaciones
+no publicadas no acredita que haya trabajos activos. La vista vacía distingue
+visitante, lector y editor y describe el estado de consulta; conserva roles,
+acciones y decisiones. No afirma «Todo decidido» sin identidad editorial.

@@ -356,9 +356,11 @@ def main():
         return 2
 
     resumen_fuente = dia.get('_produccion') or {}
-    sala.avisar('fuente de producción: %d visibles, %d recuperadas, %d sin fuente vigente; %d sí, %d no'
-                % tuple(resumen_fuente.get(k, 0) for k in
-                        ('visibles', 'recuperadas', 'fuentes_no_vigentes', 'si', 'no')))
+    sala.avisar('lectura de producción: alcance=%s, cuenta_historial=%s; %d fuentes observadas, '
+                '%d históricas, %d sin acreditar; %d sí y %d no observados'
+                % (resumen_fuente.get('alcance', 'no_confirmado'), resumen_fuente.get('cuenta_historial', 'no_confirmada'),
+                   *tuple(resumen_fuente.get(k, 0) for k in
+                          ('visibles', 'recuperadas', 'fuentes_sin_acreditar', 'si', 'no'))))
     nuevos, diario = planear(dia, cola, reglas, cat)
     sala.avisar('día %s · %d propuesta(s) · COLA con %d trabajo(s)'
                 % (dia.get('fecha'), len(dia.get('propuestas') or []), len(cola)))
