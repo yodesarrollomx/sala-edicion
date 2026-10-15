@@ -145,6 +145,8 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
 
   const m=await prepare(b,390,"editor",true),q=m.page;
   assert.ok(await q.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1));
+  assert.equal(await q.locator('.bt-frames').first().evaluate(el=>getComputedStyle(el).display),'flex');
+  assert.ok(await q.locator('.bt-frames').first().evaluate(el=>el.scrollWidth>el.clientWidth),'la mesa móvil conserva la tira horizontal');
   await q.screenshot({path:out+"/04-tablero-movil.png",fullPage:true});
   await q.locator('[data-open="synthetic-0"]').click();
   await q.locator('[data-lamina="2"]').click();

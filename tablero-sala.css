@@ -238,3 +238,9 @@ body.sala-tablero[data-vista="hoy"] .app{width:100%;max-width:1600px;margin:0 au
  .bt-legend{gap:8px}.bt-levels{display:none}.bt-hint{display:none}
 }
 @media(prefers-reduced-motion:reduce){#tableroHoy button{transition:none}}
+@media(max-width:700px){
+ /* En la mesa cada libro es una tira, no una pared interminable de páginas. */
+ #tableroHoy[data-level="tablero"] .bt-frames{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:8px;scrollbar-width:thin}
+ #tableroHoy[data-level="tablero"] .bt-frame{flex:0 0 146px;scroll-snap-align:start}
+ #tableroHoy[data-level="tablero"] .bt-other{flex:0 0 180px}
+}
