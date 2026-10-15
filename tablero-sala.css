@@ -3,7 +3,9 @@ body.sala-tablero[data-vista="hoy"] .app{max-width:none;padding:20px 24px calc(v
 body.sala-tablero #vHoy{display:block;max-width:none}
 body.sala-tablero #vHoy>.cab{padding:0;margin:0}
 body.sala-tablero #vHoy>.cab>#fechaTxt,body.sala-tablero #titulo,body.sala-tablero #subt{display:none}
-body.sala-tablero #vHoy>.cab .fila-estado{justify-content:flex-end;margin:0 0 8px}
+body.sala-tablero #vHoy>.cab .fila-estado{justify-content:flex-end;margin:0 0 8px;max-width:100%;min-width:0}
+body.sala-tablero #vHoy>.cab .estado{min-width:0;max-width:100%}
+body.sala-tablero #vHoy>.cab .estado span{min-width:0}
 body.sala-tablero #vHoy>.mazo,body.sala-tablero #vHoy>.panel-lateral{display:none!important}
 body:not(.sala-tablero) #tableroHoy{display:none}
 .bt-return{display:none;border:1px solid var(--linea);background:var(--tarjeta);border-radius:20px;padding:8px 16px;margin:0 0 12px}

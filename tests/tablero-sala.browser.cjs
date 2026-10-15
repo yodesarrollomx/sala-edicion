@@ -81,9 +81,16 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await p.locator('[data-lamina="2"]').click();
   await p.waitForSelector(".bt-choice");
   assert.match(await p.locator(".bt-pager").innerText(),/1 de 2/);
-  await p.locator("[data-next-option]").click();
-  await p.waitForFunction(()=>document.querySelector(".bt-main-photo")?.naturalWidth>0);
-  await p.locator('[data-vote="si"]').click();
+  await p.locator("[data-full-photo]").click();
+  await p.waitForSelector(".zoom.galeria .zg");
+  await p.locator(".zoom .zg-sig").click();
+  await p.waitForFunction(()=>document.querySelector(".zoom img")?.naturalWidth>0);
+  assert.match(await p.locator(".zoom .zg-cual").innerText(),/2 de 2/);
+  assert.equal(d.writes.filter(x=>x.accion==="decidir").length,0);
+  await p.keyboard.press("ArrowLeft");assert.match(await p.locator(".zoom .zg-cual").innerText(),/1 de 2/);
+  await p.keyboard.press("ArrowRight");assert.match(await p.locator(".zoom .zg-cual").innerText(),/2 de 2/);
+  await p.waitForFunction(()=>document.querySelector(".zoom img")?.naturalWidth>0);
+  await p.locator(".zoom .zg-elegir").click();
   await p.waitForFunction(()=>document.querySelector(".bt-choice-copy .bt-dot")?.textContent==="Aprobada");
   assert.equal(d.writes.filter(x=>x.accion==="decidir").length,1);
   const chosen=d.writes.find(x=>x.accion==="decidir").propuestas["synthetic-0"];
@@ -109,7 +116,7 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await d.context.close();
 
   const m=await prepare(b,390,"editor",true),q=m.page;
-  assert.ok(await q.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  assert.ok(await q.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1));
   await q.screenshot({path:out+"/04-tablero-movil.png",fullPage:true});
   await q.locator('[data-open="synthetic-0"]').click();
   await q.locator('[data-lamina="2"]').click();
@@ -142,6 +149,17 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    const r=await prepare(b,390,role,true),page=r.page;
    await page.locator('[data-open="synthetic-0"]').click();await page.locator('[data-lamina="2"]').click();
    assert.ok(await page.locator('[data-vote="si"]').isDisabled());assert.ok(await page.locator('[data-vote="no"]').isDisabled());
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1),'El aviso largo de sólo lectura no debe ensanchar el viewport');
+   await page.locator('[data-full-photo]').scrollIntoViewIfNeeded();
+   assert.equal(await page.locator('[data-full-photo]').evaluate(el=>{
+    const r=el.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;
+    return document.elementFromPoint(x,y)===el;
+   }),true,'El botón Ampliar debe recibir el toque real');
+   await page.screenshot({path:out+'/07-'+role+'-antes-ampliar.png',fullPage:true});
+   await page.locator('[data-full-photo]').click();await page.waitForSelector('.zoom.galeria');
+   assert.equal(await page.evaluate(()=>getComputedStyle(document.body).overflow),"hidden");
+   assert.equal(await page.locator('.zoom .zg-elegir').isVisible(),false);
+   await page.locator('.zoom .zg-sig').click();assert.match(await page.locator('.zoom .zg-cual').innerText(),/2 de 2/);
    assert.equal(r.writes.filter(x=>x.accion==="decidir").length,0);
    await r.context.close();
   }
