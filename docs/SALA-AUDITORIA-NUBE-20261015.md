@@ -80,10 +80,13 @@ El intento de restablecer Modal
 se detuvo porque A10G requiere un método de pago. No invocó GPU ni añadió
 facturación. La cascada existente permite Wan en Hugging Face, Modal, parallax
 CPU y cámara CPU. Las reglas observadas habilitan las cuatro etapas de nube,
-el respaldo de cámara y su uso al agotar cuota. Parallax y cámara son movimiento
-sobre láminas; sus metadatos conservan `generativa:false`. El Space de Wan y su
-API estaban disponibles; eso no demuestra cupo de cuenta ni generación nueva.
-No existe adaptador Gemini/Veo de video en este proceso.
+el respaldo de cámara y su uso al agotar cuota. No se observaron reglas que
+sustituyan los defaults del ejecutor: `escena_parallax=1` y `escena_modal=0`.
+El respaldo CPU queda disponible cuando existe trabajo vigente aprobado y se
+cumplen sus compuertas; esta lectura no acredita una salida nueva. Parallax y
+cámara son movimiento sobre láminas; sus metadatos conservan `generativa:false`.
+El Space de Wan y su API estaban disponibles; eso no demuestra cupo de cuenta
+ni generación nueva. No existe adaptador Gemini/Veo de video en este proceso.
 
 El vigilante externo de Render está sano y observa; su recuperación automática
 requiere completar la conexión GitHub App. GitHub exige confirmar la identidad

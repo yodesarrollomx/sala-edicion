@@ -261,6 +261,35 @@ def _validar_lectura(recurso, datos):
         raise SalaError('GET ?recurso=%s sin contrato de lectura' % recurso, codigo='sala_contrato_lectura', metadatos={'tipo_respuesta': 'json_objeto'})
 
 
+def _leer_sheet(url, recurso, validar):
+    """Recupera un 404 de lectura con el presupuesto restante, nunca con datos de sonda."""
+    started = time.monotonic()
+    presupuesto = ESPERA_SHEET * INTENTOS_RELEVO + sum(2 ** i for i in range(1, INTENTOS_RELEVO))
+    try:
+        return _pedir(url, None, 'GET ?recurso=' + recurso,
+                      espera=ESPERA_SHEET, intentos=INTENTOS_RELEVO,
+                      solo_curl=True, validar=validar)
+    except SalaError as error:
+        restante = presupuesto - (time.monotonic() - started)
+        if error.codigo != 'sala_http_404' or restante < 1:
+            raise
+    # Sólo cola/reglas llaman este helper. Un tercer GET fresco ocupa como máximo
+    # 20 s de los 122 s originales; ni tiempo adicional ni reenvío de escrituras.
+    tope = min(20, restante)
+    try:
+        data = _pedir(url, None, 'GET ?recurso=' + recurso,
+                      espera=tope, intentos=1, solo_curl=True, validar=validar)
+    except SalaError as error:
+        error.metadatos = metadatos_publicos({**error.metadatos, 'intentos': INTENTOS_RELEVO + 1,
+            'duracion_total_ms': round((time.monotonic()-started)*1000)})
+        raise
+    avisar('SALA_LECTURA_RECUPERADA ' + json.dumps({
+        'recurso': recurso, 'causa_previa': 'sala_http_404', 'intentos': INTENTOS_RELEVO + 1,
+        'presupuesto_total_segundos': presupuesto, 'timeout_recuperacion_segundos': round(tope, 3),
+        'duracion_total_ms': round((time.monotonic()-started)*1000)}, sort_keys=True))
+    return data
+
+
 def get(recurso, **params):
     """Lectura. `recurso` es uno de los que atiende doGet: dia, reglas, cola, catalogo,
     bitacora, envios, expedientes, prompts."""
@@ -275,9 +304,7 @@ def get(recurso, **params):
                       espera=ESPERA_RELEVO, intentos=INTENTOS_RELEVO,
                       solo_curl=True, validar=validar)
     if recurso in ('cola', 'reglas'):
-        return _pedir(url, None, 'GET ?recurso=' + recurso,
-                      espera=ESPERA_SHEET, intentos=INTENTOS_RELEVO,
-                      solo_curl=True, validar=validar)
+        return _leer_sheet(url, recurso, validar)
     return _pedir(url, None, 'GET ?recurso=' + recurso,
                   solo_curl=True, validar=validar)
 

@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-15.sala-nube.1",
   "proposal_id": "CHG-SALA-NUBE-20261015",
-  "summary": "Continuidad del recorrido: Ejecutor y Revisión atienden COLA existente con sus compuertas aunque falle una fase anterior; Continuar exige Mesa y Revisión exitosas. Diagnóstico de lecturas GAS con códigos y métricas permitidas, sonda GET única sin reanudar efectos y conteos de selección de Mesa sin datos privados. Mantenimiento manual acotado a una corrida queued huérfana conocida mediante token efímero; un solo force-cancel y conciliación de lectura. Mantiene guardias de main, decisiones, permisos existentes, correo y snapshots FULL de CHG-SALA-NUBE-20261015.",
+  "summary": "Continuidad del recorrido: Ejecutor y Revisión atienden COLA existente con sus compuertas aunque falle una fase anterior; Continuar exige Mesa y Revisión exitosas. Diagnóstico de lecturas GAS con códigos y métricas permitidas, sonda GET única sin reanudar efectos y conteos de selección de Mesa sin datos privados. Mantenimiento manual acotado a una corrida queued huérfana conocida mediante token efímero; un solo force-cancel y conciliación de lectura. Mantiene guardias de main, decisiones, permisos existentes, correo y snapshots FULL de CHG-SALA-NUBE-20261015. Recupera únicamente HTTP404 de lecturas cola/reglas mediante un tercer GET fresco validado de hasta 20 s dentro del presupuesto original de 122 s; cambios del cliente activan preflight de Cierre sin solicitar correo ni comparación.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -15,6 +15,7 @@
   "tests": [
     "Suite Python completa en árbol integrado; pruebas de cierre, cliente, Mesa y mantenimiento sin servicios reales.",
     "Transporte HTTP302 real y POST aplicado con acuse perdido: una escritura; sonda GET acotada sin POST.",
+    "Reloj simulado: HTTP404 de cola/reglas se recupera con JSON real validado; sin presupuesto no hay tercer intento, y el último intento sólo usa tiempo restante. Otros errores y POST no reciben intentos adicionales; una sonda ok no sustituye datos ni valida preflight.",
     "Revisión independiente: metadata pública y compuertas; workflowparse, nube/verificar.py, Node y diffcheck.",
     "Mantenimiento exige run/head/repo/path/event/branch/intento/edad/queued/jobs0; HTTP202 no acredita cancelación.",
     "La prueba integral posterior requiere main estable y recibos reales; no se atribuye producción a una corrida fallida."
