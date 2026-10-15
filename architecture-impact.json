@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-15.sala-nube.1",
   "proposal_id": "CHG-SALA-NUBE-20261015",
-  "summary": "Reparar continuidad de Sala en nube sobre los procesos existentes: GET válido o error explícito, POST ambiguo sin duplicar, mutex por intento y publicación con recibo real, presupuesto final de Pages, lector de snapshots compatible con emisión FULL predeterminada y delta opt-in tras drenaje. Correo por historial/decisiones y puente de chinches con checkpoints y estados solicitados/completados diferenciados. Push de cierre no manda nuevas entradas ni repite comparación histórica. Se conservan editores, vetos, destinatario, datos, secretos y compuertas.",
+  "summary": "Añadir diagnóstico seguro por fase del cierre online para localizar fallos reales de preflight, configuración y acuse privado. Sólo publica etiquetas permitidas, sin mensajes remotos ni datos privados. Mantiene compuertas, operaciones y no reintento de efectos ambiguos de CHG-SALA-NUBE-20261015.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -13,11 +13,10 @@
     "EXT-GMAIL"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p \"*_test.py\": 302 casos aprobados; transporte simulado con POST aplicado/acuse perdido, snapshots y publicaciones, conteos y puente.",
-    "node --test tests/correo-estado.test.cjs tests/sala-imagenes.test.cjs tests/imagen-broker.test.mjs: 23 casos aprobados.",
-    "python3 nube/verificar.py: 13 grupos aprobados; git diff --check.",
-    "Recepción del correo y recuperación externa de Render se verifican por separado; no se atribuyen a CI sintético.",
-    "Lectura del Sheet real sin escrituras confirma resumen acumulado; funciones compartidas del original coinciden con las probadas."
+    "24 pruebas cierre_online_test aprobadas, incluyendo fases, fallos de guardado y exclusión de datos privados.",
+    "Revisión independiente del cambio: sin bloqueadores; no hay nuevos envíos ni cambios de permisos.",
+    "Pruebas correo y revisión, nube/verificar.py (13 grupos) y git diff --check aprobados.",
+    "El diagnóstico real requiere ejecutar el workflow; CI no acredita recepción de correo ni conectividad externa."
   ],
   "rollback": "Conservar decisiones/cola/medios/releases/recibos. Antes de revertir lectores tras emitir deltas, desactivar flag y publicar FULL desde lector compatible, comprobando recibo. Para correo original restaurar la función conservada correoDiarioAnterior20261015_ y conservar el respaldo privado del contenedor. No cambiar URL ni ACL."
 }
