@@ -116,7 +116,7 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await d.context.close();
 
   const m=await prepare(b,390,"editor",true),q=m.page;
-  assert.ok(await q.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  assert.ok(await q.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1));
   await q.screenshot({path:out+"/04-tablero-movil.png",fullPage:true});
   await q.locator('[data-open="synthetic-0"]').click();
   await q.locator('[data-lamina="2"]').click();
@@ -149,14 +149,12 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    const r=await prepare(b,390,role,true),page=r.page;
    await page.locator('[data-open="synthetic-0"]').click();await page.locator('[data-lamina="2"]').click();
    assert.ok(await page.locator('[data-vote="si"]').isDisabled());assert.ok(await page.locator('[data-vote="no"]').isDisabled());
-   assert.notEqual(await page.evaluate(()=>getComputedStyle(document.body).overflow),"hidden");
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1),'El aviso largo de sólo lectura no debe ensanchar el viewport');
    await page.locator('[data-full-photo]').scrollIntoViewIfNeeded();
-   console.log('zoom-readonly-layout',role,await page.locator('[data-full-photo]').evaluate(el=>{
+   assert.equal(await page.locator('[data-full-photo]').evaluate(el=>{
     const r=el.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;
-    return {button:{x:r.x,y:r.y,w:r.width,h:r.height,pointer:getComputedStyle(el).pointerEvents},
-     viewport:{w:innerWidth,h:innerHeight,scrollY,visual:{w:visualViewport.width,h:visualViewport.height,top:visualViewport.offsetTop,scale:visualViewport.scale}},
-     hit:document.elementsFromPoint(x,y).slice(0,5).map(e=>({tag:e.tagName,cls:e.className,button:e.hasAttribute('data-full-photo')}))};
-   }));
+    return document.elementFromPoint(x,y)===el;
+   }),true,'El botón Ampliar debe recibir el toque real');
    await page.screenshot({path:out+'/07-'+role+'-antes-ampliar.png',fullPage:true});
    await page.locator('[data-full-photo]').click();await page.waitForSelector('.zoom.galeria');
    assert.equal(await page.evaluate(()=>getComputedStyle(document.body).overflow),"hidden");
