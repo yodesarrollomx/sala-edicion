@@ -2,6 +2,7 @@
 const {chromium}=require("playwright"),assert=require("node:assert/strict"),fs=require("node:fs"),crypto=require("node:crypto");
 const out="tests/evidencia-tablero";fs.mkdirSync(out,{recursive:true});
 const base=(process.env.SALA_TEST_URL||'http://127.0.0.1:8765/').replace(/\/?$/,'/');
+const chincheSource=fs.readFileSync(process.env.SALA_CHINCHE_SOURCE||'../atlas/chinche.js','utf8');
 const titles=["Tres perspectivas","Doble camino","El diseño invisible","Ruta propia","El entregable","La mesa"];
 const tiras={};const propuestas=titles.map((pieza,k)=>{
  const id="synthetic-"+k;
@@ -30,11 +31,15 @@ async function prepare(browser,width,role="editor",mobile=false,embedded=false,m
  const page=await context.newPage(),writes=[],errors=[],releaseReads=[];
  page.on("pageerror",e=>errors.push(String(e)));
  await page.addInitScript(({role})=>{
+  window.SpeechRecognition=class{constructor(){window.__dictado=this;}start(){}stop(){this.onend&&this.onend();}};
+
   localStorage.setItem("sala_clave","synthetic-session-key");localStorage.setItem("sala_rol",role);
   localStorage.setItem("sala_guia_v3","1");localStorage.setItem("sala_guia","1");
  },{role});
  await page.route("**/*",async route=>{
   const req=route.request(),u=new URL(req.url());
+  if(u.pathname==='/yod-portal/chinche.js'){await route.fulfill({contentType:'application/javascript',body:chincheSource});return;}
+
   if(u.hostname==="script.google.com"||u.hostname==="script.googleusercontent.com"){
    if(req.method()==="POST"){const body=JSON.parse(req.postData()||"{}");writes.push(body);await route.fulfill({json:{ok:true}});return;}
    const resource=u.searchParams.get("recurso");
@@ -72,6 +77,27 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
 (async()=>{
  const b=await chromium.launch({headless:true});
  try{
+  // Compositor real, micrófono sintético y endpoint de negocio interceptado.
+  const capture=await prepare(b,390,'editor',true),cp=capture.page;
+  await cp.waitForFunction(()=>window.YODChinche);
+  await cp.locator('[data-open="synthetic-0"]').click();await cp.locator('[data-lamina="2"]').click();
+  await cp.locator('[data-next-option]').click();
+  assert.equal((await cp.evaluate(()=>SalaTablero.contexto())).toma,2);
+  await cp.evaluate(()=>YODChinche.anotar({sinCaptura:true,css:'.bt-main-photo'}));
+  await cp.locator('.chn-mic').click();
+  await cp.evaluate(()=>window.__dictado.onresult({results:[Object.assign([{transcript:'Corregir el fondo'}],{isFinal:true}),Object.assign([{transcript:'parcial no enviar'}],{isFinal:false})]}));
+  assert.equal(await cp.locator('.chn-txt').inputValue(),'Corregir el fondo');
+  await cp.locator('[data-ok]').click();assert.equal(capture.writes.length,0);
+  await cp.locator('[data-ok]').click();assert.equal(capture.writes.length,0);
+  // Cambia la navegación subyacente: el sobre conserva la toma originalmente señalada.
+  await cp.evaluate(()=>document.querySelector('[data-prev-option]').click());
+  await cp.screenshot({path:out+'/00-correccion-dictada.png',fullPage:true});
+  await cp.locator('[data-ok]').click();
+  await cp.waitForFunction(()=>JSON.parse(localStorage.getItem('sala_produccion_v1')||'[]').some(r=>r.estado==='recibido'));
+  const produced=capture.writes.filter(x=>x.accion==='produccion');assert.equal(produced.length,1);
+  const note=JSON.parse(produced[0].detalle);assert.equal(note.carta.pid,'synthetic-0');assert.equal(note.carta.lamina,2);assert.equal(note.carta.version,7);assert.equal(note.carta.toma,2);assert.equal(note.captura.texto_revisado,true);
+  assert.equal(capture.writes.filter(x=>x.accion==='decidir').length,0,'clavar no aprueba');
+  assert.equal(capture.errors.length,0,capture.errors.join('\n'));await capture.context.close();
   const d=await prepare(b,1440),p=d.page;
   assert.equal(await p.locator(".bt-column").count(),6);
   assert.equal(await p.locator(".bt-frame").count(),36);

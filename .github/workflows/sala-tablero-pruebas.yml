@@ -8,6 +8,7 @@ on:
       - 'index.html'
       - 'medios-publicos.js'
       - 'tablero-sala.*'
+      - 'sala-correcciones.js'
       - 'tests/tablero-sala*'
       - 'tests/sala-imagenes.test.cjs'
       - 'nube/motores/imagen_hidream.py'
@@ -28,6 +29,13 @@ jobs:
             nube
             tests
             docs
+      - uses: actions/checkout@v4
+        with:
+          repository: yodesarrollomx/yod-portal
+          ref: afe4d0103a1bc5915ff6d68113fa87fa7836219c
+          path: .fixture-atlas
+          sparse-checkout: chinche.js
+          sparse-checkout-cone-mode: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -50,7 +58,7 @@ jobs:
       - name: Interacción escritorio y móvil sin escribir al Sheet
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/tablero-http.log" 2>&1 &
-          node tests/tablero-sala.browser.cjs
+          SALA_CHINCHE_SOURCE=.fixture-atlas/chinche.js node tests/tablero-sala.browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

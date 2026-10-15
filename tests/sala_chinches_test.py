@@ -144,7 +144,11 @@ class ReceiptTests(unittest.TestCase):
             it = issue(reason=reason)
             self.assertFalse(puente.completado(it))
             self.assertNotEqual(puente.estado_encargo(it), 'cumplida')
-        self.assertEqual(puente.estado_encargo(issue()), 'cumplida')
+        self.assertEqual(puente.estado_encargo(issue()), 'por verificar')
+        verified=issue(['en-sheet']); verified['resultado']={'tipo':'pr_verificado'}
+        self.assertEqual(puente.estado_encargo(verified), 'cumplida')
+        delivered=issue(); delivered['resultado']={'tipo':'pr_verificado'}
+        self.assertEqual(puente.estado_encargo(delivered), 'entregada')
         self.assertEqual(puente.estado_encargo(issue(state='OPEN')), 'en curso')
 
     def test_ideas_request_has_generic_stable_issue_and_is_only_solicited(self):
@@ -185,3 +189,40 @@ class ReceiptTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+class OutcomeTests(unittest.TestCase):
+    def fixture(self):
+        it=issue();it['url']='https://github.com/yodesarrollomx/sala-edicion/issues/27'
+        sha,head='a'*40,'b'*40
+        answers=[[{'event':'closed','commit_id':sha}],
+                 [{'merged_at':'2026-10-15T00:00:00Z','merge_commit_sha':sha,'base':{'repo':{'full_name':'yodesarrollomx/sala-edicion'}},'head':{'sha':head},'html_url':'https://github.com/yodesarrollomx/sala-edicion/pull/28'}],
+                 {'total_count':1,'check_runs':[{'name':'fixture','status':'completed','conclusion':'success'}]},
+                 {'workflow_runs':[{'head_sha':sha,'conclusion':'success','event':'push'}]}]
+        return it,answers
+
+    def test_plain_completed_or_manual_label_never_proves_result(self):
+        it,_=self.fixture();it['etiquetas']=['en-sheet']
+        with patch.object(puente,'gh',return_value='[{"event":"closed","commit_id":null}]'):
+            self.assertIsNone(puente.resultado_verificado(it))
+        self.assertEqual(puente.estado_encargo(it),'por verificar')
+
+    def test_linked_merge_exact_checks_and_published_commit_prove_technical_only(self):
+        it,answers=self.fixture()
+        with patch.object(puente,'gh',side_effect=[json.dumps(x) for x in answers]):
+            result=puente.resultado_verificado(it)
+        self.assertEqual(result['commit'],'a'*40)
+        self.assertIs(result['aprobacion_editorial'],False)
+
+    def test_failed_checks_wrong_publish_and_truncated_checks_fail_closed(self):
+        for variant in ('failed','different','truncated'):
+            it,answers=self.fixture()
+            if variant=='failed':answers[2]['check_runs'][0]['conclusion']='failure'
+            elif variant=='different':answers[3]['workflow_runs'][0]['head_sha']='c'*40
+            else:answers[2]['total_count']=2
+            with patch.object(puente,'gh',side_effect=[json.dumps(x) for x in answers]):
+                self.assertIsNone(puente.resultado_verificado(it))
+
+    def test_new_public_marker_never_exports_private_fields(self):
+        result=puente.cuerpo_issue(CID,{'texto':'private-note','quien':'private-author','url':'private-url','carta':{'pid':'private-pid'}})
+        self.assertIn(CID,result)
+        self.assertNotIn('private-',result)
