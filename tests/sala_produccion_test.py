@@ -301,7 +301,7 @@ class RejectionSourceTests(unittest.TestCase):
                 png.write_bytes(b"sintetico")
                 compose.return_value = (png, jpg)
                 candidates, _ = mesa.producir_tomas("pieza", {"pieza": "Sintética"}, lam,
-                    "La imagen no cuadra con el texto", {}, [], root, 1)
+                    "La imagen no cuadra con el texto", {"imagen_motores": "doble"}, [], root, 1)
             self.assertEqual(candidates[0]["dice"], "Texto aprobado visible")
             self.assertEqual(compose.call_args.args[1], "Texto aprobado visible")
 

@@ -62,10 +62,12 @@ def generar(receta, reglas):
             d = json.loads(receipt.read_text())
             data = photo.read_bytes()
             if (d.get("modelo") == MODELO and (d.get("receta_sha256") == recipe_sha or rules.get("_imagen_solo_recibo"))
+                    and re.fullmatch(r"[a-f0-9]{64}", str(d.get("receta_sha256") or ""))
                     and (d.get("foto_sha256") or d.get("imagen_sha256")) == hashlib.sha256(data).hexdigest()):
                 data, _ = validar(data)
-                rules["_receta_proveedor_sha256"] = recipe_sha
+                rules["_receta_proveedor_sha256"] = d["receta_sha256"]
                 rules["_imagen_recibo_id"] = rid
+                rules["_imagen_parametros"] = {"seed": d.get("seed"), "aspect_ratio": "3:4", "space": SPACE}
                 return data, "png"
         except (ValueError, OSError, MotorError):
             pass
@@ -118,6 +120,7 @@ def generar(receta, reglas):
                 tmp_receipt.replace(receipt)
                 rules["_receta_proveedor_sha256"] = recipe_sha
                 rules["_imagen_recibo_id"] = rid
+                rules["_imagen_parametros"] = {"seed": d.get("seed"), "aspect_ratio": "3:4", "space": SPACE}
                 _FALLOS = 0
                 return data, "png"
             except Exception as e:

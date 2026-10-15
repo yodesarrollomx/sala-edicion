@@ -232,14 +232,20 @@ SIN_LETRAS = ('. Photorealistic editorial photograph, natural light. Absolutely 
               'no letters, no words, no captions, no signs, no logos, no watermark.')
 
 
-def generar(receta, reglas):
-    """Devuelve (bytes, extension, motor, avisos). Intermitente si ninguno pudo."""
+def preparar_receta(receta, reglas):
+    """Texto exacto que reciben los adaptadores (sin credenciales)."""
     from contenido_reglas import ContenidoVetado, exigir
     try:
         exigir(receta, reglas, 'receta de imagen')
     except ContenidoVetado as e:
         raise MotorError(str(e)) from e
-    receta = receta.rstrip('. ') + SIN_LETRAS
+    return receta.rstrip('. ') + SIN_LETRAS
+
+
+def generar(receta, reglas):
+    receta = (reglas or {}).get('_imagen_prompt_confirmado') or preparar_receta(receta, reglas)
+    from contenido_reglas import exigir
+    exigir(receta, reglas, 'prompt de imagen confirmado')
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
                                     or 'hidream_demo').split(',') if m.strip() in MOTORES]
     if (reglas or {}).get('_imagen_solo_recibo'):

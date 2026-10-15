@@ -1,0 +1,47 @@
+name: Sala · recuperación entre runners
+on:
+  push:
+    branches: [main]
+    paths:
+      - nube/sala_recibos.py
+      - nube/probar_persistencia.py
+      - .github/workflows/sala-persistencia-prueba.yml
+permissions:
+  contents: write
+concurrency:
+  group: sala-prueba-persistencia
+  cancel-in-progress: false
+jobs:
+  guardar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            nube
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Guardar plan y resultado sintéticos en draft privado
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/probar_persistencia.py guardar
+  recuperar:
+    needs: guardar
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            nube
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Recuperar en runner nuevo sin planificador ni generador
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/probar_persistencia.py recuperar

@@ -12,6 +12,8 @@ por falta de cerebro — sólo sale menos pulido, y la evidencia lo dice.
 """
 
 import json
+import re
+import hashlib
 import os
 import urllib.error
 import urllib.request
@@ -72,6 +74,7 @@ def _gemini(texto, reglas, instruccion=None):
         url = ('https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s'
                % (modelo, clave))
         try:
+            _trazar(reglas, 'gemini', modelo, texto, instruccion or con_estrategia(INSTRUCCION, reglas))
             r = _post_json(url, {'systemInstruction': {'parts': [{'text': instruccion or con_estrategia(INSTRUCCION, reglas)}]},
                                  'contents': [{'parts': [{'text': texto}]}]}, {}, 'Gemini ' + modelo)
             break
@@ -106,6 +109,7 @@ def _openai(texto, reglas, cola, instruccion=None):
     if _pagadas_hoy(cola) >= tope:
         raise MotorError('tope diario del respaldo de pago alcanzado (%d)' % tope,
                          intermitente=True)
+    _trazar(reglas, 'openai', _regla(reglas, 'cerebro_respaldo_modelo', 'gpt-4o-mini'), texto, instruccion or con_estrategia(INSTRUCCION, reglas))
     r = _post_json('https://api.openai.com/v1/chat/completions',
                    {'model': _regla(reglas, 'cerebro_respaldo_modelo', 'gpt-4o-mini'),
                     'max_tokens': 220,
@@ -170,6 +174,32 @@ def _json_de(texto):
         return None
 
 
+def edita_texto(nota):
+    """Permiso conservador: una prohibición explícita domina una frase ambigua."""
+    nota = str(nota or '')
+    prohibe = (r'\b(?:no|sin)\s+(?:(?:quiero|pido|necesito)\s+que\s+)?(?:(?:me|lo|le)\s+)?(?:cambi\w*|modifi\w*|reescri\w*|toqu\w*|tocar|alter\w*)[^.;!\n]*\b(?:texto|caption|frase|mensaje)\b'
+               r'|\b(?:conserv\w*|mant[eé]n\w*|deja)\b[^.;!\n]*\b(?:texto|caption|frase|mensaje)\b'
+               r'|\b(?:texto|caption|frase|mensaje)\b[^.;!\n]*\b(?:igual|intacto|sin cambios|no (?:se )?(?:cambi\w*|toqu\w*))')
+    if re.search(prohibe, nota, re.I):
+        return False
+    return bool(re.search(r'\b(?:cambi\w*|modifi\w*|reescri\w*)[^.;!\n]*\b(?:texto|caption|frase|mensaje)\b'
+                          r'|texto no engancha|texto m[aá]s concreto|\bque diga\b|quita[^.;!\n]*pregunta', nota, re.I))
+
+
+def validar_texto_nuevo(texto):
+    # Palabras separadas por espacios; nunca truncar ni revisar texto histórico intacto.
+    if not isinstance(texto, str) or not texto.strip() or len(texto.split()) > 14:
+        raise MotorError('Texto nuevo inválido: requiere entre 1 y 14 palabras', intermitente=True)
+    return texto.strip()
+
+
+def _trazar(reglas, motor, modelo, texto, instruccion):
+    if isinstance(reglas, dict) and isinstance(reglas.get('_cerebro_traza'), list):
+        reglas['_cerebro_traza'].append({'motor': motor, 'modelo': modelo,
+            'entrada': texto, 'instruccion': instruccion,
+            'instruccion_sha256': hashlib.sha256(instruccion.encode()).hexdigest()})
+
+
 def lamina(pieza, promesa, dice, ve, nota, vetadas, reglas, cola=None, variante=1, referencia='', numero=None):
     """Devuelve ({texto, receta, porque}, cerebro_usado, avisos). Sin cerebro: el texto se
     queda y la receta sale de lo que la lámina ya mostraba + la nota."""
@@ -192,7 +222,7 @@ def lamina(pieza, promesa, dice, ve, nota, vetadas, reglas, cola=None, variante=
         try:
             d = _json_de(fn())
             if d and d.get('receta'):
-                d['texto'] = str(d.get('texto') or dice).strip()
+                d['texto'] = validar_texto_nuevo(d.get('texto')) if edita_texto(nota) or not str(dice or '').strip() else str(dice or '')
                 exigir(d, reglas, 'candidata')
                 return d, nombre, avisos
             avisos.append('%s contestó sin JSON útil' % nombre)
@@ -211,7 +241,7 @@ def fotografia_guion(dice, ve, nota, referencia, reglas, variante=1):
     import re
     context = str(ve or '').strip()[:800]
     caption = str(dice or '').strip()
-    edita_texto = bool(re.search(r'cambi\w*.*texto|texto no engancha|texto m[aá]s concreto|que diga|reescrib\w*.*texto|quita.*pregunta', str(nota or ''), re.I))
+    cambia_texto = edita_texto(nota)
     # El guion explica la intención al traductor; el caption nunca se manda al generador.
     pedido = json.dumps({'visual': context, 'intencion': caption,
                          'correccion_visual': str(nota or '')[:600], 'referencia': referencia,
@@ -222,7 +252,7 @@ def fotografia_guion(dice, ve, nota, referencia, reglas, variante=1):
                    'reference characters, natural light and location. For variant change framing. '
                    'No typography, no text, no words, labels, signs, money or watermarks. '
                    'Return only JSON {"scene":"..."}; never include caption text.')
-    if edita_texto:
+    if cambia_texto:
         instruction += (' The editor explicitly asks for a caption change. Also return texto: the corrected Spanish caption, '
                         'one idea, at most14 words, no money, locations or promises. Only change what the note requests. '
                         'Never put texto into scene.')
@@ -232,11 +262,13 @@ def fotografia_guion(dice, ve, nota, referencia, reglas, variante=1):
         scene = str((d or {}).get('scene') or '').strip()
         if scene and (not caption or caption.casefold() not in scene.casefold()):
             exigir(scene, reglas, 'escena fotográfica')
-            return {'texto': str(d.get('texto') or caption).strip() if edita_texto else caption, 'receta': scene, 'porque': 'Fotografía desde la acción del guion; texto compuesto por separado.'}, 'gemini', avisos
+            return {'texto': validar_texto_nuevo(d.get('texto')) if cambia_texto else caption, 'receta': scene, 'porque': 'Fotografía desde la acción del guion; texto compuesto por separado.'}, 'gemini', avisos
     except (MotorError, ContenidoVetado) as e:
         avisos.append(str(e))
-    if edita_texto:
+    if cambia_texto:
         raise MotorError('Corrección explícita de texto pendiente: no respondió el traductor gratuito', intermitente=True)
+    if str(nota or '').strip():
+        raise MotorError('Corrección visual pendiente: sin traductor no se aplica la nota', intermitente=True)
     # La descripción visual del guion es la fuente; no se sustituye por una pareja posando.
     visual = re.sub(r'["“”].*?["“”]', '', context)
     visual = re.sub(r'\b(texto|caption|t[ií]tulo|letrero|tipograf[ií]a)\s*:.*', '', visual, flags=re.I)

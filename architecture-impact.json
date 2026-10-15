@@ -1,14 +1,21 @@
 {
-  "model_revision": "2026-10-15.presentation-pins-ingest.1",
-  "proposal_id": "CHG-SALA-TABLERO-HIDREAM-20261013",
-  "summary": "Continuación editorial #279: mesa legible por publicación, libro con índice, imagen/mensaje/intención y comparación simultánea. Conserva contratos, vetos y guardado; sólo aprobación explícita, nunca scroll vertical.",
+  "model_revision": "2026-10-15.sala-persistencia.1",
+  "proposal_id": "CHG-SALA-PERSISTENCIA-20261015",
+  "summary": "Punto3: F1-F4, planes y resultados privados, identidad estable, guion de Arranque persistido y recuperación sin repetir generación incierta.",
   "components": [
+    "EXT-ACTIONS",
+    "EXT-DRIVE",
+    "EXT-MOTORES-MEDIA",
+    "GAS-SALA",
+    "SVC-SALA-EJECUTOR",
+    "SVC-SALA-PRODUCTOR",
     "SYS-SALA"
   ],
   "tests": [
-    "node --test tests/*.test.cjs",
+    "python3 -m unittest discover -s tests -p \"*_test.py\"",
+    "node --test tests/*.test.cjs tests/*.test.mjs",
     "python3 nube/verificar.py",
-    "Navegador sintético: escritorio, móvil, iframe, comparación sin votos, selección original, guardado existente, imágenes fallidas y roles lector/agente."
+    "Sala recuperación entre runners: dos jobs, draft privado real y proveedor sintético sin filas de negocio."
   ],
-  "rollback": "Revertir PR de interfaz sin modificar decisiones, notas, medios, snapshots ni historial."
+  "rollback": "Revertir este PR conservando todos los drafts privados, snapshots, imágenes, decisiones y colas. Sin cambios de Apps Script ni crons."
 }
