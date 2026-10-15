@@ -1,19 +1,21 @@
 {
-  "model_revision": "2026-10-15.sala-evaluacion.3",
-  "proposal_id": "CHG-SALA-EVALUACION-20261015",
-  "summary": "Finalistas locales persistentes sin votos; texto de candidata visible; métricas con unidades de lámina y toma. Evaluación técnica separada de aceptación editorial y autonomía.",
+  "model_revision": "2026-10-15.sala-ejemplo.1",
+  "proposal_id": "CHG-SALA-EJEMPLO-20261015",
+  "summary": "Nombres por rol y por fusión, conservando vetos y frescura; prueba técnica con receta breve y control de duración. Activación del backend separada de integración.",
   "components": [
     "SYS-SALA",
-    "SYS-YOD-OS",
+    "GAS-SALA",
+    "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
+    "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
-    "GAS-SALA"
+    "EXT-DRIVE",
+    "EXT-GMAIL"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p \"*_test.py\"",
     "node --test tests/*.test.cjs tests/*.test.mjs",
-    "python3 nube/verificar.py",
-    "node tests/tablero-sala.browser.cjs"
+    "python3 nube/verificar.py"
   ],
-  "rollback": "Revertir este PR conservando todos los drafts privados, snapshots, imágenes, decisiones y colas. Sin cambios de Apps Script ni crons."
+  "rollback": "Revertir el PR y restaurar sólo las funciones originales respaldadas si se activan; conservar decisiones, cola, medios, permisos y despliegue existente. La receta breve afecta sólo el ejemplo aislado."
 }

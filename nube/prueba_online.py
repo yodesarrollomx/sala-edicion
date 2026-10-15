@@ -56,13 +56,15 @@ def main():
     with patch("motores._comun.lamina_de", return_value={"dice": narration}), \
          patch.object(guion, "cargar", return_value={"prueba": True}), \
          patch.object(guion, "partes_de", return_value=[("narrador", narration)]):
-        cut = montador.ensamblar(cut_job, {}, {}, DEST, jobs)
+        # Receta de esta prueba corta; no modifica reglas ni defaults editoriales.
+        cut = montador.ensamblar(cut_job, {"audio_margen_s": 0.35, "audio_cola_s": 0.5}, {}, DEST, jobs)
     media = {p.name: metadata(p) for p in (scene, voice, cut)}
     cut_streams = media[cut.name]["streams"]
     assert any(s["tipo"] == "video" and s["ancho"] == 1080 and s["alto"] == 1920
                for s in cut_streams), "El corte no confirmó video vertical"
     assert any(s["tipo"] == "audio" for s in cut_streams), "El corte no confirmó audio"
     assert media[voice.name]["duracion_s"] > 1, "Síntesis sin voz"
+    assert 0.9 <= media[cut.name]["duracion_s"] - media[voice.name]["duracion_s"] <= 1.5, "La prueba añadió esperas excesivas"
     run = os.environ["GITHUB_RUN_ID"]
     folder = drive.asegurar_carpeta("1fYi2fCCy-2Wnas0pWn0NdplzkDE0SzGc",
                                   "SALA-prueba-online-" + run)
