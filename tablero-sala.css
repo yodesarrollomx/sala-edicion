@@ -144,3 +144,97 @@ body.sala-turno .bt-return{display:inline-block}
 #tableroHoy[data-transition="true"] .bt-column,#tableroHoy[data-transition="true"] .bt-choice{animation:bt-enter .22s ease-out}
 @keyframes bt-enter{from{opacity:.6;transform:scale(.98) translateY(5px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){#tableroHoy .bt-column,#tableroHoy .bt-choice{animation:none}}
+
+/* Mesa editorial: el contenido ocupa el espacio, los controles acompañan. */
+body.sala-tablero[data-vista="hoy"] .app{width:100%;max-width:1600px;margin:0 auto;padding:78px 40px calc(var(--nav) + 40px);box-sizing:border-box}
+#tableroHoy{text-align:left}
+#tableroHoy button{cursor:pointer;transition:background .16s,border-color .16s,box-shadow .16s}
+#tableroHoy button:focus-visible{outline:3px solid var(--oro);outline-offset:3px}
+.bt-heading{align-items:center;margin-bottom:28px}
+.bt-heading h1{font-size:clamp(32px,3.6vw,52px);line-height:1.04}
+.bt-heading p{font-size:14px}
+.bt-editorial-intro{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:28px 32px;margin-bottom:26px;border:1px solid var(--linea2);border-radius:18px;background:linear-gradient(120deg,rgba(184,137,86,.13),transparent 80%)}
+.bt-editorial-intro h2{font:30px/1.15 var(--serif);margin:10px 0}
+.bt-editorial-intro p{max-width:580px;font-size:14px;line-height:1.65;color:var(--gris);margin:0}
+#tableroHoy .bt-start{background:var(--tinta);color:var(--fondo);font-weight:600;min-height:50px;padding:12px 22px;white-space:nowrap}
+.bt-columns{display:grid;grid-template-columns:minmax(0,1fr);gap:26px}
+.bt-column{background:var(--tarjeta);border:1px solid var(--linea2);border-radius:18px;padding:24px;box-shadow:0 8px 28px #00000005}
+.bt-col-head{min-height:0;display:grid;grid-template-columns:1fr auto;gap:5px 24px;padding:0 0 20px;margin-bottom:20px;border-bottom:1px solid var(--linea)}
+.bt-col-head>.bt-eyebrow{grid-column:1/-1}
+.bt-topic h2{font-size:30px;letter-spacing:-.02em}
+.bt-col-head .bt-counts{grid-column:1;margin-bottom:0}
+.bt-col-head .bt-tools{grid-column:2;grid-row:2/4;align-content:center}
+#tableroHoy .bt-tools button{min-height:38px;padding:8px 12px;font-size:12px;background:transparent;border-color:var(--linea2)}
+#tableroHoy[data-level="tablero"] .bt-frames,#tableroHoy[data-level="publicacion"] .bt-frames{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:18px;align-items:start}
+.bt-frame{padding:7px;border-bottom-width:1px;box-shadow:none}
+#tableroHoy .bt-photo{aspect-ratio:4/5}
+#tableroHoy[data-level="tablero"] .bt-caption,.bt-caption{font-size:12px;line-height:1.55;display:block;min-height:0;margin:8px 5px;overflow:visible}
+#tableroHoy[data-level="tablero"] .bt-frame-meta>.bt-dot{font-size:11px;gap:6px}
+#tableroHoy[data-level="tablero"] .bt-signatures{display:block;font-size:10px}
+.bt-bottom{line-height:1.6;margin-top:22px}
+#tableroHoy[data-level="opciones"]>.bt-bar{display:none}
+.bt-choice{padding:24px;border-radius:18px;background:var(--tarjeta)}
+.bt-choice-top{padding-bottom:20px;margin-bottom:0;border-bottom:1px solid var(--linea)}
+.bt-book-title{text-align:center;min-width:0}
+.bt-book-title strong{display:block;font:25px/1.2 var(--serif);margin-top:6px;overflow-wrap:anywhere}
+.bt-page-rail{display:flex;align-items:center;gap:6px;overflow-x:auto;padding:16px 0 24px;scrollbar-width:thin}
+#tableroHoy .bt-page-rail button{flex:0 0 42px;min-height:42px;padding:6px;background:transparent}
+#tableroHoy .bt-page-rail button.on{border-color:var(--oro);background:rgba(184,137,86,.13);box-shadow:inset 0 -2px var(--oro)}
+.bt-page-rail>span{margin-left:auto;padding-left:16px;white-space:nowrap;font-size:12px;color:var(--gris)}
+.bt-choice-content{grid-template-columns:minmax(0,1.35fr) minmax(260px,.85fr);gap:40px;max-width:1360px}
+.bt-image-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+#tableroHoy .bt-image-heading button{font-size:12px;min-height:36px;background:transparent}
+.bt-image-stage{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding:20px;background:var(--fondo);border:1px solid var(--linea);border-radius:14px}
+.bt-image-stage figure{margin:0;min-width:0}
+.bt-image-stage figcaption{font-size:11px;line-height:1.5;color:var(--gris);text-align:center;margin:12px 0 0}
+.bt-hero{max-width:420px;max-height:62dvh;aspect-ratio:4/5;touch-action:pan-y;border-radius:4px;box-shadow:0 8px 20px #00000012}
+.bt-image-stage.is-comparing{grid-template-columns:repeat(2,minmax(0,1fr));padding:14px;align-items:center}
+.bt-comparison>div{aspect-ratio:4/5;display:flex;align-items:center}
+.bt-comparison img{width:100%;height:100%;object-fit:contain}
+.bt-thumbs{gap:10px}
+#tableroHoy .bt-thumbs button{width:58px;height:74px;position:relative}
+.bt-thumbs button>span{position:absolute;bottom:3px;right:3px;background:var(--tarjeta);font-size:10px;border-radius:4px;padding:1px 4px}
+#tableroHoy .bt-enlarge{display:block;margin:14px auto 0;background:transparent;padding:8px 28px}
+.bt-choice-copy{align-self:start;padding:4px 0;min-width:0}
+.bt-section-label{display:block;margin-top:30px}
+.bt-choice-copy h2{font:clamp(25px,2.4vw,36px)/1.24 var(--serif);margin:12px 0 26px;letter-spacing:-.025em}
+.bt-intention{padding-left:16px;border-left:2px solid var(--oro);margin:22px 0}
+.bt-intention p{font-size:14px;line-height:1.65;color:var(--gris);margin:8px 0}
+.bt-scene{font-size:13px;color:var(--gris);padding:12px 0;border-bottom:1px solid var(--linea)}
+.bt-scene summary{cursor:pointer;min-height:28px;line-height:28px}
+.bt-scene p{line-height:1.65}
+.bt-editor-note{margin:20px 0;padding:16px 20px;background:rgba(184,137,86,.09);border-radius:3px 12px 12px 3px;border-left:3px solid var(--oro)}
+.bt-editor-note p{font-size:14px;line-height:1.6;white-space:pre-wrap}
+.bt-decision-panel{margin-top:26px;padding-top:20px;border-top:1px solid var(--linea2)}
+.bt-decisions{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#tableroHoy .bt-approve{font-size:13px;padding:12px;background:var(--tinta);border-color:var(--tinta);color:var(--fondo)}
+#tableroHoy .bt-reject{font-size:13px;padding:12px;color:var(--tinta);border-color:var(--linea2)}
+.bt-gesture-hint{font-size:12px!important;line-height:1.6;color:var(--gris)}
+#tableroHoy .bt-next-review{width:100%;border:0;border-top:1px solid var(--linea);background:transparent;text-align:right;margin-top:18px;padding-top:18px}
+@media(max-width:900px){
+ body.sala-tablero[data-vista="hoy"] .app{padding:64px 20px calc(var(--nav) + 28px)}
+ .bt-choice-content{gap:24px;grid-template-columns:minmax(0,1fr) minmax(240px,.85fr)}
+ .bt-choice{padding:18px}
+}
+@media(max-width:700px){
+ body.sala-tablero[data-vista="hoy"] .app{padding:14px 12px calc(var(--nav) + 24px)}
+ .bt-heading{align-items:flex-start}.bt-heading h1{font-size:36px}.bt-heading-actions{justify-content:flex-start}
+ .bt-editorial-intro{display:block;padding:22px;margin-bottom:18px}.bt-editorial-intro h2{font-size:26px}
+ #tableroHoy .bt-start{width:100%;margin-top:18px}
+ .bt-column{padding:16px;border-radius:14px}.bt-col-head{display:block;margin-bottom:16px;padding-bottom:16px}
+ .bt-topic h2{font-size:28px}.bt-col-head .bt-tools{margin-top:14px}
+ #tableroHoy[data-level="tablero"] .bt-frames,#tableroHoy[data-level="publicacion"] .bt-frames{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ #tableroHoy[data-level="tablero"] .bt-caption,#tableroHoy[data-level="publicacion"] .bt-caption{font-size:11px;line-height:1.5}
+ #tableroHoy[data-level="tablero"] .bt-frame-meta>.bt-dot{font-size:10px}
+ .bt-choice{padding:12px;border-radius:14px}.bt-choice-top{gap:8px;padding-bottom:14px}.bt-book-title strong{font-size:18px}
+ .bt-book-title .bt-eyebrow{font-size:8px}.bt-choice-top>button{flex-shrink:0}
+ #tableroHoy .bt-choice-top button{font-size:11px;padding:6px 8px;min-height:42px}
+ .bt-page-rail{padding:14px 0 18px}.bt-page-rail>span{font-size:10px;padding-left:6px}
+ .bt-choice-content{display:flex;flex-direction:column;gap:22px}.bt-carousel{min-width:0;width:100%}
+ .bt-image-stage{padding:12px}.bt-hero{max-height:52dvh;width:100%;max-width:330px}
+ .bt-image-stage.is-comparing{padding:8px;gap:8px}.bt-image-stage.is-comparing figcaption{font-size:10px}
+ .bt-choice-copy{width:100%;padding:0}.bt-section-label{margin-top:18px}.bt-choice-copy h2{font-size:28px}
+ .bt-decisions{grid-template-columns:1fr 1fr}.bt-decision-panel{margin-top:20px}
+ .bt-legend{gap:8px}.bt-levels{display:none}.bt-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){#tableroHoy button{transition:none}}

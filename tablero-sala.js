@@ -85,14 +85,15 @@ function render(){
  const oldX=root.querySelector(".bt-pan")?.scrollLeft||0;
  root.dataset.level=S.choice?"opciones":f?"publicacion":"tablero";
  root.dataset.transition=String(previousLevel!==root.dataset.level);
- root.innerHTML=`<div class="bt-heading"><div><span class="bt-eyebrow">SALA DE EDICIÓN</span><h1>${f?esc(f.t.pieza||f.p.titulo):"Tus publicaciones, de un vistazo"}</h1><p>${f?"Tira completa · toca una lámina para comparar sus opciones.":S.groups.length+" publicaciones · "+pending+" láminas por revisar"}</p></div>
- <div class="bt-heading-actions"><button data-refresh ${S.busy?"disabled":""}>${S.busy?"Actualizando…":"↻ Actualizar"}</button><button data-legacy>Revisión paso a paso</button></div></div>
+ root.innerHTML=`<div class="bt-heading"><div><span class="bt-eyebrow">SALA DE EDICIÓN</span><h1>${f?esc(f.t.pieza||f.p.titulo):"La mesa editorial"}</h1><p>${f?"Lee la secuencia completa. Abre una página para revisar sus tomas.":S.groups.length+" "+(S.groups.length===1?"publicación":"publicaciones")+" en mesa · "+pending+" páginas por revisar"}</p></div>
+ <div class="bt-heading-actions"><button data-refresh ${S.busy?"disabled":""}>${S.busy?"Actualizando…":"↻ Actualizar"}</button><button data-legacy>Otras revisiones</button></div></div>
+ ${!f?`<div class="bt-editorial-intro"><div><span class="bt-eyebrow">TU CRITERIO, ANTES DE PRODUCIR</span><h2>Una historia. Cada detalle.</h2><p>Revisa el mensaje, compara las tomas y deja una decisión clara. Tus notas acompañan cada página.</p></div><button class="bt-start" data-next ${pending?"":"disabled"}>${pending?"Empezar revisión ↗":"Sin páginas por revisar"}</button></div>`:""}
  <div class="bt-bar"><div class="bt-legend"><span class="bt-dot amarillo">Revisar</span><span class="bt-dot verde">Aprobada</span><span class="bt-dot rojo">Cambio pedido</span><span class="bt-dot produccion">Producción</span></div>
- <div class="bt-levels"><button data-back ${!f?"disabled":""} aria-label="Alejar, volver al tablero">−</button><span>${S.choice?"3 · Opciones":f?"2 · Publicación":"1 · Tablero"}</span><button data-zoom aria-label="Acercar">${S.choice?"↗":"+"}</button></div></div>
+ <div class="bt-levels"><button data-back ${!f?"disabled":""} aria-label="Alejar, volver al tablero">−</button><span>${S.choice?"Revisión":f?"Libro abierto":"Vista general"}</span><button data-zoom aria-label="Acercar">${S.choice?"↗":"+"}</button></div></div>
  <div class="bt-nav">${f?`<button data-back>← Todas las publicaciones</button><button data-next>Ir a la siguiente por revisar →</button>`:
- `<div class="bt-filters">${["todas","atencion","produccion"].map(k=>`<button data-filter="${k}" class="${S.filter===k?"on":""}" aria-pressed="${S.filter===k}">${k==="todas"?"Todas":k==="atencion"?"Necesitan atención":"En producción"}</button>`).join("")}</div><span class="bt-hint">Toca una columna para acercarte · doble clic en una lámina para elegir</span>`}</div>
+ `<div class="bt-filters">${["todas","atencion","produccion"].map(k=>`<button data-filter="${k}" class="${S.filter===k?"on":""}" aria-pressed="${S.filter===k}">${k==="todas"?"Todas":k==="atencion"?"Necesitan atención":"En producción"}</button>`).join("")}</div><span class="bt-hint">Cada publicación conserva su secuencia y sus decisiones</span>`}</div>
  <div class="bt-pan" tabindex="0" aria-label="Tablero de publicaciones"><div class="bt-columns">${vg.map((g,i)=>`<section class="bt-column" style="--bt-tone:${tone(g)}" data-column="${esc(g.id)}">${header(g)}<div class="bt-frames">${(g.t.laminas||[]).map(l=>card(g,l)).join("")}${g.ejes.map(p=>`<button class="bt-other" data-eje="${esc(p.id)}">${esc(p.titulo||"Revisión de guion o producción")} →</button>`).join("")}</div></section>`).join("")||`<div class="bt-empty"><h2>${S.loaded?"No hay publicaciones en este filtro":"Cargando las publicaciones…"}</h2><p>${S.loaded?"Las decisiones y el historial siguen guardados. Elige Todas para volver.":"Leyendo la tira completa de cada publicación."}</p></div>`}</div></div>
- <p class="bt-bottom">El número ↺ cuenta los intentos de cada lámina. Amarillo pide tu revisión; azul indica trabajo en la nube. Usa +/−, la rueda sobre una imagen o dos dedos para acercar y alejar.</p>
+ <p class="bt-bottom">Aprobar una toma registra tu elección. Producción y publicación tienen sus propios comprobantes.</p>
  <p class="bt-notice" role="status" aria-live="polite">${esc(S.notice)}</p>`;
  root.querySelector(".bt-pan").scrollLeft=oldX;
  if(cl)renderChoice(cg,cl);
@@ -121,7 +122,7 @@ function chooseFrame(g,n){
  const opts=options(l),md=markData(g,l),selected=/\[toma elegida: (\d+)\]/.exec(md.nota||"");
  let k=selected?opts.findIndex(o=>o.indiceOriginal===Number(selected[1])-1):0;
  if(k<0)k=0;
- S.choice={group:g.id,n:Number(n),k};
+ S.choice={group:g.id,n:Number(n),k,compare:false};
  if(!CAPAS.some(c=>c.id==="tablero-opciones"))abrirCapa("tablero-opciones",()=>{S.choice=null;render();},null,root);
  render();
 }
@@ -140,18 +141,27 @@ function renderChoice(g,l){
  c.k=k;
  const writable=eligible()&&md.i>=0&&!!dec[g.pid]&&l.estado!=="aprobada";
  const box=document.createElement("div");box.className="bt-choice";box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");box.setAttribute("aria-label","Elegir fotografía de lámina "+l.n);
- box.innerHTML=`<div class="bt-choice-top"><button data-back>← Tira completa</button><span>${esc(g.t.pieza||g.id)} · L${l.n}</span><button data-close-choice aria-label="Cerrar opciones">×</button></div>
+ const frames=g.t.laminas||[],pos=frames.findIndex(x=>Number(x.n)===Number(l.n)),other=os.length>1?os[k===0?1:0]:null;
+ const intention=l.entiende||l.por_que||g.t.direccion?.promesa||g.t.promesa||g.p.porque||"";
+ const chosen=/\[toma elegida: (\d+)\]/.exec(md.nota||"");
+ box.innerHTML=`<div class="bt-choice-top"><button data-back>← Tira completa</button><div class="bt-book-title"><span class="bt-eyebrow">LIBRO DE REVISIÓN</span><strong>${esc(g.t.pieza||g.id)}</strong></div><button data-close-choice aria-label="Cerrar opciones">×</button></div>
+ <nav class="bt-page-rail" aria-label="Páginas de esta publicación">${frames.map(x=>`<button data-page="${x.n}" aria-label="Revisar lámina ${x.n}" aria-current="${Number(x.n)===Number(l.n)?"page":"false"}" class="${Number(x.n)===Number(l.n)?"on":""}"><span class="bt-dot ${status(g,x)}">${String(x.n).padStart(2,"0")}</span></button>`).join("")}<span>Página ${pos+1} de ${frames.length}</span></nav>
  <div class="bt-choice-content"><div class="bt-carousel" tabindex="0" aria-label="Opciones; flechas para cambiar, botón para aprobar">
- <div class="bt-hero">${o?img(o.src||o.original,"Opción "+(k+1),"bt-main-photo"):`<div class="bt-sin-foto">No hay una toma disponible todavía</div>`}<span class="bt-lamina">L${l.n}</span></div>
+ <div class="bt-image-heading"><span class="bt-eyebrow">${c.compare?"COMPARACIÓN DE TOMAS":"LA IMAGEN"}</span>${os.length>1?`<button data-compare aria-pressed="${!!c.compare}">${c.compare?"Ver una toma":"Comparar lado a lado"}</button>`:""}</div>
+ <div class="bt-image-stage ${c.compare&&other?"is-comparing":""}"><figure><div class="bt-hero">${o?img(o.src||o.original,"Opción "+(k+1),"bt-main-photo"):`<div class="bt-sin-foto">No hay una toma disponible todavía</div>`}<span class="bt-lamina">L${l.n}</span></div><figcaption>${os.length?"Toma "+(k+1)+" · En revisión":"Esperando imagen"}${chosen&&o&&Number(chosen[1])===o.indiceOriginal+1?" · Tu elección":""}</figcaption></figure>${c.compare&&other?`<figure class="bt-comparison"><div>${img(other.src||other.original,"Toma de referencia")}</div><figcaption>Toma ${k===0?2:1} · Referencia</figcaption></figure>`:""}</div>
  <div class="bt-pager"><button data-prev-option aria-label="Opción anterior" ${k<=0?"disabled":""}>←</button><span>${os.length?"Opción "+(k+1)+" de "+os.length:"En producción"}</span><button data-next-option aria-label="Opción siguiente" ${k>=os.length-1?"disabled":""}>→</button></div>
- <div class="bt-thumbs">${os.map((x,i)=>`<button data-option="${i}" aria-label="Ver opción ${i+1}" aria-pressed="${i===k}" class="${i===k?"on":""}">${img(x.src,"Opción "+(i+1))}</button>`).join("")}</div></div>
- <div class="bt-choice-copy"><span class="bt-dot ${st}">${labels[st]}</span><h2>${esc(l.dice||"Lámina "+l.n)}</h2><p>${esc(o&&o.texto||l.ve||"")}</p>
- <div class="bt-tools"><button data-info="guion" data-group="${esc(g.id)}">Guion</button><button data-info="intencion" data-group="${esc(g.id)}">Intención</button><button data-history="${l.n}" data-group="${esc(g.id)}">↺ ${intentos(l)} intentos</button><button data-full-photo ${!o?"disabled":""}>Ampliar</button></div>
- <small>${esc(o&&(o.modelo||o.motor)||"")}</small>${md.nota?`<p class="bt-editor-note">Tu nota: ${esc(md.nota.replace(/\s*\[toma elegida: \d+\]/g,""))}</p>`:""}
- <div class="bt-decisions"><button class="bt-approve" data-vote="si" ${!writable||!o?"disabled":""}>↑ Aprobar esta opción</button><button class="bt-reject" data-vote="no" ${!writable?"disabled":""}>× Pedir cambio</button></div>
- <p class="bt-gesture-hint">${writable?"Desliza la foto a los lados para comparar. Hacia arriba aprueba la opción visible.":l.estado==="aprobada"?"Esta lámina ya está aprobada. Su historia queda conservada.":"Vista de lectura: aquí puedes comparar sin cambiar decisiones."}</p>
+ <div class="bt-thumbs">${os.map((x,i)=>`<button data-option="${i}" aria-label="Ver opción ${i+1}" aria-pressed="${i===k}" class="${i===k?"on":""}">${img(x.src||x.original,"Opción "+(i+1))}<span>${i+1}</span></button>`).join("")}</div>
+ <button class="bt-enlarge" data-full-photo ${!o?"disabled":""}>Ampliar</button></div>
+ <div class="bt-choice-copy"><span class="bt-dot ${st}">${labels[st]}</span><span class="bt-eyebrow bt-section-label">EL MENSAJE</span><h2>${esc(l.dice||"Lámina "+l.n)}</h2>
+ ${intention?`<div class="bt-intention"><span class="bt-eyebrow">QUÉ DEBE TRANSMITIR</span><p>${esc(intention)}</p></div>`:""}
+ ${(o&&o.texto)||l.ve?`<details class="bt-scene"><summary>Dirección de la imagen</summary><p>${esc(o&&o.texto||l.ve)}</p></details>`:""}
+ <div class="bt-tools"><button data-info="guion" data-group="${esc(g.id)}">Guion completo</button><button data-info="intencion" data-group="${esc(g.id)}">Intención</button><button data-history="${l.n}" data-group="${esc(g.id)}">↺ ${intentos(l)} intentos</button></div>
+ ${md.nota.replace(/\s*\[toma elegida: \d+\]/g,"")?`<blockquote class="bt-editor-note"><span class="bt-eyebrow">TU NOTA AL MARGEN</span><p>${esc(md.nota.replace(/\s*\[toma elegida: \d+\]/g,""))}</p></blockquote>`:""}
+ <div class="bt-decision-panel"><span class="bt-eyebrow">TU DECISIÓN · ${os.length?"TOMA "+(k+1):"SIN TOMA"}</span><div class="bt-decisions"><button class="bt-approve" data-vote="si" ${!writable||!o?"disabled":""}>Aprobar esta toma</button><button class="bt-reject" data-vote="no" ${!writable?"disabled":""}>Pedir cambio</button></div>
+ <p class="bt-gesture-hint">${writable?"Comparar no decide. Aprueba esta toma o pide un cambio con una nota.":l.estado==="aprobada"?"Esta página ya está aprobada. Su historia se conserva.":"Vista de lectura: puedes comparar sin cambiar decisiones."}</p>
  ${l.estado==="aprobada"&&eligible()&&g.t.base?`<button data-reopen>Pedir una nueva revisión</button>`:""}
- <button class="bt-next-review" data-next>Siguiente por revisar →</button><p class="bt-notice" role="status">${esc(S.notice)}</p></div></div>`;
+ <p class="bt-notice" role="status">${esc(S.notice)}</p></div>
+ <button class="bt-next-review" data-next>Siguiente por revisar →</button></div></div>`;
  root.appendChild(box);
 }
 function moveOption(delta){if(!S.choice)return;const g=S.groups.find(x=>x.id===S.choice.group),l=g.t.laminas.find(x=>Number(x.n)===S.choice.n);S.choice.k=Math.min(Math.max(0,S.choice.k+delta),Math.max(0,options(l).length-1));render();}
@@ -203,6 +213,8 @@ function bind(){
  root.querySelectorAll("[data-next]").forEach(b=>b.onclick=next);
  root.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{S.filter=b.dataset.filter;render();});
  root.querySelectorAll("[data-option]").forEach(b=>b.onclick=()=>{S.choice.k=Number(b.dataset.option);render();});
+ root.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>chooseFrame(gs(S.choice.group),Number(b.dataset.page)));
+ root.querySelector("[data-compare]")?.addEventListener("click",()=>{S.choice.compare=!S.choice.compare;render();});
  root.querySelector("[data-prev-option]")?.addEventListener("click",()=>moveOption(-1));
  root.querySelector("[data-next-option]")?.addEventListener("click",()=>moveOption(1));
  root.querySelectorAll("[data-vote]").forEach(b=>b.onclick=()=>vote(b.dataset.vote));
@@ -220,7 +232,7 @@ function bind(){
  const hero=root.querySelector(".bt-hero");if(hero){
   let p=null;hero.addEventListener("pointerdown",e=>{if(e.target.closest("button,a,input,textarea,select,[role=button]"))return;if(e.isPrimary){p={x:e.clientX,y:e.clientY,id:e.pointerId};hero.setPointerCapture(e.pointerId);}});
   hero.addEventListener("pointercancel",()=>{p=null;});
-  hero.addEventListener("pointerup",e=>{if(!p||p.id!==e.pointerId)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p=null;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3)moveOption(dx<0?1:-1);else if(dy< -95&&Math.abs(dx)<45)vote("si");});
+  hero.addEventListener("pointerup",e=>{if(!p||p.id!==e.pointerId)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p=null;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3)moveOption(dx<0?1:-1);});
  }
 }
 async function refresh(live=false){
@@ -242,7 +254,7 @@ let wheelTotal=0,lastWheel=0;
 root.addEventListener("wheel",e=>{
  if(CAPAS.some(c=>!["tablero-publicacion","tablero-opciones"].includes(c.id)))return;
  const photo=e.target.closest(".bt-photo,.bt-hero");
- if(!photo&&!e.ctrlKey&&!e.metaKey)return;
+ if(!e.ctrlKey&&!e.metaKey)return;
  if(Date.now()-lastWheel>400)wheelTotal=0;lastWheel=Date.now();wheelTotal+=e.deltaY;
  if(e.ctrlKey||e.metaKey||photo)e.preventDefault();
  if(wheelTotal< -100){wheelTotal=0;if(!S.focus){const g=S.groups.find(g=>g.id===photo?.dataset.group)||visible()[0];open(g);}else if(!S.choice){const n=Number(photo?.dataset.lamina)||group().t.laminas[0]?.n;chooseFrame(group(),n);}}

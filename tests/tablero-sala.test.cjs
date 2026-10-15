@@ -47,7 +47,7 @@ test("los controles dentro de la foto reciben su clic y los gestos de la imagen 
  assert.deepEqual(captures,[2]);assert.deepEqual(moves,[1]);
  listeners.pointerdown({target:photo,isPrimary:true,pointerId:3,clientX:100,clientY:200});
  listeners.pointerup({target:photo,pointerId:3,clientX:100,clientY:80});
- assert.deepEqual(votes,['si']);
+ assert.deepEqual(votes,[],'desplazarse para leer nunca debe aprobar');
 });
 test("una foto fallida reintenta al tocarla y conserva el doble clic para abrir sus opciones exactas",()=>{
  const source=fs.readFileSync(require.resolve("../tablero-sala.js"),"utf8"),start=source.indexOf("function bind(){"),end=source.indexOf("async function refresh(",start);

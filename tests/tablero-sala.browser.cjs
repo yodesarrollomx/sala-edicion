@@ -100,6 +100,15 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await p.locator('[data-lamina="2"]').click();
   await p.waitForSelector(".bt-choice");
   assert.match(await p.locator(".bt-pager").innerText(),/1 de 2/);
+  await p.locator('[data-compare]').click();
+  assert.equal(await p.locator('.bt-image-stage figure').count(),2);
+  assert.equal(d.writes.length,0,'comparar no guarda ninguna decisión');
+  await p.screenshot({path:out+'/03-comparacion-editorial.png',fullPage:true});
+  await p.locator('[data-compare]').click();
+  await p.locator('[data-page="3"]').click();
+  assert.equal(await p.locator('[data-page="3"]').getAttribute('aria-current'),'page');
+  await p.locator('[data-page="2"]').click();
+  assert.equal(d.writes.length,0,'cambiar de página no decide');
   await p.locator("[data-full-photo]").click();
   await p.waitForSelector(".zoom.galeria .zg");
   await p.locator(".zoom .zg-sig").click();
@@ -144,6 +153,8 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await touch(q,[{x,y}],"touchStart");
   await touch(q,[{x,y:y-130}],"touchMove");
   await touch(q,[],"touchEnd");
+  assert.equal(m.writes.filter(x=>x.accion==="decidir").length,0,"deslizar hacia arriba sólo desplaza; no aprueba");
+  await q.locator("[data-vote=si]").click();
   await q.waitForFunction(()=>document.querySelector(".bt-choice-copy .bt-dot")?.textContent==="Aprobada");
   assert.equal(m.writes.filter(x=>x.accion==="decidir").length,1);
   await q.screenshot({path:out+"/05-carrusel-movil.png",fullPage:true});
@@ -212,7 +223,7 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   assert.match(await missingChoice.locator('.bt-notice').innerText(),/Espera a que cargue/);
   assert.equal(await missing.view.evaluate(()=>SalaMedios.estado()),'error');
   await missing.context.close();
-  fs.writeFileSync(out+"/resultado.json",JSON.stringify({ok:true,publicaciones_sinteticas:6,laminas:36,escritorio:1440,movil:390,seleccion_indice_original:true,swipe_aprobar:true,pinch_alejar:true,embed_portal:true,lector_agente_sin_votos:true},null,2));
+  fs.writeFileSync(out+"/resultado.json",JSON.stringify({ok:true,publicaciones_sinteticas:6,laminas:36,escritorio:1440,movil:390,seleccion_indice_original:true,swipe_sin_voto:true,pinch_alejar:true,embed_portal:true,lector_agente_sin_votos:true},null,2));
   console.log("PASS tablero/tira/carrusel, roles, selección, swipe, pinch y conservación");
  }finally{await b.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
