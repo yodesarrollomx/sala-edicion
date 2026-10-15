@@ -150,6 +150,14 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    await page.locator('[data-open="synthetic-0"]').click();await page.locator('[data-lamina="2"]').click();
    assert.ok(await page.locator('[data-vote="si"]').isDisabled());assert.ok(await page.locator('[data-vote="no"]').isDisabled());
    assert.notEqual(await page.evaluate(()=>getComputedStyle(document.body).overflow),"hidden");
+   await page.locator('[data-full-photo]').scrollIntoViewIfNeeded();
+   console.log('zoom-readonly-layout',role,await page.locator('[data-full-photo]').evaluate(el=>{
+    const r=el.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;
+    return {button:{x:r.x,y:r.y,w:r.width,h:r.height,pointer:getComputedStyle(el).pointerEvents},
+     viewport:{w:innerWidth,h:innerHeight,scrollY,visual:{w:visualViewport.width,h:visualViewport.height,top:visualViewport.offsetTop,scale:visualViewport.scale}},
+     hit:document.elementsFromPoint(x,y).slice(0,5).map(e=>({tag:e.tagName,cls:e.className,button:e.hasAttribute('data-full-photo')}))};
+   }));
+   await page.screenshot({path:out+'/07-'+role+'-antes-ampliar.png',fullPage:true});
    await page.locator('[data-full-photo]').click();await page.waitForSelector('.zoom.galeria');
    assert.equal(await page.evaluate(()=>getComputedStyle(document.body).overflow),"hidden");
    assert.equal(await page.locator('.zoom .zg-elegir').isVisible(),false);
