@@ -497,7 +497,7 @@ def seleccion_publica(seleccion):
             'propuestas_por_tipo': {key: cantidad(tipos.get(key)) for key in TIPOS_DIAGNOSTICO}}
 
 
-def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa='', modelo_imagen=None, seleccion=None):
+def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa='', modelo_imagen=None, seleccion=None, tomas_obtenidas=None):
     state = "bloqueado" if fallidas and not generadas else (
         "parcial" if fallidas or limitadas else "al_dia")
     report = {"schema": 1, "estado": state,
@@ -507,6 +507,10 @@ def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, 
               "generadas": generadas, "reutilizadas": reutilizadas, "fallidas": fallidas,
               "causa": causa, "modelo_imagen": modelo_imagen or imagen.MODELO_FLUX2,
               "limite_pendiente": limitadas, "cartas": cartas}
+    # Alias histórico: generadas cuenta láminas, reutilizadas cuenta tiras.
+    # No inferir llamadas al proveedor ni gasto desde una salida recuperada.
+    report.update(laminas_preparadas=generadas, tiras_reutilizadas=reutilizadas,
+                  tomas_obtenidas=tomas_obtenidas)
     if seleccion is not None:
         report['seleccion'] = seleccion_publica(seleccion)
     dest = RAIZ / "datos" / "mesa-estado.json"
@@ -558,6 +562,7 @@ def main():
     hoy = sala.hoy_hermosillo()
     plan, gastadas = [], 0
     generadas = fallidas = limitadas = reutilizadas = 0
+    tomas_obtenidas = 0
     cupo_bloqueado = False
     servicio_bloqueado = False
 
@@ -678,6 +683,7 @@ def main():
             destino.pop('reemplazo_modelo', None)
             destino['estado'] = 'rehecha'
             generadas += 1
+            tomas_obtenidas += len(tomas)
             destino['produccion_guardados'] = 1
             destino['candidatas'] = tomas
             destino['fecha'] = hoy
@@ -724,7 +730,7 @@ def main():
         guardar_estado_mesa(generadas, fallidas, limitadas, len(plan), reutilizadas,
                             causa='servicio_imagen_no_disponible' if servicio_bloqueado else ('cupo_imagen_agotado' if cupo_bloqueado else ''),
                             modelo_imagen=imagen.modelo_de(str(reglas.get('imagen_motores') or 'hidream_demo').split(',')[0].strip(), reglas),
-                            seleccion=seleccion)
+                            seleccion=seleccion, tomas_obtenidas=tomas_obtenidas)
     # Preparación que falló por completo es un fallo real, no una mesa «al día».
     return 2 if fallidas and not plan and not args.simular else 0
 

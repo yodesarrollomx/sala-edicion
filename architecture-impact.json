@@ -1,13 +1,13 @@
 {
-  "model_revision": "2026-10-15.sala-correcciones.1",
-  "proposal_id": "CHG-SALA-CORRECCIONES-20261015",
-  "summary": "Correcciones: contexto congelado, dictado revisado, envío con checkpoint/recibo, entrega verificable y aprobación explícita conservada.",
+  "model_revision": "2026-10-15.sala-evaluacion.3",
+  "proposal_id": "CHG-SALA-EVALUACION-20261015",
+  "summary": "Finalistas locales persistentes sin votos; texto de candidata visible; métricas con unidades de lámina y toma. Evaluación técnica separada de aceptación editorial y autonomía.",
   "components": [
     "SYS-SALA",
     "SYS-YOD-OS",
-    "GAS-SALA",
-    "SHEET-SALA",
-    "EXT-ACTIONS"
+    "SVC-SALA-PRODUCTOR",
+    "EXT-ACTIONS",
+    "GAS-SALA"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p \"*_test.py\"",

@@ -244,3 +244,4 @@ body.sala-tablero[data-vista="hoy"] .app{width:100%;max-width:1600px;margin:0 au
  #tableroHoy[data-level="tablero"] .bt-frame{flex:0 0 146px;scroll-snap-align:start}
  #tableroHoy[data-level="tablero"] .bt-other{flex:0 0 180px}
 }
+.bt-finalistas{border:1px solid var(--borde,#d7ddd9);border-radius:12px;padding:14px;margin:14px 0}.bt-finalistas .bt-tools{flex-wrap:wrap;margin-top:10px}#tableroHoy .bt-choice .bt-finalistas .bt-tools button[aria-pressed="true"]{background:#234e42;color:#fff;border-color:#234e42}.bt-finalistas p{font-size:12px;line-height:1.5;margin:10px 0 0}

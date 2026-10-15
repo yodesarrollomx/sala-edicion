@@ -9,7 +9,7 @@ const tiras={};const propuestas=titles.map((pieza,k)=>{
  tiras[id]={pieza,pieza_slug:id,base:id+"-base",promesa:"Entender la decisión de diseño",decidir:[2,3,4,5,6],mapa:{"1":2,"2":3,"3":4,"4":5,"5":6},
  laminas:Array.from({length:6},(_,i)=>({n:i+1,src:"laminas/"+id+"/L"+(i+1)+".jpg",dice:"Una decisión concreta para la lámina "+(i+1),ve:"Personas comparan maquetas sobre una mesa",estado:i===0?"aprobada":"rehecha",
  version:i===1?7:1,versiones:i===1?Array.from({length:7},(_,v)=>({v:v+1,src:"laminas/"+id+"/v"+(v+1)+".png",marca:v===0?"no":""})):[],
- candidatas:i===1?[{src:"laminas/"+id+"/bad.jpg",motor:"cpu"},{src:"laminas/"+id+"/L2.jpg",motor:"hidream_demo",modelo:"HiDream-I1-Dev",titulo:"A"},{src:"laminas/"+id+"/B.jpg",motor:"hidream_demo",modelo:"HiDream-I1-Dev",titulo:"B"}]:[]}))};
+ candidatas:i===1?[{src:"laminas/"+id+"/bad.jpg",motor:"cpu"},{src:"laminas/"+id+"/L2.jpg",motor:"hidream_demo",modelo:"HiDream-I1-Dev",titulo:"A",dice:"Texto específico de la toma A"},{src:"laminas/"+id+"/B.jpg",motor:"hidream_demo",modelo:"HiDream-I1-Dev",titulo:"B",dice:"Texto específico de la toma B"}]:[]}))};
  return {id,tipo:"laminas",pieza,titulo:pieza,laminas:tiras[id].laminas.slice(1).map(x=>x.src)};
 });
 function day(role){return {fecha:"2026-10-13",rol:role,quien:"Alejandro",version:"synthetic",propuestas:JSON.parse(JSON.stringify(propuestas)),decisiones:{editores:[],propuestas:{}}};}
@@ -99,6 +99,29 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   const note=JSON.parse(produced[0].detalle);assert.equal(note.carta.pid,'synthetic-0');assert.equal(note.carta.lamina,2);assert.equal(note.carta.version,7);assert.equal(note.carta.toma,2);assert.equal(note.captura.texto_revisado,true);
   assert.equal(capture.writes.filter(x=>x.accion==='decidir').length,0,'clavar no aprueba');
   assert.equal(capture.errors.length,0,capture.errors.join('\n'));await capture.context.close();
+  // Preselección real de UI: recarga del mismo navegador, cero efectos de negocio.
+  for(const width of [1440,390]){
+   const shortlist=await prepare(b,width,'editor',width===390),sp=shortlist.page;
+   async function abrirFinalistas(){await sp.locator('[data-open="synthetic-0"]').click();await sp.locator('[data-lamina="2"]').click();}
+   await abrirFinalistas();
+   await sp.locator('[data-finalista="0"]').click();await sp.locator('[data-finalista="1"]').click();
+   assert.equal(await sp.locator('[data-finalista][aria-pressed="true"]').count(),2);
+   assert.equal(shortlist.writes.length,0);
+   await sp.reload();await sp.waitForSelector('.bt-column');await sp.evaluate(()=>cerrarCapas());await abrirFinalistas();
+   assert.equal(await sp.locator('[data-finalista][aria-pressed="true"]').count(),2);
+   const finalStyle=await sp.locator('[data-finalista]').first().evaluate(el=>({bg:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color}));
+   assert.equal(finalStyle.bg,'rgb(35, 78, 66)','finalistas seleccionadas deben contrastar con texto blanco');
+   assert.equal(finalStyle.color,'rgb(255, 255, 255)');
+   await sp.locator('[data-next-option]').click();
+   assert.equal(await sp.locator('.bt-choice-copy h2').innerText(),'Texto específico de la toma B');
+   await sp.locator('[data-compare]').click();
+   await sp.screenshot({path:out+'/00-finalistas-'+width+'.png',fullPage:true});
+   assert.ok(await sp.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1));
+   await sp.locator('[data-finalista="0"]').click();
+   assert.equal(await sp.locator('[data-finalista][aria-pressed="true"]').count(),1);
+   assert.equal(shortlist.writes.length,0,'preseleccionar, comparar y recargar nunca votan ni producen');
+   assert.deepEqual(shortlist.errors,[]);await shortlist.context.close();
+  }
   const d=await prepare(b,1440),p=d.page;
   assert.equal(await p.locator(".bt-column").count(),6);
   assert.equal(await p.locator(".bt-frame").count(),36);
