@@ -26,6 +26,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
+from revisiones_presentacion import assert_public_bytes
 
 SCHEMA = 1
 SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -86,6 +87,7 @@ def validate_file(path, data):
     if path.endswith(".json"):
         try:
             json.loads(data)
+            assert_public_bytes(data)
         except (ValueError, UnicodeError) as exc:
             raise OnlineError("JSON público inválido") from exc
     elif path.lower().endswith((".jpg", ".jpeg")) and not data.startswith(b"\xff\xd8\xff"):
@@ -1047,6 +1049,11 @@ class Snapshots:
             if path.is_symlink() or any(p.is_symlink() for p in path.parents if p != self.root):
                 raise OnlineError("Bundle con symlink")
             if path.is_file():
+                if rel.endswith('.json'):
+                    try:
+                        assert_public_bytes(path.read_bytes())
+                    except ValueError as exc:
+                        raise OnlineError("Bundle con revisión privada sin proyectar") from exc
                 files[rel] = path
                 total += path.stat().st_size
         if "version-online.json" not in files:

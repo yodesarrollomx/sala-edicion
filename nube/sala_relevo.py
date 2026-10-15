@@ -26,6 +26,7 @@ import pathlib
 import sys
 
 import sala_cliente as sala
+from revisiones_presentacion import public_projection
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 MANIFIESTO = RAIZ / 'datos' / 'manifiesto.json'
@@ -64,7 +65,7 @@ def armar(dia, previo):
     # de un repo PÚBLICO (INVIOLABLE 2).
     for prohibido in ('rol', 'quien', 'clave_nueva', 'aviso_llave', 'cache'):
         nuevo.pop(prohibido, None)
-    return nuevo
+    return public_projection(nuevo)
 
 
 def igual(a, b):
