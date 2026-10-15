@@ -58,7 +58,7 @@ class HiDreamTest(unittest.TestCase):
     def test_descripcion_visual_no_envia_caption_ni_cerebro_pagado(self):
         caption="Cuatro opiniones sobre nuestro proyecto"
         with patch.object(cerebro,"_gemini",side_effect=MotorError("sin cuota")),patch.object(cerebro,"_openai",side_effect=AssertionError("sin pago")):
-            d,who,_=cerebro.fotografia_guion(caption,"Tres personas comparan un plano sin letras","Más luz","",{},2)
+            d,who,_=cerebro.fotografia_guion(caption,"Tres personas comparan un plano sin letras","","",{},2)
         self.assertEqual(d["texto"],caption)
         self.assertNotIn(caption,d["receta"])
         self.assertIn("Tres personas",d["receta"])

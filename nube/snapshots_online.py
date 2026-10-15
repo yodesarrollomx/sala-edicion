@@ -288,7 +288,18 @@ class GitHub:
         return data
 
     def upload(self, release, data, *, name="snapshot.zip", content_type="application/zip"):
-        if name != "snapshot.zip":
+        private = re.fullmatch(r"(?:plan|resultado|(?:envio|rechazo)-[0-9]+-[0-9]+)\.zip", name)
+        if private:
+            try:
+                body = json.loads(release.get("body") or "{}")
+                valid = (release.get("draft") is True and body.get("kind") == "yod-sala-ejecucion-privada"
+                         and content_type == "application/zip"
+                         and release.get("tag_name") == "sala-ejecucion-" + body["request_id"])
+            except (ValueError, KeyError, TypeError):
+                valid = False
+            if not valid:
+                raise OnlineError("Activo privado fuera de su draft exclusivo")
+        elif name != "snapshot.zip":
             match = re.fullmatch(r"[0-9a-f]{64}\.(png|jpg|jpeg|webp)", name)
             mime = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "webp": "image/webp"}
             if not match or content_type != mime[match[1]]:

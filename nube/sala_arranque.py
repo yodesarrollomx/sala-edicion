@@ -88,7 +88,10 @@ def pensar(texto, instruccion, reglas, cola):
         if d:
             try:
                 exigir(d, reglas, 'salida')
-            except ContenidoVetado as e:
+                if instruccion == INSTR_GUION:
+                    for lam in d.get('laminas') or []:
+                        cerebro.validar_texto_nuevo(lam.get('dice'))
+            except (ContenidoVetado, MotorError) as e:
                 fallas.append('%s: %s' % (nombre, e))
                 continue
             return d
@@ -205,9 +208,27 @@ def arranque(simular, reglas, cola, tope):
             continue
         veto = vetadas(s)
         try:
-            g = pensar('Pieza: %s\nDe qué trata: %s\nFormato: %s de %d lámina(s).\nPalabras prohibidas: %s'
-                       % (nombre, i.get('bajada') or '', i.get('formato'), n, ', '.join(veto) or 'ninguna'),
-                       INSTR_GUION, reglas, cola)
+            pedido_guion = 'Pieza: %s\nDe qué trata: %s\nFormato: %s de %d lámina(s).\nPalabras prohibidas: %s' % (nombre, i.get('bajada') or '', i.get('formato'), n, ', '.join(veto) or 'ninguna')
+            if __import__('os').environ.get('SALA_RECIBOS_PRIVADOS') == '1':
+                from sala_recibos import Recibos, digest, canonical
+                from snapshots_online import OnlineError
+                source = {'idea': i.get('id'), 'pedido': pedido_guion,
+                          'instruccion': con_estrategia(INSTR_GUION, reglas)}
+                rid = digest(canonical({'etapa': 'guion', **source}))
+                recibos = Recibos(rid)
+                try:
+                    previo = recibos.get('plan.zip')
+                    if previo:
+                        g = previo[0]['guion']
+                    else:
+                        r_guion = dict(reglas, _cerebro_traza=[])
+                        g = pensar(pedido_guion, INSTR_GUION, r_guion, cola)
+                        recibos.put('plan.zip', {'entradas': source, 'guion': g,
+                                                'cerebro_llamadas': r_guion['_cerebro_traza']})
+                except OnlineError:
+                    raise MotorError('Guion privado sin confirmar; se conserva pendiente', intermitente=True) from None
+            else:
+                g = pensar(pedido_guion, INSTR_GUION, reglas, cola)
         except MotorError as e:
             sala.avisar('  ✗ sin guion: %s' % e)
             apunta(nombre, 'sin guion', e)
@@ -226,7 +247,7 @@ def arranque(simular, reglas, cola, tope):
             sala.avisar('  ✗ el texto de la lámina 1 trae algo prohibido; no se arranca')
             apunta(nombre, 'sin lámina', 'el texto traía una palabra vetada; se reintenta')
             continue
-        t = {'pieza': nombre, 'pieza_slug': s, 'promesa': g.get('promesa') or i.get('bajada') or '',
+        t = {'_fuente_recibo': 'idea:' + str(i.get('id') or s), 'pieza': nombre, 'pieza_slug': s, 'promesa': g.get('promesa') or i.get('bajada') or '',
              'laminas': [lam1]}
         try:
             exigir(dict(t, titulo=nombre, guion=lams), reglas, 'arranque')

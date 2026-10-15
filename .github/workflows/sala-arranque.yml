@@ -41,6 +41,8 @@ jobs:
       MODO: ${{ inputs.modo || 'todo' }}
       SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
       SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+      GH_TOKEN: ${{ github.token }}
+      SALA_RECIBOS_PRIVADOS: '1'
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

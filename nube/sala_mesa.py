@@ -232,56 +232,79 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas, solo_reci
     ref = referencia(t)
     ref_txt = ('Lámina %s aprobada — referencia visual: %s' % (ref.get('n'), contexto_visual(ref.get('ve')))
                if ref and ref.get('n') != lam.get('n') else '')
-    if not nota and ref_txt:
-        nota = 'Que se parezca a la lámina %s aprobada: mismos personajes, mismo lugar, misma luz.' % ref.get('n')
     for k in range(1, n_tomas + 1):
         try:
-            if 'hidream_demo' in str(reglas.get('imagen_motores') or 'hidream_demo').split(','):
-                d, quien, av = cerebro.fotografia_guion(
-                    str(lam.get('dice') or ''), contexto_visual(lam.get('ve')),
-                    contexto_visual(nota), ref_txt, reglas, k)
-            elif lam.get('reemplazo_modelo') == POLITICA['revision'] or solo_recibo:
-                # Cambiar el generador no requiere reescribir el guion ni otra inferencia.
-                # El modelo de imagen recibe el mensaje visible como autoridad de la escena.
-                receta = (
-                    "Create a high-end architectural editorial photograph for this existing Spanish caption: "
-                    + json.dumps(str(lam.get('dice') or ''), ensure_ascii=False)
-                    + ". Show the caption's meaning literally with a concrete action and physical objects: "
-                    "site plans, architectural models, materials or the described work. "
-                    "People must interact with those objects; a generic couple posing or looking at each other is insufficient. "
-                    "Mexican architectural context, coherent professional full-frame 35mm photography, warm natural daylight, "
-                    "restrained beige and terracotta palette, accurate perspective and anatomically correct faces and hands. "
-                    "Keep all important subjects inside the central 4:5 region with space for the separate caption overlay. "
-                    "The approved reference below guides characters, lighting and style, not an unrelated pose. "
-                    + (ref_txt or "Consistent contemporary architectural documentary style.")
-                    + " Context from the original description: " + contexto_visual(lam.get('ve'))
-                    + ". Editor visual correction notes, for composition only: " + contexto_visual(nota)
-                    + ". Output only the photograph, absolutely no text, letters, captions, signs, logos or watermarks.")
-                d = {'texto': str(lam.get('dice') or ''), 'receta': receta,
-                     'porque': 'Nueva fotografía desde el guion vigente; conserva exactamente el texto visible.'}
-                quien, av = 'guion-vigente', []
-            else:
-                d, quien, av = cerebro.lamina(t.get('pieza') or slug, t.get('promesa'), lam.get('dice'),
-                                              lam.get('ve'), nota, veto, reglas, cola, k, ref_txt,
-                                              numero=lam.get('n'))
-            avisos += av
-            exigir(d, reglas, 'candidata')
-            # Un desacuerdo explícito entre imagen y texto corrige la imagen;
-            # no convierte la nota en permiso para reescribir el texto mostrado.
-            solo_imagen = 'la imagen no cuadra con el texto' in normalizar(nota)
-            texto = str(lam.get('dice') or '') if solo_imagen else d['texto']
-            problema = guardia(texto, veto)
-            if problema:
-                avisos.append('toma %d: el texto propuesto %s; se queda el de la tira' % (k, problema))
-                texto = str(lam.get('dice') or '')
-                if guardia(texto, veto):
-                    avisos.append('toma %d: el texto de la tira también %s — no se monta' % (k, guardia(texto, veto)))
-                    continue
-            exigir({'texto': texto}, reglas, 'texto elegido')
+            reglas_pedido = dict(reglas, _cerebro_traza=[])
+            def preparar():
+                if not solo_recibo and 'hidream_demo' in str(reglas.get('imagen_motores') or 'hidream_demo').split(','):
+                    d, quien, av = cerebro.fotografia_guion(
+                        str(lam.get('dice') or ''), contexto_visual(lam.get('ve')),
+                        contexto_visual(nota), ref_txt, reglas_pedido, k)
+                elif lam.get('reemplazo_modelo') == POLITICA['revision'] or solo_recibo:
+                    # Cambiar el generador no requiere reescribir el guion ni otra inferencia.
+                    # El modelo de imagen recibe el mensaje visible como autoridad de la escena.
+                    receta = (
+                        "Create a high-end architectural editorial photograph for this existing Spanish caption: "
+                        + json.dumps(str(lam.get('dice') or ''), ensure_ascii=False)
+                        + ". Show the caption's meaning literally with a concrete action and physical objects: "
+                        "site plans, architectural models, materials or the described work. "
+                        "People must interact with those objects; a generic couple posing or looking at each other is insufficient. "
+                        "Mexican architectural context, coherent professional full-frame 35mm photography, warm natural daylight, "
+                        "restrained beige and terracotta palette, accurate perspective and anatomically correct faces and hands. "
+                        "Keep all important subjects inside the central 4:5 region with space for the separate caption overlay. "
+                        "The approved reference below guides characters, lighting and style, not an unrelated pose. "
+                        + (ref_txt or "Consistent contemporary architectural documentary style.")
+                        + " Context from the original description: " + contexto_visual(lam.get('ve'))
+                        + ". Editor visual correction notes, for composition only: " + contexto_visual(nota)
+                        + ". Output only the photograph, absolutely no text, letters, captions, signs, logos or watermarks.")
+                    d = {'texto': str(lam.get('dice') or ''), 'receta': receta,
+                         'porque': 'Nueva fotografía desde el guion vigente; conserva exactamente el texto visible.'}
+                    quien, av = 'guion-vigente', []
+                else:
+                    d, quien, av = cerebro.lamina(t.get('pieza') or slug, t.get('promesa'), lam.get('dice'),
+                                                  lam.get('ve'), nota, veto, reglas_pedido, cola, k, ref_txt,
+                                                  numero=lam.get('n'))
+                exigir(d, reglas, 'candidata')
+                # Un desacuerdo explícito entre imagen y texto corrige la imagen;
+                # no convierte la nota en permiso para reescribir el texto mostrado.
+                solo_imagen = 'la imagen no cuadra con el texto' in normalizar(nota)
+                texto = str(lam.get('dice') or '') if solo_imagen else d['texto']
+                problema = guardia(texto, veto)
+                if problema:
+                    avisos.append('toma %d: el texto propuesto %s; se queda el de la tira' % (k, problema))
+                    texto = str(lam.get('dice') or '')
+                    if guardia(texto, veto):
+                        avisos.append('toma %d: el texto de la tira también %s — no se monta' % (k, guardia(texto, veto)))
+                        raise MotorError('El texto histórico también infringe el veto; no se monta')
+                exigir({'texto': texto}, reglas, 'texto elegido')
+                return {'d': d, 'texto': texto, 'cerebro': quien, 'avisos': av,
+                        'cerebro_llamadas': reglas_pedido['_cerebro_traza'],
+                        'prompt_imagen': imagen.preparar_receta(d['receta'], reglas),
+                        'politica_revision': POLITICA['revision']}
             reglas_imagen = dict(reglas, _imagen_request_id=hashlib.sha256(
                 (str(carpeta.relative_to(RAIZ)) + ':L%d-%d' % (lam['n'], k)).encode()).hexdigest(),
                 _imagen_solo_recibo=solo_recibo)
-            datos, ext, motor, av2 = imagen.generar(d['receta'], reglas_imagen)
+            meta_privada = None
+            if __import__('os').environ.get('SALA_RECIBOS_PRIVADOS') == '1':
+                from sala_recibos import ejecutar
+                source = {'pieza': slug, 'fuente': t.get('_fuente_recibo') or t.get('id') or t.get('origen') or '',
+                          'n': lam['n'], 'variante': k,
+                          'dice': str(lam.get('dice') or ''), 've': str(lam.get('ve') or ''),
+                          'nota': nota, 'referencia': ref_txt, 'src_previo': lam.get('src'),
+                          'politica_revision': POLITICA['revision']}
+                rid_privado = hashlib.sha256(json.dumps(source, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+                plan, datos, meta_privada = ejecutar(rid_privado, source,
+                                                    preparar, reglas, solo_recibo)
+                d, texto, quien = plan['d'], plan['texto'], plan['cerebro']
+                ext, motor, av2 = meta_privada['ext'], meta_privada['motor'], meta_privada['avisos']
+                avisos += plan['avisos']
+                reglas_imagen['_receta_proveedor_sha256'] = meta_privada['receta_sha256']
+                reglas_imagen['_imagen_recibo_id'] = meta_privada['recibo_imagen']
+            else:
+                plan = preparar()
+                d, texto, quien = plan['d'], plan['texto'], plan['cerebro']
+                avisos += plan['avisos']
+                datos, ext, motor, av2 = imagen.generar(d['receta'], reglas_imagen)
             avisos += av2
             with tempfile.NamedTemporaryFile(suffix='.' + ext) as tmp:
                 tmp.write(datos)
@@ -289,7 +312,7 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas, solo_reci
                 png, jpg = componer(tmp.name, texto, carpeta / ('L%d-%d.png' % (lam['n'], k)))
             tomas.append({'src': str(jpg.relative_to(RAIZ)), 'original': str(png.relative_to(RAIZ)),
                           'titulo': chr(64 + k), 'texto': str(d.get('porque') or '')[:160],
-                          'dice': texto, 'motor': motor, 'modelo': imagen.modelo_de(motor, reglas), 'cerebro': quien,
+                          'dice': texto, 'motor': motor, 'modelo': meta_privada['modelo'] if meta_privada else imagen.modelo_de(motor, reglas), 'cerebro': quien,
                           'generado_en': dt.datetime.now(dt.timezone.utc).isoformat(),
                           'run_id': __import__('os').environ.get('GITHUB_RUN_ID'),
                           'workflow': __import__('os').environ.get('GITHUB_WORKFLOW'),
@@ -601,6 +624,7 @@ def main():
                 'opciones': [], 'video': None, 'origen': previa.get('origen')}})
             continue
         tira = vigente
+        tira['_fuente_recibo'] = tid
         decidir = []
         for lam, marca, nota in pend:
             sala.avisar('   L%s · %s · nota vigente de %d caracteres' %
