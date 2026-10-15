@@ -413,9 +413,13 @@ function fusionDia_(DE, f) {
   });
   var vivos = {}; Object.keys(vigE).forEach(function (q) { vivos[vigE[q]] = q; });
   var dec = { propuestas: {}, editores: [] }, ult = 0;
+  // Sólo esta lectura: evita una consulta CONFIG por cada firma.
+  var nombresLectura = Object.create(null);
   Object.keys(mejorFila).map(function (k) { return mejorFila[k]; }).forEach(function (d) {
     var eid = String(d.envio_id);
-    var rol = rolEnvio[eid], quien = nombreDe(rol);
+    var rol = rolEnvio[eid];
+    if (!(rol in nombresLectura)) nombresLectura[rol] = nombreDe(rol);
+    var quien = nombresLectura[rol];
     if (String(d.marca || '') === 'borrar') { d = Object.assign({}, d); d.marca = ''; }
     if (dec.editores.indexOf(quien) < 0) dec.editores.push(quien);
     var pid = String(d.prop_id);
@@ -529,10 +533,13 @@ function fusionProduccion_(DE) {
     if (!pid && String(d.nota_estrategia || '')) elegir(rol + '|estrategia', d, t, '', String(d.nota_estrategia));
   });
   var dec = { propuestas: Object.create(null), editores: [] }, generales = [], estrategias = [];
+  var nombresLectura = Object.create(null);
   Object.keys(ultimas).sort().forEach(function (clave) {
     var u = ultimas[clave], d = u.d;
     if (u.ambigua) throw new Error('produccion_sello_ambiguo');
-    var rol = String(d.quien || 'editor'), quien = nombreDe(rol), pid = String(d.prop_id || '');
+    var rol = String(d.quien || 'editor'), pid = String(d.prop_id || '');
+    if (!(rol in nombresLectura)) nombresLectura[rol] = nombreDe(rol);
+    var quien = nombresLectura[rol];
     if (dec.editores.indexOf(quien) < 0) dec.editores.push(quien);
     if (u.t > maximo) maximo = u.t;
     if (!pid) {
