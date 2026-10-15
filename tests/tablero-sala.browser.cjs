@@ -91,6 +91,7 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await cp.locator('[data-ok]').click();assert.equal(capture.writes.length,0);
   // Cambia la navegación subyacente: el sobre conserva la toma originalmente señalada.
   await cp.evaluate(()=>document.querySelector('[data-prev-option]').click());
+  assert.equal(await cp.locator('.chn-aviso:visible').count(),1,'los avisos de revisión no se superponen');
   await cp.screenshot({path:out+'/00-correccion-dictada.png',fullPage:true});
   await cp.locator('[data-ok]').click();
   await cp.waitForFunction(()=>JSON.parse(localStorage.getItem('sala_produccion_v1')||'[]').some(r=>r.estado==='recibido'));

@@ -658,6 +658,8 @@ html.cargando #actualizando{display:flex}
 .barra-sin-entrar{position:sticky;top:0;left:0;right:0;z-index:25;display:flex;align-items:center;
   justify-content:center;gap:8px;text-align:center;background:var(--no-suave);color:var(--no);
   border-bottom:1px solid var(--no);font-weight:600;font-size:13.5px;line-height:1.35;padding:10px 16px}
+/* Al revisar dictado, sólo el aviso más reciente queda visible. */
+body > .chn-aviso:has(~ .chn-aviso){display:none!important}
 </style><link rel="stylesheet" href="tablero-sala.css?v=20261015-editorial"></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
 <script src="sala-correcciones.js?v=20261015-4"></script>
 <script src="politica-imagen.js?v=sin-pollinations-gpt-20261012"></script>
@@ -807,7 +809,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='460677dedd';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='690ffb94be';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
