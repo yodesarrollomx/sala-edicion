@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-15.sala-nube.1",
   "proposal_id": "CHG-SALA-NUBE-20261015",
-  "summary": "Añadir diagnóstico seguro por fase del cierre online para localizar fallos reales de preflight, configuración y acuse privado. Sólo publica etiquetas permitidas, sin mensajes remotos ni datos privados. Mantiene compuertas, operaciones y no reintento de efectos ambiguos de CHG-SALA-NUBE-20261015.",
+  "summary": "Continuidad del recorrido: Ejecutor y Revisión atienden COLA existente con sus compuertas aunque falle una fase anterior; Continuar exige Mesa y Revisión exitosas. Diagnóstico de lecturas GAS con códigos y métricas permitidas, sonda GET única sin reanudar efectos y conteos de selección de Mesa sin datos privados. Mantenimiento manual acotado a una corrida queued huérfana conocida mediante token efímero; un solo force-cancel y conciliación de lectura. Mantiene guardias de main, decisiones, permisos existentes, correo y snapshots FULL de CHG-SALA-NUBE-20261015.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -13,10 +13,11 @@
     "EXT-GMAIL"
   ],
   "tests": [
-    "24 pruebas cierre_online_test aprobadas, incluyendo fases, fallos de guardado y exclusión de datos privados.",
-    "Revisión independiente del cambio: sin bloqueadores; no hay nuevos envíos ni cambios de permisos.",
-    "Pruebas correo y revisión, nube/verificar.py (13 grupos) y git diff --check aprobados.",
-    "El diagnóstico real requiere ejecutar el workflow; CI no acredita recepción de correo ni conectividad externa."
+    "Suite Python completa en árbol integrado; pruebas de cierre, cliente, Mesa y mantenimiento sin servicios reales.",
+    "Transporte HTTP302 real y POST aplicado con acuse perdido: una escritura; sonda GET acotada sin POST.",
+    "Revisión independiente: metadata pública y compuertas; workflowparse, nube/verificar.py, Node y diffcheck.",
+    "Mantenimiento exige run/head/repo/path/event/branch/intento/edad/queued/jobs0; HTTP202 no acredita cancelación.",
+    "La prueba integral posterior requiere main estable y recibos reales; no se atribuye producción a una corrida fallida."
   ],
   "rollback": "Conservar decisiones/cola/medios/releases/recibos. Antes de revertir lectores tras emitir deltas, desactivar flag y publicar FULL desde lector compatible, comprobando recibo. Para correo original restaurar la función conservada correoDiarioAnterior20261015_ y conservar el respaldo privado del contenedor. No cambiar URL ni ACL."
 }

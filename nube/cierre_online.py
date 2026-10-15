@@ -79,10 +79,16 @@ def error_seguro(error, diagnostico):
                 codigo = "drive_autenticacion_sin_confirmar"
             elif raw.startswith("falta GDRIVE_SA_JSON"):
                 codigo = "drive_credencial_ausente"
+    transporte = {}
+    if isinstance(error, sala.SalaError):
+        if error.codigo in sala.CODIGOS_DIAGNOSTICO and error.codigo != "sala_sin_confirmar":
+            codigo = error.codigo
+        transporte = sala.metadatos_publicos(error.metadatos)
     d = diagnostico or {}
     return {"fase": d.get("fase") if d.get("fase") in FASES else "sin_fase",
             "paso": d.get("paso") if d.get("paso") in PASOS else None,
             "tipo": tipo, "codigo": codigo,
+            **({"transporte":transporte} if transporte else {}),
             "efecto": d.get("efecto") if d.get("efecto") in EFECTOS else "no_iniciado"}
 
 def exigir(condition, code):
@@ -217,8 +223,15 @@ def main():
                 "escrituras_negocio":0},ensure_ascii=False,sort_keys=True))
         return 0
     except Exception as error:
+        diagnosis=error_seguro(error,diagnostico)
+        if (isinstance(error,sala.SalaError) and diagnostico.get("efecto")=="no_iniciado"
+                and diagnostico.get("fase") in {"leer_cola","leer_reglas"}):
+            try:
+                diagnosis["sonda_lectura"]=sala.sonda_get(diagnostico["fase"].removeprefix("leer_"),espera=20)
+            except Exception:
+                diagnosis["sonda_lectura"]={"ok":False,"codigo":"sonda_no_confirmada"}
         print("SALA_CIERRE "+json.dumps({"ok":False,"error":"cierre_no_confirmado_revisar_acuse",
-                                        "diagnostico":error_seguro(error,diagnostico),
+                                        "diagnostico":diagnosis,
                                         "reintento_automatico":False}))
         return 2
 

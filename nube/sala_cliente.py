@@ -21,6 +21,8 @@ una sola vez por intento; una escritura sin recibo no se vuelve a enviar a ciega
 
 import json
 import os
+import math
+import re
 import subprocess
 import sys
 import time
@@ -48,21 +50,60 @@ ESPERA_SHEET = 60
 PROHIBIDAS = {'decidir', 'parrilla_decision'}
 
 
+HTTP_DIAGNOSTICO = frozenset({400, 401, 403, 404, 405, 408, 409, 413, 429, 500, 502, 503, 504})
+CODIGOS_DIAGNOSTICO = frozenset({"sala_sin_confirmar", "sala_clave_ausente", "sala_url_ausente",
+    "sala_json_invalido", "sala_objeto_invalido", "sala_error_backend", "sala_clave_rechazada",
+    "sala_permiso_rechazado", "sala_recurso_no_disponible", "sala_rechazada", "sala_contrato_lectura", "sala_tiempo_agotado",
+    "sala_red_sin_confirmar", "sala_transporte_sin_confirmar", "sala_telemetria_sin_confirmar"}
+    | {"sala_http_" + str(x) for x in HTTP_DIAGNOSTICO})
+RECURSOS_DIAGNOSTICO = frozenset({"dia", "cola", "reglas", "catalogo", "bitacora", "envios", "expedientes", "prompts"})
+TIPOS_RESPUESTA = frozenset({"vacia", "html", "no_json", "json_objeto", "json_no_objeto", "json_error", "sin_respuesta"})
+
+
+def metadatos_publicos(datos):
+    """Sólo nombres constantes y métricas numéricas; nunca texto remoto o URLs."""
+    out = {}
+    if not isinstance(datos, dict):
+        return out
+    for field, allowed in (("recurso", RECURSOS_DIAGNOSTICO), ("tipo_respuesta", TIPOS_RESPUESTA)):
+        value = datos.get(field)
+        if isinstance(value, str) and value in allowed:
+            out[field] = value
+    for field, limit in (("timeout_segundos", 120), ("latencia_ms", 600000),
+                         ("duracion_total_ms", 1000000), ("bytes", 100000000),
+                         ("intentos", 3), ("curl_codigo", 99), ("estado_http", 599)):
+        value = datos.get(field)
+        if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and 0 <= value <= limit:
+            out[field] = round(value, 3)
+    return out
+
+
 class SalaError(RuntimeError):
-    """Algo no contestó o contestó mal. NUNCA se traduce a «no hay nada» (INVIOLABLE 4)."""
+    """Fallo explícito con metadatos seguros; nunca equivale a cero pendientes."""
+    def __init__(self, *args, codigo="sala_sin_confirmar", metadatos=None):
+        super().__init__(*args)
+        self.codigo = codigo if isinstance(codigo, str) and codigo in CODIGOS_DIAGNOSTICO else "sala_sin_confirmar"
+        self.metadatos = metadatos_publicos(metadatos)
+
+
+class _TextoRespuesta(str):
+    def __new__(cls, value, metadatos):
+        obj = super().__new__(cls, value)
+        obj.metadatos = metadatos_publicos(metadatos)
+        return obj
 
 
 def _exec_url():
     u = os.environ.get('SALA_GAS_EXEC', '').strip()
     if not u:
-        raise SalaError('falta SALA_GAS_EXEC (secret de Actions con la liga /exec)')
+        raise SalaError('falta SALA_GAS_EXEC (secret de Actions con la liga /exec)', codigo='sala_url_ausente')
     return u
 
 
 def _clave():
     k = os.environ.get('SALA_CLAVE_AGENTE', '').strip()
     if not k:
-        raise SalaError('falta SALA_CLAVE_AGENTE (secret de Actions con la clave del agente)')
+        raise SalaError('falta SALA_CLAVE_AGENTE (secret de Actions con la clave del agente)', codigo='sala_clave_ausente')
     return k
 
 
@@ -106,31 +147,53 @@ def enmascarar_en_actions():
 
 
 def _leer_json(crudo, donde):
+    meta = dict(getattr(crudo, 'metadatos', {}))
     try:
         datos = json.loads(crudo)
     except (ValueError, TypeError):
-        raise SalaError('%s no devolvió JSON: %s' % (donde, redactar(str(crudo)[:300])))
+        text = crudo.strip().lower() if isinstance(crudo, str) else ''
+        meta['tipo_respuesta'] = 'vacia' if not text else ('html' if text.startswith(('<!doctype html', '<html', '<body')) else 'no_json')
+        raise SalaError('%s no devolvió JSON' % donde,
+                        codigo='sala_json_invalido', metadatos=meta)
     if not isinstance(datos, dict):
-        raise SalaError('%s no devolvió un objeto JSON' % donde)
+        meta['tipo_respuesta'] = 'json_no_objeto'
+        raise SalaError('%s no devolvió un objeto JSON' % donde, codigo='sala_objeto_invalido', metadatos=meta)
+    meta['tipo_respuesta'] = 'json_objeto'
     if datos.get('error'):
-        raise SalaError('%s contestó con error: %s' % (donde, redactar(datos['error'])))
+        meta['tipo_respuesta'] = 'json_error'
+        code = {'clave incorrecta': 'sala_clave_rechazada', 'solo el agente': 'sala_permiso_rechazado',
+                'solo el agente o un editor': 'sala_permiso_rechazado', 'recurso desconocido': 'sala_recurso_no_disponible'}.get(datos['error']) if isinstance(datos['error'], str) else None
+        raise SalaError('%s contestó con error de backend' % donde,
+                        codigo=code or 'sala_error_backend', metadatos=meta)
     if datos.get('ok') is False:
-        raise SalaError('%s rechazó la solicitud (ok:false)' % donde)
+        raise SalaError('%s rechazó la solicitud (ok:false)' % donde, codigo='sala_rechazada', metadatos=meta)
     return datos
 
 
 def _curl(url, cuerpo=None, espera=ESPERA):
-    """Respaldo con curl -L: sigue la redirección de Apps Script como manda CLAUDE.md."""
-    cmd = ['curl', '-sS', '-L', '--max-time', str(espera)]
+    """curl sigue 302 con GET; su trailer separa métricas sin imprimir cuerpo o URL."""
+    cmd = ['curl', '-sS', '-L', '--max-time', str(espera), '--write-out',
+           '\nSALA_TRANSPORTE_V1:%{http_code}:%{time_total}:%{size_download}\n']
     if cuerpo is not None:
-        # --data-binary elige POST solo en el origen. La respuesta 302 de GAS
-        # vive en un recurso GET: -X POST también lo forzaría allí y devuelve HTML/405.
         cmd += ['-H', 'Content-Type: text/plain;charset=utf-8', '--data-binary', '@-']
     cmd.append(url)
+    started = time.monotonic()
     r = subprocess.run(cmd, input=(cuerpo or ''), capture_output=True, text=True)
+    body, marker, trailer = r.stdout.rpartition('\nSALA_TRANSPORTE_V1:')
+    meta = {'curl_codigo': r.returncode, 'timeout_segundos': espera,
+            'latencia_ms': round((time.monotonic() - started) * 1000), 'tipo_respuesta': 'sin_respuesta'}
+    fields = re.fullmatch(r'(\d{3}):(\d+(?:\.\d+)?):(\d+)\n?', trailer) if marker else None
+    if fields:
+        meta.update(estado_http=int(fields.group(1)), latencia_ms=round(float(fields.group(2))*1000), bytes=int(fields.group(3)))
     if r.returncode != 0:
-        raise SalaError('curl falló (%s): %s' % (r.returncode, redactar(r.stderr[:300])))
-    return r.stdout
+        raise SalaError('curl falló (%s)' % r.returncode,
+                        codigo='sala_tiempo_agotado' if r.returncode == 28 else 'sala_transporte_sin_confirmar', metadatos=meta)
+    if not fields:
+        raise SalaError('curl sin telemetría confirmada', codigo='sala_telemetria_sin_confirmar', metadatos=meta)
+    if meta['estado_http'] >= 400:
+        code = 'sala_http_' + str(meta['estado_http'])
+        raise SalaError('curl HTTP sin respuesta aceptada', codigo=code, metadatos=meta)
+    return _TextoRespuesta(body, meta)
 
 
 def _urllib(url, cuerpo=None, espera=ESPERA):
@@ -150,6 +213,7 @@ def _pedir(url, cuerpo, donde, espera=ESPERA, intentos=INTENTOS, solo_curl=False
     no la aplicó. Su consumidor debe conciliar el estado antes de repetirla.
     """
     ultimo = None
+    started = time.monotonic()
     if cuerpo is not None:
         intentos, solo_curl = 1, True
     vias = (('curl -L', _curl),) if solo_curl else (
@@ -157,21 +221,32 @@ def _pedir(url, cuerpo, donde, espera=ESPERA, intentos=INTENTOS, solo_curl=False
     for intento in range(1, intentos + 1):
         for via, fn in vias:
             try:
-                datos = _leer_json(fn(url, cuerpo, espera), donde)
+                raw = fn(url, cuerpo, espera)
+                datos = _leer_json(raw, donde)
                 if validar:
-                    validar(datos)
+                    try:
+                        validar(datos)
+                    except SalaError as error:
+                        error.metadatos = metadatos_publicos({**getattr(raw, 'metadatos', {}), **error.metadatos})
+                        raise
                 return datos
             except SalaError as e:
                 ultimo = e
             except (urllib.error.URLError, OSError, subprocess.SubprocessError) as e:
-                ultimo = SalaError('%s por %s: %s' % (donde, via, redactar(e)))
+                ultimo = SalaError('%s por %s sin lectura confirmada' % (donde, via), codigo='sala_red_sin_confirmar')
         if intento < intentos:
             time.sleep(2 ** intento)
+    meta = dict(ultimo.metadatos) if ultimo else {}
+    meta.update(intentos=intentos, duracion_total_ms=round((time.monotonic()-started)*1000))
+    resource = {"GET ?recurso=" + x: x for x in RECURSOS_DIAGNOSTICO}.get(donde)
+    if resource:
+        meta['recurso'] = resource
+    code = ultimo.codigo if ultimo else 'sala_sin_confirmar'
     if cuerpo is not None:
         raise SalaError('%s sin recibo confirmado; no se reenvió. Conciliar el estado '
-                        'antes de repetir · último: %s' % (donde, ultimo))
-    raise SalaError('%s no contestó en %d intentos · último: %s' % (
-        donde, intentos, ultimo))
+                        'antes de repetir · código: %s' % (donde, code), codigo=code, metadatos=meta)
+    raise SalaError('%s no contestó en %d intentos · código: %s' % (
+        donde, intentos, code), codigo=code, metadatos=meta)
 
 
 def _validar_lectura(recurso, datos):
@@ -183,7 +258,7 @@ def _validar_lectura(recurso, datos):
     }
     if any(not isinstance(datos.get(campo), tipo)
            for campo, tipo in campos.get(recurso, ())):
-        raise SalaError('GET ?recurso=%s sin contrato de lectura' % recurso)
+        raise SalaError('GET ?recurso=%s sin contrato de lectura' % recurso, codigo='sala_contrato_lectura', metadatos={'tipo_respuesta': 'json_objeto'})
 
 
 def get(recurso, **params):
@@ -205,6 +280,27 @@ def get(recurso, **params):
                       solo_curl=True, validar=validar)
     return _pedir(url, None, 'GET ?recurso=' + recurso,
                   solo_curl=True, validar=validar)
+
+
+def sonda_get(recurso, espera=20):
+    """Una lectura diagnóstica acotada, sin reintentos, POST ni payload público."""
+    if recurso not in ('cola', 'reglas') or not isinstance(espera, int) or isinstance(espera, bool) or not 1 <= espera <= 20:
+        raise ValueError('sonda_fuera_de_alcance')
+    meta = {'recurso': recurso, 'timeout_segundos': espera, 'intentos': 1}
+    started = time.monotonic()
+    try:
+        url = _exec_url() + '?' + urllib.parse.urlencode({'recurso': recurso, 'clave': _clave()})
+        raw = _curl(url, None, espera)
+        meta.update(getattr(raw, 'metadatos', {}))
+        data = _leer_json(raw, 'sonda')
+        _validar_lectura(recurso, data)
+        meta['tipo_respuesta'] = 'json_objeto'
+        result = {'ok': True, 'codigo': 'lectura_confirmada'}
+    except SalaError as error:
+        meta.update(error.metadatos)
+        result = {'ok': False, 'codigo': error.codigo}
+    meta['duracion_total_ms'] = round((time.monotonic()-started)*1000)
+    return {**result, **metadatos_publicos(meta)}
 
 
 def post(accion, **campos):
