@@ -111,7 +111,7 @@ test('la aprobación real del tablero comprueba el manifiesto aun con la foto ca
   const source=fs.readFileSync('tablero-sala.js','utf8');
   const vote=source.slice(source.indexOf('function vote('),source.indexOf('async function reintentarFoto('));
   let ready=false,writes=0;
-  const context={api:{contexto:()=>({pid:'p',lamina:1,version:1})},S:{choice:{group:'g',n:1,k:0},groups:[{id:'g',pid:'p',t:{laminas:[{n:1,estado:'rehecha'}]}}]},
+  const context={ROL:()=> 'editor',api:{contexto:()=>({pid:'p',lamina:1,version:1})},S:{choice:{group:'g',n:1,k:0},groups:[{id:'g',pid:'p',t:{laminas:[{n:1,estado:'rehecha'}]}}]},
     eligible:()=>true,markData:()=>({i:0}),options:()=>[{src:'laminas/synthetic/L1.png',indiceOriginal:null}],
     dec:{p:{laminas:[''],notas:['']}},mediosDisponibles:()=>ready,root:{querySelector:()=>({complete:true,naturalWidth:72})},
     pasos:[],lockeadas:[],guardarBorrador(){},programarSubida(){},subir(){writes++;},render(){}};

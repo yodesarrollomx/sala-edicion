@@ -73,7 +73,7 @@ async function prepare(browser,width,role="editor",mobile=false,embedded=false,m
  return {page,view,context,writes,errors,releaseReads};
 }
 const sessions=new WeakMap();
-async function touch(page,points,type){let session=sessions.get(page);if(!session){session=await page.context().newCDPSession(page);sessions.set(page,session);}await session.send("Input.dispatchTouchEvent",{type,touchPoints:points});}
+async function touch(page,points,type){let session=sessions.get(page);if(!session){session=await page.context().newCDPSession(page);sessions.set(page,session);}await session.send("Input.dispatchTouchEvent",{type,touchPoints:points.map((p,i)=>({id:i+1,...p}))});}
 (async()=>{
  const b=await chromium.launch({headless:true});
  try{
@@ -188,7 +188,9 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await q.screenshot({path:out+"/05-carrusel-movil.png",fullPage:true});
   await q.locator("[data-close-choice]").click();
   await q.waitForSelector('#tableroHoy[data-level="publicacion"]');
-  const area=await q.locator(".bt-pan").boundingBox(),cx=Math.round(area.x+area.width/2),cy=Math.round(area.y+80);
+  await q.locator('.bt-pan').evaluate(el=>el.scrollIntoView({block:'start'}));
+  const area=await q.locator(".bt-pan").boundingBox(),cx=Math.round(area.x+area.width/2),cy=Math.round(Math.max(0,area.y)+80);
+  assert.ok(await q.evaluate(({x,y})=>!!document.elementFromPoint(x,y)?.closest('.bt-pan'),{x:cx,y:cy}),'el gesto empieza en una superficie visible del tablero');
   await touch(q,[{x:cx-80,y:cy},{x:cx+80,y:cy}],"touchStart");
   await touch(q,[{x:cx-40,y:cy},{x:cx+40,y:cy}],"touchMove");
   await touch(q,[],"touchEnd");

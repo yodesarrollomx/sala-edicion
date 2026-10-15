@@ -21,3 +21,12 @@ test('La chinche usa contexto capturado, no la vista actual, y sólo marca ACK',
  const ch={id:'CHN-test',texto:'Texto',contexto:{vista:'hoy',carta:{pid:'original',pieza:'Original',lamina:4,version:9,src:'v9.png'}},url:'https://example.invalid/?private=synthetic#x'};
  await context.chincheClavada(ch);assert.equal(marked.length,0);assert.equal(JSON.parse(sent[0][1]).carta.version,9);assert.equal(JSON.parse(sent[0][1]).url,'https://example.invalid/');status='recibido';await context.chincheClavada(ch);assert.deepEqual(marked,['CHN-test']);
 });
+
+test('Una nota abierta no aplica después de cambiar editor o versión',()=>{
+ const source=fs.readFileSync('tablero-sala.js','utf8');const vote=source.slice(source.indexOf('function vote('),source.indexOf('async function reintentarFoto('));
+ for(const change of ['editor','version']){
+  let owner='editor',version=1,callback,writes=0;const d={laminas:[''],notas:['']};
+  const ctx={ROL:()=>owner,api:{contexto:()=>({pid:'p',version})},S:{choice:{group:'g',n:1,k:0},groups:[{id:'g',pid:'p',t:{laminas:[{n:1,estado:'rehecha'}]}}]},eligible:()=>true,markData:()=>({i:0,nota:''}),options:()=>[{src:'fixture',indiceOriginal:0}],dec:{p:d},root:{querySelector:()=>({complete:true,naturalWidth:10})},render(){},pedirNota:fn=>callback=fn,pasos:[],lockeadas:[],guardarBorrador(){writes++;},programarSubida(){},subir(){}};
+  vm.createContext(ctx);vm.runInContext(vote,ctx);ctx.vote('no');if(change==='editor')owner='editor2';else version=2;callback('Cambiar fondo');assert.equal(writes,0);assert.equal(d.laminas[0],'');assert.match(ctx.S.notice,/versión o sesión cambió/);
+ }
+});

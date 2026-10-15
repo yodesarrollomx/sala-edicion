@@ -199,9 +199,9 @@ function vote(m,zoomPhoto){
  if(!d||md.i<0||l.estado==="aprobada")return;
  const image=zoomPhoto||root.querySelector(".bt-main-photo");
  if(m==="si"&&(!mediosDisponibles()||!o||!image||!image.complete||!image.naturalWidth)){S.notice="Espera a que cargue esta fotografía antes de aprobarla.";render();return;}
- const identity=JSON.stringify(api.contexto());
+ const identity=JSON.stringify(api.contexto()),owner=ROL();
  const apply=note=>{
-  if(!eligible()||JSON.stringify(api.contexto())!==identity||dec[g.pid]!==d){S.notice="La versión o sesión cambió. Abre de nuevo la lámina antes de decidir.";render();return;}
+  if(!eligible()||ROL()!==owner||JSON.stringify(api.contexto())!==identity||dec[g.pid]!==d){S.notice="La versión o sesión cambió. Abre de nuevo la lámina antes de decidir.";render();return;}
   if(m==='no'&&!String(note||'').trim()){S.notice="Escribe qué debe cambiar.";render();return;}
 
   S.last={pid:g.pid,i:md.i,marca:d.laminas[md.i],nota:d.notas[md.i]};
