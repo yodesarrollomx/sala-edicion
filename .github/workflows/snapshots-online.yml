@@ -40,7 +40,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: python3 -m unittest discover -s tests -p snapshots_online_test.py -v
-      - run: pip install --quiet pillow
+      - run: pip install --quiet pillow requests google-auth
       - run: python3 -m unittest discover -s tests -p '*medios*_test.py' -v
       - run: git diff --check
   capacidad:

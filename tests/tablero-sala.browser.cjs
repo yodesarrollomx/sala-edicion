@@ -185,26 +185,27 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   for(const [width,mobile,embedded] of [[1440,false,false],[390,true,false],[820,false,true]]){
    const media={mode:'public'},r=await prepare(b,width,'editor',mobile,embedded,media),view=r.view;
    await view.locator('[data-open="synthetic-0"]').click();await view.locator('[data-lamina="2"]').click();
-   await view.waitForFunction(()=>document.querySelector('.bt-main-photo')?.naturalWidth===72);
-   assert.equal(await view.locator('.bt-main-photo').getAttribute('src'),mediaManifest.entries['laminas/synthetic-0/L2.jpg'].url);
-   await view.locator('[data-full-photo]').click();await view.waitForFunction(()=>document.querySelector('.zoom img')?.naturalWidth===72);
-   await view.locator('.zoom .zg-sig').click();
-   await view.waitForFunction(url=>document.querySelector('.zoom img')?.src===url&&document.querySelector('.zoom img')?.naturalWidth===72,mediaManifest.entries['laminas/synthetic-0/B.jpg'].url);
+   const choice=view.getByRole('dialog',{name:'Elegir fotografía de lámina 2',exact:true}),zoom=view.locator('.zoom.galeria');
+   await view.waitForFunction(()=>document.querySelector('.bt-choice .bt-main-photo')?.naturalWidth===72);
+   assert.equal(await choice.locator('.bt-main-photo').getAttribute('src'),mediaManifest.entries['laminas/synthetic-0/L2.jpg'].url);
+   await choice.locator('[data-full-photo]').click();await view.waitForFunction(()=>document.querySelector('.zoom.galeria img')?.naturalWidth===72);
+   await zoom.locator('.zg-sig').click();
+   await view.waitForFunction(url=>document.querySelector('.zoom.galeria img')?.src===url&&document.querySelector('.zoom.galeria img')?.naturalWidth===72,mediaManifest.entries['laminas/synthetic-0/B.jpg'].url);
    assert.equal(r.writes.length,0,'ver/zoom/galería no escribe decisiones');
-   await view.locator('.zoom .zx').click();
+   await zoom.locator('.zx').click();
    media.mode='badpin';await view.evaluate(()=>SalaMedios.cargar());
-   await view.locator('[data-vote="si"]').click();
+   await choice.locator('[data-vote="si"]').click();
    assert.equal(r.writes.length,0,'ni una imagen ya descargada permite aprobar si el pin falló');
-   assert.match(await view.locator('.bt-notice').innerText(),/Espera a que cargue/);
-   media.mode='public';await view.waitForSelector('.bt-hero .bt-retry-label');await view.locator('.bt-hero .bt-retry-label').click();
-   await view.waitForFunction(()=>document.querySelector('.bt-main-photo')?.naturalWidth===72);
+   assert.match(await choice.locator('.bt-notice').innerText(),/Espera a que cargue/);
+   media.mode='public';await choice.locator('.bt-hero .bt-retry-label').waitFor();await choice.locator('.bt-hero .bt-retry-label').click();
+   await view.waitForFunction(()=>document.querySelector('.bt-choice .bt-main-photo')?.naturalWidth===72);
    assert.equal(await view.evaluate(()=>SalaMedios.estado()),'listo');
    assert.ok(r.releaseReads.length>=2);assert.deepEqual(r.errors,[]);
    await r.context.close();
   }
   const missing=await prepare(b,390,'editor',true,false,{mode:'missing'});
   await missing.view.locator('[data-open="synthetic-0"]').click();await missing.view.locator('[data-lamina="2"]').click();
-  await missing.view.locator('[data-vote="si"]').click();assert.equal(missing.writes.length,0);
+  await missing.view.getByRole('dialog',{name:'Elegir fotografía de lámina 2',exact:true}).locator('[data-vote="si"]').click();assert.equal(missing.writes.length,0);
   assert.equal(await missing.view.evaluate(()=>SalaMedios.estado()),'error');
   await missing.context.close();
   fs.writeFileSync(out+"/resultado.json",JSON.stringify({ok:true,publicaciones_sinteticas:6,laminas:36,escritorio:1440,movil:390,seleccion_indice_original:true,swipe_aprobar:true,pinch_alejar:true,embed_portal:true,lector_agente_sin_votos:true},null,2));
