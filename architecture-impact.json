@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-13.sala-tablero-hidream.1",
   "proposal_id": "CHG-SALA-TABLERO-HIDREAM-20261013",
-  "summary": "Completar chinche #279 en el tablero Hoy vigente: el botón Ampliar de tablero-sala.js conecta todas las opciones al visor compartido, permite comparar con flechas y elegir explícitamente desde el zoom. Reutiliza voto/validación de imagen cargada, revalida rol y lámina al elegir; lector/agente no reciben callback de decisión. Conserva los índices originales de tomas filtradas, historial y guardado existentes. Sólo presentación: sin GAS, datos, permisos ni nuevas decisiones.",
+  "summary": "Completar chinche #279 en el tablero Hoy vigente: el botón Ampliar de tablero-sala.js conecta todas las opciones al visor compartido, permite comparar con flechas y elegir explícitamente desde el zoom. Reutiliza voto/validación de imagen cargada, revalida rol y lámina al elegir; lector/agente no reciben callback de decisión. Conserva los índices originales de tomas filtradas, historial y guardado existentes. Sólo presentación: sin GAS, datos, permisos ni nuevas decisiones. Las capas inline publicación/opciones permiten scroll en móvil; zoom, hojas y bienvenida mantienen bloqueo del fondo. Sin click forzado ni permisos nuevos.",
   "components": [
     "SYS-SALA"
   ],

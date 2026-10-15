@@ -657,7 +657,7 @@ html.cargando #actualizando{display:flex}
 .barra-sin-entrar{position:sticky;top:0;left:0;right:0;z-index:25;display:flex;align-items:center;
   justify-content:center;gap:8px;text-align:center;background:var(--no-suave);color:var(--no);
   border-bottom:1px solid var(--no);font-weight:600;font-size:13.5px;line-height:1.35;padding:10px 16px}
-</style><link rel="stylesheet" href="tablero-sala.css?v=20261013-1"></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
+</style><link rel="stylesheet" href="tablero-sala.css?v=20261015-279"></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
 <script src="politica-imagen.js?v=sin-pollinations-gpt-20261012"></script>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
 <style>/* 13-oct · chinche #297 (CHN-20261013-0930-3863): «todas las pantallas tienen el solecito y la nochecita, aquí no».
@@ -804,7 +804,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='b66ebe5923';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='179ef95a64';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada

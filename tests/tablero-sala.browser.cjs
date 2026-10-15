@@ -149,7 +149,9 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    const r=await prepare(b,390,role,true),page=r.page;
    await page.locator('[data-open="synthetic-0"]').click();await page.locator('[data-lamina="2"]').click();
    assert.ok(await page.locator('[data-vote="si"]').isDisabled());assert.ok(await page.locator('[data-vote="no"]').isDisabled());
+   assert.notEqual(await page.evaluate(()=>getComputedStyle(document.body).overflow),"hidden");
    await page.locator('[data-full-photo]').click();await page.waitForSelector('.zoom.galeria');
+   assert.equal(await page.evaluate(()=>getComputedStyle(document.body).overflow),"hidden");
    assert.equal(await page.locator('.zoom .zg-elegir').isVisible(),false);
    await page.locator('.zoom .zg-sig').click();assert.match(await page.locator('.zoom .zg-cual').innerText(),/2 de 2/);
    assert.equal(r.writes.filter(x=>x.accion==="decidir").length,0);
