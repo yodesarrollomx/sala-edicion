@@ -36,6 +36,24 @@ class ArchiveTests(unittest.TestCase):
         with self.assertRaises(so.OnlineError):
             so.decode_archive(self.data, self.repo, self.prefixes, "0" * 64)
 
+    def test_archive_bytes_are_reproducible_for_recovery(self):
+        repeated, _ = so.encode_archive(self.repo, "a" * 40,
+                                       {self.path: b'{"prueba":true}'}, [], self.prefixes)
+        self.assertEqual(self.data, repeated)
+        with zipfile.ZipFile(io.BytesIO(repeated)) as archive:
+            self.assertTrue(all(i.date_time == (1980, 1, 1, 0, 0, 0) for i in archive.infolist()))
+
+    def test_delta_identity_binds_base_and_patch(self):
+        raw, manifest = so.encode_archive(self.repo, "a" * 40, {self.path: b"{}"}, [],
+                                          self.prefixes, base_id=10, base_data="b" * 64)
+        decoded, _ = so.decode_archive(raw, self.repo, self.prefixes,
+                                       expected_data=manifest["data_sha"])
+        self.assertEqual(decoded["base_snapshot_id"], 10)
+        changed, _ = so.encode_archive(self.repo, "a" * 40, {self.path: b"{}"}, [],
+                                       self.prefixes, base_id=10, base_data="c" * 64)
+        with self.assertRaises(so.OnlineError):
+            so.decode_archive(changed, self.repo, self.prefixes, expected_data=manifest["data_sha"])
+
     def test_wrong_repo(self):
         with self.assertRaises(so.OnlineError):
             so.decode_archive(self.data, "otro/repositorio", self.prefixes)
@@ -192,6 +210,21 @@ class FakeGitHub:
         return self.assets[aid]
 
 
+class TransportTests(unittest.TestCase):
+    def test_only_get_retries_transient_failures(self):
+        error = so.urllib.error.HTTPError("https://api.github.com/test", 500, "internal", {}, None)
+        waits = []
+        api = so.GitHub("prueba/repo", "doble", sleep=waits.append)
+        with patch.object(so.urllib.request, "urlopen", side_effect=[error, error, io.BytesIO(b'{"ok":true}')]) as request:
+            self.assertEqual(api.request("pages"), {"ok": True})
+        self.assertEqual(request.call_count, 3)
+        self.assertEqual(waits, [1, 2])
+        with patch.object(so.urllib.request, "urlopen", side_effect=error) as request:
+            with self.assertRaises(so.OnlineError):
+                api.request("releases", {"draft": True})
+        self.assertEqual(request.call_count, 1)
+
+
 class LifecycleTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -223,6 +256,264 @@ class LifecycleTests(unittest.TestCase):
         self.path.write_text('{"version":2}')
         out = self.s.prepare("relevo")
         return out, self.api.releases[out["snapshot_id"]]
+
+    def next_run(self, process="relevo"):
+        self.s.release()
+        self.run_git("reset", "--hard", "HEAD")
+        self.env["GITHUB_RUN_ID"] = str(int(self.env["GITHUB_RUN_ID"]) + 1)
+        self.s = so.Snapshots(self.root, self.env, api=self.api)
+        self.s.bootstrap(process, lock=True)
+
+    def mark_published(self, rid):
+        body = json.loads(self.api.releases[rid]["body"])
+        body["state"] = "published"
+        self.api.releases[rid]["body"] = json.dumps(body)
+
+    def test_snapshot_reentry_reuses_release_and_asset(self):
+        first, _ = self.prepare()
+        second = self.s.prepare("relevo")
+        self.assertEqual(first, second)
+        self.assertEqual(len(self.api.releases), 1)
+        self.assertEqual(len(self.api.assets), 1)
+
+    def test_delta_keeps_parent_media_without_uploading_it_again(self):
+        self.env["SALA_SNAPSHOT_INCREMENTAL"] = "1"
+        parent, _ = self.prepare()
+        self.mark_published(parent["snapshot_id"])
+        self.next_run("mesa")
+        tira = self.root / "datos/tiras/prueba.json"
+        tira.parent.mkdir()
+        tira.write_text('{"version":3}')
+        child = self.s.prepare("mesa")
+        release = self.api.releases[child["snapshot_id"]]
+        body = json.loads(release["body"])
+        manifest, patch_files = so.decode_archive(self.api.assets[body["asset_id"]],
+                                                self.s.repo, self.s.prefixes)
+        self.assertEqual(set(patch_files), {"datos/tiras/prueba.json"})
+        self.assertEqual(manifest["base_snapshot_id"], parent["snapshot_id"])
+        resolved, files = self.s.download(release, body)
+        self.assertEqual(files["datos/manifiesto.json"], b'{"version":2}')
+        self.assertEqual(files["datos/tiras/prueba.json"], b'{"version":3}')
+        self.assertEqual(resolved["data_sha"], child["data_sha"])
+
+    def test_incremental_flag_is_off_by_default_and_full_checkpoint_reads_delta(self):
+        parent, _ = self.prepare()
+        body = json.loads(self.api.releases[parent["snapshot_id"]]["body"])
+        manifest, _ = self.s.archive(self.api.releases[parent["snapshot_id"]], body)
+        self.assertNotIn("base_snapshot_id", manifest)
+        self.mark_published(parent["snapshot_id"])
+        self.env["SALA_SNAPSHOT_INCREMENTAL"] = "1"
+        self.next_run("mesa")
+        tira = self.root / "datos/tiras/prueba.json"
+        tira.parent.mkdir()
+        tira.write_text('{"version":3}')
+        child = self.s.prepare("mesa")
+        self.mark_published(child["snapshot_id"])
+        self.env.pop("SALA_SNAPSHOT_INCREMENTAL")
+        self.next_run()
+        self.path.write_text('{"version":4}')
+        full = self.s.prepare("relevo")
+        release = self.api.releases[full["snapshot_id"]]
+        manifest, files = self.s.archive(release, json.loads(release["body"]))
+        self.assertNotIn("base_snapshot_id", manifest)
+        self.assertEqual(set(files), {"datos/manifiesto.json", "datos/tiras/prueba.json"})
+
+    def test_snapshot_published_state_is_not_downgraded_on_reentry(self):
+        out, _ = self.prepare()
+        self.mark_published(out["snapshot_id"])
+        self.s.prepare("relevo")
+        self.assertEqual(json.loads(self.api.releases[out["snapshot_id"]]["body"])["state"], "published")
+
+    def test_chain_bound_fails_without_applying_partial_files(self):
+        self.env["SALA_SNAPSHOT_INCREMENTAL"] = "1"
+        parent, _ = self.prepare()
+        self.mark_published(parent["snapshot_id"])
+        self.next_run()
+        self.path.write_text('{"version":3}')
+        child = self.s.prepare("relevo")
+        release = self.api.releases[child["snapshot_id"]]
+        with patch.object(so, "MAX_CHAIN", 1), self.assertRaises(so.OnlineError):
+            self.s.download(release, json.loads(release["body"]))
+        self.assertEqual(self.path.read_text(), '{"version":3}')
+
+    def test_replay_preserves_deletion_then_restoration(self):
+        self.env["SALA_SNAPSHOT_INCREMENTAL"] = "1"
+        first, _ = self.prepare()
+        self.mark_published(first["snapshot_id"])
+        self.next_run()
+        self.path.unlink()
+        deleted = self.s.prepare("relevo")
+        self.mark_published(deleted["snapshot_id"])
+        self.next_run()
+        self.assertFalse(self.path.exists())
+        self.path.write_text('{"version":4}')
+        restored = self.s.prepare("relevo")
+        release = self.api.releases[restored["snapshot_id"]]
+        manifest, files = self.s.download(release, json.loads(release["body"]))
+        self.assertEqual(files["datos/manifiesto.json"], b'{"version":4}')
+        self.assertNotIn("datos/manifiesto.json", manifest["deleted"])
+
+    def test_delta_rejects_wrong_parent_hash_and_order(self):
+        self.env["SALA_SNAPSHOT_INCREMENTAL"] = "1"
+        parent, _ = self.prepare()
+        self.mark_published(parent["snapshot_id"])
+        self.next_run()
+        self.path.write_text('{"version":3}')
+        child = self.s.prepare("relevo")
+        rid = child["snapshot_id"]
+        for base_id, base_data in ((parent["snapshot_id"], "0" * 64),
+                                    (rid, child["data_sha"])):
+            raw, manifest = so.encode_archive(self.s.repo, self.s.head(),
+                {"datos/manifiesto.json": b'{"version":3}'}, [], self.s.prefixes,
+                base_id=base_id, base_data=base_data)
+            body = json.loads(self.api.releases[rid]["body"])
+            body.update({"archive_sha256": so.digest(raw), "data_sha": manifest["data_sha"],
+                         "parent_id": base_id})
+            self.api.assets[body["asset_id"]] = raw
+            self.api.releases[rid]["body"] = json.dumps(body)
+            with self.assertRaises(so.OnlineError):
+                self.s.download(self.api.releases[rid], body)
+
+    def test_site_budget_blocks_before_upload_and_preserves_bundle(self):
+        bundle = Path(self.tmp.name) / "existing-site"
+        bundle.mkdir()
+        (bundle / "keep.txt").write_text("conservar")
+        self.path.write_text('{"version":2}')
+        with patch.object(so, "MAX_SITE", 1):
+            with self.assertRaises(so.OnlineError):
+                self.s.prepare("relevo")
+            with self.assertRaises(so.OnlineError):
+                self.s.build_site(bundle)
+        self.assertEqual(self.api.releases, {})
+        self.assertEqual((bundle / "keep.txt").read_text(), "conservar")
+
+    def test_same_attempt_recovers_existing_lease(self):
+        lease = self.s.state()["lease"]
+        self.s.state_file.unlink()
+        self.assertEqual(self.s.acquire("relevo"), lease)
+
+    def test_new_run_attempt_can_replace_previous_attempt_lease(self):
+        old_lease = self.s.state()["lease"]
+        env = {**self.env, "GITHUB_RUN_ATTEMPT": "2"}
+        new = so.Snapshots(self.root, env, api=self.api)
+        request = self.api.request
+        def observed(path, *args, **kwargs):
+            if path.startswith("actions/runs/"):
+                return {"status": "in_progress", "run_attempt": 2}
+            return request(path, *args, **kwargs)
+        with patch.object(self.api, "request", side_effect=observed):
+            new.bootstrap("relevo", lock=True)
+        self.assertNotEqual(new.state()["lease"], old_lease)
+        with self.assertRaises(so.OnlineError):
+            self.s.assert_lease()
+
+    def test_lost_write_response_is_reconciled_without_duplicate(self):
+        self.path.write_text('{"version":2}')
+        request, upload = self.api.request, self.api.upload
+        lost = {"releases", "upload", "patch"}
+        def ambiguous(path, body=None, method=None):
+            result = request(path, body, method)
+            kind = "releases" if path == "releases" else "patch" if method == "PATCH" and path.startswith("releases/") else ""
+            if kind in lost:
+                lost.remove(kind)
+                raise so.OnlineError("GitHub HTTP 500")
+            return result
+        def ambiguous_upload(release, raw):
+            result = upload(release, raw)
+            if "upload" in lost:
+                lost.remove("upload")
+                raise so.OnlineError("Subida del snapshot no confirmada")
+            return result
+        with patch.object(self.api, "request", side_effect=ambiguous), patch.object(self.api, "upload", side_effect=ambiguous_upload):
+            result = self.s.prepare("relevo")
+        self.assertEqual(len(self.api.releases), 1)
+        self.assertEqual(len(self.api.assets), 1)
+        self.assertEqual(json.loads(self.api.releases[result["snapshot_id"]]["body"])["state"], "prepared")
+
+    def test_lost_lock_cas_response_is_reconciled(self):
+        self.s.release()
+        request = self.api.request
+        def ambiguous(path, body=None, method=None):
+            result = request(path, body, method)
+            if path == "git/refs/" + so.LOCK_REF and method == "PATCH":
+                raise so.OnlineError("GitHub HTTP 500")
+            return result
+        with patch.object(self.api, "request", side_effect=ambiguous):
+            lease = self.s.acquire("relevo")
+            self.assertEqual(lease, self.api.lock)
+            self.s.release()
+        self.assertNotIn("lease", self.s.state())
+
+    def test_published_dispatch_is_recovered_without_sending_again(self):
+        out, _ = self.prepare()
+        body = json.loads(self.api.releases[out["snapshot_id"]]["body"])
+        body.update({"state": "published", "published_code_sha": self.s.head(), "published_run": "99"})
+        self.api.releases[out["snapshot_id"]]["body"] = json.dumps(body)
+        run = {"id": 99, "display_title": f"Sala · publicacion=datos-12-1-relevo · sha={self.s.head()}",
+               "head_sha": self.s.head(), "head_branch": "main", "status": "completed", "conclusion": "success"}
+        request = self.api.request
+        def observed(path, body=None, method=None):
+            if "/runs?" in path:
+                return {"workflow_runs": [run]}
+            if path.endswith("/dispatches"):
+                raise AssertionError("No volver a disparar una publicación identificada")
+            return request(path, body, method)
+        with patch.object(self.api, "request", side_effect=observed), patch.object(self.s, "verify_receipt") as verify:
+            result = self.s.dispatch_publish(self.s.head())
+            self.assertEqual(result["pages_run"], 99)
+            verify.assert_called_once_with(self.s.head(), out["data_sha"], out["snapshot_id"], "99")
+            run["conclusion"] = "failure"
+            self.assertEqual(self.s.dispatch_publish(self.s.head())["publicado"], "si")
+            run["id"] = 100
+            with self.assertRaises(so.OnlineError):
+                self.s.dispatch_publish(self.s.head())
+
+    def test_duplicate_dispatches_never_report_publication(self):
+        self.prepare()
+        run = {"id": 99, "display_title": f"Sala · publicacion=datos-12-1-relevo · sha={self.s.head()}",
+               "head_sha": self.s.head(), "head_branch": "main", "status": "completed", "conclusion": "success"}
+        request = self.api.request
+        def observed(path, body=None, method=None):
+            if "/runs?" in path:
+                return {"workflow_runs": [run, {**run, "id": 100}]}
+            return request(path, body, method)
+        with patch.object(self.api, "request", side_effect=observed), self.assertRaises(so.OnlineError):
+            self.s.dispatch_publish(self.s.head())
+
+    def test_lost_dispatch_response_waits_for_delayed_index_without_second_post(self):
+        out, _ = self.prepare()
+        lease = self.s.state()["lease"]
+        run = {"id": 99, "display_title": f"Sala · publicacion=datos-12-1-relevo · sha={self.s.head()}",
+               "head_sha": self.s.head(), "head_branch": "main", "status": "completed", "conclusion": "success"}
+        request = self.api.request
+        dispatches, pending_reads, elapsed = [], [], [0]
+        def observed(path, body=None, method=None):
+            if path.endswith("/dispatches"):
+                dispatches.append(body)
+                raise so.OnlineError("GitHub HTTP 500")
+            if "/runs?" in path:
+                if not dispatches:
+                    return {"workflow_runs": []}
+                pending_reads.append(path)
+                self.assertEqual(self.api.lock, lease)
+                if len(pending_reads) <= 2:
+                    return {"workflow_runs": []}
+                self.mark_published(out["snapshot_id"])
+                return {"workflow_runs": [run]}
+            return request(path, body, method)
+        def advance(seconds):
+            elapsed[0] += seconds
+        with patch.object(self.api, "request", side_effect=observed), \
+                patch.object(self.s, "clock", side_effect=lambda: elapsed[0]), \
+                patch.object(self.s, "sleep", side_effect=advance), \
+                patch.object(self.s, "verify_receipt") as verify:
+            result = self.s.dispatch_publish(self.s.head(), timeout=60)
+        self.assertEqual(result["pages_run"], 99)
+        self.assertEqual(len(dispatches), 1)
+        self.assertEqual(len(pending_reads), 3)
+        self.assertEqual(elapsed[0], 20)
+        self.assertEqual(self.s.state()["lease"], lease)
+        verify.assert_called_once_with(self.s.head(), out["data_sha"], out["snapshot_id"], "99")
 
     def test_no_change_is_not_a_new_snapshot(self):
         result = self.s.prepare("relevo")
@@ -283,6 +574,13 @@ class LifecycleTests(unittest.TestCase):
         self.assertTrue(self.s.file_is_published(self.path))
         self.path.write_text('{"version":3}')
         self.assertFalse(self.s.file_is_published(self.path))
+
+    def test_staging_alone_never_counts_as_a_published_receipt(self):
+        self.s.stage(self.s.head())
+        self.assertFalse(self.s.file_is_published(self.path))
+        with patch.object(self.s, "verify_receipt", return_value={"ok": True}):
+            self.s.confirm()
+        self.assertTrue(self.s.file_is_published(self.path))
 
     def test_confirm_failure_never_marks_published(self):
         out, release = self.prepare()

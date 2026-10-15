@@ -53,7 +53,8 @@ jobs:
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
           SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
           GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
-          ENVIAR_ENTRADA: ${{ github.event_name == 'push' || inputs.enviar_entrada }}
+          # Un cambio de código verifica el cierre; no vuelve a enviar una entrada.
+          ENVIAR_ENTRADA: ${{ github.event_name == 'workflow_dispatch' && inputs.enviar_entrada }}
           REPROGRAMAR_CORREO: ${{ inputs.reprogramar_correo }}
         run: |
           flags=()
@@ -70,7 +71,8 @@ jobs:
     secrets: inherit
   comparar:
     needs: cierre
-    if: github.event_name == 'push' || inputs.comparar
+    # La comparación histórica genera medios: sólo bajo una petición manual explícita.
+    if: github.event_name == 'workflow_dispatch' && inputs.comparar
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:

@@ -1,16 +1,48 @@
 #!/usr/bin/env python3
 """Regresión de transporte: un GAS simulado redirige POST hacia un recurso GET."""
 import json
+import os
 import pathlib
 import sys
 import threading
 import unittest
+from unittest import mock
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "nube"))
 import sala_cliente as cliente
 
 class RedirectTest(unittest.TestCase):
+    def test_post_aplicado_con_respuesta_perdida_no_se_duplica(self):
+        received = []
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, *args):
+                pass
+            def do_POST(self):
+                raw = self.rfile.read(int(self.headers.get("Content-Length", "0")))
+                received.append(json.loads(raw))
+                # El servidor aplicó la escritura pero no devuelve su acuse JSON.
+                self.send_response(200)
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+        server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            with mock.patch.dict(os.environ, {
+                "SALA_GAS_EXEC": "http://127.0.0.1:%d/exec" % server.server_port,
+                "SALA_CLAVE_AGENTE": "clave-sintetica-sin-acceso",
+            }), mock.patch.object(cliente.time, "sleep") as dormir:
+                with self.assertRaisesRegex(cliente.SalaError, "sin recibo confirmado"):
+                    cliente.post("produccion", evento="Prueba sintética")
+            self.assertEqual(len(received), 1)
+            self.assertEqual(received[0]["evento"], "Prueba sintética")
+            dormir.assert_not_called()
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
+
     def test_post_conserva_cuerpo_en_origen_y_lee_respuesta_con_get(self):
         received = []
         class Handler(BaseHTTPRequestHandler):

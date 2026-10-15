@@ -502,6 +502,11 @@ function doGet(e) {
                evento: String(b.evento), detalle: String(b.detalle || '').slice(0, 300) }; });
     return json({ ok: true, bitacora: ult });
   }
+  if (p.recurso === 'correo_estado') {           // diagnóstico sin enviar correo ni cambiar disparadores
+    if (rolQuien !== 'agente') return json({ error: 'solo el agente' });
+    try { return json({ ok: true, version: 'correo-historico-2026-10-15', resumen: resumenCorreoDiario_(hoy()) }); }
+    catch (errCorreo) { return json({ ok: false, version: 'correo-historico-2026-10-15', error: 'correo_sin_lectura_confirmada' }); }
+  }
   if (p.recurso === 'envios') {                   // TODAS las filas de DECISIONES de un dia (auditoria desde la Mac):
     if (rolDe(p.clave) !== 'agente') return json({ error: 'solo el agente' });   // recupera marcas que un envio posterior tapo
     if (p.f && !/^\d{4}-\d{2}-\d{2}$/.test(p.f)) return json({ error: 'fecha inválida (yyyy-mm-dd)' });
@@ -1150,27 +1155,113 @@ function doPost(e) {
 }
 
 /* ------------------------------------------------ el correo de las 7:00 */
+/* El correo lee el historial, no sólo las propuestas fechadas hoy. Son conteos de
+   tarjetas, piezas y trabajos distintos; aprobar nunca demuestra producir/publicar.
+   Reutiliza la fusión de los dos editores (el NO manda) sin escribir decisiones. */
+function estadoCorreo_(f, PR, DE, PD, QU) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(f)) ||
+      ![PR, DE, PD, QU].every(function (x) { return Array.isArray(x); })) throw new Error('correo_sin_contrato');
+  var props = {}, producidas = {}, publicadas = {}, sinAcuse = {}, trabajos = {};
+  var r = { correo: 2, fecha: f, lectura: 'confirmada', revision: 0, aprobadas: 0,
+            cambios: 0, producidas: 0, publicadas: 0, sin_acuse: 0, en_cola: 0, corriendo: 0, fallos: 0 };
+  PR.forEach(function (x) {
+    var fx = fechaDe(x.fecha), id = String(x.prop_id || '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fx) || !id) throw new Error('propuesta_sin_contrato');
+    if (fx <= f && (!props[id] || fechaDe(props[id].fecha) <= fx)) props[id] = x;
+  });
+  // La granularidad por editor/pieza/lámina se conserva también entre fechas.
+  // Copias sólo para leer: fusionDia_ no modifica las filas originales ni el Sheet.
+  var historico = DE.filter(function (d) {
+    var fx = fechaDe(d.fecha);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fx) || !selloDe(d.guardado)) throw new Error('decision_sin_contrato');
+    return fx <= f;
+  }).map(function (d) { return Object.assign({}, d, { fecha: f }); });
+  var decisiones = fusionDia_(historico, f).dec.propuestas;
+  Object.keys(props).forEach(function (id) {
+    var x = props[id];
+    if (/^retirada/i.test(String(x.estado || '')) || /^retirada/i.test(String(x.origen || ''))) return;
+    var p = { tipo: String(x.tipo || 'laminas'), laminas: JSON.parse(x.laminas_json || '[]'),
+              opciones: JSON.parse(x.opciones_json || '[]') };
+    if (!Array.isArray(p.laminas) || !p.opciones || typeof p.opciones !== 'object') throw new Error('propuesta_sin_formato');
+    var m = decisiones[id], marcas = (m && m.laminas) || [];
+    var n = p.tipo === 'eje' ? (Array.isArray(p.opciones) ? p.opciones.length : (p.opciones.candidatas || []).length) : p.laminas.length;
+    var usadas = marcas.slice(0, n), elegida = p.tipo === 'eje' && usadas.indexOf('si') >= 0;
+    if (!cerrada_(p, m)) r.revision++;
+    if (elegida || (n > 0 && usadas.filter(function (v) { return v === 'si'; }).length === n)) r.aprobadas++;
+    if (!elegida && usadas.indexOf('no') >= 0) r.cambios++;
+  });
+  PD.forEach(function (x) {
+    var fx = fechaDe(x.fecha), id = String(x.pieza || ''), e = String(x.estado || '').toLowerCase().trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fx)) throw new Error('produccion_sin_fecha');
+    if (fx > f || !id) return;
+    if (['video', 'corte', 'producida', 'producido'].indexOf(e) >= 0) producidas[id] = true;
+    // Es un registro del backend con enlace, no una verificación de la red social.
+    if (e === 'publicada') {
+      if (/^https?:\/\//i.test(String(x.enlace || '').trim())) publicadas[id] = true;
+      else sinAcuse[id] = true;
+    }
+  });
+  QU.forEach(function (x) {
+    var id = String(x.id || '');
+    if (!id) throw new Error('trabajo_sin_id');
+    trabajos[id] = x;                              // defensa ante filas duplicadas de un mismo trabajo
+  });
+  Object.keys(trabajos).forEach(function (id) {
+    var x = trabajos[id], e = String(x.estado || '');
+    if (e === 'pendiente') r.en_cola++;
+    else if (e === 'corriendo') r.corriendo++;
+    else if (e === 'fallo') r.fallos++;
+    else if (e !== 'hecho' && e !== 'obsoleto') throw new Error('trabajo_sin_estado');
+    if (e === 'hecho' && x.etapa === 'corte' && x.pieza) producidas[String(x.pieza)] = true;
+  });
+  r.producidas = Object.keys(producidas).length;
+  r.publicadas = Object.keys(publicadas).length;
+  r.sin_acuse = Object.keys(sinAcuse).filter(function (id) { return !publicadas[id]; }).length;
+  return r;
+}
+function resumenCorreoDiario_(f) {
+  var nombres = ['PROPUESTAS', 'DECISIONES', 'PRODUCCION', 'COLA'];
+  var datos = nombres.map(function (n) {
+    // filas() retorna [] si falta una pestaña: aquí esa ausencia es un fallo, nunca cero pendientes.
+    var h = hoja(n), cab = PESTANAS[n];
+    if (!h || h.getLastRow() < 1) throw new Error('correo_hoja_ausente');
+    var encabezado = h.getRange(1, 1, 1, cab.length).getValues()[0];
+    if (!cab.every(function (v, i) { return encabezado[i] === v; })) throw new Error('correo_hoja_sin_contrato');
+    return filas(n);
+  });
+  return estadoCorreo_(f, datos[0], datos[1], datos[2], datos[3]);
+}
 function correoDiario() {
-  var f = hoy();
-  var n = filas('PROPUESTAS').filter(function (x) { return fechaDe(x.fecha) === f; }).length;
-  var asunto = n > 0 ? 'Sala de Edición · ' + n + ' propuesta(s) esperan tu revisión'
-                     : 'Sala de Edición · hoy no hay pendientes';
-  // la liga trae la sesion en el fragmento #: no viaja al servidor y el portal la siembra solo
+  var f = hoy(), r;
+  try { r = resumenCorreoDiario_(f); }
+  catch (err) { r = { correo: 2, fecha: f, lectura: 'sin_confirmar' }; }
+  var asunto = r.lectura !== 'confirmada' ? 'Sala de Edición · no se pudo confirmar el estado' :
+    (r.revision > 0 ? 'Sala de Edición · ' + r.revision + ' propuesta(s) esperan tu revisión' :
+     'Sala de Edición · estado de producción al ' + f);
+  // La liga trae la sesión en el fragmento #: no viaja al servidor.
   var exec = ScriptApp.getService().getUrl();
   var liga = PORTAL + '#gas=' + encodeURIComponent(exec) +
              '&clave=' + encodeURIComponent(leerConfig('clave')) + '&rol=editor';
+  var texto = r.lectura !== 'confirmada' ?
+    'No se pudo leer el estado completo de la Sala. Hay que revisar la conexión; no se han confirmado los conteos.' :
+    'Estado acumulado hasta ' + f + '. Propuestas pendientes de revisión: ' + r.revision +
+    '. Tarjetas activas aprobadas por los editores: ' + r.aprobadas + '. Con cambios pedidos: ' + r.cambios +
+    '. Piezas producidas: ' + r.producidas + '. Publicaciones registradas con enlace: ' + r.publicadas +
+    '. Registros de publicación sin enlace: ' + r.sin_acuse + '. Trabajos en cola: ' + r.en_cola +
+    ', en curso: ' + r.corriendo + ', con fallo: ' + r.fallos +
+    '. Aprobar una tarjeta autoriza su siguiente etapa; la publicación se registra por separado.';
   var html =
     '<div style="background:#0a0a0c;padding:34px 22px;font-family:Georgia,serif;color:#f4f1ec">' +
     '<p style="color:#debc7e;font-size:12px;letter-spacing:3px;margin:0 0 6px">YO DESARROLLO</p>' +
     '<h2 style="font-weight:400;margin:0 0 16px">Sala de <em style="color:#debc7e">Edición</em></h2>' +
-    '<p style="font-size:15px;line-height:1.6;margin:0 0 22px">' +
-    (n > 0 ? 'Hay <b>' + n + ' propuesta(s)</b> esperándote. Cinco minutos.' : 'Hoy no hay propuestas nuevas.') + '</p>' +
+    '<p style="font-size:15px;line-height:1.6;margin:0 0 22px">' + texto + '</p>' +
     '<a href="' + liga + '" style="background:#c2a06b;color:#17130c;text-decoration:none;' +
     'padding:13px 26px;border-radius:8px;font-family:-apple-system,sans-serif;font-weight:600">Abrir mi turno</a>' +
     '<p style="color:#8a867e;font-size:12px;margin:26px 0 0">Palomea lo que sirve, tacha lo que no, ' +
     'y escribe lo que quieres distinto.</p></div>';
-  MailApp.sendEmail({ to: CORREO, subject: asunto, htmlBody: html });
-  bitacora('Correo de las 7:00 enviado', asunto);
+  MailApp.sendEmail({ to: CORREO, subject: asunto, body: texto + '\nAbrir mi turno: ' + liga, htmlBody: html });
+  // Metadatos agregados, sin claves, títulos, destinatarios ni notas privadas. Caben en la lectura de bitácora.
+  bitacora('Correo de las 7:00 enviado', JSON.stringify(r));
 }
 
 

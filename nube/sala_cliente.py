@@ -15,8 +15,8 @@ Las dos reglas que gobiernan este archivo:
     decide. `post()` rechaza `accion:'decidir'` aquí mismo, antes de la red, para que un
     error de programación no pueda siquiera intentarlo.
 
-Nota de campo (CLAUDE.md): para POST al GAS hay que seguir la redirección — `urllib` dio 404
-una vez. Aquí se sigue con `curl -L` de respaldo si la vía de Python no entrega JSON.
+Nota de campo (CLAUDE.md): GAS redirige la respuesta a un recurso GET. Se usa `curl -L`
+una sola vez por intento; una escritura sin recibo no se vuelve a enviar a ciegas.
 """
 
 import json
@@ -37,10 +37,12 @@ INTENTOS = 3
 # hasta 12 s (era el presupuesto de `dia` ANTES de que le agregaran caché,
 # 5-sep) — así que 12 s como tope duro para el resto era optimista.
 ESPERA = 25          # segundos de tope por intento
-# Sólo la cosecha fresca del relevo: armarDia_ lee varias pestañas sin caché.
-# Dos llamadas curl de 60 s evitan seis lecturas concurrentes/repetidas de 25 s.
-ESPERA_RELEVO = 60
+# Productor y Mesa también leen el día fresco. El run 38666752617 agotó ambos
+# intentos de 60 s; el presupuesto incluye /exec y su redirección. No recurrir a
+# un día viejo para abrir compuertas. Cola/reglas también leen Sheets sin caché.
+ESPERA_RELEVO = 120
 INTENTOS_RELEVO = 2
+ESPERA_SHEET = 60
 
 # Acciones que la nube tiene prohibidas por diseño, no por configuración.
 PROHIBIDAS = {'decidir', 'parrilla_decision'}
@@ -108,8 +110,12 @@ def _leer_json(crudo, donde):
         datos = json.loads(crudo)
     except (ValueError, TypeError):
         raise SalaError('%s no devolvió JSON: %s' % (donde, redactar(str(crudo)[:300])))
-    if isinstance(datos, dict) and datos.get('error'):
+    if not isinstance(datos, dict):
+        raise SalaError('%s no devolvió un objeto JSON' % donde)
+    if datos.get('error'):
         raise SalaError('%s contestó con error: %s' % (donde, redactar(datos['error'])))
+    if datos.get('ok') is False:
+        raise SalaError('%s rechazó la solicitud (ok:false)' % donde)
     return datos
 
 
@@ -135,28 +141,49 @@ def _urllib(url, cuerpo=None, espera=ESPERA):
         return r.read().decode('utf-8', 'replace')
 
 
-def _pedir(url, cuerpo, donde, espera=ESPERA, intentos=INTENTOS, solo_curl=False):
+def _pedir(url, cuerpo, donde, espera=ESPERA, intentos=INTENTOS, solo_curl=False,
+           validar=None):
     """Reintenta sin aceptar como vacío un fallo de transporte o de JSON.
 
-    El relevo fresco usa curl -L (el transporte de respaldo ya probado con GAS):
-    no duplica cada solicitud lenta con urllib antes de reintentar.
-    Los demás recursos conservan sus dos vías y tiempos anteriores.
+    Las lecturas lentas usan curl -L sin duplicar cada intento con urllib.
+    Una escritura usa un único envío: perder la respuesta no prueba que GAS
+    no la aplicó. Su consumidor debe conciliar el estado antes de repetirla.
     """
     ultimo = None
+    if cuerpo is not None:
+        intentos, solo_curl = 1, True
     vias = (('curl -L', _curl),) if solo_curl else (
         ('urllib', _urllib), ('curl -L', _curl))
     for intento in range(1, intentos + 1):
         for via, fn in vias:
             try:
-                return _leer_json(fn(url, cuerpo, espera), donde)
+                datos = _leer_json(fn(url, cuerpo, espera), donde)
+                if validar:
+                    validar(datos)
+                return datos
             except SalaError as e:
                 ultimo = e
             except (urllib.error.URLError, OSError, subprocess.SubprocessError) as e:
                 ultimo = SalaError('%s por %s: %s' % (donde, via, redactar(e)))
         if intento < intentos:
             time.sleep(2 ** intento)
+    if cuerpo is not None:
+        raise SalaError('%s sin recibo confirmado; no se reenvió. Conciliar el estado '
+                        'antes de repetir · último: %s' % (donde, ultimo))
     raise SalaError('%s no contestó en %d intentos · último: %s' % (
         donde, intentos, ultimo))
+
+
+def _validar_lectura(recurso, datos):
+    """Una respuesta incompleta no acredita un día, cola o reglas vacíos."""
+    campos = {
+        'dia': (('propuestas', list), ('decisiones', dict)),
+        'cola': (('cola', list),),
+        'reglas': (('reglas', dict), ('motores', list)),
+    }
+    if any(not isinstance(datos.get(campo), tipo)
+           for campo, tipo in campos.get(recurso, ())):
+        raise SalaError('GET ?recurso=%s sin contrato de lectura' % recurso)
 
 
 def get(recurso, **params):
@@ -165,13 +192,19 @@ def get(recurso, **params):
     q = {'recurso': recurso, 'clave': _clave()}
     q.update({k: v for k, v in params.items() if v is not None})
     url = _exec_url() + '?' + urllib.parse.urlencode(q)
+    validar = lambda datos: _validar_lectura(recurso, datos)
     # fresco=1 nunca permite caché: el respaldo conserva sólo datos verificados.
     # Un día sin caché puede tardar más que un recurso ordinario (6 pestañas).
     if recurso == 'dia' and str(params.get('fresco')) == '1':
         return _pedir(url, None, 'GET ?recurso=dia',
                       espera=ESPERA_RELEVO, intentos=INTENTOS_RELEVO,
-                      solo_curl=True)
-    return _pedir(url, None, 'GET ?recurso=' + recurso)
+                      solo_curl=True, validar=validar)
+    if recurso in ('cola', 'reglas'):
+        return _pedir(url, None, 'GET ?recurso=' + recurso,
+                      espera=ESPERA_SHEET, intentos=INTENTOS_RELEVO,
+                      solo_curl=True, validar=validar)
+    return _pedir(url, None, 'GET ?recurso=' + recurso,
+                  solo_curl=True, validar=validar)
 
 
 def post(accion, **campos):
@@ -188,7 +221,8 @@ def post(accion, **campos):
             raise SalaError(str(e)) from e
     cuerpo = {'accion': accion, 'clave': _clave()}
     cuerpo.update(campos)
-    return _pedir(_exec_url(), json.dumps(cuerpo), 'POST accion=' + accion)
+    return _pedir(_exec_url(), json.dumps(cuerpo), 'POST accion=' + accion,
+                  espera=ESPERA_SHEET)
 
 
 def slug_seguro(texto, si_vacio='x'):
