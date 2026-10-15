@@ -29,6 +29,7 @@ concurrency:
   group: pages
   cancel-in-progress: false
 env:
+  SALA_PRODUCCION_HISTORICA: ${{ vars.SALA_PRODUCCION_HISTORICA || '0' }}
   SALA_PUBLICADOR_MODO: snapshots
 jobs:
   publicar:
@@ -68,6 +69,7 @@ jobs:
           python3 nube/verificar.py
           python3 -m unittest discover -s tests -p 'publicar_git_test.py'
           python3 -m unittest discover -s tests -p 'snapshots_online_test.py'
+          python3 -m unittest discover -s tests -p '*medios*_test.py'
           node --test tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs
       - name: Construir bundle público sin logs ni archivos privados del runner
         env:

@@ -30,6 +30,7 @@ concurrency:
 
 env:
   SALA_PUBLICADOR_MODO: snapshots
+  SALA_MEDIOS_PUBLICOS: ${{ vars.SALA_MEDIOS_PUBLICOS || '0' }}
 
 jobs:
   arranque:

@@ -92,6 +92,7 @@ class AuditoriaFallosTests(unittest.TestCase):
         row = self.candidato(self.evaluar())
         self.assertTrue(row["elegible"])
         self.assertEqual(row["bloqueos"], [])
+        self.assertEqual(row["evaluado"], {"guion": True, "plan": True})
         self.assertEqual(row["id"], self.corte["id"])
         self.resolver.assert_called_once_with(self.tira, self.decision, self.prop)
         self.assertEqual({call.args[0]["id"] for call in self.media.call_args_list},
@@ -120,7 +121,40 @@ class AuditoriaFallosTests(unittest.TestCase):
 
     def test_fuente_ausente_no_se_inventa_desde_decision_o_tira(self):
         self.dia["propuestas"] = []
-        self.bloqueado(self.evaluar(), "fuente_no_vigente")
+        row = self.bloqueado(self.evaluar(), "fuente_no_vigente")
+        self.assertEqual(row["bloqueos"], ["fuente_no_vigente"])
+        self.assertEqual(row["evaluado"], {"guion": False, "plan": False})
+        self.reader.assert_not_called()
+        self.media.assert_not_called()
+
+    def test_sin_fuente_ni_decision_no_atribuye_defectos_de_guion_o_plan(self):
+        self.dia["propuestas"] = []
+        self.dia["decisiones"]["propuestas"] = {}
+        row = self.candidato(self.evaluar())
+        self.assertFalse(row["elegible"])
+        self.assertEqual(row["bloqueos"], ["fuente_no_vigente", "aprobacion_incompleta"])
+        self.assertEqual(row["evaluado"], {"guion": False, "plan": False})
+        self.reader.assert_not_called()
+        self.resolver.assert_not_called()
+        self.media.assert_not_called()
+
+    def test_decision_ausente_no_evalua_guion_ni_plan_aunque_existan_locales(self):
+        self.dia["decisiones"]["propuestas"] = {}
+        row = self.bloqueado(self.evaluar(), "aprobacion_incompleta")
+        self.assertEqual(row["bloqueos"], ["aprobacion_incompleta"])
+        self.assertEqual(row["evaluado"], {"guion": False, "plan": False})
+        self.reader.assert_not_called()
+        self.media.assert_not_called()
+
+    def test_tira_sin_resolver_no_se_evalua_ni_puede_ser_elegible(self):
+        for fallo in (ValueError("detalle privado"), None):
+            with self.subTest(resolucion=type(fallo).__name__):
+                self.resolver.side_effect = fallo if isinstance(fallo, Exception) else None
+                self.resolver.return_value = fallo
+                row = self.bloqueado(self.evaluar(), "lectura_no_confirmada")
+                self.assertEqual(row["bloqueos"], ["lectura_no_confirmada"])
+                self.assertEqual(row["evaluado"], {"guion": False, "plan": False})
+                self.media.assert_not_called()
 
     def test_fuente_retirada_no_autoriza_reintento(self):
         self.dia["propuestas"][0]["origen"] = "retirada-por-direccion"
@@ -321,6 +355,7 @@ class MediosRecibosYAcuseTests(unittest.TestCase):
         snapshots = Mock()
         snapshots.state.return_value = self.state
         snapshots.head.return_value = "a" * 40
+        snapshots.media_hash_for_receipt.return_value = None
         release = copy.deepcopy(self.release if release is None else release)
         if body is not None:
             release["body"] = json.dumps(body)
@@ -369,6 +404,22 @@ class MediosRecibosYAcuseTests(unittest.TestCase):
         self.assertTrue(get.call_args.args[0].full_url.endswith("/version-online.json"))
         response.read.assert_called_once_with(32768)
 
+    def test_recibo_de_medios_exige_el_pin_exacto_del_snapshot(self):
+        for pin in (None, "e" * 64, "d" * 64):
+            with self.subTest(pin=pin):
+                snapshots = self.snapshots_doble()
+                snapshots.media_hash_for_receipt.return_value = "d" * 64
+                receipt = {**self.receipt}
+                if pin is not None:
+                    receipt["media_manifest_sha256"] = pin
+                with patch.object(auditoria.urllib.request, "urlopen",
+                                  return_value=self.respuesta_recibo(receipt)):
+                    if pin == "d" * 64:
+                        self.assertEqual(auditoria.confirmar_snapshot(snapshots),
+                                         (self.state, receipt))
+                    else:
+                        with self.assertRaisesRegex(auditoria.AuditoriaError, "snapshot_sin_acuse"):
+                            auditoria.confirmar_snapshot(snapshots)
     def test_recibo_ajeno_a_codigo_datos_o_snapshot_no_acredita_lectura(self):
         for field, value in (("code_sha", "c" * 40), ("data_sha", "d" * 64),
                              ("snapshot_id", 99), ("run_id", "no-numerico"),
@@ -504,6 +555,17 @@ class MediosRecibosYAcuseTests(unittest.TestCase):
 
 
 class GitHubSoloLecturaTests(unittest.TestCase):
+    def test_repositorio_se_expone_sin_ampliar_capacidad_de_escritura(self):
+        delegate = Mock()
+        delegate.repo = "yodesarrollomx/sala-edicion"
+        api = auditoria.ReadOnlyGitHub(delegate)
+        self.assertEqual(api.repo, delegate.repo)
+        with self.assertRaises(AttributeError):
+            api.repo = "otro/repositorio"
+        with self.assertRaises(auditoria.AuditoriaError):
+            api.request("releases", {"draft": False})
+        delegate.request.assert_not_called()
+
     def test_get_implicitito_o_explicito_se_delega_como_get_sin_cuerpo(self):
         for method in (None, "GET"):
             with self.subTest(method=method):

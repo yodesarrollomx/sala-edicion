@@ -10,6 +10,9 @@ permissions:
 concurrency:
   group: sala-ejecutor
   cancel-in-progress: false
+env:
+  SALA_PRODUCCION_HISTORICA: ${{ vars.SALA_PRODUCCION_HISTORICA || '0' }}
+
 jobs:
   auditar:
     if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'

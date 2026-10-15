@@ -37,7 +37,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  SALA_PRODUCCION_HISTORICA: ${{ vars.SALA_PRODUCCION_HISTORICA || '0' }}
   SALA_PUBLICADOR_MODO: snapshots
+  SALA_MEDIOS_PUBLICOS: ${{ vars.SALA_MEDIOS_PUBLICOS || '0' }}
 
 jobs:
   mesa:

@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-15.sala-nube.1",
-  "proposal_id": "CHG-SALA-NUBE-20261015",
-  "summary": "Cierra fallos comprobados de lectura y publicación: recupera sólo HTTP404 de COLA/REGLAS con GET fresco dentro del presupuesto de 122 s; verifica el plan staged antes del bundle y exige recibo exacto servido con consultas de caché distintas y diagnóstico de campos sin valores. La Sala representa estados reales sin prometer horarios ni rondas futuras. Añade auditoría manual de cortes fallidos sin reencolar: fuente y guion vigentes, aprobación completa sin vetos, identidad exacta del plan, medios privados verificados, recibo vinculado a release y doble lectura estable. Conserva decisiones, etapas habilitadas, guardia de main, mutex, correo y FULL predeterminado de CHG-SALA-NUBE-20261015. Documenta inventario actual de chinches y límites pendientes.",
+  "model_revision": "2026-10-15.sala-medios.1",
+  "proposal_id": "CHG-SALA-MEDIOS-PUBLICOS-20261015",
+  "summary": "Conserva decisiones históricas mediante un contrato GET del agente con firmas, notas y timestamps reales, desplegado por separado y desactivado por defecto. El lector legado declara su ventana limitada sin llamar retiradas a fuentes no acreditadas. Externaliza sólo imágenes nuevas después de verificar lector servido, Actions, release inmutable y bytes anónimos; FULL y Pages conservan históricos y referencias mediante manifiesto con hash exacto. Las banderas usan variables de repositorio con default0. Añade sonda técnica manual independiente, aprobación cerrada durante validación del lector y diagnóstico de auditoría sin defectos derivados. No reencola, cambia marcas o permisos, activa deltas ni aumenta capacidad por omisión de históricos.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -13,12 +13,12 @@
     "EXT-GMAIL"
   ],
   "tests": [
-    "Suite Python integrada y Node; verificar.py y verificación del impacto sobre el árbol base de main.",
-    "Lectura HTTP404: tercer GET sólo dentro de 122 s y hasta 20 s; contratos inválidos, presupuesto agotado, otros códigos y POST no reciben recuperación adicional. Transporte HTTP302 y ACK perdido no duplican POST.",
-    "Recibo: igualdad exacta de código/datos/snapshot/run/plan, drift local antes de bundle, nonces distintos por GET y diagnóstico sin valores privados; preserva main y mutex.",
-    "Interfaz: render sintético de copy/publicación y etapas terminadas, cola/ejecución real; no inventa próximas rondas ni horarios.",
-    "Auditoría: ausencia de etapa habilitada, recibo falsificado, identidad cruzada de pieza/dependencias, vetos, guion incompleto, bytes MD5, cambios concurrentes, API GitHub sólo GET y ningún POST al GAS.",
-    "Revisión independiente de privacidad y compuertas. La activación requiere CI exacto y recibos reales; guardar código no acredita producción ni recepción de correo."
+    "473 pruebas Python integradas,65 Node de interfaz/historia y13 verificaciones locales; impacto contra Atlas aprobado238 y diffcheck. CI de navegador ejecuta escritorio/móvil/iframe con datos sintéticos, imágenes y fallo/recuperación del pin.",
+    "Historial: marcas posteriores de cualquier fecha/editor, no/borrar/pendiente, fuentes retiradas, empates sólo máximos, fechas imposibles y selección de toma acreditada por firmas; flag0 conserva lector limitado explícito. Ningún POST de prueba.",
+    "Medios: legacy FULL, omisión sólo nuevos, hidratación hash/MIME, presupuesto ZIP/Pages, archivo publicado, lector viejo cerrado, nonce y pin exactos, rechazo symlinks/manifiesto alterado. Preflight de Pages y Actions antes de efectos.",
+    "Idempotencia: perder respuesta o runner tras create/upload/publish recupera el mismo tag de contenido; sonda técnica PNG sin negocio comprueba segunda instancia sin mutaciones. Ejecución real sólo tras despliegue del lector e inmutabilidad.",
+    "Revisión independiente de roles/UI, lectura histórica adversaria y almacén. La auditoría admite sólo GETproduccion y conserva restricción GET al hidratar medios; recibo exige pin del manifiesto.",
+    "Los resultados de CI/código no acreditan backend GAS desplegado, nuevo correo recibido, canario real o generación de piezas. Activaciones y recibos se comprueban por separado."
   ],
-  "rollback": "Conservar decisiones/cola/medios/releases/recibos. Antes de revertir lectores tras emitir deltas, desactivar flag y publicar FULL desde lector compatible, comprobando recibo. Para correo original restaurar la función conservada correoDiarioAnterior20261015_ y conservar el respaldo privado del contenedor. No cambiar URL ni ACL."
+  "rollback": "Apagar emisores/lectura histórica por variables conserva decisiones, cola, medios y snapshots. Tras publicar manifiestos externos conservar el lector compatible; antes de volver al lector viejo repatriar todos los bytes y demostrar presupuesto/recibo. Si hubo deltas, publicar primero FULL con lector compatible. No eliminar assets/históricos ni cambiar URL/ACL/backend para sortear bloqueos."
 }

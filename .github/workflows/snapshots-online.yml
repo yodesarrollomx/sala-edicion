@@ -4,16 +4,28 @@ on:
     branches: [codex/sala-online-20261011]
     paths:
       - nube/snapshots_online.py
+      - nube/medios_publicos.py
+      - nube/sonda_medios_publicos.py
       - nube/probar_snapshots.py
       - scripts/snapshots_online.py
       - scripts/probar_snapshots.py
       - tests/snapshots_online_test.py
+      - tests/medios_publicos_test.py
+      - tests/snapshots_medios_test.py
+      - tests/sonda_medios_publicos_test.py
+      - .github/workflows/sonda-medios-publicos.yml
       - .github/workflows/snapshots-online.yml
   pull_request:
     paths:
       - nube/snapshots_online.py
+      - nube/medios_publicos.py
+      - nube/sonda_medios_publicos.py
       - scripts/snapshots_online.py
       - tests/snapshots_online_test.py
+      - tests/medios_publicos_test.py
+      - tests/snapshots_medios_test.py
+      - tests/sonda_medios_publicos_test.py
+      - .github/workflows/sonda-medios-publicos.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -28,6 +40,8 @@ jobs:
         with:
           python-version: '3.11'
       - run: python3 -m unittest discover -s tests -p snapshots_online_test.py -v
+      - run: pip install --quiet pillow requests google-auth
+      - run: python3 -m unittest discover -s tests -p '*medios*_test.py' -v
       - run: git diff --check
   capacidad:
     if: github.event_name == 'push'

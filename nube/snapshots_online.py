@@ -12,6 +12,7 @@ overlays completos, también útiles como checkpoint antes de una reversión.
 """
 import argparse
 import hashlib
+from html.parser import HTMLParser
 import io
 import json
 import os
@@ -41,9 +42,10 @@ MAX_FILE = 25 * 1024 * 1024
 MAX_FILES = 10000
 MAX_SITE = 900 * 1024 * 1024
 MAX_CHAIN = 1024
+MEDIA_PATH = "datos/medios-publicos.json"
 SALA_PATHS = {
-    "arranque": ("laminas/", "datos/tiras/", "datos/arranque.json"),
-    "mesa": ("laminas/", "datos/tiras/", "datos/mesa-estado.json"),
+    "arranque": ("laminas/", "datos/tiras/", "datos/arranque.json", MEDIA_PATH),
+    "mesa": ("laminas/", "datos/tiras/", "datos/mesa-estado.json", MEDIA_PATH),
     "relevo": ("datos/manifiesto.json",),
     "maquinas": ("datos/maquinas.json",),
     "chinches": ("datos/encargos.json", "datos/piezas.json", "datos/motores_puntaje.json"),
@@ -189,12 +191,15 @@ def decode_archive(data, repo, prefixes, expected_hash=None, expected_data=None)
         raise OnlineError("No se pudo validar el snapshot") from exc
 
 
-def receipt_matches(receipt, *, code_sha, data_sha, snapshot_id, run_id, plan_sha256=None):
+def receipt_matches(receipt, *, code_sha, data_sha, snapshot_id, run_id, plan_sha256=None,
+                    media_manifest_sha256=None):
     return not receipt_differences(receipt, code_sha=code_sha, data_sha=data_sha,
-                                  snapshot_id=snapshot_id, run_id=run_id, plan_sha256=plan_sha256)
+                                  snapshot_id=snapshot_id, run_id=run_id, plan_sha256=plan_sha256,
+                                  media_manifest_sha256=media_manifest_sha256)
 
 
-def receipt_differences(receipt, *, code_sha, data_sha, snapshot_id, run_id, plan_sha256=None):
+def receipt_differences(receipt, *, code_sha, data_sha, snapshot_id, run_id, plan_sha256=None,
+                        media_manifest_sha256=None):
     """Sólo nombres fijos de campos; nunca valores ni cuerpos recibidos."""
     if not isinstance(receipt, dict):
         return ["tipo_recibo"]
@@ -202,7 +207,12 @@ def receipt_differences(receipt, *, code_sha, data_sha, snapshot_id, run_id, pla
                 "snapshot_id": snapshot_id, "run_id": run_id}
     if plan_sha256 is not None:
         expected["plan_sha256"] = plan_sha256
-    return [field for field, value in expected.items() if receipt.get(field) != value]
+    if media_manifest_sha256 is not None:
+        expected["media_manifest_sha256"] = media_manifest_sha256
+    differences = [field for field, value in expected.items() if receipt.get(field) != value]
+    if media_manifest_sha256 is None and "media_manifest_sha256" in receipt:
+        differences.append("media_manifest_sha256")
+    return differences
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -275,14 +285,21 @@ class GitHub:
             raise OnlineError("Snapshot demasiado grande")
         return data
 
-    def upload(self, release, data):
+    def upload(self, release, data, *, name="snapshot.zip", content_type="application/zip"):
+        if name != "snapshot.zip":
+            match = re.fullmatch(r"[0-9a-f]{64}\.(png|jpg|jpeg|webp)", name)
+            mime = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "webp": "image/webp"}
+            if not match or content_type != mime[match[1]]:
+                raise OnlineError("Activo público fuera del contrato de imágenes")
+        elif content_type != "application/zip":
+            raise OnlineError("Tipo de snapshot inválido")
         url = release["upload_url"].split("{")[0]
         expected = f"https://uploads.github.com/repos/{self.repo}/releases/{release['id']}/assets"
         if url != expected:
             raise OnlineError("Destino de subida no permitido")
-        req = urllib.request.Request(url + "?name=snapshot.zip", data=data, method="POST",
+        req = urllib.request.Request(url + "?name=" + urllib.parse.quote(name), data=data, method="POST",
               headers={"Authorization": "Bearer " + self.token,
-                       "Content-Type": "application/zip",
+                       "Content-Type": content_type,
                        "Accept": "application/vnd.github+json"})
         try:
             with urllib.request.urlopen(req, timeout=120) as r:
@@ -310,6 +327,7 @@ class Snapshots:
         self.state_dir = Path(self.env.get("RUNNER_TEMP") or tempfile.gettempdir()) / state_name
         self.state_dir.mkdir(parents=True, exist_ok=True)
         self.state_file = self.state_dir / "online.json"
+        self._verified_media = None
 
     def git(self, *args, binary=False):
         proc = subprocess.run(["git", *args], cwd=self.root, capture_output=True,
@@ -550,7 +568,228 @@ class Snapshots:
         resolved = {**manifest, "files": [{"path": p, "sha256": digest(raw), "bytes": len(raw)}
                                           for p, raw in sorted(files.items())],
                     "deleted": sorted(deleted)}
+        if MEDIA_PATH in files:
+            media = self._parse_media(files[MEDIA_PATH])
+            if set(media["entries"]) & (set(files) | deleted):
+                raise OnlineError("Un medio externo no puede viajar o borrarse dentro del ZIP")
         return resolved, files
+
+    def _reader_ready(self):
+        class ReaderMarker(HTMLParser):
+            ready = False
+            script = False
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if tag == "meta" and attrs.get("name") == "sala-medios-publicos" and attrs.get("content") == "1":
+                    self.ready = True
+                if tag == "script" and urllib.parse.urlsplit(attrs.get("src", "")).path == "medios-publicos.js":
+                    self.script = True
+        parser = ReaderMarker()
+        try:
+            parser.feed(self.git("show", self.head() + ":index.html"))
+            script = self.git("show", self.head() + ":medios-publicos.js", binary=True)
+        except OnlineError:
+            return False
+        return parser.ready and parser.script and bool(script)
+
+    def _parse_media(self, raw):
+        from medios_publicos import MediaError, validate_manifest
+        try:
+            manifest = validate_manifest(raw, self.repo)
+        except MediaError as exc:
+            raise OnlineError(str(exc)) from None
+        if not self._reader_ready():
+            raise OnlineError("El código aprobado no declara el lector de medios públicos")
+        tracked = set(self.git("ls-files", "-z").split("\0"))
+        if tracked & set(manifest["entries"]):
+            raise OnlineError("No se externalizan rutas históricas de Git")
+        return manifest
+
+    def assert_media_reader_published(self):
+        """The emitter needs a completed, independently accredited reader deploy."""
+        if not self._reader_ready():
+            raise OnlineError("El código aprobado no declara el lector de medios públicos")
+        source = self.head()
+        try:
+            site = self.api.request("pages")["html_url"].rstrip("/") + "/"
+            parsed = urllib.parse.urlsplit(site)
+            if (parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password
+                    or parsed.port not in (None, 443) or parsed.query or parsed.fragment):
+                raise ValueError("site")
+            query = urllib.parse.urlencode({"lector": source, "check": str(time.time_ns())})
+            request = urllib.request.Request(site + "version-online.json?" + query,
+                                             headers={"Cache-Control": "no-cache"})
+            with urllib.request.urlopen(request, timeout=30) as response:
+                raw = response.read(32769)
+            if len(raw) > 32768:
+                raise ValueError("size")
+            receipt = json.loads(raw)
+        except (KeyError, TypeError, ValueError, UnicodeError, OSError, urllib.error.URLError, OnlineError):
+            raise OnlineError("No se acreditó el lector público antes de externalizar") from None
+        if (not isinstance(receipt, dict) or type(receipt.get("schema")) is not int
+                or receipt["schema"] != SCHEMA or receipt.get("code_sha") != source
+                or type(receipt.get("run_id")) is not str
+                or not re.fullmatch(r"[1-9][0-9]*", receipt["run_id"])):
+            raise OnlineError("El recibo público no acredita el código del lector actual")
+        try:
+            run = self.api.request("actions/runs/" + receipt["run_id"])
+        except OnlineError:
+            raise OnlineError("No se acreditó la ejecución pública del lector") from None
+        if (not isinstance(run, dict) or type(run.get("id")) is not int
+                or str(run["id"]) != receipt["run_id"]
+                or not isinstance(run.get("repository"), dict)
+                or run["repository"].get("full_name") != self.repo
+                or run.get("path") != ".github/workflows/publicar.yml"
+                or run.get("head_branch") != "main" or run.get("head_sha") != source
+                or run.get("event") not in ("push", "workflow_dispatch")
+                or run.get("status") != "completed" or run.get("conclusion") != "success"):
+            raise OnlineError("La ejecución de Pages no acredita un lector terminado y compatible")
+        return receipt
+
+    def media_manifest(self):
+        path = self.root / MEDIA_PATH
+        if path.is_symlink():
+            raise OnlineError("Manifiesto de medios con symlink")
+        return self._parse_media(path.read_bytes()) if path.is_file() else None
+
+    def anonymous_media(self, url):
+        """Sólo GET anónimo acotado; las URLs firmadas nunca se guardan ni se loguean."""
+        def parsed_url(value):
+            try:
+                parsed = urllib.parse.urlsplit(value)
+                if parsed.port not in (None, 443):
+                    raise ValueError("port")
+                return parsed
+            except (TypeError, ValueError):
+                raise OnlineError("URL pública de medio no autorizada") from None
+        current, original = url, parsed_url(url)
+        if (original.scheme != "https" or original.hostname != "github.com"
+                or original.username or original.password or original.query or original.fragment
+                or not original.path.startswith("/" + self.repo + "/releases/download/")):
+            raise OnlineError("URL pública de medio no autorizada")
+        opener = urllib.request.build_opener(NoRedirect)
+        for _ in range(4):
+            request = urllib.request.Request(current, headers={"Cache-Control": "no-cache"})
+            try:
+                with opener.open(request, timeout=90) as response:
+                    raw = response.read(MAX_FILE + 1)
+                if len(raw) > MAX_FILE:
+                    raise OnlineError("Descarga pública demasiado grande")
+                return raw
+            except urllib.error.HTTPError as exc:
+                if exc.code not in (301, 302, 303, 307, 308):
+                    raise OnlineError("Descarga pública no confirmada") from None
+                target = exc.headers.get("Location", "")
+                parsed = parsed_url(target)
+                if (parsed.scheme != "https" or parsed.username or parsed.password or parsed.fragment
+                        or parsed.hostname not in {"github.com", "release-assets.githubusercontent.com", "objects.githubusercontent.com"}
+                        or (parsed.hostname == "github.com" and (parsed.path != original.path or parsed.query))):
+                    raise OnlineError("Redirección pública no autorizada") from None
+                current = target
+            except (OSError, urllib.error.URLError, ValueError):
+                raise OnlineError("Descarga pública no confirmada") from None
+        raise OnlineError("Demasiadas redirecciones públicas")
+
+    def _assert_media_origin(self, files):
+        """A dirty checkout cannot introduce an unacknowledged public map."""
+        path = self.root / MEDIA_PATH
+        if not path.exists() or MEDIA_PATH in files:
+            return
+        try:
+            raw = self.git("show", self.head() + ":" + MEDIA_PATH, binary=True)
+        except OnlineError:
+            raise OnlineError("El manifiesto público no procede del snapshot ni de Git aprobado") from None
+        if path.read_bytes() != raw:
+            raise OnlineError("El manifiesto público no procede del snapshot ni de Git aprobado")
+
+    def _media_cache(self, manifest):
+        catalog = {entry["url"]: entry for entry in manifest["entries"].values()}
+        directory = self.state_dir / "medios-publicos"
+        directory.mkdir(exist_ok=True)
+
+        def fetch(url):
+            entry = catalog.get(url)
+            if entry is None:
+                raise OnlineError("Descarga no declarada en medios públicos")
+            cache = directory / entry["sha256"]
+            raw = cache.read_bytes() if cache.is_file() else self.anonymous_media(url)
+            if len(raw) != entry["bytes"] or digest(raw) != entry["sha256"]:
+                raise OnlineError("Los bytes públicos no coinciden con su manifiesto")
+            if not cache.exists():
+                temp = cache.with_suffix(".tmp")
+                temp.write_bytes(raw)
+                temp.replace(cache)
+            return raw
+        return fetch
+
+    def hydrate_media(self):
+        manifest = self.media_manifest()
+        if not manifest:
+            return None
+        from medios_publicos import MediaError, verify_manifest_assets
+        identity = digest((self.root / MEDIA_PATH).read_bytes())
+        fetch = self._media_cache(manifest)
+        if self._verified_media != identity:
+            try:
+                verify_manifest_assets(manifest, self.api, fetch)
+            except MediaError as exc:
+                raise OnlineError(str(exc)) from None
+            self._verified_media = identity
+        # Verificar TODO antes de materializar; el caché ya acredita cada objeto.
+        for logical, entry in manifest["entries"].items():
+            target = self.root / logical
+            if target.is_symlink() or any(p.is_symlink() for p in target.parents if p != self.root):
+                raise OnlineError("Destino de medio público con symlink")
+            if target.exists() and (not target.is_file() or digest(target.read_bytes()) != entry["sha256"]):
+                raise OnlineError("No se sobrescribe una identidad pública existente")
+        for logical, entry in manifest["entries"].items():
+            target = self.root / logical
+            if not target.exists():
+                target.parent.mkdir(parents=True, exist_ok=True)
+                temp = target.with_name(target.name + ".online-tmp")
+                temp.write_bytes(fetch(entry["url"]))
+                temp.replace(target)
+        return manifest
+
+    def _prepare_media(self, state, process, current):
+        manifest = self.media_manifest()
+        if manifest != state.get("media_baseline") and manifest != state.get("media_prepared"):
+            raise OnlineError("No se edita el manifiesto público fuera de su publicador")
+        entries = manifest["entries"] if manifest else {}
+        if any(current.get(path) != entry["sha256"] for path, entry in entries.items()):
+            raise OnlineError("No se modifica ni elimina una identidad pública externalizada")
+        if self.env.get("SALA_MEDIOS_PUBLICOS") != "1" or process not in ("mesa", "arranque"):
+            return manifest
+        from medios_publicos import MediaError, upload_new
+        tracked = set(self.git("ls-files", "-z").split("\0"))
+        candidates = {path: (self.root / path).read_bytes() for path in current
+                      if path.startswith("laminas/") and path not in state["baseline"]
+                      and path not in tracked and path not in entries}
+        if not candidates:
+            return manifest
+        if not self._reader_ready():
+            raise OnlineError("Desplegar y verificar el lector antes de externalizar imágenes")
+        self.assert_media_reader_published()
+        # upload_new exige inmutabilidad y una descarga anónima antes de devolver referencias.
+        journal = state.setdefault("media_journal", {})
+        def checkpoint(value):
+            state["media_journal"] = value
+            self.save(state)
+        try:
+            updated = upload_new(entries, candidates, self.head(), self.run, self.attempt,
+                                 process, self.api, self.anonymous_media,
+                                 journal=journal, checkpoint=checkpoint)
+        except MediaError as exc:
+            raise OnlineError(str(exc)) from None
+        state["media_prepared"] = updated
+        self.save(state)
+        target = self.root / MEDIA_PATH
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temp = target.with_name(target.name + ".online-tmp")
+        temp.write_bytes(canonical(updated) + b"\n")
+        temp.replace(target)
+        return self.hydrate_media()
 
     def fingerprint(self):
         files = {}
@@ -587,12 +826,17 @@ class Snapshots:
             self.acquire(process)
         state = self.state(required=False)
         release, body = self.latest()
+        files = {}
         if release:
             manifest, files = self.download(release, body)
             self.apply(manifest, files)
+        self._assert_media_origin(files)
+        media = self.hydrate_media()
         state.update({"source_sha": self.head(), "parent_id": release["id"] if release else 0,
                       "baseline": self.fingerprint(), "data_sha": body["data_sha"] if body else digest(canonical({"files": [], "deleted": []}))})
         state["parent_data_sha"] = state["data_sha"]
+        state["media_baseline"] = media
+        state.pop("media_prepared", None)
         self.save(state)
         return self.output(snapshot_id=state["parent_id"], hidratado="si")
 
@@ -616,6 +860,11 @@ class Snapshots:
         paths = set(self.git("diff", "--name-only", "HEAD").splitlines())
         if any(not allowed(p, self.prefixes) for p in paths):
             raise OnlineError("El productor alteró código; se requiere PR")
+        media = self._prepare_media(state, process, current)
+        if media:
+            current = self.fingerprint()
+            changed = {p for p in set(current) | set(state["baseline"])
+                       if current.get(p) != state["baseline"].get(p)}
         incremental = self.env.get("SALA_SNAPSHOT_INCREMENTAL") == "1"
         if incremental:
             candidates = sorted(changed)
@@ -624,7 +873,9 @@ class Snapshots:
             # Sin activar el flag seguimos emitiendo overlays completos v1.
             untracked = self.git("ls-files", "--others", "--exclude-standard").splitlines()
             candidates = sorted(p for p in paths | set(untracked) if allowed(p, self.prefixes))
-        files = {p: (self.root / p).read_bytes() for p in candidates if (self.root / p).is_file()}
+        external = set(media["entries"]) if media else set()
+        files = {p: (self.root / p).read_bytes() for p in candidates
+                 if p not in external and (self.root / p).is_file()}
         deleted = [p for p in candidates if not (self.root / p).exists()]
         self.site_files()  # Presupuesto FINAL antes de crear/subir otra versión.
         raw, manifest = encode_archive(self.repo, source, files, deleted, self.prefixes,
@@ -734,6 +985,9 @@ class Snapshots:
                     print("::warning::Pages acredita la publicación exacta; falló un paso posterior del workflow.")
                 state["published_receipt"] = {"schema": SCHEMA, "code_sha": sha,
                     "data_sha": state["data_sha"], "snapshot_id": rid, "run_id": str(run["id"])}
+                media_hash = self.media_hash_for_receipt()
+                if media_hash:
+                    state["published_receipt"]["media_manifest_sha256"] = media_hash
                 self.save(state)
                 return self.output(publicado="si", snapshot_id=rid, pages_run=run["id"])
             self.sleep(10)
@@ -755,17 +1009,22 @@ class Snapshots:
                 raise OnlineError("Snapshot concurrente o código diferente")
         else:
             release, body = self.latest()
+        files = {}
         if release:
             manifest, files = self.download(release, body)
             self.apply(manifest, files)
             data_sha, rid = body["data_sha"], release["id"]
         else:
             data_sha, rid = digest(canonical({"files": [], "deleted": []})), 0
+        self._assert_media_origin(files)
+        media = self.hydrate_media()
         receipt = {"schema": SCHEMA, "code_sha": sha, "data_sha": data_sha,
                    "snapshot_id": rid, "run_id": self.run}
         plan_file = self.root / "datos" / "plan-agregados.json"
         if plan_file.is_file():
             receipt["plan_sha256"] = digest(plan_file.read_bytes())
+        if media:
+            receipt["media_manifest_sha256"] = digest((self.root / MEDIA_PATH).read_bytes())
         (self.root / "version-online.json").write_bytes(canonical(receipt) + b"\n")
         state = {"source_sha": sha, "snapshot_id": rid, "data_sha": data_sha,
                  "lease": lease, "staged_receipt": receipt}
@@ -773,12 +1032,16 @@ class Snapshots:
         return self.output(snapshot_id=rid, data_sha=data_sha)
 
     def site_files(self):
+        media = self.hydrate_media()
+        external = set(media["entries"]) if media else set()
         # Sólo archivos de Git aprobado y outputs allowlisted. Nunca logs ni credenciales.
         tracked = self.git("ls-files", "-z").split("\0")
         public = set(tracked) | set(self.fingerprint()) | {"version-online.json"}
         files, total = {}, 0
         for rel in sorted(public):
             if not rel or rel.startswith(".github/") or rel.startswith(".git"):
+                continue
+            if rel in external:
                 continue
             path = self.root / rel
             if path.is_symlink() or any(p.is_symlink() for p in path.parents if p != self.root):
@@ -792,7 +1055,7 @@ class Snapshots:
             raise OnlineError(f"Sitio público de {total} bytes excede el presupuesto de {MAX_SITE}; "
                               "conservar históricos y migrar medios antes de publicar")
         if total > MAX_SITE * 0.9:
-            print(f"::warning::Sitio público en {total} de {MAX_SITE} bytes; migrar medios históricos.")
+            print(f"::warning::Sitio público en {total} de {MAX_SITE} bytes; externalizar derivados nuevos.")
         return files
 
     def build_site(self, destination):
@@ -801,6 +1064,7 @@ class Snapshots:
         if dest == self.root or self.root in dest.parents:
             raise OnlineError("El bundle debe estar fuera del checkout")
         self.plan_hash_for_receipt()  # Detectar cambios posteriores a stage antes de publicar.
+        self.media_hash_for_receipt()
         files = self.site_files()  # Fallar antes de tocar un bundle anterior.
         if dest.exists():
             shutil.rmtree(dest)
@@ -819,8 +1083,17 @@ class Snapshots:
             raise OnlineError("El plan local cambió después de stage; campo=plan_sha256")
         return actual
 
+    def media_hash_for_receipt(self):
+        manifest = self.media_manifest()
+        actual = digest((self.root / MEDIA_PATH).read_bytes()) if manifest else None
+        staged = self.state(required=False).get("staged_receipt")
+        if isinstance(staged, dict) and staged.get("media_manifest_sha256") != actual:
+            raise OnlineError("El manifiesto local cambió después de stage; campo=media_manifest_sha256")
+        return actual
+
     def verify_receipt(self, sha, data_sha, snapshot_id, run_id, timeout=300):
         expected_plan = self.plan_hash_for_receipt()
+        expected_media = self.media_hash_for_receipt()
         site = self.api.request("pages")["html_url"].rstrip("/") + "/"
         parsed = urllib.parse.urlsplit(site)
         if parsed.scheme != "https" or parsed.username or parsed.password:
@@ -839,7 +1112,8 @@ class Snapshots:
                     receipt = json.loads(response.read(32768))
                 differences = receipt_differences(receipt, code_sha=sha, data_sha=data_sha,
                                                  snapshot_id=snapshot_id, run_id=run_id,
-                                                 plan_sha256=expected_plan)
+                                                 plan_sha256=expected_plan,
+                                                 media_manifest_sha256=expected_media)
                 if not differences:
                     return receipt
                 diagnostic = "campos=" + ",".join(differences)
@@ -986,13 +1260,21 @@ class Snapshots:
     def file_is_published(self, path):
         state = self.state()
         receipt = state.get("published_receipt")
+        media_hash = self.media_hash_for_receipt()
         if not receipt or not receipt_matches(receipt, code_sha=self.head(),
                 data_sha=state["data_sha"], snapshot_id=receipt["snapshot_id"],
-                run_id=receipt["run_id"]):
+                run_id=receipt["run_id"], media_manifest_sha256=media_hash):
             return False
+        relative = Path(path).resolve().relative_to(self.root).as_posix()
+        media = self.media_manifest()
+        external = media and relative in media["entries"]
         if not receipt["snapshot_id"]:
-            relative = Path(path).resolve().relative_to(self.root).as_posix()
             try:
+                if external:
+                    if digest(self.git("show", self.head() + ":" + MEDIA_PATH, binary=True)) != media_hash:
+                        return False
+                    self.hydrate_media()
+                    return digest(Path(path).read_bytes()) == media["entries"][relative]["sha256"]
                 return allowed(relative, self.prefixes) and digest(Path(path).read_bytes()) == digest(
                     self.git("show", self.head() + ":" + relative, binary=True))
             except (OnlineError, OSError):
@@ -1002,8 +1284,12 @@ class Snapshots:
         if body["state"] != "published" or body["data_sha"] != state["data_sha"]:
             return False
         manifest, files = self.download(release, body)
-        relative = Path(path).resolve().relative_to(self.root).as_posix()
         local = self.root / relative
+        if external:
+            if MEDIA_PATH not in files or digest(files[MEDIA_PATH]) != media_hash:
+                return False
+            self.hydrate_media()
+            return local.is_file() and digest(local.read_bytes()) == media["entries"][relative]["sha256"]
         # Un archivo base que nunca cambió también debe acreditar su hash Git.
         if relative in files:
             return local.is_file() and digest(local.read_bytes()) == digest(files[relative])

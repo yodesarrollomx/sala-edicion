@@ -42,7 +42,7 @@ test('para un GAS antiguo se rescatan las marcas sin perder los demás campos', 
 });
 test('una portada del repo prefiere JPG ligera aunque el catálogo ofrezca Drive', () => {
   const contexto = {_porRuta:{'laminas/lote/L1.png':{prueba:'test-drive'},'laminas/lote/L1.jpg':{prueba:'test-drive-jpg'},'externa.png':{prueba:'test-drive'}},
-    deDrive: id => 'https://drive.invalid/'+id};
+    deDrive: id => 'https://drive.invalid/'+id,SalaMedios:{vista:(src,ruta)=>ruta}};
   vm.runInNewContext(extraer('const ligera=src=>{', '/* Ampliar sí pide') +
     '\nthis.ligeraPublica = ligera;', contexto);
   assert.equal(contexto.ligeraPublica('laminas/lote/L1.png'),'laminas/lote/L1.jpg');
@@ -79,6 +79,44 @@ test('consultas secundarias dan prioridad limitada a la primera foto', () => {
   assert.match(secundarios,/principal\.addEventListener\('load',adelante,\{once:true\}\)/);
   assert.match(secundarios,/principal\.addEventListener\('error',adelante,\{once:true\}\)/);
   assert.match(secundarios,/setTimeout\(adelante,2000\)/);
+});
+
+test('vista vacía de visitante no da por decididas las tarjetas de los editores ni anuncia trabajo sin cola',()=>{
+  const nodes=new Map(),get=s=>{if(!nodes.has(s))nodes.set(s,{textContent:'',innerHTML:'',hidden:false});return nodes.get(s)};
+  const data={quien:'',_todas:[{id:'synthetic',laminas:['a.jpg','b.jpg','c.jpg']}],decisiones:{propuestas:{}}};
+  const ctx={$:get,D:data,PZ:{synthetic:{pieza:'Sintética',estado:'en camino',etapa:'copy'}},COLA:[],lockeadas:[],
+    DECIDE:()=>false,pintarCtx(){},pintarPanel(){},ICO_CHECK:'',fetch(){throw Error('sin red')},subir(){throw Error('sin escrituras')}};
+  const before=JSON.stringify({D:ctx.D,PZ:ctx.PZ});
+  vm.runInNewContext(extraer('function pintarVacio(){','/* ══ vista de solo lectura:')+'\npintarVacio();',ctx);
+  assert.equal(get('#titulo').textContent,'Vista de consulta');
+  assert.match(get('#zona').innerHTML,/Estás viendo la Sala como visitante/);
+  assert.match(get('#zona').innerHTML,/Las decisiones corresponden a los editores/);
+  assert.doesNotMatch(get('#zona').innerHTML,/Todo decidido|Producción trabaja|Cuando necesite tu decisión/);
+  assert.equal(JSON.stringify({D:ctx.D,PZ:ctx.PZ}),before);
+  assert.equal(get('#mandoWrap').hidden,true);
+  assert.match(get('#zona').innerHTML,/onclick="irVista\('pub'\)"/);
+});
+
+test('vista vacía distingue cuenta editora y cuenta de consulta sin cambiar sus acciones',()=>{
+  for(const editora of [true,false]){
+    const nodes=new Map(),get=s=>{if(!nodes.has(s))nodes.set(s,{});return nodes.get(s)};
+    const ctx={$:get,D:{quien:'Cuenta sintética'},PZ:{},lockeadas:[],DECIDE:()=>editora,
+      pintarCtx(){},pintarPanel(){},ICO_CHECK:''};
+    vm.runInNewContext(extraer('function pintarVacio(){','/* ══ vista de solo lectura:')+'\npintarVacio();',ctx);
+    assert.equal(get('#titulo').textContent,editora?'Sin tarjetas por responder para ti':'Vista de consulta');
+    assert.match(get('#zona').innerHTML,editora?/para tu cuenta en esta vista/:/Tu cuenta tiene acceso de consulta/);
+    assert.doesNotMatch(get('#zona').innerHTML,/Todo decidido|Producción trabaja|onclick=/);
+    assert.equal(get('#mandoWrap').hidden,true);
+  }
+});
+
+test('sin identidad confirmada tampoco se atribuye un turno a un rol editor local',()=>{
+  const nodes=new Map(),get=s=>{if(!nodes.has(s))nodes.set(s,{});return nodes.get(s)};
+  const ctx={$:get,D:null,PZ:{},lockeadas:[],DECIDE:()=>true,pintarCtx(){},pintarPanel(){},ICO_CHECK:''};
+  vm.runInNewContext(extraer('function pintarVacio(){','/* ══ vista de solo lectura:')+'\npintarVacio();',ctx);
+  assert.equal(get('#titulo').textContent,'Vista de consulta');
+  assert.match(get('#zona').innerHTML,/Estás viendo la Sala como visitante/);
+  assert.doesNotMatch(get('#zona').innerHTML,/Todo decidido|Producción trabaja|No hay tarjetas por responder para tu cuenta/);
 });
 
 {

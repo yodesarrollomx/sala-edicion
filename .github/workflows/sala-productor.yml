@@ -29,6 +29,9 @@ concurrency:
   group: sala-productor
   cancel-in-progress: false
 
+env:
+  SALA_PRODUCCION_HISTORICA: ${{ vars.SALA_PRODUCCION_HISTORICA || '0' }}
+
 jobs:
   productor:
     if: github.ref == 'refs/heads/main'

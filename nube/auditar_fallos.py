@@ -37,6 +37,10 @@ class ReadOnlyGitHub:
     def __init__(self, delegate):
         self._delegate=delegate
 
+    @property
+    def repo(self):
+        return self._delegate.repo
+
     def request(self,path,body=None,method=None,raw=False):
         if body is not None or method not in (None,'GET'):
             raise AuditoriaError('github_solo_lectura')
@@ -111,7 +115,8 @@ def evaluar(cola,dia,reglas,cat,*,planner,resolver,tira_reader,media_check,snaps
             'fallos_totales':sum(r.get('estado')=='fallo' for r in queue),'omitidos_veto':sum(vetado(r) for r in queue)}
     for row in selected:
         rid=str(row.get('id') or ''); ev=evidencia(row); pid=str(ev.get('de') or '')
-        result={'id':rid,'etapa':'corte','fuente':pid,'elegible':False,'bloqueos':[],'dependencias':[]}
+        result={'id':rid,'etapa':'corte','fuente':pid,'elegible':False,'bloqueos':[],'dependencias':[],
+                'evaluado':{'guion':False,'plan':False}}
         def block(code):
             if code not in result['bloqueos']:result['bloqueos'].append(code)
         if not ventana_estable:block('ventana_cambio')
@@ -119,21 +124,28 @@ def evaluar(cola,dia,reglas,cat,*,planner,resolver,tira_reader,media_check,snaps
         if 'corte' not in {x.strip() for x in str(reglas.get('nube_ejecuta_etapas') or '').split(',')}:
             block('etapa_no_habilitada')
         prop=proposals.get(pid); decision=decisions.get(pid)
-        if not prop or prop_counts[pid]!=1 or str(prop.get('origen','')).lower().startswith('retirada') or str(prop.get('estado','')).lower().startswith('retirada'):
+        fuente_confirmada=bool(prop and prop_counts[pid]==1
+            and not str(prop.get('origen','')).lower().startswith('retirada')
+            and not str(prop.get('estado','')).lower().startswith('retirada'))
+        if not fuente_confirmada:
             block('fuente_no_vigente')
         if not isinstance(decision,dict) or not any(x=='si' for x in decision.get('laminas') or []):
             block('aprobacion_incompleta')
         elif 'no' in (decision.get('laminas') or []) or firmas_no(decision):
             block('aprobacion_incompleta')
         tira=None;nums=[]
-        if prop and isinstance(decision,dict):
+        if fuente_confirmada and isinstance(decision,dict):
             try:
                 if not snapshot_check(pid):block('snapshot_sin_acuse')
                 tira=tira_reader(pid)
                 if not isinstance(tira,dict):raise ValueError()
                 tira=resolver(tira,decision,prop)
-            except Exception:block('lectura_no_confirmada')
+                if not isinstance(tira,dict):raise ValueError()
+            except Exception:
+                tira=None
+                block('lectura_no_confirmada')
         if isinstance(tira,dict):
+            result['evaluado']['guion']=True
             if not produccion.es_video(tira):block('formato_no_video')
             guion=tira.get('guion'); frames=tira.get('laminas')
             nums=[str(l.get('n','')) for l in guion if isinstance(l,dict)] if isinstance(guion,list) else []
@@ -147,11 +159,14 @@ def evaluar(cola,dia,reglas,cat,*,planner,resolver,tira_reader,media_check,snaps
             if revisar(tira,reglas):block('contenido_vetado')
         expected=planned_by_id.get(rid)
         old_lams=laminas(ev.get('laminas'))
-        if old_lams and set(n for n,_ in old_lams)!=set(nums):block('guion_incompleto')
-        if (not expected or plan_counts.get(rid)!=1 or descriptor(row)!=descriptor(expected)
+        if isinstance(tira,dict) and old_lams and set(n for n,_ in old_lams)!=set(nums):block('guion_incompleto')
+        # Sin fuente y tira resueltas no se ha contrastado el guion ni el plan.
+        # Sus compuertas previas ya bloquean; no atribuirles defectos derivados.
+        result['evaluado']['plan']=isinstance(tira,dict)
+        if (result['evaluado']['plan'] and (not expected or plan_counts.get(rid)!=1 or descriptor(row)!=descriptor(expected)
                 or not descriptor_coherente(row) or not descriptor_coherente(expected)
                 or evidencia(expected).get('de')!=pid or not old_lams
-                or laminas(evidencia(expected).get('laminas'))!=old_lams):
+                or laminas(evidencia(expected).get('laminas'))!=old_lams)):
             block('plan_no_coincide')
         # No descargar ni generar medios si antes falló una compuerta.
         if not result['bloqueos']:
@@ -199,7 +214,7 @@ def verificar_medio(job):
 
 
 def fresh(resource,**params):
-    if resource not in {'dia','cola','reglas','catalogo'}:raise AuditoriaError('lectura_no_confirmada')
+    if resource not in {'dia','produccion','cola','reglas','catalogo'}:raise AuditoriaError('lectura_no_confirmada')
     return sala.get(resource,**{**params,'fresco':'1'})
 
 
@@ -233,7 +248,8 @@ def confirmar_snapshot(s):
                                headers={'Cache-Control':'no-cache'}),timeout=30) as response:
         receipt=json.loads(response.read(32768))
     if not receipt_matches(receipt,code_sha=code,data_sha=state['data_sha'],
-            snapshot_id=state['parent_id'],run_id=run):raise AuditoriaError('snapshot_sin_acuse')
+            snapshot_id=state['parent_id'],run_id=run,
+            media_manifest_sha256=s.media_hash_for_receipt()):raise AuditoriaError('snapshot_sin_acuse')
     return state,receipt
 
 

@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Sala">
 <meta name="theme-color" content="#0a0a0c">
 <meta name="robots" content="noindex, nofollow">
+<meta name="sala-medios-publicos" content="1">
 <title>Sala de Edición · Yo Desarrollo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://script.google.com">
@@ -659,6 +660,7 @@ html.cargando #actualizando{display:flex}
   border-bottom:1px solid var(--no);font-weight:600;font-size:13.5px;line-height:1.35;padding:10px 16px}
 </style><link rel="stylesheet" href="tablero-sala.css?v=20261015-279"></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
 <script src="politica-imagen.js?v=sin-pollinations-gpt-20261012"></script>
+<script src="medios-publicos.js?v=20261015-1"></script>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
 <style>/* 13-oct · chinche #297 (CHN-20261013-0930-3863): «todas las pantallas tienen el solecito y la nochecita, aquí no».
    Mismo botón ☀️/🌙 que el Portero del YOD OS y MISMA preferencia (localStorage «yod_tema», mismo origen):
@@ -804,7 +806,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='00ae5394b0';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='ba60917594';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -894,16 +896,19 @@ const deDrive=(id,ancho)=>`https://drive.google.com/thumbnail?id=${id}&sz=w${anc
    video desapareció de la mesa («Nada pendiente para ti» con el video esperando en el Sheet).
    Se lee en un solo lugar. */
 const CANDIDATAS=p=>{ const o=(p&&p.opciones)||[]; return Array.isArray(o)?o:(o.candidatas||o.opciones||[]) };
+const mediosDisponibles=()=>typeof SalaMedios!=='undefined'&&SalaMedios.disponible();
+const fuentesImagen=(src,legado)=>typeof SalaMedios!=='undefined'?SalaMedios.fuentes(src,legado):[];
 const ligera=src=>{
   // Las PNG y JPG de laminas/ se sirven desde Pages. También aplica si el
   // Sheet ya devuelve .jpg y el catálogo ofrece una miniatura lenta de Drive.
+  let ruta;
   if(/^laminas\/[^?#]+\.(?:png|jpe?g|webp)$/i.test(src||''))
-    return /\.png$/i.test(src)?src.replace(/\.png$/i,'.jpg'):src;
-  const c=_porRuta[src]; if(c&&c.prueba) return deDrive(c.prueba,1200);
-  return /\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src;
+    ruta=/\.png$/i.test(src)?src.replace(/\.png$/i,'.jpg'):src;
+  else{ const c=_porRuta[src]; ruta=c&&c.prueba?deDrive(c.prueba,1200):(/\.png$/i.test(src||'')?src.replace(/\.png$/i,'.jpg'):src); }
+  return typeof SalaMedios!=='undefined'?SalaMedios.vista(src,ruta):'';
 };
 /* Ampliar sí pide el original limpio (sin sello), que para eso está. */
-const original=src=>{ const c=_porRuta[src]; return (c&&c.original)?deDrive(c.original,2000):src };
+const original=src=>{ const c=_porRuta[src]; return typeof SalaMedios!=='undefined'?SalaMedios.vista(src,(c&&c.original)?deDrive(c.original,2000):src):'' };
 /* El serial visible: «APODO-L04 · revisión 5 de 5». Para no volver a dudar si es nueva. */
 function serialDe(src){ const c=_porRuta[src]; return c?`${c.serial} · revisión ${c.r} de ${c.de}`:'' }
 const ICO_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -946,6 +951,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&CAPAS.length){ e.p
 let _ultimoErrorLlave='';
 async function traer(f,intentos,tope,sinRespaldo){
   _ultimoErrorLlave='';
+  const medios=typeof SalaMedios!=='undefined'?SalaMedios.cargar():Promise.resolve();
   if(ENTRADO()){
     const N=intentos||3;
     for(let i=0;i<N;i++){
@@ -967,7 +973,7 @@ async function traer(f,intentos,tope,sinRespaldo){
         }
       }
       try{
-        if(sirvio){ _llaveViva=sirvio; if(localStorage.getItem('sala_clave')&&localStorage.getItem('sala_clave')!==sirvio&&sirvio!==localStorage.getItem('pyod_clave_v1')) localStorage.setItem('sala_clave',sirvio); return resp }
+        if(sirvio){ _llaveViva=sirvio; if(localStorage.getItem('sala_clave')&&localStorage.getItem('sala_clave')!==sirvio&&sirvio!==localStorage.getItem('pyod_clave_v1')) localStorage.setItem('sala_clave',sirvio); await medios; return resp }
         throw new Error(ultimoError||'sin respuesta del Sheet');
       }catch(e){ const m=String(e&&e.message||e);
         if(/clave|credencial|no reconoc/i.test(m)){ _ultimoErrorLlave=m; break }
@@ -977,7 +983,7 @@ async function traer(f,intentos,tope,sinRespaldo){
   if(sinRespaldo) throw new Error('sin datos de ese día');   // el respaldo es de HOY: no sirve de sustituto
   const r=await fetch('datos/manifiesto.json?v='+Date.now());
   if(!r.ok) throw new Error('tampoco pude leer el respaldo');
-  const j=await r.json(); j._respaldo=true; return j;
+  const j=await r.json(); j._respaldo=true; await medios; return j;
 }
 async function conMarcasDeAntes(d,f){
   if(d._respaldo) return d;
@@ -1561,7 +1567,7 @@ function pintarCartas(){
       dobleToque(el.querySelector('.lienzo'),_zoomLam);
       el.querySelectorAll('[data-cand]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); if(!DECIDE()||!candadoLibre()) return; const k=+b.dataset.cand;
         const mini=b.closest('.cand-item').querySelector('img');
-        if(el.dataset.imagenLista!=='si'||!mini||!mini.complete||!mini.naturalWidth){
+        if(!mediosDisponibles()||el.dataset.imagenLista!=='si'||!mini||!mini.complete||!mini.naturalWidth){
           pintarEstado('cola','Esta toma aún no tiene imagen visible; no se puede aprobar');
           return;
         }
@@ -1637,11 +1643,11 @@ function montarImagen(el,src,prioritaria=true,reintento=false){
   const c=el.querySelector('.lienzo .cargando');
   if(c) c.textContent='Cargando lámina…';
   const cat=_porRuta[src]||{};
-  const fuentes=[...new Set([ligera(src),src,cat.prueba?deDrive(cat.prueba,1200):null]
-    .filter(Boolean))];
+  const fuentes=fuentesImagen(src,[ligera(src),src,cat.prueba?deDrive(cat.prueba,1200):null]);
   let i=0;
-  const version=u=>reintento?u+(u.includes('?')?'&':'?')+'reintentar='+Date.now():u;
+  const version=u=>!reintento?u:typeof SalaMedios!=='undefined'?SalaMedios.reintentar(u):u+(u.includes('?')?'&':'?')+'reintentar='+Date.now();
   const lista=()=>{
+    if(!mediosDisponibles())return;
     el.dataset.imagenLista='si'; img.classList.add('lista');
     const aviso=el.querySelector('.lienzo .cargando'); if(aviso) aviso.remove();
   };
@@ -1653,7 +1659,7 @@ function montarImagen(el,src,prioritaria=true,reintento=false){
     txt.textContent='Esta revisión todavía no tiene una imagen disponible. No se puede aprobar sin verla.';
     const btn=document.createElement('button'); btn.type='button';
     btn.className='secund reintentar-imagen'; btn.textContent='Reintentar imagen';
-    btn.onclick=e=>{ e.preventDefault(); e.stopPropagation(); montarImagen(el,src,prioritaria,true) };
+    btn.onclick=async e=>{ e.preventDefault(); e.stopPropagation(); if(typeof SalaMedios!=='undefined')await SalaMedios.cargar(); montarImagen(el,src,prioritaria,true) };
     aviso.append(txt,btn);
   };
   img.onload=lista;
@@ -1694,7 +1700,7 @@ function decidir(m){
   if(!DECIDE()||!candadoLibre()) return;
   const x=pasos[idx]; if(!x||x.tipo!=='lamina') return;
   const actual=document.querySelector('#zona .carta[data-k="'+idx+'"]');
-  if(!actual||actual.dataset.imagenLista!=='si'){
+  if(!mediosDisponibles()||!actual||actual.dataset.imagenLista!=='si'){
     pintarEstado('cola','Imagen de esta revisión pendiente; reintenta antes de decidir');
     const b=actual&&actual.querySelector('.lienzo .reintentar-imagen');
     if(b) b.focus();
@@ -1824,7 +1830,7 @@ function abrirZoom(src,opc){
   const gal=(opc&&Array.isArray(opc.galeria))?opc.galeria.filter(g=>g&&g.src):[];
   let gi=gal.length?Math.max(0,Math.min(gal.length-1,+opc.i||0)):0;
   if(gal.length) src=gal[gi].src;
-  let fuentes=[...new Set([ligera(src),original(src),src].filter(Boolean))];
+  let fuentes=fuentesImagen(src,[ligera(src),original(src),src]);
   const z=document.createElement('div'); z.className='zoom';
   z.innerHTML=`<img alt="Lámina ampliada"><button class="zx">${ICO_VOLVER}Volver</button><div class="zoom-error" hidden style="position:absolute;z-index:4;max-width:min(92vw,360px);padding:24px;border-radius:16px;background:#28231c;color:#fff;text-align:center"><p>La imagen de esta revisión todavía no está disponible. Puedes reintentar sin cerrar la Sala.</p><button type="button" class="reintentar-zoom" style="min-height:44px;padding:8px 18px;border-radius:12px">Reintentar imagen</button></div><div class="zt">${matchMedia('(hover:hover)').matches?'Rueda o doble clic para acercar · arrastra para mover':'Pellizca o doble toque para acercar · desliza para mover'}</div>${gal.length>1?`<div class="zg" role="group" aria-label="Comparar tomas"><button type="button" class="zg-ant" aria-label="Toma anterior">‹</button><span class="zg-cual" aria-live="polite"><b></b><small></small></span><button type="button" class="zg-sig" aria-label="Toma siguiente">›</button><button type="button" class="zg-elegir">Elegir ésta</button></div>`:''}`;
   if(gal.length>1) z.classList.add('galeria');
@@ -1838,13 +1844,15 @@ function abrirZoom(src,opc){
     clearTimeout(espera);
     if(pos>=fuentes.length){ img.hidden=true; aviso.hidden=false; return }
     const ruta=fuentes[pos++];
-    img.hidden=false; img.src=recargar?ruta+(ruta.includes('?')?'&':'?')+'reintentar='+Date.now():ruta;
+    img.hidden=false; img.src=!recargar?ruta:typeof SalaMedios!=='undefined'?SalaMedios.reintentar(ruta):ruta+(ruta.includes('?')?'&':'?')+'reintentar='+Date.now();
     espera=setTimeout(()=>{ if(!img.complete||!img.naturalWidth) proxima() },8000);
   };
   img.onload=()=>{ clearTimeout(espera); aviso.hidden=true; ajustar() };
   img.onerror=()=>proxima();
-  z.querySelector('.reintentar-zoom').onclick=e=>{
-    e.preventDefault(); e.stopPropagation(); aviso.hidden=true; pos=0; recargar=true; proxima();
+  z.querySelector('.reintentar-zoom').onclick=async e=>{
+    e.preventDefault(); e.stopPropagation(); if(typeof SalaMedios!=='undefined')await SalaMedios.cargar();
+    const actual=gal.length?gal[gi].src:src; fuentes=fuentesImagen(actual,[ligera(actual),original(actual),actual]);
+    aviso.hidden=true; pos=0; recargar=true; proxima();
   };
   proxima();
   const id='zoom'+Date.now();
@@ -1853,7 +1861,7 @@ function abrirZoom(src,opc){
     zg.querySelector('.zg-cual b').textContent=g.titulo||('Toma '+(gi+1));
     zg.querySelector('.zg-cual small').textContent=(gi+1)+' de '+gal.length;
     zg.querySelector('.zg-elegir').hidden=typeof g.elegir!=='function' };
-  const irA=k=>{ gi=(k+gal.length)%gal.length; fuentes=[...new Set([ligera(gal[gi].src),original(gal[gi].src),gal[gi].src].filter(Boolean))];
+  const irA=k=>{ gi=(k+gal.length)%gal.length; fuentes=fuentesImagen(gal[gi].src,[ligera(gal[gi].src),original(gal[gi].src),gal[gi].src]);
     pos=0; recargar=false; aviso.hidden=true; proxima(); pintarCual() };
   if(zg){ pintarCual();
     zg.querySelector('.zg-ant').onclick=e=>{ e.stopPropagation(); irA(gi-1) };
@@ -1962,10 +1970,13 @@ function pintarFin(){
   clearTimeout(_tSubir); subir(); pintarPanel();
 }
 function pintarVacio(){
-  $('#titulo').textContent='Nada pendiente para ti'; $('#subt').textContent=''; $('#mandoWrap').hidden=true; $('#bolas').innerHTML=''; pintarCtx(null); $('#verresp').hidden=!lockeadas.length;
+  const quien=String(D&&D.quien||'').trim(), consulta=!quien||!DECIDE();
+  $('#titulo').textContent=consulta?'Vista de consulta':'Sin tarjetas por responder para ti'; $('#subt').textContent=''; $('#mandoWrap').hidden=true; $('#bolas').innerHTML=''; pintarCtx(null); $('#verresp').hidden=!lockeadas.length;
   const enCam=Object.values(PZ).filter(p=>p.estado!=='publicada');
-  const txt=enCam.length?`Producción trabaja en ${enCam.length===1?'una publicación':enCam.length+' publicaciones'}. Cuando necesite tu decisión, aparece aquí.`:'Cuando Producción necesite tu decisión, aparece aquí.';
-  $('#zona').innerHTML=`<div class="vacio-hoy"><div class="palomon">${ICO_CHECK}</div><h2>Todo decidido</h2><p>${txt}</p>
+  const txt=!quien?'Estás viendo la Sala como visitante. Las decisiones corresponden a los editores.':
+    consulta?'Tu cuenta tiene acceso de consulta. Las decisiones corresponden a los editores.':
+    'No hay tarjetas por responder para tu cuenta en esta vista.';
+  $('#zona').innerHTML=`<div class="vacio-hoy"><div class="palomon">${ICO_CHECK}</div><h2>${consulta?'Acceso de consulta':'Tu mesa no tiene tarjetas por responder'}</h2><p>${txt}${enCam.length?' Puedes consultar el estado registrado de las publicaciones.':''}</p>
     ${enCam.length?`<button class="secund" onclick="irVista('pub')">Ver publicaciones</button>`:''}</div>`;
   pintarPanel();
 }
@@ -3220,7 +3231,7 @@ setInterval(vigilarVersion,600000);
   // Catálogo y vistas auxiliares se cargan al pintar la primera carta, sin competir con el día.
   try{ aplicarDia(normalizarDia(await conMarcasDeAntes(await traer(),''))) }
   catch(e){ if(!_pintado&&ENTRADO()&&!VISTA_DOC){ pintarEsperandoSheet(); reintentarSheet(0) }   // 23-sep: invariante 12 — con sesión nunca se abre la copia
-    else if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)); avisarRespaldo(); reintentarSheet(0) }
+    else if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); if(typeof SalaMedios!=='undefined')await SalaMedios.cargar(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)); avisarRespaldo(); reintentarSheet(0) }
     catch(e2){ $('#titulo').textContent='No pude abrir la sala'; $('#subt').textContent='Puede ser la red. Cierra y vuelve a abrir en un momento.'; pintarEstado('sin','Sin conexión') } } }
   avisarLlave();
 })();
