@@ -112,14 +112,29 @@ class Publisher:
         return result["workflow_runs"]
 
     def dispatch_and_wait(self, workflow, branch, inputs, *, head=None, title=None, deadline=None):
-        before = {run["id"] for run in self.run_list(workflow, branch)}
-        self.api(f"repos/{self.repo}/actions/workflows/{workflow}/dispatches",
-                 {"ref": branch, "inputs": inputs})
+        previous = self.run_list(workflow, branch)
+        before = {run["id"] for run in previous}
+        reusable = [run for run in previous if title is not None
+                    and run.get("event") == "workflow_dispatch" and run.get("head_branch") == branch
+                    and run.get("display_title") == title
+                    and (head is None or run.get("head_sha") == head)]
+        if len(reusable) > 1:
+            raise PublicationError("Más de una corrida coincide; se requiere revisión.")
+        if not reusable:
+            try:
+                self.api(f"repos/{self.repo}/actions/workflows/{workflow}/dispatches",
+                         {"ref": branch, "inputs": inputs})
+            except PublicationError:
+                if title is None:
+                    raise
+                # Una publicación tiene identidad exacta. Una respuesta perdida
+                # se reconcilia leyendo esa corrida, sin duplicar el POST.
         if deadline is None:
             deadline = self.clock() + self.timeout
         while self.clock() < deadline:
             runs = [run for run in self.run_list(workflow, branch)
-                    if run.get("id") not in before and run.get("event") == "workflow_dispatch"
+                    if (title is not None or run.get("id") not in before)
+                    and run.get("event") == "workflow_dispatch"
                     and run.get("head_branch") == branch
                     and (head is None or run.get("head_sha") == head)
                     and (title is None or run.get("display_title") == title)]
@@ -330,7 +345,7 @@ class Publisher:
         publication_id = f"{process}-{self.run}-{self.attempt}"
         # El ref es una rama admitida por workflow_dispatch; el workflow valida y
         # hace checkout del input SHA, aunque main avance mientras se espera.
-        title = f"Sala publicar · {sha} · {publication_id}"
+        title = f"Sala · publicacion={publication_id} · sha={sha}"
         run_id = self.dispatch_and_wait("publicar.yml", "main",
                                        {"sha": sha, "publicacion_id": publication_id}, title=title)
         return self.output(publicado_sha=sha, publicacion_run=run_id)

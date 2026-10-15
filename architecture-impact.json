@@ -1,15 +1,23 @@
 {
-  "model_revision": "2026-10-13.sala-tablero-hidream.1",
-  "proposal_id": "CHG-SALA-TABLERO-HIDREAM-20261013",
-  "summary": "Completar chinche #279 en el tablero Hoy vigente: el botón Ampliar de tablero-sala.js conecta todas las opciones al visor compartido, permite comparar con flechas y elegir explícitamente desde el zoom. Reutiliza voto/validación de imagen cargada, revalida rol y lámina al elegir; lector/agente no reciben callback de decisión. Conserva los índices originales de tomas filtradas, historial y guardado existentes. Sólo presentación: sin GAS, datos, permisos ni nuevas decisiones. El aviso de rol lector se contrae dentro de la cabecera, sin ensanchar el viewport móvil ni desplazar los puntos de toque. Se conserva el bloqueo de capas existente.",
+  "model_revision": "2026-10-15.sala-nube.1",
+  "proposal_id": "CHG-SALA-NUBE-20261015",
+  "summary": "Reparar continuidad de Sala en nube sobre los procesos existentes: GET válido o error explícito, POST ambiguo sin duplicar, mutex por intento y publicación con recibo real, presupuesto final de Pages, lector de snapshots compatible con emisión FULL predeterminada y delta opt-in tras drenaje. Correo por historial/decisiones y puente de chinches con checkpoints y estados solicitados/completados diferenciados. Push de cierre no manda nuevas entradas ni repite comparación histórica. Se conservan editores, vetos, destinatario, datos, secretos y compuertas.",
   "components": [
-    "SYS-SALA"
+    "SYS-SALA",
+    "GAS-SALA",
+    "SHEET-SALA",
+    "SVC-SALA-PRODUCTOR",
+    "SVC-SALA-EJECUTOR",
+    "EXT-ACTIONS",
+    "EXT-DRIVE",
+    "EXT-GMAIL"
   ],
   "tests": [
-    "Regresión del consumidor real tablero-sala: zoom con dos opciones, flechas sin votos, clic explícito conserva índice original; lector/agente sin callback, revocación y cambio de lámina rechazan elección tardía. Recorrido browser aislado actualiza el mismo flujo de escritorio y roles.",
-    "node --test tests/sala-imagenes.test.cjs tests/imagen-broker.test.mjs: firma opcional de galería y navegación/elección explícita/cierre con DOM sintético; no sustituye QA visual.",
-    "python3 nube/sellar_sala.py; python3 nube/verificar.py (13 pruebas, todo en orden).",
-    "Playwright 390px y 1280px embed=1 con láminas reales del repo: abrirZoom con galería muestra «Lámina actual 1 de 2», › cambia a la toma 2 (L1→L3), ← regresa, «Elegir ésta» llama al mismo elegir de la carta y cierra el visor; sin galería no aparece la barra; sin desbordamiento horizontal ni errores de página."
+    "python3 -m unittest discover -s tests -p \"*_test.py\": 302 casos aprobados; transporte simulado con POST aplicado/acuse perdido, snapshots y publicaciones, conteos y puente.",
+    "node --test tests/correo-estado.test.cjs tests/sala-imagenes.test.cjs tests/imagen-broker.test.mjs: 23 casos aprobados.",
+    "python3 nube/verificar.py: 13 grupos aprobados; git diff --check.",
+    "Recepción del correo y recuperación externa de Render se verifican por separado; no se atribuyen a CI sintético.",
+    "Lectura del Sheet real sin escrituras confirma resumen acumulado; funciones compartidas del original coinciden con las probadas."
   ],
-  "rollback": "Revertir este PR en tablero-sala.js/index.html conservando visor legado, decisiones, historial, Sheet y permisos."
+  "rollback": "Conservar decisiones/cola/medios/releases/recibos. Antes de revertir lectores tras emitir deltas, desactivar flag y publicar FULL desde lector compatible, comprobando recibo. Para correo original restaurar la función conservada correoDiarioAnterior20261015_ y conservar el respaldo privado del contenedor. No cambiar URL ni ACL."
 }

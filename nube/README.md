@@ -1,5 +1,12 @@
 # El ciclo de la Sala, en la nube
 
+**Estado operativo 15-oct-2026:** Mesa, Productor, Ejecutor, publicación y puente
+corren en GitHub Actions con las conexiones existentes. No requieren la Mac ni
+una conversación abierta. La auditoría, reparación, corte de snapshots y límites
+vigentes están en [SALA-AUDITORIA-NUBE-20261015](../docs/SALA-AUDITORIA-NUBE-20261015.md).
+Las instrucciones de arranque originales que siguen son antecedentes; no volver
+a crear secretos, disparadores o servicios ya existentes sin comprobar su estado.
+
 Hasta ahora `/sala` sólo existía en la Mac: los scripts en `~/yod_audit/`, las llaves en
 `~/.sala_gas_claves.json`, los disparadores en `launchd`. Si la Mac se dormía, la Sala
 amanecía sin respaldo y nadie se enteraba.

@@ -118,7 +118,7 @@ class FakeGitHub:
             "status": "queued" if status == "queued" else "completed",
             "conclusion": None if status == "queued" else status,
             "display_title": "" if is_guard or is_verifier else
-            f"Sala publicar · {fields['sha']} · {fields['publicacion_id']}",
+            f"Sala · publicacion={fields['publicacion_id']} · sha={fields['sha']}",
         }
 
 
@@ -336,6 +336,15 @@ class PublicationTests(unittest.TestCase):
         with self.assertRaisesRegex(module.PublicationError, "sin éxito"):
             self.publisher.publish(MERGE, "relevo")
         self.assertFalse((self.cwd / "output").exists())
+
+    def test_publication_reentry_recovers_same_dispatch(self):
+        first = self.publisher.publish(MERGE, "relevo")
+        second = self.publisher.publish(MERGE, "relevo")
+        self.assertEqual(first, second)
+        dispatches = [argv for argv, _ in self.fake.calls
+                      if argv[:4] == ["gh", "api", "--method", "POST"]
+                      and argv[4].endswith("/publicar.yml/dispatches")]
+        self.assertEqual(len(dispatches), 1)
 
     def test_invalid_publication_sha_never_dispatches(self):
         with self.assertRaises(module.PublicationError):

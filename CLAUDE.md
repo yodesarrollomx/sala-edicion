@@ -2,6 +2,10 @@
 
 Contexto para Claude Code. **Lee este archivo completo antes de tocar nada.**
 
+**Continuidad 15-oct-2026:** el proceso y su reparación vigente están documentados
+en `docs/SALA-AUDITORIA-NUBE-20261015.md`. Las menciones a Mac/launchd de este
+documento son antecedentes. No introducir dependencias de una computadora local.
+
 ## Qué es esto
 
 El portal diario de producción de contenido de **Yo Desarrollo**. Cada mañana llega un correo con la

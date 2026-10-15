@@ -5,6 +5,10 @@ Identidad: GITHUB_TOKEN del propio workflow. Un mutex Git con fast-forward
 serializa escritores sin cancelar procesos distintos en la cola de Actions.
 Nunca contiene credenciales ni registros privados. Antes de montar se exige
 el recibo exacto de Pages y el hash de cada archivo.
+
+SALA_SNAPSHOT_INCREMENTAL=1 activa la emisión de parches sólo después de
+desplegar este lector y drenar consumidores antiguos. Por defecto se emiten
+overlays completos, también útiles como checkpoint antes de una reversión.
 """
 import argparse
 import hashlib
@@ -28,15 +32,15 @@ DIGEST = re.compile(r"^[0-9a-f]{64}$")
 PREFIX = "yod-online-"
 KIND = "yod-online-public-data"
 LOCK_REF = "heads/runtime/online-data-lease"
-# Sala sin producir desde 13-oct: el snapshot acumulado llegó a 208.4 MB y cada carta
-# nueva superaba 200 MiB (mesa fallaba en «Guardar snapshot» y saltaba productor/ejecutor).
-# 450 MiB mantiene sitio Pages (láminas en git ~464 MB + snapshot) bajo el límite de 1 GB.
-# Aviso temprano al 75 % para compactar/sacar medios antes de volver a atorarse.
+# El límite de cada ZIP no acredita el tamaño de Pages. El lector admite parches
+# encadenados; el sitio final se mide por separado, sin borrar históricos.
 MAX_ZIP = 450 * 1024 * 1024
 MAX_PLAIN = 900 * 1024 * 1024
 AVISO_ZIP = int(MAX_ZIP * 0.75)
 MAX_FILE = 25 * 1024 * 1024
 MAX_FILES = 10000
+MAX_SITE = 900 * 1024 * 1024
+MAX_CHAIN = 1024
 SALA_PATHS = {
     "arranque": ("laminas/", "datos/tiras/", "datos/arranque.json"),
     "mesa": ("laminas/", "datos/tiras/", "datos/mesa-estado.json"),
@@ -90,7 +94,7 @@ def validate_file(path, data):
         raise OnlineError("WEBP inválido")
 
 
-def encode_archive(repo, source_sha, files, deleted, prefixes):
+def encode_archive(repo, source_sha, files, deleted, prefixes, *, base_id=0, base_data=None):
     if not SHA.fullmatch(source_sha):
         raise OnlineError("SHA de código inválido")
     records = []
@@ -106,12 +110,20 @@ def encode_archive(repo, source_sha, files, deleted, prefixes):
     manifest = {"schema": SCHEMA, "repo": repo, "source_sha": source_sha,
                 "files": records, "deleted": sorted(deleted)}
     data_sha = digest(canonical({"files": records, "deleted": sorted(deleted)}))
+    if base_id:
+        if type(base_id) is not int or base_id < 1 or not DIGEST.fullmatch(str(base_data)):
+            raise OnlineError("Base incremental inválida")
+        manifest.update({"base_snapshot_id": base_id, "base_data_sha": base_data})
+        data_sha = digest(canonical({"base_data_sha": base_data, "patch_sha": data_sha}))
     manifest["data_sha"] = data_sha
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as z:
-        z.writestr("snapshot.json", canonical(manifest))
-        for path, data in sorted(files.items()):
-            z.writestr("files/" + path, data)
+        # Identidad estable entre reintentos (el timestamp ZIP no es un dato).
+        for path, data in [("snapshot.json", canonical(manifest)),
+                           *(("files/" + p, raw) for p, raw in sorted(files.items()))]:
+            info = zipfile.ZipInfo(path, date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            z.writestr(info, data)
     result = buf.getvalue()
     if len(result) > MAX_ZIP:
         raise OnlineError("Snapshot comprimido demasiado grande")
@@ -161,6 +173,13 @@ def decode_archive(data, repo, prefixes, expected_hash=None, expected_data=None)
                     or set(names) != declared):
                 raise OnlineError("ZIP con archivos no declarados")
             actual = digest(canonical({"files": manifest["files"], "deleted": deleted}))
+            if "base_snapshot_id" in manifest or "base_data_sha" in manifest:
+                if (type(manifest.get("base_snapshot_id")) is not int
+                        or manifest["base_snapshot_id"] < 1
+                        or not DIGEST.fullmatch(str(manifest.get("base_data_sha")))):
+                    raise OnlineError("Base incremental inválida")
+                actual = digest(canonical({"base_data_sha": manifest["base_data_sha"],
+                                           "patch_sha": actual}))
             if manifest.get("data_sha") != actual or (expected_data and actual != expected_data):
                 raise OnlineError("Identidad de los datos incorrecta")
             return manifest, files
@@ -183,8 +202,8 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 
 
 class GitHub:
-    def __init__(self, repo, token):
-        self.repo, self.token = repo, token
+    def __init__(self, repo, token, sleep=time.sleep):
+        self.repo, self.token, self.sleep = repo, token, sleep
 
     def request(self, path, body=None, method=None, raw=False):
         if not path.startswith("/"):
@@ -196,14 +215,24 @@ class GitHub:
                        "Accept": "application/vnd.github+json",
                        "X-GitHub-Api-Version": "2022-11-28",
                        "Content-Type": "application/json"})
-        try:
-            with urllib.request.urlopen(req, timeout=90) as r:
-                content = r.read()
-        except urllib.error.HTTPError as exc:
-            # No cuerpo remoto ni URL firmada/token en logs.
-            raise OnlineError("GitHub HTTP " + str(exc.code)) from None
-        except (OSError, urllib.error.URLError) as exc:
-            raise OnlineError("GitHub no confirmó la operación") from None
+        # Sólo lecturas se reintentan aquí. Una escritura ambigua se reconcilia
+        # en su operación por identidad; repetir POST a ciegas duplica versiones.
+        for attempt in range(3):
+            try:
+                with urllib.request.urlopen(req, timeout=90) as r:
+                    content = r.read()
+                break
+            except urllib.error.HTTPError as exc:
+                if req.get_method() == "GET" and exc.code in (429, 500, 502, 503, 504) and attempt < 2:
+                    self.sleep(2 ** attempt)
+                    continue
+                # No cuerpo remoto ni URL firmada/token en logs.
+                raise OnlineError("GitHub HTTP " + str(exc.code)) from None
+            except (OSError, urllib.error.URLError):
+                if req.get_method() == "GET" and attempt < 2:
+                    self.sleep(2 ** attempt)
+                    continue
+                raise OnlineError("GitHub no confirmó la operación") from None
         if raw:
             return content
         try:
@@ -336,9 +365,23 @@ class Snapshots:
             busy = info and info["state"] == "held"
             if busy and info["expires"] <= time.time():
                 busy = False
+            if (busy and info.get("run_id") == self.run
+                    and str(info.get("attempt")) == self.attempt
+                    and info.get("process") == process):
+                # Recuperar el mismo intento después de perder la respuesta del
+                # CAS o su estado local. No inventar una segunda concesión.
+                state = self.state(required=False)
+                state.update({"lease": before, "process": process})
+                self.save(state)
+                return before
             if busy:
                 owner = self.api.request("actions/runs/" + str(info["run_id"]))
-                busy = owner["status"] != "completed"
+                # Actions conserva run_id al reintentar. El intento anterior ya
+                # terminó aunque la corrida consultada vuelva a estar activa.
+                newer_attempt = (str(owner.get("run_attempt", "")).isdecimal()
+                                 and str(info.get("attempt", "")).isdecimal()
+                                 and int(owner["run_attempt"]) > int(info["attempt"]))
+                busy = owner["status"] != "completed" and not newer_attempt
             if not busy:
                 payload = {"schema": SCHEMA, "state": "held", "run_id": self.run,
                            "attempt": self.attempt, "process": process,
@@ -359,6 +402,14 @@ class Snapshots:
                     self.save(state)
                     return commit
                 except OnlineError as exc:
+                    # GitHub puede haber escrito el ref y devolver 500 después.
+                    # La lectura exacta acredita el CAS; nunca usar force=True.
+                    observed, _ = self._lock_info()
+                    if observed == commit:
+                        state = self.state(required=False)
+                        state.update({"lease": commit, "process": process})
+                        self.save(state)
+                        return commit
                     if str(exc) not in ("GitHub HTTP 409", "GitHub HTTP 422"):
                         raise
             if self.clock() >= deadline:
@@ -378,6 +429,14 @@ class Snapshots:
         if not state.get("lease"):
             return
         sha, info = self._lock_info()
+        if (info and info["state"] == "released" and info["run_id"] == self.run
+                and str(info.get("attempt")) == self.attempt
+                and state["lease"] in {
+                    p.get("sha") if isinstance(p, dict) else p
+                    for p in self.api.request("git/commits/" + sha).get("parents", [])}):
+            state.pop("lease", None)
+            self.save(state)
+            return
         if sha != state["lease"] or info["run_id"] != self.run:
             raise OnlineError("No se libera un mutex de otro proceso")
         info["state"] = "released"
@@ -385,21 +444,31 @@ class Snapshots:
             "message": canonical(info).decode(),
             "tree": self.api.request("git/commits/" + sha)["tree"]["sha"],
             "parents": [sha]})["sha"]
-        self.api.request("git/refs/" + LOCK_REF, {"sha": commit, "force": False}, method="PATCH")
+        try:
+            self.api.request("git/refs/" + LOCK_REF, {"sha": commit, "force": False}, method="PATCH")
+        except OnlineError:
+            observed, _ = self._lock_info()
+            if observed != commit:
+                raise
         state.pop("lease", None)
         self.save(state)
 
-    def latest(self):
+    def releases(self):
         releases = []
-        for page in range(1, 6):
+        for page in range(1, 101):
             batch = self.api.request(f"releases?per_page=100&page={page}")
             if not isinstance(batch, list):
                 raise OnlineError("No se pudo leer el historial de snapshots")
             releases.extend(batch)
             if len(batch) < 100:
                 break
+        else:
+            raise OnlineError("Historial de snapshots incompleto; no elegir un padre a ciegas")
+        return releases
+
+    def latest(self):
         found = []
-        for release in releases:
+        for release in self.releases():
             if not release.get("draft"):
                 continue
             try:
@@ -426,10 +495,53 @@ class Snapshots:
                            for a in release.get("assets", []))):
             raise OnlineError("Versión privada inválida")
 
-    def download(self, release, body):
+    def archive(self, release, body):
         self.validate_release(release, body)
-        return decode_archive(self.api.asset(body["asset_id"]), self.repo, self.prefixes,
+        cache = self.state_dir / (body["archive_sha256"] + ".zip")
+        raw = cache.read_bytes() if cache.is_file() else self.api.asset(body["asset_id"])
+        result = decode_archive(raw, self.repo, self.prefixes,
                               body["archive_sha256"], body["data_sha"])
+        if result[0]["source_sha"] != body["source_sha"]:
+            raise OnlineError("El código del archivo no coincide con la versión")
+        if not cache.exists():
+            tmp = cache.with_suffix(".tmp")
+            tmp.write_bytes(raw)
+            tmp.replace(cache)
+        return result
+
+    def download(self, release, body):
+        # Los ZIP antiguos son overlays completos. Los nuevos sólo llevan el
+        # parche contra el padre; cada enlace acredita id y hash antes de aplicar.
+        chain, seen = [], set()
+        while True:
+            if release["id"] in seen or len(chain) >= MAX_CHAIN:
+                raise OnlineError("Cadena de snapshots cíclica o demasiado larga")
+            seen.add(release["id"])
+            manifest, _ = self.archive(release, body)
+            chain.append((release, body))
+            base = manifest.get("base_snapshot_id")
+            if not base:
+                break
+            if base != body["parent_id"] or base >= release["id"]:
+                raise OnlineError("Padre incremental fuera de orden")
+            release = self.api.request("releases/" + str(base))
+            body = json.loads(release["body"])
+            if body.get("state") != "published" or body.get("data_sha") != manifest["base_data_sha"]:
+                raise OnlineError("La base incremental no coincide con el padre publicado")
+        files, deleted = {}, set()
+        for current, metadata in reversed(chain):
+            manifest, patch = self.archive(current, metadata)
+            for path in manifest["deleted"]:
+                files.pop(path, None)
+                deleted.add(path)
+            files.update(patch)
+            deleted.difference_update(patch)
+            if len(files) > MAX_FILES or sum(map(len, files.values())) > MAX_PLAIN:
+                raise OnlineError("Datos acumulados fuera del presupuesto público")
+        resolved = {**manifest, "files": [{"path": p, "sha256": digest(raw), "bytes": len(raw)}
+                                          for p, raw in sorted(files.items())],
+                    "deleted": sorted(deleted)}
+        return resolved, files
 
     def fingerprint(self):
         files = {}
@@ -471,6 +583,7 @@ class Snapshots:
             self.apply(manifest, files)
         state.update({"source_sha": self.head(), "parent_id": release["id"] if release else 0,
                       "baseline": self.fingerprint(), "data_sha": body["data_sha"] if body else digest(canonical({"files": [], "deleted": []}))})
+        state["parent_data_sha"] = state["data_sha"]
         self.save(state)
         return self.output(snapshot_id=state["parent_id"], hidratado="si")
 
@@ -494,27 +607,75 @@ class Snapshots:
         paths = set(self.git("diff", "--name-only", "HEAD").splitlines())
         if any(not allowed(p, self.prefixes) for p in paths):
             raise OnlineError("El productor alteró código; se requiere PR")
-        untracked = self.git("ls-files", "--others", "--exclude-standard").splitlines()
-        candidates = sorted(p for p in paths | set(untracked) if allowed(p, self.prefixes))
+        incremental = self.env.get("SALA_SNAPSHOT_INCREMENTAL") == "1"
+        if incremental:
+            candidates = sorted(changed)
+        else:
+            # Desplegar primero el lector compatible y drenar jobs antiguos.
+            # Sin activar el flag seguimos emitiendo overlays completos v1.
+            untracked = self.git("ls-files", "--others", "--exclude-standard").splitlines()
+            candidates = sorted(p for p in paths | set(untracked) if allowed(p, self.prefixes))
         files = {p: (self.root / p).read_bytes() for p in candidates if (self.root / p).is_file()}
         deleted = [p for p in candidates if not (self.root / p).exists()]
-        raw, manifest = encode_archive(self.repo, source, files, deleted, self.prefixes)
-        release = self.api.request("releases", {
-            "tag_name": PREFIX + self.run + "-" + self.attempt + "-" + process,
-            "target_commitish": source, "name": "Datos online " + process,
-            "draft": True, "body": canonical({"schema": SCHEMA, "repo": self.repo,
-                                            "state": "uploading", "kind": KIND}).decode()})
-        asset = self.api.upload(release, raw)
-        body = {"schema": SCHEMA, "repo": self.repo, "kind": KIND, "state": "prepared",
+        self.site_files()  # Presupuesto FINAL antes de crear/subir otra versión.
+        raw, manifest = encode_archive(self.repo, source, files, deleted, self.prefixes,
+                                      base_id=state["parent_id"] if incremental else 0,
+                                      base_data=state["parent_data_sha"])
+        body = {"schema": SCHEMA, "repo": self.repo, "kind": KIND,
                 "process": process, "source_sha": source, "parent_id": state["parent_id"],
                 "archive_sha256": digest(raw), "data_sha": manifest["data_sha"],
-                "asset_id": asset["id"], "lease": state["lease"], "run_id": self.run,
+                "lease": state["lease"], "run_id": self.run,
                 "attempt": self.attempt}
-        self.api.request("releases/" + str(release["id"]),
-                         {"body": canonical(body).decode(), "draft": True,
-                          "tag_name": PREFIX + body["run_id"] + "-" + str(body.get("attempt", self.attempt)) + "-" + body["process"]}, method="PATCH")
+        def existing():
+            found = []
+            for candidate in self.releases():
+                try:
+                    metadata = json.loads(candidate.get("body") or "")
+                except ValueError:
+                    continue
+                if (candidate.get("draft") and isinstance(metadata, dict)
+                        and all(metadata.get(k) == v for k, v in body.items())):
+                    found.append(candidate)
+            if len(found) > 1:
+                raise OnlineError("Más de un snapshot coincide con esta operación")
+            return found[0] if found else None
+        release = existing()
+        if not release:
+            try:
+                release = self.api.request("releases", {
+                    "tag_name": PREFIX + self.run + "-" + self.attempt + "-" + process,
+                    "target_commitish": source, "name": "Datos online " + process,
+                    "draft": True, "body": canonical({**body, "state": "uploading"}).decode()})
+            except OnlineError:
+                release = existing()
+                if not release:
+                    raise
+        assets = [a for a in release.get("assets", []) if a.get("name") == "snapshot.zip"]
+        if len(assets) > 1:
+            raise OnlineError("Activos duplicados en el snapshot")
+        if assets:
+            asset = assets[0]
+        else:
+            try:
+                asset = self.api.upload(release, raw)
+            except OnlineError:
+                release = self.api.request("releases/" + str(release["id"]))
+                assets = [a for a in release.get("assets", []) if a.get("name") == "snapshot.zip"]
+                if len(assets) != 1:
+                    raise
+                asset = assets[0]
         if digest(self.api.asset(asset["id"])) != body["archive_sha256"]:
             raise OnlineError("El snapshot subido no coincide")
+        body.update({"state": "prepared", "asset_id": asset["id"]})
+        if json.loads(release["body"]).get("state") != "published":
+            try:
+                self.api.request("releases/" + str(release["id"]),
+                                 {"body": canonical(body).decode(), "draft": True,
+                                  "tag_name": PREFIX + body["run_id"] + "-" + self.attempt + "-" + process}, method="PATCH")
+            except OnlineError:
+                observed = self.api.request("releases/" + str(release["id"]))
+                if json.loads(observed["body"]) != body:
+                    raise
         state.update({"prepared_id": release["id"], "data_sha": body["data_sha"]})
         self.save(state)
         return self.output(hubo="si", merge_sha=source, snapshot_id=release["id"],
@@ -527,25 +688,41 @@ class Snapshots:
         self.assert_lease()
         rid = state.get("prepared_id") or state["parent_id"]
         publication = f"datos-{self.run}-{self.attempt}-{state.get('process', 'manual')}"
-        self.api.request("actions/workflows/publicar.yml/dispatches", {
-            "ref": "main", "inputs": {"sha": sha, "publicacion_id": publication,
-                                      "snapshot_id": str(rid), "lease": state["lease"]}})
         deadline = self.clock() + timeout
         title = f"Sala · publicacion={publication} · sha={sha}"
+        def matching_runs():
+            runs = self.api.request("actions/workflows/publicar.yml/runs?event=workflow_dispatch&per_page=100")["workflow_runs"]
+            found = [r for r in runs if r.get("display_title") == title
+                     and r.get("head_sha") == sha and r.get("head_branch") == "main"]
+            if len(found) > 1:
+                raise OnlineError("Más de una publicación coincide; no montar")
+            return found[0] if found else None
+        run = matching_runs()
+        if not run:
+            try:
+                self.api.request("actions/workflows/publicar.yml/dispatches", {
+                    "ref": "main", "inputs": {"sha": sha, "publicacion_id": publication,
+                                              "snapshot_id": str(rid), "lease": state["lease"]}})
+            except OnlineError:
+                # Una respuesta perdida no autoriza duplicar el dispatch. Su
+                # identidad exacta se reconcilia en el mismo bucle de lectura:
+                # Actions puede tardar en indexar una corrida ya aceptada.
+                pass
         while self.clock() < deadline:
-            runs = self.api.request("actions/workflows/publicar.yml/runs?event=workflow_dispatch&per_page=30")["workflow_runs"]
-            run = next((r for r in runs if r["display_title"] == title
-                        and r["head_sha"] == sha and r["head_branch"] == "main"), None)
+            run = matching_runs()
             if run and run["status"] == "completed":
-                if run["conclusion"] != "success":
-                    raise OnlineError("Pages falló; snapshot conservado sin montar")
                 release = self.api.request("releases/" + str(rid)) if rid else None
                 body = json.loads(release["body"]) if release else None
                 if release:
                     self.validate_release(release, body)
-                    if body["state"] != "published":
+                    if body["state"] != "published" or body["data_sha"] != state["data_sha"]:
                         raise OnlineError("Pages no confirmó el snapshot")
+                if run["conclusion"] != "success" and not (body and body.get("published_code_sha") == sha
+                        and str(body.get("published_run")) == str(run["id"])):
+                    raise OnlineError("Pages falló; snapshot conservado sin montar")
                 self.verify_receipt(sha, state["data_sha"], rid, str(run["id"]))
+                if run["conclusion"] != "success":
+                    print("::warning::Pages acredita la publicación exacta; falló un paso posterior del workflow.")
                 state["published_receipt"] = {"schema": SCHEMA, "code_sha": sha,
                     "data_sha": state["data_sha"], "snapshot_id": rid, "run_id": str(run["id"])}
                 self.save(state)
@@ -582,31 +759,46 @@ class Snapshots:
             receipt["plan_sha256"] = digest(plan_file.read_bytes())
         (self.root / "version-online.json").write_bytes(canonical(receipt) + b"\n")
         state = {"source_sha": sha, "snapshot_id": rid, "data_sha": data_sha,
-                 "lease": lease, "published_receipt": receipt}
+                 "lease": lease, "staged_receipt": receipt}
         self.save(state)
         return self.output(snapshot_id=rid, data_sha=data_sha)
+
+    def site_files(self):
+        # Sólo archivos de Git aprobado y outputs allowlisted. Nunca logs ni credenciales.
+        tracked = self.git("ls-files", "-z").split("\0")
+        public = set(tracked) | set(self.fingerprint()) | {"version-online.json"}
+        files, total = {}, 0
+        for rel in sorted(public):
+            if not rel or rel.startswith(".github/") or rel.startswith(".git"):
+                continue
+            path = self.root / rel
+            if path.is_symlink() or any(p.is_symlink() for p in path.parents if p != self.root):
+                raise OnlineError("Bundle con symlink")
+            if path.is_file():
+                files[rel] = path
+                total += path.stat().st_size
+        if "version-online.json" not in files:
+            total += 32768  # Reserva para el recibo aún no creado en preparar.
+        if total > MAX_SITE:
+            raise OnlineError(f"Sitio público de {total} bytes excede el presupuesto de {MAX_SITE}; "
+                              "conservar históricos y migrar medios antes de publicar")
+        if total > MAX_SITE * 0.9:
+            print(f"::warning::Sitio público en {total} de {MAX_SITE} bytes; migrar medios históricos.")
+        return files
 
     def build_site(self, destination):
         import shutil
         dest = Path(destination).resolve()
         if dest == self.root or self.root in dest.parents:
             raise OnlineError("El bundle debe estar fuera del checkout")
+        files = self.site_files()  # Fallar antes de tocar un bundle anterior.
         if dest.exists():
             shutil.rmtree(dest)
         dest.mkdir(parents=True)
-        # Sólo archivos de Git aprobado y outputs allowlisted. Nunca logs ni credenciales.
-        tracked = self.git("ls-files", "-z").split("\0")
-        public = set(tracked) | set(self.fingerprint()) | {"version-online.json"}
-        for rel in public:
-            if not rel or rel.startswith(".github/") or rel.startswith(".git"):
-                continue
-            path = self.root / rel
-            if path.is_symlink():
-                raise OnlineError("Bundle con symlink")
-            if path.is_file():
-                target = dest / rel
-                target.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(path, target)
+        for rel, path in files.items():
+            target = dest / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(path, target)
         return self.output(bundle="si")
 
     def verify_receipt(self, sha, data_sha, snapshot_id, run_id, timeout=300):
@@ -635,7 +827,7 @@ class Snapshots:
     def confirm(self):
         state = self.state()
         sha, rid = state["source_sha"], state["snapshot_id"]
-        self.verify_receipt(sha, state["data_sha"], rid, self.run)
+        receipt = self.verify_receipt(sha, state["data_sha"], rid, self.run)
         if self.main() != sha:
             raise OnlineError("main avanzó durante la publicación")
         if rid:
@@ -649,8 +841,15 @@ class Snapshots:
                     raise OnlineError("La versión padre cambió")
                 body.update({"state": "published", "published_code_sha": sha,
                              "published_run": self.run, "confirmed_at": int(time.time())})
-                self.api.request("releases/" + str(rid),
-                                 {"body": canonical(body).decode()}, method="PATCH")
+                try:
+                    self.api.request("releases/" + str(rid),
+                                     {"body": canonical(body).decode()}, method="PATCH")
+                except OnlineError:
+                    observed = self.api.request("releases/" + str(rid))
+                    if json.loads(observed["body"]) != body:
+                        raise
+        state["published_receipt"] = state.get("staged_receipt", receipt)
+        self.save(state)
         return self.output(publicado="si", snapshot_id=rid)
 
     def publish_raw(self):
