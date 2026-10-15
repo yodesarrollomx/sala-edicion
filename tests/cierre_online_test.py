@@ -255,5 +255,53 @@ class DiagnosisTests(unittest.TestCase):
         self.assertEqual(result["efecto"],"resultado_desconocido_no_reintentar")
         self.assertEqual(calls,["entrada"])
 
+class SafeProbeTests(unittest.TestCase):
+    def test_typed_sala_error_preserves_safe_diagnostics(self):
+        error=c.sala.SalaError("PRIVATE-URL TOKEN",codigo="sala_tiempo_agotado",
+                               metadatos={"recurso":"cola","curl_codigo":28,"latencia_ms":60000,"PRIVATE":"TOKEN"})
+        result=c.error_seguro(error,{"fase":"leer_cola","efecto":"no_iniciado"})
+        self.assertEqual(result["codigo"],"sala_tiempo_agotado")
+        self.assertEqual(result["transporte"]["curl_codigo"],28)
+        self.assertNotIn("PRIVATE",json.dumps(result))
+
+    def test_main_probes_failed_read_once_without_sending_or_saving_business_data(self):
+        error=c.sala.SalaError("PRIVATE-URL TOKEN",codigo="sala_json_invalido",
+                               metadatos={"tipo_respuesta":"html","estado_http":200})
+        out=io.StringIO()
+        def getter(resource):
+            if resource=="cola":raise error
+            return CloseTests().getter(resource)
+        with patch.object(sys,"argv",["cierre_online.py"]), \
+             patch.object(c.sala,"enmascarar_en_actions"), \
+             patch.object(c,"private_config",return_value=({},"PRIVATE-PARENT")), \
+             patch.dict(os.environ,{"GITHUB_REPOSITORY":"synthetic/repo","GH_TOKEN":"PRIVATE"}), \
+             patch.object(c.sala,"get",side_effect=getter), \
+             patch.object(c.sala,"sonda_get",return_value={"ok":False,"codigo":"sala_http_405","estado_http":405}) as probe, \
+             patch.object(c,"una_vez") as operation,patch.object(c,"guardar") as save,redirect_stdout(out):
+            self.assertEqual(c.main(),2)
+        probe.assert_called_once_with("cola",espera=20)
+        operation.assert_not_called()
+        save.assert_not_called()
+        self.assertNotIn("PRIVATE",out.getvalue())
+        result=json.loads(out.getvalue().split("SALA_CIERRE ",1)[1])
+        self.assertEqual(result["diagnostico"]["codigo"],"sala_json_invalido")
+        self.assertEqual(result["diagnostico"]["sonda_lectura"]["estado_http"],405)
+
+    def test_probe_success_never_turns_failed_preflight_into_an_operation(self):
+        out=io.StringIO()
+        def execute(*args,**kwargs):
+            kwargs["diagnostico"].update(fase="leer_cola",efecto="no_iniciado")
+            raise c.sala.SalaError("PRIVATE",codigo="sala_tiempo_agotado")
+        with patch.object(sys,"argv",["cierre_online.py"]),patch.object(c.sala,"enmascarar_en_actions"), \
+             patch.object(c,"private_config",return_value=({},"PRIVATE")), \
+             patch.dict(os.environ,{"GITHUB_REPOSITORY":"synthetic/repo","GH_TOKEN":"PRIVATE"}), \
+             patch.object(c,"ejecutar",side_effect=execute), \
+             patch.object(c.sala,"sonda_get",return_value={"ok":True,"codigo":"lectura_confirmada"}) as probe, \
+             patch.object(c,"una_vez") as operation,redirect_stdout(out):
+            self.assertEqual(c.main(),2)
+        probe.assert_called_once()
+        operation.assert_not_called()
+        self.assertFalse(json.loads(out.getvalue().split("SALA_CIERRE ",1)[1])["ok"])
+
 if __name__=="__main__":
     unittest.main()

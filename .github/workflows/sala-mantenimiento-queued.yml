@@ -1,0 +1,42 @@
+name: Sala · Mantenimiento de corrida huérfana
+on:
+  workflow_dispatch:
+    inputs:
+      aplicar:
+        description: 'Intentar force-cancel de la única corrida permitida; false sólo inspecciona'
+        type: boolean
+        required: false
+        default: false
+permissions:
+  contents: read
+  actions: write
+concurrency:
+  group: sala-mantenimiento-queued
+  cancel-in-progress: false
+jobs:
+  mantenimiento:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /nube/mantenimiento_queued.py
+            /nube/snapshots_online.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Inspeccionar o intentar la única cancelación permitida
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          APLICAR: ${{ inputs.aplicar }}
+        run: |
+          set -euo pipefail
+          args=()
+          if [ "$APLICAR" = true ]; then args+=(--aplicar); fi
+          python3 nube/mantenimiento_queued.py "${args[@]}"

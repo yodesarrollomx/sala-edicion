@@ -35,14 +35,17 @@ jobs:
     secrets: inherit
   ejecutor:
     needs: productor
+    if: ${{ !cancelled() }}
     uses: ./.github/workflows/sala-ejecutor.yml
     secrets: inherit
   revision:
     needs: ejecutor
+    if: ${{ !cancelled() }}
     uses: ./.github/workflows/sala-revision.yml
     secrets: inherit
   continuar:
-    needs: revision
+    needs: [mesa, revision]
+    if: ${{ needs.mesa.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

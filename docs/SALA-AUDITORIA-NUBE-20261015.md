@@ -50,6 +50,48 @@ revisor, pruebas y publicación; el puente no realiza esa implementación.
 La revisión de mantenimiento debe usar la rutina existente de ChatGPT, conservando
 el historial y comprobantes, sin depender de una sesión de Claude.
 
+## Evidencia de activación
+
+Atlas [235](https://github.com/yodesarrollomx/yod-portal/pull/235) y Sala
+[305](https://github.com/yodesarrollomx/sala-edicion/pull/305) quedaron integrados.
+La publicación [38682616103](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38682616103)
+confirmó el recibo FULL del código `b6884d1`. La publicación posterior
+[38683590998](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38683590998)
+confirmó código `8761404`, snapshot `413425842` y hash de datos
+`a576545e88e76b040abc2e6788dda4afc5f57f0bc5ffd6ef0fb1e249e950d186`.
+Un cambio posterior puede sustituir estos recibos; el archivo servido
+`version-online.json` es la comprobación vigente.
+
+El cierre [38683590924](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38683590924)
+localizó un fallo de lectura de COLA, sin efectos iniciados. El diagnóstico de
+[306](https://github.com/yodesarrollomx/sala-edicion/pull/306) sólo publica fases,
+tipos y códigos permitidos. Un preflight fallido no acredita producción.
+
+El recorrido [38683389298](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38683389298)
+procesó cero piezas en Mesa y rechazó guardar porque main avanzó. No acredita
+nueva generación. Se conserva esa guardia; Ejecutor y Revisión pueden atender
+la cola existente con sus validaciones propias aunque falle una fase anterior.
+Continuar exige éxito de Mesa y Revisión para no relanzar Mesa tras un fallo.
+
+## Capacidad disponible
+
+El intento de restablecer Modal
+[38683018389](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38683018389)
+se detuvo porque A10G requiere un método de pago. No invocó GPU ni añadió
+facturación. La cascada existente permite Wan en Hugging Face, Modal, parallax
+CPU y cámara CPU. Las reglas observadas habilitan las cuatro etapas de nube,
+el respaldo de cámara y su uso al agotar cuota. Parallax y cámara son movimiento
+sobre láminas; sus metadatos conservan `generativa:false`. El Space de Wan y su
+API estaban disponibles; eso no demuestra cupo de cuenta ni generación nueva.
+No existe adaptador Gemini/Veo de video en este proceso.
+
+El vigilante externo de Render está sano y observa; su recuperación automática
+requiere completar la conexión GitHub App. GitHub exige confirmar la identidad
+de la cuenta antes de revisar esa instalación. La tarea diaria existente de
+revisión de Sala conserva horario y ahora recoge la continuidad de ChatGPT.
+La estabilidad de siete días y la recepción del próximo correo siguen siendo
+comprobaciones futuras, separadas de guardar código y publicar el sitio.
+
 ## Verificación y reversión
 
 Las pruebas usan datos sintéticos. La lectura agregada del Sheet real es de

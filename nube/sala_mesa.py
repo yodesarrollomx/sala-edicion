@@ -431,7 +431,50 @@ def piezas_por_prioridad(piezas, dia):
         key=lambda x: priority(x)[0], reverse=True)
 
 
-def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa='', modelo_imagen=None):
+TIPOS_DIAGNOSTICO = ('idea', 'guion', 'eje', 'lamina', 'laminas', 'voz', 'escena',
+                    'video', 'corte', 'copy', 'otros')
+CAMPOS_SELECCION = ('propuestas_vivas', 'propuestas_con_laminas', 'fuentes_recuperadas',
+                    'tiras_locales', 'tiras_vigentes', 'tiras_sin_fuente_vigente',
+                    'tiras_con_fuente_reemplazada', 'tiras_fuera_filtro_pieza',
+                    'tiras_excluidas_publicadas', 'tiras_sin_fuente_al_procesar',
+                    'tiras_sin_laminas_abiertas', 'tiras_con_laminas_abiertas',
+                    'laminas_abiertas', 'tiras_sin_laminas_listas',
+                    'tiras_con_validacion_pendiente', 'tiras_preparadas')
+
+
+def conteos_seleccion(dia, antes, vigentes, recuperadas=0, sin_sheet=False):
+    """Sólo cantidades y categorías fijas: ningún ID, título o texto del backend."""
+    report = {key: 0 for key in CAMPOS_SELECCION}
+    props = dia.get('propuestas') or []
+    types = {key: 0 for key in TIPOS_DIAGNOSTICO}
+    for prop in props:
+        tipo = prop.get('tipo')
+        key = tipo if isinstance(tipo, str) and tipo in types else 'otros'
+        types[key] += 1
+    report.update({'fuente': 'sin_sheet' if sin_sheet else 'backend',
+                   'propuestas_vivas': len(props),
+                   'propuestas_por_tipo': types,
+                   'propuestas_con_laminas': sum(bool(p.get('laminas')) for p in props),
+                   'fuentes_recuperadas': recuperadas,
+                   'tiras_locales': len(antes), 'tiras_vigentes': len(vigentes),
+                   'tiras_sin_fuente_vigente': len(antes) - len(vigentes),
+                   'tiras_con_fuente_reemplazada': sum(
+                       antes[slug][0] != value[0] for slug, value in vigentes.items())})
+    return report
+
+
+def seleccion_publica(seleccion):
+    """La salida admite únicamente contadores enteros y nombres definidos aquí."""
+    def cantidad(value):
+        return value if type(value) is int and value >= 0 else 0
+    tipos = seleccion.get('propuestas_por_tipo')
+    tipos = tipos if isinstance(tipos, dict) else {}
+    return {**{key: cantidad(seleccion.get(key)) for key in CAMPOS_SELECCION},
+            'fuente': seleccion.get('fuente') if seleccion.get('fuente') in ('backend', 'sin_sheet') else 'sin_confirmar',
+            'propuestas_por_tipo': {key: cantidad(tipos.get(key)) for key in TIPOS_DIAGNOSTICO}}
+
+
+def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa='', modelo_imagen=None, seleccion=None):
     state = "bloqueado" if fallidas and not generadas else (
         "parcial" if fallidas or limitadas else "al_dia")
     report = {"schema": 1, "estado": state,
@@ -441,6 +484,8 @@ def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, 
               "generadas": generadas, "reutilizadas": reutilizadas, "fallidas": fallidas,
               "causa": causa, "modelo_imagen": modelo_imagen or imagen.MODELO_FLUX2,
               "limite_pendiente": limitadas, "cartas": cartas}
+    if seleccion is not None:
+        report['seleccion'] = seleccion_publica(seleccion)
     dest = RAIZ / "datos" / "mesa-estado.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
@@ -493,27 +538,37 @@ def main():
     cupo_bloqueado = False
     servicio_bloqueado = False
 
+    recuperadas = 0
     if not args.sin_sheet:
-        hidratar_tiras_activas(contexto_produccion())
+        recuperadas = hidratar_tiras_activas(contexto_produccion())
     piezas = tiras_por_pieza()
+    piezas_antes = piezas
     if not args.sin_sheet:
         piezas = tiras_vigentes(piezas, contexto_produccion())
-    orden = piezas_por_prioridad(piezas, contexto_produccion() if not args.sin_sheet else {})
+    dia_orden = contexto_produccion() if not args.sin_sheet else {}
+    orden = piezas_por_prioridad(piezas, dia_orden)
+    seleccion = conteos_seleccion(dia_orden, piezas_antes, piezas, recuperadas, args.sin_sheet)
     for slug, (tid, t) in orden:
         if args.pieza and slug != args.pieza:
+            seleccion['tiras_fuera_filtro_pieza'] += 1
             continue
         nombre = str(t.get('pieza') or slug)
         if nombre.lower() in ya_salieron:
+            seleccion['tiras_excluidas_publicadas'] += 1
             sala.avisar('· %s: ya publicada, no vuelve a la mesa' % nombre)
             continue
         if not args.sin_sheet:
             live = {p['id'] for p in contexto_produccion()['propuestas']}
             if tid not in live:
+                seleccion['tiras_sin_fuente_al_procesar'] += 1
                 continue
         pend = abiertas(tid, t, leer_sheet=not args.sin_sheet)
         if not pend:
+            seleccion['tiras_sin_laminas_abiertas'] += 1
             sala.avisar('· %s (%s): todas sus láminas aprobadas — nada que rehacer' % (nombre, tid))
             continue
+        seleccion['tiras_con_laminas_abiertas'] += 1
+        seleccion['laminas_abiertas'] += len(pend)
         sala.avisar('▶ %s · tira %s · %d lámina(s) abiertas' % (nombre, tid, len(pend)))
         nueva_id = '%s-nube-%s-%s' % (slug, hoy, hashlib.md5(
             json.dumps({'base': tid, 'laminas': [(l['n'], m, n, l.get('src'), l.get('dice'))
@@ -604,6 +659,7 @@ def main():
             destino['fecha'] = hoy
             decidir.append(lam['n'])
         if not decidir:
+            seleccion['tiras_sin_laminas_listas'] += 1
             continue
         # Un lote parcial no oculta las candidatas aún sin responder del lote anterior.
         decidir = sorted(set(decidir) | {l['n'] for l in tira['laminas']
@@ -619,6 +675,7 @@ def main():
         try:
             validar_nuevas_tomas(tira, reglas)
         except (ContenidoVetado, sala.SalaError) as e:
+            seleccion['tiras_con_validacion_pendiente'] += 1
             sala.avisar('⏸ %s: las tomas nuevas requieren corrección; %s' % (nombre, e))
             continue
         carta = {'id': nueva_id, 'titulo': tira['titulo'], 'tipo': 'laminas',
@@ -633,6 +690,8 @@ def main():
                 (TIRAS / 'index.json').write_text(json.dumps([nueva_id] + idx, ensure_ascii=False),
                                                   encoding='utf-8')
 
+    seleccion['tiras_preparadas'] = len(plan)
+    sala.avisar('selección Mesa:', json.dumps(seleccion_publica(seleccion), ensure_ascii=False))
     sala.avisar('resumen: %d carta(s) %s' % (len(plan), 'que se montarían' if args.simular else 'listas para montar'))
     if not args.simular:
         PLAN.parent.mkdir(parents=True, exist_ok=True)
@@ -640,7 +699,8 @@ def main():
                         encoding='utf-8')
         guardar_estado_mesa(generadas, fallidas, limitadas, len(plan), reutilizadas,
                             causa='servicio_imagen_no_disponible' if servicio_bloqueado else ('cupo_imagen_agotado' if cupo_bloqueado else ''),
-                            modelo_imagen=imagen.modelo_de(str(reglas.get('imagen_motores') or 'hidream_demo').split(',')[0].strip(), reglas))
+                            modelo_imagen=imagen.modelo_de(str(reglas.get('imagen_motores') or 'hidream_demo').split(',')[0].strip(), reglas),
+                            seleccion=seleccion)
     # Preparación que falló por completo es un fallo real, no una mesa «al día».
     return 2 if fallidas and not plan and not args.simular else 0
 
