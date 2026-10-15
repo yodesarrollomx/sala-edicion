@@ -205,8 +205,11 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    await r.context.close();
   }
   const missing=await prepare(b,390,'editor',true,false,{mode:'missing'});
-  await missing.view.locator('[data-open="synthetic-0"]').click();await missing.view.locator('[data-lamina="2"]').click();
-  await missing.view.getByRole('dialog',{name:'Elegir fotografía de lámina 2',exact:true}).locator('[data-vote="si"]').click();assert.equal(missing.writes.length,0);
+  await missing.view.locator('[data-open="synthetic-0"]').click();await missing.view.locator('[data-lamina="2"]').dblclick();
+  const missingChoice=missing.view.getByRole('dialog',{name:'Elegir fotografía de lámina 2',exact:true});
+  assert.ok(await missingChoice.locator('[data-vote="si"]').isEnabled(),'la cuenta editora puede intentar aprobar; la imagen debe cerrar la compuerta');
+  await missingChoice.locator('[data-vote="si"]').click();assert.equal(missing.writes.length,0);
+  assert.match(await missingChoice.locator('.bt-notice').innerText(),/Espera a que cargue/);
   assert.equal(await missing.view.evaluate(()=>SalaMedios.estado()),'error');
   await missing.context.close();
   fs.writeFileSync(out+"/resultado.json",JSON.stringify({ok:true,publicaciones_sinteticas:6,laminas:36,escritorio:1440,movil:390,seleccion_indice_original:true,swipe_aprobar:true,pinch_alejar:true,embed_portal:true,lector_agente_sin_votos:true},null,2));

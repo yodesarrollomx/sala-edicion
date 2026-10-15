@@ -49,3 +49,11 @@ test("los controles dentro de la foto reciben su clic y los gestos de la imagen 
  listeners.pointerup({target:photo,pointerId:3,clientX:100,clientY:80});
  assert.deepEqual(votes,['si']);
 });
+test("una foto fallida reintenta al tocarla y conserva el doble clic para abrir sus opciones exactas",()=>{
+ const source=fs.readFileSync(require.resolve("../tablero-sala.js"),"utf8"),start=source.indexOf("function bind(){"),end=source.indexOf("async function refresh(",start);
+ const failed={},button={dataset:{group:'synthetic',lamina:'2'},querySelector:()=>failed},opened=[],retried=[];
+ const g={id:'synthetic'},ctx={root:{querySelectorAll:q=>q==='[data-lamina]'?[button]:[],querySelector:()=>null},S:{groups:[g],focus:'synthetic'},reintentarFoto:im=>retried.push(im),open:(...args)=>opened.push(args)};
+ vm.runInNewContext(source.slice(start,end)+"\nthis.bind=bind;",ctx);ctx.bind();
+ button.onclick();assert.deepEqual(retried,[failed]);assert.deepEqual(opened,[]);
+ button.ondblclick({preventDefault(){}});assert.deepEqual(opened,[[g,2,true]]);
+});
