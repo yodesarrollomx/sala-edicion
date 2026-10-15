@@ -80,3 +80,96 @@ test('consultas secundarias dan prioridad limitada a la primera foto', () => {
   assert.match(secundarios,/principal\.addEventListener\('error',adelante,\{once:true\}\)/);
   assert.match(secundarios,/setTimeout\(adelante,2000\)/);
 });
+
+{
+/* Estados que ve el editor: consumidor real, datos sintéticos y ninguna escritura. */
+const test=require('node:test'), assert=require('node:assert/strict'), fs=require('node:fs'), vm=require('node:vm');
+const html=fs.readFileSync('index.html','utf8');
+function block(start,end){
+  const a=html.indexOf(start),b=html.indexOf(end,a+start.length);
+  assert.ok(a>=0&&b>a,'falta consumidor '+start);
+  return html.slice(a,b);
+}
+function sala(){
+  const surface={innerHTML:'',querySelectorAll:()=>[]};
+  const ctx=vm.createContext({D:{propuestas:[],decisiones:{propuestas:{}}},dec:{},pasos:[],TIRAS:{},PZ:{},
+    COLA:[],FABRICA:[],IDEAS:[],ARRANQUE:{},EXP:{cargado:true},publicadas:new Set(),
+    $:()=>surface,esc:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
+    ligera:x=>x,fuenteLamina:(l,src)=>src,CANDIDATAS:p=>p.opciones?.candidatas||[],mapaDe:t=>t.mapa||{'1':1},
+    fetch:()=>{throw Error('el estado cargado no necesita red')},
+    proximaCorrida:()=>{throw Error('no prometer horarios sin trabajo confirmado')},
+    estimaFabrica:()=>{throw Error('no estimar una etapa genérica')},
+    COLA_DE_ETAPA:{laminas:'prospectos',voz:'voz',escenas:'escena',corte:'corte'},HORAS_ATORADO:3,
+    NOM_COLA:{prospectos:'las candidatas de lámina',voz:'la voz',escena:'la escena',corte:'el corte'}});
+  ctx.esPublicada=nombre=>ctx.publicadas.has(nombre);
+  ctx.nomCola=e=>ctx.NOM_COLA[e]||e;
+  for(const source of [
+    block('function normSlug(s){','// una lámina puede tener'),
+    block('function ejeEligioLamina(l){','function evidenciaSrc(f){'),
+    block('function quefaltaPara(t,g,publicada){','async function pintarProduccion(){'),
+    block('function edadHoras(txt){','function filaLinea(z){'),
+    block('const ETAPAS = {','/* el anillo:'),
+    block('function hechasDe(z,publicada){','function frutoPub(c){'),
+    block('function filaLinea(z){','function enganchaLinea(c){')
+  ]) vm.runInContext(source,ctx);
+  ctx.enganchaLinea=()=>{};
+  function piece(rows={},approved=true){
+    const tira={pieza:'Pieza sintética',pieza_slug:'synthetic',laminas:[{n:1,src:'synthetic.jpg',estado:approved?'aprobada':'pendiente'}]};
+    ctx.TIRAS={'synthetic-v1':tira};
+    return {slug:'synthetic',nombre:'Pieza sintética',tira,filas:{prospectos:[],voz:[],escena:[],corte:[],...rows}};
+  }
+  async function render(z){
+    await ctx.pintarLinea([z],'linea',true);
+    return surface.innerHTML;
+  }
+  return {ctx,piece,render};
+}
+
+test('lámina aprobada sin trabajo en cola pide confirmar texto, sin promesa de producción',async()=>{
+  const s=sala(),z=s.piece(),before=JSON.stringify(z),rendered=await s.render(z);
+  assert.match(rendered,/Texto de publicación por confirmar/);
+  assert.doesNotMatch(rendered,/Productor lo pone|≈|hace después|próxima ronda/);
+  assert.equal(s.ctx.filaLinea(z).fab,false);
+  assert.equal(JSON.stringify(z),before);
+});
+
+test('una publicación registrada no vuelve a pedir publicarla ni cuenta como abierta',async()=>{
+  const s=sala(),z=s.piece();s.ctx.publicadas.add(z.nombre);
+  assert.equal(s.ctx.filaLinea(z).que,'Publicación registrada.');
+  const rendered=await s.render(z);
+  assert.match(rendered,/No hay publicaciones abiertas/);
+  assert.doesNotMatch(rendered,/Falta publicarla|pone en cola|≈/);
+});
+
+test('sin tarjeta actual no inventa una decisión de hoy ni una próxima ronda',async()=>{
+  const s=sala(),rendered=await s.render(s.piece({},false));
+  assert.match(rendered,/No hay una tarjeta por responder de esta pieza en la mesa actual/);
+  assert.doesNotMatch(rendered,/Hoy ya decidiste|próxima ronda|≈/);
+});
+
+test('un trabajo pendiente real muestra cola sin atribuirle copy ni una hora garantizada',async()=>{
+  const s=sala(),z=s.piece({voz:[{id:'q1',etapa:'voz',estado:'pendiente'}]}),rendered=await s.render(z);
+  assert.match(rendered,/1 trabajo en cola/);
+  assert.match(rendered,/Inicio pendiente de confirmar/);
+  assert.equal(s.ctx.filaLinea(z).fab,true);
+  assert.doesNotMatch(rendered,/trabajo de copy|pone en cola|≈|revísalo/);
+});
+
+test('un trabajo en curso conserva su etapa y no promete una terminación sin recibo',async()=>{
+  const s=sala(),now=new Date(Date.now()-7*3600000).toISOString().slice(0,19);
+  const z=s.piece({voz:[{id:'q1',etapa:'voz',estado:'corriendo',actualizado:now}]}),rendered=await s.render(z);
+  assert.match(rendered,/En proceso: voz \(1 trabajo\)/);
+  assert.match(rendered,/Finalización pendiente de confirmar/);
+  assert.equal(s.ctx.filaLinea(z).fab,true);
+  assert.doesNotMatch(rendered,/≈|pone en cola|Lo próximo de la fábrica/);
+});
+
+test('voz, escena y corte hechos no se presentan como producción todavía activa',async()=>{
+  const s=sala(),z=s.piece(Object.fromEntries(['voz','escena','corte'].map(etapa=>[etapa,[{id:etapa,etapa,estado:'hecho'}]])));
+  const rendered=await s.render(z);
+  assert.match(rendered,/Texto de publicación por confirmar/);
+  assert.doesNotMatch(rendered,/En proceso:|trabajo en cola|pone en cola|≈/);
+  assert.equal(s.ctx.filaLinea(z).fab,false);
+});
+
+}

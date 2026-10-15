@@ -20,6 +20,9 @@ la Mac ni requiere una conversación abierta para esos trabajos.
 | Pedir ideas se registraba CUMPLIDO | Solicitud durable; no acredita entrega | Dispatch ambiguo no se repite |
 | Cerrar NOT_PLANNED se mostraba cumplido | Descartado y completado tienen estados distintos | Regresiones del puente |
 | Etiqueta fallida podía duplicar un append de cumplimiento | Checkpoint anterior al efecto y relectura por ID/evento/clave | ACK perdido, ventana limitada y etiqueta fallida conservan el pendiente |
+| Una lectura intermitente de COLA devolvió HTTP404 antes de responder correctamente | Tercer GET fresco sólo tras 404 y dentro del presupuesto original | La sonda diagnóstica no se usa para acreditar éxito |
+| El recibo servido podía no acreditarse durante la espera | Clave de caché distinta por GET, plan fijado antes del bundle y diagnóstico de campos distintos | Conserva igualdad exacta y guardias; la causa del incidente previo sigue sin confirmarse |
+| La interfaz prometía horarios y una ronda futura sin evidencia | Representa copy, publicación y cola con estados comprobados | Casos renderizados sin horarios inventados |
 
 ## Activación y límites
 
@@ -106,3 +109,38 @@ Antes de revertir tras emitir deltas: desactivar el flag con el lector compatibl
 publicar FULL, verificar su recibo y sólo entonces revertir lectores si procede.
 Conservar releases, medios, decisiones, cola e historial. El correo puede volver
 al cuerpo anterior conservado sin cambiar destinatario, URL ni permisos.
+
+## Corte operativo y recuperación de fallos
+
+El recorrido [38685236773](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38685236773)
+completó Mesa, Productor y Ejecutor sobre `a2bbfce`. Productor recuperó las
+decisiones existentes y no añadió trabajos; Ejecutor no encontró pendientes.
+Eso no acredita generación nueva. Revisión guardó su estado privado, pero su
+publicación [38686617000](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38686617000)
+no acreditó el recibo exacto en el plazo. Una lectura posterior sí observó código, datos, snapshot y run previstos;
+el hash del plan esperado por ese runner no quedó registrado. Esto no basta
+para atribuir la causa a la caché. El nuevo diagnóstico
+distingue campos, HTTP, JSON y transporte sin publicar sus valores.
+
+`Auditar cortes fallidos sin reencolar` es manual y comparte la exclusión del
+Ejecutor. No siembra reglas ni modifica COLA, decisiones, contenido o medios.
+Exige snapshot publicado con recibo independiente, fuente vigente, guion completo
+aprobado sin vetos, identidad exacta del plan y de las dependencias, bytes y MD5
+de Drive, etapa habilitada y una segunda lectura estable. Su informe detallado
+se conserva en la carpeta privada configurada; el log público sólo contiene
+conteos y códigos permitidos. Elegibilidad no significa reencolado ni producción.
+El workflow necesita visibilidad de releases draft y de Pages; el cliente se
+limita explícitamente a GET y bloquea mutaciones de GitHub.
+
+La cancelación única de la corrida huérfana
+[37655539140](https://github.com/yodesarrollomx/sala-edicion/actions/runs/37655539140)
+fue rechazada con HTTP409 en el mantenimiento
+[38685379932](https://github.com/yodesarrollomx/sala-edicion/actions/runs/38685379932).
+La corrida seguía queued y sin jobs al releerla; no se afirma que esté drenada
+ni se repite el POST. La emisión incremental sigue apagada.
+
+El artefacto observado ocupaba 897647868 bytes, aproximadamente 95% del
+presupuesto de 900 MiB. No se amplía ese límite ni se borran históricos. La
+continuidad de producción necesita una migración de medios verificada antes
+de agotar esa capacidad. El [inventario de chinches](SALA-CHINCHES-CORTE-20261015.md)
+separa reparaciones técnicas de decisiones editoriales y aceptación pendiente.

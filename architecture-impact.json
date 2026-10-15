@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-15.sala-nube.1",
   "proposal_id": "CHG-SALA-NUBE-20261015",
-  "summary": "Continuidad del recorrido: Ejecutor y Revisión atienden COLA existente con sus compuertas aunque falle una fase anterior; Continuar exige Mesa y Revisión exitosas. Diagnóstico de lecturas GAS con códigos y métricas permitidas, sonda GET única sin reanudar efectos y conteos de selección de Mesa sin datos privados. Mantenimiento manual acotado a una corrida queued huérfana conocida mediante token efímero; un solo force-cancel y conciliación de lectura. Mantiene guardias de main, decisiones, permisos existentes, correo y snapshots FULL de CHG-SALA-NUBE-20261015. Recupera únicamente HTTP404 de lecturas cola/reglas mediante un tercer GET fresco validado de hasta 20 s dentro del presupuesto original de 122 s; cambios del cliente activan preflight de Cierre sin solicitar correo ni comparación.",
+  "summary": "Cierra fallos comprobados de lectura y publicación: recupera sólo HTTP404 de COLA/REGLAS con GET fresco dentro del presupuesto de 122 s; verifica el plan staged antes del bundle y exige recibo exacto servido con consultas de caché distintas y diagnóstico de campos sin valores. La Sala representa estados reales sin prometer horarios ni rondas futuras. Añade auditoría manual de cortes fallidos sin reencolar: fuente y guion vigentes, aprobación completa sin vetos, identidad exacta del plan, medios privados verificados, recibo vinculado a release y doble lectura estable. Conserva decisiones, etapas habilitadas, guardia de main, mutex, correo y FULL predeterminado de CHG-SALA-NUBE-20261015. Documenta inventario actual de chinches y límites pendientes.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -13,12 +13,12 @@
     "EXT-GMAIL"
   ],
   "tests": [
-    "Suite Python completa en árbol integrado; pruebas de cierre, cliente, Mesa y mantenimiento sin servicios reales.",
-    "Transporte HTTP302 real y POST aplicado con acuse perdido: una escritura; sonda GET acotada sin POST.",
-    "Reloj simulado: HTTP404 de cola/reglas se recupera con JSON real validado; sin presupuesto no hay tercer intento, y el último intento sólo usa tiempo restante. Otros errores y POST no reciben intentos adicionales; una sonda ok no sustituye datos ni valida preflight.",
-    "Revisión independiente: metadata pública y compuertas; workflowparse, nube/verificar.py, Node y diffcheck.",
-    "Mantenimiento exige run/head/repo/path/event/branch/intento/edad/queued/jobs0; HTTP202 no acredita cancelación.",
-    "La prueba integral posterior requiere main estable y recibos reales; no se atribuye producción a una corrida fallida."
+    "Suite Python integrada y Node; verificar.py y verificación del impacto sobre el árbol base de main.",
+    "Lectura HTTP404: tercer GET sólo dentro de 122 s y hasta 20 s; contratos inválidos, presupuesto agotado, otros códigos y POST no reciben recuperación adicional. Transporte HTTP302 y ACK perdido no duplican POST.",
+    "Recibo: igualdad exacta de código/datos/snapshot/run/plan, drift local antes de bundle, nonces distintos por GET y diagnóstico sin valores privados; preserva main y mutex.",
+    "Interfaz: render sintético de copy/publicación y etapas terminadas, cola/ejecución real; no inventa próximas rondas ni horarios.",
+    "Auditoría: ausencia de etapa habilitada, recibo falsificado, identidad cruzada de pieza/dependencias, vetos, guion incompleto, bytes MD5, cambios concurrentes, API GitHub sólo GET y ningún POST al GAS.",
+    "Revisión independiente de privacidad y compuertas. La activación requiere CI exacto y recibos reales; guardar código no acredita producción ni recepción de correo."
   ],
   "rollback": "Conservar decisiones/cola/medios/releases/recibos. Antes de revertir lectores tras emitir deltas, desactivar flag y publicar FULL desde lector compatible, comprobando recibo. Para correo original restaurar la función conservada correoDiarioAnterior20261015_ y conservar el respaldo privado del contenedor. No cambiar URL ni ACL."
 }

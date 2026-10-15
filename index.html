@@ -804,7 +804,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='179ef95a64';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='00ae5394b0';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2536,33 +2536,34 @@ function filaLinea(z){
     else if(k===run) c=viejos.some(f=>(COLA_DE_ETAPA[k]||'')===f.etapa)?'rojo':'corre';
     else if(i===aqui) c=tuyo?'tu':(fallos.length||viejos.length?'rojo':'sig');
     return {k,txt,c,aqui:i===aqui} });
-  const ejec=proximaCorrida(20,2), prod=proximaCorrida(30,1), estF=estimaFabrica((colaPend[0]||viejos[0]||{}).etapa);
   let quien='sig', que='', cuando='';
   const nomEt=aqui>=0?et[aqui][1]:'';
   // lo de la fábrica se cuenta aparte: puede haber algo atorado aunque la decisión sea tuya
   let nota='';
   if(fallos.length){ const e=fallos[0].evidencia; nota=`Además, ${nomCola(fallos[0].etapa)} ${fallos[0].item||''} falló: ${String((e&&typeof e==='object'?e.error:'')||'sin detalle').slice(0,80)} (necesita revisión).` }
-  else if(viejos.length) nota=`Además, ${nomCola(viejos[0].etapa)} está atorada desde el ${fechaCorta(viejos[0].actualizado)}; se rescata sola${ejec?' ≈ '+horaHmo(ejec):''}`;
-  else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola${estF?' · revísalo ≈ '+horaHmo(estF.listo):''}`;
-  if(aqui<0){ quien='fab'; que='Lista para salir: todas sus etapas están hechas.'; cuando='Falta publicarla.' }
+  else if(viejos.length) nota=`Además, ${nomCola(viejos[0].etapa)} figura en curso desde el ${fechaCorta(viejos[0].actualizado)}; su finalización no está confirmada.`;
+  else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola.`;
+  if(publicada){ que='Publicación registrada.' }
+  else if(aqui<0){ que='Material listo. Publicación por confirmar.' }
   else if(!mesa&&/esperando tu s|elige una opci|en tu mesa/i.test(falta)){ quien='sig'; que='No pude leer tu mesa de hoy: entra (o actualiza) para saber si te toca algo.'; cuando='' }
   else if(tuyo){ quien='tu'; que=mesa?`Te toca: ${pend.length} en tu mesa de hoy${falta?' ('+falta+')':''}.`:`Te toca: ${falta}.`; const f=fechaDeTiraL(t); cuando='Toca para decidir ahora'+(f?' · esperando desde el '+fechaCorta(f):''); }
-  else if(cambio){ quien='fab'; que=`Producción rehace ${falta.replace(/^pidió cambio en /i,'')} con tu nota.`; cuando='Vuelve a tu mesa en cuanto esté lista la nueva versión.' }
-  else if(esperaRonda){ quien='sig'; const lam=(falta.match(/l[aá]mina \d+/i)||[''])[0]; que=`Hoy ya decidiste lo que había${lam?'; la '+lam+' vuelve a tu mesa en la próxima ronda':''}.`; cuando='' }
+  else if(cambio){ que=`Cambio pedido en ${falta.replace(/^pidió cambio en /i,'')}.`; cuando='La nueva versión aún no está confirmada.' }
+  else if(esperaRonda&&!['copy','publicada'].includes(et[aqui][0])){ que='No hay una tarjeta por responder de esta pieza en la mesa actual.'; cuando='Consulta su historial para revisar las decisiones.' }
   else if(fallos.length){ quien='rojo'; const e=fallos[0].evidencia; const err=(e&&typeof e==='object'?e.error:'')||'sin detalle';
     que=`${nomCola(fallos[0].etapa)} ${fallos[0].item||''} falló: ${String(err).slice(0,90)}.`; cuando='Necesita revisión: no se reintenta solo.' }
-  else if(viejos.length){ quien='rojo'; que=`Atorado en ${nomCola(viejos[0].etapa)} desde el ${fechaCorta(viejos[0].actualizado)} (una corrida que murió).`;
-    cuando=estF?'Se rescata solo cuando la fábrica vuelva a correr (≈ '+horaHmo(estF.toma)+')':'' }
+  else if(viejos.length){ quien='rojo'; que=`${nomCola(viejos[0].etapa)} figura en curso desde el ${fechaCorta(viejos[0].actualizado)}.`;
+    cuando='Su finalización no está confirmada.' }
   else if(run){ quien='fab'; const n=todas.filter(f=>/corriendo/i.test(f.estado||'')).length;
-    que=`La fábrica está produciendo ${et.find(x=>x[0]===run)?.[1]||run} (${n} trabajo${n===1?'':'s'}).`; { const c=todas.find(f=>/corriendo/i.test(f.estado||'')), ini=c&&Date.parse(String(c.actualizado||'').slice(0,16)+'-07:00'); const fin=ini?new Date(ini+(durEtapa(c.etapa)+3)*60000):null;
-      cuando=fin&&fin>new Date()?'Revísalo ≈ '+horaHmo(fin)+' (lo que suele tardar).':'Sale al terminar la corrida en curso.' } }
-  else if(colaPend.length){ quien='fab'; que=`${colaPend.length} trabajo${colaPend.length===1?'':'s'} de ${nomEt} en cola.`; cuando=estF?estF.texto:'' }
+    que=`En proceso: ${et.find(x=>x[0]===run)?.[1]||run} (${n} trabajo${n===1?'':'s'}).`; cuando='Finalización pendiente de confirmar.' }
+  else if(colaPend.length){ quien='fab'; que=`${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola.`; cuando='Inicio pendiente de confirmar.' }
   else if(!t){ const ar=((ARRANQUE&&ARRANQUE.piezas)||[]).find(x=>x.pieza===z.nombre);
     // 23-sep (su reclamo: «dice que la siguiente ronda escribe el guion… y no he visto que haga nada»):
     // si el arranque ya lo intentó y no pudo, se dice qué pasó y cuándo, no una promesa genérica.
-    if(ar&&ar.resultado!=='arrancada'){ quien='rojo'; que=`Idea elegida; el arranque lo intentó y no pudo: ${ar.motivo||ar.resultado}.`; cuando=`Último intento: ${fechaHoraCorta(ARRANQUE.corrida)} · se reintenta solo cada hora.` }
-    else { quien='sig'; que='Idea elegida, sin guion ni láminas todavía.'; const m=proxArranque(); cuando=`El arranque escribe su guion y su lámina 1 ${m}.` } }
-  else { quien='sig'; que=`Sigue: ${nomEt}.`; cuando=prod?'El Productor lo pone en cola ≈ '+horaHmo(prod)+' y la fábrica lo hace después':'' }
+    if(ar&&ar.resultado!=='arrancada'){ quien='rojo'; que=`Idea elegida; el arranque lo intentó y no pudo: ${ar.motivo||ar.resultado}.`; cuando=`Último intento: ${fechaHoraCorta(ARRANQUE.corrida)}.` }
+    else { que='Idea elegida. Guion y láminas pendientes de confirmar.' } }
+  else if(et[aqui][0]==='copy'){ que='Texto de publicación por confirmar.' }
+  else if(et[aqui][0]==='publicada'){ que='Publicación por confirmar.' }
+  else { que=`Sigue: ${nomEt}.`; cuando='Sin avance confirmado para esta etapa.' }
   const pct=Math.round(100*h.size/et.length);
   if(tuyo&&nota) cuando+=' · '+nota;
   return {z,segs,quien,que,cuando,pct,run,tuyo,paso:tuyo?pend[0]:null,rojo:!!(fallos.length||viejos.length),fab:!tuyo&&quien==='fab'};
@@ -2581,9 +2582,8 @@ async function pintarLinea(piezas,destino,compacto){
     abiertas.push({slug,nombre:i.titulo||i.id,tira:null,filas:{prospectos:[],escena:[],voz:[],corte:[]}}); ya.add(slug) }
   const filas=abiertas.map(filaLinea).sort((a,b)=>(b.tuyo-a.tuyo)||(b.rojo-a.rojo)||(b.fab-a.fab)||(b.pct-a.pct));
   const nTu=filas.filter(f=>f.tuyo).length, nFab=filas.filter(f=>f.fab).length, nRojo=filas.filter(f=>f.rojo).length, nSig=filas.filter(f=>!f.tuyo&&!f.fab&&!f.rojo).length;
-  const ejec=estimaFabrica('');
   const rel=!filas.length?'No hay publicaciones abiertas.':
-    `${filas.length} publicaciones abiertas. `+(nTu?`${nTu} te ${nTu===1?'espera':'esperan'} a ti`:'Ninguna te espera a ti')+(nFab?`, ${nFab} ${nFab===1?'está':'están'} en la fábrica`:'')+(nRojo?` y ${nRojo} ${nRojo===1?'está atorada':'están atoradas'}`:'')+'.'+(ejec&&nFab?` Lo próximo de la fábrica: revísalo ≈ ${horaHmo(ejec.listo).replace(/\.$/,'')}.`:'');
+    `${filas.length} publicaciones abiertas. `+(nTu?`${nTu} te ${nTu===1?'espera':'esperan'} a ti`:'Ninguna te espera a ti')+(nFab?`, ${nFab} ${nFab===1?'está':'están'} en la fábrica`:'')+(nRojo?` y ${nRojo} ${nRojo===1?'está atorada':'están atoradas'}`:'')+'.';
   // pendientes del sistema: recados atorados, ideas propuestas sin elegir
   let recados=[]; if(!compacto) try{ const j=await (await fetch('datos/encargos.json?v='+Date.now())).json(); const por=new Map();
     (j.encargos||[]).forEach(e=>{ const q=String(e.que||''); const id=(q.match(/"id":"([^"]+)"/)||[])[1]||q; const tx=(q.match(/"texto":"((?:[^"\\]|\\.)*)/)||[])[1]||q; por.set(id,{...e,texto:tx}) });
