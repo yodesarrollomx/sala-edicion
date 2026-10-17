@@ -282,6 +282,10 @@ def main():
         r = sala.get('reglas')
         reglas, motores_resp = r.get('reglas') or {}, r.get('motores') or []
         cola = (sala.get('cola') or {}).get('cola') or []
+        from cola_identidad import cola_segura
+        cola, repetidos = cola_segura(cola)
+        if repetidos:
+            sala.avisar('COLA: %d identidad(es) duplicadas bloqueadas, sin ejecutar ni rescatar' % repetidos)
         for t in cola:   # 23-sep: el Sheet devuelve la evidencia como TEXTO JSON; aquí es un dict
             if isinstance(t.get('evidencia'), str):
                 try:

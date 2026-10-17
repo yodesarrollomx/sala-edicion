@@ -23,3 +23,9 @@ La sonda autenticada39045627647 confirmó el contrato completo con el validador 
 Propuesta de compatibilidad `CHG-SALA-GUION-HEREDADO-20261017`, atlas `a205629797b59396ee24f141b181f3f6eefe09f6`: Mesa no interpreta texto/ruta como láminas por crear. Conserva y trabaja las láminas existentes; declara contador `tiras_con_guion_heredado` y estado parcial. Productor permite las etapas ya aprobadas de esas láminas y bloquea corte sin lista visual confirmada. Una lista con identidades inválidas sigue rechazándose. No se reescribe el guion ni se convierte una ausencia en aprobación.
 
 Pruebas locales del ajuste:512Python,117Node y13verificaciones de Sala. Esto acredita la corrección aislada; la siguiente ejecución debe comprobar publicación, compuertas y resultados reales. Revertir el PR conserva todos los datos, medios y decisiones.
+
+## Identidad única de trabajos
+
+Productor39069978675 acreditó historial completo y encoló74filas. La inspección detectó17identificadores repetidos y45filas excedentes. Ejecutor39070036439 fue cancelado antes de acreditar un nuevo entregable; la ejecución sin acuse se conserva bloqueada. Propuesta CHG-SALA-COLA-UNICA-20261017, atlas be583eb37389457a6c8034d3388f24aa30ac172b.
+
+Productor consolida únicamente ejecuciones equivalentes, conserva todas las fuentes y omite identidades con notas/contenido contradictorios. Ejecutor bloquea duplicados activos antes de ejecutar o rescatar; las filas obsoletas son historia. GAS rechaza un upsert con IDs repetidos antes de escribir filas. La conciliación existente requiere respaldo privado, plan por fila, lectura fresca igual al plan y readback, sin borrar filas ni alterar decisiones.

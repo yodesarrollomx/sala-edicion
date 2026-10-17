@@ -286,6 +286,10 @@ def planear(dia, cola, reglas, cat=None):
             abiertas = [i + 1 for i, e in enumerate(estados) if e != 'si']
             diario.append('el corte de %s NO se abre: láminas sin aprobar %s' % (pid, abiertas))
 
+    from cola_identidad import consolidar_plan
+    nuevos, ambiguos = consolidar_plan(nuevos)
+    if ambiguos:
+        diario.append('%d identidad(es) con contenido o notas contradictorias: no se encolan' % len(ambiguos))
     return nuevos, diario
 
 
