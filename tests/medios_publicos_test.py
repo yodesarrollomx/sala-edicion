@@ -488,3 +488,50 @@ class LifecycleTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class DraftTemporaryURLTests(unittest.TestCase):
+    def test_draft_temporary_url_recovers_existing_upload_without_resending(self):
+        api = FakeGitHub()
+        original_upload = api.upload
+        def upload(release, data, **kw):
+            result = original_upload(release, data, **kw)
+            api.releases[release["id"]]["assets"][0]["browser_download_url"] = (
+                f"https://github.com/{mp.REPO}/releases/download/untagged-484177f273a8b354c76f/"
+                + result["name"])
+            raise KeyboardInterrupt("runner interrupted after upload")
+        api.upload = upload
+        with self.assertRaises(KeyboardInterrupt):
+            mp.upload_new({}, {PATH: PNG}, SOURCE, "12", "1", "mesa", api, api.fetch)
+        original_request = api.request
+        def request(path, body=None, method=None):
+            result = original_request(path, body, method)
+            if body == {"draft": False}:
+                release = api.releases[int(path.split("/")[1])]
+                for asset in release["assets"]:
+                    asset["browser_download_url"] = mp._url(release["tag_name"], asset["name"])
+                result = copy.deepcopy(release)
+            return result
+        api.request = request
+        manifest = mp.upload_new({}, {PATH: PNG}, SOURCE, "13", "1", "mesa", api, api.fetch)
+        self.assertEqual(api.writes("upload"), 1)
+        self.assertNotIn("untagged", manifest["entries"][PATH]["url"])
+        mp.verify_manifest_assets(manifest, api, api.fetch)
+
+    def test_temporary_url_only_before_publication_with_exact_digest(self):
+        expected = mp._file_info(PATH, PNG)
+        item = {"id": 1, "name": expected["name"], "size": len(PNG),
+                "state": "uploaded", "content_type": "image/png",
+                "digest": "sha256:" + expected["sha256"],
+                "browser_download_url": f"https://github.com/{mp.REPO}/releases/download/untagged-ab12/" + expected["name"]}
+        mp._asset(item, expected, "sala-media-test", require_digest=True)
+        with self.assertRaises(mp.MediaError):
+            mp._asset(item, expected, "sala-media-test", require_digest=False)
+        for url in (item["browser_download_url"] + "?token=bad",
+                    item["browser_download_url"].replace(mp.REPO, "other/repo"),
+                    item["browser_download_url"].replace("github.com", "evil.example"),
+                    item["browser_download_url"].replace("untagged-ab12", "other-tag")):
+            with self.subTest(url=url), self.assertRaises(mp.MediaError):
+                mp._asset({**item, "browser_download_url": url}, expected, "sala-media-test", require_digest=True)
+        for digest in (None, "sha256:" + "0" * 64):
+            with self.subTest(digest=digest), self.assertRaises(mp.MediaError):
+                mp._asset({**item, "digest": digest}, expected, "sala-media-test", require_digest=True)

@@ -265,12 +265,18 @@ def _release(release, tag, descriptor=None, published=False):
 
 
 def _asset(item, expected, tag, asset_id=None, require_digest=False):
+    # GitHub uses a temporary tag in draft download URLs. It is never emitted
+    # in our manifest; the published asset must use the exact final tag URL.
+    url = item.get("browser_download_url") if type(item) is dict else None
+    draft_url = (require_digest and type(url) is str and re.fullmatch(
+        re.escape(f"https://github.com/{REPO}/releases/download/")
+        + r"untagged-[0-9a-f]+/" + re.escape(expected["name"]), url) is not None)
     if (type(item) is not dict or not _positive(item.get("id"))
             or (asset_id is not None and item["id"] != asset_id)
             or item.get("name") != expected["name"] or item.get("state") != "uploaded"
             or type(item.get("size")) is not int or item["size"] != expected["bytes"]
             or item.get("content_type") != expected["mime"]
-            or item.get("browser_download_url") != _url(tag, expected["name"])
+            or (url != _url(tag, expected["name"]) and not draft_url)
             or (require_digest and item.get("digest") != "sha256:" + expected["sha256"])
             or ("digest" in item and item["digest"] is not None
                 and item["digest"] != "sha256:" + expected["sha256"])):
