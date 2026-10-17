@@ -75,7 +75,7 @@ def gemini_pro(receta, reglas):
     return gemini(receta, dict(reglas or {}, imagen_gemini_modelo=MODELO_GEMINI_PRO))
 
 def modelo_de(motor, reglas=None):
-    return {'hidream_demo': 'HiDream-I1-Dev', 'openai_broker': 'gpt-image-1.5', 'cloudflare_flux2': MODELO_FLUX2, 'gemini_pro': MODELO_GEMINI_PRO,
+    return {'hidream_o1': 'HiDream-O1-Image-Dev', 'hidream_demo': 'HiDream-I1-Dev', 'openai_broker': 'gpt-image-1.5', 'cloudflare_flux2': MODELO_FLUX2, 'gemini_pro': MODELO_GEMINI_PRO,
             'cloudflare': '@cf/black-forest-labs/flux-1-schnell',
             'gemini': str((reglas or {}).get('imagen_gemini_modelo') or 'gemini-2.5-flash-image'),
             'pollinations': 'pollinations/flux', 'hf': 'black-forest-labs/FLUX.1-schnell',
@@ -232,7 +232,12 @@ def hidream_demo(receta, reglas):
     return generar_hidream(receta, reglas)
 
 
-MOTORES = {'hidream_demo': hidream_demo, 'openai_broker': openai_broker, 'cloudflare_flux2': cloudflare_flux2, 'gemini_pro': gemini_pro,
+def hidream_o1(receta, reglas):
+    from motores.imagen_hidream_o1 import generar as generar_o1
+    return generar_o1(receta, reglas)
+
+
+MOTORES = {'hidream_o1': hidream_o1, 'hidream_demo': hidream_demo, 'openai_broker': openai_broker, 'cloudflare_flux2': cloudflare_flux2, 'gemini_pro': gemini_pro,
            'cloudflare': cloudflare, 'gemini': gemini, 'pollinations': pollinations, 'hf': hf, 'cpu': cpu}
 
 
@@ -257,7 +262,7 @@ def generar(receta, reglas):
     orden = [m.strip() for m in str((reglas or {}).get('imagen_motores')
                                     or 'hidream_demo').split(',') if m.strip() in MOTORES]
     if (reglas or {}).get('_imagen_solo_recibo'):
-        orden = [m for m in orden if m in ('hidream_demo', 'openai_broker')]
+        orden = [m for m in orden if m in ('hidream_demo', 'hidream_o1', 'openai_broker')]
     # Veto de Dirección: ni el orden explícito ni el respaldo heredado lo reactivan.
     orden = [m for m in orden if not vetada({'motor': m})]
     avisos = []

@@ -1,24 +1,22 @@
 {
-  "model_revision": "2026-10-17.sala-cola-unica.1",
-  "proposal_id": "CHG-SALA-COLA-UNICA-20261017",
-  "summary": "Consolidar sólo trabajos equivalentes conservando fuentes, bloquear contradicciones y duplicados activos; rechazar IDs repetidos antes de escribir COLA. Conciliar filas técnicas sin borrar historia ni decidir.",
+  "model_revision": "2026-10-17.sala-hidream-o1.1",
+  "proposal_id": "CHG-SALA-HIDREAM-O1-20261017",
+  "summary": "Adaptador explícito hidream_o1 al Space oficial HiDream-O1-Image-Dev, sin token pagado ni respaldo implícito. Congela receta, seed, modelo y versión; conserva resultado privado y recibos. Revisión de política nueva distingue planes nuevos de envíos I1 inciertos. Habilitar en REGLAS sólo tras pruebas, imagen real conservada e integración. Productor puede procesar etapas previamente aprobadas aunque Mesa falle; sus lecturas, vetos y compuertas se mantienen y el recorrido conserva estado fallido de Mesa.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
-    "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
-    "EXT-DRIVE",
     "EXT-MOTORES-MEDIA",
-    "SYS-YOD-OS",
-    "EXT-GMAIL"
+    "SYS-YOD-OS"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p \"*_test.py\"",
+    "python3 -m unittest discover -s tests -p '*_test.py' -v",
     "node --test tests/*.test.cjs tests/*.test.mjs",
-    "python3 nube/verificar.py"
+    "python3 nube/verificar.py",
+    "git diff --check"
   ],
-  "rollback": "Revertir código conservando decisiones, cola, medios y snapshots.",
-  "model_commit": "be583eb37389457a6c8034d3388f24aa30ac172b"
+  "rollback": "Restaurar imagen_motores anterior y política/adaptadores mediante PR, conservando bytes, planes, votos y recibos. No reenviar planes ambiguos ni reactivar modelos vetados. Revertir condición de orquestación si falla validación de compuertas.",
+  "model_commit": "bb580d61ee8aaf9c42f6155cda8b93ef4d0c1f6f"
 }
