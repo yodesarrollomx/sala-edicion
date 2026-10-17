@@ -1,0 +1,31 @@
+name: Activar HiDream O1 confirmado y ejecutar Sala
+on:
+  push:
+    branches: [codex/activar-hidream-o1-20261017]
+permissions:
+  contents: read
+  actions: write
+jobs:
+  activar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            nube
+            politica-imagen.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet requests pillow
+      - name: Cambiar sólo el motor seleccionado y comprobar lectura fresca
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: python3 nube/activar_o1_confirmado.py
+      - name: Ejecutar recorrido real con el motor verificado
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sala-recorrido.yml --ref main -f pasadas_restantes=0
