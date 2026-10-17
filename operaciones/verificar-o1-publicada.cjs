@@ -10,7 +10,7 @@ async function loaded(locator){await locator.scrollIntoViewIfNeeded();await loca
  for(let i=0;i<60;i++){
   try{
    receipt=await json('version-online.json');report=await json('datos/mesa-estado.json');
-   assert.ok(receipt.media_manifest_sha256);assert.equal(report.run_id,'39073527776');
+   assert.ok(receipt.media_manifest_sha256);assert.equal(report.modelo_imagen,'HiDream-O1-Image-Dev');assert.ok(report.generadas>=4&&report.tomas_obtenidas===8);
    const mf=await json('datos/manifiesto.json');
    for(const p of mf.propuestas||[]){
     if(!p.id.startsWith(slug+'-'))continue;
@@ -22,6 +22,9 @@ async function loaded(locator){await locator.scrollIntoViewIfNeeded();await loca
   if(i===59)throw Error('Lote real aún no está publicado y montado en el respaldo de la sala: '+(result.espera||'sin tarjeta'));
   await new Promise(r=>setTimeout(r,20000));
  }
+ const proof=await fetch('https://api.github.com/repos/yodesarrollomx/sala-edicion/actions/runs/'+report.run_id+'/jobs');
+ assert.equal(proof.status,200);const jobs=(await proof.json()).jobs;
+ assert.ok(jobs.some(j=>(j.name==='mesa'||j.name==='mesa / mesa')&&j.conclusion==='success'),'Mesa sin montaje confirmado');
  const mr=await fetch(base+'datos/medios-publicos.json?v='+Date.now()),raw=Buffer.from(await mr.arrayBuffer());assert.equal(mr.status,200);
  assert.equal(crypto.createHash('sha256').update(raw).digest('hex'),receipt.media_manifest_sha256);
  const manifest=JSON.parse(raw),candidates=target.t.laminas.flatMap(l=>[2,3,4,5].includes(Number(l.n))?(l.candidatas||[]):[]);
