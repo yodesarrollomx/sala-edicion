@@ -1,20 +1,19 @@
-name: Evidencia visual de Sala con O1 publicado
+name: Sala O1 real · cuatro recorridos con ocho tomas verificadas
 on:
   push:
     branches: [codex/evidencia-o1-publicada-20261017]
-    paths-ignore: ['evidencia-o1/**']
+    paths-ignore: ['evidencia-o1-real/**']
 permissions:
   contents: write
 jobs:
   evidencia:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-          sparse-checkout: |
-            operaciones
+          sparse-checkout: operaciones
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -24,17 +23,17 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: evidencia-o1-publicada
-          path: evidencia-o1/
-      - name: Conservar capturas y resultado sin alterar el sitio
+          name: sala-o1-real-capturas-y-bitacora
+          path: evidencia-o1-real/
+      - name: Conservar pruebas públicas
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          test -d evidencia-o1 || exit 0
-          git config user.name 'codex'
-          git config user.email 'codex@users.noreply.github.com'
-          git add --sparse evidencia-o1/
-          git diff --cached --quiet && exit 0
-          git commit -m 'evidencia: recorrido visual real de Sala O1'
-          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:codex/evidencia-o1-publicada-20261017
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --sparse evidencia-o1-real/
+          if ! git diff --cached --quiet; then
+            git commit -m "evidencia: recorrido real de ocho tomas O1"
+            git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:codex/evidencia-o1-publicada-20261017
+          fi

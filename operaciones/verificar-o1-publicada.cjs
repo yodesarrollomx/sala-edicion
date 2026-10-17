@@ -1,76 +1,71 @@
-const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
-const base='https://yodesarrollomx.github.io/sala-edicion/';
+const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const base='https://yodesarrollomx.github.io/sala-edicion/',dir='evidencia-o1-real',slug='dato-servilleta-3';
+const result={scope:'cuatro_recorridos_visuales_de_lote_real',cuatro_ciclos_productivos_acreditados:false,run_id:process.env.GITHUB_RUN_ID,passes:[]};
+const json=async path=>{const r=await fetch(base+path+'?v='+Date.now());assert.equal(r.status,200,path);return r.json()};
+async function loaded(locator){await locator.scrollIntoViewIfNeeded();await locator.evaluate(e=>new Promise((resolve,reject)=>{if(e.complete)return e.naturalWidth?resolve():reject(Error('Imagen rota'));const timer=setTimeout(()=>reject(Error('Imagen sin cargar')),30000);e.onload=()=>{clearTimeout(timer);e.naturalWidth?resolve():reject(Error('Imagen vacía'))};e.onerror=()=>{clearTimeout(timer);reject(Error('Imagen rota'))}}));}
 (async()=>{
- for(let attempt=0;attempt<30;attempt++){
-  const r=await fetch(base+'datos/mesa-estado.json?espera='+Date.now());
-  const d=await r.json();
-  if(Array.isArray(d.publicaciones)&&d.run_id==='39071362170' && d.modelo_imagen==='HiDream-O1-Image-Dev' && d.generadas>0)break;
-  if(attempt===29)throw Error('No llegó la proyección del commit esperado');
-  await new Promise(resolve=>setTimeout(resolve,20000));
- }
- const browser=await chromium.launch({headless:true});
- const result={tipo:'recorridos_visuales_reales_sin_escrituras',produccion_nueva_acreditada:false,nota:'El navegador acredita visualización y bytes; la producción requiere recibos separados',run_id:process.env.GITHUB_RUN_ID,passes:[]};
- fs.mkdirSync('evidencia-o1',{recursive:true});
+ fs.mkdirSync(dir,{recursive:true});let browser;
  try{
+ let target,receipt,report;
+ for(let i=0;i<60;i++){
+  try{
+   receipt=await json('version-online.json');report=await json('datos/mesa-estado.json');
+   assert.ok(receipt.media_manifest_sha256);assert.equal(report.run_id,'39073527776');
+   const mf=await json('datos/manifiesto.json');
+   for(const p of mf.propuestas||[]){
+    if(!p.id.startsWith(slug+'-'))continue;
+    const t=await json('datos/tiras/'+p.id+'.json');
+    if((t.laminas||[]).length===5&&[2,3,4,5].every(n=>(t.laminas.find(l=>Number(l.n)===n)?.candidatas||[]).filter(c=>c.modelo==='HiDream-O1-Image-Dev').length===2)){target={id:p.id,t};break;}
+   }
+   if(target)break;
+  }catch(e){result.espera=e.message;}
+  if(i===59)throw Error('Lote real aún no está publicado y montado en el respaldo de la sala: '+(result.espera||'sin tarjeta'));
+  await new Promise(r=>setTimeout(r,20000));
+ }
+ const mr=await fetch(base+'datos/medios-publicos.json?v='+Date.now()),raw=Buffer.from(await mr.arrayBuffer());assert.equal(mr.status,200);
+ assert.equal(crypto.createHash('sha256').update(raw).digest('hex'),receipt.media_manifest_sha256);
+ const manifest=JSON.parse(raw),candidates=target.t.laminas.flatMap(l=>[2,3,4,5].includes(Number(l.n))?(l.candidatas||[]):[]);
+ assert.equal(candidates.length,8);
+ const assets=[];
+ for(const c of candidates){
+  const logical=c.src||c.original,entry=manifest.entries[logical];assert.ok(entry,'Imagen nueva sin manifiesto: '+logical);
+  const r=await fetch(entry.url),bytes=Buffer.from(await r.arrayBuffer());assert.equal(r.status,200);assert.equal(bytes.length,entry.bytes);assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),entry.sha256);
+  assets.push({logical,sha256:entry.sha256,bytes:bytes.length,url:entry.url,modelo:c.modelo});
+ }
+ result.lote={id:target.id,mesa:report.run_id,receipt,assets};
+ browser=await chromium.launch();
  for(let k=1;k<=4;k++){
-  const inicio=new Date().toISOString(),mobile=k%2===0;
-  const context=await browser.newContext({viewport:{width:mobile?390:1440,height:mobile?844:1000},isMobile:mobile,hasTouch:mobile});
-  const page=await context.newPage(),errors=[],blocked=[];
-  await page.route('**/*',r=>{if(['GET','HEAD'].includes(r.request().method()))return r.continue();blocked.push(r.request().method());return r.abort();});
-  page.on('pageerror',e=>errors.push(e.message.slice(0,200)));
-  const res=await page.request.get(base+'datos/mesa-estado.json?v='+Date.now());assert.equal(res.status(),200);
-  const report=await res.json();assert.ok(Array.isArray(report.publicaciones)&&report.publicaciones.length>0,'Falta inventario vigente publicado');
+  const mobile=k%2===0,context=await browser.newContext({viewport:{width:mobile?390:1440,height:mobile?844:1000},isMobile:mobile,hasTouch:mobile});
+  const page=await context.newPage(),errors=[],writes=[],start=new Date().toISOString();
+  await page.route('**/*',r=>{if(['GET','HEAD'].includes(r.request().method()))return r.continue();writes.push(r.request().method());return r.abort()});
+  page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base,{waitUntil:'domcontentloaded'});
   await page.waitForSelector('.bt-column',{timeout:60000});
-  await page.waitForFunction(()=>!document.querySelector('[data-refresh]')?.disabled,{timeout:60000});
-  await page.getByRole('button',{name:'Saltar',exact:true}).click({timeout:15000});
-  const role=await page.evaluate(()=>ROL());assert.equal(role,'lector');
-  const columns=await page.locator('.bt-column').count();
-  assert.equal(columns,report.publicaciones.length);
-  const expected=report.publicaciones.reduce((a,p)=>a+p.laminas.length,0);
-  assert.equal(await page.locator('.bt-frame').count(),expected);
-  await page.screenshot({path:'evidencia-o1/pasada-'+k+'-mesa.jpg',type:'jpeg',quality:75,fullPage:true});
-  const ids=await page.locator('[data-open]').evaluateAll(els=>els.map(e=>e.dataset.open));
-  const pieces=[];
-  for(const id of ids){
-   await page.locator('[data-open="'+id+'"]').click();
-   const fotos=page.locator('.bt-frame img');
-   for(let j=0;j<await fotos.count();j++){
-    await fotos.nth(j).scrollIntoViewIfNeeded();
-    await fotos.nth(j).evaluate(e=>new Promise((resolve,reject)=>{
-     if(e.complete)return e.naturalWidth?resolve():reject(Error('Imagen sin bytes'));
-     const timer=setTimeout(()=>reject(Error('Imagen no cargada')),30000);
-     e.addEventListener('load',()=>{clearTimeout(timer);e.naturalWidth?resolve():reject(Error('Imagen vacía'));},{once:true});
-     e.addEventListener('error',()=>{clearTimeout(timer);reject(Error('Imagen rota'));},{once:true});
-    }));
+  await page.waitForFunction(()=>!document.querySelector('[data-refresh]')?.disabled);
+  const skip=page.getByRole('button',{name:'Saltar',exact:true});if(await skip.isVisible())await skip.click();
+  assert.equal(await page.evaluate(()=>ROL()),'lector');
+  const ids=await page.locator('[data-open]').evaluateAll(els=>els.map(e=>e.dataset.open));assert.ok(ids.includes(slug));
+  let frames=0;
+  for(const id of ids){await page.locator('[data-open="'+id+'"]').click();const photos=page.locator('.bt-frame img');const count=await page.locator('.bt-frame').count();assert.equal(await photos.count(),count);for(let j=0;j<count;j++)await loaded(photos.nth(j));frames+=count;await page.locator('.bt-nav [data-back]').click();}
+  await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:dir+'/pasada-'+k+'-tablero.jpg',type:'jpeg',quality:80,fullPage:true});
+  await page.locator('[data-open="'+slug+'"]').click();assert.equal(await page.locator('.bt-frame').count(),5);await page.screenshot({path:dir+'/pasada-'+k+'-tira.jpg',type:'jpeg',quality:85,fullPage:true});
+  const options=[];
+  for(const number of [2,3,4,5]){
+   await page.locator('.bt-photo[data-lamina="'+number+'"]').click();
+   assert.equal(await page.locator('[data-option]').count(),2);
+   for(let option=0;option<2;option++){
+    await page.locator('[data-option="'+option+'"]').click();await loaded(page.locator('.bt-main-photo'));
+    const src=await page.locator('.bt-main-photo').getAttribute('src');assert.ok(src.startsWith('https://github.com/yodesarrollomx/sala-edicion/releases/download/'));
+    options.push({lamina:number,opcion:option+1,src});
+    if(number===2)await page.screenshot({path:dir+'/pasada-'+k+'-lamina2-opcion'+(option+1)+'.jpg',type:'jpeg',quality:85,fullPage:true});
    }
-   const frames=await page.locator('.bt-frame').count();assert.equal(await fotos.count(),frames);
-   pieces.push({pieza:id,laminas:frames,imagenes_cargadas:frames});
-   if(pieces.length===1)await page.screenshot({path:'evidencia-o1/pasada-'+k+'-tira.jpg',type:'jpeg',quality:75,fullPage:true});
    await page.locator('.bt-nav [data-back]').click();
   }
-  // Recorrer también el tablero completo para cargar las imágenes diferidas antes de fotografiarlo.
-  const overview=page.locator('.bt-frame img');
-  for(let j=0;j<await overview.count();j++){
-   await overview.nth(j).scrollIntoViewIfNeeded();
-   await overview.nth(j).evaluate(e=>new Promise((resolve,reject)=>{
-    if(e.complete)return e.naturalWidth?resolve():reject(Error('Miniatura rota'));
-    const timer=setTimeout(()=>reject(Error('Miniatura no cargada')),30000);
-    e.addEventListener('load',()=>{clearTimeout(timer);resolve();},{once:true});
-    e.addEventListener('error',()=>{clearTimeout(timer);reject(Error('Miniatura rota'));},{once:true});
-   }));
-  }
-  assert.equal(await overview.evaluateAll(els=>els.filter(e=>e.complete&&e.naturalWidth>0).length),expected);
-  await page.evaluate(()=>window.scrollTo(0,0));
-  await page.screenshot({path:'evidencia-o1/pasada-'+k+'-mesa.jpg',type:'jpeg',quality:75,fullPage:true});
-  await page.screenshot({path:'evidencia-o1/pasada-'+k+'-pantalla.jpg',type:'jpeg',quality:80});
-  assert.deepEqual(errors,[]);assert.deepEqual(blocked,[]);
-  result.passes.push({pasada:k,inicio,fin:new Date().toISOString(),viewport:mobile?'movil':'escritorio',role,columnas:columns,laminas:expected,piezas:pieces,mesa_run_id:report.run_id,mesa_code_sha:report.code_sha,mesa_revisada:report.revisado_en,errores:errors,escrituras:blocked.length,ok:true});
-  fs.writeFileSync('evidencia-o1/resultado.json',JSON.stringify(result,null,2));
-  console.log('RECORRIDO_VISUAL '+JSON.stringify(result.passes.at(-1)));
-  await context.close();
+  assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
+  result.passes.push({pasada:k,inicio:start,fin:new Date().toISOString(),viewport:mobile?'movil':'escritorio',columnas:ids.length,laminas_recorridas:frames,opciones:options,errores:errors,escrituras:writes.length,ok:true});
+  fs.writeFileSync(dir+'/resultado.json',JSON.stringify(result,null,2));console.log('PASADA_REAL '+JSON.stringify(result.passes.at(-1)));await context.close();
  }
  result.ok=true;
- }catch(e){result.ok=false;result.error=e.message;console.error('VERIFICACION_FALLIDA '+e.message);process.exitCode=1;}
- finally{fs.writeFileSync('evidencia-o1/resultado.json',JSON.stringify(result,null,2));await browser.close();}
+ }catch(e){result.ok=false;result.error=e.message;console.error('FALLO_REAL '+e.message);process.exitCode=1;}
+ finally{fs.writeFileSync(dir+'/resultado.json',JSON.stringify(result,null,2));if(browser)await browser.close();}
 })();
