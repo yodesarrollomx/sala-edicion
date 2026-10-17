@@ -243,7 +243,7 @@ def producir_tomas(slug, t, lam, nota, reglas, cola, carpeta, n_tomas, solo_reci
         try:
             reglas_pedido = dict(reglas, _cerebro_traza=[])
             def preparar():
-                if not solo_recibo and 'hidream_demo' in str(reglas.get('imagen_motores') or 'hidream_demo').split(','):
+                if not solo_recibo and any(m.strip() in ('hidream_demo', 'hidream_o1') for m in str(reglas.get('imagen_motores') or 'hidream_demo').split(',')):
                     d, quien, av = cerebro.fotografia_guion(
                         str(lam.get('dice') or ''), contexto_visual(lam.get('ve')),
                         contexto_visual(nota), ref_txt, reglas_pedido, k)
@@ -609,7 +609,7 @@ def main():
         pend = abiertas(tid, t, leer_sheet=not args.sin_sheet)
         if not pend:
             seleccion['tiras_sin_laminas_abiertas'] += 1
-            sala.avisar('· %s (%s): todas sus láminas aprobadas — nada que rehacer' % (nombre, tid))
+            sala.avisar('· %s (%s): sin tomas nuevas que preparar; consultar estados de revisión' % (nombre, tid))
             continue
         seleccion['tiras_con_laminas_abiertas'] += 1
         seleccion['laminas_abiertas'] += len(pend)

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2026-10-12.sin-pollinations.gpt.1",
+  "revision": "2026-10-17.hidream-o1.1",
   "retirados": [
     {
       "motor": "cpu",
@@ -77,13 +77,13 @@
     "laminas/tu-terreno-tus-reglas-nube-2026-10-11-37000b/L5-1.png"
   ],
   "reemplazo": {
-    "motor": "hidream_demo",
-    "modelo": "HiDream-I1-Dev",
+    "motor": "hidream_o1",
+    "modelo": "HiDream-O1-Image-Dev",
     "respaldos": [],
     "conservar_texto": true,
-    "orden_direccion": "2026-10-13",
+    "orden_direccion": "2026-10-17",
     "estado": "prueba_real_confirmada",
-    "prueba": "38342683066",
-    "disponibilidad": "Space gratuito; límite diario no publicado. Sin respaldo de pago implícito."
+    "prueba": "39070759507",
+    "disponibilidad": "Space oficial gratuito probado con receta real; sin cuota garantizada ni respaldo de pago."
   }
 }

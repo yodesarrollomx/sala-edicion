@@ -210,7 +210,7 @@ def ejecutar(rid, source, preparar, reglas, solo_recibo=False, store=None):
         try:
             photo, ext, motor, avisos = imagen.generar(plan['d']['receta'], effective)
         except imagen.RechazoImagen as e:
-            if not effective['_imagen_solo_recibo'] and str(effective.get('imagen_motores') or 'hidream_demo').strip() == 'hidream_demo':
+            if not effective['_imagen_solo_recibo'] and str(effective.get('imagen_motores') or 'hidream_demo').strip() in ('hidream_demo', 'hidream_o1'):
                 store.put('rechazo-' + store.owner + '.zip',
                           {'estado': 'rechazo_sin_imagen', 'motivo': e.motivo,
                            'plan_sha256': digest(canonical(plan))})
