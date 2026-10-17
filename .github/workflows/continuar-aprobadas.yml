@@ -1,0 +1,16 @@
+name: Continuar etapas aprobadas de Sala
+on:
+  push:
+    branches: [codex/continuar-produccion-aprobada-20261017]
+permissions:
+  contents: read
+  actions: write
+jobs:
+  ejecutar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invocar productor existente con sus compuertas y reglas vigentes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: yodesarrollomx/sala-edicion
+        run: gh workflow run sala-productor.yml --ref main -f simular=false
