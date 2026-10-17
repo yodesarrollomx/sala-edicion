@@ -1,6 +1,6 @@
 {
   "model_revision": "2026-10-17.sala-medios-draft.1",
-  "model_commit": "f07895ab1c79cbeac3594715c8777f8ee8f4358e",
+  "model_commit": "cac19defff81d25078bea5ed23f231783de0ee37",
   "proposal_id": "CHG-SALA-MEDIOS-DRAFT-20261017",
   "summary": "Corregir validación de URL temporal untagged de activos draft de GitHub. Antes de publicar, exigir ID/nombre/tamaño/MIME/SHA256 exactos y URL restringida al mismo repositorio y archivo. Después de publicar, exigir URL de tag definitiva exacta, release inmutable y descarga anónima de bytes exactos. Conservar contrato MEDIOS y límite900MiB.",
   "components": [
