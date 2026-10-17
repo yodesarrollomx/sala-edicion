@@ -1091,6 +1091,15 @@ function doPost(e) {
     if (rolDe(d.clave) !== 'agente') return json({ error: 'solo el agente' });
     var op = String(d.op || 'upsert');
     if (['upsert', 'estado'].indexOf(op) < 0) return json({ error: 'op desconocida (upsert|estado)' });
+    if (op === 'upsert') {
+      var idsLote = Object.create(null), repetidoLote = false;
+      (d.filas || []).forEach(function (t) {
+        var idLote = String((t || {}).id || '').trim();
+        if (idLote && idsLote[idLote]) repetidoLote = true;
+        idsLote[idLote] = true;
+      });
+      if (repetidoLote) return json({ ok: false, error: 'cola_id_duplicado_en_lote' });
+    }
     var hC = hoja('COLA');
     if (!hC) return json({ error: 'no existe la hoja COLA: corre antes accion:hojas' });
     var dtC = hC.getDataRange().getValues(), donde = {};

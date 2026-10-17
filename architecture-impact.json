@@ -1,18 +1,24 @@
 {
-  "model_revision": "2026-10-17.sala-recibos-fallo.1",
-  "proposal_id": "CHG-SALA-RECIBOS-FALLO-20261017",
-  "summary": "Negativas terminales de HiDream se conservan por plan e intento; reintento posterior sin confundir rechazo y envío incierto. Sin respaldo pagado ni cambios editoriales.",
+  "model_revision": "2026-10-17.sala-cola-unica.1",
+  "proposal_id": "CHG-SALA-COLA-UNICA-20261017",
+  "summary": "Consolidar sólo trabajos equivalentes conservando fuentes, bloquear contradicciones y duplicados activos; rechazar IDs repetidos antes de escribir COLA. Conciliar filas técnicas sin borrar historia ni decidir.",
   "components": [
     "SYS-SALA",
+    "GAS-SALA",
+    "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
+    "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
-    "EXT-MOTORES-MEDIA"
+    "EXT-DRIVE",
+    "EXT-MOTORES-MEDIA",
+    "SYS-YOD-OS",
+    "EXT-GMAIL"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p \"*_test.py\"",
     "node --test tests/*.test.cjs tests/*.test.mjs",
     "python3 nube/verificar.py"
   ],
-  "rollback": "Revertir adaptadores y lector de negativas; conservar planes, resultados, negativos y decisiones. Mantener conciliación cerrada ante estado desconocido.",
-  "model_commit": "2f2c58a4e5826f176a236372887d581763816f0c"
+  "rollback": "Revertir código conservando decisiones, cola, medios y snapshots.",
+  "model_commit": "be583eb37389457a6c8034d3388f24aa30ac172b"
 }
