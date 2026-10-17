@@ -153,6 +153,7 @@ def main():
     try:
         sala.enmascarar_en_actions()
         drive.INTENTOS = 1
+        exigir(not produccion.peticiones_abiertas(), 'peticiones_abiertas')
         rules = (sala.get('reglas', fresco='1') or {}).get('reglas') or {}
         queue = (sala.get('cola', fresco='1') or {}).get('cola') or []
         exigir(not any(r.get('estado') == 'corriendo' for r in queue), 'ejecucion_en_curso')
