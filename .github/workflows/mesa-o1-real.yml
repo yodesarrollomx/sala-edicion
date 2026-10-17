@@ -1,32 +1,21 @@
-name: Montaje con guiones actuales y respaldo publico
+name: Leer lote real y respaldo publico sin credenciales
 on:
   push:
     branches: [codex/mesa-o1-real-20261017]
-permissions:
-  contents: read
-  actions: write
+permissions: {}
 jobs:
-  relevo:
+  comprobar:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
     steps:
-      - name: Drenar recorrido de version sustituida
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: yodesarrollomx/sala-edicion
-        run: gh run cancel 39073596938 || true
-      - name: Esperar montaje actual antes del relevo
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: yodesarrollomx/sala-edicion
-        run: |
-          for intento in $(seq 1 90); do
-            estado=$(gh api repos/yodesarrollomx/sala-edicion/actions/runs/39073909910/jobs --jq '.jobs[] | select(.name=="mesa / mesa") | .status+":"+(.conclusion//"")')
-            if [ "$estado" = "completed:success" ]; then
-              gh workflow run sala-relevo.yml --ref main -f simular=false
-              exit 0
-            fi
-            case "$estado" in completed:*) echo "$estado"; exit 1;; esac
-            sleep 20
-          done
-          exit 1
+      - run: |
+          python3 - <<'PY'
+          import urllib.request,json,time
+          base="https://yodesarrollomx.github.io/sala-edicion/"
+          def read(p):
+              with urllib.request.urlopen(base+p+"?auditoria="+str(time.time_ns()),timeout=40) as r:return json.load(r)
+          t=read("datos/tiras/dato-servilleta-3-nube-2026-10-17-5debd0.json")
+          print(json.dumps({"laminas":[{"n":l.get("n"),"candidatas":[{k:c.get(k) for k in ("modelo","motor","src","original")} for c in l.get("candidatas",[])]}for l in t.get("laminas",[])]}))
+          m=read("datos/manifiesto.json")
+          print(json.dumps({"keys":list(m),"propuestas":[{"id":p.get("id"),"tipo":p.get("tipo")}for p in m.get("propuestas",[]) if "servilleta" in str(p.get("id"))]}))
+          print(json.dumps(read("version-online.json")))
+          PY
