@@ -1,0 +1,23 @@
+name: Auditoria independiente de Sala 17 octubre
+on:
+  push:
+    branches: [codex/auditoria-autonomia-20261017]
+permissions:
+  contents: read
+jobs:
+  auditar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Leer sitio y servicios sin modificar negocio
+        run: python3 operaciones/auditoria-autonomia-20261017.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: auditoria-autonomia-20261017
+          path: auditoria.json
