@@ -29,6 +29,7 @@ const mediaRaw=JSON.stringify(mediaManifest),mediaPin=crypto.createHash('sha256'
 async function prepare(browser,width,role="editor",mobile=false,embedded=false,media={mode:'legacy'}){
  const context=await browser.newContext({viewport:{width,height:mobile?844:1000},isMobile:mobile,hasTouch:mobile});
  const page=await context.newPage(),writes=[],errors=[],releaseReads=[];
+ const visibleDay=()=>media.emptyDay?{...day(role),propuestas:[]}:day(role);
  page.on("pageerror",e=>errors.push(String(e)));
  await page.addInitScript(({role})=>{
   window.SpeechRecognition=class{constructor(){window.__dictado=this;}start(){}stop(){this.onend&&this.onend();}};
@@ -43,7 +44,7 @@ async function prepare(browser,width,role="editor",mobile=false,embedded=false,m
   if(u.hostname==="script.google.com"||u.hostname==="script.googleusercontent.com"){
    if(req.method()==="POST"){const body=JSON.parse(req.postData()||"{}");writes.push(body);await route.fulfill({json:{ok:true}});return;}
    const resource=u.searchParams.get("recurso");
-   await route.fulfill({json:resource==="dia"?day(role):resource==="cola"?{ok:true,cola:[{pieza:"synthetic-1",etapa:"voz",estado:"corriendo",item:"2"}]}:resource==="entrada"?{ok:true,rol:role}: {ok:true,reglas:{},propuestas:[]}});return;
+   await route.fulfill({json:resource==="dia"?visibleDay():resource==="cola"?{ok:true,cola:[{pieza:"synthetic-1",etapa:"voz",estado:"corriendo",item:"2"}]}:resource==="entrada"?{ok:true,rol:role}: {ok:true,reglas:{},propuestas:[]}});return;
   }
   if(mediaAssets.has(req.url())){releaseReads.push(req.url());await route.fulfill({contentType:'image/jpeg',body:mediaAssets.get(req.url())});return;}
   if(u.hostname!=="127.0.0.1"){await route.fulfill({status:200,contentType:req.resourceType()==="stylesheet"?"text/css":"application/javascript",body:""});return;}
@@ -56,7 +57,8 @@ async function prepare(browser,width,role="editor",mobile=false,embedded=false,m
   if(u.pathname==="/fixture-parent"){await route.fulfill({contentType:"text/html",body:'<html><body style="margin:0"><iframe src="/?embed=1" style="width:100%;height:650px;border:0" title="Sala en el portal"></iframe></body></html>'});return;}
   if(u.pathname.includes("/datos/")){
    let value={};
-   if(u.pathname==="/datos/manifiesto.json")value=day(role);
+   if(u.pathname==="/datos/mesa-estado.json"&&media.emptyDay)value={revisado_en:new Date().toISOString(),publicaciones:Object.entries(tiras).map(([id,t])=>({id,laminas:t.laminas.map(l=>({n:l.n,estado:"aprobada",...(l.n===2?{toma:3}:{})}))}))};
+   else if(u.pathname==="/datos/manifiesto.json")value=visibleDay();
    else if(u.pathname==="/datos/tiras/index.json")value=Object.keys(tiras);
    else if(u.pathname.startsWith("/datos/tiras/"))value=tiras[u.pathname.split("/").pop().replace(".json","")]||{};
    else if(u.pathname==="/datos/piezas.json")value={};
@@ -267,6 +269,18 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    await view.waitForFunction(()=>document.querySelector('.bt-choice .bt-main-photo')?.naturalWidth===72);
    assert.equal(await view.evaluate(()=>SalaMedios.estado()),'listo');
    assert.ok(r.releaseReads.length>=2);assert.deepEqual(r.errors,[]);
+   await r.context.close();
+  }
+  for(const [width,mobile] of [[1440,false],[390,true]]){
+   const r=await prepare(b,width,'editor',mobile,false,{mode:'legacy',emptyDay:true}),view=r.view;
+   assert.equal(await view.locator('.bt-column').count(),6,'día vacío conserva seis tiras confirmadas');
+   assert.equal(await view.locator('.bt-frame.verde').count(),36);
+   assert.equal(await view.evaluate(()=>D.propuestas.length),0,'inventario no inventa propuestas ni votos');
+   await view.locator('[data-open="synthetic-0"]').click();await view.locator('[data-lamina="2"]').click();
+   assert.equal(await view.locator('[data-vote]').count(),0);
+   assert.equal(await view.locator('[data-reopen]').count(),0);
+   assert.match(await view.locator('.bt-main-photo').getAttribute('src'),/B.jpg/);
+   assert.equal(r.writes.length,0);assert.deepEqual(r.errors,[]);
    await r.context.close();
   }
   const missing=await prepare(b,390,'editor',true,false,{mode:'missing'});
