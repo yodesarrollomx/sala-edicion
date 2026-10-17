@@ -1,10 +1,10 @@
-name: Comprobar salida de medios para produccion O1
+name: Diagnosticar contrato real de medios
 on:
   push:
     branches: [codex/mesa-o1-real-20261017]
 permissions:
-  contents: read
-  actions: write
+  contents: write
+  actions: read
 jobs:
   comprobar:
     runs-on: ubuntu-latest
@@ -13,5 +13,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: yodesarrollomx/sala-edicion
         run: |
-          curl --fail --silent 'https://yodesarrollomx.github.io/sala-edicion/version-online.json?prueba=medios2'
-          gh workflow run sonda-medios-publicos.yml --ref main -f aplicar=true
+          gh api --paginate 'repos/yodesarrollomx/sala-edicion/releases?per_page=100' --jq '.[] | select(.tag_name | startswith("sala-media-")) | {id,tag_name,draft,immutable,body,assets:[.assets[]|{id,name,state,size,content_type,digest,browser_download_url}]}'
