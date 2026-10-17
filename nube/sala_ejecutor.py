@@ -282,6 +282,11 @@ def main():
         r = sala.get('reglas')
         reglas, motores_resp = r.get('reglas') or {}, r.get('motores') or []
         cola = (sala.get('cola') or {}).get('cola') or []
+        import sala_produccion
+        from sala_vigencia import cola_sin_publicadas
+        cola, publicadas = cola_sin_publicadas(cola, sala_produccion.cargar())
+        if publicadas:
+            sala.avisar('COLA: %d trabajo(s) de piezas publicadas excluidos antes de ejecutar' % publicadas)
         from cola_identidad import cola_segura
         cola, repetidos = cola_segura(cola)
         if repetidos:

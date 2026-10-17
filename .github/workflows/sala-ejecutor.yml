@@ -26,6 +26,9 @@ permissions:
   issues: write
   actions: write   # para encadenarse a sí mismo si quedó trabajo
 
+env:
+  SALA_PRODUCCION_HISTORICA: ${{ vars.SALA_PRODUCCION_HISTORICA || '0' }}
+
 # Invariante 53: nunca dos ejecutores a la vez.
 concurrency:
   group: sala-ejecutor

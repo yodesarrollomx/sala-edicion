@@ -1,15 +1,16 @@
 {
-  "model_revision": "2026-10-17.sala-medios-draft.1",
-  "model_commit": "cac19defff81d25078bea5ed23f231783de0ee37",
-  "proposal_id": "CHG-SALA-MEDIOS-PUBLICOS-20261015",
-  "summary": "Activación versionada del emisor de imágenes nuevas en Mesa y Arranque bajo contrato MEDIOS. Preserva históricos, snapshots privados, pin, inmutabilidad y descarga anónima. Integrar únicamente tras sonda técnica completada y reentrada sin escrituras; prueba de producción posterior obligatoria.",
+  "model_revision": "2026-10-17.sala-entrega-fuentes.1",
+  "proposal_id": "CHG-SALA-ENTREGA-FUENTES-20261017",
+  "summary": "Preservar src de láminas históricas, impedir identidades vacías y excluir piezas ya publicadas antes de planificar, rescatar o ejecutar; sincronizar política JS con la política O1 vigente. Conserva votos, notas y archivos.",
   "components": [
     "SYS-SALA",
+    "GAS-SALA",
+    "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
     "EXT-DRIVE",
-    "SYS-YOD-OS"
+    "EXT-MOTORES-MEDIA"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p '*_test.py' -v",
@@ -17,5 +18,6 @@
     "python3 nube/verificar.py",
     "git diff --check"
   ],
-  "rollback": "Desactivar SALA_MEDIOS_PUBLICOS en ambos workflows mediante PR. Conservar lector compatible, manifiesto y releases inmutables ya referenciados; no borrar historia ni repatriar sin presupuesto verificado."
+  "rollback": "Revertir código por PR; conservar respaldo y todas las filas, decisiones y medios. Restaurar sólo campos técnicos que sigan coincidiendo con la conciliación.",
+  "model_commit": "2c9748c31724c0d246a342f9295faa20ca205d48"
 }
