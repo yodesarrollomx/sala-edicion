@@ -189,7 +189,7 @@ function next(){
 function renderChoice(g,l){
  const os=options(l),c=S.choice,k=Math.min(c.k,Math.max(0,os.length-1)),o=os[k],md=markData(g,l),st=status(g,l);
  c.k=k;
- const writable=eligible()&&!g.p._consulta&&md.i>=0&&!!dec[g.pid]&&l.estado!=="aprobada";
+ const writable=eligible()&&!g.p?._consulta&&md.i>=0&&!!dec[g.pid]&&l.estado!=="aprobada";
  const box=document.createElement("div");box.className="bt-choice";box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");box.setAttribute("aria-label","Elegir fotografía de lámina "+l.n);
  let finalistas=[],finalistasError=false;
  try{finalistas=preseleccion(localStorage,{quien:ROL(),pid:g.pid,n:l.n,version:l.version||null,dice:l.dice},os).leer();}catch(e){finalistasError=true;}
@@ -213,7 +213,7 @@ function renderChoice(g,l){
  ${md.nota.replace(/\s*\[toma elegida: \d+\]/g,"")?`<blockquote class="bt-editor-note"><span class="bt-eyebrow">TU NOTA AL MARGEN</span><p>${esc(md.nota.replace(/\s*\[toma elegida: \d+\]/g,""))}</p></blockquote>`:""}
  <div class="bt-decision-panel"><span class="bt-eyebrow">TU DECISIÓN · ${os.length?"TOMA "+(k+1):"SIN TOMA"}</span><div class="bt-decisions"><button class="bt-approve" data-vote="si" ${!writable||!o?"disabled":""}>Aprobar esta toma</button><button class="bt-reject" data-vote="no" ${!writable?"disabled":""}>Pedir cambio</button></div>
  <p class="bt-gesture-hint">${writable?"Comparar no decide. Aprueba esta toma o pide un cambio con una nota.":l.estado==="aprobada"?"Esta página ya está aprobada. Su historia se conserva.":"Vista de lectura: puedes comparar sin cambiar decisiones."}</p>
- ${l.estado==="aprobada"&&eligible()&&!g.p._consulta&&g.t.base?`<button data-reopen>Pedir una nueva revisión</button>`:""}
+ ${l.estado==="aprobada"&&eligible()&&!g.p?._consulta&&g.t.base?`<button data-reopen>Pedir una nueva revisión</button>`:""}
  <p class="bt-notice" role="status">${esc(S.notice)}</p></div>
  <button class="bt-next-review" data-next>Siguiente por revisar →</button></div></div>`;
  root.appendChild(box);
@@ -222,7 +222,7 @@ function moveOption(delta){if(!S.choice)return;const g=S.groups.find(x=>x.id===S
 function conservarFinalista(i){
  if(!S.choice||!eligible())return;
  const g=S.groups.find(x=>x.id===S.choice.group),l=g&&g.t.laminas.find(x=>Number(x.n)===S.choice.n);
- if(!l||g.p._consulta||l.estado==="aprobada"||markData(g,l).i<0||!dec[g.pid])return;
+ if(!l||g.p?._consulta||l.estado==="aprobada"||markData(g,l).i<0||!dec[g.pid])return;
  try{
   const r=preseleccion(localStorage,{quien:ROL(),pid:g.pid,n:l.n,version:l.version||null,dice:l.dice},options(l)).cambiar(i);
   S.notice=r.ok?"Preselección guardada en este navegador. Aún no has aprobado esta toma.":"Ya conservaste dos finalistas. Quita una antes de añadir otra.";
@@ -245,7 +245,7 @@ function ampliarOpciones(){
 function vote(m,zoomPhoto){
  if(!S.choice||!eligible())return;
  const g=S.groups.find(x=>x.id===S.choice.group),l=g.t.laminas.find(x=>Number(x.n)===S.choice.n),md=markData(g,l),d=dec[g.pid],o=options(l)[S.choice.k];
- if(g.p._consulta||!d||md.i<0||l.estado==="aprobada")return;
+ if(g.p?._consulta||!d||md.i<0||l.estado==="aprobada")return;
  const image=zoomPhoto||root.querySelector(".bt-main-photo");
  if(m==="si"&&(!mediosDisponibles()||!o||!image||!image.complete||!image.naturalWidth)){S.notice="Espera a que cargue esta fotografía antes de aprobarla.";render();return;}
  const identity=JSON.stringify(api.contexto()),owner=ROL();
