@@ -50,7 +50,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/tablero-sala.test.cjs tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs tests/sala-modelos.test.cjs
+      - run: node --test tests/tablero-publicaciones.test.cjs tests/tablero-sala.test.cjs tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs tests/sala-modelos.test.cjs
       - name: Navegador Chromium
         run: |
           npm install --no-save --package-lock=false playwright

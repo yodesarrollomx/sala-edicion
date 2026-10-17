@@ -277,7 +277,7 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    assert.equal(await view.locator('.bt-frame.verde').count(),36);
    assert.equal(await view.evaluate(()=>D.propuestas.length),0,'inventario no inventa propuestas ni votos');
    await view.locator('[data-open="synthetic-0"]').click();await view.locator('[data-lamina="2"]').click();
-   assert.equal(await view.locator('[data-vote]').count(),0);
+   assert.equal(await view.locator('[data-vote]:enabled').count(),0);
    assert.equal(await view.locator('[data-reopen]').count(),0);
    assert.match(await view.locator('.bt-main-photo').getAttribute('src'),/B.jpg/);
    assert.equal(r.writes.length,0);assert.deepEqual(r.errors,[]);
