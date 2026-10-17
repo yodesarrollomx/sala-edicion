@@ -1,0 +1,8 @@
+{
+  "scope": "cuatro_recorridos_visuales_de_lote_real",
+  "cuatro_ciclos_productivos_acreditados": false,
+  "run_id": "39075900977",
+  "passes": [],
+  "ok": false,
+  "error": "Command failed: gh api repos/yodesarrollomx/sala-edicion/actions/jobs/117521746455/logs\nthe response contains terminal escape sequences; pass --allow-escape-sequences to output it anyway\n"
+}

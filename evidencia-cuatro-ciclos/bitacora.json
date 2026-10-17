@@ -1,0 +1,19 @@
+{
+  "scope": "cuatro_ejecuciones_reales_secuenciales_con_verificacion_de_entregables",
+  "produccion_inicial": {
+    "run_id": "39073909910",
+    "tomas": 8,
+    "laminas": 4,
+    "corte": "apodo:48s",
+    "conclusion": "success"
+  },
+  "nota": "Las repeticiones conservan aprobaciones y entregables. Trabajo nuevo y reutilizado se registran por separado; no se generan versiones para inflar el contador.",
+  "cycles": [],
+  "ok": false,
+  "actual": {
+    "cycle": 1,
+    "run": 39075517796,
+    "inicio": "2026-10-17T22:39:46.809Z"
+  },
+  "error": "Command failed: node operaciones/verificar-ciclo.cjs"
+}
