@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-17.sala-entrega-fuentes.1",
   "proposal_id": "CHG-SALA-ENTREGA-FUENTES-20261017",
-  "summary": "Preservar src de láminas históricas, impedir identidades vacías y excluir piezas ya publicadas antes de planificar, rescatar o ejecutar; sincronizar política JS con la política O1 vigente. Conserva votos, notas y archivos.",
+  "summary": "Resolver una referencia explícita datos/guiones/FAMILIA-VIDEO.json ya existente y válida a sus escenas originales, en una copia de la tira. Mantener familia, numeración, texto, roles y votos; referencias ausentes, ajenas, fuera de la raíz o malformadas conservan bloqueo. Así Productor puede abrir el corte aprobado y Ejecutor revisa el contenido real antes del montaje; no se redacta ni aprueba guion.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",

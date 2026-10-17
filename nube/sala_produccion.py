@@ -318,12 +318,52 @@ def resolver_tira(tira, decision, prop=None):
     for i, lam in enumerate(result.get('laminas') or []):
         if requiere_reemplazo(lam):
             result['laminas'][i] = cleaned['laminas'][i]
+    return resolver_guion(result)
+
+
+def resolver_guion(tira):
+    """Resuelve sólo la referencia JSON explícita de su familia; no escribe ni inventa texto."""
+    result = copy.deepcopy(tira)
+    ref = result.get('guion')
+    family = str(result.get('pieza_slug') or '')
+    if (not isinstance(ref, str) or not family
+            or not re.fullmatch(r'datos/guiones/[A-Za-z0-9_-]+-VIDEO\.json', ref)
+            or Path(ref).name.casefold() != (family + '-VIDEO.json').casefold()):
+        return result
+    root = ROOT.resolve()
+    path = (root / ref).resolve()
+    if root not in path.parents:
+        return result
+    try:
+        if path.stat().st_size > 512 * 1024:
+            return result
+        script = json.loads(path.read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return result
+    scenes = script.get('escenas') if isinstance(script, dict) else None
+    if not isinstance(scenes, list) or not 0 < len(scenes) <= 1000:
+        return result
+    seen, frames = set(), []
+    for scene in scenes:
+        if not isinstance(scene, dict):
+            return result
+        n, parts = scene.get('n'), scene.get('partes')
+        if (type(n) is not int or n < 1 or n in seen or not isinstance(parts, list) or not parts
+                or any(not isinstance(p, dict) or not isinstance(p.get('dice'), str)
+                       or not p['dice'].strip() or not isinstance(p.get('rol'), str)
+                       or not p['rol'].strip() for p in parts)):
+            return result
+        seen.add(n)
+        frames.append({'n': n, 'dice': ' '.join(p['dice'] for p in parts),
+                       'partes': copy.deepcopy(parts)})
+    result['guion_referencia'] = ref
+    result['guion'] = frames
     return result
 
 
 def guion_faltante(tira):
     """Láminas del guion que aún no tienen propuesta visual; nunca aprobaciones."""
-    guion = tira.get("guion") or []
+    guion = resolver_guion(tira).get("guion") or []
     if not isinstance(guion, list):
         raise sala.SalaError("guion sin lista de láminas")
     numbers = [str(l.get("n", "")) for l in guion if isinstance(l, dict)]
