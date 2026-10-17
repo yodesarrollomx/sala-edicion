@@ -42,7 +42,7 @@ def head(path):
   req=u.Request(BASE+p.quote(path,safe="/"),method="HEAD",headers={"User-Agent":"Sala-auditoria"})
   with u.urlopen(req,timeout=30) as r:return r.status==200
  except Exception:return False
-with cf.ThreadPoolExecutor(max_workers=6) as pool:checks=list(pool.map(head,sorted(photos)[:250]))
+with cf.ThreadPoolExecutor(max_workers=6) as pool:checks=list(pool.map(head,sorted(photos)))
 out["medios"]={"detectados":len(photos),"comprobados":len(checks),"respondieron":sum(checks),"fallaron":len(checks)-sum(checks),"tiras_fallidas":errors}
 for label,url in [("render","https://yod-cloud-room.onrender.com/healthz"),("hidream","https://huggingface.co/api/spaces/HiDream-ai/HiDream-I1-Dev")]:
  try:
