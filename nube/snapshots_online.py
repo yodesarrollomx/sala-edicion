@@ -778,6 +778,7 @@ class Snapshots:
         tracked = set(self.git("ls-files", "-z").split("\0"))
         candidates = {path: (self.root / path).read_bytes() for path in current
                       if path.startswith("laminas/") and path not in state["baseline"]
+                      and Path(path).suffix in {".png", ".jpg", ".jpeg", ".webp"}
                       and path not in tracked and path not in entries}
         if not candidates:
             return manifest
