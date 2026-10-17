@@ -1,4 +1,4 @@
-name: Producir laminas pendientes con O1 verificado
+name: Comprobar salida de medios para produccion O1
 on:
   push:
     branches: [codex/mesa-o1-real-20261017]
@@ -6,10 +6,10 @@ permissions:
   contents: read
   actions: write
 jobs:
-  mesa:
+  comprobar:
     runs-on: ubuntu-latest
     steps:
       - env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: yodesarrollomx/sala-edicion
-        run: gh workflow run sala-mesa.yml --ref main -f modo=montar
+        run: gh workflow run sonda-medios-publicos.yml --ref main -f aplicar=true
