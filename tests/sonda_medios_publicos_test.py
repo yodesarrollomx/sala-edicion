@@ -149,6 +149,9 @@ class SondaTests(unittest.TestCase):
         self.assertEqual(report["state"], "verified")
         self.assertEqual(report["entry"]["mime"], "image/png")
         self.assertEqual(report["reentry_mutations"], 0)
+        self.api = FakeGitHub()
+        self.http = PublicHTTP(self.api)
+        self.http.asset_mime = "application/octet-stream"
         self.http.alter = True
         with self.assertRaises(mp.MediaError):
             self.run_canary(apply=True)
