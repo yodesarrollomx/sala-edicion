@@ -1,0 +1,25 @@
+name: Verificar paquete de activación histórica
+on:
+  push:
+    branches: [codex/activar-historico-paquete-20261017]
+permissions:
+  contents: read
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            gas
+            tests
+            docs
+            datos
+            nube
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node docs/activacion-historico/verificar.cjs
+      - run: node --test tests/produccion-historica.test.cjs tests/produccion-historica-adversaria.test.cjs

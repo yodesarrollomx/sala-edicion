@@ -1,0 +1,10 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync('gas/Code.gs','utf8');
+const from=source.indexOf('function fechaProduccionValida_');
+const to=source.indexOf('/* ------------------------------------------------ lectura */',from);
+assert.ok(from>=0&&to>from);
+const patch=fs.readFileSync('docs/activacion-historico/ HistoricoSala.gs'.replace('/ ', '/'),'utf8');
+assert.equal(patch,source.slice(from,to),'El paquete debe ser idéntico al código probado');
+new vm.Script(patch);
+new vm.Script(fs.readFileSync('docs/activacion-historico/ComprobarHistorico.gs','utf8'));
+console.log('PAQUETE_VERIFICADO: seis funciones idénticas; sintaxis válida; sin despliegue ni escrituras Google.');
