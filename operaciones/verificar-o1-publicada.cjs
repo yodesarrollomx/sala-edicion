@@ -2,9 +2,9 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
 const base='https://yodesarrollomx.github.io/sala-edicion/',dir='evidencia-o1-real',slug='dato-servilleta-3';
 const result={scope:'cuatro_recorridos_visuales_de_lote_real',cuatro_ciclos_productivos_acreditados:false,run_id:process.env.GITHUB_RUN_ID,passes:[]};
 const json=async path=>{const r=await fetch(base+path+'?v='+Date.now());assert.equal(r.status,200,path);return r.json()};
-async function loaded(locator){await locator.scrollIntoViewIfNeeded();await locator.evaluate(e=>new Promise((resolve,reject)=>{if(e.complete)return e.naturalWidth?resolve():reject(Error('Imagen rota'));const timer=setTimeout(()=>reject(Error('Imagen sin cargar')),30000);e.onload=()=>{clearTimeout(timer);e.naturalWidth?resolve():reject(Error('Imagen vacía'))};e.onerror=()=>{clearTimeout(timer);reject(Error('Imagen rota'))}}));}
+async function loaded(locator){await locator.evaluate(e=>e.scrollIntoView({behavior:'instant',block:'center',inline:'center'}));await locator.evaluate(e=>new Promise((resolve,reject)=>{if(e.complete)return e.naturalWidth?resolve():reject(Error('Imagen rota'));const timer=setTimeout(()=>reject(Error('Imagen sin cargar')),30000);e.onload=()=>{clearTimeout(timer);e.naturalWidth?resolve():reject(Error('Imagen vacía'))};e.onerror=()=>{clearTimeout(timer);reject(Error('Imagen rota'))}}));}
 (async()=>{
- fs.mkdirSync(dir,{recursive:true});let browser;
+ fs.mkdirSync(dir,{recursive:true});let browser,activePage;
  try{
  let target,receipt,report;
  for(let i=0;i<60;i++){
@@ -39,7 +39,7 @@ async function loaded(locator){await locator.scrollIntoViewIfNeeded();await loca
  browser=await chromium.launch();
  for(let k=1;k<=4;k++){
   const mobile=k%2===0,context=await browser.newContext({viewport:{width:mobile?390:1440,height:mobile?844:1000},isMobile:mobile,hasTouch:mobile});
-  const page=await context.newPage(),errors=[],writes=[],start=new Date().toISOString();
+  const page=activePage=await context.newPage(),errors=[],writes=[],start=new Date().toISOString();
   await page.route('**/*',r=>{if(['GET','HEAD'].includes(r.request().method()))return r.continue();writes.push(r.request().method());return r.abort()});
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base,{waitUntil:'domcontentloaded'});
@@ -49,11 +49,11 @@ async function loaded(locator){await locator.scrollIntoViewIfNeeded();await loca
   assert.equal(await page.evaluate(()=>ROL()),'lector');
   const ids=await page.locator('[data-open]').evaluateAll(els=>els.map(e=>e.dataset.open));assert.ok(ids.includes(slug));
   let frames=0;
-  for(const id of ids){await page.locator('[data-open="'+id+'"]').click();const photos=page.locator('.bt-frame img');const count=await page.locator('.bt-frame').count();assert.equal(await photos.count(),count);for(let j=0;j<count;j++)await loaded(photos.nth(j));frames+=count;await page.locator('.bt-nav [data-back]').click();}
+  for(const id of ids){result.ultimo_paso={pasada:k,pieza:id};await page.locator('[data-open="'+id+'"]').click();const photos=page.locator('.bt-frame img');const count=await page.locator('.bt-frame').count();assert.equal(await photos.count(),count);for(let j=0;j<count;j++)await loaded(photos.nth(j));frames+=count;await page.locator('.bt-nav [data-back]').click();}
   await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:dir+'/pasada-'+k+'-tablero.jpg',type:'jpeg',quality:80,fullPage:true});
   await page.locator('[data-open="'+slug+'"]').click();assert.equal(await page.locator('.bt-frame').count(),5);await page.screenshot({path:dir+'/pasada-'+k+'-tira.jpg',type:'jpeg',quality:85,fullPage:true});
   const options=[];
-  for(const number of [2,3,4,5]){
+  for(const number of [2,3,4,5]){result.ultimo_paso={pasada:k,pieza:slug,lamina:number};
    await page.locator('.bt-photo[data-lamina="'+number+'"]').click();
    assert.equal(await page.locator('[data-option]').count(),2);
    for(let option=0;option<2;option++){
@@ -69,6 +69,6 @@ async function loaded(locator){await locator.scrollIntoViewIfNeeded();await loca
   fs.writeFileSync(dir+'/resultado.json',JSON.stringify(result,null,2));console.log('PASADA_REAL '+JSON.stringify(result.passes.at(-1)));await context.close();
  }
  result.ok=true;
- }catch(e){result.ok=false;result.error=e.message;console.error('FALLO_REAL '+e.message);process.exitCode=1;}
+ }catch(e){if(activePage)await activePage.screenshot({path:dir+'/fallo.jpg',type:'jpeg',quality:80,fullPage:true}).catch(()=>{});result.ok=false;result.error=e.message;console.error('FALLO_REAL '+e.message);process.exitCode=1;}
  finally{fs.writeFileSync(dir+'/resultado.json',JSON.stringify(result,null,2));if(browser)await browser.close();}
 })();
