@@ -49,6 +49,21 @@ const base='https://yodesarrollomx.github.io/sala-edicion/';
    if(pieces.length===1)await page.screenshot({path:'evidencia-mesa/pasada-'+k+'-tira.jpg',type:'jpeg',quality:75,fullPage:true});
    await page.locator('.bt-nav [data-back]').click();
   }
+  // Recorrer también el tablero completo para cargar las imágenes diferidas antes de fotografiarlo.
+  const overview=page.locator('.bt-frame img');
+  for(let j=0;j<await overview.count();j++){
+   await overview.nth(j).scrollIntoViewIfNeeded();
+   await overview.nth(j).evaluate(e=>new Promise((resolve,reject)=>{
+    if(e.complete)return e.naturalWidth?resolve():reject(Error('Miniatura rota'));
+    const timer=setTimeout(()=>reject(Error('Miniatura no cargada')),30000);
+    e.addEventListener('load',()=>{clearTimeout(timer);resolve();},{once:true});
+    e.addEventListener('error',()=>{clearTimeout(timer);reject(Error('Miniatura rota'));},{once:true});
+   }));
+  }
+  assert.equal(await overview.evaluateAll(els=>els.filter(e=>e.complete&&e.naturalWidth>0).length),expected);
+  await page.evaluate(()=>window.scrollTo(0,0));
+  await page.screenshot({path:'evidencia-mesa/pasada-'+k+'-mesa.jpg',type:'jpeg',quality:75,fullPage:true});
+  await page.screenshot({path:'evidencia-mesa/pasada-'+k+'-pantalla.jpg',type:'jpeg',quality:80});
   assert.deepEqual(errors,[]);assert.deepEqual(blocked,[]);
   result.passes.push({pasada:k,inicio,fin:new Date().toISOString(),viewport:mobile?'movil':'escritorio',role,columnas:columns,laminas:expected,piezas:pieces,mesa_run_id:report.run_id,mesa_code_sha:report.code_sha,mesa_revisada:report.revisado_en,errores:errors,escrituras:blocked.length,ok:true});
   fs.writeFileSync('evidencia-mesa/resultado.json',JSON.stringify(result,null,2));
