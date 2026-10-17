@@ -1,12 +1,12 @@
 {
   "tipo": "recorridos_visuales_reales_sin_escrituras",
   "produccion_nueva_acreditada": false,
-  "run_id": "39039079203",
+  "run_id": "39039317567",
   "passes": [
     {
       "pasada": 1,
-      "inicio": "2026-10-17T14:03:34.633Z",
-      "fin": "2026-10-17T14:03:50.505Z",
+      "inicio": "2026-10-17T14:06:54.674Z",
+      "fin": "2026-10-17T14:07:11.200Z",
       "viewport": "escritorio",
       "role": "lector",
       "columnas": 11,
@@ -77,8 +77,8 @@
     },
     {
       "pasada": 2,
-      "inicio": "2026-10-17T14:03:50.516Z",
-      "fin": "2026-10-17T14:04:09.205Z",
+      "inicio": "2026-10-17T14:07:11.208Z",
+      "fin": "2026-10-17T14:07:29.919Z",
       "viewport": "movil",
       "role": "lector",
       "columnas": 11,
@@ -149,8 +149,8 @@
     },
     {
       "pasada": 3,
-      "inicio": "2026-10-17T14:04:09.285Z",
-      "fin": "2026-10-17T14:04:25.065Z",
+      "inicio": "2026-10-17T14:07:29.924Z",
+      "fin": "2026-10-17T14:07:45.465Z",
       "viewport": "escritorio",
       "role": "lector",
       "columnas": 11,
@@ -221,8 +221,8 @@
     },
     {
       "pasada": 4,
-      "inicio": "2026-10-17T14:04:25.072Z",
-      "fin": "2026-10-17T14:04:43.348Z",
+      "inicio": "2026-10-17T14:07:45.471Z",
+      "fin": "2026-10-17T14:08:04.051Z",
       "viewport": "movil",
       "role": "lector",
       "columnas": 11,
