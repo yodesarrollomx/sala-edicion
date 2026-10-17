@@ -12,7 +12,7 @@ async function loaded(locator){await locator.evaluate(e=>e.scrollIntoView({behav
   const gh=args=>execFileSync('gh',args,{encoding:'utf8',maxBuffer:30*1024*1024});
   const jobs=JSON.parse(gh(['api','repos/yodesarrollomx/sala-edicion/actions/runs/'+process.env.SALA_CYCLE_RUN+'/jobs?per_page=100'])).jobs;
   const mesa=jobs.find(j=>j.name==='mesa / mesa'&&j.conclusion==='success');assert.ok(mesa,'Mesa del ciclo sin éxito');
-  const logs=gh(['api','repos/yodesarrollomx/sala-edicion/actions/jobs/'+mesa.id+'/logs']);
+  const logResponse=await fetch('https://api.github.com/repos/yodesarrollomx/sala-edicion/actions/jobs/'+mesa.id+'/logs',{headers:{Authorization:'Bearer '+process.env.GH_TOKEN,Accept:'application/vnd.github+json'}});assert.equal(logResponse.status,200,'Descarga del log propio');const logs=await logResponse.text();
   const line=logs.split('\n').filter(x=>x.includes('estado Mesa: ')).at(-1);assert.ok(line,'Sin comprobante Mesa');
   runReport=JSON.parse(line.slice(line.indexOf('estado Mesa: ')+13).trim());
   assert.equal(runReport.run_id,process.env.SALA_CYCLE_RUN);
