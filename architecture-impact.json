@@ -2,7 +2,7 @@
   "model_revision": "2026-10-17.sala-medios-draft.1",
   "model_commit": "cac19defff81d25078bea5ed23f231783de0ee37",
   "proposal_id": "CHG-SALA-MEDIOS-PUBLICOS-20261015",
-  "summary": "La sonda acepta Content-Type application/octet-stream del CDN de GitHub únicamente para el PNG técnico cuyos bytes exactos, SHA256, dimensiones y MIME de API ya se verifican. Mantiene rechazo de HTML, cambios de bytes, repositorios privados y releases mutables. Respuesta real200/82bytes/SHA256 exacto en corrida39072904911.",
+  "summary": "Activación versionada del emisor de imágenes nuevas en Mesa y Arranque bajo contrato MEDIOS. Preserva históricos, snapshots privados, pin, inmutabilidad y descarga anónima. Integrar únicamente tras sonda técnica completada y reentrada sin escrituras; prueba de producción posterior obligatoria.",
   "components": [
     "SYS-SALA",
     "SVC-SALA-PRODUCTOR",
@@ -17,5 +17,5 @@
     "python3 nube/verificar.py",
     "git diff --check"
   ],
-  "rollback": "Revertir filtro mediante PR; conservar manifiestos y medios existentes. No cambiar decisiones ni borrar históricos."
+  "rollback": "Desactivar SALA_MEDIOS_PUBLICOS en ambos workflows mediante PR. Conservar lector compatible, manifiesto y releases inmutables ya referenciados; no borrar historia ni repatriar sin presupuesto verificado."
 }
