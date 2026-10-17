@@ -1,21 +1,60 @@
-name: Leer lote real y respaldo publico sin credenciales
+name: Sala · cuatro ciclos completos con entregables reales
 on:
   push:
     branches: [codex/mesa-o1-real-20261017]
-permissions: {}
+    paths-ignore: ['evidencia-cuatro-ciclos/**']
+permissions:
+  contents: write
+  actions: write
 jobs:
-  comprobar:
+  ciclos:
     runs-on: ubuntu-latest
+    timeout-minutes: 240
     steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: operaciones
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: app
+          persist-credentials: false
+          sparse-checkout: nube
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - run: |
-          python3 - <<'PY'
-          import urllib.request,json,time
-          base="https://yodesarrollomx.github.io/sala-edicion/"
-          def read(p):
-              with urllib.request.urlopen(base+p+"?auditoria="+str(time.time_ns()),timeout=40) as r:return json.load(r)
-          t=read("datos/tiras/dato-servilleta-3-nube-2026-10-17-5debd0.json")
-          print(json.dumps({"laminas":[{"n":l.get("n"),"candidatas":[{k:c.get(k) for k in ("modelo","motor","src","original")} for c in l.get("candidatas",[])]}for l in t.get("laminas",[])]}))
-          m=read("datos/manifiesto.json")
-          print(json.dumps({"keys":list(m),"propuestas":[{"id":p.get("id"),"tipo":p.get("tipo")}for p in m.get("propuestas",[]) if "servilleta" in str(p.get("id"))]}))
-          print(json.dumps(read("version-online.json")))
-          PY
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+          pip install --quiet requests google-auth
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+      - name: Ejecutar cuatro recorridos y verificar imagenes y video completos
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: yodesarrollomx/sala-edicion
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: node operaciones/cuatro-ciclos.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cuatro-ciclos-reales-bitacora-y-capturas
+          path: evidencia-cuatro-ciclos/
+      - name: Conservar bitacora y capturas publicas
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --sparse evidencia-cuatro-ciclos/
+          if ! git diff --cached --quiet; then
+            git commit -m "evidencia: cuatro ciclos completos y bytes de entregables"
+            git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:codex/mesa-o1-real-20261017
+          fi
