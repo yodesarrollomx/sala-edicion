@@ -9,7 +9,7 @@ from contenido_reglas import revisar
 sala.enmascarar_en_actions()
 report={"at":datetime.now(timezone.utc).isoformat(),"run_id":os.environ["GITHUB_RUN_ID"],"code_sha":os.environ["GITHUB_SHA"],"escrituras_negocio":0}
 try:
-    hist=produccion.cargar(historica=True)
+    hist=produccion.validar_historica(sala.get("produccion",fresco="1"))
     report["contrato_historico"]={"ok":True,"propuestas":len(hist.get("propuestas",[]))}
 except Exception as e:
     report["contrato_historico"]={"ok":False,"tipo":type(e).__name__,"codigo":getattr(e,"codigo",None)}
