@@ -1,4 +1,4 @@
-name: Refrescar respaldo despues del montaje real
+name: Continuar montaje actual y publicar respaldo
 on:
   push:
     branches: [codex/mesa-o1-real-20261017]
@@ -8,17 +8,30 @@ permissions:
 jobs:
   relevo:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
-      - name: Retirar verificador anterior sustituido
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: yodesarrollomx/sala-edicion
-        run: gh run cancel 39073651154 || true
-      - name: Esperar montaje confirmado y actualizar respaldo publico
+      - name: Retirar verificaciones sustituidas y revision de codigo anterior
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: yodesarrollomx/sala-edicion
         run: |
-          gh run watch 39073527776 --exit-status --interval 20
-          gh workflow run sala-relevo.yml --ref main -f simular=false
+          gh run cancel 39073701517 || true
+          anterior=$(gh run view 39073515592 --json headSha --jq .headSha)
+          if [ "$anterior" = "e31f522fc656ca4652452e0d49ecfd9e2dd531fa" ]; then
+            gh run cancel 39073515592 || true
+          fi
+      - name: Esperar montaje de la version actual
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: yodesarrollomx/sala-edicion
+        run: |
+          for intento in $(seq 1 90); do
+            estado=$(gh api repos/yodesarrollomx/sala-edicion/actions/runs/39073596938/jobs --jq '.jobs[] | select(.name=="mesa / mesa") | .status+":"+(.conclusion//"")')
+            if [ "$estado" = "completed:success" ]; then
+              gh workflow run sala-relevo.yml --ref main -f simular=false
+              exit 0
+            fi
+            case "$estado" in completed:*) echo "$estado"; exit 1;; esac
+            sleep 20
+          done
+          exit 1
