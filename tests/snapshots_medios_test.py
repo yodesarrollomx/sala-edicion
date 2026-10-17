@@ -98,6 +98,19 @@ class MediaSnapshots(unittest.TestCase):
         body = json.loads(release["body"])
         return self.s.download(release, body)
 
+    def test_json_receipts_stay_in_snapshot_and_only_images_are_externalized(self):
+        folder = self.root / "laminas/recibos-hidream"
+        folder.mkdir(parents=True)
+        receipt = folder / "synthetic.json"
+        raw = b'{"modelo":"synthetic","foto_sha256":"synthetic"}'
+        receipt.write_bytes(raw)
+        output = self.prepare()
+        _, files = self.archive(output)
+        self.assertEqual(files["laminas/recibos-hidream/synthetic.json"], raw)
+        manifest = mp.validate_manifest(files[so.MEDIA_PATH], mp.REPO)
+        self.assertEqual(set(manifest["entries"]), {"laminas/new/L1.png", "laminas/new/L1.jpg"})
+        self.assertNotIn("laminas/recibos-hidream/synthetic.json", manifest["entries"])
+
     def test_default_off_keeps_legacy_full_bytes_and_has_no_media_api_effect(self):
         output = self.prepare(enabled=False)
         _, files = self.archive(output)

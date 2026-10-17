@@ -1,13 +1,14 @@
 {
   "model_revision": "2026-10-17.sala-medios-draft.1",
   "model_commit": "cac19defff81d25078bea5ed23f231783de0ee37",
-  "proposal_id": "CHG-SALA-MEDIOS-DRAFT-20261017",
-  "summary": "Corregir validación de URL temporal untagged de activos draft de GitHub. Antes de publicar, exigir ID/nombre/tamaño/MIME/SHA256 exactos y URL restringida al mismo repositorio y archivo. Después de publicar, exigir URL de tag definitiva exacta, release inmutable y descarga anónima de bytes exactos. Conservar contrato MEDIOS y límite900MiB.",
+  "proposal_id": "CHG-SALA-MEDIOS-PUBLICOS-20261015",
+  "summary": "Aplicar el contrato MEDIOS existente sólo a imágenes nuevas: los recibos JSON bajo laminas/ permanecen en el snapshot y no se envían al validador de imágenes. Preserva bytes, rutas, historial, pin y compuertas existentes; emisor sigue apagado hasta sonda real.",
   "components": [
     "SYS-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
+    "EXT-DRIVE",
     "SYS-YOD-OS"
   ],
   "tests": [
@@ -16,5 +17,5 @@
     "python3 nube/verificar.py",
     "git diff --check"
   ],
-  "rollback": "Revertir validación por PR y mantener SALA_MEDIOS_PUBLICOS=0 hasta sonda verificada. Conservar todos los recibos, releases e históricos."
+  "rollback": "Revertir filtro mediante PR; conservar manifiestos y medios existentes. No cambiar decisiones ni borrar históricos."
 }
