@@ -99,7 +99,8 @@ def subir_producto(ruta, familia, drive_raiz, cat_reglas):
 
 def _leer_tira(pid):
     try:
-        return json.loads((RAIZ / 'datos' / 'tiras' / ('%s.json' % pid)).read_text(encoding='utf-8'))
+        from sala_produccion import resolver_guion
+        return resolver_guion(json.loads((RAIZ / 'datos' / 'tiras' / ('%s.json' % pid)).read_text(encoding='utf-8')))
     except (OSError, ValueError, TypeError):
         return None
 
