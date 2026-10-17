@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-17.sala-historico-retiros.1",
   "proposal_id": "CHG-SALA-HISTORICO-RETIROS-20261017",
-  "summary": "Resolver duplicados heredados por retiro explícito o procedencia descriptiva, sin elegir contenido por orden físico ni cambiar filas; comprobar contrato real antes de activar el consumidor.",
+  "summary": "Completar el entorno de la sonda de sólo lectura (requests y fuente GAS para contrato sintético), registrar despliegue73 y limitar salida a métricas permitidas; sin activar flag hasta GET real.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
