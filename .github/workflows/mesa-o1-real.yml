@@ -1,4 +1,4 @@
-name: Recuperar y publicar tomas O1 con medios activados
+name: Refrescar respaldo despues del montaje real
 on:
   push:
     branches: [codex/mesa-o1-real-20261017]
@@ -6,20 +6,19 @@ permissions:
   contents: read
   actions: write
 jobs:
-  recuperar:
+  relevo:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
-      - env:
+      - name: Retirar verificador anterior sustituido
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: yodesarrollomx/sala-edicion
+        run: gh run cancel 39073651154 || true
+      - name: Esperar montaje confirmado y actualizar respaldo publico
+        env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: yodesarrollomx/sala-edicion
         run: |
-          for intento in $(seq 1 60); do
-            listo=$(gh api 'repos/yodesarrollomx/sala-edicion/actions/runs?branch=main&per_page=25' --jq '[.workflow_runs[] | select(.head_sha=="e31f522fc656ca4652452e0d49ecfd9e2dd531fa" and .path==".github/workflows/publicar.yml" and .conclusion=="success")]|length')
-            if [ "$listo" -gt 0 ]; then
-              gh workflow run sala-mesa.yml --ref main -f modo=montar
-              exit 0
-            fi
-            sleep 10
-          done
-          exit 1
+          gh run watch 39073527776 --exit-status --interval 20
+          gh workflow run sala-relevo.yml --ref main -f simular=false
