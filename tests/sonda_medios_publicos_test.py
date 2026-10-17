@@ -143,6 +143,16 @@ class SondaTests(unittest.TestCase):
                 if fault == "private":
                     self.assertEqual(self.api.writes("releases"), 0)
 
+    def test_cdn_generic_binary_mime_requires_the_exact_png_bytes(self):
+        self.http.asset_mime = "application/octet-stream"
+        report = self.run_canary(apply=True)
+        self.assertEqual(report["state"], "verified")
+        self.assertEqual(report["entry"]["mime"], "image/png")
+        self.assertEqual(report["reentry_mutations"], 0)
+        self.http.alter = True
+        with self.assertRaises(mp.MediaError):
+            self.run_canary(apply=True)
+
     def test_reentry_mutation_intent_is_blocked_before_reaching_real_api(self):
         count = 0
 
