@@ -59,7 +59,7 @@ async function loaded(locator){await locator.scrollIntoViewIfNeeded();await loca
     options.push({lamina:number,opcion:option+1,src});
     if(number===2)await page.screenshot({path:dir+'/pasada-'+k+'-lamina2-opcion'+(option+1)+'.jpg',type:'jpeg',quality:85,fullPage:true});
    }
-   await page.locator('.bt-nav [data-back]').click();
+   await page.locator('.bt-choice-top [data-back]').click();
   }
   assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
   result.passes.push({pasada:k,inicio:start,fin:new Date().toISOString(),viewport:mobile?'movil':'escritorio',columnas:ids.length,laminas_recorridas:frames,opciones:options,errores:errors,escrituras:writes.length,ok:true});
