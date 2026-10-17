@@ -127,6 +127,8 @@ function card(g,l){
  </article>`;
 }
 function render(){
+ // Una lectura de cola o el reloj no interrumpen una revisión de video/eje.
+ if(document.body.classList.contains("sala-turno"))return;
  if(!D)return;
  const previousLevel=root.dataset.level;
  document.body.classList.add("sala-tablero");

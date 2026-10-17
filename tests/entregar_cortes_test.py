@@ -53,6 +53,10 @@ class EntregaTests(unittest.TestCase):
                 with self.assertRaisesRegex(m.EntregaError,'falta_audio_o_video'):m.comprobar_medio(ev,meta,p)
             p.write_bytes(b'changed content')
             with self.assertRaises(m.EntregaError):m.comprobar_medio(ev,meta,p)
+    def test_open_request_blocks_before_any_remote_read_or_write(self):
+        with patch.object(m.sala,'enmascarar_en_actions'),patch.object(m.produccion,'peticiones_abiertas',return_value=True),patch.object(m.sala,'get') as get,patch.object(m.sala,'post') as post:
+            self.assertEqual(m.main(),2)
+            get.assert_not_called();post.assert_not_called()
     def test_source_must_remain_active(self):
         with self.assertRaises(m.EntregaError):m.fuente(self.day,self.ev)
 

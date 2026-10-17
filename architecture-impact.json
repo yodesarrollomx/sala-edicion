@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-17.sala-entrega-cortes.1",
   "proposal_id": "CHG-SALA-ENTREGA-CORTES-20261017",
-  "summary": "Entrega de cortes durables vigentes como carta nueva: bytes, audio, video, fuente, votos y plan verificados; recibo preparado antes del único montaje; concilia acuse incierto sin reenvío; visor Drive autenticado sin cambiar ACL. Despierta tras producción real y conserva imágenes aprobadas.",
+  "summary": "Entrega de cortes durables vigentes como carta nueva: bytes, audio, video, fuente, votos y plan verificados; recibo preparado antes del único montaje; concilia acuse incierto sin reenvío; visor Drive autenticado sin cambiar ACL. Despierta tras producción real y conserva imágenes aprobadas. La revisión de video permanece abierta durante actualizaciones de cola/reloj, conserva su explicación y respeta peticiones abiertas.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
