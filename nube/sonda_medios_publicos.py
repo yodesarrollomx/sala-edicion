@@ -184,7 +184,9 @@ def run_canary(*, apply, head, run, attempt, index_sha256, reader_sha256, api_fa
     logical = "laminas/_sondas/" + sha256(png) + ".png"
 
     def fetch(url):
-        raw = _get(get, url, MAX_CANARY, {"image/png"})
+        # GitHub's asset CDN uses generic binary MIME; API metadata, PNG
+        # signature, dimensions, length and exact SHA256 still prove the image.
+        raw = _get(get, url, MAX_CANARY, {"image/png", "application/octet-stream"})
         _dimensions(raw)
         return raw
 

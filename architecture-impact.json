@@ -2,7 +2,7 @@
   "model_revision": "2026-10-17.sala-medios-draft.1",
   "model_commit": "cac19defff81d25078bea5ed23f231783de0ee37",
   "proposal_id": "CHG-SALA-MEDIOS-PUBLICOS-20261015",
-  "summary": "Aplicar el contrato MEDIOS existente sólo a imágenes nuevas: los recibos JSON bajo laminas/ permanecen en el snapshot y no se envían al validador de imágenes. Preserva bytes, rutas, historial, pin y compuertas existentes; emisor sigue apagado hasta sonda real.",
+  "summary": "La sonda acepta Content-Type application/octet-stream del CDN de GitHub únicamente para el PNG técnico cuyos bytes exactos, SHA256, dimensiones y MIME de API ya se verifican. Mantiene rechazo de HTML, cambios de bytes, repositorios privados y releases mutables. Respuesta real200/82bytes/SHA256 exacto en corrida39072904911.",
   "components": [
     "SYS-SALA",
     "SVC-SALA-PRODUCTOR",
