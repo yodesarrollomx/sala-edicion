@@ -11,3 +11,7 @@ El proyecto original tiene respaldo privado. La comprobación del candidato a la
 Orden de activación: pruebas y revisión del cambio; guardar y releer el módulo exacto; actualizar la implementación existente conservando URL y permisos; ejecutar `sala-historico.yml` con las credenciales existentes y el validador del consumidor. Sólo tras ese éxito se habilita `SALA_PRODUCCION_HISTORICA=1`. El diagnóstico no escribe ni imprime contenido privado. Después se ejecuta producción con sus compuertas editoriales y de motores existentes.
 
 Reversión: desactivar el consumidor histórico y seleccionar versión72 en la misma implementación; restaurar el módulo respaldado si procede. Conservar decisiones, cola, medios y configuración. Cuatro recorridos vacíos no equivalen a cuatro producciones completas.
+
+## Despliegue comprobado
+
+PR317 integrado con tres checks verdes. Implementación original actualizada de72 a73 a las08:29Hermosillo; Google confirmó despliegue exitoso y misma URL. Code.gs y CorreoNube siguen byte idénticos al respaldo del editor; módulo histórico cotejado tras recarga. La primera sonda39045405502 se detuvo en las pruebas aisladas porque su runner no tenía requests; no llegó al backend ni activó el consumidor. Se incorpora requests y gas al entorno de la sonda antes de repetirla.

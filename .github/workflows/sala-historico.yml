@@ -13,10 +13,16 @@ jobs:
         with:
           sparse-checkout: |
             nube
+            gas
             tests
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar cliente usado por los dobles
+        run: pip install --quiet requests
       - name: Validar contrato y vetos con datos sintéticos
         run: python3 -m unittest discover -s tests -p produccion_historica_test.py -v
       - name: Leer el contrato desplegado sin activar producción
@@ -37,5 +43,6 @@ jobs:
           # Sólo constantes y métricas validadas; ninguna fila, firma o clave.
           print(json.dumps({'ok': True, 'contrato': 'produccion-historica-v1',
                             'version': 'produccion-historica-2026-10-15',
-                            'alcance': 'historial_completo', 'fuentes': value['fuentes']}))
+                            'alcance': 'historial_completo', 'fuentes': {k: value['fuentes'][k] for k in
+                            ('leidas', 'activas', 'retiradas', 'decisiones_leidas')}}))
           PY
