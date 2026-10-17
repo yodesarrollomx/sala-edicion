@@ -1,0 +1,36 @@
+name: Conciliar negativa confirmada y ejecutar Sala
+on:
+  push:
+    branches: [codex/conciliar-negativa-confirmada-20261017]
+permissions:
+  contents: write
+  actions: write
+jobs:
+  recuperar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet requests pillow
+      - name: Adquirir mutex de los datos de Sala
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py bootstrap --proceso mesa --lock
+      - name: Conciliar exclusivamente la negativa que consta en el log
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/conciliar_negativa_20261017.py
+      - name: Liberar mutex
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py liberar
+      - name: Ejecutar recorrido completo con la correccion integrada
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sala-recorrido.yml --ref main -f pasadas_restantes=0
