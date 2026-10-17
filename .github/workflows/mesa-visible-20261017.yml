@@ -1,0 +1,25 @@
+name: Diagnosticar mesa visible
+on:
+  push:
+    branches: [codex/sala-mesa-vacia-20261017]
+permissions:
+  contents: read
+jobs:
+  navegador:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright
+      - run: npx playwright install --with-deps chromium
+      - run: node operaciones/mesa-visible-20261017.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mesa-visible
+          path: evidencia/
