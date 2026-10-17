@@ -1,0 +1,32 @@
+name: Sala · preparación real sin escribir decisiones
+on:
+  push:
+    branches: [codex/sala-preflight-real-20261017]
+permissions:
+  contents: read
+jobs:
+  lectura:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet google-auth requests pillow numpy
+      - name: Leer snapshot privado de operación
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py bootstrap
+      - name: Confirmar fuentes, compuertas y cola
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: python3 operaciones/preflight-real-20261017.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: preparacion-real-sala
+          path: evidencia-preflight/
