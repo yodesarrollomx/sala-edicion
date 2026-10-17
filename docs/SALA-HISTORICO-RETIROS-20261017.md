@@ -15,3 +15,11 @@ Reversión: desactivar el consumidor histórico y seleccionar versión72 en la m
 ## Despliegue comprobado
 
 PR317 integrado con tres checks verdes. Implementación original actualizada de72 a73 a las08:29Hermosillo; Google confirmó despliegue exitoso y misma URL. Code.gs y CorreoNube siguen byte idénticos al respaldo del editor; módulo histórico cotejado tras recarga. La primera sonda39045405502 se detuvo en las pruebas aisladas porque su runner no tenía requests; no llegó al backend ni activó el consumidor. Se incorpora requests y gas al entorno de la sonda antes de repetirla.
+
+## Consumidor activado y compatibilidad histórica
+
+La sonda autenticada39045627647 confirmó el contrato completo con el validador Python. El propietario completó la confirmación de GitHub y el readback del17-oct acreditó `SALA_PRODUCCION_HISTORICA=1`; medios públicos sigue0. El recorrido39069155006 leyó con ese flag y detectó guiones heredados de ruta/texto donde esperaba lista visual. Mesa se detuvo; Ejecutor comprobó153trabajos,0pendientes y0entregables nuevos.
+
+Propuesta de compatibilidad `CHG-SALA-GUION-HEREDADO-20261017`, atlas `a205629797b59396ee24f141b181f3f6eefe09f6`: Mesa no interpreta texto/ruta como láminas por crear. Conserva y trabaja las láminas existentes; declara contador `tiras_con_guion_heredado` y estado parcial. Productor permite las etapas ya aprobadas de esas láminas y bloquea corte sin lista visual confirmada. Una lista con identidades inválidas sigue rechazándose. No se reescribe el guion ni se convierte una ausencia en aprobación.
+
+Pruebas locales del ajuste:512Python,117Node y13verificaciones de Sala. Esto acredita la corrección aislada; la siguiente ejecución debe comprobar publicación, compuertas y resultados reales. Revertir el PR conserva todos los datos, medios y decisiones.

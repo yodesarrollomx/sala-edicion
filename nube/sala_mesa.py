@@ -123,6 +123,13 @@ def decision_del_sheet(pid, fecha_tira):
 from motores.politica_imagen import depurar_tira, para_revision, vetada, POLITICA
 
 
+def continuacion_visual(tira):
+    """El guion heredado de voz/texto no declara nuevas láminas visuales."""
+    if isinstance(tira.get('guion'), str):
+        return []
+    return produccion.guion_faltante(tira)
+
+
 def abiertas(tid, t, leer_sheet=True):
     """Correcciones vigentes y continuación del guion tras aprobar la primera."""
     dec, srcs = decision_del_sheet(tid, fecha_de(t)) if leer_sheet else ({}, None)
@@ -156,7 +163,7 @@ def abiertas(tid, t, leer_sheet=True):
         salida.append((lam, mark or "pendiente", note))
     first = next((l for l in work["laminas"] if str(l.get("n")) == "1"), None)
     if first and first.get("estado") == "aprobada":
-        for lam in produccion.guion_faltante(work):
+        for lam in continuacion_visual(work):
             lam.update(estado="pendiente", version=1, src="")
             salida.append((lam, "pendiente", ""))
     return salida
@@ -462,7 +469,7 @@ CAMPOS_SELECCION = ('propuestas_vivas', 'propuestas_con_laminas', 'fuentes_recup
                     'tiras_excluidas_publicadas', 'tiras_sin_fuente_al_procesar',
                     'tiras_sin_laminas_abiertas', 'tiras_con_laminas_abiertas',
                     'laminas_abiertas', 'tiras_sin_laminas_listas',
-                    'tiras_con_validacion_pendiente', 'tiras_preparadas')
+                    'tiras_con_validacion_pendiente', 'tiras_con_guion_heredado', 'tiras_preparadas')
 
 
 def conteos_seleccion(dia, antes, vigentes, recuperadas=0, sin_sheet=False):
@@ -498,8 +505,9 @@ def seleccion_publica(seleccion):
 
 
 def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa='', modelo_imagen=None, seleccion=None, tomas_obtenidas=None, publicaciones=None):
+    guiones_heredados = (seleccion or {}).get('tiras_con_guion_heredado', 0)
     state = "bloqueado" if fallidas and not generadas else (
-        "parcial" if fallidas or limitadas else "al_dia")
+        "parcial" if fallidas or limitadas or guiones_heredados else "al_dia")
     report = {"schema": 1, "estado": state,
               "revisado_en": dt.datetime.now(dt.timezone.utc).isoformat(),
               "code_sha": __import__("os").environ.get("GITHUB_SHA"),
@@ -595,6 +603,9 @@ def main():
             if tid not in live:
                 seleccion['tiras_sin_fuente_al_procesar'] += 1
                 continue
+        if isinstance(t.get('guion'), str):
+            seleccion['tiras_con_guion_heredado'] += 1
+            sala.avisar('· guion heredado: sólo láminas existentes; continuación visual sin confirmar')
         pend = abiertas(tid, t, leer_sheet=not args.sin_sheet)
         if not pend:
             seleccion['tiras_sin_laminas_abiertas'] += 1
@@ -625,7 +636,7 @@ def main():
             previa = _leer(hecha, {}) or {}
             validar_nuevas_tomas(previa, reglas)
             reutilizadas += 1
-            limitadas += len(produccion.guion_faltante(previa))
+            limitadas += len(continuacion_visual(previa))
             sala.avisar('   ↺ la tira %s ya existe: se reusa sin volver a producir' % nueva_id)
             plan.append({'familia': slug, 'tira_id': nueva_id, 'carta': {
                 'id': nueva_id, 'titulo': previa.get('titulo'), 'tipo': 'laminas',

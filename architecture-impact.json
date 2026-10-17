@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-17.sala-historico-retiros.1",
-  "proposal_id": "CHG-SALA-HISTORICO-RETIROS-20261017",
-  "summary": "Completar el entorno de la sonda de sólo lectura (requests y fuente GAS para contrato sintético), registrar despliegue73 y limitar salida a métricas permitidas; sin activar flag hasta GET real.",
+  "model_revision": "2026-10-17.sala-guion-heredado.1",
+  "proposal_id": "CHG-SALA-GUION-HEREDADO-20261017",
+  "summary": "Mesa conserva láminas existentes de guiones heredados sin inventar continuación; contador y estado parcial. Productor bloquea corte sin lista visual, manteniendo etapas aprobadas y vetos.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -20,5 +20,5 @@
     "python3 nube/verificar.py"
   ],
   "rollback": "Revertir código conservando decisiones, cola, medios y snapshots.",
-  "model_commit": "30bb7133e7a4ad2d53fcfb29ecce8609c649f91e"
+  "model_commit": "a205629797b59396ee24f141b181f3f6eefe09f6"
 }

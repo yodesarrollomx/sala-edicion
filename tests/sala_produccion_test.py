@@ -109,6 +109,16 @@ class ProductionReadTests(unittest.TestCase):
 
 
 class PlanningTests(unittest.TestCase):
+    def test_legacy_script_never_opens_cut_but_keeps_approved_branches(self):
+        for legacy in ('datos/guiones/SINTETICA-VIDEO.json', 'Guion de voz heredado'):
+            t = tira(count=1)
+            t['guion'] = legacy
+            before = copy.deepcopy(t)
+            jobs, log = self.plan(t)
+            self.assertEqual({j['etapa'] for j in jobs}, {'escena', 'voz'})
+            self.assertTrue(any('NO se abre: guion heredado' in line for line in log))
+            self.assertEqual(t, before)
+
     def plan(self, t, queue=None, dec=None):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -162,6 +172,32 @@ class PlanningTests(unittest.TestCase):
 
 
 class MesaTests(unittest.TestCase):
+    def test_legacy_script_keeps_existing_drafts_without_inventing_continuation(self):
+        for legacy in ('datos/guiones/SINTETICA-VIDEO.json', 'Guion de voz heredado'):
+            t = tira()
+            t['guion'] = legacy
+            t['laminas'].append({'n': 2, 'src': '', 'estado': 'pendiente', 'dice': 'Existente'})
+            before = copy.deepcopy(t)
+            with patch.object(mesa, 'decision_del_sheet', return_value=(yes(), ['laminas/a.jpg'])):
+                opened = mesa.abiertas(P, t)
+            self.assertEqual([item[0]['n'] for item in opened], [2])
+            self.assertEqual(t, before)
+
+    def test_invalid_visual_list_still_fails_instead_of_looking_complete(self):
+        t = tira()
+        t['guion'].append(t['guion'][0])
+        with patch.object(mesa, 'decision_del_sheet', return_value=(yes(), ['laminas/a.jpg'])):
+            with self.assertRaises(sala.SalaError):
+                mesa.abiertas(P, t)
+
+    def test_legacy_script_diagnostic_is_partial_and_only_contains_a_count(self):
+        with tempfile.TemporaryDirectory() as td, patch.object(mesa, 'RAIZ', Path(td)), \
+                patch.object(mesa.sala, 'avisar'):
+            self.assertEqual(mesa.guardar_estado_mesa(0, 0, 0, 0,
+                             seleccion={'tiras_con_guion_heredado': 2}), 'parcial')
+            report = json.loads((Path(td) / 'datos/mesa-estado.json').read_text())
+            self.assertEqual(report['seleccion']['tiras_con_guion_heredado'], 2)
+
     def test_current_rejection_note_wins_over_original_date(self):
         current = day([card()], {P: {"laminas": ["no"], "notas": ["Nota nueva"]}})
         with patch.object(mesa, "contexto_produccion", return_value=current):
