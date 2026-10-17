@@ -23,6 +23,7 @@ const base='https://yodesarrollomx.github.io/sala-edicion/';
   await page.goto(base,{waitUntil:'domcontentloaded'});
   await page.waitForSelector('.bt-column',{timeout:60000});
   await page.waitForFunction(()=>!document.querySelector('[data-refresh]')?.disabled,{timeout:60000});
+  await page.getByRole('button',{name:'Saltar',exact:true}).click({timeout:15000});
   const role=await page.evaluate(()=>ROL());assert.equal(role,'lector');
   const columns=await page.locator('.bt-column').count();
   assert.equal(columns,report.publicaciones.length);
