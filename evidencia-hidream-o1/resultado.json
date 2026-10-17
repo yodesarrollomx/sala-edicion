@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "space": "HiDream-ai/HiDream-O1-Image-Dev",
+  "lamina": 2,
+  "pieza": "dato-servilleta-3",
+  "segundos": 23.14,
+  "imagen_sha256": "0bc55c396a467022f3e83e4b10c5bd230a135d79ee41466ff741ff9999c78493",
+  "preview_sha256": "6355f368ece8b668c8ba93291333cdefa0fe9ed75bb0a23782ef523ba5dc2dd8",
+  "prompt_sha256": "0fc6e66536d066c1e5c9bc995ed7f9941ac182b214a5211d0cc416f9b049e662",
+  "run_id": "39070759507",
+  "alcance": "prueba de reemplazo con receta real; no montada en Sala ni aprobada editorialmente"
+}
