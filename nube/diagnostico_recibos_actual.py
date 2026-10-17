@@ -11,7 +11,7 @@ out=pathlib.Path("evidencia-hidream-o1");out.mkdir(exist_ok=True)
 started=time.monotonic()
 with tempfile.TemporaryDirectory() as td:
  c=Client("HiDream-ai/HiDream-O1-Image-Dev",verbose=False,download_files=td)
- job=c.submit(plan["prompt_imagen"],"3:4",False,123,api_name="/_generate_wrapped")
+ job=c.submit(plan["prompt_imagen"],"3:4",False,124,api_name="/_generate_wrapped")
  try: result=job.result(timeout=360)
  except Exception as e:
   print(json.dumps({"ok":False,"tipo":type(e).__name__,"detalle":str(e)[:250]}))
@@ -24,6 +24,7 @@ with tempfile.TemporaryDirectory() as td:
  p=pathlib.Path(p).resolve()
  assert pathlib.Path(td).resolve() in p.parents
  data=p.read_bytes();assert 5000<len(data)<25*1024*1024
+ (out/"original.png").write_bytes(data)
  im=Image.open(p);im.verify()
  im=Image.open(p).convert("RGB");assert min(im.size)>=512
  im.thumbnail((1024,1365));im.save(out/"prueba.jpg",quality=90)
