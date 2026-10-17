@@ -233,6 +233,9 @@ def planear(dia, cola, reglas, cat=None):
                                    'evidencia': {'de': pid, 'lamina': n, 'n_real': True,
                                                  **datos_lamina(lt)}})
                     nuevos_ids.add(tid)
+            if isinstance(tira.get('guion'), str):
+                diario.append('el corte de %s NO se abre: guion heredado sin lista visual confirmada' % familia)
+                continue
             ausentes = produccion.guion_faltante(tira)
             if faltan or ausentes:
                 diario.append('el corte de %s NO se abre: %d sin aprobar, %d por producir'
