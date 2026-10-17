@@ -23,6 +23,11 @@ def paths(obj):
   for v in obj:yield from paths(v)
  elif isinstance(obj,str):yield obj
 tiras=sorted({s for s in paths(globals().get("manifest",{})) if s.startswith("datos/tiras/") and s.endswith(".json") and ".." not in s})
+try:
+ index=json.loads(get("datos/tiras/index.json"))
+ if isinstance(index,list):
+  tiras=sorted(set(tiras)|{"datos/tiras/"+s+".json" for s in index if isinstance(s,str) and "/" not in s and ".." not in s})
+except Exception:out["indice_tiras_error"]=True
 out["tiras_detectadas"]=len(tiras)
 photos=set();errors=0
 for t in tiras:
