@@ -4,7 +4,7 @@ El comprobador de sólo lectura del proyecto original detectó duplicados hereda
 
 La lectura agrupa la última fecha de cada PID. Un retiro explícito en estado u origen excluye el grupo completo. Si siguen activas, todas las filas deben coincidir salvo origen descriptivo; sus textos únicos se conservan ordenados y separados por ` | `. Las diferencias de contenido, opciones, vídeo o estado siguen cerrando la lectura. No se modifican filas, fechas, marcas, notas o firmas.
 
-Propuesta central: CHG-SALA-HISTORICO-RETIROS-20261017, modelo `2026-10-17.sala-historico-retiros.1`, commit `bc333f3072c647d57ff871d68e408372aa247c84` de yod-portal.
+Propuesta central: CHG-SALA-HISTORICO-RETIROS-20261017, modelo `2026-10-17.sala-historico-retiros.1`, commit `30bb7133e7a4ad2d53fcfb29ecce8609c649f91e` de yod-portal.
 
 El proyecto original tiene respaldo privado. La comprobación del candidato a las 08:21 Hermosillo terminó correctamente: 288 filas de propuestas, 30 fuentes activas, 191 retiradas y 10654 filas de decisiones. Esto acredita la lectura desde el editor, todavía no el despliegue.
 

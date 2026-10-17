@@ -11,7 +11,8 @@
     "EXT-ACTIONS",
     "EXT-DRIVE",
     "EXT-MOTORES-MEDIA",
-    "SYS-YOD-OS"
+    "SYS-YOD-OS",
+    "EXT-GMAIL"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p \"*_test.py\"",
@@ -19,5 +20,5 @@
     "python3 nube/verificar.py"
   ],
   "rollback": "Revertir código conservando decisiones, cola, medios y snapshots.",
-  "model_commit": "bc333f3072c647d57ff871d68e408372aa247c84"
+  "model_commit": "30bb7133e7a4ad2d53fcfb29ecce8609c649f91e"
 }
