@@ -121,6 +121,15 @@ jobs:
             2>&1 | tee ../ejecutor.log
           echo "codigo=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
 
+      - name: Entregar cortes después de producir medios reales
+        if: ${{ !inputs.simular && steps.ejecutor.outputs.codigo == '0' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if grep -Eq '^resumen: [1-9][0-9]* hecho' ejecutor.log; then
+            gh workflow run sala-entregar-cortes.yml --ref main --repo "$GITHUB_REPOSITORY"
+          fi
+
       # 28-sep · Saturar: si esta vuelta avanzó (≥1 hecho) y todavía queda trabajo, se vuelve a
       # encender en lugar de esperar al siguiente latido. Sin avance no se relanza (un trabajo
       # atorado no puede crear un bucle).

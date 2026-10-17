@@ -100,7 +100,7 @@ function options(l){
  const src=fuenteLamina(l,l.src);return src?[{src,original:l.original,indiceOriginal:null,titulo:"Actual",modelo:l.modelo}]:[];
 }
 function phase(g){
- const q=(COLA||[]).filter(f=>normSlug(f.pieza)===normSlug(g.t.pieza_slug||g.t.pieza)&&!/barrida|hecho|cancel|retirad/i.test(f.estado||""));
+ const q=(COLA||[]).filter(f=>normSlug(f.pieza)===normSlug(g.t.pieza_slug||g.t.pieza)&&!/barrida|hecho|cancel|retirad|obsoleto/i.test(f.estado||""));
  const running=q.find(f=>/corriendo|proceso/i.test(f.estado||""));
  const bad=q.find(f=>/fallo|error/i.test(f.estado||""));
  return running?{text:"Produciendo "+(running.etapa||""),kind:"produccion"}:bad?{text:"Producción necesita atención",kind:"rojo"}:q.length?{text:q.length+" trabajos en fila",kind:"produccion"}:null;
