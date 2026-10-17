@@ -32,7 +32,7 @@ const base='https://yodesarrollomx.github.io/sala-edicion/';
   const ids=await page.locator('[data-open]').evaluateAll(els=>els.map(e=>e.dataset.open));
   const pieces=[];
   for(const id of ids){
-   await page.locator('[data-open]').evaluateAll((els,id)=>els.find(e=>e.dataset.open===id).click(),id);
+   await page.locator('[data-open="'+id+'"]').click();
    const fotos=page.locator('.bt-frame img');
    for(let j=0;j<await fotos.count();j++){
     await fotos.nth(j).scrollIntoViewIfNeeded();
