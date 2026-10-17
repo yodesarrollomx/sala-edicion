@@ -497,7 +497,7 @@ def seleccion_publica(seleccion):
             'propuestas_por_tipo': {key: cantidad(tipos.get(key)) for key in TIPOS_DIAGNOSTICO}}
 
 
-def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa='', modelo_imagen=None, seleccion=None, tomas_obtenidas=None):
+def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, causa='', modelo_imagen=None, seleccion=None, tomas_obtenidas=None, publicaciones=None):
     state = "bloqueado" if fallidas and not generadas else (
         "parcial" if fallidas or limitadas else "al_dia")
     report = {"schema": 1, "estado": state,
@@ -513,6 +513,9 @@ def guardar_estado_mesa(generadas, fallidas, limitadas, cartas, reutilizadas=0, 
                   tomas_obtenidas=tomas_obtenidas)
     if seleccion is not None:
         report['seleccion'] = seleccion_publica(seleccion)
+    if publicaciones is not None:
+        report["publicaciones"] = publicaciones
+        report["alcance_publicaciones"] = "fuentes_vigentes_del_productor"
     dest = RAIZ / "datos" / "mesa-estado.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
@@ -574,6 +577,8 @@ def main():
     if not args.sin_sheet:
         piezas = tiras_vigentes(piezas, contexto_produccion())
     dia_orden = contexto_produccion() if not args.sin_sheet else {}
+    from sala_publicaciones import proyectar
+    publicaciones = None if args.sin_sheet else proyectar(piezas, dia_orden, produccion.resolver_tira)
     orden = piezas_por_prioridad(piezas, dia_orden)
     seleccion = conteos_seleccion(dia_orden, piezas_antes, piezas, recuperadas, args.sin_sheet)
     for slug, (tid, t) in orden:
@@ -730,7 +735,7 @@ def main():
         guardar_estado_mesa(generadas, fallidas, limitadas, len(plan), reutilizadas,
                             causa='servicio_imagen_no_disponible' if servicio_bloqueado else ('cupo_imagen_agotado' if cupo_bloqueado else ''),
                             modelo_imagen=imagen.modelo_de(str(reglas.get('imagen_motores') or 'hidream_demo').split(',')[0].strip(), reglas),
-                            seleccion=seleccion, tomas_obtenidas=tomas_obtenidas)
+                            seleccion=seleccion, tomas_obtenidas=tomas_obtenidas, publicaciones=publicaciones)
     # Preparación que falló por completo es un fallo real, no una mesa «al día».
     return 2 if fallidas and not plan and not args.simular else 0
 

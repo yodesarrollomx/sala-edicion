@@ -36,7 +36,23 @@ function preseleccion(storage,context,opciones){
  }
  return {leer:()=>leer().map(x=>ids.indexOf(x)),cambiar};
 }
-const api={intentos,estado,fotoKey,textoToma,preseleccion};
+function proyectarPublicacion(t,registro){
+ const copia=JSON.parse(JSON.stringify(t));
+ const frames=new Map((registro.laminas||[]).map(l=>[Number(l.n),l]));
+ if(frames.size!==(copia.laminas||[]).length)throw Error("Proyección incompleta");
+ for(const l of copia.laminas||[]){
+  const f=frames.get(Number(l.n));if(!f||!["aprobada","rechazada","pendiente"].includes(f.estado))throw Error("Estado sin confirmar");
+  if(f.toma!==undefined){
+   if(!Number.isInteger(f.toma)||f.toma<1)throw Error("Toma inválida");
+   const c=(l.candidatas||[])[f.toma-1];if(!c||!(c.original||c.src))throw Error("Toma ausente");
+   l.src=c.original||c.src;l.original=l.src;l.dice=c.dice||l.dice;
+   l.seleccion={toma:f.toma};
+  }
+  l.estado=f.estado;
+ }
+ return copia;
+}
+const api={intentos,estado,fotoKey,textoToma,preseleccion,proyectarPublicacion};
 if(typeof module==="object"&&module.exports)module.exports=api;
 if(typeof document==="undefined")return;
 const root=document.getElementById("tableroHoy");if(!root)return;
@@ -126,7 +142,7 @@ function render(){
  <div class="bt-levels"><button data-back ${!f?"disabled":""} aria-label="Alejar, volver al tablero">−</button><span>${S.choice?"Revisión":f?"Libro abierto":"Vista general"}</span><button data-zoom aria-label="Acercar">${S.choice?"↗":"+"}</button></div></div>
  <div class="bt-nav">${f?`<button data-back>← Todas las publicaciones</button><button data-next>Ir a la siguiente por revisar →</button>`:
  `<div class="bt-filters">${["todas","atencion","produccion"].map(k=>`<button data-filter="${k}" class="${S.filter===k?"on":""}" aria-pressed="${S.filter===k}">${k==="todas"?"Todas":k==="atencion"?"Necesitan atención":"En producción"}</button>`).join("")}</div><span class="bt-hint">Cada publicación conserva su secuencia y sus decisiones</span>`}</div>
- <div class="bt-pan" tabindex="0" aria-label="Tablero de publicaciones"><div class="bt-columns">${vg.map((g,i)=>`<section class="bt-column" style="--bt-tone:${tone(g)}" data-column="${esc(g.id)}">${header(g)}<div class="bt-frames">${(g.t.laminas||[]).map(l=>card(g,l)).join("")}${g.ejes.map(p=>`<button class="bt-other" data-eje="${esc(p.id)}">${esc(p.titulo||"Revisión de guion o producción")} →</button>`).join("")}</div></section>`).join("")||`<div class="bt-empty"><h2>${S.loaded?"No hay publicaciones en este filtro":"Cargando las publicaciones…"}</h2><p>${S.loaded?"Las decisiones y el historial siguen guardados. Elige Todas para volver.":"Leyendo la tira completa de cada publicación."}</p></div>`}</div></div>
+ <div class="bt-pan" tabindex="0" aria-label="Tablero de publicaciones"><div class="bt-columns">${vg.map((g,i)=>`<section class="bt-column" style="--bt-tone:${tone(g)}" data-column="${esc(g.id)}">${header(g)}<div class="bt-frames">${(g.t.laminas||[]).map(l=>card(g,l)).join("")}${g.ejes.map(p=>`<button class="bt-other" data-eje="${esc(p.id)}">${esc(p.titulo||"Revisión de guion o producción")} →</button>`).join("")}</div></section>`).join("")||`<div class="bt-empty"><h2>${S.loaded?(S.filter==="todas"?"No se han cargado publicaciones":"No hay publicaciones en este filtro"):"Cargando las publicaciones…"}</h2><p>${S.loaded?(S.filter==="todas"?"Consulta el estado de actualización abajo. Un tablero vacío no confirma que no exista producción.":"Elige Todas para ver las demás publicaciones."):"Leyendo la tira completa de cada publicación."}</p></div>`}</div></div>
  <p class="bt-bottom">Aprobar una toma registra tu elección. Producción y publicación tienen sus propios comprobantes.</p>
  <p class="bt-notice" role="status" aria-live="polite">${esc(S.notice)}</p>`;
  root.querySelector(".bt-pan").scrollLeft=oldX;
@@ -154,7 +170,7 @@ function open(g,n,choose=false){
 function chooseFrame(g,n){
  const l=(g.t.laminas||[]).find(x=>Number(x.n)===Number(n));if(!l)return;
  const opts=options(l),md=markData(g,l),selected=/\[toma elegida: (\d+)\]/.exec(md.nota||"");
- let k=selected?opts.findIndex(o=>o.indiceOriginal===Number(selected[1])-1):0;
+ let k=selected?opts.findIndex(o=>o.indiceOriginal===Number(selected[1])-1):l.seleccion?opts.findIndex(o=>o.indiceOriginal===l.seleccion.toma-1):0;
  if(k<0)k=0;
  S.choice={group:g.id,n:Number(n),k,compare:false};
  if(!CAPAS.some(c=>c.id==="tablero-opciones"))abrirCapa("tablero-opciones",()=>{S.choice=null;render();},null,root);
@@ -173,7 +189,7 @@ function next(){
 function renderChoice(g,l){
  const os=options(l),c=S.choice,k=Math.min(c.k,Math.max(0,os.length-1)),o=os[k],md=markData(g,l),st=status(g,l);
  c.k=k;
- const writable=eligible()&&md.i>=0&&!!dec[g.pid]&&l.estado!=="aprobada";
+ const writable=eligible()&&!g.p?._consulta&&md.i>=0&&!!dec[g.pid]&&l.estado!=="aprobada";
  const box=document.createElement("div");box.className="bt-choice";box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");box.setAttribute("aria-label","Elegir fotografía de lámina "+l.n);
  let finalistas=[],finalistasError=false;
  try{finalistas=preseleccion(localStorage,{quien:ROL(),pid:g.pid,n:l.n,version:l.version||null,dice:l.dice},os).leer();}catch(e){finalistasError=true;}
@@ -197,7 +213,7 @@ function renderChoice(g,l){
  ${md.nota.replace(/\s*\[toma elegida: \d+\]/g,"")?`<blockquote class="bt-editor-note"><span class="bt-eyebrow">TU NOTA AL MARGEN</span><p>${esc(md.nota.replace(/\s*\[toma elegida: \d+\]/g,""))}</p></blockquote>`:""}
  <div class="bt-decision-panel"><span class="bt-eyebrow">TU DECISIÓN · ${os.length?"TOMA "+(k+1):"SIN TOMA"}</span><div class="bt-decisions"><button class="bt-approve" data-vote="si" ${!writable||!o?"disabled":""}>Aprobar esta toma</button><button class="bt-reject" data-vote="no" ${!writable?"disabled":""}>Pedir cambio</button></div>
  <p class="bt-gesture-hint">${writable?"Comparar no decide. Aprueba esta toma o pide un cambio con una nota.":l.estado==="aprobada"?"Esta página ya está aprobada. Su historia se conserva.":"Vista de lectura: puedes comparar sin cambiar decisiones."}</p>
- ${l.estado==="aprobada"&&eligible()&&g.t.base?`<button data-reopen>Pedir una nueva revisión</button>`:""}
+ ${l.estado==="aprobada"&&eligible()&&!g.p?._consulta&&g.t.base?`<button data-reopen>Pedir una nueva revisión</button>`:""}
  <p class="bt-notice" role="status">${esc(S.notice)}</p></div>
  <button class="bt-next-review" data-next>Siguiente por revisar →</button></div></div>`;
  root.appendChild(box);
@@ -206,7 +222,7 @@ function moveOption(delta){if(!S.choice)return;const g=S.groups.find(x=>x.id===S
 function conservarFinalista(i){
  if(!S.choice||!eligible())return;
  const g=S.groups.find(x=>x.id===S.choice.group),l=g&&g.t.laminas.find(x=>Number(x.n)===S.choice.n);
- if(!l||l.estado==="aprobada"||markData(g,l).i<0||!dec[g.pid])return;
+ if(!l||g.p?._consulta||l.estado==="aprobada"||markData(g,l).i<0||!dec[g.pid])return;
  try{
   const r=preseleccion(localStorage,{quien:ROL(),pid:g.pid,n:l.n,version:l.version||null,dice:l.dice},options(l)).cambiar(i);
   S.notice=r.ok?"Preselección guardada en este navegador. Aún no has aprobado esta toma.":"Ya conservaste dos finalistas. Quita una antes de añadir otra.";
@@ -229,7 +245,7 @@ function ampliarOpciones(){
 function vote(m,zoomPhoto){
  if(!S.choice||!eligible())return;
  const g=S.groups.find(x=>x.id===S.choice.group),l=g.t.laminas.find(x=>Number(x.n)===S.choice.n),md=markData(g,l),d=dec[g.pid],o=options(l)[S.choice.k];
- if(!d||md.i<0||l.estado==="aprobada")return;
+ if(g.p?._consulta||!d||md.i<0||l.estado==="aprobada")return;
  const image=zoomPhoto||root.querySelector(".bt-main-photo");
  if(m==="si"&&(!mediosDisponibles()||!o||!image||!image.complete||!image.naturalWidth)){S.notice="Espera a que cargue esta fotografía antes de aprobarla.";render();return;}
  const identity=JSON.stringify(api.contexto()),owner=ROL();
@@ -296,17 +312,37 @@ function bind(){
  }
 }
 async function refresh(live=false){
- if(S.busy)return;S.busy=true;render();
+ if(S.busy){S.refreshPending=true;return;}S.busy=true;S.notice="";render();
  try{
-  if(live&&ENTRADO()){_tCola=0;traerCola();const d=await traer(fecha,1,20000,true);if(d&&!d._respaldo&&!d.error)aplicarDia(d);else S.notice="No se confirmó una lectura nueva del Sheet; conservé lo que ya tenías.";}
-  const props=(D&&(D._todas||D.propuestas))||[];
+  if(live&&ENTRADO()){_tCola=0;traerCola();const d=await traer(fecha,1,20000,true);if(d&&!d._respaldo&&!d.error)aplicarDia(normalizarDia(d));else S.notice="No se confirmó una lectura nueva del Sheet; conservé lo que ya tenías.";}
+  const props=[...((D&&(D._todas||D.propuestas))||[])];
+  let inventario=[];
+  try{
+   const response=await fetch("datos/mesa-estado.json?v="+Date.now(),{cache:"no-store",signal:AbortSignal.timeout(20000)});
+   if(!response.ok)throw Error("Sin inventario");
+   const report=await response.json();
+   if(!Array.isArray(report.publicaciones)||!report.revisado_en)throw Error("Sin proyección");
+   inventario=report.publicaciones;
+   const ids=new Set(props.map(p=>p.id));
+   for(const p of inventario){
+    if(!/^[A-Za-z0-9_-]+$/.test(p.id)||!Array.isArray(p.laminas))throw Error("Inventario inválido");
+    if(!ids.has(p.id)){props.push({id:p.id,tipo:"laminas",_consulta:true});ids.add(p.id);}
+   }
+   S.notice="Inventario consultado: "+new Date(report.revisado_en).toLocaleString()+". Las publicaciones sin revisión activa se muestran sólo para consulta.";
+   if(Date.now()-Date.parse(report.revisado_en)>3*60*60*1000)S.notice+=" La actualización tiene más de tres horas; sus estados pueden haber cambiado.";
+  }catch(e){S.notice="No se confirmó el inventario de publicaciones. Se muestran únicamente las revisiones disponibles; esto no significa que no haya trabajo guardado.";}
+  const porId=new Map(inventario.map(p=>[p.id,p]));
   if(live){for(const p of props)delete TIRAS[p.id];}
-  const all=await Promise.all(props.map(async p=>({p,t:await cargarTira(p.id)}))),map=new Map();
+  const all=await Promise.all(props.map(async p=>{
+   let t=await cargarTira(p.id);
+   if(p._consulta){if(!t)throw Error("Falta una tira vigente");t=proyectarPublicacion(t,porId.get(p.id));}
+   return {p,t};
+  })),map=new Map();
   for(const {p,t}of all){if(!t||!(t.laminas||[]).length)continue;const id=t.pieza_slug||normSlug(t.pieza||p.pieza||p.titulo);let g=map.get(id);if(!g){g={id,pid:p.id,p,t,ejes:[]};map.set(id,g);}else if((D.propuestas||[]).some(x=>x.id===p.id)&&!dec[g.pid])map.set(id,{id,pid:p.id,p,t,ejes:g.ejes});}
   for(const {p,t}of all){if(t&&(t.laminas||[]).length)continue;const id=p.pieza_slug||normSlug(p.pieza||String(p.titulo||"").split(" · ")[0]);const g=map.get(id)||[...map.values()].find(x=>normSlug(x.t.pieza)===id);if(g)g.ejes.push(p);else map.set(id,{id,pid:p.id,p,t:{pieza:p.pieza||p.titulo,pieza_slug:id,laminas:[]},ejes:[p]});}
   S.groups=[...map.values()];S.loaded=true;if(S.focus&&!group()){S.focus=null;S.choice=null;}
  }catch(e){S.notice="No pude actualizar el tablero. Tu revisión sigue conservada. Usa Actualizar.";}
- finally{S.busy=false;render();}
+ finally{S.busy=false;render();if(S.refreshPending){S.refreshPending=false;queueMicrotask(()=>refresh());}}
 }
 api.refresh=refresh;api.render=render;api.produccionActualizada=()=>{if(!S.choice)render();};
 const returnButton=document.createElement("button");returnButton.className="bt-return";returnButton.textContent="← Volver al tablero";returnButton.onclick=()=>{document.body.classList.remove("sala-turno");render();};document.getElementById("vHoy").prepend(returnButton);

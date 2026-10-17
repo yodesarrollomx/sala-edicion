@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-15.sala-ejemplo.1",
-  "proposal_id": "CHG-SALA-EJEMPLO-20261015",
-  "summary": "Nombres por rol y por fusión, conservando vetos y frescura; prueba técnica con receta breve y control de duración. Activación del backend separada de integración.",
+  "model_revision": "2026-10-17.sala-mesa-visible.1",
+  "proposal_id": "CHG-SALA-MESA-VISIBLE-20261017",
+  "summary": "Mostrar tiras vigentes de producción aunque el día esté vacío, con toma confirmada y consulta sin voto. No confundir proyección con producción nueva.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -10,12 +10,13 @@
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
     "EXT-DRIVE",
-    "EXT-GMAIL"
+    "EXT-MOTORES-MEDIA",
+    "SYS-YOD-OS"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p \"*_test.py\"",
     "node --test tests/*.test.cjs tests/*.test.mjs",
     "python3 nube/verificar.py"
   ],
-  "rollback": "Revertir el PR y restaurar sólo las funciones originales respaldadas si se activan; conservar decisiones, cola, medios, permisos y despliegue existente. La receta breve afecta sólo el ejemplo aislado."
+  "rollback": "Revertir código conservando decisiones, cola, medios y snapshots."
 }
