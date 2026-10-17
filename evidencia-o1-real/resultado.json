@@ -1,13 +1,172 @@
 {
   "scope": "cuatro_recorridos_visuales_de_lote_real",
   "cuatro_ciclos_productivos_acreditados": false,
-  "run_id": "39074053807",
+  "run_id": "39074864844",
   "passes": [
     {
       "pasada": 1,
-      "inicio": "2026-10-17T22:20:54.165Z",
-      "fin": "2026-10-17T22:21:26.261Z",
+      "inicio": "2026-10-17T22:23:49.830Z",
+      "fin": "2026-10-17T22:24:10.311Z",
       "viewport": "escritorio",
+      "columnas": 22,
+      "laminas_recorridas": 77,
+      "opciones": [
+        {
+          "lamina": 2,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/167afad2e9ea197edb08d87bf29bf04dd9db77f3eb4c7db3ec0dc1682aa31ab9.jpg"
+        },
+        {
+          "lamina": 2,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/506176c943e4c8d172ff0b0e99922e979682f0db8ea49fe0d94d2027d44551c5.jpg"
+        },
+        {
+          "lamina": 3,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/64e573a40cec70bcf7e9fef01761e6396adb7f11c9f61699f903f87d0d650da6.jpg"
+        },
+        {
+          "lamina": 3,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/44484a41675eea1e56a49f5c44ef495ae2056d05bd35bd03edd082cfdbf6c927.jpg"
+        },
+        {
+          "lamina": 4,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/5b92ffa0163e7b4096d4a478e03a14298698f5fb60ec4502da9240a4c998bb8a.jpg"
+        },
+        {
+          "lamina": 4,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/8808bb7d3c6f1c560cf9e238021929e04a3e7247b1e3acc6d734f6daa49b3a5f.jpg"
+        },
+        {
+          "lamina": 5,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/04cd84ddbf9cf1c5207db1a2572748ed39c6c47d432077fd19197fd828bcf906.jpg"
+        },
+        {
+          "lamina": 5,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/c14292740f1d5d5554622f0f31d84d00dfb3c529bb84f1c1225b19859ea87c47.jpg"
+        }
+      ],
+      "errores": [],
+      "escrituras": 0,
+      "ok": true
+    },
+    {
+      "pasada": 2,
+      "inicio": "2026-10-17T22:24:10.354Z",
+      "fin": "2026-10-17T22:24:49.192Z",
+      "viewport": "movil",
+      "columnas": 22,
+      "laminas_recorridas": 77,
+      "opciones": [
+        {
+          "lamina": 2,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/167afad2e9ea197edb08d87bf29bf04dd9db77f3eb4c7db3ec0dc1682aa31ab9.jpg"
+        },
+        {
+          "lamina": 2,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/506176c943e4c8d172ff0b0e99922e979682f0db8ea49fe0d94d2027d44551c5.jpg"
+        },
+        {
+          "lamina": 3,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/64e573a40cec70bcf7e9fef01761e6396adb7f11c9f61699f903f87d0d650da6.jpg"
+        },
+        {
+          "lamina": 3,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/44484a41675eea1e56a49f5c44ef495ae2056d05bd35bd03edd082cfdbf6c927.jpg"
+        },
+        {
+          "lamina": 4,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/5b92ffa0163e7b4096d4a478e03a14298698f5fb60ec4502da9240a4c998bb8a.jpg"
+        },
+        {
+          "lamina": 4,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/8808bb7d3c6f1c560cf9e238021929e04a3e7247b1e3acc6d734f6daa49b3a5f.jpg"
+        },
+        {
+          "lamina": 5,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/04cd84ddbf9cf1c5207db1a2572748ed39c6c47d432077fd19197fd828bcf906.jpg"
+        },
+        {
+          "lamina": 5,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/c14292740f1d5d5554622f0f31d84d00dfb3c529bb84f1c1225b19859ea87c47.jpg"
+        }
+      ],
+      "errores": [],
+      "escrituras": 0,
+      "ok": true
+    },
+    {
+      "pasada": 3,
+      "inicio": "2026-10-17T22:24:49.274Z",
+      "fin": "2026-10-17T22:25:08.542Z",
+      "viewport": "escritorio",
+      "columnas": 22,
+      "laminas_recorridas": 77,
+      "opciones": [
+        {
+          "lamina": 2,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/167afad2e9ea197edb08d87bf29bf04dd9db77f3eb4c7db3ec0dc1682aa31ab9.jpg"
+        },
+        {
+          "lamina": 2,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/506176c943e4c8d172ff0b0e99922e979682f0db8ea49fe0d94d2027d44551c5.jpg"
+        },
+        {
+          "lamina": 3,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/64e573a40cec70bcf7e9fef01761e6396adb7f11c9f61699f903f87d0d650da6.jpg"
+        },
+        {
+          "lamina": 3,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/44484a41675eea1e56a49f5c44ef495ae2056d05bd35bd03edd082cfdbf6c927.jpg"
+        },
+        {
+          "lamina": 4,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/5b92ffa0163e7b4096d4a478e03a14298698f5fb60ec4502da9240a4c998bb8a.jpg"
+        },
+        {
+          "lamina": 4,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/8808bb7d3c6f1c560cf9e238021929e04a3e7247b1e3acc6d734f6daa49b3a5f.jpg"
+        },
+        {
+          "lamina": 5,
+          "opcion": 1,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/04cd84ddbf9cf1c5207db1a2572748ed39c6c47d432077fd19197fd828bcf906.jpg"
+        },
+        {
+          "lamina": 5,
+          "opcion": 2,
+          "src": "https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-240ec7addda64f312acd003f5cf9bc9f9b96629418652838c3eb60083d8be4b5-mesa/c14292740f1d5d5554622f0f31d84d00dfb3c529bb84f1c1225b19859ea87c47.jpg"
+        }
+      ],
+      "errores": [],
+      "escrituras": 0,
+      "ok": true
+    },
+    {
+      "pasada": 4,
+      "inicio": "2026-10-17T22:25:08.591Z",
+      "fin": "2026-10-17T22:25:47.308Z",
+      "viewport": "movil",
       "columnas": 22,
       "laminas_recorridas": 77,
       "opciones": [
@@ -57,7 +216,6 @@
       "ok": true
     }
   ],
-  "espera": "The expression evaluated to a falsy value:\n\n  assert.ok(receipt.media_manifest_sha256)\n",
   "lote": {
     "id": "dato-servilleta-3-nube-2026-10-17-5debd0",
     "mesa": "39073909910",
@@ -129,6 +287,10 @@
       }
     ]
   },
-  "ok": false,
-  "error": "locator.scrollIntoViewIfNeeded: Element is not attached to the DOM\nCall log:\n  - attempting scroll into view action\n    - waiting for element to be stable\n    - element is not stable\n  - retrying scroll into view action\n    - waiting for element to be stable\n"
+  "ultimo_paso": {
+    "pasada": 4,
+    "pieza": "dato-servilleta-3",
+    "lamina": 5
+  },
+  "ok": true
 }
