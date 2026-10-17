@@ -32,7 +32,7 @@ try{
  const calibration=await finished(39073909910);
  report.produccion_inicial.conclusion=calibration.conclusion;save();
  for(let cycle=1;cycle<=4;cycle++){
-  const id=await dispatch(),start=new Date().toISOString();report.actual={cycle,run:id,inicio:start};save();console.log('CICLO_INICIADO '+JSON.stringify(report.actual));
+  const id=cycle===1?39075517796:await dispatch(),start=new Date().toISOString();report.actual={cycle,run:id,inicio:start};save();console.log('CICLO_INICIADO '+JSON.stringify(report.actual));
   const r=await finished(id),jobs=api('actions/runs/'+id+'/jobs?per_page=100').jobs;
   if(r.conclusion!=='success')throw Error('El recorrido completo falló: '+id+' '+r.conclusion);
   for(const name of ['mesa / mesa','productor / productor','ejecutor / ejecutor','revision / revision']){

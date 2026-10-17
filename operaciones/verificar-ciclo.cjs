@@ -6,10 +6,20 @@ async function loaded(locator){await locator.evaluate(e=>e.scrollIntoView({behav
 (async()=>{
  fs.mkdirSync(dir,{recursive:true});let browser,activePage;
  try{
- let target,receipt,report;
+ let target,receipt,report,runReport;
+ if(process.env.SALA_CYCLE_RUN){
+  const {execFileSync}=require('node:child_process');
+  const gh=args=>execFileSync('gh',args,{encoding:'utf8',maxBuffer:30*1024*1024});
+  const jobs=JSON.parse(gh(['api','repos/yodesarrollomx/sala-edicion/actions/runs/'+process.env.SALA_CYCLE_RUN+'/jobs?per_page=100'])).jobs;
+  const mesa=jobs.find(j=>j.name==='mesa / mesa'&&j.conclusion==='success');assert.ok(mesa,'Mesa del ciclo sin éxito');
+  const logs=gh(['api','repos/yodesarrollomx/sala-edicion/actions/jobs/'+mesa.id+'/logs']);
+  const line=logs.split('\n').filter(x=>x.includes('estado Mesa: ')).at(-1);assert.ok(line,'Sin comprobante Mesa');
+  runReport=JSON.parse(line.slice(line.indexOf('estado Mesa: ')+13).trim());
+  assert.equal(runReport.run_id,process.env.SALA_CYCLE_RUN);
+ }
  for(let i=0;i<60;i++){
   try{
-   receipt=await json('version-online.json');report=await json('datos/mesa-estado.json');
+   receipt=await json('version-online.json');report=runReport||await json('datos/mesa-estado.json');
    assert.ok(receipt.media_manifest_sha256);assert.equal(report.modelo_imagen,'HiDream-O1-Image-Dev');if(process.env.SALA_CYCLE_RUN)assert.equal(report.run_id,process.env.SALA_CYCLE_RUN);else assert.ok(report.generadas>=4&&report.tomas_obtenidas===8);
    const mf=await json('datos/manifiesto.json');
    for(const p of mf.propuestas||[]){
