@@ -1,8 +1,296 @@
 {
   "tipo": "recorridos_visuales_reales_sin_escrituras",
   "produccion_nueva_acreditada": false,
-  "run_id": "39038950222",
-  "passes": [],
-  "ok": false,
-  "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('[data-open=\"asi-se-ve-saber\"]')\n    - locator resolved to <button class=\"bt-topic\" data-open=\"asi-se-ve-saber\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"tour\">…</div> intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <h2>Esta es la mesa de edición</h2> from <div class=\"tour\">…</div> subtree intercepts pointer events\n  2 × retrying click action\n      - waiting 100ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"tour\">…</div> intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <div class=\"tour\">…</div> intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <h2>Esta es la mesa de edición</h2> from <div class=\"tour\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - element is outside of the viewport\n  2 × retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"tour\">…</div> intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <h2>Esta es la mesa de edición</h2> from <div class=\"tour\">…</div> subtree intercepts pointer events\n  3 × retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"tour\">…</div> intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <h2>Esta es la mesa de edición</h2> from <div class=\"tour\">…</div> subtree intercepts pointer events\n  2 × retrying click action\n      - waiting 500ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - element is outside of the viewport\n  10 × retrying click action\n       - waiting 500ms\n       - waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"tour\">…</div> intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n       - waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <h2>Esta es la mesa de edición</h2> from <div class=\"tour\">…</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n       - waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"tour\">…</div> intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n       - waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"tour\">…</div> intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <div class=\"tour\">…</div> intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <h2>Esta es la mesa de edición</h2> from <div class=\"tour\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n  - element was detached from the DOM, retrying\n    - locator resolved to <button class=\"bt-topic\" data-open=\"asi-se-ve-saber\">…</button>\n  - attempting click action\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <h2>Esta es la mesa de edición</h2> from <div class=\"tour\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <div class=\"tour\">…</div> intercepts pointer events\n  - retrying click action\n    - waiting 20ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <h2>Esta es la mesa de edición</h2> from <div class=\"tour\">…</div> subtree intercepts pointer events\n  2 × retrying click action\n      - waiting 100ms\n      - waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"tour\">…</div> intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <div class=\"tour\">…</div> intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n"
+  "run_id": "39039079203",
+  "passes": [
+    {
+      "pasada": 1,
+      "inicio": "2026-10-17T14:03:34.633Z",
+      "fin": "2026-10-17T14:03:50.505Z",
+      "viewport": "escritorio",
+      "role": "lector",
+      "columnas": 11,
+      "laminas": 57,
+      "piezas": [
+        {
+          "pieza": "asi-se-ve-saber",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "dato-tres-opiniones",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "doble-via",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "el-arquitecto-invisible",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "la-identidad-no-se-improvisa",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "la-ruta-autonoma",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "llamada-entregable",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "llamada-que-pasa",
+          "laminas": 1,
+          "imagenes_cargadas": 1
+        },
+        {
+          "pieza": "manos-expertas-en-cada-metro",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "mesa-vacia",
+          "laminas": 7,
+          "imagenes_cargadas": 7
+        },
+        {
+          "pieza": "tu-terreno-tus-reglas",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        }
+      ],
+      "mesa_run_id": "39038648620",
+      "mesa_code_sha": "ee3e9a5b54b08fa59ed6d2d7df17c8550b102d68",
+      "mesa_revisada": "2026-10-17T13:58:48.682801+00:00",
+      "errores": [],
+      "escrituras": 0,
+      "ok": true
+    },
+    {
+      "pasada": 2,
+      "inicio": "2026-10-17T14:03:50.516Z",
+      "fin": "2026-10-17T14:04:09.205Z",
+      "viewport": "movil",
+      "role": "lector",
+      "columnas": 11,
+      "laminas": 57,
+      "piezas": [
+        {
+          "pieza": "asi-se-ve-saber",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "dato-tres-opiniones",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "doble-via",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "el-arquitecto-invisible",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "la-identidad-no-se-improvisa",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "la-ruta-autonoma",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "llamada-entregable",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "llamada-que-pasa",
+          "laminas": 1,
+          "imagenes_cargadas": 1
+        },
+        {
+          "pieza": "manos-expertas-en-cada-metro",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "mesa-vacia",
+          "laminas": 7,
+          "imagenes_cargadas": 7
+        },
+        {
+          "pieza": "tu-terreno-tus-reglas",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        }
+      ],
+      "mesa_run_id": "39038648620",
+      "mesa_code_sha": "ee3e9a5b54b08fa59ed6d2d7df17c8550b102d68",
+      "mesa_revisada": "2026-10-17T13:58:48.682801+00:00",
+      "errores": [],
+      "escrituras": 0,
+      "ok": true
+    },
+    {
+      "pasada": 3,
+      "inicio": "2026-10-17T14:04:09.285Z",
+      "fin": "2026-10-17T14:04:25.065Z",
+      "viewport": "escritorio",
+      "role": "lector",
+      "columnas": 11,
+      "laminas": 57,
+      "piezas": [
+        {
+          "pieza": "asi-se-ve-saber",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "dato-tres-opiniones",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "doble-via",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "el-arquitecto-invisible",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "la-identidad-no-se-improvisa",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "la-ruta-autonoma",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "llamada-entregable",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "llamada-que-pasa",
+          "laminas": 1,
+          "imagenes_cargadas": 1
+        },
+        {
+          "pieza": "manos-expertas-en-cada-metro",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "mesa-vacia",
+          "laminas": 7,
+          "imagenes_cargadas": 7
+        },
+        {
+          "pieza": "tu-terreno-tus-reglas",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        }
+      ],
+      "mesa_run_id": "39038648620",
+      "mesa_code_sha": "ee3e9a5b54b08fa59ed6d2d7df17c8550b102d68",
+      "mesa_revisada": "2026-10-17T13:58:48.682801+00:00",
+      "errores": [],
+      "escrituras": 0,
+      "ok": true
+    },
+    {
+      "pasada": 4,
+      "inicio": "2026-10-17T14:04:25.072Z",
+      "fin": "2026-10-17T14:04:43.348Z",
+      "viewport": "movil",
+      "role": "lector",
+      "columnas": 11,
+      "laminas": 57,
+      "piezas": [
+        {
+          "pieza": "asi-se-ve-saber",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "dato-tres-opiniones",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "doble-via",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "el-arquitecto-invisible",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "la-identidad-no-se-improvisa",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "la-ruta-autonoma",
+          "laminas": 6,
+          "imagenes_cargadas": 6
+        },
+        {
+          "pieza": "llamada-entregable",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "llamada-que-pasa",
+          "laminas": 1,
+          "imagenes_cargadas": 1
+        },
+        {
+          "pieza": "manos-expertas-en-cada-metro",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        },
+        {
+          "pieza": "mesa-vacia",
+          "laminas": 7,
+          "imagenes_cargadas": 7
+        },
+        {
+          "pieza": "tu-terreno-tus-reglas",
+          "laminas": 5,
+          "imagenes_cargadas": 5
+        }
+      ],
+      "mesa_run_id": "39038648620",
+      "mesa_code_sha": "ee3e9a5b54b08fa59ed6d2d7df17c8550b102d68",
+      "mesa_revisada": "2026-10-17T13:58:48.682801+00:00",
+      "errores": [],
+      "escrituras": 0,
+      "ok": true
+    }
+  ],
+  "ok": true
 }
