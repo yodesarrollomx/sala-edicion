@@ -576,27 +576,39 @@ function fusionProduccion_(DE) {
 function produccionHistorica_(f, PR, DE) {
   if (!fechaProduccionValida_(f) || !Array.isArray(PR) || PR.length > 10000)
     throw new Error('produccion_sin_contrato');
-  var ultimas = Object.create(null), ambiguas = Object.create(null), dias = Object.create(null);
+  var ultimas = Object.create(null), dias = Object.create(null);
   PR.forEach(function (p) {
     var fecha = fechaDe(p.fecha), pid = String(p.prop_id || '');
     if (!fechaProduccionValida_(fecha) || !/^[A-Za-z0-9_.-]{1,256}$/.test(pid))
       throw new Error('produccion_fuente_invalida');
     dias[fecha] = 1;
-    if (fecha <= f && (!ultimas[pid] || fechaDe(ultimas[pid].fecha) < fecha)) { ultimas[pid] = p; ambiguas[pid] = false; }
-    else if (fecha <= f && fechaDe(ultimas[pid].fecha) === fecha && JSON.stringify(ultimas[pid]) !== JSON.stringify(p))
-      ambiguas[pid] = true;
+    if (fecha <= f && (!ultimas[pid] || fechaDe(ultimas[pid][0].fecha) < fecha)) ultimas[pid] = [p];
+    else if (fecha <= f && fechaDe(ultimas[pid][0].fecha) === fecha) ultimas[pid].push(p);
   });
   var retiradas = 0, props = [];
   Object.keys(ultimas).sort().forEach(function (pid) {
-    if (ambiguas[pid]) throw new Error('produccion_fuente_duplicada');
-    var p = ultimas[pid];
-    if (/^retirada/i.test(String(p.estado || '')) || /^retirada/i.test(String(p.origen || ''))) { retiradas++; return; }
+    var grupo = ultimas[pid], p = grupo[0];
+    // El retiro explícito domina copias heredadas de la misma fecha. Nunca revivir
+    // una pieza por el orden físico de las filas ni modificar el historial.
+    if (grupo.some(function (r) {
+      return /^retirada/i.test(String(r.estado || '')) || /^retirada/i.test(String(r.origen || ''));
+    })) { retiradas++; return; }
+    var firmas = Object.create(null), origenes = Object.create(null);
+    grupo.forEach(function (r) {
+      // Sólo la procedencia descriptiva admite variantes: conservarlas todas.
+      // Cualquier diferencia de contenido/estado sigue cerrando la lectura.
+      var firma = JSON.stringify(Object.keys(r).filter(function (k) { return k !== 'origen'; })
+        .sort().map(function (k) { return [k, r[k]]; }));
+      firmas[firma] = 1;
+      if (r.origen) origenes[String(r.origen)] = 1;
+    });
+    if (Object.keys(firmas).length !== 1) throw new Error('produccion_fuente_duplicada');
     var laminas = JSON.parse(p.laminas_json || '[]'), opciones = JSON.parse(p.opciones_json || '[]');
     if (!Array.isArray(laminas) || laminas.length > 1000 || !opciones || typeof opciones !== 'object')
       throw new Error('produccion_fuente_invalida');
     props.push({ id: pid, titulo: String(p.titulo || ''), tipo: String(p.tipo || 'laminas'),
       laminas: laminas, opciones: opciones, video: String(p.video || '') || null,
-      origen: String(p.origen || '') || null, estado: String(p.estado || ''),
+      origen: Object.keys(origenes).sort().join(' | ') || null, estado: String(p.estado || ''),
       fecha_fuente: fechaDe(p.fecha), de_antes: fechaDe(p.fecha) < f ? fechaDe(p.fecha) : null });
   });
   return { ok: true, contrato: 'produccion-historica-v1', alcance: 'historial_completo',
