@@ -1,0 +1,25 @@
+name: Diagnostico privado de recibos de imagen
+on:
+  push:
+    branches: [codex/diagnostico-recibos-20261017]
+permissions:
+  contents: read
+jobs:
+  leer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            nube
+            politica-imagen.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet requests pillow
+      - name: Inspeccionar estados sin generar ni modificar registros
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/diagnostico_recibos_actual.py
