@@ -13,6 +13,6 @@
     "node --test tests/*.test.cjs tests/*.test.mjs",
     "python3 nube/verificar.py"
   ],
-  "rollback": "Revertir código conservando decisiones, cola, medios y snapshots.",
-  "model_commit": "c07942ee4cccbb81bd49c2ffc2557b10d088f354"
+  "rollback": "Revertir adaptadores y lector de negativas; conservar planes, resultados, negativos y decisiones. Mantener conciliación cerrada ante estado desconocido.",
+  "model_commit": "2f2c58a4e5826f176a236372887d581763816f0c"
 }
