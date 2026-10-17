@@ -23,3 +23,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 nube/diagnostico_recibos_actual.py
+      - name: Conservar muestra verificable de la receta real
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name 'codex'
+          git config user.email 'codex@users.noreply.github.com'
+          git add evidencia-hidream-o1
+          git commit -m 'evidencia: prueba real de reemplazo HiDream O1, no aprobacion'
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:codex/diagnostico-recibos-20261017
