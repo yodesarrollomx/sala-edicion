@@ -48,7 +48,7 @@ def _client(folder):
     return Client(SPACE, **kw)
 
 def generar(receta, reglas):
-    from motores.imagen import CupoImagen, ReciboNoConfirmado, ServicioImagen
+    from motores.imagen import CupoImagen, ReciboNoConfirmado, ServicioImagen, RechazoImagen
     global _FALLOS, _DETENIDO
     rules = reglas if isinstance(reglas, dict) else {}
     recipe_sha = hashlib.sha256(receta.encode()).hexdigest()
@@ -76,7 +76,7 @@ def generar(receta, reglas):
     if rules.get("_imagen_solo_recibo"):
         raise ReciboNoConfirmado("HiDream: toma aún sin recibo confirmado", intermitente=True)
     if _DETENIDO:
-        raise ServicioImagen("HiDream detenido: " + _DETENIDO, intermitente=True)
+        raise RechazoImagen("no_enviado")
     folder.mkdir(parents=True, exist_ok=True)
     import tempfile
     with tempfile.TemporaryDirectory(prefix="hidream-") as tmp:
@@ -84,8 +84,7 @@ def generar(receta, reglas):
             client = _client(Path(tmp))
         except Exception as e:
             _DETENIDO = "servicio gratuito no disponible"
-            raise ServicioImagen("HiDream no está disponible: " + sala.redactar(str(e))[:180],
-                             intermitente=True) from None
+            raise RechazoImagen("no_enviado") from None
         seed = int(rid[:8], 16) % 1000000
         started = time.monotonic()
         for attempt in range(2):
@@ -98,6 +97,11 @@ def generar(receta, reglas):
                     raise ValueError("respuesta incompleta")
                 path, used_seed, message, details = result[:4]
                 if not path:
+                    terminal = re.fullmatch(r"Error: Task failed with status ([34]):[\s\S]*", str(message))
+                    # Un intento anterior sin nombre de imagen pudo producirla: no reintentar a ciegas.
+                    if terminal and attempt == 0:
+                        _DETENIDO = "tarea terminal sin imagen"
+                        raise RechazoImagen("tarea_fallida" if terminal[1] == "3" else "tarea_cancelada")
                     if "No image name in successful response" in str(message):
                         raise RuntimeError("No image name in successful response")
                     raise ValueError("no entregó imagen: " + str(message))
@@ -123,6 +127,8 @@ def generar(receta, reglas):
                 rules["_imagen_parametros"] = {"seed": d.get("seed"), "aspect_ratio": "3:4", "space": SPACE}
                 _FALLOS = 0
                 return data, "png"
+            except RechazoImagen:
+                raise
             except Exception as e:
                 msg = sala.redactar(str(e))[:220]
                 if "No image name in successful response" in msg and attempt == 0:

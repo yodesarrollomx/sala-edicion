@@ -146,9 +146,17 @@ class Recibos:
             refused = self.get(name.replace('envio-', 'rechazo-', 1))
             if refused is None:
                 pending = True
-            elif refused[0] != {'estado': 'cupo_sin_imagen', 'plan_sha256': plan_sha}:
+            elif not negativa_confirmada(refused[0], plan_sha):
                 raise MotorError('Negativa de cuota sin confirmar; no repetir')
         return pending
+
+
+def negativa_confirmada(record, plan_sha):
+    if record == {'estado': 'cupo_sin_imagen', 'plan_sha256': plan_sha}:
+        return True
+    return any(record == {'estado': 'rechazo_sin_imagen', 'plan_sha256': plan_sha,
+                           'motivo': motivo}
+               for motivo in ('tarea_fallida', 'tarea_cancelada', 'no_enviado'))
 
 
 def ejecutar(rid, source, preparar, reglas, solo_recibo=False, store=None):
@@ -193,11 +201,20 @@ def ejecutar(rid, source, preparar, reglas, solo_recibo=False, store=None):
             previstos = {m.strip() for m in str(effective['imagen_motores']).split(',')}
             if not previstos.issubset(actuales):
                 raise MotorError('Configuración de motores cambió; requiere nueva versión antes de generar')
-            if store.get('rechazo-' + store.owner + '.zip'):
+            rechazo_actual = store.get('rechazo-' + store.owner + '.zip')
+            if rechazo_actual and rechazo_actual[0].get('estado') == 'rechazo_sin_imagen':
+                raise imagen.RechazoImagen(rechazo_actual[0]['motivo'])
+            if rechazo_actual:
                 raise imagen.CupoImagen('Cuota rechazada en este intento; esperar otra ejecución', intermitente=True)
             store.put('envio-' + store.owner + '.zip', {'plan_sha256': digest(canonical(plan)), 'estado': 'enviado'})
         try:
             photo, ext, motor, avisos = imagen.generar(plan['d']['receta'], effective)
+        except imagen.RechazoImagen as e:
+            if not effective['_imagen_solo_recibo'] and str(effective.get('imagen_motores') or 'hidream_demo').strip() == 'hidream_demo':
+                store.put('rechazo-' + store.owner + '.zip',
+                          {'estado': 'rechazo_sin_imagen', 'motivo': e.motivo,
+                           'plan_sha256': digest(canonical(plan))})
+            raise
         except imagen.CupoImagen:
             # Sólo el adaptador HiDream confirma la negativa explícita sin pago/fallback.
             if not effective['_imagen_solo_recibo'] and str(effective.get('imagen_motores') or 'hidream_demo').strip() == 'hidream_demo':
