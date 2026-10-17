@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-17.sala-entrega-fuentes.1",
-  "proposal_id": "CHG-SALA-ENTREGA-FUENTES-20261017",
-  "summary": "Recuperación manual de una escena bloqueada por cancelación: exige identidad y plan aprobados vigentes, inventario Drive completo sin salida ambigua, etapa y CPU habilitadas, respaldo privado releído y segunda lectura estable. Produce sólo con parallax/cámara existentes, sin repetir proveedor externo. Guarda resultado durable, evidencia y readback. No cambia votos ni rescata cortes fallidos automáticamente.",
+  "model_revision": "2026-10-17.sala-entrega-cortes.1",
+  "proposal_id": "CHG-SALA-ENTREGA-CORTES-20261017",
+  "summary": "Entrega de cortes durables vigentes como carta nueva: bytes, audio, video, fuente, votos y plan verificados; recibo preparado antes del único montaje; concilia acuse incierto sin reenvío; visor Drive autenticado sin cambiar ACL. Despierta tras producción real y conserva imágenes aprobadas.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -9,8 +9,7 @@
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
-    "EXT-DRIVE",
-    "EXT-MOTORES-MEDIA"
+    "EXT-DRIVE"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p '*_test.py' -v",
@@ -19,5 +18,5 @@
     "git diff --check"
   ],
   "rollback": "Revertir código por PR; conservar respaldo y todas las filas, decisiones y medios. Restaurar sólo campos técnicos que sigan coincidiendo con la conciliación.",
-  "model_commit": "2c9748c31724c0d246a342f9295faa20ca205d48"
+  "model_commit": "f4c7f7d02ee557c1b148577f2abb644ce9421fdb"
 }
