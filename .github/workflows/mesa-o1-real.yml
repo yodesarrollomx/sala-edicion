@@ -1,4 +1,4 @@
-name: Verificar medios tras publicar reparacion draft
+name: Verificar descarga anonima del activo inmutable
 on:
   push:
     branches: [codex/mesa-o1-real-20261017]
@@ -10,12 +10,26 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Lectura sin token de imagen tecnica publicada
+        run: |
+          python3 - <<'PY'
+          import urllib.request, urllib.error, urllib.parse, hashlib, json
+          url="https://github.com/yodesarrollomx/sala-edicion/releases/download/sala-media-677d8c6a530820cc777d78a5ce361d7a7149a828f76b9d82f21646e27a9b26c1-arranque/0c025fcf37ddd8d3d7bb36b245c25192afa17287e55d1bd14551e851030e0d85.png"
+          try:
+              with urllib.request.urlopen(url, timeout=40) as r:
+                  data=r.read(1000)
+                  print(json.dumps({"status":r.status,"mime":r.headers.get_content_type(),"host":urllib.parse.urlsplit(r.url).hostname,"bytes":len(data),"sha256":hashlib.sha256(data).hexdigest()}))
+          except urllib.error.HTTPError as e:
+              print(json.dumps({"status":e.code,"host":urllib.parse.urlsplit(e.url).hostname}))
+          except Exception as e:
+              print(json.dumps({"error_type":type(e).__name__}))
+          PY
       - env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: yodesarrollomx/sala-edicion
         run: |
           for intento in $(seq 1 60); do
-            listo=$(gh api 'repos/yodesarrollomx/sala-edicion/actions/runs?branch=main&per_page=25' --jq '[.workflow_runs[] | select(.head_sha=="1ec9697058c044bc3544fd314c0c535b14e9d524" and .path==".github/workflows/publicar.yml" and .conclusion=="success")]|length')
+            listo=$(gh api 'repos/yodesarrollomx/sala-edicion/actions/runs?branch=main&per_page=25' --jq '[.workflow_runs[] | select(.head_sha=="568ecfdb6eb0e3a066fd7da08f6341c58edd5e1f" and .path==".github/workflows/publicar.yml" and .conclusion=="success")]|length')
             if [ "$listo" -gt 0 ]; then
               gh workflow run sonda-medios-publicos.yml --ref main -f aplicar=true
               exit 0
