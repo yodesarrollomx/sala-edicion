@@ -1,0 +1,41 @@
+name: Recuperar escena interrumpida con CPU verificada
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: ID exacto de la escena bloqueada por cancelación
+        type: string
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: sala-ejecutor
+  cancel-in-progress: false
+env:
+  SALA_PRODUCCION_HISTORICA: ${{ vars.SALA_PRODUCCION_HISTORICA || '0' }}
+jobs:
+  recuperar:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet google-auth requests pillow numpy opencv-python-headless onnxruntime gradio_client
+      - name: Hidratar fuentes privadas verificadas
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 nube/snapshots_online.py bootstrap
+      - name: Instalar motor CPU existente
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+      - name: Recuperar sólo si fuente y ausencia de salida se confirman
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+          RECUPERAR_JOB_ID: ${{ inputs.job_id }}
+        run: python3 nube/recuperar_escena_cpu.py

@@ -1,7 +1,7 @@
 {
   "model_revision": "2026-10-17.sala-entrega-fuentes.1",
   "proposal_id": "CHG-SALA-ENTREGA-FUENTES-20261017",
-  "summary": "Resolver una referencia explícita datos/guiones/FAMILIA-VIDEO.json ya existente y válida a sus escenas originales, en una copia de la tira. Mantener familia, numeración, texto, roles y votos; referencias ausentes, ajenas, fuera de la raíz o malformadas conservan bloqueo. Así Productor puede abrir el corte aprobado y Ejecutor revisa el contenido real antes del montaje; no se redacta ni aprueba guion.",
+  "summary": "Recuperación manual de una escena bloqueada por cancelación: exige identidad y plan aprobados vigentes, inventario Drive completo sin salida ambigua, etapa y CPU habilitadas, respaldo privado releído y segunda lectura estable. Produce sólo con parallax/cámara existentes, sin repetir proveedor externo. Guarda resultado durable, evidencia y readback. No cambia votos ni rescata cortes fallidos automáticamente.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
