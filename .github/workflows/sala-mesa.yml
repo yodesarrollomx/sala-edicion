@@ -39,7 +39,8 @@ concurrency:
 env:
   SALA_PRODUCCION_HISTORICA: ${{ vars.SALA_PRODUCCION_HISTORICA || '0' }}
   SALA_PUBLICADOR_MODO: snapshots
-  SALA_MEDIOS_PUBLICOS: ${{ vars.SALA_MEDIOS_PUBLICOS || '0' }}
+  # Activación versionada: imágenes nuevas con SHA256, release inmutable y GET anónimo.
+  SALA_MEDIOS_PUBLICOS: '1'
 
 jobs:
   mesa:
