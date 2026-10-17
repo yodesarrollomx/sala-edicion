@@ -30,6 +30,14 @@ class ServicioImagen(MotorError):
     """Servicio gratuito sin disponibilidad; detener lote sin activar pago."""
     pass
 
+class RechazoImagen(ServicioImagen):
+    """Negativa confirmada: no hubo imagen, o no se envió al proveedor."""
+    def __init__(self, motivo):
+        if motivo not in ('tarea_fallida', 'tarea_cancelada', 'no_enviado'):
+            raise ValueError('Motivo de negativa no confirmado')
+        self.motivo = motivo
+        super().__init__('HiDream: ' + motivo + '; reintento en otra ejecución', intermitente=True)
+
 class ReciboNoConfirmado(MotorError):
     pass
 
