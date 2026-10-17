@@ -169,3 +169,52 @@ test('cabecera ilegible no se convierte en historial vacío confirmado ni filtra
   assert.equal('propuestas' in result,false);assert.deepEqual(writes,[]);
   assert.equal(JSON.stringify(result).includes('cabecera-invalida'),false);
 });
+
+test('retiro explícito domina copias de la misma fecha, incluso contenido contradictorio', () => {
+  const ctx=backend();
+  for (const retirement of [{estado:'retirada'}, {origen:'Retirada por dirección'}]) {
+    const rows=[proposal(), proposal({titulo:'Otro contenido'}), proposal(retirement)];
+    for (const order of permutations(rows)) {
+      const before=JSON.stringify(order);
+      const value=plain(ctx.produccionHistorica_('2026-10-15',order,[decision('no')]));
+      assert.deepEqual(value.propuestas,[]);
+      assert.equal(value.fuentes.retiradas,1);
+      assert.equal(value.decisiones.propuestas['fuente-sintetica'].laminas[0],'no');
+      assert.equal(JSON.stringify(order),before);
+    }
+  }
+});
+
+test('procedencias descriptivas se conservan sin duplicar ni cambiar contenido o firmas', () => {
+  const ctx=backend(), rows=[proposal({origen:'rehecha-de base-z'}),
+    proposal({origen:'rehecha-de base-a'}),proposal({origen:'rehecha-de base-z'})];
+  for (const order of permutations(rows)) {
+    const before=JSON.stringify(order);
+    const value=plain(ctx.produccionHistorica_('2026-10-15',order,[decision('no')]));
+    assert.equal(value.propuestas.length,1);
+    assert.equal(value.propuestas[0].origen,'rehecha-de base-a | rehecha-de base-z');
+    assert.deepEqual(value.propuestas[0].laminas,['laminas/sintetica/L1.jpg']);
+    assert.equal(value.decisiones.propuestas['fuente-sintetica'].laminas[0],'no');
+    assert.equal(JSON.stringify(order),before);
+  }
+});
+
+test('procedencia distinta no oculta diferencias activas de título, tipo, opciones, vídeo o estado', () => {
+  const ctx=backend();
+  for (const difference of [{titulo:'Otro'}, {tipo:'video'}, {opciones_json:'["otra"]'},
+    {video:'otro.mp4'}, {estado:'otro estado'}, {laminas_json:'["otra.jpg"]'}]) {
+    for (const rows of permutations([proposal({origen:'base-a'}), proposal({origen:'base-z',...difference})]))
+      assert.throws(()=>ctx.produccionHistorica_('2026-10-15',rows,[]),/produccion_fuente_duplicada/);
+  }
+});
+
+test('retiro de una fecha anterior o futura no sustituye el grupo vigente', () => {
+  const ctx=backend(), rows=[proposal({fecha:'2026-08-01',estado:'retirada'}),
+    proposal(),proposal({fecha:'2026-11-01',estado:'retirada'})];
+  for (const order of permutations(rows)) {
+    const value=plain(ctx.produccionHistorica_('2026-10-15',order,[]));
+    assert.equal(value.propuestas.length,1);
+    assert.equal(value.propuestas[0].fecha_fuente,'2026-09-01');
+    assert.equal(value.fuentes.retiradas,0);
+  }
+});

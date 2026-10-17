@@ -1,0 +1,41 @@
+name: Verificar histórico de Sala (sólo lectura)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verificar:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            nube
+            tests
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validar contrato y vetos con datos sintéticos
+        run: python3 -m unittest discover -s tests -p produccion_historica_test.py -v
+      - name: Leer el contrato desplegado sin activar producción
+        working-directory: nube
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import sala_cliente as sala
+          from sala_produccion import validar_historica
+          sala.enmascarar_en_actions()
+          try:
+              value = validar_historica(sala.get('produccion', fresco='1'))
+          except Exception:
+              raise SystemExit('historico_sin_confirmar') from None
+          # Sólo constantes y métricas validadas; ninguna fila, firma o clave.
+          print(json.dumps({'ok': True, 'contrato': 'produccion-historica-v1',
+                            'version': 'produccion-historica-2026-10-15',
+                            'alcance': 'historial_completo', 'fuentes': value['fuentes']}))
+          PY

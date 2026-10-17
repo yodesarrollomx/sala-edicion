@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-17.sala-mesa-visible.1",
-  "proposal_id": "CHG-SALA-MESA-VISIBLE-20261017",
-  "summary": "Mostrar tiras vigentes de producción aunque el día esté vacío, con toma confirmada y consulta sin voto. No confundir proyección con producción nueva.",
+  "model_revision": "2026-10-17.sala-historico-retiros.1",
+  "proposal_id": "CHG-SALA-HISTORICO-RETIROS-20261017",
+  "summary": "Resolver duplicados heredados por retiro explícito o procedencia descriptiva, sin elegir contenido por orden físico ni cambiar filas; comprobar contrato real antes de activar el consumidor.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -11,12 +11,14 @@
     "EXT-ACTIONS",
     "EXT-DRIVE",
     "EXT-MOTORES-MEDIA",
-    "SYS-YOD-OS"
+    "SYS-YOD-OS",
+    "EXT-GMAIL"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p \"*_test.py\"",
     "node --test tests/*.test.cjs tests/*.test.mjs",
     "python3 nube/verificar.py"
   ],
-  "rollback": "Revertir código conservando decisiones, cola, medios y snapshots."
+  "rollback": "Revertir código conservando decisiones, cola, medios y snapshots.",
+  "model_commit": "30bb7133e7a4ad2d53fcfb29ecce8609c649f91e"
 }
