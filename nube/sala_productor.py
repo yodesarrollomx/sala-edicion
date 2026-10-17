@@ -81,7 +81,10 @@ def huella_insumo(lam, cat=None):
       3. hash de `{src, dice}` de la tira — si ni el archivo existe (la imagen vive sólo en
          Drive y el catálogo tampoco la conoce todavía).
     """
-    src = str((lam or {}).get('src') or '')
+    lam = normalizar_lamina(lam)
+    src = str(lam.get('src') or '')
+    if not src and not str(lam.get('dice') or '').strip():
+        raise sala.SalaError('lámina sin insumo identificable')
     if src:
         d = catalogo.huella_de(src, cat)
         if d:
@@ -105,11 +108,15 @@ def lamina_tira(tira, n):
     return next((l for l in (tira or {}).get('laminas') or [] if str(l.get('n')) == str(n)), None)
 
 
+def normalizar_lamina(lam):
+    return {'src': lam} if isinstance(lam, str) else (lam if isinstance(lam, dict) else {})
+
+
 def datos_lamina(lam):
     """Lo que un motor necesita para trabajar sin volver a preguntarle al día: qué imagen es
     y qué dice/muestra. Antes la evidencia no llevaba `src` y ninguna escena podía encontrar
     su lámina (se quedaban `pendiente` para siempre con «sin id de Drive»)."""
-    lam = lam if isinstance(lam, dict) else {}
+    lam = normalizar_lamina(lam)
     return {k: str(lam.get(k) or '') for k in ('src', 'dice', 've') if lam.get(k)}
 
 
@@ -137,12 +144,17 @@ def planear(dia, cola, reglas, cat=None):
 
     ya = {t.get('id') for t in cola}
     nuevos, diario = [], []
+    from sala_vigencia import publicada, registro_publicadas
+    publicadas = registro_publicadas()
 
     for p in (dia.get('propuestas') or []):
         pid = str(p.get('id') or '')
         # 23-sep: la pieza la dice su tira (`mesa-vacia`, no `mesa`), y el número real de cada
         # lámina lo dice su mapa: la carta «lámina 1 de 1» del Apodo es la L6, no la L1.
         tira = tira_de(pid)
+        if publicada(p, tira, publicadas):
+            diario.append('pieza ya publicada: no se vuelve a encolar')
+            continue
         mapa = (tira or {}).get('mapa') or {}
         familia = str((tira or {}).get('pieza_slug') or (pid.split('-')[0] if pid else ''))
         if vigiladas and familia not in vigiladas and '-nube-' not in pid:
@@ -169,7 +181,12 @@ def planear(dia, cola, reglas, cat=None):
             estados.append(marca or 'pendiente')
             item = str(mapa.get(str(i + 1), i + 1)) if tira else str(i + 1)
             lam_t = lamina_tira(tira, item) if tira else None
-            ver, de_donde = huella_insumo(lam_t or (lam if isinstance(lam, dict) else {}), cat)
+            try:
+                ver, de_donde = huella_insumo(lam_t or lam, cat)
+            except sala.SalaError:
+                estados[-1] = 'pendiente'
+                diario.append('lámina sin insumo identificable; no se encola')
+                continue
             extra = {'n_real': True, **datos_lamina(lam_t)} if lam_t else datos_lamina(lam)
 
             if lam_t and lam_t.get('reemplazo_modelo'):
@@ -265,7 +282,7 @@ def planear(dia, cola, reglas, cat=None):
         todas_si = bool(estados) and all(e == 'si' for e in estados)
         if todas_si:
             ver_pieza = hashlib.md5(
-                json.dumps([huella_insumo(l if isinstance(l, dict) else {}, cat)[0]
+                json.dumps([huella_insumo(l, cat)[0]
                             for l in laminas], sort_keys=True).encode()).hexdigest()[:8]
             tid = '%s:corte:completo:%s' % (familia, ver_pieza)
             if tid not in ya:
@@ -276,7 +293,7 @@ def planear(dia, cola, reglas, cat=None):
                 # `item` y su huella (la misma `ver` que ya identifica sus trabajos de escena
                 # y voz en la COLA).
                 lam_ev = [{'item': str(i + 1),
-                          'huella': huella_insumo(l if isinstance(l, dict) else {}, cat)[0]}
+                          'huella': huella_insumo(l, cat)[0]}
                          for i, l in enumerate(laminas)]
                 nuevos.append({'id': tid, 'pieza': familia, 'etapa': 'corte', 'item': 'completo',
                                'estado': 'pendiente', 'prioridad': 7, 'pidio': 'productor-nube',

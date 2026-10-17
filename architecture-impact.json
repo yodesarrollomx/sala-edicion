@@ -1,15 +1,16 @@
 {
-  "model_revision": "2026-10-17.sala-medios-draft.1",
-  "model_commit": "cac19defff81d25078bea5ed23f231783de0ee37",
-  "proposal_id": "CHG-SALA-MEDIOS-PUBLICOS-20261015",
-  "summary": "Aplicar el contrato MEDIOS existente sólo a imágenes nuevas: los recibos JSON bajo laminas/ permanecen en el snapshot y no se envían al validador de imágenes. Preserva bytes, rutas, historial, pin y compuertas existentes; emisor sigue apagado hasta sonda real.",
+  "model_revision": "2026-10-17.sala-entrega-fuentes.1",
+  "proposal_id": "CHG-SALA-ENTREGA-FUENTES-20261017",
+  "summary": "Preservar src de láminas históricas, impedir identidades vacías y excluir piezas ya publicadas antes de planificar, rescatar o ejecutar; sincronizar política JS con la política O1 vigente. Conserva votos, notas y archivos.",
   "components": [
     "SYS-SALA",
+    "GAS-SALA",
+    "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
     "EXT-DRIVE",
-    "SYS-YOD-OS"
+    "EXT-MOTORES-MEDIA"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p '*_test.py' -v",
@@ -17,5 +18,6 @@
     "python3 nube/verificar.py",
     "git diff --check"
   ],
-  "rollback": "Revertir filtro mediante PR; conservar manifiestos y medios existentes. No cambiar decisiones ni borrar históricos."
+  "rollback": "Revertir código por PR; conservar respaldo y todas las filas, decisiones y medios. Restaurar sólo campos técnicos que sigan coincidiendo con la conciliación.",
+  "model_commit": "2c9748c31724c0d246a342f9295faa20ca205d48"
 }
