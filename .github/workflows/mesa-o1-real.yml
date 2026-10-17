@@ -1,10 +1,10 @@
-name: Diagnosticar contrato real de medios
+name: Preparar reparacion de publicacion sin repetir produccion
 on:
   push:
     branches: [codex/mesa-o1-real-20261017]
 permissions:
-  contents: write
-  actions: read
+  contents: read
+  actions: write
 jobs:
   comprobar:
     runs-on: ubuntu-latest
@@ -13,4 +13,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: yodesarrollomx/sala-edicion
         run: |
-          gh api --paginate 'repos/yodesarrollomx/sala-edicion/releases?per_page=100' --jq '.[] | select(.tag_name | startswith("sala-media-")) | {id,tag_name,draft,immutable,body,assets:[.assets[]|{id,name,state,size,content_type,digest,browser_download_url}]}'
+          gh run cancel 39071256923 || true
+          gh api repos/yodesarrollomx/sala-edicion/immutable-releases || true
+          gh api repos/yodesarrollomx/sala-edicion/actions/variables/SALA_MEDIOS_PUBLICOS --jq '{name,value}' || true
