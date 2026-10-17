@@ -13,7 +13,6 @@ for page in range(1,101):
   if "plan.zip" not in assets or "resultado.zip" in assets:continue
   plan,_=unpack(api.asset(assets["plan.zip"]["id"]))
   src=plan.get("entradas",{})
-  if src.get("pieza")!="dato-servilleta-3":continue
   print("PENDIENTE",json.dumps({"rid":row["tag_name"].removeprefix("sala-ejecucion-"),"pieza":src.get("pieza"),"fuente":src.get("fuente"),"n":src.get("n"),"variante":src.get("variante"),"run_plan":plan.get("run_id"),"assets":sorted(assets),"motores":plan.get("configuracion",{}).get("imagen_motores")}))
   count+=1
  if len(rows)<100:break

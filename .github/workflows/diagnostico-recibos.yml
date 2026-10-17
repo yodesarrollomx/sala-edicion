@@ -3,7 +3,7 @@ on:
   push:
     branches: [codex/diagnostico-recibos-20261017]
 permissions:
-  contents: read
+  contents: write
 jobs:
   leer:
     runs-on: ubuntu-latest
