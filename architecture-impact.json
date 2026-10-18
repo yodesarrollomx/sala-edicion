@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-18.sala-metadatos-corte.1",
-  "proposal_id": "CHG-SALA-METADATOS-CORTE-20261018",
-  "summary": "Corrección manual acotada de metadatos antiguos que contienen ubicaciones vetadas, mediante parche privado con valores anteriores y SHA de fuente. Preservar imágenes, texto visible elegido, narración efectiva y firmas. Validar contexto resuelto y todas las reglas. Respaldar antes, publicar snapshot con mutex y recibo exacto, y sólo después conciliar cada corte fallido vigente sin duplicarlo. Si cambia narración o identidad de dependencias, no reutilizar medios ni estados aprobados. Fuentes retiradas o formato Lámina no se convierten a video. Normaliza una copia de evidencia JSON de voz antes de resolver la lámina; conserva COLA original y comparación con el texto seleccionado.",
+  "model_revision": "2026-10-18.sala-titulo-corte.1",
+  "proposal_id": "CHG-SALA-TITULO-CORTE-20261018",
+  "summary": "Conservar título completo del corte y agruparlo por origen exacto vigente, sin cambiar identidad, medios o decisiones.",
   "components": [
     "SYS-SALA",
     "SHEET-SALA",
@@ -12,11 +12,11 @@
     "EXT-DRIVE"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p \"*metadatos*test.py\" -v",
+    "python3 -m unittest discover -s tests -p \"*entregar*test.py\" -v",
+    "node --test tests/tablero-sala.test.cjs",
     "python3 nube/verificar.py",
-    "git diff --check",
-    "Regresión evidencia dict/JSON: fuentes con getter sintético, resolver_tira real y selección de candidata; texto distinto bloqueado, COLA y archivos intactos. No acredita E2E productivo."
+    "git diff --check"
   ],
   "rollback": "Conservar originales y recibos privados. Restaurar sólo metadatos que aún coincidan con el parche; no borrar medios, propuestas ni votos. Revertir código por PR.",
-  "model_commit": "6889b623cd8e64fa3a09dad5d5b4eed4c5314d6a"
+  "model_commit": "0933f0ab76ff5277402510ad0abf34c5d407cc97"
 }

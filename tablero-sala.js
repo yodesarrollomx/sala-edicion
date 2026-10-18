@@ -52,7 +52,14 @@ function proyectarPublicacion(t,registro){
  }
  return copia;
 }
-const api={intentos,estado,fotoKey,textoToma,preseleccion,proyectarPublicacion};
+// Cortes se relacionan por fuente exacta, nunca por el prefijo del título.
+function grupoDeCorte(p,groups){
+ const source=/^corte-de ([A-Za-z0-9_-]+)$/.exec(String(p.origen||""));
+ if(!source)return null;
+ const matches=groups.filter(g=>g.pid===source[1]);
+ return matches.length===1?matches[0]:null;
+}
+const api={grupoDeCorte,intentos,estado,fotoKey,textoToma,preseleccion,proyectarPublicacion};
 if(typeof module==="object"&&module.exports)module.exports=api;
 if(typeof document==="undefined")return;
 const root=document.getElementById("tableroHoy");if(!root)return;
@@ -341,7 +348,14 @@ async function refresh(live=false){
    return {p,t};
   })),map=new Map();
   for(const {p,t}of all){if(!t||!(t.laminas||[]).length)continue;const id=t.pieza_slug||normSlug(t.pieza||p.pieza||p.titulo);let g=map.get(id);if(!g){g={id,pid:p.id,p,t,ejes:[]};map.set(id,g);}else if((D.propuestas||[]).some(x=>x.id===p.id)&&!dec[g.pid])map.set(id,{id,pid:p.id,p,t,ejes:g.ejes});}
-  for(const {p,t}of all){if(t&&(t.laminas||[]).length)continue;const id=p.pieza_slug||normSlug(p.pieza||String(p.titulo||"").split(" · ")[0]);const g=map.get(id)||[...map.values()].find(x=>normSlug(x.t.pieza)===id);if(g)g.ejes.push(p);else map.set(id,{id,pid:p.id,p,t:{pieza:p.pieza||p.titulo,pieza_slug:id,laminas:[]},ejes:[p]});}
+  for(const {p,t}of all){if(t&&(t.laminas||[]).length)continue;
+   if(String(p.origen||"").startsWith("corte-de ")){
+    const g=grupoDeCorte(p,[...map.values()]);
+    if(g)g.ejes.push(p);
+    else map.set("corte:"+p.id,{id:"corte:"+p.id,pid:p.id,p,t:{pieza:p.pieza||p.titulo,pieza_slug:"corte:"+p.id,laminas:[]},ejes:[p]});
+    continue;
+   }
+   const id=p.pieza_slug||normSlug(p.pieza||String(p.titulo||"").split(" · ")[0]);const g=map.get(id)||[...map.values()].find(x=>normSlug(x.t.pieza)===id);if(g)g.ejes.push(p);else map.set(id,{id,pid:p.id,p,t:{pieza:p.pieza||p.titulo,pieza_slug:id,laminas:[]},ejes:[p]});}
   S.groups=[...map.values()];S.loaded=true;if(S.focus&&!group()){S.focus=null;S.choice=null;}
  }catch(e){S.notice="No pude actualizar el tablero. Tu revisión sigue conservada. Usa Actualizar.";}
  finally{S.busy=false;render();if(S.refreshPending){S.refreshPending=false;queueMicrotask(()=>refresh());}}

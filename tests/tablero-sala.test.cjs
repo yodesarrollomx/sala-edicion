@@ -77,3 +77,14 @@ test("una foto fallida reintenta al tocarla y conserva el doble clic para abrir 
  button.onclick();assert.deepEqual(retried,[failed]);assert.deepEqual(opened,[]);
  button.ondblclick({preventDefault(){}});assert.deepEqual(opened,[[g,2,true]]);
 });
+
+test("corte se asocia por fuente vigente exacta, sin fusionar prefijos ni votos",()=>{
+ const a={pid:'source-a',t:{pieza:'REEL · Pieza A'},ejes:[],decision:'si'},b={pid:'source-b',t:{pieza:'REEL · Pieza B'},ejes:[],decision:'no'};
+ const p={id:'cut-a',titulo:'REEL · corte completo · para revisar',origen:'corte-de source-a'};
+ const before=JSON.stringify([p,a,b]);
+ assert.equal(board.grupoDeCorte(p,[a,b]),a);
+ assert.equal(board.grupoDeCorte({...p,origen:'corte-de source-b'},[a,b]),b);
+ for(const origen of ['corte-de source-old','corte-de source-a extra','rehecha-de source-a',''])assert.equal(board.grupoDeCorte({...p,origen},[a,b]),null);
+ assert.equal(board.grupoDeCorte(p,[a,{...a}]),null);
+ assert.equal(JSON.stringify([p,a,b]),before);
+});
