@@ -1,22 +1,21 @@
 {
-  "model_revision": "2026-10-17.sala-entrega-cortes.1",
-  "proposal_id": "CHG-SALA-ENTREGA-CORTES-20261017",
-  "summary": "Entrega de cortes durables vigentes como carta nueva: bytes, audio, video, fuente, votos y plan verificados; recibo preparado antes del único montaje; concilia acuse incierto sin reenvío; visor Drive autenticado sin cambiar ACL. Despierta tras producción real y conserva imágenes aprobadas. La revisión de video permanece abierta durante actualizaciones de cola/reloj, conserva su explicación y respeta peticiones abiertas.",
+  "model_revision": "2026-10-18.sala-metadatos-corte.1",
+  "proposal_id": "CHG-SALA-METADATOS-CORTE-20261018",
+  "summary": "Corrección manual acotada de metadatos antiguos que contienen ubicaciones vetadas, mediante parche privado con valores anteriores y SHA de fuente. Preservar imágenes, texto visible elegido, narración efectiva y firmas. Validar contexto resuelto y todas las reglas. Respaldar antes, publicar snapshot con mutex y recibo exacto, y sólo después conciliar cada corte fallido vigente sin duplicarlo. Si cambia narración o identidad de dependencias, no reutilizar medios ni estados aprobados. Fuentes retiradas o formato Lámina no se convierten a video.",
   "components": [
     "SYS-SALA",
-    "GAS-SALA",
     "SHEET-SALA",
+    "GAS-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
     "EXT-ACTIONS",
     "EXT-DRIVE"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p '*_test.py' -v",
-    "node --test tests/*.test.cjs tests/*.test.mjs",
+    "python3 -m unittest discover -s tests -p \"*metadatos*test.py\" -v",
     "python3 nube/verificar.py",
     "git diff --check"
   ],
-  "rollback": "Revertir código por PR; conservar respaldo y todas las filas, decisiones y medios. Restaurar sólo campos técnicos que sigan coincidiendo con la conciliación.",
-  "model_commit": "f4c7f7d02ee557c1b148577f2abb644ce9421fdb"
+  "rollback": "Conservar originales y recibos privados. Restaurar sólo metadatos que aún coincidan con el parche; no borrar medios, propuestas ni votos. Revertir código por PR.",
+  "model_commit": "6889b623cd8e64fa3a09dad5d5b4eed4c5314d6a"
 }
