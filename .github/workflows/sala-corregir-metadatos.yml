@@ -1,0 +1,60 @@
+name: Sala · corregir metadatos revisados y reanudar cuatro cortes
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: Preparar firmas privadas o aplicar manifiesto ya revisado
+        type: choice
+        options: [preparar, aplicar]
+        default: preparar
+        required: true
+      doc_id:
+        description: Google Doc privado que contiene sólo el JSON revisado
+        type: string
+        required: true
+      manifest_sha256:
+        description: SHA256 del JSON canónico (UTF8, claves ordenadas, separadores compactos)
+        type: string
+        required: true
+permissions:
+  contents: write
+  pages: read
+  actions: write
+concurrency:
+  group: sala-ejecutor
+  cancel-in-progress: false
+env:
+  SALA_PRODUCCION_HISTORICA: ${{ vars.SALA_PRODUCCION_HISTORICA || '0' }}
+  SALA_PUBLICADOR_MODO: snapshots
+jobs:
+  corregir:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet requests google-auth pillow
+      - name: Regresiones sin datos reales
+        run: |
+          python3 -m unittest discover -s tests -p corregir_metadatos_editoriales_test.py -v
+          python3 -m unittest discover -s tests -p reanudar_cortes_metadatos_test.py -v
+      - name: Ejecutar el modo manual revisado
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+          EDITORIAL_PATCH_MODE: ${{ inputs.modo }}
+          EDITORIAL_PATCH_DOC_ID: ${{ inputs.doc_id }}
+          EDITORIAL_PATCH_SHA256: ${{ inputs.manifest_sha256 }}
+        run: python3 nube/reanudar_cortes_metadatos.py
+      - name: Continuar con el ejecutor existente
+        if: success() && inputs.modo == 'aplicar'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sala-ejecutor.yml --ref main --repo "$GITHUB_REPOSITORY"
