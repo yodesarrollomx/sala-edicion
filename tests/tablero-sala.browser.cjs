@@ -29,7 +29,11 @@ const mediaRaw=JSON.stringify(mediaManifest),mediaPin=crypto.createHash('sha256'
 async function prepare(browser,width,role="editor",mobile=false,embedded=false,media={mode:'legacy'}){
  const context=await browser.newContext({viewport:{width,height:mobile?844:1000},isMobile:mobile,hasTouch:mobile});
  const page=await context.newPage(),writes=[],errors=[],releaseReads=[];
- const visibleDay=()=>media.emptyDay?{...day(role),propuestas:[]}:day(role);
+ const visibleDay=()=>{
+  const value=media.emptyDay?{...day(role),propuestas:[]}:day(role);
+  if(media.cuts)value.propuestas.push(...[0,1,9].map(n=>({id:'synthetic-cut-'+n,tipo:'eje',titulo:'REEL · Pieza '+n+' · corte completo · para revisar',origen:'corte-de synthetic-'+n,laminas:[],opciones:{candidatas:[{titulo:'Conservar este corte'}]}})));
+  return value;
+ };
  page.on("pageerror",e=>errors.push(String(e)));
  await page.addInitScript(({role})=>{
   window.SpeechRecognition=class{constructor(){window.__dictado=this;}start(){}stop(){this.onend&&this.onend();}};
@@ -77,8 +81,15 @@ async function prepare(browser,width,role="editor",mobile=false,embedded=false,m
 const sessions=new WeakMap();
 async function touch(page,points,type){let session=sessions.get(page);if(!session){session=await page.context().newCDPSession(page);sessions.set(page,session);}await session.send("Input.dispatchTouchEvent",{type,touchPoints:points.map((p,i)=>({id:i+1,...p}))});}
 (async()=>{
- const b=await chromium.launch({headless:true});
+ const b=await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.CHROMIUM_EXECUTABLE_PATH,args:["--no-sandbox"]}:{})});
  try{
+  // Corte y fuente comparten columna por identidad, aun con prefijo REEL común.
+  const cuts=await prepare(b,1440,'editor',false,false,{mode:'legacy',cuts:true});
+  for(const n of [0,1])assert.equal(await cuts.page.locator('[data-column="synthetic-'+n+'"] [data-eje="synthetic-cut-'+n+'"]').count(),1);
+  assert.equal(await cuts.page.locator('[data-column="corte:synthetic-cut-9"] [data-eje="synthetic-cut-9"]').count(),1);
+  assert.equal(await cuts.page.locator('[data-column="reel"]').count(),0);
+  assert.equal(cuts.writes.length,0);assert.deepEqual(cuts.errors,[]);
+  await cuts.context.close();
   // Compositor real, micrófono sintético y endpoint de negocio interceptado.
   const capture=await prepare(b,390,'editor',true),cp=capture.page;
   await cp.waitForFunction(()=>window.YODChinche);

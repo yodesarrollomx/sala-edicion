@@ -5,11 +5,7 @@
   "components": [
     "SYS-SALA",
     "SHEET-SALA",
-    "GAS-SALA",
-    "SVC-SALA-PRODUCTOR",
-    "SVC-SALA-EJECUTOR",
-    "EXT-ACTIONS",
-    "EXT-DRIVE"
+    "SVC-SALA-EJECUTOR"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p \"*entregar*test.py\" -v",
