@@ -43,7 +43,7 @@ def preparar(row, plan, titulo):
            and canonical(pe.get('laminas')) == canonical(ev['laminas']), 'insumos_distintos')
     exigir(isinstance(titulo, str) and titulo.strip(), 'pieza_sin_titulo')
     prop = {'id': '%s-corte-nube-%s' % (row['pieza'], ev['md5'][:12]),
-            'titulo': titulo.split(' · ')[0] + ' · corte completo · para revisar',
+            'titulo': titulo.strip() + ' · corte completo · para revisar',
             'tipo': 'eje', 'laminas': [],
             'opciones': {'porque': 'Revisa el corte completo: imagen, voz y secuencia. Esta revisión conserva las decisiones de tus láminas.',
                          'candidatas': [{'titulo': 'Conservar este corte', 'texto': 'El corte está bien como lo veo y escucho.'}]},

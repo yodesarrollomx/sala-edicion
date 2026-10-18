@@ -24,6 +24,14 @@ class EntregaTests(unittest.TestCase):
         self.assertEqual(self.prop['origen'],'corte-de sintetica-v1')
         self.assertNotIn('familia',self.prop)
         self.assertEqual(self.row['evidencia'],self.ev)
+    def test_compound_piece_name_survives_without_changing_review_identity(self):
+        before=copy.deepcopy((self.row,self.plan))
+        for title in ('REEL · Pieza sintética', 'Pieza · segunda parte', 'Pieza sintética'):
+            prop=m.preparar(self.row,self.plan,title)
+            self.assertEqual(prop['titulo'],title+' · corte completo · para revisar')
+            self.assertEqual({k:v for k,v in prop.items() if k!='titulo'},
+                             {k:v for k,v in self.prop.items() if k!='titulo'})
+        self.assertEqual((self.row,self.plan),before)
     def test_inactive_changed_source_hashes_or_missing_durability_block(self):
         for key,value in [('de','otra'),('laminas',[]),('durable',False),('md5','a'),('drive_id','bad/id')]:
             row=copy.deepcopy(self.row);row['evidencia'][key]=value
