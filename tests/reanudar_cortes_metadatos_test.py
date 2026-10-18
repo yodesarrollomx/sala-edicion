@@ -1,4 +1,5 @@
 import copy
+import json
 from pathlib import Path
 import sys
 import unittest
@@ -51,6 +52,82 @@ class TransitionTests(unittest.TestCase):
         resolved = {'laminas': [{'n': 1, 'dice': 'texto elegido'}]}
         with self.assertRaisesRegex(ValueError, 'voz_texto_distinto'):
             op.ensure_voice_match(row, resolved, [voice])
+
+
+class VoiceEvidenceTests(unittest.TestCase):
+    def fixture(self, encoded, note=''):
+        row = {'pieza': 'demo', 'evidencia': {'laminas': [{'item': '1', 'huella': '12345678'}]}}
+        ev = {'src': 'same.png', 'dice': 'texto original', 'nota': note, 'de': 'demo', 'lamina': 1}
+        voice = {'id': 'demo:voz:1:12345678', 'estado': 'hecho', 'evidencia': json.dumps(ev) if encoded else ev}
+        return row, voice
+
+    def test_dict_and_json_evidence_match_without_mutating_queue(self):
+        for encoded in (False, True):
+            with self.subTest(encoded=encoded):
+                row, voice = self.fixture(encoded)
+                before = copy.deepcopy([row, voice])
+                op.ensure_voice_match(row, {'laminas': [{'n': 1, 'dice': 'texto original'}]}, [voice])
+                self.assertEqual([row, voice], before)
+                with self.assertRaisesRegex(ValueError, 'voz_texto_distinto'):
+                    op.ensure_voice_match(row, {'laminas': [{'n': 1, 'dice': 'texto diferente'}]}, [voice])
+                self.assertEqual([row, voice], before)
+
+    def test_selected_candidate_text_still_controls_comparison(self):
+        import motores._comun as common
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp)/'demo.json'
+            source.write_text(json.dumps({'laminas': [{'n': 1, 'dice': 'texto original',
+                'candidatas': [{'src': 'old.png', 'dice': 'texto original'},
+                               {'src': 'chosen.png', 'dice': 'texto elegido'}]}]}))
+            raw = source.read_bytes()
+            with patch.object(common, 'TIRAS', Path(tmp)):
+                for encoded in (False, True):
+                    with self.subTest(encoded=encoded):
+                        row, voice = self.fixture(encoded, '[toma elegida: 2]')
+                        before = copy.deepcopy([row, voice])
+                        op.ensure_voice_match(row, {'laminas': [{'n': 1, 'dice': 'texto elegido'}]}, [voice])
+                        with self.assertRaisesRegex(ValueError, 'voz_texto_distinto'):
+                            op.ensure_voice_match(row, {'laminas': [{'n': 1, 'dice': 'texto original'}]}, [voice])
+                        self.assertEqual([row, voice], before)
+                        self.assertEqual(source.read_bytes(), raw)
+
+
+    def test_getter_queue_strings_through_sources_target_and_selected_voice(self):
+        import motores._comun as common
+        row, voice = self.fixture(True, '[toma elegida: 2]')
+        row.update(id='demo:corte:completo:12345678', estado='fallo', etapa='corte', item='completo')
+        row['evidencia'].update(de='demo', error='ubicación vetada')
+        row['evidencia'] = json.dumps(row['evidencia'])
+        queue = [row, voice]
+        day = {'ok': True, 'fecha': '2026-10-18', 'propuestas': [{'id': 'demo', 'estado': 'en revisión'}],
+               'decisiones': {'propuestas': {'demo': {'laminas': ['si'], 'notas': ['[toma elegida: 2]']}}}}
+        tira = {'pieza_slug': 'demo', 'formato': 'video', 'promesa': 'Terreno en Hermosillo',
+                'guion': [{'n': 1}], 'laminas': [{'n': 1, 'dice': 'texto original',
+                    'candidatas': [{'src': 'old.png', 'dice': 'texto original'},
+                                   {'src': 'chosen.png', 'dice': 'texto elegido'}]}]}
+        raw = json.dumps(tira).encode()
+        target = {'id': row['id'], 'pid': 'demo', 'source_sha256': op.digest(raw),
+                  'row_sha256': op.digest(op.signature(row).encode()),
+                  'replacements': [{'path': ['promesa'], 'before': 'Terreno en Hermosillo', 'after': 'Terreno'}]}
+        before = copy.deepcopy(queue)
+        responses = {'cola': {'cola': queue}, 'reglas': {'reglas': {}}, 'catalogo': {'catalogo': {}}, 'dia': day}
+        with tempfile.TemporaryDirectory() as tmp, patch.dict(op.os.environ, {'SALA_PRODUCCION_HISTORICA': '0'}), \
+                patch.object(op.sala, 'get', side_effect=lambda resource, **kwargs: copy.deepcopy(responses[resource])) as get, \
+                patch.object(op.sala, 'post', side_effect=AssertionError('no POST')), patch.object(common, 'TIRAS', Path(tmp)):
+            path = Path(tmp)/'demo.json'; path.write_bytes(raw)
+            _, actual_queue, actual_day, _ = op.fuentes()
+            corrected = op.apply(raw, target['source_sha256'], target['replacements'])
+            actual_row, resolved = op.check_target(target, actual_queue, actual_day, raw, corrected)
+            self.assertEqual(resolved['laminas'][0]['dice'], 'texto elegido')
+            self.assertEqual(resolved['laminas'][0]['seleccion']['toma'], 2)
+            op.ensure_voice_match(actual_row, resolved, actual_queue)
+            resolved['laminas'][0]['dice'] = 'texto original'
+            with self.assertRaisesRegex(ValueError, 'voz_texto_distinto'):
+                op.ensure_voice_match(actual_row, resolved, actual_queue)
+            self.assertEqual(actual_queue, before)
+            self.assertEqual(path.read_bytes(), raw)
+            self.assertTrue(all(c.kwargs.get('fresco') == '1' for c in get.call_args_list))
+        self.assertEqual(queue, before)
 
 
 class PrepareTests(unittest.TestCase):

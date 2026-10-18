@@ -127,8 +127,11 @@ def ensure_voice_match(row, resolved, queue):
         n, h = str(entry['item']), entry['huella']
         voice = unique_row(queue, ':'.join((row['pieza'], 'voz', n, h)))
         require(voice.get('estado') == 'hecho' and n in by_n, 'voz_no_confirmada')
-        require(evidence(voice).get('src') and evidence(voice).get('dice'), 'voz_sin_insumos_registrados')
-        require(str(lamina_de(voice).get('dice') or '').strip() == str(by_n[n].get('dice') or '').strip(), 'voz_texto_distinto')
+        voice_evidence = evidence(voice)
+        require(voice_evidence.get('src') and voice_evidence.get('dice'), 'voz_sin_insumos_registrados')
+        normalized_voice = copy.deepcopy(voice)
+        normalized_voice['evidencia'] = voice_evidence
+        require(str(lamina_de(normalized_voice).get('dice') or '').strip() == str(by_n[n].get('dice') or '').strip(), 'voz_texto_distinto')
 
 
 def transition(rows, read, write):
