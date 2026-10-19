@@ -1,0 +1,39 @@
+name: Graphify - mapa de codigo (manual)
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/graphify-code.yml'
+permissions:
+  contents: read
+jobs:
+  graphify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GRAPHIFY_QUERY_LOG_DISABLE: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      OPENAI_API_KEY: ''
+      ANTHROPIC_API_KEY: ''
+      GEMINI_API_KEY: ''
+      GOOGLE_API_KEY: ''
+      DEEPSEEK_API_KEY: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar Graphify version fijada
+        run: python -m pip install --disable-pip-version-check 'graphifyy==0.9.92'
+      - name: Version
+        run: graphify --version
+      - name: Grafo de codigo sin LLM
+        run: graphify extract . --code-only
+      - name: Guardar resultado sin publicarlo
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: graphify-code-map
+          path: graphify-out/
+          if-no-files-found: warn
+          retention-days: 7
