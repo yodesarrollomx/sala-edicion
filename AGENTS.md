@@ -22,3 +22,7 @@ El workflow `Arquitectura YOD` compara el cambio con una versión fija del atlas
 Revertir el commit de este cambio mediante revisión y repetir las verificaciones locales. No borrar ni restaurar registros de negocio, Sheets o archivos de clientes como parte del rollback.
 
 Usa datos sintéticos y dobles para verificar integraciones. No pruebes escrituras en endpoints de producción ni publiques credenciales, datos personales o contenido privado en archivos o logs públicos.
+
+## Eficiencia de contexto YOD OS (propuesta)
+
+Cuando la política transversal de agentes esté aprobada e integrada en `yodesarrollomx/yod-portal`, seguir `docs/agentes/politica-eficiencia-yod-os.md` de ese repositorio además de estas reglas. No activar herramientas, proxies ni proveedores externos por esta referencia. En caso de conflicto, prevalecen los controles específicos de este repositorio y las instrucciones de mayor prioridad.
