@@ -14,5 +14,19 @@
     "git diff --check"
   ],
   "rollback": "Conservar originales y recibos privados. Restaurar sólo metadatos que aún coincidan con el parche; no borrar medios, propuestas ni votos. Revertir código por PR.",
-  "model_commit": "0933f0ab76ff5277402510ad0abf34c5d407cc97"
+  "model_commit": "0933f0ab76ff5277402510ad0abf34c5d407cc97",
+  "agent_tooling_change": {
+    "id": "CHG-SALA-GRAPHIFY-CODE-20261018",
+    "scope": "CI-only, read-only code graph from public repository, no business data or new runtime integration",
+    "components": [
+      "SYS-SALA"
+    ],
+    "tests": [
+      "Graphify code graph workflow executes without LLM credentials",
+      "CI Verificar la Sala",
+      "CI Arquitectura YOD"
+    ],
+    "rollback": "Revert graphify-code.yml and this metadata addition; no production data affected",
+    "status": "proposed"
+  }
 }
