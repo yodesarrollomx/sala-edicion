@@ -638,6 +638,7 @@ function respuestaProduccionHistorica_(rolQuien) {
 /* ------------------------------------------------ lectura */
 function doGet(e) {
   var p = (e && e.parameter) || {};
+  if (p.recurso === 'presentaciones_publico') return yodPresentacionesGet_(p);
   // (Antes aquí corría resembrar() en cada lectura: escribía en CONFIG en cada request y
   //  volvía imposible rotar las claves. Ahora sólo se corre a mano desde el editor.)
   var rolQuien = rolDe(p.clave);
@@ -910,6 +911,7 @@ function armarDia_(f) {
 /* ------------------------------------------------ escritura */
 function doPost(e) {
   var d; try { d = JSON.parse(e.postData.contents); } catch (err) { return json({ error: 'cuerpo ilegible' }); }
+  if (d && d.accion === 'presentaciones') return yodPresentacionesPost_(d);
   if (d && /^chinche_secuencia_(guardar|recibo|leer)$/.test(d.accion || '')) return chincheSecuencia_(d);
   // #49: validar antes de cachés y de los handlers tempranos de ideas/árbol.
   var contenidoError = validarContenidoEntrada_(d);
