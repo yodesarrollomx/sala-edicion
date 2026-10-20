@@ -88,3 +88,28 @@ test("corte se asocia por fuente vigente exacta, sin fusionar prefijos ni votos"
  assert.equal(board.grupoDeCorte(p,[a,{...a}]),null);
  assert.equal(JSON.stringify([p,a,b]),before);
 });
+
+
+test("avanzar conserva orden aunque la actual ya esté aprobada; vuelve sólo al final",()=>{
+ const list=[1,2,3,4].map(n=>({group:'a',n,pending:n!==2}));
+ assert.equal(board.siguientePendiente(list,{group:'a',n:2}).n,3);
+ assert.equal(board.siguientePendiente(list,{group:'a',n:4}).n,1);
+ assert.equal(board.siguientePendiente(list.map(x=>({...x,pending:false})),{group:'a',n:4}),null);
+ assert.equal(board.siguientePendiente([],null),null);
+ assert.equal(board.siguientePendiente(list,null).n,1);
+});
+test("reabrir exige nota, misma sesión, versión y origen; no modifica sin confirmación",()=>{
+ const source=fs.readFileSync(require.resolve('../tablero-sala.js'),'utf8');
+ const a=source.indexOf('function canReopen('),b=source.indexOf('function renderChoice',a);
+ let role='editor',fresh=true,context={pid:'a',lamina:1,version:2},callback,calls=[];
+ const g={id:'a',p:{_consulta:true},t:{base:'original-a',laminas:[{n:1,estado:'aprobada'}]}};
+ const ctx={S:{choice:{group:'a',n:1},groups:[g]},eligible:()=>fresh&&role==='editor',ROL:()=>role,api:{contexto:()=>context},pedirNota:fn=>callback=fn,reabrirAprobada:(...args)=>calls.push(args),render(){}};
+ vm.runInNewContext(source.slice(a,b)+';this.request=pedirNuevaRevision;',ctx);
+ ctx.request();callback(' ');assert.equal(calls.length,0);
+ ctx.request();role='lector';callback('Cambiar luz');assert.equal(calls.length,0);
+ role='editor';ctx.request();context={...context,version:3};callback('Cambiar luz');assert.equal(calls.length,0);
+ ctx.request();g.t.base='otro';callback('Cambiar luz');assert.equal(calls.length,0);
+ ctx.request();fresh=false;callback('Cambiar luz');assert.equal(calls.length,0);
+ fresh=true;ctx.request();callback(' Cambiar luz ');assert.equal(calls.length,1);assert.equal(calls[0][2],'Cambiar luz');
+ assert.equal(g.t.laminas[0].estado,'aprobada');
+});
