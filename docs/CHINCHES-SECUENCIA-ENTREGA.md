@@ -23,3 +23,7 @@ Portal:856 pruebas y verificadores OS/portal/accesos/obra. Presentaciones:151 pr
 Bloqueo de activación observado: navegador de nube sin sesión Google, Apps Script redirige a página pública. No se ha editado el servidor ni ampliado permisos. Mantener PR en borrador hasta completar integración y QA nativa. No sustituir faltantes por una demo.
 
 Reversión: revertir cambios de código, conservando IDs, paquetes, recibos y borradores. No borrar registros ni archivos privados.
+
+## Checkpoint 20-oct-2026
+
+Sala: versión76 publicada y fuente del editor recuperada tras una edición simultánea; no implica despliegue de consumidores. EMD: fuente viva base38 comparada; se detectó que el marco exterior de Google no delega micrófono. Capturador de voz en ventana superior con retorno privado validado en Chromium con audio real sintético y trazos/capturas sincronizados. Sigue pendiente Safari, activación nativa y comprobación integral. Amalaya: editor productivo aún no localizado; no sustituirlo por el proyecto vacío vinculado a la hoja.

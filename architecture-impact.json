@@ -15,5 +15,5 @@
     "node --test gas/chinche-secuencia.test.cjs"
   ],
   "rollback": "Revertir consumidores y dispatch de este PR conservando paquetes privados, recibos SHA256, IndexedDB, borradores, Sheets y medios; no revertir cambios concurrentes de rendimiento.",
-  "model_commit": "21b37f98de658724702c1122234d264e5c0abd76"
+  "model_commit": "b8f70c6828ac1ede9a931c012f882f2390680bce"
 }
