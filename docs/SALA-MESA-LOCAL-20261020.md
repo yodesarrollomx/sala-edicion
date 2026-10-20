@@ -19,7 +19,7 @@ La marca Performance `sala-mesa-local-visible` se registra después de dos frame
 
 ## Publicación
 
-Dirección autorizó expresamente publicar el registro de arquitectura y completar el despliegue el 20-oct-2026. Atlas: PR [yod-portal#288](https://github.com/yodesarrollomx/yod-portal/pull/288), commit `2941b4e5eaf21d07654689974648f6d4eaa9dd67`. El árbol publicado coincide con el árbol local validado. El consumidor fija ese commit; la integración y el despliegue se acreditan con los recibos de CI y Pages del PR.
+Dirección autorizó expresamente publicar el registro de arquitectura y completar el despliegue el 20-oct-2026. Atlas: PR [yod-portal#288](https://github.com/yodesarrollomx/yod-portal/pull/288), commit `b4efa45afa3d9515696bd83c6f10a8521bec033d`. El árbol publicado coincide con el árbol local validado. El consumidor fija ese commit; la integración y el despliegue se acreditan con los recibos de CI y Pages del PR.
 
 ## Reversión
 

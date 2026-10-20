@@ -12,5 +12,5 @@
     "git diff --check"
   ],
   "rollback": "Revertir PR. La copia sala_mesa_local_v1 se ignora; no borrar borradores sala2-*, cola, Sheets ni medios.",
-  "model_commit": "2941b4e5eaf21d07654689974648f6d4eaa9dd67"
+  "model_commit": "b4efa45afa3d9515696bd83c6f10a8521bec033d"
 }
