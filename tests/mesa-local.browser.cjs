@@ -99,9 +99,11 @@ const day=()=>({fecha:'2026-10-20',rol:'editor',quien:'Editor sintético',ultima
   // Otra sesión del mismo dispositivo nunca pinta la copia anterior.
   await page.evaluate(saved=>{localStorage.setItem('sala_mesa_local_v1',saved);localStorage.setItem('sala_rol','editor2');},snapshot);
   reject=false;hold=true;release=null;
-  await page.reload({waitUntil:'domcontentloaded'});await page.waitForSelector('#fraseCarga');
-  assert.equal(await page.locator('.bt-local').count(),0);assert.equal(await page.locator('.bt-column').count(),0);
-  assert.equal(await page.evaluate(()=>localStorage.getItem('sala_mesa_local_v1')),null);
+  await page.reload({waitUntil:'domcontentloaded'});await page.waitForSelector('.bt-local');
+  assert.match(await page.locator('.bt-local').innerText(),/Copia publicada/);
+  assert.equal(await page.evaluate(()=>DECIDE()),false);
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('sala_mesa_local_v1')||'null')?.source==='published');
+  assert.notEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sala_mesa_local_v1')).owner),JSON.parse(snapshot).owner);
   assert.deepEqual(errors,[]);assert.equal(writes.length,0);
   if(release){hold=false;release();}
   console.log(JSON.stringify({width,cachedVisibleMs:Math.round(elapsed),writes:0,errors:0,draftPreserved:true,rejectionCleared:true}));

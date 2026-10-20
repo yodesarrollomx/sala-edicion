@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-20.sala-arranque-progresivo.1",
-  "proposal_id": "CHG-SALA-REVISION-TOMAS-20261020",
-  "summary": "Comparación inicial en escritorio, avance ordenado tras aprobar y petición explícita de cambio con origen confirmado e historial conservado.",
+  "model_revision": "2026-10-20.sala-arranque-progresivo.2",
+  "proposal_id": "CHG-SALA-ARRANQUE-PROGRESIVO-20261020",
+  "summary": "Abrir consulta pública mientras espera servidor; pintar tiras progresivamente y diferir medios fuera de vista.",
   "components": [
     "SYS-SALA"
   ],
@@ -9,8 +9,10 @@
     "node --test tests/tablero-sala.test.cjs tests/mesa-local.test.cjs tests/sala-carga.test.cjs",
     "node tests/tablero-sala.browser.cjs (Chromium, datos sintéticos, 390/1440)",
     "python3 nube/verificar.py",
-    "git diff --check"
+    "git diff --check",
+    "node tests/arranque-progresivo.browser.cjs",
+    "python3 -m unittest discover -s tests -p sala_rendimiento_test.py -v"
   ],
-  "rollback": "Revertir este PR. No borrar decisiones, borradores, historial, cola ni medios.",
-  "model_commit": "72a399021cfbf37e5f4b76a122b4fd9f3faf6fe7"
+  "rollback": "Revertir PR. La copia sala_mesa_local_v1 se ignora; no borrar borradores sala2-*, cola, Sheets ni medios.",
+  "model_commit": "21e8b3d4a64f6045f5875ff39caa0ce1a97751a8"
 }

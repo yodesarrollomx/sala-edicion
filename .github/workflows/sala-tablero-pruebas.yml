@@ -59,6 +59,8 @@ jobs:
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/tablero-http.log" 2>&1 &
           SALA_CHINCHE_SOURCE=.fixture-atlas/chinche.js node tests/tablero-sala.browser.cjs
+          node tests/mesa-local.browser.cjs
+          node tests/arranque-progresivo.browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

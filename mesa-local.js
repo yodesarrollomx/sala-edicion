@@ -11,7 +11,7 @@
   }
   function valid(x,owner,now){
     return !!(x&&x.schema===1&&x.owner===owner&&Number.isFinite(x.savedAt)&&x.savedAt<=now+60000&&now-x.savedAt<TTL&&
-      x.day&&!x.day._respaldo&&!x.day.error&&/^\d{4}-\d{2}-\d{2}$/.test(x.day.fecha||'')&&Array.isArray(x.day.propuestas)&&
+      x.day&&(!x.day._respaldo||x.source==='published')&&!x.day.error&&/^\d{4}-\d{2}-\d{2}$/.test(x.day.fecha||'')&&Array.isArray(x.day.propuestas)&&
       Array.isArray(x.groups)&&x.groups.every(g=>g&&typeof g.id==='string'&&typeof g.pid==='string'&&g.p&&g.t&&Array.isArray(g.t.laminas)&&Array.isArray(g.ejes)));
   }
   function clear(storage){try{storage.removeItem(KEY);}catch(e){}}
@@ -23,10 +23,10 @@
       return copy(x);
     }catch(e){clear(storage);return null;}
   }
-  function write(storage,owner,day,groups,now=Date.now()){
+  function write(storage,owner,day,groups,now=Date.now(),source='server'){
     try{
       if(!owner)return false;
-      const x=copy({schema:1,owner,savedAt:now,day,groups});
+      const x=copy({schema:1,owner,savedAt:now,source,day,groups});
       if(!valid(x,owner,now))return false;
       const raw=JSON.stringify(x);if(raw.length>MAX)return false;
       storage.setItem(KEY,raw);return true;
