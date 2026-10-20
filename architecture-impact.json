@@ -1,19 +1,22 @@
 {
-  "model_revision": "2026-10-20.sala2-interfaz.1",
-  "proposal_id": "CHG-SALA2-INTERFAZ-20261020",
-  "summary": "Sala2: interfaz de turno y dock sobre datos, permisos y motor originales.",
+  "model_revision": "2026-10-20.presentaciones-md.1",
+  "proposal_id": "CHG-PRESENTACIONES-MD-20261020",
+  "summary": "Portal integrado en Master Developer con catálogo, revisión privada, publicación y conducción por el servidor Sala existente.",
   "components": [
-    "SYS-SALA"
+    "SYS-INVERSION",
+    "SYS-YOD-OS",
+    "SYS-CONTROL",
+    "SYS-SALA",
+    "GAS-SALA",
+    "SHEET-SALA"
   ],
   "tests": [
-    "node --test tests/*.test.cjs",
-    "node tests/sala2.browser.cjs",
-    "node tests/tablero-sala.browser.cjs",
-    "node tests/mesa-local.browser.cjs",
-    "node tests/arranque-progresivo.browser.cjs",
-    "python3 nube/verificar.py",
+    "node --test tests/brokers*.test.cjs (board:164 PASS)",
+    "node tests/presentation-hub-browser.cjs (board:PASS3 tamaños y2 dispositivos)",
+    "Contratos GAS con dobles sin escrituras de negocio",
+    "python3 nube/verificar.py (Sala)",
     "git diff --check"
   ],
-  "rollback": "Revertir este PR de interfaz; conservar datos, cola, borradores, medios y backend. Vista anterior: clasica=1.",
-  "model_commit": "ce758ebe0df46e3bf6acebd5d5094bc5a41c1ef6"
+  "rollback": "Revertir frontend o implementación a su versión anterior; conservar archivos privados, publicaciones, recibos, chinches y permisos.",
+  "model_commit": "f0c8f898735e46acc8888423338c514b8ed1686d"
 }
