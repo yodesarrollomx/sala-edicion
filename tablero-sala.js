@@ -59,7 +59,15 @@ function grupoDeCorte(p,groups){
  const matches=groups.filter(g=>g.pid===source[1]);
  return matches.length===1?matches[0]:null;
 }
-const api={grupoDeCorte,intentos,estado,fotoKey,textoToma,preseleccion,proyectarPublicacion};
+function siguientePendiente(list,current){
+ const start=current?list.findIndex(x=>x.group===current.group&&x.n===current.n):-1;
+ for(let step=1;step<=list.length;step++){
+  const x=list[(start+step)%list.length];
+  if(x.pending)return x;
+ }
+ return null;
+}
+const api={siguientePendiente,grupoDeCorte,intentos,estado,fotoKey,textoToma,preseleccion,proyectarPublicacion};
 if(typeof module==="object"&&module.exports)module.exports=api;
 if(typeof document==="undefined")return;
 const root=document.getElementById("tableroHoy");if(!root)return;
@@ -181,7 +189,7 @@ function chooseFrame(g,n){
  const opts=options(l),md=markData(g,l),selected=/\[toma elegida: (\d+)\]/.exec(md.nota||"");
  let k=selected?opts.findIndex(o=>o.indiceOriginal===Number(selected[1])-1):l.seleccion?opts.findIndex(o=>o.indiceOriginal===l.seleccion.toma-1):0;
  if(k<0)k=0;
- S.choice={group:g.id,n:Number(n),k,compare:false};
+ S.choice={group:g.id,n:Number(n),k,compare:opts.length>1&&window.matchMedia("(min-width: 901px)").matches};
  if(!CAPAS.some(c=>c.id==="tablero-opciones"))abrirCapa("tablero-opciones",()=>{S.choice=null;render();},null,root);
  render();
 }
@@ -190,10 +198,25 @@ function back(){
  if(S.focus)cerrarCapa("tablero-publicacion");
 }
 function next(){
- const list=S.groups.flatMap(g=>(g.t.laminas||[]).filter(l=>status(g,l)==="amarillo").map(l=>({g,l})));
- if(!list.length){S.notice="No quedan láminas amarillas. Puedes ver aprobadas, cambios y producción.";render();return;}
- const i=S.choice?list.findIndex(x=>x.g.id===S.choice.group&&Number(x.l.n)===S.choice.n):-1;
- const x=list[(i+1)%list.length];open(x.g,x.l.n,true);
+ const list=S.groups.flatMap(g=>(g.t.laminas||[]).map(l=>({group:g.id,n:Number(l.n),g,l,pending:status(g,l)==="amarillo"})));
+ const x=siguientePendiente(list,S.choice);
+ if(!x){S.notice="No quedan láminas por revisar. El indicador de guardado confirma el envío de tus decisiones.";render();return;}
+ open(x.g,x.l.n,true);
+}
+function canReopen(g,l){return !!(eligible()&&g&&l&&l.estado==="aprobada"&&g.t.base);}
+function pedirNuevaRevision(){
+ if(!S.choice)return;
+ const g=S.groups.find(x=>x.id===S.choice.group),l=g?.t.laminas.find(x=>Number(x.n)===S.choice.n);
+ if(!canReopen(g,l))return;
+ const identity=JSON.stringify(api.contexto()),owner=ROL(),base=g.t.base;
+ pedirNota(note=>{
+  const live=S.choice&&S.groups.find(x=>x.id===S.choice.group),frame=live?.t.laminas.find(x=>Number(x.n)===S.choice.n);
+  if(!canReopen(live,frame)||ROL()!==owner||live.t.base!==base||JSON.stringify(api.contexto())!==identity){S.notice="La versión o sesión cambió. Abre de nuevo la lámina antes de pedir un cambio.";render();return;}
+  if(!String(note||"").trim()){S.notice="Escribe qué debe cambiar.";render();return;}
+  reabrirAprobada(live.t,frame,String(note).trim());
+  S.notice="Petición de cambio anotada. El indicador de guardado confirma su envío; la aprobación anterior sigue en el historial.";
+  render();
+ });
 }
 function renderChoice(g,l){
  const os=options(l),c=S.choice,k=Math.min(c.k,Math.max(0,os.length-1)),o=os[k],md=markData(g,l),st=status(g,l);
@@ -220,9 +243,9 @@ function renderChoice(g,l){
  ${(o&&o.texto)||l.ve?`<details class="bt-scene"><summary>Dirección de la imagen</summary><p>${esc(o&&o.texto||l.ve)}</p></details>`:""}
  <div class="bt-tools"><button data-info="guion" data-group="${esc(g.id)}">Guion completo</button><button data-info="intencion" data-group="${esc(g.id)}">Intención</button><button data-history="${l.n}" data-group="${esc(g.id)}">↺ ${intentos(l)} intentos</button></div>
  ${md.nota.replace(/\s*\[toma elegida: \d+\]/g,"")?`<blockquote class="bt-editor-note"><span class="bt-eyebrow">TU NOTA AL MARGEN</span><p>${esc(md.nota.replace(/\s*\[toma elegida: \d+\]/g,""))}</p></blockquote>`:""}
- <div class="bt-decision-panel"><span class="bt-eyebrow">TU DECISIÓN · ${os.length?"TOMA "+(k+1):"SIN TOMA"}</span><div class="bt-decisions"><button class="bt-approve" data-vote="si" ${!writable||!o?"disabled":""}>Aprobar esta toma</button><button class="bt-reject" data-vote="no" ${!writable?"disabled":""}>Pedir cambio</button></div>
+ <div class="bt-decision-panel"><span class="bt-eyebrow">TU DECISIÓN · ${os.length?"TOMA "+(k+1):"SIN TOMA"}</span><div class="bt-decisions"><button class="bt-approve" data-vote="si" ${!writable||!o?"disabled":""}>Aprobar esta toma</button><button class="bt-reject" ${canReopen(g,l)?"data-reopen":'data-vote="no"'} ${!writable&&!canReopen(g,l)?"disabled":""}>Pedir cambio</button></div>
  <p class="bt-gesture-hint">${writable?"Comparar no decide. Aprueba esta toma o pide un cambio con una nota.":l.estado==="aprobada"?"Esta página ya está aprobada. Su historia se conserva.":"Vista de lectura: puedes comparar sin cambiar decisiones."}</p>
- ${l.estado==="aprobada"&&eligible()&&!g.p?._consulta&&g.t.base?`<button data-reopen>Pedir una nueva revisión</button>`:""}
+
  <p class="bt-notice" role="status">${esc(S.notice)}</p></div>
  <button class="bt-next-review" data-next>Siguiente por revisar →</button></div></div>`;
  root.appendChild(box);
@@ -268,7 +291,7 @@ function vote(m,zoomPhoto){
   if(d._borrar)delete d._borrar[md.i];
   if(!pasos.some(x=>x.tipo==="lamina"&&x.pid===g.pid&&x.i===md.i)){pasos.push({tipo:"lamina",pid:g.pid,i:md.i,p:g.p});lockeadas=lockeadas.filter(x=>!(x.pid===g.pid&&x.i===md.i));}
   guardarBorrador();programarSubida();subir();
-  S.notice=m==="si"?"Opción elegida. El indicador de guardado confirma su envío al Sheet.":"Cambio pedido. La nota viaja con tu revisión.";render();
+  S.notice=m==="si"?"Opción elegida. El indicador de guardado confirma su envío al Sheet.":"Cambio pedido. La nota viaja con tu revisión.";if(m==="si")next();else render();
  };
  if(m==="no"){pedirNota(note=>{apply(note);},md.nota.replace(/\s*\[toma elegida: \d+\]/g,""));}else apply();
 }
@@ -304,7 +327,7 @@ function bind(){
  root.querySelector("[data-next-option]")?.addEventListener("click",()=>moveOption(1));
  root.querySelectorAll("[data-vote]").forEach(b=>b.onclick=()=>vote(b.dataset.vote));
  root.querySelector("[data-full-photo]")?.addEventListener("click",ampliarOpciones);
- root.querySelector("[data-reopen]")?.addEventListener("click",()=>{const g=gs(S.choice.group),l=g.t.laminas.find(l=>Number(l.n)===S.choice.n);pedirNota(note=>{reabrirAprobada(g.t,l,note);S.focus=null;S.choice=null;render();});});
+ root.querySelector("[data-reopen]")?.addEventListener("click",pedirNuevaRevision);
  root.querySelector("[data-zoom]")?.addEventListener("click",()=>{if(S.choice)root.querySelector("[data-full-photo]")?.click();else if(S.focus){const g=group();chooseFrame(g,g.t.laminas[0]?.n);}else open(visible()[0]);});
  root.querySelector("[data-refresh]")?.addEventListener("click",()=>refresh(true));
  root.querySelector("[data-legacy]")?.addEventListener("click",()=>{cerrarCapas();document.body.classList.remove("sala-tablero");document.body.classList.add("sala-turno");pintarCartas();});

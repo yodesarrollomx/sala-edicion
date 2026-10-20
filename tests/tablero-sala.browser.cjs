@@ -163,8 +163,7 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await p.locator('[data-lamina="2"]').click();
   await p.waitForSelector(".bt-choice");
   assert.match(await p.locator(".bt-pager").innerText(),/1 de 2/);
-  await p.locator('[data-compare]').click();
-  assert.equal(await p.locator('.bt-image-stage figure').count(),2);
+  assert.equal(await p.locator('.bt-image-stage figure').count(),2,'escritorio compara al abrir');
   assert.equal(d.writes.length,0,'comparar no guarda ninguna decisión');
   await p.screenshot({path:out+'/03-comparacion-editorial.png',fullPage:true});
   await p.locator('[data-compare]').click();
@@ -182,7 +181,7 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await p.keyboard.press("ArrowRight");assert.match(await p.locator(".zoom .zg-cual").innerText(),/2 de 2/);
   await p.waitForFunction(()=>document.querySelector(".zoom img")?.naturalWidth>0);
   await p.locator(".zoom .zg-elegir").click();
-  await p.waitForFunction(()=>document.querySelector(".bt-choice-copy .bt-dot")?.textContent==="Aprobada");
+  await p.waitForFunction(()=>document.querySelector('[data-page="3"]')?.getAttribute("aria-current")==="page");
   assert.equal(d.writes.filter(x=>x.accion==="decidir").length,1);
   const chosen=d.writes.find(x=>x.accion==="decidir").propuestas["synthetic-0"];
   assert.equal(chosen.laminas[0],"si");
@@ -214,13 +213,14 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
   await q.locator('[data-open="synthetic-0"]').click();
   await q.locator('[data-lamina="2"]').click();
   await q.waitForFunction(()=>document.querySelector(".bt-main-photo")?.naturalWidth>0);
+  assert.equal(await q.locator(".bt-image-stage figure").count(),1,"móvil abre una toma legible");
   const h=await q.locator(".bt-hero").boundingBox(),x=Math.round(h.x+h.width/2),y=Math.round(h.y+h.height*.75);
   await touch(q,[{x,y}],"touchStart");
   await touch(q,[{x,y:y-130}],"touchMove");
   await touch(q,[],"touchEnd");
   assert.equal(m.writes.filter(x=>x.accion==="decidir").length,0,"deslizar hacia arriba sólo desplaza; no aprueba");
   await q.locator("[data-vote=si]").click();
-  await q.waitForFunction(()=>document.querySelector(".bt-choice-copy .bt-dot")?.textContent==="Aprobada");
+  await q.waitForFunction(()=>document.querySelector('[data-page="3"]')?.getAttribute("aria-current")==="page");
   assert.equal(m.writes.filter(x=>x.accion==="decidir").length,1);
   await q.screenshot({path:out+"/05-carrusel-movil.png",fullPage:true});
   await q.locator("[data-close-choice]").click();
@@ -289,9 +289,16 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    assert.equal(await view.evaluate(()=>D.propuestas.length),0,'inventario no inventa propuestas ni votos');
    await view.locator('[data-open="synthetic-0"]').click();await view.locator('[data-lamina="2"]').click();
    assert.equal(await view.locator('[data-vote]:enabled').count(),0);
-   assert.equal(await view.locator('[data-reopen]').count(),0);
+   assert.equal(await view.locator('[data-reopen]:enabled').count(),1,'una aprobación con origen confirmado admite una nueva petición');
    assert.match(await view.locator('.bt-main-photo').getAttribute('src'),/B.jpg/);
-   assert.equal(r.writes.length,0);assert.deepEqual(r.errors,[]);
+   assert.equal(r.writes.length,0,'abrir historial no emite decisiones');
+   await view.locator('[data-reopen]').click();
+   await view.locator('#notaT').fill('Revisar contraste: petición explícita sintética');
+   await view.locator('#notaOk').click();
+   await view.waitForFunction(()=>dec['synthetic-0-base']?.laminas[1]==='no');
+   assert.equal(await view.evaluate(()=>dec['synthetic-0-base'].notas[1]),'Revisar contraste: petición explícita sintética');
+   assert.equal(await view.evaluate(()=>TIRAS['synthetic-0'].laminas[1].estado),'rehecha','la solicitud no reescribe la historia');
+   assert.deepEqual(r.errors,[]);
    await r.context.close();
   }
   const missing=await prepare(b,390,'editor',true,false,{mode:'missing'});
