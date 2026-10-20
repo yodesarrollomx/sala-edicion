@@ -49,7 +49,7 @@ jobs:
         # No hace falta credencial real: prueba_drive_logica() genera su propia
         # cuenta de servicio de mentira (RSA propio) y nunca toca la red — pero
         # sí necesita poder IMPORTAR google-auth para construirla.
-        run: pip install --quiet google-auth requests pillow numpy
+        run: pip install --quiet google-auth requests pillow numpy cryptography
       - name: Reglas del repo, sello de versión e integridad de los datos
         run: python3 nube/verificar.py
       - name: Probar recuperación de Relevo (sin Google ni credenciales)
@@ -58,6 +58,8 @@ jobs:
         run: python3 -m unittest discover -s tests -p publicar_git_test.py
       - name: Pruebas de carga inicial de Hoy (sin red)
         run: node --test tests/sala-carga.test.cjs
+      - name: Contrato privado del reproductor y autorización de los cortes (sin red)
+        run: node --test tests/video-revision.test.cjs tests/video-privado-gas.test.cjs
       - name: Verificar decisiones históricas sin Sheet real
         run: node --test tests/produccion-historica.test.cjs tests/produccion-historica-adversaria.test.cjs
       - name: Pruebas de fotos publicadas, zoom y reintentos

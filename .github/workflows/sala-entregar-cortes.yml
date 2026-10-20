@@ -1,6 +1,12 @@
 name: Entregar cortes terminados a la Sala
 on:
   workflow_dispatch:
+    inputs:
+      modo:
+        description: Entregar cortes o preparar sólo su reproducción privada en iPhone
+        type: choice
+        options: [entregar, video_iphone]
+        default: entregar
 permissions:
   contents: write
   actions: write
@@ -21,13 +27,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install --quiet google-auth requests pillow
+      - run: pip install --quiet google-auth requests pillow cryptography
       - name: Hidratar fuentes privadas verificadas
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 nube/snapshots_online.py bootstrap
       - run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
       - name: Montar sólo cortes durables y vigentes sin tocar decisiones
+        if: inputs.modo != 'video_iphone'
         env:
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
           SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
@@ -35,7 +42,15 @@ jobs:
         run: |
           set -o pipefail
           python3 nube/entregar_cortes.py | tee entrega.log
+      - name: Preparar reproducción privada de los cortes dentro de Sala
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: python3 nube/video_revision.py
       - name: Refrescar el respaldo tras una entrega confirmada
+        if: inputs.modo != 'video_iphone'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
