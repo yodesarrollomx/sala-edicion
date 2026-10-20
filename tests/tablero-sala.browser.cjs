@@ -58,7 +58,7 @@ async function prepare(browser,width,role="editor",mobile=false,embedded=false,m
    await route.fulfill({contentType:'application/json',body:mediaRaw});return;
   }
   if(/\/laminas\/.*\.(jpg|png)$/.test(u.pathname)){await route.fulfill({contentType:"image/svg+xml",body:svg});return;}
-  if(u.pathname==="/fixture-parent"){await route.fulfill({contentType:"text/html",body:'<html><body style="margin:0"><iframe src="/?embed=1" style="width:100%;height:650px;border:0" title="Sala en el portal"></iframe></body></html>'});return;}
+  if(u.pathname==="/fixture-parent"){await route.fulfill({contentType:"text/html",body:'<html><body style="margin:0"><iframe src="/?embed=1&clasica=1" style="width:100%;height:650px;border:0" title="Sala en el portal"></iframe></body></html>'});return;}
   if(u.pathname.includes("/datos/")){
    let value={};
    if(u.pathname==="/datos/mesa-estado.json"&&media.emptyDay)value={revisado_en:new Date().toISOString(),publicaciones:Object.entries(tiras).map(([id,t])=>({id,laminas:t.laminas.map(l=>({n:l.n,estado:"aprobada",...(l.n===2?{toma:3}:{})}))}))};
@@ -71,7 +71,7 @@ async function prepare(browser,width,role="editor",mobile=false,embedded=false,m
   }
   await route.continue();
  });
- await page.goto(base+(embedded?"fixture-parent":""));
+ await page.goto(base+(embedded?"fixture-parent":"?clasica=1"));
  const view=embedded?page.frames().find(f=>f.parentFrame()):page;
  await view.waitForSelector(".bt-column",{timeout:30000});
  await view.waitForFunction(()=>!document.querySelector("[data-refresh]")?.disabled&&!document.querySelector(".bt-local"));

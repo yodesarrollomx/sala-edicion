@@ -29,7 +29,7 @@ const day=()=>({fecha:'2026-10-20',rol:'editor',quien:'Editor sintético',propue
    if(u.pathname.startsWith('/laminas/')){images.push(u.pathname);return route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="tan"/></svg>'});}
    return route.continue();
   });
-  await page.goto('http://127.0.0.1:'+server.address().port,{waitUntil:'domcontentloaded'});
+  await page.goto('http://127.0.0.1:'+server.address().port+'/?clasica=1',{waitUntil:'domcontentloaded'});
   await page.waitForSelector('[data-column="fast"]');
   const visibleMs=await page.evaluate(()=>performance.now());
   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('sala_mesa_local_v1')||'null')?.source==='published');

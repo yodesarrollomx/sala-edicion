@@ -1,22 +1,19 @@
 {
-  "model_revision": "2026-10-20.chinches-secuencia.1",
-  "proposal_id": "CHG-CHINCHES-SECUENCIA-20261020",
-  "summary": "Voz y dibujo sincronizados en chinches; almacenamiento privado con acuse íntegro.",
+  "model_revision": "2026-10-20.sala2-interfaz.1",
+  "proposal_id": "CHG-SALA2-INTERFAZ-20261020",
+  "summary": "Sala2: interfaz de turno y dock sobre datos, permisos y motor originales.",
   "components": [
-    "SYS-SALA",
-    "GAS-SALA",
-    "SHEET-SALA",
-    "EXT-GMAIL"
+    "SYS-SALA"
   ],
   "tests": [
-    "node --test tests/tablero-sala.test.cjs tests/mesa-local.test.cjs tests/sala-carga.test.cjs",
-    "node tests/tablero-sala.browser.cjs (Chromium, datos sintéticos, 390/1440)",
-    "python3 nube/verificar.py",
-    "git diff --check",
+    "node --test tests/*.test.cjs",
+    "node tests/sala2.browser.cjs",
+    "node tests/tablero-sala.browser.cjs",
+    "node tests/mesa-local.browser.cjs",
     "node tests/arranque-progresivo.browser.cjs",
-    "python3 -m unittest discover -s tests -p sala_rendimiento_test.py -v",
-    "node --test gas/chinche-secuencia.test.cjs"
+    "python3 nube/verificar.py",
+    "git diff --check"
   ],
-  "rollback": "Revertir consumidores y dispatch de este PR conservando paquetes privados, recibos SHA256, IndexedDB, borradores, Sheets y medios; no revertir cambios concurrentes de rendimiento.",
-  "model_commit": "3df04b6e2c02e57a85c5d500ce2e866d4db38ffc"
+  "rollback": "Revertir este PR de interfaz; conservar datos, cola, borradores, medios y backend. Vista anterior: clasica=1.",
+  "model_commit": "ce758ebe0df46e3bf6acebd5d5094bc5a41c1ef6"
 }

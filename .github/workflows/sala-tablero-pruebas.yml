@@ -6,6 +6,8 @@ on:
   pull_request:
     paths:
       - 'index.html'
+      - 'sala2.*'
+      - 'tests/sala2.browser.cjs'
       - 'medios-publicos.js'
       - 'tablero-sala.*'
       - 'sala-correcciones.js'
@@ -61,6 +63,7 @@ jobs:
           SALA_CHINCHE_SOURCE=.fixture-atlas/chinche.js node tests/tablero-sala.browser.cjs
           node tests/mesa-local.browser.cjs
           node tests/arranque-progresivo.browser.cjs
+          node tests/sala2.browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

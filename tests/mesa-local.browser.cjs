@@ -50,7 +50,7 @@ const day=()=>({fecha:'2026-10-20',rol:'editor',quien:'Editor sintético',ultima
    if(u.pathname.startsWith('/laminas/'))return route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="tan"/></svg>'});
    return route.continue();
   });
-  await page.goto(base,{waitUntil:'domcontentloaded'});
+  await page.goto(base+'?clasica=1',{waitUntil:'domcontentloaded'});
   await page.waitForSelector('.bt-column');
   await page.waitForFunction(()=>!!localStorage.getItem('sala_mesa_local_v1'));
   const snapshot=await page.evaluate(()=>localStorage.getItem('sala_mesa_local_v1'));
