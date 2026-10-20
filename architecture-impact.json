@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-20.sala-mesa-local.1",
-  "proposal_id": "CHG-SALA-MESA-LOCAL-20261020",
-  "summary": "Abrir la última mesa guardada por sesión para consulta y revalidar en segundo plano. Preservar borradores, cola y permisos vigentes.",
+  "model_revision": "2026-10-20.chinches-secuencia.1",
+  "proposal_id": "CHG-CHINCHES-SECUENCIA-20261020",
+  "summary": "Voz y dibujo sincronizados en chinches; almacenamiento privado con acuse íntegro.",
   "components": [
     "SYS-SALA"
   ],

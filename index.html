@@ -813,7 +813,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='c66734a962';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='67ed21c06f';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2978,6 +2978,8 @@ function chincheContexto(op){
  return {rol:ROL(),vista:v,popup:titulo?titulo.textContent:'',carta:tab||(x?{pid:x.pid,tipo:x.tipo,lamina:l?l.n:x.tipo==='lamina'?nLamina(x):null,pieza:piezaDe(x),version:l&&l.version||null,src:l&&(l.original||l.src)||null}:null)};
 }
 async function chincheClavada(ch){
+ if(ch.secuencia){const r=await YodChincheEntrega.client().send(ch);if(r.state==='received')chincheMandada(ch.id);return {estado:r.state==='received'?'recibido':'pendiente',mensaje:r.state==='received'?'Recibido: voz y dibujo completos.':'Guardada aquí; falta confirmar voz y dibujo en Sala.'};}
+
  const c=ch.contexto||(ch.elemento&&ch.elemento.valores)||{vista:ch.vista||'',carta:null};
  const det=JSON.stringify({id:ch.id,creado:ch.creado||null,texto:ch.texto,tipo:ch.tipo,captura:ch.captura||null,quien:ch.quien||'',vista:c.vista||ch.vista,popup:c.popup||'',carta:c.carta||null,
   elemento:ch.elemento?{css:ch.elemento.css,texto:ch.elemento.texto,seccion:ch.elemento.seccion}:null,url:String(ch.url||'').split(/[?#]/)[0]});

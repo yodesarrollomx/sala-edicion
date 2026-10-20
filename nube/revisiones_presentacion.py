@@ -3,6 +3,7 @@ import json
 import re
 
 PRIVATE_KIND = "yod-presentation-private-v1"
+PRIVATE_KINDS = (PRIVATE_KIND, "chinche-secuencia-v1")
 PUBLIC_NOTE = "Revisión privada de presentación: consultar PRODUCCION por ID."
 PIN_ID = re.compile(r"CHN-\d{8}-\d{4}-[a-f0-9]{4}")
 
@@ -12,13 +13,13 @@ def contains_private(value):
     while pending:
         item = pending.pop()
         if isinstance(item, dict):
-            if item.get('kind') == PRIVATE_KIND:
+            if item.get('kind') in PRIVATE_KINDS:
                 return True
             pending.extend(item.values())
         elif isinstance(item, list):
             pending.extend(item)
         elif isinstance(item, str):
-            if PRIVATE_KIND in item:
+            if any(kind in item for kind in PRIVATE_KINDS):
                 return True
             if item.lstrip().startswith(('{', '[')):
                 try:
@@ -43,7 +44,7 @@ def public_projection(value):
     if isinstance(value, list):
         return [public_projection(item) for item in value]
     if isinstance(value, dict):
-        if value.get("kind") == PRIVATE_KIND:
+        if value.get("kind") in PRIVATE_KINDS:
             cid = str(value.get("id", ""))
             return {"id": cid if PIN_ID.fullmatch(cid) else None,
                     "texto": PUBLIC_NOTE}
@@ -53,5 +54,5 @@ def public_projection(value):
 
 def assert_public_bytes(data):
     """Reject marked envelopes at snapshot and final bundle boundaries."""
-    if PRIVATE_KIND.encode() in data or contains_private(json.loads(data)):
+    if any(kind.encode() in data for kind in PRIVATE_KINDS) or contains_private(json.loads(data)):
         raise ValueError("Revisión privada fuera de su proyección pública")
