@@ -396,7 +396,7 @@ async function refresh(live=false,preview=false){
  finally{S.busy=false;render();if(S.refreshPending){S.refreshPending=false;queueMicrotask(()=>refresh(false,_mesaPublica));}}
 }
 api.preview=()=>refresh(false,true);
-api.restore=cache=>{S.groups=cache.groups;S.loaded=true;S.cached=true;S.publicPreview=cache.source==='published';S.savedAt=cache.savedAt;render();requestAnimationFrame(()=>requestAnimationFrame(()=>{performance.mark("sala-mesa-local-visible");if(!performance.getEntriesByName("sala-contenido-visible").length)performance.mark("sala-contenido-visible");}));};
+api.restore=cache=>{S.groups=cache.groups;S.loaded=true;S.cached=true;S.publicPreview=cache.source==='published';S.savedAt=S.publicPreview?Date.parse(cache.day.fecha+'T12:00:00'):cache.savedAt;render();requestAnimationFrame(()=>requestAnimationFrame(()=>{performance.mark("sala-mesa-local-visible");if(!performance.getEntriesByName("sala-contenido-visible").length)performance.mark("sala-contenido-visible");}));};
 api.clear=()=>{S.groups=[];S.focus=S.choice=null;S.cached=false;S.loaded=false;root.innerHTML="";document.body.classList.remove("sala-tablero");};
 api.refresh=refresh;api.render=render;api.produccionActualizada=()=>{if(!S.choice)render();};
 const returnButton=document.createElement("button");returnButton.className="bt-return";returnButton.textContent="← Volver al tablero";returnButton.onclick=()=>{document.body.classList.remove("sala-turno");render();};document.getElementById("vHoy").prepend(returnButton);
