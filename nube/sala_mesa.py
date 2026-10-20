@@ -138,6 +138,7 @@ def abiertas(tid, t, leer_sheet=True):
     work, retiradas = depurar_tira(produccion.resolver_tira(t, dec, {'laminas': srcs or []}))
     mapa = work.get("mapa") or {str(i + 1): n for i, n in
                                 enumerate(work.get("decidir") or [])}
+    presentadas = {int(n) for n in mapa.values()}
     marks = (dec or {}).get("laminas") or []
     notes = (dec or {}).get("notas") or []
     por_n = {int(mapa.get(str(i + 1), i + 1)): (str(mark or ""),
@@ -158,6 +159,10 @@ def abiertas(tid, t, leer_sheet=True):
         if not mark and lam.get("candidatas"):
             if n in retiradas:
                 salida.append((lam, "depurar_modelo", note))
+            elif n not in presentadas:
+                # 19-oct (La Mesa Vacía L2, L3, L5, L7): tomas que la carta vigente nunca
+                # mostró se quedaban sin carta para siempre. Vuelven a la mesa tal cual.
+                salida.append((lam, "sin_presentar", note))
             continue
         note = note or str(lam.get("nota_previa") or "")
         salida.append((lam, mark or "pendiente", note))
@@ -214,6 +219,18 @@ def validar_nuevas_tomas(tira, reglas=None):
     if numeros != encontradas:
         raise sala.SalaError('el mapa de láminas nuevas no coincide con la tira')
     return True
+
+
+def tomas_presentables(lam, reglas=None):
+    """Tomas que ninguna carta mostró: vuelven sólo las que pasan la compuerta de una toma nueva."""
+    limpias = []
+    for c in lam.get('candidatas') or []:
+        try:
+            validar_nuevas_tomas({'decidir': [lam.get('n')], 'laminas': [dict(lam, candidatas=[c])]}, reglas)
+            limpias.append(c)
+        except (ContenidoVetado, sala.SalaError) as e:
+            sala.avisar('   · L%s: una toma sin presentar queda como historia (%s)' % (lam.get('n'), e))
+    return limpias
 
 
 def referencia(t):
@@ -648,6 +665,11 @@ def main():
         tira['_fuente_recibo'] = tid
         decidir = []
         for lam, marca, nota in pend:
+            if marca == 'sin_presentar':
+                limpias = tomas_presentables(lam, reglas)
+                if not limpias:
+                    continue
+                lam = dict(lam, candidatas=limpias, src=limpias[0]['src'])
             sala.avisar('   L%s · %s · nota vigente de %d caracteres' %
                         (lam.get('n'), marca, len(nota or '')))
             destino = next((l for l in tira['laminas'] if l.get('n') == lam.get('n')), None)
@@ -657,14 +679,16 @@ def main():
             if args.simular:
                 decidir.append(lam['n'])
                 continue
-            if marca == 'depurar_modelo':
+            if marca in ('depurar_modelo', 'sin_presentar'):
                 destino['candidatas'] = lam['candidatas']
                 destino['src'] = lam.get('src') or lam['candidatas'][0]['src']
                 destino['estado'] = 'rehecha'
                 destino['produccion_guardados'] = 1
                 destino['fecha'] = hoy
                 decidir.append(lam['n'])
-                sala.avisar('   ↺ modelo retirado depurado; se conservan las tomas permitidas')
+                sala.avisar('   ↺ modelo retirado depurado; se conservan las tomas permitidas'
+                            if marca == 'depurar_modelo' else
+                            '   ↺ sus tomas nunca se presentaron: vuelven a la mesa sin producir otras')
                 continue
             solo_recibo = cupo_bloqueado
             if gastadas >= tope:

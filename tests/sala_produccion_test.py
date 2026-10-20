@@ -218,6 +218,25 @@ class MesaTests(unittest.TestCase):
         with patch.object(mesa, "decision_del_sheet", return_value=({}, ["laminas/a.jpg"])):
             self.assertEqual(mesa.abiertas(P, t), [])
 
+    def test_candidates_never_shown_by_live_card_return_to_the_table(self):
+        t = tira()
+        t["laminas"].append({"n": 2, "src": "laminas/c.png", "estado": "rehecha",
+                             "nota_previa": "Nota antigua",
+                             "candidatas": [{"src": "laminas/c.png"}, {"src": "laminas/d.png"}]})
+        with patch.object(mesa, "decision_del_sheet", return_value=({}, ["laminas/a.jpg"])):
+            opened = mesa.abiertas(P, t)
+        self.assertEqual([(x[0]["n"], x[1]) for x in opened], [(2, "sin_presentar")])
+        self.assertEqual(len(opened[0][0]["candidatas"]), 2)
+
+    def test_never_shown_takes_return_without_the_ones_the_gate_rejects(self):
+        lam = {"n": 2, "estado": "rehecha", "src": "laminas/c.png", "candidatas": [
+            {"motor": "cloudflare", "src": "laminas/c.png", "dice": "Texto limpio"},
+            {"motor": "cloudflare", "src": "laminas/d.png", "dice": "En Hermosillo"}]}
+        with patch.object(mesa.sala, "avisar"):
+            kept = mesa.tomas_presentables(lam, {"contenido_ubicaciones_vetadas": "Hermosillo"})
+        self.assertEqual([c["src"] for c in kept], ["laminas/c.png"])
+        self.assertEqual(len(lam["candidatas"]), 2)
+
     def test_source_without_live_sheet_record_is_blocked(self):
         with patch.object(mesa, "decision_del_sheet", return_value=(None, None)):
             with self.assertRaises(sala.SalaError):
