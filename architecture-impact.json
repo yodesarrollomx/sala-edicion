@@ -6,11 +6,14 @@
     "SYS-SALA"
   ],
   "tests": [
-    "node --test tests/mesa-local.test.cjs tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs tests/tablero-sala.test.cjs",
-    "node tests/mesa-local.browser.cjs (Chromium, datos sintéticos)",
+    "node --test tests/tablero-sala.test.cjs tests/mesa-local.test.cjs tests/sala-carga.test.cjs",
+    "node tests/tablero-sala.browser.cjs (Chromium, datos sintéticos, 390/1440)",
     "python3 nube/verificar.py",
-    "git diff --check"
+    "git diff --check",
+    "node tests/arranque-progresivo.browser.cjs",
+    "python3 -m unittest discover -s tests -p sala_rendimiento_test.py -v",
+    "node --test gas/chinche-secuencia.test.cjs"
   ],
-  "rollback": "Revertir PR. La copia sala_mesa_local_v1 se ignora; no borrar borradores sala2-*, cola, Sheets ni medios.",
-  "model_commit": "b4efa45afa3d9515696bd83c6f10a8521bec033d"
+  "rollback": "Revertir consumidores y dispatch de este PR conservando paquetes privados, recibos SHA256, IndexedDB, borradores, Sheets y medios; no revertir cambios concurrentes de rendimiento.",
+  "model_commit": "21b37f98de658724702c1122234d264e5c0abd76"
 }

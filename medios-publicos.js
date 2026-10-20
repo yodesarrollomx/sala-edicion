@@ -56,7 +56,7 @@ function crear(env){
   if(flight)return flight;
   state="pendiente";
   flight=(async()=>{
-   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
    try{
     const nonce=Date.now(),opts={cache:"no-store",signal:controller.signal,credentials:"omit"};
     const [manifest,receipt]=await Promise.all([env.fetch("datos/medios-publicos.json?v="+nonce,opts),env.fetch("version-online.json?v="+nonce,opts)]);

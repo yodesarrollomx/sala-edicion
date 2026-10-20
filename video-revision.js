@@ -12,7 +12,7 @@
   return {tipo:'archivo',src,enlace:src};
  }
  function html(src){const v=resolver(src);if(!v)return '';
-  return v.tipo==='drive'?`<div class="lienzo conVideo"><iframe src="${esc(v.src)}" title="Corte completo para revisar" allow="fullscreen" allowfullscreen referrerpolicy="no-referrer"></iframe></div>`:`<div class="lienzo conVideo"><video src="${esc(v.src)}" controls playsinline preload="metadata"></video></div>`;
+  return v.tipo==='drive'?`<div class="lienzo conVideo"><iframe loading="lazy" src="${esc(v.src)}" title="Corte completo para revisar" allow="fullscreen" allowfullscreen referrerpolicy="no-referrer"></iframe></div>`:`<div class="lienzo conVideo"><video src="${esc(v.src)}" controls playsinline preload="none"></video></div>`;
  }
  return {resolver,html};
 });

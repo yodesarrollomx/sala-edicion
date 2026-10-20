@@ -110,14 +110,14 @@ test('mientras se relee una versión lista o legada se cierra aprobación, sin d
 test('la aprobación real del tablero comprueba el manifiesto aun con la foto cargada',()=>{
   const source=fs.readFileSync('tablero-sala.js','utf8');
   const vote=source.slice(source.indexOf('function vote('),source.indexOf('async function reintentarFoto('));
-  let ready=false,writes=0;
+  let ready=false,writes=0,advances=0;
   const context={ROL:()=> 'editor',api:{contexto:()=>({pid:'p',lamina:1,version:1})},S:{choice:{group:'g',n:1,k:0},groups:[{id:'g',pid:'p',t:{laminas:[{n:1,estado:'rehecha'}]}}]},
     eligible:()=>true,markData:()=>({i:0}),options:()=>[{src:'laminas/synthetic/L1.png',indiceOriginal:null}],
     dec:{p:{laminas:[''],notas:['']}},mediosDisponibles:()=>ready,root:{querySelector:()=>({complete:true,naturalWidth:72})},
-    pasos:[],lockeadas:[],guardarBorrador(){},programarSubida(){},subir(){writes++;},render(){}};
+    pasos:[],lockeadas:[],guardarBorrador(){},programarSubida(){},subir(){writes++;},next(){advances++;},render(){}};
   vm.runInNewContext(vote+'\nthis.vote=vote;',context);
-  context.vote('si');assert.equal(writes,0);assert.equal(context.dec.p.laminas[0],'');assert.match(context.S.notice,/Espera a que cargue/);
-  ready=true;context.vote('si');assert.equal(writes,1);assert.equal(context.dec.p.laminas[0],'si');
+  context.vote('si');assert.equal(writes,0);assert.equal(context.dec.p.laminas[0],'');assert.match(context.S.notice,/Espera a que cargue/);assert.equal(advances,0);
+  ready=true;context.vote('si');assert.equal(writes,1);assert.equal(context.dec.p.laminas[0],'si');assert.equal(advances,1);
 });
 test('Mesa sólo monta después de publicación confirmada y comprobación de archivos',()=>{
   assert.match(workflow,/id: publicacion/);

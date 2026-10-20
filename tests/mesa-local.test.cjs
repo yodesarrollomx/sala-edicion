@@ -34,3 +34,9 @@ test('tamaño acotado y limpieza afectan sólo a la copia, nunca borradores ni c
  assert.equal(cache.write(s,'o',{...day,large:'x'.repeat(cache.MAX)},groups),false);
  cache.clear(s);assert.equal(s.getItem('sala_cola'),'cola');assert.equal(s.getItem('sala2-2026-10-20'),'borrador');
 });
+
+test('snapshot publicado se guarda antes de validar servidor, conserva origen de consulta',()=>{
+ const s=storage();assert.equal(cache.write(s,'owner',{...day,_respaldo:true},groups,1000,'published'),true);
+ const saved=cache.read(s,'owner',1001);assert.equal(saved.source,'published');assert.equal(saved.day._respaldo,true);
+ assert.equal(saved.day.clave_nueva,undefined);assert.equal(cache.read(s,'otra-sesion',1002),null);
+});
