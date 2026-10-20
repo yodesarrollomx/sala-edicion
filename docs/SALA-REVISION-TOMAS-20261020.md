@@ -17,3 +17,9 @@ No cambia carga, medios, productor, cola, credenciales ni decisiones editoriales
 - QA visual de comparación de escritorio y recorrido móvil con datos sintéticos. Todas las escrituras Google están interceptadas por el test.
 
 Esta evidencia no acredita una escritura real de un editor ni una nueva producción. Publicación y bytes servidos deben registrarse aparte. Rollback: revertir este PR sin borrar borradores, decisiones, medios ni historial.
+
+## Publicación comprobada
+
+PR354 integrado en 25e5b9dade0dc2c32fac3a0312dfbc13feb696ba. Checks del head702ba536030354162240b9b85132f3ebf2dd7f2b: navegador, verificar, Arquitectura YOD y regresiones SUCCESS. Publicación39448620966 SUCCESS. Bytes públicos cotejados: tablero-sala.js36960bytes SHA25656c74e45f1d798fb9878cd56144c9244263b04088e0ce5f67db03596db7dee4a; index.html293124bytes SHA256153f9f9581fee4169e1f55f598161b27e8a6db437aeb72255b859ca63969658b. Ambos iguales al código probado. version-online.json confirma ese merge y run, snapshot418538841; data_sha ca433dfde0f5d8d4ec131c19c9e997a48e926acab17e43dd0073e42411b99027. No acredita decisiones reales de editores.
+
+Los marcadores #356 y #357 corresponden a las dos correcciones completas de navegación/comparación. #358 conserva pendiente la dirección editorial específica y la producción de una nueva lámina: la petición de revisión está reparada, pero no sustituye esa parte del encargo.
