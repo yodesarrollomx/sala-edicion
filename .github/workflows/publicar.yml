@@ -70,7 +70,7 @@ jobs:
           python3 -m unittest discover -s tests -p 'publicar_git_test.py'
           python3 -m unittest discover -s tests -p 'snapshots_online_test.py'
           python3 -m unittest discover -s tests -p '*medios*_test.py'
-          node --test tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs
+          node --test tests/mesa-local.test.cjs tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs
       - name: Construir bundle público sin logs ni archivos privados del runner
         env:
           GH_TOKEN: ${{ github.token }}
