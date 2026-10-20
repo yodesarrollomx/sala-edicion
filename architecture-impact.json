@@ -1,19 +1,16 @@
 {
-  "model_revision": "2026-10-18.sala-titulo-corte.1",
-  "proposal_id": "CHG-SALA-MESA-VISIBLE-20261017",
-  "summary": "El montador de la mesa volvía a montar sólo lo que la carta vigente mostró. Las tomas existentes que ninguna carta presentó (La Mesa Vacía L2, L3, L5 y L7) quedaban como «pendientes» sin carta: el tablero las enseñaba sólo para consulta y el editor no podía decidir. Ahora vuelven a la mesa tal cual, sin producir imágenes nuevas, y sólo las tomas que pasan la compuerta de contenido de una toma nueva; las que no la pasan se conservan como historia. No cambia decisiones, notas ni imágenes guardadas.",
+  "model_revision": "2026-10-20.sala-mesa-local.1",
+  "proposal_id": "CHG-SALA-MESA-LOCAL-20261020",
+  "summary": "Abrir la última mesa guardada por sesión para consulta y revalidar en segundo plano. Preservar borradores, cola y permisos vigentes.",
   "components": [
-    "SYS-SALA",
-    "GAS-SALA",
-    "SVC-SALA-PRODUCTOR"
+    "SYS-SALA"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p '*_test.py' (573 pruebas)",
-    "tests/sala_produccion_test.py: tomas nunca presentadas vuelven a la mesa; las vetadas se quedan como historia; candidatas históricas sin verificar siguen sin presentarse",
+    "node --test tests/mesa-local.test.cjs tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs tests/tablero-sala.test.cjs",
+    "node tests/mesa-local.browser.cjs (Chromium, datos sintéticos)",
     "python3 nube/verificar.py",
-    "git diff --check",
-    "Lectura del caso real publicado mesa-vacia-nube-2026-10-12-9d1b1a: L2 conserva su toma 1, L3 y L5 sus dos tomas, L7 su toma 2; las tomas con «Hermosillo» quedan fuera"
+    "git diff --check"
   ],
-  "rollback": "Revertir por PR. Las cartas que ya se hayan montado se conservan; no se borran propuestas, decisiones ni imágenes.",
-  "model_commit": "0933f0ab76ff5277402510ad0abf34c5d407cc97"
+  "rollback": "Revertir PR. La copia sala_mesa_local_v1 se ignora; no borrar borradores sala2-*, cola, Sheets ni medios.",
+  "model_commit": "2941b4e5eaf21d07654689974648f6d4eaa9dd67"
 }

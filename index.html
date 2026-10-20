@@ -782,6 +782,7 @@ body:has(#temaSala) .chn-pastilla{bottom:calc(var(--nav) + 64px + env(safe-area-
   </section>
 </div>
 
+<script src="mesa-local.js?v=20261020-1"></script>
 <script>
 /* ══ sesión — MISMO contrato de siempre: la liga entra por el #hash ══ */
 /* La dirección del Sheet NO es secreta (sin credencial no entrega nada); la credencial sí,
@@ -807,17 +808,18 @@ const GAS_DEF='https://script.google.com/macros/s/AKfycbx61UWsEYCL_dHzi0JrUv3GuA
 const GAS=()=>localStorage.getItem('sala_gas')||GAS_DEF;
 const CLAVE=()=>_llaveViva||localStorage.getItem('pyod_clave_v1')||localStorage.getItem('sala_clave')||'';   // 5-sep: la sesión del OS manda; 8-sep: si otra llave resultó ser la buena, esa manda
 let _llaveViva='';
+let _mesaLocal=false, _cacheMesa=null, _diaParaCache=null;
 const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage.getItem('sala_clave')].filter(Boolean))];   // se PRUEBAN todas; nunca se borra ninguna
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='ff1b72e109';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='c66734a962';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
 // aquí) nunca se decide, aunque el rol diga editor; así Aprobar, Pedir cambio y el arrastre quedan
 // de verdad apagados para quien nunca entró.
-const DECIDE=()=>VISTA_DOC||(ENTRADO()&&(ROL()==='editor'||ROL()==='editor2'));
+const DECIDE=()=>!_mesaLocal&&(VISTA_DOC||(ENTRADO()&&(ROL()==='editor'||ROL()==='editor2')));
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
 const OTROS=fs=>(fs||[]).filter(f=>f.quien!==YO()&&(f.marca||f.nota));
 const MIA=fs=>(fs||[]).find(f=>f.quien===YO()&&f.marca);
@@ -981,7 +983,7 @@ async function traer(f,intentos,tope,sinRespaldo){
         if(sirvio){ _llaveViva=sirvio; if(localStorage.getItem('sala_clave')&&localStorage.getItem('sala_clave')!==sirvio&&sirvio!==localStorage.getItem('pyod_clave_v1')) localStorage.setItem('sala_clave',sirvio); await medios; return resp }
         throw new Error(ultimoError||'sin respuesta del Sheet');
       }catch(e){ const m=String(e&&e.message||e);
-        if(/clave|credencial|no reconoc/i.test(m)){ _ultimoErrorLlave=m; break }
+        if(/clave|credencial|no reconoc/i.test(m)){ _ultimoErrorLlave=m; if(_mesaLocal){ retirarMesaLocal(); pintarLlaveMala(m); } break }
         if(i<N-1) await new Promise(res=>setTimeout(res,700*(i+1))) }
     }
   }
@@ -1105,6 +1107,7 @@ function armarPasos(sinCandado){
   }
 }
 function guardarBorrador(){
+  if(_mesaLocal) return; // consultar una copia nunca pisa el borrador editorial
   try{ localStorage.setItem(claveBorrador(),JSON.stringify({dec,idx,hist,pasos:pasos.map(x=>x.tipo+':'+x.pid+':'+(x.i??'')),t:Date.now(),env:guard.env||null})) }catch(e){}
 }
 function restaurarBorrador(){
@@ -1165,7 +1168,7 @@ function pintarEstado(tipo,texto){
   const e=$('#estado'); e.className='estado '+tipo; e.querySelector('span').textContent=texto;
   const fg=$('#finGuardado'); if(fg) fg.textContent=texto;
   const p=$('#pEstado'); if(p){ p.className='estado '+tipo; p.querySelector('span').textContent=texto }
-  $('#btnEntrar').hidden=ENTRADO()&&DECIDE();   // 10-oct: con llave pero visto como lector, el botón sigue ahí (antes quedabas sin salida)
+  $('#btnEntrar').hidden=ENTRADO()&&(DECIDE()||(_mesaLocal&&D));   // 10-oct: con llave pero visto como lector, el botón sigue ahí (antes quedabas sin salida)
   const bse=$('#barraSinEntrar'); if(bse) bse.hidden=ENTRADO();   // 8-sep: la barra ancha solo vive mientras no hay sesión
   const br=$('#btnReintentar'); if(br) br.hidden=!(tipo==='cola'||tipo==='sin'&&leerLS('sala_cola',[]).length);
   avisarPuerta('aj',!ENTRADO());
@@ -3062,6 +3065,42 @@ async function pintarIdeas(temas){
   const np=$('#nuevaPremisa'); if(np) np.onclick=nuevaPremisa;
 }
 
+/* ══ última mesa local: consulta inmediata; el Sheet sigue autorizando ══ */
+function identidadMesaLocal(){ return {endpoint:GAS(),role:ROL(),keys:LLAVES()} }
+async function abrirMesaLocal(){
+  if(typeof SalaMesaLocal==='undefined'||VISTA_DOC) return false;
+  try{
+    const identity=identidadMesaLocal(), signature=JSON.stringify(identity);
+    const owner=await SalaMesaLocal.scope(identity,window.crypto);
+    if(signature!==JSON.stringify(identidadMesaLocal())) return false;
+    const cache=SalaMesaLocal.read(localStorage,owner); if(!cache) return false;
+    _cacheMesa=cache; _mesaLocal=true; D=cache.day; fecha=D.fecha; _pintado=true;
+    pintarFecha(fecha); $('#mandoWrap').hidden=true;
+    pintarEstado('lectura','Última mesa guardada · actualizando');
+    if(window.SalaTablero) window.SalaTablero.restore(cache);
+    return true;
+  }catch(e){ return false }
+}
+async function guardarMesaLocal(groups,day){
+  if(typeof SalaMesaLocal==='undefined'||_mesaLocal||!day||day._respaldo||VISTA_DOC) return;
+  try{
+    const identity=identidadMesaLocal(), signature=JSON.stringify(identity);
+    const owner=await SalaMesaLocal.scope(identity,window.crypto);
+    if(signature!==JSON.stringify(identidadMesaLocal())||_mesaLocal) return;
+    SalaMesaLocal.write(localStorage,owner,day,groups);
+  }catch(e){}
+}
+function retirarMesaLocal(){
+  if(typeof SalaMesaLocal!=='undefined') SalaMesaLocal.clear(localStorage);
+  _cacheMesa=null; _diaParaCache=null;
+  if(_mesaLocal){ cerrarCapas(); D=null; _pintado=false; if(window.SalaTablero) window.SalaTablero.clear(); }
+}
+window.addEventListener('storage',e=>{
+  if(e.key===null||['sala_gas','sala_clave','sala_rol','pyod_clave_v1'].includes(e.key)){
+    _mesaLocal=true; retirarMesaLocal(); location.reload();
+  }
+});
+
 /* ══ arranque ══ */
 let _secundariosLanzados=false;
 function cargarSecundarios(){
@@ -3118,6 +3157,13 @@ function pintarCargando(){
   pintaAvance(); clearInterval(_tFrases); _tFrases=setInterval(()=>{ if(!$('#fraseCarga')){ clearInterval(_tFrases); return } pintaAvance() },1000);
 }
 function aplicarDia(d){
+  if(d&&d._respaldo&&_ultimoErrorLlave&&_mesaLocal){ retirarMesaLocal(); pintarLlaveMala(_ultimoErrorLlave); return; }
+  const desdeLocal=_mesaLocal;
+  if(d&&!d._respaldo){
+    _diaParaCache=JSON.parse(JSON.stringify(d));
+    _mesaLocal=false; _cacheMesa=null;
+    if(desdeLocal) _pintado=false; // montar fresco restaura el borrador con la conciliación existente
+  }
   clearInterval(_tFrases);
   if(_t0Carga&&d&&!d._respaldo){ try{ localStorage.setItem('sala_carga_s',String(Math.max(1,Math.round((Date.now()-_t0Carga)/1000)))) }catch(e){} _t0Carga=0 }
   // traer() cae solo al respaldo si el Sheet no contestó: con sesión, eso se dice y se reintenta (nunca pasa por «lo de hoy»)
@@ -3172,6 +3218,7 @@ function pintarEsperandoSheet(){
   if(!_reintentando){ _reintentando=true; reintentarSheet(0) }
 }
 function avisarRespaldo(){
+  if(_mesaLocal){ pintarEstado('cola','Copia guardada · sin conexión; reintentando'); return; }
   $('#subt').textContent='Sin señal con el Sheet · te muestro la copia'+((typeof D!=='undefined'&&D&&D.fecha)?' del '+D.fecha:'')+' · lo que marques se guarda al volver';
   pintarEstado('cola','Sin señal con el Sheet · reintentando');
 }
@@ -3249,13 +3296,13 @@ setInterval(vigilarVersion,600000);
   $('#barraSinEntrar').hidden=ENTRADO();   // 8-sep: se decide de una vez, sin esperar al Sheet (ENTRADO() solo mira este aparato)
   abrirGuia(false); ajustarZona();   // bienvenida inmediata; vigilar versión después de abrir Hoy
   subirCola();   // preservar guardados: sólo las lecturas secundarias esperan a que pinte Hoy
-  // 5-sep (Alejandro): «prefiero una animación mientras carga que estar viendo algo pasado».
-  // Ya NO se pinta la copia de respaldo a los 2.5 s: se espera al Sheet con una carta de carga.
-  // El respaldo solo entra si el Sheet de verdad no contesta, y se dice con todas sus letras.
-  pintarCargando();
+  // 20-oct: Dirección pide abrir la última mesa local y revalidar en segundo plano.
+  // Es consulta fechada, nunca una autorización para decidir sobre datos antiguos.
+  if(!await abrirMesaLocal()) pintarCargando();
   // Catálogo y vistas auxiliares se cargan al pintar la primera carta, sin competir con el día.
   try{ aplicarDia(normalizarDia(await conMarcasDeAntes(await traer(),''))) }
-  catch(e){ if(!_pintado&&ENTRADO()&&!VISTA_DOC){ pintarEsperandoSheet(); reintentarSheet(0) }   // 23-sep: invariante 12 — con sesión nunca se abre la copia
+  catch(e){ if(_mesaLocal){ avisarRespaldo(); if(!_reintentando){ _reintentando=true; reintentarSheet(0) } }
+    else if(!_pintado&&ENTRADO()&&!VISTA_DOC){ pintarEsperandoSheet(); reintentarSheet(0) }   // 23-sep: invariante 12 — con sesión nunca se abre la copia
     else if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); if(typeof SalaMedios!=='undefined')await SalaMedios.cargar(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)); avisarRespaldo(); reintentarSheet(0) }
     catch(e2){ $('#titulo').textContent='No pude abrir la sala'; $('#subt').textContent='Puede ser la red. Cierra y vuelve a abrir en un momento.'; pintarEstado('sin','Sin conexión') } } }
   avisarLlave();
@@ -3273,5 +3320,5 @@ setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subir
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); _tSubir=null; subir() } } });
 window.addEventListener('resize',()=>{ if(DECIDE()) pintarPanel(); else pintarPanelMira() });
 </script>
-<script src="tablero-sala.js?v=20261018-titulo-cortes"></script>
+<script src="tablero-sala.js?v=20261020-mesa-local"></script>
 </body></html>

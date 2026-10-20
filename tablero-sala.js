@@ -81,7 +81,7 @@ api.contexto=function(el){
   recibo:o&&o.recibo_imagen||l&&l.recibo_imagen||null};
 };
 const tones=["184,137,86","116,157,142","130,148,186","177,135,157","162,163,112","164,138,190","110,167,180"];
-const eligible=()=>DECIDE()&&(!D||!D._respaldo||VISTA_DOC);
+const eligible=()=>!S.cached&&DECIDE()&&(!D||!D._respaldo||VISTA_DOC);
 function group(){return S.groups.find(g=>g.id===S.focus);}
 function tone(g){let h=0;for(const c of g.id)h=(h*31+c.charCodeAt(0))>>>0;return tones[h%tones.length];}
 function markData(g,l){
@@ -144,9 +144,9 @@ function render(){
  const oldX=root.querySelector(".bt-pan")?.scrollLeft||0;
  root.dataset.level=S.choice?"opciones":f?"publicacion":"tablero";
  root.dataset.transition=String(previousLevel!==root.dataset.level);
- root.innerHTML=`<div class="bt-heading"><div><span class="bt-eyebrow">SALA DE EDICIÓN</span><h1>${f?esc(f.t.pieza||f.p.titulo):"La mesa editorial"}</h1><p>${f?"Lee la secuencia completa. Abre una página para revisar sus tomas.":S.groups.length+" "+(S.groups.length===1?"publicación":"publicaciones")+" en mesa · "+pending+" páginas por revisar"}</p></div>
- <div class="bt-heading-actions"><button data-refresh ${S.busy?"disabled":""}>${S.busy?"Actualizando…":"↻ Actualizar"}</button><button data-legacy>Otras revisiones</button></div></div>
- ${!f?`<div class="bt-editorial-intro"><div><span class="bt-eyebrow">TU CRITERIO, ANTES DE PRODUCIR</span><h2>Una historia. Cada detalle.</h2><p>Revisa el mensaje, compara las tomas y deja una decisión clara. Tus notas acompañan cada página.</p></div><button class="bt-start" data-next ${pending?"":"disabled"}>${pending?"Empezar revisión ↗":"Sin páginas por revisar"}</button></div>`:""}
+ root.innerHTML=`${S.cached?`<p class="bt-notice bt-local" role="status">Copia guardada el ${esc(new Date(S.savedAt).toLocaleString('es-MX'))} · Actualizando. Puedes consultar; las decisiones se habilitan al confirmar la mesa vigente.</p>`:''}<div class="bt-heading"><div><span class="bt-eyebrow">SALA DE EDICIÓN</span><h1>${f?esc(f.t.pieza||f.p.titulo):"La mesa editorial"}</h1><p>${f?"Lee la secuencia completa. Abre una página para revisar sus tomas.":S.groups.length+" "+(S.groups.length===1?"publicación":"publicaciones")+" en mesa · "+pending+" páginas por revisar"}</p></div>
+ <div class="bt-heading-actions"><button data-refresh ${S.busy?"disabled":""}>${S.busy?"Actualizando…":"↻ Actualizar"}</button><button data-legacy ${S.cached?"disabled":""}>Otras revisiones</button></div></div>
+ ${!f&&!S.cached?`<div class="bt-editorial-intro"><div><span class="bt-eyebrow">TU CRITERIO, ANTES DE PRODUCIR</span><h2>Una historia. Cada detalle.</h2><p>Revisa el mensaje, compara las tomas y deja una decisión clara. Tus notas acompañan cada página.</p></div><button class="bt-start" data-next ${pending?"":"disabled"}>${pending?"Empezar revisión ↗":"Sin páginas por revisar"}</button></div>`:""}
  <div class="bt-bar"><div class="bt-legend"><span class="bt-dot amarillo">Revisar</span><span class="bt-dot verde">Aprobada</span><span class="bt-dot rojo">Cambio pedido</span><span class="bt-dot produccion">Producción</span></div>
  <div class="bt-levels"><button data-back ${!f?"disabled":""} aria-label="Alejar, volver al tablero">−</button><span>${S.choice?"Revisión":f?"Libro abierto":"Vista general"}</span><button data-zoom aria-label="Acercar">${S.choice?"↗":"+"}</button></div></div>
  <div class="bt-nav">${f?`<button data-back>← Todas las publicaciones</button><button data-next>Ir a la siguiente por revisar →</button>`:
@@ -321,17 +321,20 @@ function bind(){
  }
 }
 async function refresh(live=false){
+ if(_mesaLocal&&!live){render();return;}
  if(S.busy){S.refreshPending=true;return;}S.busy=true;S.notice="";render();
  try{
-  if(live&&ENTRADO()){_tCola=0;traerCola();const d=await traer(fecha,1,20000,true);if(d&&!d._respaldo&&!d.error)aplicarDia(normalizarDia(d));else S.notice="No se confirmó una lectura nueva del Sheet; conservé lo que ya tenías.";}
+  if(live&&ENTRADO()){_tCola=0;traerCola();const d=await traer(_mesaLocal?'':fecha,1,20000,true);if(d&&!d._respaldo&&!d.error)aplicarDia(normalizarDia(d));else S.notice="No se confirmó una lectura nueva del Sheet; conservé lo que ya tenías.";}
+  if(_mesaLocal)return;
+  const sourceDay=D, cacheDay=_diaParaCache;
   const props=[...((D&&(D._todas||D.propuestas))||[])];
-  let inventario=[];
+  let inventario=[], inventarioConfirmado=false;
   try{
    const response=await fetch("datos/mesa-estado.json?v="+Date.now(),{cache:"no-store",signal:AbortSignal.timeout(20000)});
    if(!response.ok)throw Error("Sin inventario");
    const report=await response.json();
    if(!Array.isArray(report.publicaciones)||!report.revisado_en)throw Error("Sin proyección");
-   inventario=report.publicaciones;
+   inventario=report.publicaciones; inventarioConfirmado=true;
    const ids=new Set(props.map(p=>p.id));
    for(const p of inventario){
     if(!/^[A-Za-z0-9_-]+$/.test(p.id)||!Array.isArray(p.laminas))throw Error("Inventario inválido");
@@ -356,10 +359,14 @@ async function refresh(live=false){
     continue;
    }
    const id=p.pieza_slug||normSlug(p.pieza||String(p.titulo||"").split(" · ")[0]);const g=map.get(id)||[...map.values()].find(x=>normSlug(x.t.pieza)===id);if(g)g.ejes.push(p);else map.set(id,{id,pid:p.id,p,t:{pieza:p.pieza||p.titulo,pieza_slug:id,laminas:[]},ejes:[p]});}
-  S.groups=[...map.values()];S.loaded=true;if(S.focus&&!group()){S.focus=null;S.choice=null;}
+  if(D!==sourceDay){S.refreshPending=true;return;}
+  S.groups=[...map.values()];S.loaded=true;S.cached=false;
+  if(inventarioConfirmado&&all.every(({p,t})=>!(p.laminas||[]).length||!!t)) guardarMesaLocal(S.groups,cacheDay);if(S.focus&&!group()){S.focus=null;S.choice=null;}
  }catch(e){S.notice="No pude actualizar el tablero. Tu revisión sigue conservada. Usa Actualizar.";}
  finally{S.busy=false;render();if(S.refreshPending){S.refreshPending=false;queueMicrotask(()=>refresh());}}
 }
+api.restore=cache=>{S.groups=cache.groups;S.loaded=true;S.cached=true;S.savedAt=cache.savedAt;render();requestAnimationFrame(()=>requestAnimationFrame(()=>performance.mark("sala-mesa-local-visible")));};
+api.clear=()=>{S.groups=[];S.focus=S.choice=null;S.cached=false;S.loaded=false;root.innerHTML="";document.body.classList.remove("sala-tablero");};
 api.refresh=refresh;api.render=render;api.produccionActualizada=()=>{if(!S.choice)render();};
 const returnButton=document.createElement("button");returnButton.className="bt-return";returnButton.textContent="← Volver al tablero";returnButton.onclick=()=>{document.body.classList.remove("sala-turno");render();};document.getElementById("vHoy").prepend(returnButton);
 let wheelTotal=0,lastWheel=0;
@@ -381,5 +388,5 @@ document.addEventListener("keydown",e=>{
  if(e.key==="Tab"&&S.choice){const buttons=[...root.querySelectorAll(".bt-choice button:not(:disabled),.bt-choice [tabindex]")];if(e.shiftKey&&document.activeElement===buttons[0]){e.preventDefault();buttons[buttons.length-1]?.focus();}else if(!e.shiftKey&&document.activeElement===buttons[buttons.length-1]){e.preventDefault();buttons[0]?.focus();}}
 },true);
 setInterval(()=>{if(D&&!document.hidden&&document.body.dataset.vista==="hoy"&&!S.choice)render();},30000);
-if(D)refresh();
+if(_cacheMesa)api.restore(_cacheMesa);else if(D)refresh();
 })();
