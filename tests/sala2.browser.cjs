@@ -41,6 +41,7 @@ const day=role=>({fecha:'2026-10-20',rol:role,quien:'Editor sintético',propuest
    await page.waitForFunction(()=>idx===2);assert.equal(await page.evaluate(()=>dec['corte-1'].nota),'NO VA — Rehacer');
    await page.waitForFunction(()=>candadoLibre());await page.locator('#s2ok').click();await page.waitForFunction(()=>idx===3);assert.equal(await page.evaluate(()=>dec['corte-2'].laminas[0]),'si');
    await page.waitForFunction(()=>candadoLibre());await page.locator('#deshacer').click();await page.waitForFunction(()=>idx===2);
+   await page.evaluate(()=>{pasos[idx].p.video='';pintarCartas();});await page.waitForSelector('#zona .opciones',{state:'visible'});
    await page.locator('#puertas [data-v="prod"]').click();await page.waitForFunction(()=>document.body.dataset.vista==='prod');assert.equal(await page.locator('#s2dock').isVisible(),false);
    await page.locator('#puertas [data-v="hoy"]').click();await page.waitForSelector('#s2dock',{state:'visible'});
   }else{

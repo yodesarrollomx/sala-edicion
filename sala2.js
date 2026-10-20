@@ -74,6 +74,7 @@
     prefijo = pref || '';
     if (x.tipo === 'lamina'){ if (typeof decidir === 'function') decidir('no'); }
     else { var ning = carta() && carta().querySelector('[data-ning]'); if (ning) ning.click(); }
+    if (!document.getElementById('notaT')) prefijo = '';
   }
   function aprobar(){
     var x = paso(); if (!x || !puedeDecidir() || document.querySelector('.velo, .hoja-velo')) return;
@@ -122,7 +123,8 @@
   function marcarCarta(){
     var c = carta(); if (!c) return;
     var ops = c.querySelectorAll('[data-op]');
-    if (c.classList.contains('s2-una') !== (ops.length === 1)) c.classList.toggle('s2-una', ops.length === 1);
+    var unicaConVideo = ops.length === 1 && !!c.querySelector('.conVideo');
+    if (c.classList.contains('s2-una') !== unicaConVideo) c.classList.toggle('s2-una', unicaConVideo);
     if (!document.getElementById('s2clasica')){
       var a = document.createElement('a');
       a.id = 's2clasica'; var url = new URL(location.href); url.searchParams.set('clasica','1'); a.href = url.href; a.textContent = 'Ver la Sala anterior';
