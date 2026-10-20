@@ -15,7 +15,18 @@ function yodPresCRM_(token){
 function yodPresActor_(token){
  // Fresh server verification, with expiry and revocation. Never trust a browser role.
  if(typeof token!=='string'||token.length<20||token.length>500)return null;
- var v=validarEnHojaDelPortero_(token);if(!v||v.ok!==true||!v.correo)return null;
+ var v=null,porteros=[PORTERO_EXEC,PORTERO_RESPALDO];
+ for(var i=0;i<porteros.length;i++){
+  try{var response=UrlFetchApp.fetch(porteros[i]+'?recurso=canje&t='+encodeURIComponent(token),{muteHttpExceptions:true,followRedirects:true});
+   if(response.getResponseCode()!==200)continue;
+   var candidate=JSON.parse(response.getContentText());if(!candidate||typeof candidate.ok!=='boolean')continue;
+   // An authoritative denial is final. A transport failure may use the configured backup.
+   if(candidate.ok!==true)return null;v=candidate;break;
+  }catch(e){/* no credential, URL or response is logged */}
+ }
+ if(!v)throw Error('service_unavailable');if(typeof v.correo!=='string'||typeof v.rol!=='string')return null;
+ var role=String(v.rol).toLowerCase(),boards=String(v.boards||'');
+ if(role!=='admin'&&boards.trim()!=='*'&&boards.split(',').map(function(x){return x.trim().toUpperCase();}).indexOf(CODIGO_SALA)<0)return null;
  var email=String(v.correo).trim().toLowerCase(),owner=yodPresDigest_(email)===YOD_PRES_OWNER_&&String(v.rol).toLowerCase()==='admin';
  var actor={ok:true,id:yodPresDigest_(email),name:String(v.nombre||'YOD'),owner:owner,opportunityIds:[]};
  if(!owner){try{actor.opportunityIds=yodPresCRM_(token).opportunities.map(function(o){return o.id;});}catch(e){return null;}}

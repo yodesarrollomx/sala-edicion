@@ -1,21 +1,17 @@
 {
-  "model_revision": "2026-10-20.sala-video-iphone.1",
-  "proposal_id": "CHG-SALA-VIDEO-IPHONE-20261020",
-  "summary": "Reproductor nativo, copia ligera cifrada preparada automáticamente y fullscreen dentro de Sala.",
+  "model_revision": "2026-10-20.chinches-audio-ipad.1",
+  "proposal_id": "CHG-PRESENTACIONES-MD-20261020",
+  "summary": "Canje fresco por el Portero HTTP existente sin depender de compartir la hoja de sesiones con el propietario de Apps Script.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
-    "SHEET-SALA",
-    "EXT-GMAIL"
+    "SHEET-SALA"
   ],
   "tests": [
-    "node --test tests/*.test.cjs",
-    "node tests/video-privado.browser.cjs",
-    "node tests/sala2.browser.cjs",
+    "node --test tests/presentaciones-gas.test.cjs",
     "python3 nube/verificar.py",
-    "git diff --check",
-    "python3 tests/video_revision_test.py"
+    "git diff --check"
   ],
-  "rollback": "Revertir interfaz y versión de implementación, conservar datos, permisos, archivos y decisiones.",
-  "model_commit": "7c47cb111e4e6a7d978d0be6d8e7ec7a8b362542"
+  "rollback": "Revertir código por PR conservando originales, borradores, IDs, recibos y permisos",
+  "model_commit": "7796d27f8f68eda5785e4f173accdbe4fbdc13fe"
 }
