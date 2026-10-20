@@ -74,6 +74,7 @@ async function prepare(browser,width,role="editor",mobile=false,embedded=false,m
  await page.goto(base+(embedded?"fixture-parent":""));
  const view=embedded?page.frames().find(f=>f.parentFrame()):page;
  await view.waitForSelector(".bt-column",{timeout:30000});
+ await view.waitForFunction(()=>!document.querySelector("[data-refresh]")?.disabled&&!document.querySelector(".bt-local"));
  // La bienvenida, si estaba visible, se cierra con su botón sin tocar datos.
  await view.evaluate(()=>{if(typeof cerrarCapas==="function")cerrarCapas();});
  return {page,view,context,writes,errors,releaseReads};

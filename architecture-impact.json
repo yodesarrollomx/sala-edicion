@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-20.sala-mesa-local.1",
-  "proposal_id": "CHG-SALA-MESA-LOCAL-20261020",
-  "summary": "Abrir la última mesa guardada por sesión para consulta y revalidar en segundo plano. Preservar borradores, cola y permisos vigentes.",
+  "model_revision": "2026-10-20.sala-arranque-progresivo.2",
+  "proposal_id": "CHG-SALA-ARRANQUE-PROGRESIVO-20261020",
+  "summary": "Abrir consulta pública mientras espera servidor; pintar tiras progresivamente y diferir medios fuera de vista.",
   "components": [
     "SYS-SALA"
   ],
@@ -9,8 +9,10 @@
     "node --test tests/mesa-local.test.cjs tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs tests/tablero-sala.test.cjs",
     "node tests/mesa-local.browser.cjs (Chromium, datos sintéticos)",
     "python3 nube/verificar.py",
-    "git diff --check"
+    "git diff --check",
+    "node tests/arranque-progresivo.browser.cjs",
+    "python3 -m unittest discover -s tests -p sala_rendimiento_test.py -v"
   ],
   "rollback": "Revertir PR. La copia sala_mesa_local_v1 se ignora; no borrar borradores sala2-*, cola, Sheets ni medios.",
-  "model_commit": "b4efa45afa3d9515696bd83c6f10a8521bec033d"
+  "model_commit": "21e8b3d4a64f6045f5875ff39caa0ce1a97751a8"
 }

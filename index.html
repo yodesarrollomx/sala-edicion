@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://script.google.com">
 <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&display=swap">
 <style>
 /* Sala 3.0 · «Tres puertas» (3-sep-2026): Hoy · Publicaciones · Ajustes.
    Nace de la auditoría UX tras la demo a Sayri: un solo orden, retorno consistente,
@@ -664,8 +664,8 @@ body > .chn-aviso:has(~ .chn-aviso){display:none!important}
 </style><link rel="stylesheet" href="tablero-sala.css?v=20261015-editorial"></head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
 <script src="sala-correcciones.js?v=20261015-4"></script>
 <script src="politica-imagen.js?v=hidream-o1-20261017"></script>
-<script src="video-revision.js?v=20261017-1"></script>
-<script src="medios-publicos.js?v=20261015-1"></script>
+<script src="video-revision.js?v=20261020-diferido"></script>
+<script src="medios-publicos.js?v=20261020-20261015-1"></script>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
 <style>/* 13-oct · chinche #297 (CHN-20261013-0930-3863): «todas las pantallas tienen el solecito y la nochecita, aquí no».
    Mismo botón ☀️/🌙 que el Portero del YOD OS y MISMA preferencia (localStorage «yod_tema», mismo origen):
@@ -782,7 +782,7 @@ body:has(#temaSala) .chn-pastilla{bottom:calc(var(--nav) + 64px + env(safe-area-
   </section>
 </div>
 
-<script src="mesa-local.js?v=20261020-1"></script>
+<script src="mesa-local.js?v=20261020-snapshot-1"></script>
 <script>
 /* ══ sesión — MISMO contrato de siempre: la liga entra por el #hash ══ */
 /* La dirección del Sheet NO es secreta (sin credencial no entrega nada); la credencial sí,
@@ -808,12 +808,12 @@ const GAS_DEF='https://script.google.com/macros/s/AKfycbx61UWsEYCL_dHzi0JrUv3GuA
 const GAS=()=>localStorage.getItem('sala_gas')||GAS_DEF;
 const CLAVE=()=>_llaveViva||localStorage.getItem('pyod_clave_v1')||localStorage.getItem('sala_clave')||'';   // 5-sep: la sesión del OS manda; 8-sep: si otra llave resultó ser la buena, esa manda
 let _llaveViva='';
-let _mesaLocal=false, _cacheMesa=null, _diaParaCache=null;
+let _mesaLocal=false, _mesaPublica=false, _cacheMesa=null, _diaParaCache=null;
 const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage.getItem('sala_clave')].filter(Boolean))];   // se PRUEBAN todas; nunca se borra ninguna
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='c66734a962';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='3ce1334454';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -956,41 +956,49 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&CAPAS.length){ e.p
 
 /* ══ datos (idéntico contrato: recurso=dia, respaldo en datos/manifiesto.json) ══ */
 let _ultimoErrorLlave='';
+const SALA_TIMEOUT_MS=8000, SALA_REINTENTOS=1, SALA_BACKOFF_MS=400;
+window.SalaRendimiento=[];
+function medirSala(tipo,inicio,resultado,intento){
+  window.SalaRendimiento.push({tipo,ms:Math.round(performance.now()-inicio),resultado,intento});
+  if(window.SalaRendimiento.length>80)window.SalaRendimiento.shift();
+}
+let _snapshotPublicado=null;
+function snapshotPublicado(){
+  if(!_snapshotPublicado)_snapshotPublicado=(async()=>{
+    const inicio=performance.now();
+    try{const r=await fetch('datos/manifiesto.json?v='+Date.now(),{signal:AbortSignal.timeout(SALA_TIMEOUT_MS)});
+      if(!r.ok)throw Error('sin copia');const j=await r.json();
+      if(!j.fecha||!Array.isArray(j.propuestas))throw Error('copia inválida');
+      medirSala('snapshot',inicio,'ok',1);return j;
+    }catch(e){medirSala('snapshot',inicio,'fallo',1);throw e;}
+  })();
+  return _snapshotPublicado;
+}
 async function traer(f,intentos,tope,sinRespaldo){
-  _ultimoErrorLlave='';
-  const medios=typeof SalaMedios!=='undefined'?SalaMedios.cargar():Promise.resolve();
-  if(ENTRADO()){
-    const N=intentos||3;
-    for(let i=0;i<N;i++){
-      // 8-sep (revisión): se prueban TODAS las llaves guardadas, empezando por la que ya sirvió.
-      // Antes se borraba `sala_clave` dando por hecho que era la que había fallado, y como CLAVE()
-      // prefería la del OS, se perdía una llave buena sin haberla probado nunca.
-      let ultimoError=null, sirvio=null, resp=null;
-      for(const llave of (_llaveViva?[_llaveViva,...LLAVES().filter(k=>k!==_llaveViva)]:LLAVES())){
-        try{
-          const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),tope||(ENTRADO()?40000:15000));   // 23-sep: 60→40 s; la espera ya se ve contada en pantalla   // con sesión se espera al Sheet frío
-          const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(llave)+(f?'&f='+encodeURIComponent(f):''),{signal:ctl.signal});
-          clearTimeout(t);
-          const j=await leerJSON(r);
-          if(!r.ok||!j) throw new Error('sin JSON ('+r.status+')');
-          if(j.error) throw new Error(j.error);
-          sirvio=llave; resp=j; break;
-        }catch(e){ const m=String(e&&e.message||e); ultimoError=m;
-          if(!/clave|credencial|no reconoc/i.test(m)) break;   // no es la llave: es la red; no tiene caso probar otras
-        }
+  _ultimoErrorLlave='';cargarMediosSinBloquear();
+  const N=Math.min(1+SALA_REINTENTOS,Math.max(1,intentos||2));
+  const llaves=_llaveViva?[_llaveViva,...LLAVES().filter(k=>k!==_llaveViva)]:LLAVES();
+  let k=0;
+  if(ENTRADO())for(let i=0;i<N;i++){
+    const inicio=performance.now(),ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),Math.min(tope||SALA_TIMEOUT_MS,SALA_TIMEOUT_MS));
+    try{
+      const llave=llaves[k];
+      const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(llave)+(f?'&f='+encodeURIComponent(f):''),{signal:ctl.signal});
+      const j=await leerJSON(r);
+      if(!r.ok||!j)throw Error('sin JSON');if(j.error)throw Error(j.error);
+      medirSala('dia',inicio,'ok',i+1);_llaveViva=llave;return j;
+    }catch(e){
+      medirSala('dia',inicio,ctl.signal.aborted?'timeout':'fallo',i+1);
+      const m=String(e&&e.message||e);
+      if(/clave|credencial|no reconoc/i.test(m)){
+        if(k+1<llaves.length&&i+1<N){k++;}
+        else{_ultimoErrorLlave=m;if(_mesaLocal){retirarMesaLocal();pintarLlaveMala(m);}break;}
       }
-      try{
-        if(sirvio){ _llaveViva=sirvio; if(localStorage.getItem('sala_clave')&&localStorage.getItem('sala_clave')!==sirvio&&sirvio!==localStorage.getItem('pyod_clave_v1')) localStorage.setItem('sala_clave',sirvio); await medios; return resp }
-        throw new Error(ultimoError||'sin respuesta del Sheet');
-      }catch(e){ const m=String(e&&e.message||e);
-        if(/clave|credencial|no reconoc/i.test(m)){ _ultimoErrorLlave=m; if(_mesaLocal){ retirarMesaLocal(); pintarLlaveMala(m); } break }
-        if(i<N-1) await new Promise(res=>setTimeout(res,700*(i+1))) }
-    }
+    }finally{clearTimeout(t);}
+    if(i+1<N)await new Promise(resolve=>setTimeout(resolve,SALA_BACKOFF_MS));
   }
-  if(sinRespaldo) throw new Error('sin datos de ese día');   // el respaldo es de HOY: no sirve de sustituto
-  const r=await fetch('datos/manifiesto.json?v='+Date.now());
-  if(!r.ok) throw new Error('tampoco pude leer el respaldo');
-  const j=await r.json(); j._respaldo=true; await medios; return j;
+  if(sinRespaldo)throw Error('sin datos de ese día');
+  const j=JSON.parse(JSON.stringify(await snapshotPublicado()));j._respaldo=true;return j;
 }
 async function conMarcasDeAntes(d,f){
   if(d._respaldo) return d;
@@ -1275,16 +1283,22 @@ async function subirCola(){
    Cada propuesta puede traer su tira en datos/tiras/<id>.json: las 9 láminas con su
    texto, cuáles ya aprobó y cuál se está rehaciendo. Así la carta nunca llega sola. ══ */
 const TIRAS={}; let TIRAS_HAY=null;
+const _tirasEnVuelo=new Map(); let _indiceTiras=null;
 const POLITICA_IMAGEN=globalThis.SalaPoliticaImagen||{tomas:()=>[],srcLamina:()=>'',mensajeEspera:()=> 'Esperando el control del generador de imágenes'};
 function fuenteLamina(l,src){return POLITICA_IMAGEN.srcLamina(l,src||l&&l.src||'')}
-async function cargarTira(pid){
+async function cargarTira(pid,conocida=false){
   if(pid in TIRAS) return TIRAS[pid];
-  // el índice evita pedir tiras que no existen (404 en la consola por cada carta suelta)
-  if(TIRAS_HAY===null){ try{ TIRAS_HAY=await (await fetch('datos/tiras/index.json?v='+Date.now())).json() }catch(e){ TIRAS_HAY=[] } }
-  if(Array.isArray(TIRAS_HAY)&&!TIRAS_HAY.includes(pid)){ TIRAS[pid]=null; return null }
-  try{ const r=await fetch('datos/tiras/'+pid+'.json?v='+Date.now()); TIRAS[pid]=r.ok?await r.json():null }
-  catch(e){ TIRAS[pid]=null }
-  return TIRAS[pid];
+  if(_tirasEnVuelo.has(pid)) return _tirasEnVuelo.get(pid);
+  const task=(async()=>{
+    if(!conocida&&TIRAS_HAY===null){
+      if(!_indiceTiras) _indiceTiras=fetch('datos/tiras/index.json?v='+Date.now(),{signal:AbortSignal.timeout(8000)}).then(r=>{if(!r.ok)throw Error('índice');return r.json()}).then(j=>{if(!Array.isArray(j))throw Error('índice');TIRAS_HAY=j;}).catch(()=>{}).finally(()=>{_indiceTiras=null});
+      await _indiceTiras;
+    }
+    if(!conocida&&Array.isArray(TIRAS_HAY)&&!TIRAS_HAY.includes(pid)){TIRAS[pid]=null;return null;}
+    try{const r=await fetch('datos/tiras/'+encodeURIComponent(pid)+'.json?v='+Date.now(),{signal:AbortSignal.timeout(8000)});if(r.status===404){TIRAS[pid]=null;return null;}if(!r.ok)throw Error('tira');return TIRAS[pid]=await r.json();}
+    catch(e){return null;}
+  })();
+  _tirasEnVuelo.set(pid,task);try{return await task;}finally{_tirasEnVuelo.delete(pid);}
 }
 /* La nota de una lámina vive en el Sheet (con credencial), no en el archivo público del repo. */
 function notaDeLamina(t,l){
@@ -1547,7 +1561,7 @@ function pintarCartas(){
   $('#titulo').innerHTML=r===1?`Falta <b>1 decisión</b>`:`Faltan <b>${r} decisiones</b>`;
   $('#subt').textContent=piezaDe(x0)?`Publicación: ${piezaDe(x0)}`:'';
   z.innerHTML='';
-  for(let k=Math.min(idx+1,pasos.length-1);k>=idx;k--){
+  for(let k=idx;k>=idx;k--){
     const x=pasos[k], el=document.createElement('div');
     el.className='carta'+(k>idx?' detras':''); el.dataset.k=k;
     if(x.tipo==='lamina'){
@@ -1602,7 +1616,7 @@ function pintarCartas(){
       const ops=CANDIDATAS(x.p).map((o,j)=>{ const m=_medio(o.src);
         const vista = !o.src ? ''
           : m==='audio' ? `<audio src="${esc(o.src)}" controls preload="none" style="width:100%;margin-bottom:8px"></audio>`
-          : m==='video' ? `<video src="${esc(o.src)}" controls playsinline preload="metadata" style="width:100%;max-height:300px;border-radius:10px;display:block;margin-bottom:8px"></video>`
+          : m==='video' ? `<video src="${esc(o.src)}" controls playsinline preload="none" style="width:100%;max-height:300px;border-radius:10px;display:block;margin-bottom:8px"></video>`
           : `<img src="${esc(ligera(o.src))}" alt="" style="width:100%;max-height:230px;object-fit:cover;object-position:center 30%;border-radius:10px;display:block;margin-bottom:8px;cursor:zoom-in" data-amp="${esc(o.src)}">`;
         return `<div class="op">${vista}<h4>${esc(o.titulo||('Opción '+(j+1)))}</h4><p>${esc(o.texto||'')}</p><button data-op="${j}">Aprobar esta opción</button></div>` }).join('');
       // 15-sep, su reclamo textual: «no me está mostrando mucho ni para qué ni imágenes; no me dejó claro
@@ -1629,7 +1643,7 @@ function pintarCartas(){
     z.appendChild(el);
     if(k===idx&&x.tipo==='lamina') arrastrar(el);
   }
-  pasos.slice(idx+1,idx+2).forEach(x=>{ if(x.tipo==='lamina'){ const im=new Image(); im.fetchPriority='low'; im.decoding='async'; im.src=ligera(x.p.laminas[x.i]) } });
+  // La siguiente tarjeta se carga cuando el editor avanza.
   mandoDecidir();
   const esLam=pasos[idx].tipo==='lamina';
   $('#mando').hidden=!esLam;                 // en una carta de opciones se elige arriba…
@@ -3066,7 +3080,7 @@ async function pintarIdeas(temas){
 }
 
 /* ══ última mesa local: consulta inmediata; el Sheet sigue autorizando ══ */
-function identidadMesaLocal(){ return {endpoint:GAS(),role:ROL(),keys:LLAVES()} }
+function identidadMesaLocal(){ return {endpoint:GAS(),role:ROL(),keys:LLAVES().length?LLAVES():['consulta-publica']} }
 async function abrirMesaLocal(){
   if(typeof SalaMesaLocal==='undefined'||VISTA_DOC) return false;
   try{
@@ -3074,25 +3088,25 @@ async function abrirMesaLocal(){
     const owner=await SalaMesaLocal.scope(identity,window.crypto);
     if(signature!==JSON.stringify(identidadMesaLocal())) return false;
     const cache=SalaMesaLocal.read(localStorage,owner); if(!cache) return false;
-    _cacheMesa=cache; _mesaLocal=true; D=cache.day; fecha=D.fecha; _pintado=true;
+    _cacheMesa=cache; _mesaLocal=true; _mesaPublica=cache.source==='published'; D=cache.day; fecha=D.fecha; _pintado=true;
     pintarFecha(fecha); $('#mandoWrap').hidden=true;
     pintarEstado('lectura','Última mesa guardada · actualizando');
     if(window.SalaTablero) window.SalaTablero.restore(cache);
     return true;
   }catch(e){ return false }
 }
-async function guardarMesaLocal(groups,day){
-  if(typeof SalaMesaLocal==='undefined'||_mesaLocal||!day||day._respaldo||VISTA_DOC) return;
+async function guardarMesaLocal(groups,day,publicada=false){
+  if(typeof SalaMesaLocal==='undefined'||(!publicada&&(_mesaLocal||!day||day._respaldo))||!day||VISTA_DOC) return;
   try{
     const identity=identidadMesaLocal(), signature=JSON.stringify(identity);
     const owner=await SalaMesaLocal.scope(identity,window.crypto);
-    if(signature!==JSON.stringify(identidadMesaLocal())||_mesaLocal) return;
-    SalaMesaLocal.write(localStorage,owner,day,groups);
+    if(signature!==JSON.stringify(identidadMesaLocal())||(!publicada&&_mesaLocal)||day!==D&&publicada) return;
+    SalaMesaLocal.write(localStorage,owner,day,groups,Date.now(),publicada?'published':'server');
   }catch(e){}
 }
 function retirarMesaLocal(){
   if(typeof SalaMesaLocal!=='undefined') SalaMesaLocal.clear(localStorage);
-  _cacheMesa=null; _diaParaCache=null;
+  _cacheMesa=null; _diaParaCache=null; _mesaPublica=false;
   if(_mesaLocal){ cerrarCapas(); D=null; _pintado=false; if(window.SalaTablero) window.SalaTablero.clear(); }
 }
 window.addEventListener('storage',e=>{
@@ -3100,6 +3114,26 @@ window.addEventListener('storage',e=>{
     _mesaLocal=true; retirarMesaLocal(); location.reload();
   }
 });
+
+let _mediosIniciales=null;
+function cargarMediosSinBloquear(){
+  if(_mediosIniciales||typeof SalaMedios==='undefined')return _mediosIniciales;
+  _mediosIniciales=SalaMedios.cargar().then(()=>{
+    if(window.SalaTablero)window.SalaTablero.render();
+    if(_pintado&&!document.body.classList.contains('sala-tablero')&&!_mesaLocal){if(DECIDE())pintarCartas();else pintarMira();}
+  }).catch(()=>{});
+  return _mediosIniciales;
+}
+async function abrirMesaPublicada(){
+  try{
+    const j=JSON.parse(JSON.stringify(await snapshotPublicado()));
+    if(D||_ultimoErrorLlave||!j.fecha||!Array.isArray(j.propuestas))return;
+    j._respaldo=true;D=normalizarDia(j);fecha=D.fecha;_mesaLocal=true;_mesaPublica=true;_pintado=true;
+    pintarFecha(fecha);$('#mandoWrap').hidden=true;pintarEstado('lectura','Copia publicada · actualizando');
+    clearInterval(_tFrases);
+    if(window.SalaTablero)window.SalaTablero.preview();
+  }catch(e){/* El servidor sigue en paralelo; no se reemplaza contenido vigente. */}
+}
 
 /* ══ arranque ══ */
 let _secundariosLanzados=false;
@@ -3150,7 +3184,7 @@ function pintaAvance(){ const e=$('#fraseCarga'); if(!e) return;
   const b=$('#btnRecarga'); if(b) b.onclick=()=>location.reload() }
 function pintarCargando(){
   const z=$('#zona'); if(!z) return;
-  $('#titulo').innerHTML='Abriendo la mesa…'; $('#subt').textContent='Leyendo el Sheet, no una copia';
+  $('#titulo').innerHTML='Abriendo la mesa…'; $('#subt').textContent='Abriendo la copia publicada mientras conecto con tu mesa';
   _t0Carga=Date.now();
   z.innerHTML=`<div class="carta cargando-carta"><div class="lienzo"><div class="cargando"><i class="ruedita"></i><span id="fraseCarga"></span></div></div></div>`;
   const mw=$('#mandoWrap'); if(mw) mw.hidden=true;
@@ -3161,7 +3195,7 @@ function aplicarDia(d){
   const desdeLocal=_mesaLocal;
   if(d&&!d._respaldo){
     _diaParaCache=JSON.parse(JSON.stringify(d));
-    _mesaLocal=false; _cacheMesa=null;
+    _mesaLocal=false; _mesaPublica=false; _cacheMesa=null;
     if(desdeLocal) _pintado=false; // montar fresco restaura el borrador con la conciliación existente
   }
   clearInterval(_tFrases);
@@ -3173,7 +3207,7 @@ function aplicarDia(d){
   const firma=x=>(x.propuestas||[]).map(p=>p.id+':'+((p.laminas||[]).length||(p.opciones||[]).length)).join('|');
   if(_pintado&&d&&d._respaldo){ avisarRespaldo(); return }   // con mesa armada, una copia de respaldo no la reconstruye bajo los pies del editor
   if(!_pintado&&d&&d._respaldo&&ENTRADO()&&_ultimoErrorLlave&&!VISTA_DOC){ pintarLlaveMala(_ultimoErrorLlave); return }
-  if(!_pintado&&d&&d._respaldo&&ENTRADO()&&!VISTA_DOC){ pintarEsperandoSheet(); return }   // 7-sep: con sesión NUNCA se abre una mesa de copia: decidir sobre ella borraba marcas
+  if(!_pintado&&d&&d._respaldo&&!VISTA_DOC){ abrirMesaPublicada(); return }   // 7-sep: con sesión NUNCA se abre una mesa de copia: decidir sobre ella borraba marcas
   if(_pintado&&D&&DECIDE()&&cuentas().hoy>0){ if(firma(D)!==firma(d)){ D.propuestas=d.propuestas.map(p=>{const v=(D.propuestas||[]).find(q=>q.id===p.id); return v||p}); }
     D.decisiones=d.decisiones; D._todas=d._todas||d.propuestas; D._respaldo=false; estadoInicial(); $('#subt').textContent=pasos[idx]&&piezaDe(pasos[idx])?`Publicación: ${piezaDe(pasos[idx])}`:''; }
   else { try{ montar(d); _pintado=true }catch(e){ console.error('montar',e); $('#titulo').textContent='No pude armar la mesa'; $('#subt').textContent='Recarga la Sala. Detalle: '+String(e&&e.message||e).slice(0,90); pintarEstado('sin','Error al abrir'); } }
@@ -3211,20 +3245,20 @@ function entrarConGoogle(){
 }
 function pintarEsperandoSheet(){
   clearInterval(_tFrases);
-  $('#titulo').textContent='El Sheet tarda en contestar'; $('#subt').textContent='No te muestro una copia: lo que decidas debe ir sobre lo real. Reintento solo.';
+  $('#titulo').textContent='El Sheet tarda en contestar'; $('#subt').textContent='No pude confirmar la mesa vigente. La copia publicada sigue disponible para consulta.';
   $('#zona').innerHTML=`<div class="carta cargando-carta"><div class="lienzo"><div class="cargando"><i class="ruedita"></i><span>Esperando al Sheet… <button class="secund" id="btnAhora" type="button">Reintentar ahora</button></span></div></div></div>`;
-  $('#mandoWrap').hidden=true; pintarEstado('cola','Sin señal con el Sheet · reintentando');
+  $('#mandoWrap').hidden=true; pintarEstado('cola','Sin señal con el Sheet · puedes reintentar');
   const b=$('#btnAhora'); if(b) b.onclick=async()=>{ b.disabled=true; try{ const d=await traer('',2,60000,true); if(d&&d._respaldo) throw 0; aplicarDia(normalizarDia(await conMarcasDeAntes(d,''))) }catch(e){ b.disabled=false } };
   if(!_reintentando){ _reintentando=true; reintentarSheet(0) }
 }
 function avisarRespaldo(){
-  if(_mesaLocal){ pintarEstado('cola','Copia guardada · sin conexión; reintentando'); return; }
-  $('#subt').textContent='Sin señal con el Sheet · te muestro la copia'+((typeof D!=='undefined'&&D&&D.fecha)?' del '+D.fecha:'')+' · lo que marques se guarda al volver';
-  pintarEstado('cola','Sin señal con el Sheet · reintentando');
+  if(_mesaLocal){ pintarEstado('cola','Copia disponible · sin conexión; usa Actualizar'); return; }
+  $('#subt').textContent='Sin señal con el Sheet · te muestro la copia'+((typeof D!=='undefined'&&D&&D.fecha)?' del '+D.fecha:'')+' · consulta de lectura';
+  pintarEstado('cola','Sin señal con el Sheet · puedes reintentar');
 }
-function reintentarSheet(n){            // se insiste cada 20 s hasta 30 veces; el tope es largo porque un día frío del Sheet tarda ~50 s
-  if(n>=30){ _reintentando=false; return }
-  setTimeout(async()=>{ try{ const d=await traer('',1,60000,true); if(d&&d._respaldo) throw new Error('respaldo'); aplicarDia(normalizarDia(await conMarcasDeAntes(d,''))) }catch(e){ reintentarSheet(n+1) } },20000);
+function reintentarSheet(){
+  // traer ya agotó su único reintento. No crear ciclos automáticos de nuevas lecturas.
+  _reintentando=false;avisarRespaldo();
 }
 function montar(d){
   D=d; fecha=D.fecha||''; pintarFecha(fecha);
@@ -3239,14 +3273,14 @@ function montar(d){
     if(d.rol==='lector'&&/^editor/.test(antes||'')&&_pintado){ pintarEstado('sin','El Sheet ahora te ve como lector · vuelve a entrar'); }   // no se borra el rol de editor en silencio (auditoría 7-sep)
     else localStorage.setItem('sala_rol',d.rol);
   }
-  if(!DECIDE()){ estadoInicial(); pintarMira(); Promise.all([...new Set((D._todas||[]).map(p=>p.id))].map(cargarTira)).then(()=>pintarMira()); return }   // con la tira, la vista de solo lectura también dice «lámina 7 de 9»
+  if(!DECIDE()){ estadoInicial(); if(!window.SalaTablero)pintarMira(); if(MIRA[mIdx]) cargarTira(MIRA[mIdx].p.id).then(()=>{if(!document.body.classList.contains('sala-tablero'))pintarMira();}); return }   // con la tira, la vista de solo lectura también dice «lámina 7 de 9»
   const b=leerLS('sala2-'+fecha,null);
   const tSheet=Date.parse(D.ultima_revision||'')||0;
   const borradorManda=!!(b&&b.dec&&(b.t||0)>tSheet&&Object.values(b.dec).some(x=>x&&!x._reabierta&&(x.laminas||[]).some(m=>m==='si'||m==='no')));   // las reaperturas no cuentan
   armarPasos(borradorManda); hidratarReaperturas();
   const hubo=restaurarBorrador(); if(!hubo){ idx=0; hist=[] }
-  estadoInicial(); pintarCartas(); const mw=$('#mandoWrap'); if(mw&&pasos.length&&idx<pasos.length) mw.hidden=false;
-  Promise.all([...new Set(pasos.map(x=>x.pid))].map(cargarTira)).then(()=>{ if(pasos[idx]){ pintarTira(pasos[idx]); pintarCartas() } });
+  estadoInicial(); if(!window.SalaTablero)pintarCartas(); const mw=$('#mandoWrap'); if(mw&&pasos.length&&idx<pasos.length) mw.hidden=false;
+  if(pasos[idx]) cargarTira(pasos[idx].pid).then(()=>{ if(pasos[idx]&&!document.body.classList.contains('sala-tablero')){ pintarTira(pasos[idx]); pintarCartas() } });
   if(hubo&&idx>0&&idx<pasos.length) $('#subt').textContent=`Sigues donde ibas · ${piezaDe(pasos[idx])}`;
   ajustarZona();
 }
@@ -3298,12 +3332,12 @@ setInterval(vigilarVersion,600000);
   subirCola();   // preservar guardados: sólo las lecturas secundarias esperan a que pinte Hoy
   // 20-oct: Dirección pide abrir la última mesa local y revalidar en segundo plano.
   // Es consulta fechada, nunca una autorización para decidir sobre datos antiguos.
-  if(!await abrirMesaLocal()) pintarCargando();
+  if(!await abrirMesaLocal()){ pintarCargando(); abrirMesaPublicada(); }
   // Catálogo y vistas auxiliares se cargan al pintar la primera carta, sin competir con el día.
   try{ aplicarDia(normalizarDia(await conMarcasDeAntes(await traer(),''))) }
   catch(e){ if(_mesaLocal){ avisarRespaldo(); if(!_reintentando){ _reintentando=true; reintentarSheet(0) } }
     else if(!_pintado&&ENTRADO()&&!VISTA_DOC){ pintarEsperandoSheet(); reintentarSheet(0) }   // 23-sep: invariante 12 — con sesión nunca se abre la copia
-    else if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); if(typeof SalaMedios!=='undefined')await SalaMedios.cargar(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)); avisarRespaldo(); reintentarSheet(0) }
+    else if(!_pintado){ try{ const r=await fetch('datos/manifiesto.json?v='+Date.now()); const j=await r.json(); cargarMediosSinBloquear(); j._respaldo=true; _pintado=true; montar(normalizarDia(j)); avisarRespaldo(); reintentarSheet(0) }
     catch(e2){ $('#titulo').textContent='No pude abrir la sala'; $('#subt').textContent='Puede ser la red. Cierra y vuelve a abrir en un momento.'; pintarEstado('sin','Sin conexión') } } }
   avisarLlave();
 })();
@@ -3320,5 +3354,5 @@ setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subir
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); _tSubir=null; subir() } } });
 window.addEventListener('resize',()=>{ if(DECIDE()) pintarPanel(); else pintarPanelMira() });
 </script>
-<script src="tablero-sala.js?v=20261020-mesa-local"></script>
+<script src="tablero-sala.js?v=20261020-progresivo"></script>
 </body></html>

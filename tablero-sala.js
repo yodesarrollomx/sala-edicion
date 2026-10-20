@@ -114,7 +114,16 @@ function phase(g){
 }
 function visible(){return S.groups.filter(g=>S.filter==="todas"||(g.t.laminas||[]).some(l=>S.filter==="atencion"?status(g,l)==="amarillo"||status(g,l)==="rojo":status(g,l)==="produccion")||(S.filter==="produccion"&&phase(g)));}
 function img(src,alt,cls=""){
- return src?`<img class="${cls}" src="${esc(ligera(src))}" alt="${esc(alt)}" loading="lazy" decoding="async">`:`<div class="bt-sin-foto">Preparando fotografía</div>`;
+ return src?`<img class="${cls}" data-bt-src="${esc(ligera(src))}" alt="${esc(alt)}" loading="lazy" decoding="async">`:`<div class="bt-sin-foto">Preparando fotografía</div>`;
+}
+let imageObserver=null;
+function activarImagenesVisibles(){
+ if(imageObserver)imageObserver.disconnect();
+ const images=root.querySelectorAll('img[data-bt-src]');
+ const load=im=>{const src=im.dataset.btSrc;if(src){im.src=src;delete im.dataset.btSrc;}else if(im.onerror&&typeof SalaMedios!=="undefined"&&SalaMedios.estado()==="error"){im.onerror();}};
+ if(typeof IntersectionObserver==='undefined'){images.forEach(load);return;}
+ imageObserver=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){load(e.target);imageObserver.unobserve(e.target);}},{rootMargin:'80px'});
+ images.forEach(im=>imageObserver.observe(im));
 }
 function counts(g){const c={amarillo:0,rojo:0,verde:0,produccion:0};(g.t.laminas||[]).forEach(l=>c[status(g,l)]++);return c;}
 function header(g){
@@ -144,19 +153,19 @@ function render(){
  const oldX=root.querySelector(".bt-pan")?.scrollLeft||0;
  root.dataset.level=S.choice?"opciones":f?"publicacion":"tablero";
  root.dataset.transition=String(previousLevel!==root.dataset.level);
- root.innerHTML=`${S.cached?`<p class="bt-notice bt-local" role="status">Copia guardada el ${esc(new Date(S.savedAt).toLocaleString('es-MX'))} · Actualizando. Puedes consultar; las decisiones se habilitan al confirmar la mesa vigente.</p>`:''}<div class="bt-heading"><div><span class="bt-eyebrow">SALA DE EDICIÓN</span><h1>${f?esc(f.t.pieza||f.p.titulo):"La mesa editorial"}</h1><p>${f?"Lee la secuencia completa. Abre una página para revisar sus tomas.":S.groups.length+" "+(S.groups.length===1?"publicación":"publicaciones")+" en mesa · "+pending+" páginas por revisar"}</p></div>
+ root.innerHTML=`${S.cached?`<p class="bt-notice bt-local" role="status">${S.publicPreview?"Copia publicada del":"Copia guardada el"} ${esc(new Date(S.savedAt).toLocaleString('es-MX'))} · Actualizando. Puedes consultar; las decisiones se habilitan al confirmar la mesa vigente.</p>`:''}<div class="bt-heading"><div><span class="bt-eyebrow">SALA DE EDICIÓN</span><h1>${f?esc(f.t.pieza||f.p.titulo):"La mesa editorial"}</h1><p>${f?"Lee la secuencia completa. Abre una página para revisar sus tomas.":S.groups.length+" "+(S.groups.length===1?"publicación":"publicaciones")+" en mesa · "+pending+" páginas por revisar"}</p></div>
  <div class="bt-heading-actions"><button data-refresh ${S.busy?"disabled":""}>${S.busy?"Actualizando…":"↻ Actualizar"}</button><button data-legacy ${S.cached?"disabled":""}>Otras revisiones</button></div></div>
  ${!f&&!S.cached?`<div class="bt-editorial-intro"><div><span class="bt-eyebrow">TU CRITERIO, ANTES DE PRODUCIR</span><h2>Una historia. Cada detalle.</h2><p>Revisa el mensaje, compara las tomas y deja una decisión clara. Tus notas acompañan cada página.</p></div><button class="bt-start" data-next ${pending?"":"disabled"}>${pending?"Empezar revisión ↗":"Sin páginas por revisar"}</button></div>`:""}
  <div class="bt-bar"><div class="bt-legend"><span class="bt-dot amarillo">Revisar</span><span class="bt-dot verde">Aprobada</span><span class="bt-dot rojo">Cambio pedido</span><span class="bt-dot produccion">Producción</span></div>
  <div class="bt-levels"><button data-back ${!f?"disabled":""} aria-label="Alejar, volver al tablero">−</button><span>${S.choice?"Revisión":f?"Libro abierto":"Vista general"}</span><button data-zoom aria-label="Acercar">${S.choice?"↗":"+"}</button></div></div>
  <div class="bt-nav">${f?`<button data-back>← Todas las publicaciones</button><button data-next>Ir a la siguiente por revisar →</button>`:
  `<div class="bt-filters">${["todas","atencion","produccion"].map(k=>`<button data-filter="${k}" class="${S.filter===k?"on":""}" aria-pressed="${S.filter===k}">${k==="todas"?"Todas":k==="atencion"?"Necesitan atención":"En producción"}</button>`).join("")}</div><span class="bt-hint">Cada publicación conserva su secuencia y sus decisiones</span>`}</div>
- <div class="bt-pan" tabindex="0" aria-label="Tablero de publicaciones"><div class="bt-columns">${vg.map((g,i)=>`<section class="bt-column" style="--bt-tone:${tone(g)}" data-column="${esc(g.id)}">${header(g)}<div class="bt-frames">${(g.t.laminas||[]).map(l=>card(g,l)).join("")}${g.ejes.map(p=>`<button class="bt-other" data-eje="${esc(p.id)}">${esc(p.titulo||"Revisión de guion o producción")} →</button>`).join("")}</div></section>`).join("")||`<div class="bt-empty"><h2>${S.loaded?(S.filter==="todas"?"No se han cargado publicaciones":"No hay publicaciones en este filtro"):"Cargando las publicaciones…"}</h2><p>${S.loaded?(S.filter==="todas"?"Consulta el estado de actualización abajo. Un tablero vacío no confirma que no exista producción.":"Elige Todas para ver las demás publicaciones."):"Leyendo la tira completa de cada publicación."}</p></div>`}</div></div>
+ <div class="bt-pan" tabindex="0" aria-label="Tablero de publicaciones"><div class="bt-columns">${vg.map((g,i)=>`<section class="bt-column" style="--bt-tone:${tone(g)}" data-column="${esc(g.id)}">${header(g)}<div class="bt-frames">${(g.t.laminas||[]).map(l=>card(g,l)).join("")}${g.ejes.map(p=>`<button class="bt-other" ${S.cached?"disabled":""} data-eje="${esc(p.id)}">${esc(p.titulo||"Revisión de guion o producción")} →</button>`).join("")}</div></section>`).join("")||`<div class="bt-empty"><h2>${S.loaded?(S.filter==="todas"?"No se han cargado publicaciones":"No hay publicaciones en este filtro"):"Cargando las publicaciones…"}</h2><p>${S.loaded?(S.filter==="todas"?"Consulta el estado de actualización abajo. Un tablero vacío no confirma que no exista producción.":"Elige Todas para ver las demás publicaciones."):"Leyendo la tira completa de cada publicación."}</p></div>`}</div></div>
  <p class="bt-bottom">Aprobar una toma registra tu elección. Producción y publicación tienen sus propios comprobantes.</p>
  <p class="bt-notice" role="status" aria-live="polite">${esc(S.notice)}</p>`;
  root.querySelector(".bt-pan").scrollLeft=oldX;
  if(cl)renderChoice(cg,cl);
- bind();if(S.choice){root.querySelector(".bt-carousel")?.focus({preventScroll:true});}
+ bind();activarImagenesVisibles();if(S.choice){root.querySelector(".bt-carousel")?.focus({preventScroll:true});}
 }
 function info(g,n,kind){
  const l=(g.t.laminas||[]).find(x=>Number(x.n)===n);
@@ -308,7 +317,7 @@ function bind(){
  root.querySelector("[data-zoom]")?.addEventListener("click",()=>{if(S.choice)root.querySelector("[data-full-photo]")?.click();else if(S.focus){const g=group();chooseFrame(g,g.t.laminas[0]?.n);}else open(visible()[0]);});
  root.querySelector("[data-refresh]")?.addEventListener("click",()=>refresh(true));
  root.querySelector("[data-legacy]")?.addEventListener("click",()=>{cerrarCapas();document.body.classList.remove("sala-tablero");document.body.classList.add("sala-turno");pintarCartas();});
- root.querySelectorAll("[data-eje]").forEach(b=>b.onclick=()=>{cerrarCapas();document.body.classList.remove("sala-tablero");document.body.classList.add("sala-turno");const k=pasos.findIndex(x=>x.pid===b.dataset.eje);if(k>=0){idx=k;irVista("hoy");pintarCartas();}});
+ root.querySelectorAll("[data-eje]").forEach(b=>b.onclick=()=>{if(S.cached)return;cerrarCapas();document.body.classList.remove("sala-tablero");document.body.classList.add("sala-turno");const k=pasos.findIndex(x=>x.pid===b.dataset.eje);if(k>=0){idx=k;irVista("hoy");pintarCartas();}});
  root.querySelectorAll(".bt-photo img,.bt-main-photo").forEach(im=>{im.onerror=()=>{
   im.dataset.failed="1";const parent=im.parentElement;if(parent.querySelector(".bt-retry-label"))return;
   const label=document.createElement(parent.classList.contains("bt-hero")?"button":"span");label.className="bt-retry-label";label.textContent="Foto sin cargar · reintentar";parent.appendChild(label);
@@ -320,36 +329,28 @@ function bind(){
   hero.addEventListener("pointerup",e=>{if(!p||p.id!==e.pointerId)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p=null;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3)moveOption(dx<0?1:-1);});
  }
 }
-async function refresh(live=false){
- if(_mesaLocal&&!live){render();return;}
+async function refresh(live=false,preview=false){
+ if(_mesaLocal&&!live&&!preview){render();return;}
  if(S.busy){S.refreshPending=true;return;}S.busy=true;S.notice="";render();
  try{
   if(live&&ENTRADO()){_tCola=0;traerCola();const d=await traer(_mesaLocal?'':fecha,1,20000,true);if(d&&!d._respaldo&&!d.error)aplicarDia(normalizarDia(d));else S.notice="No se confirmó una lectura nueva del Sheet; conservé lo que ya tenías.";}
-  if(_mesaLocal)return;
-  const sourceDay=D, cacheDay=_diaParaCache;
-  const props=[...((D&&(D._todas||D.propuestas))||[])];
-  let inventario=[], inventarioConfirmado=false;
-  try{
-   const response=await fetch("datos/mesa-estado.json?v="+Date.now(),{cache:"no-store",signal:AbortSignal.timeout(20000)});
-   if(!response.ok)throw Error("Sin inventario");
-   const report=await response.json();
-   if(!Array.isArray(report.publicaciones)||!report.revisado_en)throw Error("Sin proyección");
-   inventario=report.publicaciones; inventarioConfirmado=true;
-   const ids=new Set(props.map(p=>p.id));
-   for(const p of inventario){
-    if(!/^[A-Za-z0-9_-]+$/.test(p.id)||!Array.isArray(p.laminas))throw Error("Inventario inválido");
-    if(!ids.has(p.id)){props.push({id:p.id,tipo:"laminas",_consulta:true});ids.add(p.id);}
-   }
-   S.notice="Inventario consultado: "+new Date(report.revisado_en).toLocaleString()+". Las publicaciones sin revisión activa se muestran sólo para consulta.";
-   if(Date.now()-Date.parse(report.revisado_en)>3*60*60*1000)S.notice+=" La actualización tiene más de tres horas; sus estados pueden haber cambiado.";
-  }catch(e){S.notice="No se confirmó el inventario de publicaciones. Se muestran únicamente las revisiones disponibles; esto no significa que no haya trabajo guardado.";}
-  const porId=new Map(inventario.map(p=>[p.id,p]));
+  if(_mesaLocal&&!preview)return;
+  const sourceDay=D,cacheDay=_diaParaCache;
+  const props=[...((D&&(D._todas||D.propuestas))||[])],all=[];
   if(live){for(const p of props)delete TIRAS[p.id];}
-  const all=await Promise.all(props.map(async p=>{
-   let t=await cargarTira(p.id);
-   if(p._consulta){if(!t)throw Error("Falta una tira vigente");t=proyectarPublicacion(t,porId.get(p.id));}
-   return {p,t};
-  })),map=new Map();
+  S.cached=!!_mesaLocal;S.publicPreview=!!_mesaPublica;S.savedAt=Date.parse((D.fecha||'')+'T12:00:00');
+  const inventoryTask=(async()=>{
+   try{
+    const response=await fetch("datos/mesa-estado.json?v="+Date.now(),{cache:"no-store",signal:AbortSignal.timeout(8000)});
+    if(!response.ok)throw Error("Sin inventario");const report=await response.json();
+    if(!Array.isArray(report.publicaciones)||!report.revisado_en)throw Error("Sin proyección");
+    if(report.publicaciones.some(p=>!(/^[A-Za-z0-9_-]+$/.test(p.id))||!Array.isArray(p.laminas)))throw Error("Inventario inválido");
+    return report;
+   }catch(e){return null;}
+  })();
+  const publish=()=>{
+   if(D!==sourceDay)return;
+   const map=new Map();
   for(const {p,t}of all){if(!t||!(t.laminas||[]).length)continue;const id=t.pieza_slug||normSlug(t.pieza||p.pieza||p.titulo);let g=map.get(id);if(!g){g={id,pid:p.id,p,t,ejes:[]};map.set(id,g);}else if((D.propuestas||[]).some(x=>x.id===p.id)&&!dec[g.pid])map.set(id,{id,pid:p.id,p,t,ejes:g.ejes});}
   for(const {p,t}of all){if(t&&(t.laminas||[]).length)continue;
    if(String(p.origen||"").startsWith("corte-de ")){
@@ -359,13 +360,43 @@ async function refresh(live=false){
     continue;
    }
    const id=p.pieza_slug||normSlug(p.pieza||String(p.titulo||"").split(" · ")[0]);const g=map.get(id)||[...map.values()].find(x=>normSlug(x.t.pieza)===id);if(g)g.ejes.push(p);else map.set(id,{id,pid:p.id,p,t:{pieza:p.pieza||p.titulo,pieza_slug:id,laminas:[]},ejes:[p]});}
+   S.groups=[...map.values()];S.loaded=true;
+   // Publicar cada tira terminada, sin esperar una descarga lenta de otra publicación.
+   if(S.focus&&!group()){S.focus=null;S.choice=null;}
+   render();
+   if(S.groups.length){
+    if(preview)guardarMesaLocal(S.groups,sourceDay,true);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{if(!performance.getEntriesByName('sala-contenido-visible').length)performance.mark('sala-contenido-visible');}));
+   }
+  };
+  const load=async(list,inventory=new Map())=>{
+   let cursor=0;
+   const worker=async()=>{while(cursor<list.length&&D===sourceDay){
+    const p=list[cursor++];let t=await cargarTira(p.id,p.tipo==='laminas'||!!p._consulta);
+    if(D!==sourceDay)return;
+    if(p._consulta){if(!t)continue;t=proyectarPublicacion(t,inventory.get(p.id));}
+    all.push({p,t});publish();
+   }};
+   await Promise.all(Array.from({length:Math.min(4,list.length)},worker));
+  };
+  await load(props);
   if(D!==sourceDay){S.refreshPending=true;return;}
-  S.groups=[...map.values()];S.loaded=true;S.cached=false;
-  if(inventarioConfirmado&&all.every(({p,t})=>!(p.laminas||[]).length||!!t)) guardarMesaLocal(S.groups,cacheDay);if(S.focus&&!group()){S.focus=null;S.choice=null;}
+  const report=await inventoryTask;
+  if(D!==sourceDay){S.refreshPending=true;return;}
+  if(report){
+   const ids=new Set(props.map(p=>p.id)),extra=report.publicaciones.filter(p=>!ids.has(p.id)).map(p=>({id:p.id,tipo:'laminas',_consulta:true}));
+   S.notice="Inventario consultado: "+new Date(report.revisado_en).toLocaleString()+". Las publicaciones sin revisión activa se muestran sólo para consulta.";
+   if(Date.now()-Date.parse(report.revisado_en)>3*60*60*1000)S.notice+=" La actualización tiene más de tres horas; sus estados pueden haber cambiado.";
+   await load(extra,new Map(report.publicaciones.map(p=>[p.id,p])));
+  }else S.notice="No se confirmó el inventario completo. Puedes consultar las publicaciones disponibles mientras se recupera.";
+  if(D!==sourceDay){S.refreshPending=true;return;}
+  publish();
+  if(!preview&&S.groups.length&&all.every(({p,t})=>!(p.laminas||[]).length||!!t))guardarMesaLocal(S.groups,cacheDay);
  }catch(e){S.notice="No pude actualizar el tablero. Tu revisión sigue conservada. Usa Actualizar.";}
- finally{S.busy=false;render();if(S.refreshPending){S.refreshPending=false;queueMicrotask(()=>refresh());}}
+ finally{S.busy=false;render();if(S.refreshPending){S.refreshPending=false;queueMicrotask(()=>refresh(false,_mesaPublica));}}
 }
-api.restore=cache=>{S.groups=cache.groups;S.loaded=true;S.cached=true;S.savedAt=cache.savedAt;render();requestAnimationFrame(()=>requestAnimationFrame(()=>performance.mark("sala-mesa-local-visible")));};
+api.preview=()=>refresh(false,true);
+api.restore=cache=>{S.groups=cache.groups;S.loaded=true;S.cached=true;S.publicPreview=cache.source==='published';S.savedAt=cache.savedAt;render();requestAnimationFrame(()=>requestAnimationFrame(()=>{performance.mark("sala-mesa-local-visible");if(!performance.getEntriesByName("sala-contenido-visible").length)performance.mark("sala-contenido-visible");}));};
 api.clear=()=>{S.groups=[];S.focus=S.choice=null;S.cached=false;S.loaded=false;root.innerHTML="";document.body.classList.remove("sala-tablero");};
 api.refresh=refresh;api.render=render;api.produccionActualizada=()=>{if(!S.choice)render();};
 const returnButton=document.createElement("button");returnButton.className="bt-return";returnButton.textContent="← Volver al tablero";returnButton.onclick=()=>{document.body.classList.remove("sala-turno");render();};document.getElementById("vHoy").prepend(returnButton);
@@ -388,5 +419,5 @@ document.addEventListener("keydown",e=>{
  if(e.key==="Tab"&&S.choice){const buttons=[...root.querySelectorAll(".bt-choice button:not(:disabled),.bt-choice [tabindex]")];if(e.shiftKey&&document.activeElement===buttons[0]){e.preventDefault();buttons[buttons.length-1]?.focus();}else if(!e.shiftKey&&document.activeElement===buttons[buttons.length-1]){e.preventDefault();buttons[0]?.focus();}}
 },true);
 setInterval(()=>{if(D&&!document.hidden&&document.body.dataset.vista==="hoy"&&!S.choice)render();},30000);
-if(_cacheMesa)api.restore(_cacheMesa);else if(D)refresh();
+if(_cacheMesa)api.restore(_cacheMesa);else if(D)refresh(false,_mesaPublica);
 })();

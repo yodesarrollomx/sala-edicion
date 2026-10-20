@@ -211,3 +211,27 @@ test('voz, escena y corte hechos no se presentan como producción todavía activ
 });
 
 }
+
+test('día: máximo dos peticiones, incluso con topes explícitos y varias credenciales',async()=>{
+ for(const rejected of [false,true]){
+  let calls=0;const delays=[];
+  const ctx={window:{},performance,AbortController,AbortSignal,encodeURIComponent,Date,JSON,
+   _llaveViva:null,_mesaLocal:false,ENTRADO:()=>true,LLAVES:()=>['a','b','c'],GAS:()=> 'https://synthetic.invalid',
+   cargarMediosSinBloquear(){},leerJSON:r=>r.json(),
+   setTimeout:(fn,ms)=>{delays.push(ms);return setTimeout(fn,Math.min(ms,1));},clearTimeout,
+   fetch:async()=>{calls++;if(rejected)return {ok:true,json:async()=>({error:'clave incorrecta'})};throw Error('red');}};
+  vm.runInNewContext(extraer("let _ultimoErrorLlave='';",'async function conMarcasDeAntes')+'\nthis.run=traer;',ctx);
+  await assert.rejects(()=>ctx.run('',99,60000,true));
+  assert.equal(calls,2);assert.deepEqual(delays,[8000,400,8000]);
+ }
+});
+test('el timeout del día incluye la descarga del cuerpo JSON',async()=>{
+ let aborted=false;
+ const ctx={window:{},performance,AbortController,AbortSignal,encodeURIComponent,Date,JSON,
+  _llaveViva:null,_mesaLocal:false,ENTRADO:()=>true,LLAVES:()=>['synthetic'],GAS:()=> 'https://synthetic.invalid',
+  cargarMediosSinBloquear(){},leerJSON:r=>r.json(),setTimeout:(fn)=>setTimeout(fn,2),clearTimeout,
+  fetch:async(url,{signal})=>({ok:true,json:()=>new Promise((resolve,reject)=>signal.addEventListener('abort',()=>{aborted=true;reject(Error('abort'));}))})};
+ vm.runInNewContext(extraer("let _ultimoErrorLlave='';",'async function conMarcasDeAntes')+'\nthis.run=traer;',ctx);
+ await assert.rejects(()=>ctx.run('',1,8000,true));assert.equal(aborted,true);
+ assert.equal(ctx.window.SalaRendimiento[0].resultado,'timeout');
+});
