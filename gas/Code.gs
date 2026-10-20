@@ -910,6 +910,7 @@ function armarDia_(f) {
 /* ------------------------------------------------ escritura */
 function doPost(e) {
   var d; try { d = JSON.parse(e.postData.contents); } catch (err) { return json({ error: 'cuerpo ilegible' }); }
+  if (d && /^chinche_secuencia_(guardar|recibo|leer)$/.test(d.accion || '')) return chincheSecuencia_(d);
   // #49: validar antes de cachés y de los handlers tempranos de ideas/árbol.
   var contenidoError = validarContenidoEntrada_(d);
   if (contenidoError) return json({ error: 'contenido inválido: requiere reescritura',

@@ -1,9 +1,12 @@
 {
-  "model_revision": "2026-10-20.sala-arranque-progresivo.2",
-  "proposal_id": "CHG-SALA-ARRANQUE-PROGRESIVO-20261020",
-  "summary": "Abrir consulta pública mientras espera servidor; pintar tiras progresivamente y diferir medios fuera de vista.",
+  "model_revision": "2026-10-20.chinches-secuencia.1",
+  "proposal_id": "CHG-CHINCHES-SECUENCIA-20261020",
+  "summary": "Voz y dibujo sincronizados en chinches; almacenamiento privado con acuse íntegro.",
   "components": [
-    "SYS-SALA"
+    "SYS-SALA",
+    "GAS-SALA",
+    "SHEET-SALA",
+    "EXT-GMAIL"
   ],
   "tests": [
     "node --test tests/tablero-sala.test.cjs tests/mesa-local.test.cjs tests/sala-carga.test.cjs",
@@ -11,8 +14,9 @@
     "python3 nube/verificar.py",
     "git diff --check",
     "node tests/arranque-progresivo.browser.cjs",
-    "python3 -m unittest discover -s tests -p sala_rendimiento_test.py -v"
+    "python3 -m unittest discover -s tests -p sala_rendimiento_test.py -v",
+    "node --test gas/chinche-secuencia.test.cjs"
   ],
-  "rollback": "Revertir PR. La copia sala_mesa_local_v1 se ignora; no borrar borradores sala2-*, cola, Sheets ni medios.",
-  "model_commit": "21e8b3d4a64f6045f5875ff39caa0ce1a97751a8"
+  "rollback": "Revertir consumidores y dispatch de este PR conservando paquetes privados, recibos SHA256, IndexedDB, borradores, Sheets y medios; no revertir cambios concurrentes de rendimiento.",
+  "model_commit": "3df04b6e2c02e57a85c5d500ce2e866d4db38ffc"
 }
