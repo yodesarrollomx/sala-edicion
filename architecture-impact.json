@@ -3,7 +3,10 @@
   "proposal_id": "CHG-CHINCHES-SECUENCIA-20261020",
   "summary": "Voz y dibujo sincronizados en chinches; almacenamiento privado con acuse íntegro.",
   "components": [
-    "SYS-SALA"
+    "SYS-SALA",
+    "GAS-SALA",
+    "SHEET-SALA",
+    "EXT-GMAIL"
   ],
   "tests": [
     "node --test tests/tablero-sala.test.cjs tests/mesa-local.test.cjs tests/sala-carga.test.cjs",
@@ -15,5 +18,5 @@
     "node --test gas/chinche-secuencia.test.cjs"
   ],
   "rollback": "Revertir consumidores y dispatch de este PR conservando paquetes privados, recibos SHA256, IndexedDB, borradores, Sheets y medios; no revertir cambios concurrentes de rendimiento.",
-  "model_commit": "b8f70c6828ac1ede9a931c012f882f2390680bce"
+  "model_commit": "3df04b6e2c02e57a85c5d500ce2e866d4db38ffc"
 }
