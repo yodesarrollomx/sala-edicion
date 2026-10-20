@@ -361,6 +361,13 @@ details.prod-dentro>summary{cursor:pointer;font-weight:600;color:var(--guia);mar
 .lienzo.conVideo{flex:1 1 auto;min-height:190px}
 .num-movil{display:none}
 .abrir-video{display:block;text-align:center;font-size:12.5px;color:var(--oro);text-decoration:none;padding:6px 0 0}
+.video-nativo{position:relative;background:#151410}
+.video-nativo video{width:100%;height:100%;object-fit:contain}
+.video-aviso{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;background:#f4f1e9;color:#514c40}
+.video-aviso[hidden]{display:none!important}
+button.abrir-video{width:100%;border:0;background:transparent;cursor:pointer;font:inherit;font-size:12.5px}
+.video-ampliado{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;aspect-ratio:auto!important;z-index:99999}
+.video-cerrar{display:none}.video-ampliado .video-cerrar{display:block;position:absolute;right:16px;top:16px;z-index:2;padding:12px;border:0;border-radius:12px;background:#fff;color:#16140e}
 .ruedita{width:26px;height:26px;border-radius:50%;border:3px solid var(--oro-suave);border-top-color:var(--oro);animation:gira .8s linear infinite}
 .cargando-carta .cargando{display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:14.5px;color:#e6dfd2}
 .cargando{position:absolute;inset:0;display:grid;place-items:center;color:#c9c2b4;font-size:13px;gap:10px;padding:20px;text-align:center;
@@ -665,7 +672,7 @@ body > .chn-aviso:has(~ .chn-aviso){display:none!important}
 </head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
 <script src="sala-correcciones.js?v=20261015-4"></script>
 <script src="politica-imagen.js?v=hidream-o1-20261017"></script>
-<script src="video-revision.js?v=20261020-diferido"></script>
+<script src="video-revision.js?v=20261020-nativo1"></script>
 <script src="medios-publicos.js?v=20261020-20261015-1"></script>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');</script>
 <style>/* 13-oct · chinche #297 (CHN-20261013-0930-3863): «todas las pantallas tienen el solecito y la nochecita, aquí no».
@@ -814,7 +821,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='bd964bac24';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='1321cad3da';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1000,6 +1007,24 @@ async function traer(f,intentos,tope,sinRespaldo){
   }
   if(sinRespaldo)throw Error('sin datos de ese día');
   const j=JSON.parse(JSON.stringify(await snapshotPublicado()));j._respaldo=true;return j;
+}
+async function traerVideoRevision(pid,src,signal){
+  const llaves=_llaveViva?[_llaveViva,...LLAVES().filter(k=>k!==_llaveViva)]:LLAVES();let k=0;
+  for(let i=0;i<2;i++){
+    if(signal.aborted)throw Error('cancelado');
+    const ctl=new AbortController(),cancel=()=>ctl.abort(),inicio=performance.now();
+    signal.addEventListener('abort',cancel,{once:true});const t=setTimeout(cancel,SALA_TIMEOUT_MS);
+    try{
+      const r=await fetch(GAS(),{method:'POST',body:JSON.stringify({accion:'video_revision',prop_id:pid,video:src,clave:llaves[k]}),signal:ctl.signal});
+      const j=await leerJSON(r);if(!r.ok||!j||j.ok!==true)throw Error(j&&j.error||'video_no_disponible');
+      medirSala('video',inicio,'ok',i+1);return j;
+    }catch(e){
+      medirSala('video',inicio,ctl.signal.aborted?'timeout':'fallo',i+1);
+      if(signal.aborted||i===1)throw e;
+      if(/acceso|clave|credencial/i.test(String(e.message))&&k+1<llaves.length)k++;
+    }finally{clearTimeout(t);signal.removeEventListener('abort',cancel);}
+    await new Promise(resolve=>setTimeout(resolve,SALA_BACKOFF_MS));
+  }
 }
 async function conMarcasDeAntes(d,f){
   if(d._respaldo) return d;
@@ -1554,6 +1579,7 @@ function pintarBolas(){
   $('#verresp').hidden=!(pasos.length&&(cuentas().hoy||lockeadas.length));
 }
 function pintarCartas(){
+  VIDEO_REVISION.desmontar();
   const z=$('#zona');
   if(!pasos.length){ pintarVacio(); return }
   if(idx>=pasos.length){ pintarFin(); return }
@@ -1628,11 +1654,13 @@ function pintarCartas(){
       const _o=(x.p.opciones&&!Array.isArray(x.p.opciones))?x.p.opciones:{}; const _pq=x.p.porque||_o.porque, _rf=x.p.referencia||_o.referencia;
       const _enc = (_pq||_rf) ? `<div class="eje-enc">${_rf?`<img src="${esc(ligera(_rf))}" alt="lo que hay hoy" data-amp="${esc(_rf)}">`:''}
           <div><b>¿Qué decides aquí?</b><p>${esc(_pq||'')}</p></div></div>` : '';
-      el.innerHTML=`${VIDEO_REVISION.html(x.p.video)}
+      const _videoNativo=(ENTRADO()&&['editor','editor2'].includes(ROL()))||VIDEO_REVISION.resolver(x.p.video)?.tipo==='archivo';
+      el.innerHTML=`${VIDEO_REVISION.html(x.p.video,_videoNativo)}
         ${_enc}
         <div class="opciones">${ops}<button class="ning" data-ning>Ninguna — dejo una nota</button></div>
         <div class="pie"><span class="cual"><b>${esc(x.p.titulo||x.pid)}</b> · elige una opción</span>
-          ${VIDEO_REVISION.resolver(x.p.video)?`<a class="abrir-video" href="${esc(VIDEO_REVISION.resolver(x.p.video).enlace)}" target="_blank" rel="noopener">Abrirlo en pantalla completa ↗</a>`:''}${luegoDe(x)}</div>`;
+          ${VIDEO_REVISION.resolver(x.p.video)?(_videoNativo?'<button class="abrir-video" type="button" data-video-fullscreen>Ver en pantalla completa</button>':`<a class="abrir-video" href="${esc(VIDEO_REVISION.resolver(x.p.video).enlace)}" target="_blank" rel="noopener">Abrir en Drive ↗</a>`):''}${luegoDe(x)}</div>`;
+      if(_videoNativo)VIDEO_REVISION.montar(el,{pid:x.pid,src:x.p.video,cargar:traerVideoRevision,sesion:LLAVES().join('|')});
       el.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{ if(!DECIDE()||!candadoLibre()) return; const j=+b.dataset.op, d0=dec[x.pid]; d0._borrar=d0._borrar||{}; d0.laminas.forEach((m,i)=>{ if(m&&i!==j) d0._borrar[i]=1 }); delete d0._borrar[j]; d0.laminas[j]='si'; d0._eje='si'; avanzar('si') });
       // chinche #279: las opciones con imagen se comparan en el visor y se elige con «Elegir ésta» sin salir.
       const _galO=[...el.querySelectorAll('.op')].map(op=>{ const im=op.querySelector('img[data-amp]'), bt=op.querySelector('[data-op]');
@@ -3312,7 +3340,7 @@ function ajustarZona(){
 }
 addEventListener('resize',ajustarZona); addEventListener('load',ajustarZona);
 setInterval(()=>{ if(innerWidth<640&&document.body.dataset.vista==='hoy') ajustarZona() },600); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(ajustarZona);
-try{ const ro=new ResizeObserver(()=>ajustarZona()); ['.cab','#ctx','#tira','#mandoWrap'].forEach(q=>{ const e=$(q); if(e) ro.observe(e) }) }catch(e){}
+try{ let pendiente=false; const ro=new ResizeObserver(()=>{if(pendiente)return;pendiente=true;requestAnimationFrame(()=>{pendiente=false;ajustarZona()})}); ['.cab','#ctx','#tira','#mandoWrap'].forEach(q=>{ const e=$(q); if(e) ro.observe(e) }) }catch(e){}
 async function vigilarVersion(){
   // 8-sep: GitHub Pages sirvió la RAÍZ cacheada (una Sala vieja) mientras index.html ya era nuevo.
   // Por eso «los arreglos no llegaban». Ahora la Sala compara su sello con el del servidor y avisa.

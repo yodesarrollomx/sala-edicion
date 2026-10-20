@@ -13,7 +13,7 @@ const day=role=>({fecha:'2026-10-20',rol:role,quien:'Editor sintético',propuest
   await page.addInitScript(role=>{localStorage.setItem('sala_clave','synthetic');localStorage.setItem('sala_rol',role);localStorage.setItem('sala_guia','1');localStorage.setItem('sala_guia_v3','1');},mode==='lector'?'lector':'editor');
   await page.route('**/*',async route=>{
    const req=route.request(),u=new URL(req.url());
-   if(req.method()==='POST'){writes.push(JSON.parse(req.postData()||'{}'));return route.fulfill({json:{ok:true}});}
+   if(req.method()==='POST'){const d=JSON.parse(req.postData()||'{}');if(d.accion==='video_revision')return route.fulfill({json:{ok:false,error:'video_sintetico_no_preparado'}});writes.push(d);return route.fulfill({json:{ok:true}});}
    if(u.hostname==='script.google.com'){
     if(u.searchParams.get('recurso')==='dia')return mode==='timeout'?route.abort():route.fulfill({json:day(mode==='lector'?'lector':'editor')});
     return route.fulfill({json:{ok:true,cola:[],reglas:{}}});

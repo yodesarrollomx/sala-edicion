@@ -911,6 +911,7 @@ function armarDia_(f) {
 /* ------------------------------------------------ escritura */
 function doPost(e) {
   var d; try { d = JSON.parse(e.postData.contents); } catch (err) { return json({ error: 'cuerpo ilegible' }); }
+  if (d && /^video_revision(?:_preparar)?$/.test(d.accion || '')) return videoRevision_(d); // antes de invalidar cachés
   if (d && d.accion === 'presentaciones') return yodPresentacionesPost_(d);
   if (d && /^chinche_secuencia_(guardar|recibo|leer)$/.test(d.accion || '')) return chincheSecuencia_(d);
   // #49: validar antes de cachés y de los handlers tempranos de ideas/árbol.

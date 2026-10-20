@@ -1,23 +1,21 @@
 {
-  "model_revision": "2026-10-20.presentaciones-md.1",
-  "proposal_id": "CHG-PRESENTACIONES-MD-20261020",
-  "summary": "Portal integrado en Master Developer con catálogo, revisión privada, publicación y conducción por el servidor Sala existente. Code.gs conserva el correo; declara su propietario transversal por compartir archivo, sin modificar envíos.",
+  "model_revision": "2026-10-20.sala-video-iphone.1",
+  "proposal_id": "CHG-SALA-VIDEO-IPHONE-20261020",
+  "summary": "Reproductor nativo, copia ligera cifrada preparada automáticamente y fullscreen dentro de Sala.",
   "components": [
-    "SYS-INVERSION",
-    "SYS-YOD-OS",
-    "SYS-CONTROL",
     "SYS-SALA",
     "GAS-SALA",
     "SHEET-SALA",
     "EXT-GMAIL"
   ],
   "tests": [
-    "node --test tests/brokers*.test.cjs (board:164 PASS)",
-    "node tests/presentation-hub-browser.cjs (board:PASS3 tamaños y2 dispositivos)",
-    "Contratos GAS con dobles sin escrituras de negocio",
-    "python3 nube/verificar.py (Sala)",
-    "git diff --check"
+    "node --test tests/*.test.cjs",
+    "node tests/video-privado.browser.cjs",
+    "node tests/sala2.browser.cjs",
+    "python3 nube/verificar.py",
+    "git diff --check",
+    "python3 tests/video_revision_test.py"
   ],
-  "rollback": "Revertir frontend o implementación a su versión anterior; conservar archivos privados, publicaciones, recibos, chinches y permisos.",
-  "model_commit": "b3b261441a298016a77a52b18a7b1c67c03cda2f"
+  "rollback": "Revertir interfaz y versión de implementación, conservar datos, permisos, archivos y decisiones.",
+  "model_commit": "7c47cb111e4e6a7d978d0be6d8e7ec7a8b362542"
 }
