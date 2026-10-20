@@ -123,7 +123,7 @@ function activarImagenesVisibles(){
  const load=im=>{const src=im.dataset.btSrc;if(src){im.src=src;delete im.dataset.btSrc;}else if(im.onerror&&typeof SalaMedios!=="undefined"&&SalaMedios.estado()==="error"){im.onerror();}};
  if(typeof IntersectionObserver==='undefined'){images.forEach(load);return;}
  imageObserver=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){load(e.target);imageObserver.unobserve(e.target);}},{rootMargin:'80px'});
- images.forEach(im=>imageObserver.observe(im));
+ images.forEach(im=>{if(im.classList.contains("bt-main-photo"))load(im);else imageObserver.observe(im);});
 }
 function counts(g){const c={amarillo:0,rojo:0,verde:0,produccion:0};(g.t.laminas||[]).forEach(l=>c[status(g,l)]++);return c;}
 function header(g){
