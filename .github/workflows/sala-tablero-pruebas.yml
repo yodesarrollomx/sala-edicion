@@ -8,6 +8,9 @@ on:
       - 'index.html'
       - 'sala2.*'
       - 'tests/sala2.browser.cjs'
+      - 'tests/video-privado.browser.cjs'
+      - 'video-revision.js'
+      - '.github/workflows/sala-tablero-pruebas.yml'
       - 'medios-publicos.js'
       - 'tablero-sala.*'
       - 'sala-correcciones.js'
@@ -56,7 +59,7 @@ jobs:
       - name: Navegador Chromium
         run: |
           npm install --no-save --package-lock=false playwright
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium webkit
       - name: Interacción escritorio y móvil sin escribir al Sheet
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/tablero-http.log" 2>&1 &
@@ -64,6 +67,8 @@ jobs:
           node tests/mesa-local.browser.cjs
           node tests/arranque-progresivo.browser.cjs
           node tests/sala2.browser.cjs
+      - name: Video privado directo y embebido en Chromium y WebKit
+        run: node tests/video-privado.browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
