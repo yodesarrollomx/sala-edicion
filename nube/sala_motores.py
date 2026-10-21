@@ -52,12 +52,17 @@ def _tope_gastado(cola, etapa, motor):
     for t in cola:
         if str(t.get('etapa')) != etapa:
             continue
+        ev = t.get('evidencia') or {}
+        usos = ev.get('usos_motores', {}) if isinstance(ev, dict) else {}
+        if hoy in usos:
+            n += int(usos[hoy].get(motor, 0))
+            continue
         if str(t.get('motor') or '') != motor:
             continue
         if str(t.get('estado')) not in ('hecho', 'corriendo'):
             continue
-        creado = str(t.get('creado') or '')
-        if creado.startswith(hoy):
+        fecha = str(t.get('actualizado') or t.get('creado') or '')
+        if fecha.startswith(hoy):
             n += 1
     return n
 

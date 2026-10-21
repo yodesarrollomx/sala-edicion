@@ -50,6 +50,8 @@ jobs:
         # cuenta de servicio de mentira (RSA propio) y nunca toca la red — pero
         # sí necesita poder IMPORTAR google-auth para construirla.
         run: pip install --quiet google-auth requests pillow numpy cryptography
+      - name: FFmpeg para render sintético de animación
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
       - name: Reglas del repo, sello de versión e integridad de los datos
         run: python3 nube/verificar.py
       - name: Probar recuperación de Relevo (sin Google ni credenciales)

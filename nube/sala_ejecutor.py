@@ -105,7 +105,7 @@ def _leer_tira(pid):
         return None
 
 
-def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
+def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola, reservar=None):
     """Devuelve (estado_nuevo, evidencia_dict)."""
     etapa = str(trabajo.get('etapa'))
     inicio = time.time()
@@ -116,81 +116,93 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
 
     try:
         if etapa == 'voz':
-            m, razon = motores.elegir_motor_voz(reglas, motores_resp, [])
+            import sala_adaptativa
+            if sala_adaptativa.activa(reglas):
+                opciones, razon = sala_adaptativa.candidatos('voz', trabajo, reglas, motores_resp, cola)
+                m = {'motor': opciones[0]} if opciones else None
+            else:
+                m, razon = motores.elegir_motor_voz(reglas, motores_resp, cola)
             if not m:
                 raise MotorError('ningún motor de voz disponible: %s' % razon, intermitente=True)
             impl = MOTORES_VOZ.get(m['motor'])
             if not impl:
                 raise MotorError('motor de voz «%s» no tiene implementación en la nube'
                                  % m['motor'], intermitente=True)
+            if reservar:
+                reservar(m['motor'])
             ruta = impl.producir(trabajo, reglas, cat, SALIDA)
             motor_usado = m['motor']
 
         elif etapa == 'escena':
             exigir({'dice': lamina_de(trabajo).get('dice')}, reglas, 'escena')
-            # wan_hf (animación real, gratis e intermitente) primero; si no puede, la cámara
-            # sobre la lámina (ffmpeg, siempre sale). `escena_respaldo_camara`=0 la apaga.
-            m, razon = motores.elegir_motor('escena', motores_resp, [])
-            avisos = []
-            ruta = None
-            # 24-sep (Alejandro): el orden lo pone lo que él aprueba. Si la cámara va mejor
-            # calificada que Wan (sala_puntajes), se empieza por la cámara.
-            import sala_puntajes
-            real = str(reglas.get('escena_video_real', '0')) == '1'
-            if not real and m and m['motor'] == 'wan_hf' and sala_puntajes.orden('escena', ['wan_hf', 'camara'])[0] == 'camara':
-                avisos.append('la cámara va mejor calificada que wan_hf por tus decisiones')
-                m = None
-            if m and m['motor'] == 'wan_hf':
-                from motores import escena_wan_hf
-                try:
-                    ruta = escena_wan_hf.producir(trabajo, reglas, cat, SALIDA)
-                    motor_usado = 'wan_hf'
-                except MotorError as e:
-                    if not e.intermitente:
-                        raise
-                    # Cuota del día agotada: esperar a mañana en vez de gastar el trabajo en
-                    # la cámara, salvo que la REGLA escena_camara_si_cuota diga lo contrario.
-                    # 24-sep (Alejandro: «nunca te frenes, siempre usa tu máxima posibilidad de
-                    # producción»): por omisión la cámara ENTRA cuando Wan se queda sin cuota; si él
-                    # no quiere cámara, la REGLA escena_camara_si_cuota=0 vuelve a esperar.
-                    if getattr(e, 'esperar', False) and str(
-                            reglas.get('escena_camara_si_cuota', '1')).strip() in ('0', 'no', 'false'):
-                        raise
-                    avisos.append(str(e))
+            import sala_adaptativa
+            if sala_adaptativa.activa(reglas):
+                ruta, motor_usado, extra = sala_adaptativa.escena(
+                    trabajo, reglas, motores_resp, cat, SALIDA, cola, reservar)
             else:
-                avisos.append('wan_hf no disponible: %s' % (razon if not m else m['motor']))
-            # 28-sep · modal_ltx: animación de IA REAL (LTX-Video en Modal, centavos por escena,
-            # crédito gratis mensual de Modal). Entra si Wan no pudo; `escena_modal`=0 la apaga.
-            if ruta is None and str(reglas.get('escena_modal', '0')).strip() not in ('0', 'no', 'false'):
-                from motores import escena_modal
-                if escena_modal.disponible():
+                # wan_hf (animación real, gratis e intermitente) primero; si no puede, la cámara
+                # sobre la lámina (ffmpeg, siempre sale). `escena_respaldo_camara`=0 la apaga.
+                m, razon = motores.elegir_motor('escena', motores_resp, cola)
+                avisos = []
+                ruta = None
+                # 24-sep (Alejandro): el orden lo pone lo que él aprueba. Si la cámara va mejor
+                # calificada que Wan (sala_puntajes), se empieza por la cámara.
+                import sala_puntajes
+                real = str(reglas.get('escena_video_real', '0')) == '1'
+                if not real and m and m['motor'] == 'wan_hf' and sala_puntajes.orden('escena', ['wan_hf', 'camara'])[0] == 'camara':
+                    avisos.append('la cámara va mejor calificada que wan_hf por tus decisiones')
+                    m = None
+                if m and m['motor'] == 'wan_hf':
+                    from motores import escena_wan_hf
                     try:
-                        ruta = escena_modal.producir(trabajo, reglas, cat, SALIDA)
-                        motor_usado = 'modal_ltx'
-                    except Exception as e:  # noqa: BLE001
-                        avisos.append('modal_ltx: %s' % e)
-            # 28-sep · parallax: animación 2.5D hecha con código (profundidad + cámara virtual),
-            # gratis y sin cuota. Va entre Wan y la cámara; `escena_parallax`=0 la apaga.
-            if ruta is None and not real and str(reglas.get('escena_parallax', '1')).strip() not in ('0', 'no', 'false'):
-                try:
-                    from motores import escena_parallax
-                    ruta, extra = escena_parallax.producir_con_evidencia(trabajo, reglas, cat, SALIDA)
-                    motor_usado = 'parallax'
-                except Exception as e:  # noqa: BLE001 — si falla, la cámara sigue saliendo
-                    avisos.append('parallax: %s' % e)
-            if ruta is None:
-                if real:
-                    raise MotorError('video generativo pendiente; cámara y parallax retirados: %s'
-                                     % ' · '.join(avisos), intermitente=True)
-                if str(reglas.get('escena_respaldo_camara', '1')).strip() in ('0', 'no', 'false'):
-                    raise MotorError('sin animación y la cámara de respaldo está apagada: %s'
-                                     % ' · '.join(avisos), intermitente=True)
-                from motores import escena_camara
-                ruta = escena_camara.producir(trabajo, reglas, cat, SALIDA)
-                motor_usado = 'camara'
+                        ruta = escena_wan_hf.producir(trabajo, reglas, cat, SALIDA)
+                        motor_usado = 'wan_hf'
+                    except MotorError as e:
+                        if not e.intermitente:
+                            raise
+                        # Cuota del día agotada: esperar a mañana en vez de gastar el trabajo en
+                        # la cámara, salvo que la REGLA escena_camara_si_cuota diga lo contrario.
+                        # 24-sep (Alejandro: «nunca te frenes, siempre usa tu máxima posibilidad de
+                        # producción»): por omisión la cámara ENTRA cuando Wan se queda sin cuota; si él
+                        # no quiere cámara, la REGLA escena_camara_si_cuota=0 vuelve a esperar.
+                        if getattr(e, 'esperar', False) and str(
+                                reglas.get('escena_camara_si_cuota', '1')).strip() in ('0', 'no', 'false'):
+                            raise
+                        avisos.append(str(e))
+                else:
+                    avisos.append('wan_hf no disponible: %s' % (razon if not m else m['motor']))
+                # 28-sep · modal_ltx: animación de IA REAL (LTX-Video en Modal, centavos por escena,
+                # crédito gratis mensual de Modal). Entra si Wan no pudo; `escena_modal`=0 la apaga.
+                if ruta is None and str(reglas.get('escena_modal', '0')).strip() not in ('0', 'no', 'false'):
+                    from motores import escena_modal
+                    if escena_modal.disponible():
+                        try:
+                            ruta = escena_modal.producir(trabajo, reglas, cat, SALIDA)
+                            motor_usado = 'modal_ltx'
+                        except Exception as e:  # noqa: BLE001
+                            avisos.append('modal_ltx: %s' % e)
+                # 28-sep · parallax: animación 2.5D hecha con código (profundidad + cámara virtual),
+                # gratis y sin cuota. Va entre Wan y la cámara; `escena_parallax`=0 la apaga.
+                if ruta is None and not real and str(reglas.get('escena_parallax', '1')).strip() not in ('0', 'no', 'false'):
+                    try:
+                        from motores import escena_parallax
+                        ruta, extra = escena_parallax.producir_con_evidencia(trabajo, reglas, cat, SALIDA)
+                        motor_usado = 'parallax'
+                    except Exception as e:  # noqa: BLE001 — si falla, la cámara sigue saliendo
+                        avisos.append('parallax: %s' % e)
+                if ruta is None:
+                    if real:
+                        raise MotorError('video generativo pendiente; cámara y parallax retirados: %s'
+                                         % ' · '.join(avisos), intermitente=True)
+                    if str(reglas.get('escena_respaldo_camara', '1')).strip() in ('0', 'no', 'false'):
+                        raise MotorError('sin animación y la cámara de respaldo está apagada: %s'
+                                         % ' · '.join(avisos), intermitente=True)
+                    from motores import escena_camara
+                    ruta = escena_camara.producir(trabajo, reglas, cat, SALIDA)
+                    motor_usado = 'camara'
 
-            extra['avisos_motores'] = [sala.redactar(str(a)) for a in avisos]
-            extra['generativa'] = motor_usado in ('wan_hf', 'modal_ltx')
+                extra['avisos_motores'] = [sala.redactar(str(a)) for a in avisos]
+                extra['generativa'] = motor_usado in ('wan_hf', 'modal_ltx')
 
         elif etapa == 'prospecto':
             from motores import prospecto
@@ -219,6 +231,13 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                 exigir(tira, reglas, 'corte')
             ruta = montador.ensamblar(trabajo, reglas, cat, SALIDA, cola)
             motor_usado = 'ffmpeg'
+            deps = {f"{trabajo.get('pieza')}:{et}:{l['item']}:{l['huella']}"
+                    for l in ev0.get('laminas') or [] for et in ('escena', 'voz')}
+            extra['motores_corte'] = sorted({(j.get('evidencia') or {}).get('motor') or j.get('motor') or 'desconocido'
+                                             for j in cola if j.get('id') in deps})
+            extra['formatos_corte'] = sorted({(j.get('evidencia') or {}).get('formato', 'video_generativo')
+                                              for j in cola if j.get('id') in deps and j.get('etapa') == 'escena'})
+
 
         else:
             raise MotorError('etapa «%s» no soportada en la nube' % etapa)
@@ -226,7 +245,8 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
     except ContenidoVetado as e:
         return 'fallo', {'motor': None, 'error': str(e), 'segundos': round(time.time() - inicio, 1)}
     except MotorError as e:
-        ev = {'motor': None, 'error': str(e), 'segundos': round(time.time() - inicio, 1)}
+        ev = {'motor': None, 'error': str(e), 'segundos': round(time.time() - inicio, 1),
+              'intentos_motores': getattr(e, 'intentos', [])}
         return ('pendiente' if e.intermitente else 'fallo'), ev
     except montador.MontadorError as e:
         # El montador nunca es "intermitente": si a una lámina le falta su escena o su voz,
@@ -395,7 +415,7 @@ def main():
     # pieza entera) podía quedarse dos horas detrás de varios prospectos (prioridad 3: abren
     # candidatas de una lámina rechazada) sólo por haber llegado después. Mayor prioridad
     # primero; a igual prioridad, se respeta el orden en que ya venían (sort estable).
-    pendientes.sort(key=lambda t: -entero(t.get('prioridad'), 5))
+    pendientes.sort(key=lambda t: (0 if t.get('etapa') == 'voz' else 1 if t.get('etapa') == 'escena' else 2, -entero(t.get('prioridad'), 5)))
     sala.avisar('COLA: %d trabajo(s) pendiente(s) en %s (de %d totales)'
                % (len(pendientes), sorted(habilitadas), len(cola)))
 
@@ -431,8 +451,20 @@ def main():
         sala.post('cola', op='estado', filas=[{'id': tid, 'estado': 'corriendo'}])
         sala.avisar('▶ %s' % tid)
 
+        def reservar(nombre):
+            # Persistir ANTES de consumir: una interrupción no vuelve gratuito el intento.
+            import copy
+            entrada = copy.deepcopy(t.get('evidencia') or {})
+            usos = entrada.setdefault('usos_motores', {}).setdefault(sala.hoy_hermosillo(), {})
+            usos[nombre] = int(usos.get(nombre, 0)) + 1
+            ack = sala.post('cola', op='estado', filas=[{'id': tid, 'estado': 'corriendo',
+                      'motor': nombre, 'evidencia': entrada}])
+            if not ack.get('ok') or ack.get('ignoradas'):
+                raise MotorError('no se confirmó reserva de cuota; no consumir motor', intermitente=True)
+            t.update(evidencia=entrada, motor=nombre)
+
         try:
-            estado, ev = ejecutar_uno(t, reglas, motores_resp, cat, drive_raiz, cola)
+            estado, ev = ejecutar_uno(t, reglas, motores_resp, cat, drive_raiz, cola, reservar)
         except Exception as e:   # 23-sep: una excepción dejaba el trabajo en «corriendo» y tumbaba la corrida
             estado, ev = 'fallo', {'error': 'excepción %s: %s' % (type(e).__name__, str(e)[:300])}
         # 23-sep: la evidencia NUEVA se suma a la de entrada, no la reemplaza. Antes un intento
