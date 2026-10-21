@@ -145,9 +145,12 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
                 raise MontadorError(
                     'la lámina %s le falta %s (todavía no está "hecho" en la COLA) — el '
                     'corte no se arma incompleto' % (item, ' y '.join(faltan)))
-            if video_real and ((j_escena.get('evidencia') or {}).get('generativa') is not True
+            from sala_adaptativa import activa
+            escena_ev = j_escena.get('evidencia') or {}
+            codigo = activa(reglas) and escena_ev.get('motor') == 'codigo' and escena_ev.get('formato') == 'animacion_codigo'
+            if video_real and ((escena_ev.get('generativa') is not True and not codigo)
                                or (j_voz.get('motor') or (j_voz.get('evidencia') or {}).get('motor')) != 'gemini_tts'):
-                raise MontadorError('la revisión requiere escena generativa y voz Gemini nuevas')
+                raise MontadorError('la revisión requiere escena generativa o animación por código y voz Gemini nuevas')
 
             from contenido_reglas import ContenidoVetado, exigir
             from motores._comun import lamina_de

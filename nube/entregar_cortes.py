@@ -53,6 +53,8 @@ def preparar(row, plan, titulo):
         exigir(canonical(pe.get('correccion')) == canonical(ev['correccion']), 'revision_distinta')
         prop['origen'] = 'rehecha-de ' + ev['correccion']['de']
         prop['opciones']['porque'] = 'Nueva versión del corte con la corrección solicitada. Revisa voz, movimiento y sincronía antes de aprobar.'
+    if ev.get('motores_corte'):
+        prop['opciones']['porque'] += ' Motores: ' + ', '.join(ev['motores_corte']) + '. Formatos: ' + ', '.join(ev.get('formatos_corte') or []) + '. Animación por código cuando la voz excede la toma o no hay cuota generativa; no implica aprobación.'
     contenido_valido(prop)
     return prop
 

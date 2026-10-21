@@ -77,7 +77,7 @@ class EnginePolicyTests(unittest.TestCase):
              patch('motores.escena_wan_hf.producir',side_effect=MotorError('cuota',intermitente=True)),\
              patch('motores.escena_camara.producir',side_effect=AssertionError('cámara prohibida')),\
              patch('motores.escena_parallax.producir_con_evidencia',side_effect=AssertionError('parallax prohibido')):
-            state,ev=executor.ejecutar_uno(job,{},[],{},None,[])
+            state,ev=executor.ejecutar_uno(job,{'nube_adaptativa':'0'},[],{},None,[])
         self.assertEqual('pendiente',state)
         self.assertIn('generativo',ev['error'])
 

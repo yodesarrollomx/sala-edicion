@@ -1,11 +1,10 @@
 {
-  "model_revision": "2026-10-20.sala-revision-video.1",
-  "model_commit": "d0b6ce74ef1431b20d785cfa72e4d3d3568dbe1c",
-  "proposal_id": "CHG-SALA-REVISION-VIDEO-20261020",
-  "summary": "Corrección del contrato de duración Wan confirmado en producción: solicitudes limitadas a 5 segundos. Conserva CTR-SALA-REVISION-VIDEO-V1, sin nuevas conexiones ni motores. Montaje sigue pendiente si el video no cubre la voz; no congela ni acelera audio.",
+  "model_revision": "2026-10-21.sala-cloud-adaptativa.1",
+  "model_commit": "99127e94aaeb4f3d8cd6989266125b94c0af4b4f",
+  "proposal_id": "CHG-SALA-CLOUD-ADAPTATIVA-20261021",
+  "summary": "Producción gratuita adaptativa en Actions: animación por código cubre la voz; selección determinista80/20, vetos, reservas de cuota y puntuación con linaje exacto. Runtime sin Mac ni sesiones Claude/Codex.",
   "components": [
     "SYS-SALA",
-    "GAS-SALA",
     "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
@@ -16,8 +15,7 @@
   "tests": [
     "python3 -m unittest discover -s tests -p *_test.py",
     "python3 nube/verificar.py",
-    "Regresión del máximo real del proveedor y perfil de revisión",
-    "Producción: verificar nuevo clip durable y duración; montaje corto continúa bloqueado explícitamente"
+    "Render sintético real validado por ffprobe; comprobar entrega real por separado."
   ],
   "rollback": "Desactivar video_revision_piezas y revertir código por PR. Conservar cola, propuestas, rechazos, aprobaciones, originales y recibos."
 }
