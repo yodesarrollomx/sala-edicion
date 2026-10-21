@@ -110,6 +110,9 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
     etapa = str(trabajo.get('etapa'))
     inicio = time.time()
     extra = {}
+    if (trabajo.get('evidencia') or {}).get('correccion'):
+        from revision_video import perfil
+        reglas = perfil(reglas)
 
     try:
         if etapa == 'voz':
@@ -133,7 +136,8 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
             # 24-sep (Alejandro): el orden lo pone lo que él aprueba. Si la cámara va mejor
             # calificada que Wan (sala_puntajes), se empieza por la cámara.
             import sala_puntajes
-            if m and m['motor'] == 'wan_hf' and sala_puntajes.orden('escena', ['wan_hf', 'camara'])[0] == 'camara':
+            real = str(reglas.get('escena_video_real', '0')) == '1'
+            if not real and m and m['motor'] == 'wan_hf' and sala_puntajes.orden('escena', ['wan_hf', 'camara'])[0] == 'camara':
                 avisos.append('la cámara va mejor calificada que wan_hf por tus decisiones')
                 m = None
             if m and m['motor'] == 'wan_hf':
@@ -167,7 +171,7 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                         avisos.append('modal_ltx: %s' % e)
             # 28-sep · parallax: animación 2.5D hecha con código (profundidad + cámara virtual),
             # gratis y sin cuota. Va entre Wan y la cámara; `escena_parallax`=0 la apaga.
-            if ruta is None and str(reglas.get('escena_parallax', '1')).strip() not in ('0', 'no', 'false'):
+            if ruta is None and not real and str(reglas.get('escena_parallax', '1')).strip() not in ('0', 'no', 'false'):
                 try:
                     from motores import escena_parallax
                     ruta, extra = escena_parallax.producir_con_evidencia(trabajo, reglas, cat, SALIDA)
@@ -175,6 +179,9 @@ def ejecutar_uno(trabajo, reglas, motores_resp, cat, drive_raiz, cola):
                 except Exception as e:  # noqa: BLE001 — si falla, la cámara sigue saliendo
                     avisos.append('parallax: %s' % e)
             if ruta is None:
+                if real:
+                    raise MotorError('video generativo pendiente; cámara y parallax retirados: %s'
+                                     % ' · '.join(avisos), intermitente=True)
                 if str(reglas.get('escena_respaldo_camara', '1')).strip() in ('0', 'no', 'false'):
                     raise MotorError('sin animación y la cámara de respaldo está apagada: %s'
                                      % ' · '.join(avisos), intermitente=True)
@@ -412,6 +419,15 @@ def main():
             break
 
         tid = t.get('id')
+        if (t.get('evidencia') or {}).get('correccion'):
+            from revision_video import vigente
+            current_day = sala_produccion.cargar()
+            current_rules = (sala.get('reglas', fresco='1') or {}).get('reglas') or {}
+            current_queue = (sala.get('cola', fresco='1') or {}).get('cola') or []
+            if not vigente(t, current_day, current_queue, current_rules, cat):
+                sala.avisar('⏸ revisión sin fuente vigente; no se ejecuta')
+                continue
+            reglas = current_rules
         sala.post('cola', op='estado', filas=[{'id': tid, 'estado': 'corriendo'}])
         sala.avisar('▶ %s' % tid)
 
@@ -426,6 +442,7 @@ def main():
         entrada = {k: v for k, v in entrada.items() if k not in ('error', 'segundos', 'rescatado')}
         sala.post('cola', op='estado', filas=[{'id': tid, 'estado': estado, 'evidencia': {**entrada, **ev},
                                                'motor': ev.get('motor') or ''}])
+        t.update(estado=estado, evidencia={**entrada, **ev}, motor=ev.get('motor') or '')
 
         if estado == 'hecho':
             hechos += 1

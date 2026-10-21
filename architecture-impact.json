@@ -1,18 +1,24 @@
 {
-  "model_revision": "2026-10-20.masterdeveloper-pizarra.1",
-  "proposal_id": "CHG-MASTERDEVELOPER-PIZARRA-20261020",
-  "summary": "Nombre Master Developer para Dirección y Master Broker para otras cuentas autorizadas; entrada por brokers y recorrido canónico por proyecto. Pizarra separada con carátulas, posición, zoom, montones, carpetas, búsqueda y deshacer. Estado personal privado por actor verificado en GAS-SALA existente, revisión esperada y recibo idempotente. Conservar CRM, IDs, fuentes, permisos, versiones, chinches y URLs; no inferir avance comercial del tipo de oportunidad.",
+  "model_revision": "2026-10-20.sala-revision-video.1",
+  "model_commit": "d0b6ce74ef1431b20d785cfa72e4d3d3568dbe1c",
+  "proposal_id": "CHG-SALA-REVISION-VIDEO-20261020",
+  "summary": "Rechazo firmado de corte abre escena/voz/corte de revisión con IDs nuevos por decisión y política, validación fresca antes de ejecutar, video generativo sin cámara/parallax, voz Gemini y montaje sin congelar. Fuente visual y decisiones preservadas.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
-    "SHEET-SALA"
+    "SHEET-SALA",
+    "SVC-SALA-PRODUCTOR",
+    "SVC-SALA-EJECUTOR",
+    "EXT-MOTORES-MEDIA",
+    "EXT-DRIVE",
+    "EXT-ACTIONS"
   ],
   "tests": [
-    "Roles y separación de carteras con snapshots sintéticos.",
-    "Pizarra: mover, agrupar, sacar, recargar, deshacer, móvil y teclado.",
-    "Persistencia: identidad, CAS, ACK perdido, reintento idéntico y conflicto sin sobrescribir.",
-    "Regresiones existentes y comparación de archivos publicados; sesiones reales separadas de pruebas sintéticas."
+    "python3 -m unittest discover -s tests -p *_test.py: 587 PASS",
+    "node --test tests/*.test.cjs: 138 PASS",
+    "python3 nube/verificar.py: 13 PASS",
+    "Pruebas revisión: rechazo, idempotencia, cambio de nota, fuente/durable/firmas, motores retirados, turnos de voz y montaje real",
+    "Producción real y aceptación editorial requieren recibos separados"
   ],
-  "rollback": "Revertir PR de interfaz/servidor manteniendo archivos de organización, expedientes, recibos, permisos y originales.",
-  "model_commit": "505d6b6f540e3b0a704659c665e64be1e4e698a1"
+  "rollback": "Desactivar video_revision_piezas y revertir código por PR. Conservar cola, propuestas, rechazos, aprobaciones, originales y recibos."
 }
