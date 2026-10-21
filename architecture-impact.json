@@ -2,7 +2,7 @@
   "model_revision": "2026-10-21.sala-cloud-adaptativa.1",
   "model_commit": "99127e94aaeb4f3d8cd6989266125b94c0af4b4f",
   "proposal_id": "CHG-SALA-CLOUD-ADAPTATIVA-20261021",
-  "summary": "Producción gratuita adaptativa en Actions: animación por código cubre la voz; selección determinista80/20, vetos, reservas de cuota y puntuación con linaje exacto. Runtime sin Mac ni sesiones Claude/Codex.",
+  "summary": "Conservar hasta30 intentos por trabajo para que los reintentos sin candidatos no borren pausas por cuota o fallos. Mismo contrato adaptativo, sin cambios de permisos, decisiones ni motores.",
   "components": [
     "SYS-SALA",
     "SHEET-SALA",
