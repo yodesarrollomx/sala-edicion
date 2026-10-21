@@ -44,7 +44,7 @@ def _spaces(reglas):
 
 def _segundos(reglas):
     try:
-        return max(2, min(8, int(float(str((reglas or {}).get('escena_segundos') or 5)))))
+        return max(2, min(5, int(float(str((reglas or {}).get('escena_segundos') or 5)))))
     except ValueError:
         return 5
 

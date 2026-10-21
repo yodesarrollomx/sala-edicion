@@ -38,7 +38,7 @@ def perfil(reglas):
     return dict(reglas, escena_parallax='0', escena_respaldo_camara='0',
                 escena_camara_si_cuota='0', escena_video_real='1',
                 voz_motor='gemini_tts', audio_margen_s='0', audio_cola_s='0.15',
-                montaje_video_real='1', escena_segundos='8')
+                montaje_video_real='1', escena_segundos='5')
 
 
 def planear(dia, cola, reglas, cat, plan_base):
