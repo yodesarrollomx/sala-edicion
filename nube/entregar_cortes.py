@@ -49,6 +49,10 @@ def preparar(row, plan, titulo):
                          'candidatas': [{'titulo': 'Conservar este corte', 'texto': 'El corte está bien como lo veo y escucho.'}]},
             'video': 'https://drive.google.com/file/d/%s/preview' % ev['drive_id'],
             'origen': 'corte-de ' + ev['de']}
+    if ev.get('correccion'):
+        exigir(canonical(pe.get('correccion')) == canonical(ev['correccion']), 'revision_distinta')
+        prop['origen'] = 'rehecha-de ' + ev['correccion']['de']
+        prop['opciones']['porque'] = 'Nueva versión del corte con la corrección solicitada. Revisa voz, movimiento y sincronía antes de aprobar.'
     contenido_valido(prop)
     return prop
 

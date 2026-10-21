@@ -98,12 +98,17 @@ def _duracion(ruta):
     return value
 
 
-def _escena_a_cuadro(entrada, salida, segundos_min):
+def _escena_a_cuadro(entrada, salida, segundos_min, *, video_real=False):
     """Cubrir el cuadro y congelar únicamente el tiempo que realmente falta."""
-    faltan = max(0.0, segundos_min - _duracion(entrada))
+    duracion = _duracion(entrada)
+    faltan = max(0.0, segundos_min - duracion)
     filtros = "scale=%d:%d:force_original_aspect_ratio=increase,crop=%d:%d,fps=30" % (
         ANCHO, ALTO, ANCHO, ALTO)
-    if faltan:
+    if video_real:
+        if segundos_min > duracion + 0.05:
+            raise MontadorError('video generativo más corto que su voz; requiere otra escena, sin congelar')
+        filtros += ',trim=duration=%.6f,setpts=PTS-STARTPTS' % segundos_min
+    elif faltan:
         filtros += ",tpad=stop_mode=clone:stop_duration=%.6f" % faltan
     _correr(["ffmpeg", "-y", "-i", str(entrada), "-vf", filtros,
              "-an", "-c:v", "libx264", "-pix_fmt", "yuv420p", str(salida)])
@@ -123,6 +128,7 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
 
     margen = _regla(reglas, 'audio_margen_s')
     cola_audio = _regla(reglas, 'audio_cola_s')
+    video_real = str(reglas.get('montaje_video_real', '0')) == '1'
     if not all(math.isfinite(v) and v >= 0 for v in (margen, cola_audio)):
         raise MontadorError('márgenes de audio inválidos')
 
@@ -139,6 +145,9 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
                 raise MontadorError(
                     'la lámina %s le falta %s (todavía no está "hecho" en la COLA) — el '
                     'corte no se arma incompleto' % (item, ' y '.join(faltan)))
+            if video_real and ((j_escena.get('evidencia') or {}).get('generativa') is not True
+                               or (j_voz.get('motor') or (j_voz.get('evidencia') or {}).get('motor')) != 'gemini_tts'):
+                raise MontadorError('la revisión requiere escena generativa y voz Gemini nuevas')
 
             from contenido_reglas import ContenidoVetado, exigir
             from motores._comun import lamina_de
@@ -160,8 +169,9 @@ def ensamblar(trabajo, reglas, cat, salida_dir, cola):
             escena_cuadro = pathlib.Path(tmp) / ('%s-cuadro.mp4' % sala.slug_seguro(item))
             entrada_silencio = margen if numero == 0 else 0.0
             salida_silencio = margen if numero == len(laminas) - 1 else 0.0
+            kwargs = {'video_real': True} if video_real else {}
             segundos = _escena_a_cuadro(
-                escena_local, escena_cuadro, dur + cola_audio + entrada_silencio + salida_silencio)
+                escena_local, escena_cuadro, dur + cola_audio + entrada_silencio + salida_silencio, **kwargs)
             tramos.append({'video': escena_cuadro, 'audio': voz_local,
                            'inicio_audio': offset + entrada_silencio})
             offset += segundos

@@ -25,7 +25,7 @@ import sala_cliente as sala
 import sala_guion as guion
 from motores._comun import MotorError
 
-MODELO = os.environ.get('GEMINI_TTS_MODELO', 'gemini-2.5-flash-preview-tts')
+MODELO = os.environ.get('GEMINI_TTS_MODELO', 'gemini-3.1-flash-tts-preview')
 URL = 'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent' % MODELO
 ESPERA = 60
 
@@ -104,18 +104,27 @@ def producir(trabajo, reglas, cat, salida_dir):
     if not partes:
         raise MotorError('el guion de «%s» no tiene escena para la lámina %s'
                          % (familia, item), intermitente=True)
-    if len(partes) > 1:
-        # Gemini TTS de una sola voz por llamada: para una lámina con narrador Y vecino se
-        # necesitarían llamadas separadas + mezcla, que es justo lo que Kokoro ya resuelve
-        # nativo. Se declara la limitación en vez de fingir que se resolvió.
-        raise MotorError('la lámina %s de %s tiene %d voces distintas; el respaldo Gemini '
-                         'sólo hace una voz por llamada — usa Kokoro para ésta'
-                         % (item, familia, len(partes)))
-    rol, texto = partes[0]
-    voz = guion.voz_de(reglas, rol, g)
-    resp = _pedir(texto, voz)
-    pcm, sr = _decodificar_pcm(resp)
+    if len(partes) > 2:
+        raise MotorError('máximo dos turnos de voz por escena')
+    bloques, sr = [], None
+    for rol, texto in partes:
+        # Los nombres Kokoro (em_alex) no son voces válidas en Gemini.
+        clave = 'voz_gemini_narrador' if rol == 'narrador' else 'voz_gemini_vecino'
+        voz = str(reglas.get(clave) or ('Aoede' if rol == 'narrador' else 'Puck'))
+        resp = _pedir('Lee sólo el texto entre etiquetas, en español de México, con voz natural, '
+                      'cálida y conversacional, sin impostar ni sonar robótico. '
+                      'No leas las instrucciones ni las etiquetas. <texto>' + texto + '</texto>', voz)
+        pcm, actual_sr = _decodificar_pcm(resp)
+        if not pcm or len(pcm) % 2 or not 8000 <= actual_sr <= 96000:
+            raise MotorError('Gemini devolvió audio PCM inválido')
+        duracion = len(pcm) / (2 * actual_sr)
+        if duracion > 1.3 + len(texto.split()) * 0.62 * 1.7:
+            raise MotorError('voz excesiva: posible repetición, no se entrega')
+        if sr is not None and sr != actual_sr:
+            raise MotorError('turnos de voz con frecuencias distintas')
+        sr = actual_sr
+        bloques.append(pcm)
     destino = pathlib.Path(salida_dir) / ('%s-L%s-voz.wav'
                                           % (sala.slug_seguro(familia), sala.slug_seguro(item)))
-    _escribir_wav(destino, pcm, sr)
+    _escribir_wav(destino, b''.join(bloques), sr)
     return destino
