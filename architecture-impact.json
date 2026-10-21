@@ -2,7 +2,7 @@
   "model_revision": "2026-10-20.sala-revision-video.1",
   "model_commit": "d0b6ce74ef1431b20d785cfa72e4d3d3568dbe1c",
   "proposal_id": "CHG-SALA-REVISION-VIDEO-20261020",
-  "summary": "Rechazo firmado de corte abre escena/voz/corte de revisión con IDs nuevos por decisión y política, validación fresca antes de ejecutar, video generativo sin cámara/parallax, voz Gemini y montaje sin congelar. Fuente visual y decisiones preservadas.",
+  "summary": "Corrección del contrato de duración Wan confirmado en producción: solicitudes limitadas a 5 segundos. Conserva CTR-SALA-REVISION-VIDEO-V1, sin nuevas conexiones ni motores. Montaje sigue pendiente si el video no cubre la voz; no congela ni acelera audio.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -14,11 +14,10 @@
     "EXT-ACTIONS"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p *_test.py: 587 PASS",
-    "node --test tests/*.test.cjs: 138 PASS",
-    "python3 nube/verificar.py: 13 PASS",
-    "Pruebas revisión: rechazo, idempotencia, cambio de nota, fuente/durable/firmas, motores retirados, turnos de voz y montaje real",
-    "Producción real y aceptación editorial requieren recibos separados"
+    "python3 -m unittest discover -s tests -p *_test.py",
+    "python3 nube/verificar.py",
+    "Regresión del máximo real del proveedor y perfil de revisión",
+    "Producción: verificar nuevo clip durable y duración; montaje corto continúa bloqueado explícitamente"
   ],
   "rollback": "Desactivar video_revision_piezas y revertir código por PR. Conservar cola, propuestas, rechazos, aprobaciones, originales y recibos."
 }
