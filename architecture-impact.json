@@ -5,7 +5,6 @@
   "summary": "Producción gratuita adaptativa en Actions: animación por código cubre la voz; selección determinista80/20, vetos, reservas de cuota y puntuación con linaje exacto. Runtime sin Mac ni sesiones Claude/Codex.",
   "components": [
     "SYS-SALA",
-    "GAS-SALA",
     "SHEET-SALA",
     "SVC-SALA-PRODUCTOR",
     "SVC-SALA-EJECUTOR",
