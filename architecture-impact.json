@@ -1,17 +1,16 @@
 {
   "model_revision": "2026-10-20.chinches-audio-ipad.1",
-  "proposal_id": "CHG-PRESENTACIONES-MD-20261020",
-  "summary": "Canje fresco por el Portero HTTP existente sin depender de compartir la hoja de sesiones con el propietario de Apps Script.",
+  "proposal_id": "CHG-SALA-VIDEO-IPHONE-20261020",
+  "summary": "QA aislada del contrato existente de video privado: vertical, horizontal, escritorio, iframe con permisos OS, fullscreen y reapertura. Sin cambios de producto, datos, backend ni arquitectura.",
   "components": [
-    "SYS-SALA",
-    "GAS-SALA",
-    "SHEET-SALA"
+    "SYS-SALA"
   ],
   "tests": [
-    "node --test tests/presentaciones-gas.test.cjs",
+    "node --test tests/video-revision.test.cjs tests/video-privado-gas.test.cjs",
+    "node tests/video-privado.browser.cjs",
     "python3 nube/verificar.py",
     "git diff --check"
   ],
-  "rollback": "Revertir código por PR conservando originales, borradores, IDs, recibos y permisos",
+  "rollback": "Revertir sólo los cambios de pruebas y CI; no modifica datos, interfaz ni backend.",
   "model_commit": "7796d27f8f68eda5785e4f173accdbe4fbdc13fe"
 }

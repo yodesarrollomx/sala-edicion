@@ -58,6 +58,8 @@ jobs:
       - run: node --test tests/tablero-publicaciones.test.cjs tests/tablero-sala.test.cjs tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs tests/sala-modelos.test.cjs
       - name: Navegador Chromium
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
           npm install --no-save --package-lock=false playwright
           npx playwright install --with-deps chromium webkit
       - name: Interacción escritorio y móvil sin escribir al Sheet
