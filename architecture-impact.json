@@ -1,6 +1,6 @@
 {
   "model_revision": "2026-10-20.sala-revision-video.1",
-  "model_commit": "7e889480c551c1c7abcf6374137ba3c609134cc4",
+  "model_commit": "d0b6ce74ef1431b20d785cfa72e4d3d3568dbe1c",
   "proposal_id": "CHG-SALA-REVISION-VIDEO-20261020",
   "summary": "Rechazo firmado de corte abre escena/voz/corte de revisión con IDs nuevos por decisión y política, validación fresca antes de ejecutar, video generativo sin cámara/parallax, voz Gemini y montaje sin congelar. Fuente visual y decisiones preservadas.",
   "components": [
@@ -14,7 +14,7 @@
     "EXT-ACTIONS"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p *_test.py: 586 PASS",
+    "python3 -m unittest discover -s tests -p *_test.py: 587 PASS",
     "node --test tests/*.test.cjs: 138 PASS",
     "python3 nube/verificar.py: 13 PASS",
     "Pruebas revisión: rechazo, idempotencia, cambio de nota, fuente/durable/firmas, motores retirados, turnos de voz y montaje real",

@@ -55,6 +55,14 @@ class RevisionTests(unittest.TestCase):
         with patch.object(productor,'huella_insumo',return_value=('87654321','catalogo')):
             self.assertFalse(any(j['evidencia'].get('correccion') for j in self.plan()))
 
+    def test_execution_requires_the_current_rejection_signature(self):
+        import revision_video
+        job=next(j for j in self.plan() if j['evidencia'].get('correccion'))
+        queue=[self.old,job]
+        self.assertTrue(revision_video.vigente(job,self.day,queue,self.rules,{}))
+        self.decision['laminas']=['si']
+        self.assertFalse(revision_video.vigente(job,self.day,queue,self.rules,{}))
+
     def test_non_durable_cut_cannot_open_revision(self):
         self.old['evidencia']['durable']=False
         self.assertFalse(any(j['evidencia'].get('correccion') for j in self.plan()))
