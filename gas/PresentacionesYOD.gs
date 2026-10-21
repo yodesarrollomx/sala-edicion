@@ -38,8 +38,19 @@ function yodPresPinRows_(meta){
 }
 function yodPresPins_(meta,cursor){var list=yodPresPinRows_(meta),seen={},all=[];list.reverse().forEach(function(x){if(!seen[x.detail.id]){seen[x.detail.id]=true;all.push(x);}});var start=Number(cursor||0);if(!isFinite(start)||start<0||Math.floor(start)!==start)throw Error('invalid_request');var slice=all.slice(start,start+100);return {items:slice.map(function(x){return {id:x.detail.id,hash:x.kind==='legacy'?x.detail.objeto.huella:x.detail.hash,kind:x.kind,comment:x.revision?String(x.revision.comment||''):'Explicación con voz, trazos y capturas',title:x.revision?String((x.revision.context||{}).titulo||meta.title):meta.title,version:x.revision?String((x.revision.context||{}).version||''):null,created:String(x.revision?x.revision.created||'':x.row.fecha||''),hasCapture:!!(x.revision&&x.revision.capture),hasSequence:x.kind==='sequence',state:'received'};}),nextCursor:start+slice.length<all.length?String(start+slice.length):null,complete:start+slice.length>=all.length,total:all.length};}
 function yodPresPin_(meta,id){var rows=yodPresPinRows_(meta).filter(function(x){return x.detail.id===id;});if(!rows.length)throw Error('not_found');var x=rows[rows.length-1];if(rows.some(function(r){return (r.kind==='legacy'?r.detail.objeto.huella:r.detail.hash)!==(x.kind==='legacy'?x.detail.objeto.huella:x.detail.hash);}))throw Error('integrity');if(x.kind==='legacy'){if(yodPresDigest_(JSON.stringify(x.revision))!==x.detail.objeto.huella)throw Error('integrity');return {kind:'legacy',revision:x.revision,hash:x.detail.objeto.huella};}var canonical=chsRow_(id);if(!canonical||canonical.hash!==x.detail.hash)throw Error('integrity');var f=chsFile_(id);if(!f)throw Error('not_found');var data=f.getBlob().getDataAsString('UTF-8');if(yodPresDigest_(data)!==x.detail.hash)throw Error('integrity');var packet=JSON.parse(data);return {kind:'sequence',packet:packet,hash:x.detail.hash};}
+// Personal board state shares the existing private folder; reads never create files.
+function yodPresLayoutFile_(actor){
+ if(!/^[a-f0-9]{64}$/.test(actor))throw Error('unauthorized');
+ var folderId=PropertiesService.getScriptProperties().getProperty('YOD_PRES_FOLDER_V1');if(!folderId)throw Error('backend_not_ready');
+ var folder=DriveApp.getFolderById(folderId);if(folder.getSharingAccess()!==DriveApp.Access.PRIVATE)throw Error('private_folder_required');
+ var files=folder.getFilesByName('layout-'+actor+'.json');var file=files.hasNext()?files.next():null;
+ if(files.hasNext())throw Error('integrity');if(file&&file.getSharingAccess()!==DriveApp.Access.PRIVATE)throw Error('private_folder_required');return {folder:folder,file:file};
+}
+function yodPresLayoutRead_(actor){var found=yodPresLayoutFile_(actor);return found.file?JSON.parse(found.file.getBlob().getDataAsString('UTF-8')):null;}
+function yodPresLayoutWrite_(actor,data){var found=yodPresLayoutFile_(actor),text=JSON.stringify(data);if(Utilities.newBlob(text).getBytes().length>200000)throw Error('invalid_layout');if(found.file)found.file.setContent(text);else found.folder.createFile('layout-'+actor+'.json',text,MimeType.PLAIN_TEXT);}
 function yodPresAdapter_(){var props=PropertiesService.getScriptProperties();return {
  now:function(){return Date.now();},uuid:yodPresUUID_,hash:yodPresDigest_,auth:yodPresActor_,pins:yodPresPins_,pin:yodPresPin_,
+ readLayout:yodPresLayoutRead_,writeLayout:yodPresLayoutWrite_,
  catalog:function(){return yodPresIndex_().records.map(function(x){return x.metadata;});},read:yodPresRead_,write:yodPresWrite_,
  lock:function(fn){var l=LockService.getScriptLock();if(!l.tryLock(5000))throw Error('busy');try{return fn();}finally{l.releaseLock();}},
  session:function(id){var s=props.getProperty('YOD_PRES_SESSION_'+id);return s?JSON.parse(s):null;},
