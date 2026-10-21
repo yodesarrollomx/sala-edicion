@@ -472,6 +472,8 @@ def main():
         # trabajo (o la lista de láminas de un corte): el siguiente intento ya no sabía qué hacer.
         entrada = t.get('evidencia') if isinstance(t.get('evidencia'), dict) else {}
         entrada = {k: v for k, v in entrada.items() if k not in ('error', 'segundos', 'rescatado')}
+        if 'intentos_motores' in ev:
+            ev['intentos_motores'] = ((entrada.get('intentos_motores') or []) + ev['intentos_motores'])[-30:]
         sala.post('cola', op='estado', filas=[{'id': tid, 'estado': estado, 'evidencia': {**entrada, **ev},
                                                'motor': ev.get('motor') or ''}])
         t.update(estado=estado, evidencia={**entrada, **ev}, motor=ev.get('motor') or '')
