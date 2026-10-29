@@ -1,44 +1,44 @@
 {
   "schema": 1,
-  "generado_en": "2026-10-28T18:25:21.535678+00:00",
+  "generado_en": "2026-10-29T18:33:40.449646+00:00",
   "code_sha": "d369d1c63d8d755ef10d668863be65f142f13dc8",
-  "run_id": "40744650015",
+  "run_id": "40931847327",
   "zona_horaria": "America/Hermosillo",
   "alcance": "Canario sintético aislado; no certifica todos los motores ni aceptación editorial",
   "checks": [
     {
       "id": "canario-reglas",
       "estado": "ok",
-      "revisado_en": "2026-10-28T18:25:21.535678+00:00",
-      "vence_en": "2026-10-30T06:25:21.535678+00:00",
+      "revisado_en": "2026-10-29T18:33:40.449646+00:00",
+      "vence_en": "2026-10-31T06:33:40.449646+00:00",
       "detalle": "Configuración leída; ninguna regla modificada"
     },
     {
       "id": "motor-voz",
       "estado": "ok",
-      "revisado_en": "2026-10-28T18:25:21.535678+00:00",
-      "vence_en": "2026-10-30T06:25:21.535678+00:00",
+      "revisado_en": "2026-10-29T18:33:40.449646+00:00",
+      "vence_en": "2026-10-31T06:33:40.449646+00:00",
       "detalle": "Kokoro real: WAV con señal y duración 2.877s"
     },
     {
       "id": "motor-escena",
       "estado": "ok",
-      "revisado_en": "2026-10-28T18:25:21.535678+00:00",
-      "vence_en": "2026-10-30T06:25:21.535678+00:00",
+      "revisado_en": "2026-10-29T18:33:40.449646+00:00",
+      "vence_en": "2026-10-31T06:33:40.449646+00:00",
       "detalle": "Parallax real 1080×1920 H264 2.000s; profundidad depth-anything-v2"
     },
     {
       "id": "motor-corte",
       "estado": "ok",
-      "revisado_en": "2026-10-28T18:25:21.535678+00:00",
-      "vence_en": "2026-10-30T06:25:21.535678+00:00",
+      "revisado_en": "2026-10-29T18:33:40.449646+00:00",
+      "vence_en": "2026-10-31T06:33:40.449646+00:00",
       "detalle": "Montador real: H264/AAC con audio, duración 3.633s"
     },
     {
       "id": "drive-transferencia",
       "estado": "ok",
-      "revisado_en": "2026-10-28T18:25:21.535678+00:00",
-      "vence_en": "2026-10-30T06:25:21.535678+00:00",
+      "revisado_en": "2026-10-29T18:33:40.449646+00:00",
+      "vence_en": "2026-10-31T06:33:40.449646+00:00",
       "detalle": "Archivo de prueba subido, releído byte exacto y retiro a papelera confirmado"
     }
   ],
