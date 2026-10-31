@@ -18,7 +18,9 @@ function yodPresWorkerSource_(source,p){return source&&source.case_id===p.case_i
 function yodPresWorkerLease_(lease,p,version){
  return !!lease&&lease.job_id===version.job_id&&lease.worker_id===p.worker_id&&lease.actor_id===p.actor_id&&lease.request_id===p.request_id&&lease.source_hash===version.source.snapshot_hash&&Number.isSafeInteger(lease.lease_epoch)&&lease.lease_epoch>0&&typeof lease.lease_expires_at==='string'&&Number.isFinite(Date.parse(lease.lease_expires_at))&&Date.parse(lease.lease_expires_at)>Date.now();
 }
+function yodPresArtifact_(version){if(!version||version.artifact_hash!==yodPresDigest_(YODPresentationsDomain.stable(YODStoryboard.normalize(version.storyboard))))throw Error('integrity');}
 function yodPresWorkerResult_(record,version,receipt,p){
+ yodPresArtifact_(version);
  return {ok:true,found:true,request_id:p.request_id,case_id:p.case_id,presentation_id:record.id,presentation_version_id:version.presentation_version_id,source:version.source,artifact_hash:version.artifact_hash,receipt:receipt,url:record.metadata.url,version:YODPresentationsDomain.privateView(record).content_versions.filter(function(v){return v.presentation_version_id===version.presentation_version_id;})[0]};
 }
 function yodPresWorkerRequest_(proof){
@@ -37,6 +39,7 @@ function yodPresWorkerRequest_(proof){
    record=adapter.read(p.presentation_id);version=(record.content_versions||[]).filter(function(v){return v.presentation_version_id===p.presentation_version_id;})[0];
    var authorization=(record.production_authorizations||[]).filter(function(a){return a.authorization_id===p.authorization_id&&a.presentation_version_id===p.presentation_version_id;})[0];
    if(record.metadata?.adapter!=='ppp-storyboard-v1'||!version||version.stage!=='storyboard'||!yodPresWorkerSource_(version.source,p)||!authorization||authorization.actor_id!==actorId||authorization.snapshot_hash!==version.source.snapshot_hash)throw Error('unauthorized');
+   yodPresArtifact_(version);
    return {ok:true,case_id:p.case_id,presentation_id:record.id,presentation_version_id:version.presentation_version_id,authorization_id:authorization.authorization_id,source:version.source,artifact_hash:version.artifact_hash,registry_revision:record.revision,latest:record.latest_presentation_version_id===version.presentation_version_id,authorization:authorization};
   }
   if(!yodPresProofId_(p.presentation_id)||!yodPresProofId_(p.request_id))throw Error('invalid_request');
@@ -68,6 +71,7 @@ function yodPresWorkerRequest_(proof){
     receipt=(record.receipts||[]).filter(function(r){return r.id===p.request_id&&r.actor===actorId;})[0];
     if(!version||!receipt)return Object.assign(base,{ok:true,found:false});
     if(!yodPresWorkerSource_(version.source,p)||version.source.snapshot_hash!==p.source_hash||version.job_id!==p.job_id||receipt.job_id!==p.job_id||receipt.presentation_version_id!==p.presentation_version_id)throw Error('request_id_reused');
+    yodPresArtifact_(version);
     if(!indexed)record=adapter.create(record); // Complete only the saved index link; never regenerate content.
     return yodPresWorkerResult_(record,version,receipt,p);
    });

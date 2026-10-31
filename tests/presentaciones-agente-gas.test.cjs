@@ -96,6 +96,12 @@ test('private storage permissions and case boundaries are checked before serving
  assert.equal(other.call('presentationReceipt',{...other.receipt(input),board_case_id:'FOREIGN-PPP'}).error,'unauthorized');
 });
 
+test('receipt readback rejects an artifact whose stored content no longer matches its hash',()=>{
+ const f=fixture(),p=f.makeRegister();f.call('presentationRegister',p);
+ const record=f.context.yodPresRead_(presentationId);record.content_versions[0].storyboard.title='Modified stored bytes';f.context.yodPresWrite_(record);
+ assert.equal(f.call('presentationReceipt',f.receipt(p)).error,'integrity');
+});
+
 test('same source can receive a second narrative version while stale registry revisions are rejected',()=>{
  const f=fixture(),p=f.makeRegister();f.call('presentationRegister',p);
  const next=copy(p);next.request_id=next.registration.requestId=next.lease.request_id='register-qa-2';next.registration.data.expectedRevision=1;

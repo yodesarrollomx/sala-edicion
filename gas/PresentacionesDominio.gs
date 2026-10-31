@@ -30,7 +30,7 @@
  function generated(r){return r?.metadata?.adapter==='ppp-storyboard-v1';}
  function publicRelease(r,release){if(generated(r))fail('not_found');const v=r.releases.find(x=>x.id===(release||r.releaseRevision));if(!v)fail('release_not_found');return {id:r.id,baseVersion:v.baseVersion,revision:r.revision,releaseRevision:v.id,patch:clone(v.patch),stage:r.metadata.stage};}
  function publicSession(s,now){if(!s)return {mode:'summary',epoch:0,sequence:0};return {mode:s.until>now&&s.mode==='guided'?'guided':'summary',presentationId:s.presentationId,sessionId:s.sessionId,releaseRevision:s.releaseRevision,epoch:s.epoch,sequence:s.sequence,position:s.position,sceneId:s.sceneId,momentId:s.momentId,updatedAt:s.updatedAt,expiresAt:s.until};}
- function versionSummary(v){const {storyboard,...summary}=v;return clone(summary);}
+ function versionSummary(v){const {storyboard,...summary}=v;return clone({...summary,title:storyboard.title});}
  function privateView(r){const base=generated(r)?{id:r.id,baseVersion:r.metadata.baseVersion,revision:r.revision,releaseRevision:null,stage:r.metadata.stage}:publicRelease(r);return {...base,metadata:clone(r.metadata),links:clone(r.links),draft:clone(r.draft),releases:r.releases.map(x=>({id:x.id,at:x.at,baseVersion:x.baseVersion})),...(generated(r)?{latest_presentation_version_id:r.latest_presentation_version_id,content_versions:(r.content_versions||[]).map(versionSummary),production_authorizations:clone(r.production_authorizations||[])}:{})};}
  function revisionRef(v){if(typeof v==='number'&&Number.isSafeInteger(v)&&v>=0)return v;if(typeof v==='string'&&v.trim()&&v.length<=200&&!/[\u0000-\u001f]/.test(v))return v.trim();fail('invalid_source');}
  function generationVersion(input,a){

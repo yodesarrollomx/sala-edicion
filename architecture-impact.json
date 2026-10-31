@@ -1,6 +1,6 @@
 {
   "model_revision": "2026-10-31.ppp-presentaciones.1",
-  "model_commit": "929c43b710907b175b15ce7e9ac009869d9cb3b8",
+  "model_commit": "d99f27b5da52c5aab5d3c1ff6625937df35ba8f3",
   "proposal_id": "CHG-PPP-PRESENTACIONES-20261031",
   "summary": "Extender el registro privado existente de presentaciones con versiones inmutables ligadas a la revisión PPP vista, registro/recibo/listado por prueba firmada verificada por Portero, autorización explícita de etapa dos y proyección privada sin guion. Mismo catálogo, despliegue y carpeta Drive; sin publicación automática ni cambios financieros. Código local y pruebas sintéticas no acreditan activación productiva.",
   "components": [
