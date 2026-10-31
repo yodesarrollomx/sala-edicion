@@ -1,21 +1,20 @@
 {
-  "model_revision": "2026-10-21.sala-cloud-adaptativa.1",
-  "model_commit": "99127e94aaeb4f3d8cd6989266125b94c0af4b4f",
-  "proposal_id": "CHG-SALA-CLOUD-ADAPTATIVA-20261021",
-  "summary": "Conservar hasta30 intentos por trabajo para que los reintentos sin candidatos no borren pausas por cuota o fallos. Mismo contrato adaptativo, sin cambios de permisos, decisiones ni motores.",
+  "model_revision": "2026-10-31.ppp-presentaciones.1",
+  "model_commit": "929c43b710907b175b15ce7e9ac009869d9cb3b8",
+  "proposal_id": "CHG-PPP-PRESENTACIONES-20261031",
+  "summary": "Extender el registro privado existente de presentaciones con versiones inmutables ligadas a la revisión PPP vista, registro/recibo/listado por prueba firmada verificada por Portero, autorización explícita de etapa dos y proyección privada sin guion. Mismo catálogo, despliegue y carpeta Drive; sin publicación automática ni cambios financieros. Código local y pruebas sintéticas no acreditan activación productiva.",
   "components": [
     "SYS-SALA",
-    "SHEET-SALA",
-    "SVC-SALA-PRODUCTOR",
-    "SVC-SALA-EJECUTOR",
-    "EXT-MOTORES-MEDIA",
-    "EXT-DRIVE",
-    "EXT-ACTIONS"
+    "GAS-SALA",
+    "SYS-INVERSION",
+    "GAS-PORTERO",
+    "EXT-DRIVE"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p *_test.py",
+    "node --test tests/presentaciones-gas.test.cjs tests/presentaciones-agente-gas.test.cjs: registro, firma/ACL, replay, recuperación de índice, readback, origen y autorización exactos, proyección privada y chinches por presentación.",
     "python3 nube/verificar.py",
-    "Render sintético real validado por ffprobe; comprobar entrega real por separado."
+    "git diff --check; sintaxis GAS mediante VM con dobles aislados.",
+    "Pendiente: compare/readback del GAS vivo y piloto integrado con worker/Portero y visor, sin inferirlo de estas pruebas locales."
   ],
-  "rollback": "Desactivar video_revision_piezas y revertir código por PR. Conservar cola, propuestas, rechazos, aprobaciones, originales y recibos."
+  "rollback": "Desactivar el alcance de presentaciones del agente/Portero y revertir código por PR. Conservar versiones privadas, archivos, extensión del índice, autorizaciones, recibos y chinches; no borrar ni restaurar cálculos o registros de negocio."
 }
