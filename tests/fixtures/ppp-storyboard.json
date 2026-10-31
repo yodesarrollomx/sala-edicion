@@ -1,0 +1,412 @@
+{
+  "schema": "yod.storyboard.v1",
+  "title": "Caso sintético · Plan de Potencial",
+  "audience": "Propietario y equipo del proyecto",
+  "decision": "Acordar la evidencia que falta para elegir una ruta.",
+  "objects": [
+    {
+      "id": "site",
+      "kind": "land",
+      "label": "El terreno",
+      "schematic": true
+    },
+    {
+      "id": "owner",
+      "kind": "person",
+      "label": "Propietario",
+      "schematic": true
+    },
+    {
+      "id": "building",
+      "kind": "building",
+      "label": "Producto por validar",
+      "schematic": true
+    },
+    {
+      "id": "unit",
+      "kind": "unit",
+      "label": "Unidad",
+      "schematic": true
+    },
+    {
+      "id": "cash",
+      "kind": "money",
+      "label": "Capital para desarrollar",
+      "schematic": true
+    },
+    {
+      "id": "evidence",
+      "kind": "document",
+      "label": "Evidencia y condiciones",
+      "schematic": true
+    }
+  ],
+  "facts": [
+    {
+      "id": "area",
+      "label": "Superficie de referencia",
+      "value": "900",
+      "unit": "m²",
+      "source_ref": "snapshot.inputs.land_area",
+      "status": "verified",
+      "condition": "Ejemplo sintético. Geometría ilustrativa; no es un levantamiento."
+    },
+    {
+      "id": "funding",
+      "label": "Capital comprometido",
+      "value": null,
+      "unit": "MXN",
+      "source_ref": "snapshot.constraints.funding",
+      "status": "pending",
+      "condition": "Buscar o estructurar fondeo no significa que exista capital disponible."
+    }
+  ],
+  "scenes": [
+    {
+      "id": "intent",
+      "title": "La decisión empieza en el terreno",
+      "question": "¿Qué necesitamos decidir?",
+      "takeaway": "Acordar qué debe resolver el proyecto.",
+      "role": "context",
+      "diagram": "site",
+      "condition": "Ejemplo sintético para pruebas. No representa una oferta ni una conclusión aprobada.",
+      "moments": [
+        {
+          "id": "intent-1",
+          "label": "Ubicar el objeto",
+          "spoken": "Acordar qué debe resolver el proyecto.",
+          "visible_objects": [
+            "site"
+          ],
+          "annotations": [],
+          "relations": [],
+          "camera": {
+            "focus": [
+              "site"
+            ]
+          }
+        },
+        {
+          "id": "intent-2",
+          "label": "Entender la relación",
+          "spoken": "Acordar qué debe resolver el proyecto.",
+          "visible_objects": [
+            "site",
+            "owner"
+          ],
+          "annotations": [
+            {
+              "object_id": "site",
+              "fact_id": "area",
+              "label": ""
+            }
+          ],
+          "relations": [
+            {
+              "from": "site",
+              "to": "owner",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "site",
+              "owner"
+            ]
+          }
+        },
+        {
+          "id": "intent-3",
+          "label": "Acordar lo que sigue",
+          "spoken": "Acordar qué debe resolver el proyecto.",
+          "visible_objects": [
+            "site",
+            "owner",
+            "evidence"
+          ],
+          "annotations": [
+            {
+              "object_id": "site",
+              "fact_id": "area",
+              "label": ""
+            }
+          ],
+          "relations": [
+            {
+              "from": "site",
+              "to": "evidence",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "site",
+              "owner",
+              "evidence"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "product",
+      "title": "Del terreno al producto",
+      "question": "¿Qué producto cabe y se puede colocar?",
+      "takeaway": "El programa sigue sujeto a validación de mercado y reglas.",
+      "role": "solution",
+      "diagram": "program",
+      "condition": "Ejemplo sintético para pruebas. No representa una oferta ni una conclusión aprobada.",
+      "moments": [
+        {
+          "id": "product-1",
+          "label": "Ubicar el objeto",
+          "spoken": "El programa sigue sujeto a validación de mercado y reglas.",
+          "visible_objects": [
+            "site",
+            "building"
+          ],
+          "annotations": [],
+          "relations": [
+            {
+              "from": "site",
+              "to": "building",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "site",
+              "building"
+            ]
+          }
+        },
+        {
+          "id": "product-2",
+          "label": "Entender la relación",
+          "spoken": "El programa sigue sujeto a validación de mercado y reglas.",
+          "visible_objects": [
+            "site",
+            "building",
+            "unit"
+          ],
+          "annotations": [],
+          "relations": [
+            {
+              "from": "site",
+              "to": "unit",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "site",
+              "building",
+              "unit"
+            ]
+          }
+        },
+        {
+          "id": "product-3",
+          "label": "Acordar lo que sigue",
+          "spoken": "El programa sigue sujeto a validación de mercado y reglas.",
+          "visible_objects": [
+            "building",
+            "unit",
+            "evidence"
+          ],
+          "annotations": [],
+          "relations": [
+            {
+              "from": "building",
+              "to": "evidence",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "building",
+              "unit",
+              "evidence"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "capital",
+      "title": "Separar activo y efectivo",
+      "question": "¿Qué se aporta y qué falta financiar?",
+      "takeaway": "El terreno no sustituye el efectivo necesario para desarrollar.",
+      "role": "risk",
+      "diagram": "cashflow",
+      "condition": "Ejemplo sintético para pruebas. No representa una oferta ni una conclusión aprobada.",
+      "moments": [
+        {
+          "id": "capital-1",
+          "label": "Ubicar el objeto",
+          "spoken": "El terreno no sustituye el efectivo necesario para desarrollar.",
+          "visible_objects": [
+            "site",
+            "cash"
+          ],
+          "annotations": [],
+          "relations": [
+            {
+              "from": "site",
+              "to": "cash",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "site",
+              "cash"
+            ]
+          }
+        },
+        {
+          "id": "capital-2",
+          "label": "Entender la relación",
+          "spoken": "El terreno no sustituye el efectivo necesario para desarrollar.",
+          "visible_objects": [
+            "site",
+            "cash",
+            "owner"
+          ],
+          "annotations": [
+            {
+              "object_id": "cash",
+              "fact_id": "funding",
+              "label": ""
+            }
+          ],
+          "relations": [
+            {
+              "from": "site",
+              "to": "owner",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "site",
+              "cash",
+              "owner"
+            ]
+          }
+        },
+        {
+          "id": "capital-3",
+          "label": "Acordar lo que sigue",
+          "spoken": "El terreno no sustituye el efectivo necesario para desarrollar.",
+          "visible_objects": [
+            "cash",
+            "evidence"
+          ],
+          "annotations": [
+            {
+              "object_id": "cash",
+              "fact_id": "funding",
+              "label": ""
+            }
+          ],
+          "relations": [
+            {
+              "from": "cash",
+              "to": "evidence",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "cash",
+              "evidence"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "decision",
+      "title": "Resolver antes de comprometer",
+      "question": "¿Cuál es el siguiente paso concreto?",
+      "takeaway": "Revisar evidencia y definir responsables antes de comprometer recursos.",
+      "role": "action",
+      "diagram": "decision",
+      "condition": "Ejemplo sintético para pruebas. No representa una oferta ni una conclusión aprobada.",
+      "moments": [
+        {
+          "id": "decision-1",
+          "label": "Ubicar el objeto",
+          "spoken": "Revisar evidencia y definir responsables antes de comprometer recursos.",
+          "visible_objects": [
+            "site",
+            "evidence"
+          ],
+          "annotations": [],
+          "relations": [
+            {
+              "from": "site",
+              "to": "evidence",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "site",
+              "evidence"
+            ]
+          }
+        },
+        {
+          "id": "decision-2",
+          "label": "Entender la relación",
+          "spoken": "Revisar evidencia y definir responsables antes de comprometer recursos.",
+          "visible_objects": [
+            "site",
+            "evidence",
+            "owner"
+          ],
+          "annotations": [],
+          "relations": [
+            {
+              "from": "site",
+              "to": "owner",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "site",
+              "evidence",
+              "owner"
+            ]
+          }
+        },
+        {
+          "id": "decision-3",
+          "label": "Acordar lo que sigue",
+          "spoken": "Revisar evidencia y definir responsables antes de comprometer recursos.",
+          "visible_objects": [
+            "evidence",
+            "owner"
+          ],
+          "annotations": [],
+          "relations": [
+            {
+              "from": "evidence",
+              "to": "owner",
+              "label": "Revisar juntos"
+            }
+          ],
+          "camera": {
+            "focus": [
+              "evidence",
+              "owner"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

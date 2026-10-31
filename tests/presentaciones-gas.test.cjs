@@ -10,3 +10,12 @@ test('central history recognizes the real sequence contract and verifies its has
 test('fresh HTTP canje works without direct Sheet sharing; denial never tries backup',()=>{const f=fixture();f.context.yodPresentacionesInstalar();const call=()=>f.context.yodPresentacionesPost_({presentation:{op:'catalog',token:'sy-synthetic-credential-000000'}});assert.equal(call().ok,true);f.revoke();assert.equal(call().error,'unauthorized');assert.equal(f.backupReads(),0);const other=fixture();other.context.yodPresentacionesInstalar();other.primaryDown();assert.equal(other.context.yodPresentacionesPost_({presentation:{op:'catalog',token:'sy-synthetic-credential-000000'}}).ok,true);assert.equal(other.backupReads(),1);});
 
 test('personal layout read does not create files; save and replay keep one private file and no Sheet rows',()=>{const f=fixture();f.context.yodPresentacionesInstalar();const call=(op,data={},requestId='layout-request-1')=>f.context.yodPresentacionesPost_({presentation:{op,data,requestId,token:'sy-synthetic-credential-000000'}});assert.equal(call('layout_read').data.revision,0);assert.equal(f.files.size,1);const data={expectedRevision:0,layout:{schema:1,items:[{id:'PRS-QA',x:10,y:10,group:''}],groups:[]}};assert.equal(call('layout_save',data).ok,true);assert.equal(call('layout_save',data).data.revision,1);assert.equal(f.files.size,2);assert.equal(f.rows.length,0);f.revoke();assert.equal(call('layout_read').error,'unauthorized');});
+
+test('generic PPP pages keep central chinches scoped by presentation identity even after URL query removal',()=>{
+ const f=fixture(),meta={id:'PRS-PPP-ONE',title:'Synthetic PPP',adapter:'ppp-storyboard-v1',url:'https://yodesarrollomx.github.io/yodesarrollo-board/presentacion/ppp/?id=PRS-PPP-ONE'};
+ const base='https://yodesarrollomx.github.io/yodesarrollo-board/presentacion/ppp/';
+ for(const [n,id] of [['1','PRS-PPP-ONE'],['2','PRS-PPP-TWO']])f.rows.push({detalle:JSON.stringify({kind:'yod-presentation-private-v1',id:`CHN-20261031-100${n}-abcd`,objeto:{huella:'a'.repeat(64),revision:{source:base,context:{presentation:{presentation_id:id}}}}})});
+ for(const [n,id] of [['3','PRS-PPP-ONE'],['4','PRS-PPP-TWO']])f.rows.push({detalle:JSON.stringify({kind:'chinche-secuencia-v1',id:`CHN-20261031-100${n}-abcd`,url:base,pantalla:'ppp-'+id,hash:'b'.repeat(64)})});
+ assert.equal(f.context.yodPresPins_(meta).total,2);
+ assert.ok(f.context.yodPresPins_(meta).items.every(x=>x.id.includes('1001')||x.id.includes('1003')));
+});
