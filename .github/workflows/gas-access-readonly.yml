@@ -1,0 +1,36 @@
+name: Verificar acceso de lectura a GAS original
+
+on:
+  push:
+    branches: [codex/gas-sa-readonly-20261031]
+    paths:
+      - .github/workflows/gas-access-readonly.yml
+      - nube/gas_access_readonly.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  access:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            nube/gas_access_readonly.py
+            tests/gas_access_readonly_test.py
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar lectura y redacción sin red
+        run: python3 -m unittest discover -s tests -p gas_access_readonly_test.py
+      - name: Instalar cliente Google
+        run: pip install --quiet google-auth requests
+      - name: Diagnóstico GET con identidad existente, sin delegación
+        env:
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: python3 nube/gas_access_readonly.py

@@ -2,7 +2,7 @@
   "model_revision": "2026-10-31.ppp-presentaciones.1",
   "model_commit": "d99f27b5da52c5aab5d3c1ff6625937df35ba8f3",
   "proposal_id": "CHG-PPP-PRESENTACIONES-20261031",
-  "summary": "Extender el registro privado existente de presentaciones con versiones inmutables ligadas a la revisión PPP vista, registro/recibo/listado por prueba firmada verificada por Portero, autorización explícita de etapa dos y proyección privada sin guion. Mismo catálogo, despliegue y carpeta Drive; sin publicación automática ni cambios financieros. Código local y pruebas sintéticas no acreditan activación productiva.",
+  "summary": "Extender el registro privado existente de presentaciones con versiones inmutables ligadas a la revisión PPP vista, registro/recibo/listado por prueba firmada verificada por Portero, autorización explícita de etapa dos y proyección privada sin guion. Mismo catálogo, despliegue y carpeta Drive; sin publicación automática ni cambios financieros. Código local y pruebas sintéticas no acreditan activación productiva. Diagnóstico de activación: comprobar acceso de lectura a los proyectos originales con la misma cuenta de servicio ya instalada en Actions, sin delegación, cambios de permisos, exportación de fuente ni publicación.",
   "components": [
     "SYS-SALA",
     "GAS-SALA",
@@ -13,7 +13,8 @@
     "node --test tests/presentaciones-gas.test.cjs tests/presentaciones-agente-gas.test.cjs: registro, firma/ACL, replay, recuperación de índice, readback, origen y autorización exactos, proyección privada y chinches por presentación.",
     "python3 nube/verificar.py",
     "git diff --check; sintaxis GAS mediante VM con dobles aislados.",
-    "Pendiente: compare/readback del GAS vivo y piloto integrado con worker/Portero y visor, sin inferirlo de estas pruebas locales."
+    "Pendiente: compare/readback del GAS vivo y piloto integrado con worker/Portero y visor, sin inferirlo de estas pruebas locales.",
+    "python3 -m unittest discover -s tests -p gas_access_readonly_test.py: GET único, cierre ante rechazo y exclusión de fuente, tokens, identidades y mensajes privados del recibo."
   ],
-  "rollback": "Desactivar el alcance de presentaciones del agente/Portero y revertir código por PR. Conservar versiones privadas, archivos, extensión del índice, autorizaciones, recibos y chinches; no borrar ni restaurar cálculos o registros de negocio."
+  "rollback": "Desactivar el alcance de presentaciones del agente/Portero y revertir código por PR. Conservar versiones privadas, archivos, extensión del índice, autorizaciones, recibos y chinches; no borrar ni restaurar cálculos o registros de negocio. El diagnóstico sólo se retira del repositorio; no modifica recursos Google ni registros de negocio."
 }
