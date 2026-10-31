@@ -7,8 +7,7 @@
     "SYS-SALA",
     "GAS-SALA",
     "SYS-INVERSION",
-    "GAS-PORTERO",
-    "EXT-DRIVE"
+    "GAS-PORTERO"
   ],
   "tests": [
     "node --test tests/presentaciones-gas.test.cjs tests/presentaciones-agente-gas.test.cjs: registro, firma/ACL, replay, recuperación de índice, readback, origen y autorización exactos, proyección privada y chinches por presentación.",

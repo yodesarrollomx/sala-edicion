@@ -46,7 +46,7 @@ Los nuevos registros son privados aunque sus indicadores públicos se alteren po
 
 La primera entrega queda como `storyboard`, `ready_for_review`. `authorize_production` exige propietario verificado, revisión técnica esperada, versión exacta e instrucción `produce_presentation`; registra un evento y recibo sin cambiar el artefacto. El worker sólo puede consultar esa autorización y generar una nueva versión después.
 
-Registrar `stage:"presentation"` exige una autorización existente del mismo actor, un padre storyboard exacto, y la fuente completa y hash originales. Conserva las dos versiones. Producir no publica ni inicia una sesión pública. `read_projection` requiere propietario, versión producida y el adaptador explícito que elimina `spoken`, `question`, `source_ref` y audiencia; conserva condiciones materiales. No hay publicación anónima de estos paquetes en este cambio.
+Registrar `stage:"presentation"` exige una autorización existente del mismo actor, un padre storyboard exacto, y la fuente completa y hash originales. El padre puede ser una versión histórica que el propietario abrió y revisó; la revisión técnica esperada debe seguir siendo la actual. Añadir su nueva versión conserva las entregas posteriores ya existentes. Producir no publica ni inicia una sesión pública. `read_projection` requiere propietario, versión producida y el adaptador explícito que elimina `spoken`, `question`, `source_ref` y audiencia; conserva condiciones materiales. No hay publicación anónima de estos paquetes en este cambio.
 
 ## Verificación y activación
 
