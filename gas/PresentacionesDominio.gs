@@ -80,7 +80,7 @@
    r.content_versions.push(saved);r.latest_presentation_version_id=saved.presentation_version_id;
    r.metadata.title=saved.storyboard.title;r.metadata.stage=saved.stage;r.metadata.scenes=saved.storyboard.scenes.map(s=>({id:s.id,moments:s.moments.length}));r.metadata.maxPosition=Math.max(0,saved.storyboard.scenes.reduce((n,s)=>n+s.moments.length,0)-1);
    r.revision++;r.updatedAt=now;
-   const receipt={id:p.requestId,hash,actor:actor.id,revision:r.revision,at:now,presentation_version_id:saved.presentation_version_id,job_id:saved.job_id};r.receipts.push(receipt);r.receipts=r.receipts.slice(-100);
+   const receipt={id:p.requestId,hash,actor:actor.id,revision:r.revision,at:now,presentation_version_id:saved.presentation_version_id,job_id:saved.job_id};r.receipts.push(receipt);
    if(creating){const recovered=a.create(r);if(recovered)r=recovered;}else a.write(r);
    const committed=r.receipts.find(x=>x.id===p.requestId&&x.actor===actor.id);if(!committed||committed.hash!==hash)fail('integrity');
    return {ok:true,version:VERSION,requestId:p.requestId,data:privateView(r),receipt:clone(committed)};
@@ -98,7 +98,7 @@
    let authorization=r.production_authorizations.find(x=>x.presentation_version_id===chosen.presentation_version_id);
    if(!authorization){authorization={authorization_id:'PA-'+a.uuid(),presentation_version_id:chosen.presentation_version_id,actor_id:actor.id,at:now,instruction:'produce_presentation',snapshot_hash:chosen.source.snapshot_hash};r.production_authorizations.push(authorization);}
    r.revision++;r.updatedAt=now;
-   const receipt={id:p.requestId,hash,actor:actor.id,revision:r.revision,at:now,presentation_version_id:chosen.presentation_version_id,production_authorization_id:authorization.authorization_id};r.receipts.push(receipt);r.receipts=r.receipts.slice(-100);a.write(r);
+   const receipt={id:p.requestId,hash,actor:actor.id,revision:r.revision,at:now,presentation_version_id:chosen.presentation_version_id,production_authorization_id:authorization.authorization_id};r.receipts.push(receipt);a.write(r);
    return {ok:true,version:VERSION,requestId:p.requestId,data:privateView(r),receipt:clone(receipt)};
   });
  }
