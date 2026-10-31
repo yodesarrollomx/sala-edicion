@@ -1,0 +1,37 @@
+name: Comprobar configuración de API con identidad existente
+
+on:
+  push:
+    branches: [codex/gas-service-api-readonly-20261031]
+    paths:
+      - .github/workflows/google-service-readonly.yml
+      - nube/google_service_readonly.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  configuration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.github/workflows/google-service-readonly.yml
+            /nube/google_service_readonly.py
+            /tests/google_service_readonly_test.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar redacción y límites sin red
+        run: python3 -m unittest discover -s tests -p google_service_readonly_test.py
+      - name: Instalar cliente Google
+        run: pip install --quiet google-auth requests
+      - name: Consultar configuración y permisos existentes sin cambiarlos
+        env:
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: python3 nube/google_service_readonly.py
