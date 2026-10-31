@@ -14,7 +14,7 @@
     "python3 nube/verificar.py",
     "git diff --check; sintaxis GAS mediante VM con dobles aislados.",
     "Pendiente: compare/readback del GAS vivo y piloto integrado con worker/Portero y visor, sin inferirlo de estas pruebas locales.",
-    "python3 -m unittest discover -s tests -p google_service_readonly_test.py: 5 casos de redacción, exclusión de IDs privados en fuente/workflow, GET/testIamPermissions sin mutación, rechazo y proyecto exacto."
+    "python3 -m unittest discover -s tests -p google_service_readonly_test.py: 7 casos de redacción, exclusión de IDs privados en fuente/workflow, GET/testIamPermissions sin mutación, rechazo y proyecto exacto. Fallback del número de consumidor sólo desde ErrorInfo SERVICE_DISABLED de Google CRM, sin exportar el identificador."
   ],
   "rollback": "Desactivar el alcance de presentaciones del agente/Portero y revertir código por PR. Conservar versiones privadas, archivos, extensión del índice, autorizaciones, recibos y chinches; no borrar ni restaurar cálculos o registros de negocio. Retirar el diagnóstico sin modificar Google ni datos de negocio."
 }

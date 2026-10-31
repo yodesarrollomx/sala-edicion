@@ -26,6 +26,13 @@ class Session:
 
 
 class ServiceReadonlyTest(unittest.TestCase):
+    @staticmethod
+    def disabled_crm(consumer="projects/123456789", service="cloudresourcemanager.googleapis.com"):
+        return {"error": {"status": "PERMISSION_DENIED", "message": "private provider prose",
+                          "details": [{"@type": "type.googleapis.com/google.rpc.ErrorInfo",
+                                       "reason": "SERVICE_DISABLED", "domain": "googleapis.com",
+                                       "metadata": {"consumer": consumer, "service": service}}]}}
+
     def test_publishable_sources_exclude_fixed_private_resource_identifiers(self):
         root = PATH.parents[1]
         paths = [PATH, pathlib.Path(__file__), root / ".github/workflows/google-service-readonly.yml"]
@@ -79,6 +86,29 @@ class ServiceReadonlyTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             PROBE.diagnose(session, "synthetic-token", "../another-project")
         self.assertEqual(session.calls, [])
+
+    def test_service_disabled_consumer_is_used_only_in_memory(self):
+        denied = Response(403, self.disabled_crm())
+        session = Session([denied, denied, Response(200, {"state": "DISABLED"})])
+        report = PROBE.diagnose(session, "synthetic-token", "synthetic-project")
+        self.assertTrue(report["projectMetadata"]["consumerResolvedFromServiceDisabled"])
+        self.assertEqual(report["appsScriptService"]["state"], "DISABLED")
+        self.assertFalse(report["permissionTest"]["ok"])
+        self.assertEqual(session.calls[2][1], "https://serviceusage.googleapis.com/v1/projects/123456789/services/script.googleapis.com")
+        for private in ("123456789", "private provider prose", "synthetic-project", "synthetic-token"):
+            self.assertNotIn(private, json.dumps(report))
+
+    def test_consumer_fallback_rejects_other_service_malformed_and_ambiguous(self):
+        for data in [self.disabled_crm(service="other.googleapis.com"),
+                     self.disabled_crm(consumer="projects/synthetic-project"),
+                     self.disabled_crm(consumer="projects/123/services/other")]:
+            self.assertIsNone(PROBE.disabled_credential_consumer(data))
+        ambiguous = self.disabled_crm()
+        ambiguous["error"]["details"] += self.disabled_crm(consumer="projects/987654321")["error"]["details"]
+        self.assertIsNone(PROBE.disabled_credential_consumer(ambiguous))
+        wrong_domain = self.disabled_crm()
+        wrong_domain["error"]["details"][0]["domain"] = "untrusted.invalid"
+        self.assertIsNone(PROBE.disabled_credential_consumer(wrong_domain))
 
 
 if __name__ == "__main__":

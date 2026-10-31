@@ -29,10 +29,34 @@ def request_once(session, method, url, token, **kwargs):
             reasons = sorted({safe_code(item.get("reason")) for item in details if isinstance(item, dict) and item.get("reason")})
             return {"ok": False, "httpStatus": response.status_code,
                     "status": safe_code(error.get("status")) if isinstance(error, dict) else "UNSPECIFIED",
-                    "reasons": reasons}, None
+                    "reasons": reasons}, data
         return {"ok": True, "httpStatus": 200}, data
     except Exception:
         return {"ok": False, "status": "TRANSPORT_OR_JSON_ERROR"}, None
+
+
+def disabled_credential_consumer(data):
+    """Resolve only the authenticated consumer identified by Google's CRM error.
+
+    No quota project or impersonation is used, so this consumer belongs to the
+    same credential. Reject other services, malformed names and ambiguity.
+    """
+    error = data.get("error", {}) if isinstance(data, dict) else {}
+    details = error.get("details", []) if isinstance(error, dict) else []
+    consumers = set()
+    for detail in details:
+        if not isinstance(detail, dict) or detail.get("@type") != "type.googleapis.com/google.rpc.ErrorInfo":
+            continue
+        if detail.get("reason") != "SERVICE_DISABLED" or detail.get("domain") != "googleapis.com":
+            continue
+        metadata = detail.get("metadata", {})
+        if not isinstance(metadata, dict) or metadata.get("service") != "cloudresourcemanager.googleapis.com":
+            continue
+        consumer = metadata.get("consumer")
+        match = re.fullmatch(r"projects/([0-9]+)", consumer) if isinstance(consumer, str) else None
+        if match:
+            consumers.add(match.group(1))
+    return next(iter(consumers)) if len(consumers) == 1 else None
 
 
 def diagnose(session, token, project_id):
@@ -52,6 +76,9 @@ def diagnose(session, token, project_id):
         status["credentialProjectMatched"] = matches and bool(match)
         if status["credentialProjectMatched"]:
             project_number = match.group(1)
+    elif "SERVICE_DISABLED" in status.get("reasons", []):
+        project_number = disabled_credential_consumer(data)
+        status["consumerResolvedFromServiceDisabled"] = project_number is not None
     report["projectMetadata"] = status
     del data
     status, data = request_once(session, "POST", project_url + ":testIamPermissions", token,
