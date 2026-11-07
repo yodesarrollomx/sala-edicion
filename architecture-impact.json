@@ -16,11 +16,11 @@
   "EXT-DRIVE"
  ],
  "tests": [
-  "python3 -m unittest tests.sala_consejo_test (21 pruebas: veredicto, veto, abstención, cartas, contrato con precedencia humana, candado de llave, ruta Hermes con proveedor/modelo/imagen).",
+  "python3 -m unittest tests.sala_consejo_test (24 pruebas: veredicto, veto, abstención, cartas, contrato con precedencia humana, candado de llave, ruta Hermes con proveedor/modelo/imagen, e instalador en HOME de mentira sin red: primera corrida sin ~/.config previo, permisos, idempotencia, sin llaves).",
   "node --test tests/roast-room-gas.test.cjs (5 pruebas del GAS con dobles) y suites existentes produccion-historica, adversaria y fusion-lecturas.",
   "python3 nube/verificar.py: sólo nube/sala_consejo.py decide y sólo con _clave_consejo().",
   "bash -n nube/hermes/roast_room.sh nube/hermes/instalar_roast_room.sh; el cron horario vive en Hermes (sin agente) y la API local sólo escucha en 127.0.0.1.",
-  "Pendiente: versión nueva del GAS vivo, secret SALA_CLAVE_CONSEJO, primera corrida real y su lectura en la Sala."
+  "Hecho: GAS vivo en la versión 83, secret SALA_CLAVE_CONSEJO, instalación en Hermes (perfil sol, cron horario sin agente). Pendiente: API local de sol encendida tras reiniciar el gateway, primera corrida con cartas y su lectura en la Sala."
  ],
  "rollback": "REGLAS consejo_activo=0 o desactivar sala-consejo.yml; quitar clave_consejo de CONFIG revoca la llave. Revertir el PR y la versión del GAS. Conservar DECISIONES, CANDADOS y CONSEJO; las marcas del consejo ceden ante cualquier marca humana posterior."
 }
