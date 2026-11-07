@@ -109,6 +109,30 @@ class MotoresTests(unittest.TestCase):
         with patch.dict(os.environ, {'OPENAI_API_KEY': 'k-sol-123456', 'ANTHROPIC_API_KEY': 'k-opus-123456'}):
             self.assertEqual(consejo.motores_disponibles({}), ['sol', 'opus'])
 
+    def test_con_hermes_compiten_sol_y_opus_sin_llaves_de_api(self):
+        env = {'HERMES_API_URL': 'http://127.0.0.1:8642', 'HERMES_API_KEY': 'k-hermes-123456',
+               'OPENAI_API_KEY': '', 'ANTHROPIC_API_KEY': ''}
+        with patch.dict(os.environ, env):
+            self.assertEqual(consejo.motores_disponibles({'consejo_motores': 'sol,opus'}), ['sol', 'opus'])
+
+    def test_hermes_recibe_proveedor_modelo_e_imagen(self):
+        visto = {}
+
+        def falso(url, cuerpo, cabeceras, quien):
+            visto.update(url=url, cuerpo=cuerpo, cabeceras=cabeceras)
+            return {'choices': [{'message': {'content': '{"piezas": [{"i": 0, "voto": "si", "candados": [], "nota": ""}]}'}}]}
+        env = {'HERMES_API_URL': 'http://127.0.0.1:8642/', 'HERMES_API_KEY': 'k-hermes-123456'}
+        with patch.dict(os.environ, env), patch.object(consejo, '_post', side_effect=falso):
+            r = consejo.llamar('opus', 'claude-opus-5-5', 'sistema', 'texto', [('Lámina 0', b'\xff\xd8\xffdatos')], {})
+        self.assertEqual(r['piezas'][0]['voto'], 'si')
+        self.assertEqual(visto['url'], 'http://127.0.0.1:8642/v1/chat/completions')
+        self.assertEqual(visto['cuerpo']['provider'], 'anthropic')
+        self.assertEqual(visto['cuerpo']['model'], 'claude-opus-5-5')
+        partes = visto['cuerpo']['messages'][1]['content']
+        self.assertTrue(any(p.get('type') == 'image_url' and p['image_url']['url'].startswith('data:image/jpeg;base64,')
+                            for p in partes))
+        self.assertEqual(visto['cabeceras']['Authorization'], 'Bearer k-hermes-123456')
+
     def test_apagado_no_lee_la_mesa(self):
         with patch.object(consejo, 'leer_reglas', return_value={'consejo_activo': '0'}), \
                 patch.object(consejo.sala, 'get', side_effect=AssertionError('no debe leer la mesa')):

@@ -1,15 +1,17 @@
 # Roast Room · el consejo que autoriza la mesa de la Sala (7-nov-2026).
 #
 # Alejandro: «quienes den la autorización va a ser el roast room», en vivo desde ese día, con su
-# veto y el de Sayri por encima. Cada hora el consejo revisa las cartas que nadie ha marcado,
-# las juzgan seis jueces con Sol u Opus (al azar, en competencia) y firma «Roast Room».
-# Publicar sigue siendo sólo el clic de Alejandro; aquí no se publica nada.
+# veto y el de Sayri por encima. Publicar sigue siendo sólo el clic de Alejandro.
 #
-# Freno de emergencia: REGLAS consejo_activo = 0 (o desactivar este workflow en Actions).
+# Ese mismo día decidió que los jueces piensen con sus SUSCRIPCIONES a través de Hermes, no con
+# créditos de API: la corrida de cada hora vive en el cron de Hermes, en la Chromebook
+# (nube/hermes/roast_room.sh). Aquí quedan el marcador diario Sol contra Opus (sólo lee) y una
+# corrida a mano, que sólo vota si el repo llega a tener llaves de API.
+#
+# Freno de emergencia: REGLAS consejo_activo = 0.
 name: Sala · Roast Room
 on:
   schedule:
-    - cron: '41 * * * *'     # cada hora; la mesa se monta a lo largo del día
     - cron: '50 13 * * *'    # 06:50 Hermosillo · marcador Sol contra Opus
   workflow_dispatch:
     inputs:
@@ -52,5 +54,5 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
-          MODO: ${{ github.event_name == 'workflow_dispatch' && inputs.modo || (github.event.schedule == '50 13 * * *' && 'marcador' || 'corrida') }}
+          MODO: ${{ github.event_name == 'workflow_dispatch' && inputs.modo || 'marcador' }}
         run: python3 nube/sala_consejo.py "$MODO"

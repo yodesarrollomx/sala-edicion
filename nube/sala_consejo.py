@@ -358,7 +358,8 @@ def _post(url, cuerpo, cabeceras, quien):
     pet = urllib.request.Request(url, data=json.dumps(cuerpo).encode('utf-8'),
                                  headers=dict({'Content-Type': 'application/json'}, **cabeceras), method='POST')
     try:
-        with urllib.request.urlopen(pet, timeout=ESPERA_MOTOR) as r:
+        # Por Hermes cada juez es una corrida completa del agente: se le da más tiempo.
+        with urllib.request.urlopen(pet, timeout=ESPERA_MOTOR * (3 if _hermes()[0] else 1)) as r:
             return json.loads(r.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
         crudo = e.read().decode('utf-8', 'replace')
@@ -379,18 +380,51 @@ def _json_de(texto):
         return json.loads(m.group(0))
 
 
+def _hermes():
+    """7-nov (Alejandro): «¿esto no lo pudiera hacer Hermes a través de mi suscripción?». Si hay
+    HERMES_API_URL, Sol y Opus se piden a la API local de Hermes (en la Chromebook), que cobra contra
+    sus suscripciones y no contra créditos de API. Hermes recibe imágenes en base64 y honra
+    `provider` + `model` en cada petición."""
+    url = os.environ.get('HERMES_API_URL', '').strip().rstrip('/')
+    clave = os.environ.get('HERMES_API_KEY', '').strip()
+    return (url, clave) if url and clave else (None, None)
+
+
 def motores_disponibles(reglas):
     pedidos = [m.strip() for m in _regla(reglas, 'consejo_motores', 'sol,opus').split(',') if m.strip()]
+    if _hermes()[0]:
+        return [m for m in pedidos if m in ('sol', 'opus')]
     hay = {'sol': bool(os.environ.get('OPENAI_API_KEY', '').strip()),
            'opus': bool(os.environ.get('ANTHROPIC_API_KEY', '').strip())}
     return [m for m in pedidos if hay.get(m)]
+
+
+def proveedor_de(motor, reglas):
+    return _regla(reglas, 'consejo_proveedor_' + motor, {'sol': 'openai-codex', 'opus': 'anthropic'}[motor])
 
 
 def modelo_de(motor, reglas):
     return _regla(reglas, 'consejo_modelo_' + motor, {'sol': 'gpt-6.1-sol', 'opus': 'claude-opus-5-5'}[motor])
 
 
-def llamar(motor, modelo, sistema, texto, imagenes):
+def llamar(motor, modelo, sistema, texto, imagenes, reglas=None):
+    url, clave = _hermes()
+    if url:
+        contenido = [{'type': 'text', 'text': texto}]
+        for rotulo, datos in imagenes:
+            contenido.append({'type': 'text', 'text': rotulo + ':'})
+            contenido.append({'type': 'image_url', 'image_url': {'url': 'data:%s;base64,%s' % (_mime(datos), _jpg_b64(datos))}})
+        r = _post(url + '/v1/chat/completions',
+                  {'model': modelo, 'provider': proveedor_de(motor, reglas), 'stream': False,
+                   'messages': [{'role': 'system', 'content': sistema + (
+                       ' Contesta sólo con el JSON pedido. No uses herramientas, no abras archivos ni '
+                       'navegues: todo lo que necesitas está en este mensaje.')},
+                                {'role': 'user', 'content': contenido}]},
+                  {'Authorization': 'Bearer ' + clave}, 'Hermes %s %s' % (motor, modelo))
+        try:
+            return _json_de(r['choices'][0]['message']['content'])
+        except (KeyError, IndexError, TypeError):
+            raise ConsejoError('Hermes contestó sin mensaje')
     if motor == 'sol':
         contenido = [{'type': 'input_text', 'text': texto}]
         for rotulo, datos in imagenes:
@@ -481,7 +515,7 @@ def _pedido(carta, juez, candados, texto_material):
     return '\n\n'.join(partes)
 
 
-def juzgar(carta, motor, modelo, candados, imagenes, texto_material):
+def juzgar(carta, motor, modelo, candados, imagenes, texto_material, reglas=None):
     """Seis llamadas independientes, en paralelo. Devuelve {juez: {i: voto}} sólo con los que
     contestaron bien."""
     def uno(j):
@@ -489,7 +523,7 @@ def juzgar(carta, motor, modelo, candados, imagenes, texto_material):
         sistema = (persona or _especialista(carta)) + (
             ' Formas parte del Roast Room, un consejo de seis que autoriza o regresa piezas de '
             'contenido. Eres directo y exigente; no adulas. Escribes en español.')
-        r = llamar(motor, modelo, sistema, _pedido(carta, clave, candados, texto_material), imagenes)
+        r = llamar(motor, modelo, sistema, _pedido(carta, clave, candados, texto_material), imagenes, reglas)
         votos = {}
         for v in (r.get('piezas') if isinstance(r, dict) else None) or []:
             try:
@@ -503,7 +537,9 @@ def juzgar(carta, motor, modelo, candados, imagenes, texto_material):
             raise ConsejoError('%s no votó todas las piezas' % nombre)
         return clave, votos
     out, fallas = {}, []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as ex:
+    # En la Chromebook la memoria es corta: Hermes atiende pocos jueces a la vez (consejo_paralelo).
+    paralelo = max(1, min(6, int(_regla(reglas, 'consejo_paralelo', '2' if _hermes()[0] else '6'))))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=paralelo) as ex:
         for fut in [ex.submit(uno, j) for j in JUECES]:
             try:
                 k, v = fut.result()
@@ -557,7 +593,7 @@ def corrida(ensayo=False):
         return 0
     motores = motores_disponibles(reglas)
     if not motores:
-        sala.avisar('✗ ningún motor del consejo tiene llave (OPENAI_API_KEY / ANTHROPIC_API_KEY).')
+        sala.avisar('✗ ningún motor del consejo está disponible (HERMES_API_URL, o bien OPENAI_API_KEY / ANTHROPIC_API_KEY).')
         return 2
     candados = leer_candados()
     fecha = sala.hoy_hermosillo()
@@ -585,7 +621,7 @@ def corrida(ensayo=False):
                 continue
             for motor in candidatos:
                 modelo = modelo_de(motor, reglas)
-                votos, fallas = juzgar(carta, motor, modelo, candados, imagenes, texto_material)
+                votos, fallas = juzgar(carta, motor, modelo, candados, imagenes, texto_material, reglas)
                 usadas += LLAMADAS_POR_CARTA
                 res = veredicto(votos, carta['abiertas'], candados, umbral)
                 if res is not None:
