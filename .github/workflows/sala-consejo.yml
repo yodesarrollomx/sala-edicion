@@ -1,0 +1,56 @@
+# Roast Room · el consejo que autoriza la mesa de la Sala (7-nov-2026).
+#
+# Alejandro: «quienes den la autorización va a ser el roast room», en vivo desde ese día, con su
+# veto y el de Sayri por encima. Cada hora el consejo revisa las cartas que nadie ha marcado,
+# las juzgan seis jueces con Sol u Opus (al azar, en competencia) y firma «Roast Room».
+# Publicar sigue siendo sólo el clic de Alejandro; aquí no se publica nada.
+#
+# Freno de emergencia: REGLAS consejo_activo = 0 (o desactivar este workflow en Actions).
+name: Sala · Roast Room
+on:
+  schedule:
+    - cron: '41 * * * *'     # cada hora; la mesa se monta a lo largo del día
+    - cron: '50 13 * * *'    # 06:50 Hermosillo · marcador Sol contra Opus
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'corrida (vota en vivo), ensayo (sólo imprime) o marcador'
+        type: choice
+        options: [corrida, ensayo, marcador]
+        default: corrida
+permissions:
+  contents: read
+concurrency:
+  group: sala-roast-room
+  cancel-in-progress: false
+jobs:
+  consejo:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+          sparse-checkout: |
+            nube
+            datos/tiras
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Herramientas para ver los cortes
+        run: |
+          pip install --quiet google-auth requests
+          sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+      - name: Sesión del Roast Room
+        env:
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          SALA_CLAVE_CONSEJO: ${{ secrets.SALA_CLAVE_CONSEJO }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+          MODO: ${{ github.event_name == 'workflow_dispatch' && inputs.modo || (github.event.schedule == '50 13 * * *' && 'marcador' || 'corrida') }}
+        run: python3 nube/sala_consejo.py "$MODO"

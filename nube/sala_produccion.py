@@ -18,6 +18,8 @@ PID = re.compile(r"^[A-Za-z0-9_.-]+$")
 CONTRATO_PRODUCCION = 'produccion-historica-v1'
 VERSION_PRODUCCION = 'produccion-historica-2026-10-15'
 VERSIONES_LEGADAS = frozenset({'dos-compuertas-2026-09-12'})
+# 7-nov-2026: el Roast Room (rol `consejo`) firma junto a los dos editores; su marca cede ante la de ellos.
+ROLES_QUE_DECIDEN = ('editor', 'editor2', 'consejo')
 
 
 def contrato_invalido():
@@ -89,14 +91,14 @@ def validar_historica(value):
                 or not isinstance(notes, list) or len(notes) != len(marks)
                 or not all(isinstance(x, str) and len(x) <= 32768 for x in notes)
                 or not isinstance(decision.get('nota'), str) or len(decision['nota']) > 65536
-                or not isinstance(proposal_signatures, list) or len(proposal_signatures) > 2):
+                or not isinstance(proposal_signatures, list) or len(proposal_signatures) > 3):
             contrato_invalido()
         for i, (mark, group) in enumerate(zip(marks, signatures)):
-            if mark not in (None, 'si', 'no') or not isinstance(group, list) or len(group) > 2:
+            if mark not in (None, 'si', 'no') or not isinstance(group, list) or len(group) > 3:
                 contrato_invalido()
             roles = []
             for sig in group:
-                if (not isinstance(sig, dict) or sig.get('rol') not in ('editor', 'editor2')
+                if (not isinstance(sig, dict) or sig.get('rol') not in ROLES_QUE_DECIDEN
                         or sig.get('marca') not in (None, 'si', 'no')
                         or not isinstance(sig.get('quien'), str) or not 0 < len(sig['quien']) <= 256
                         or not isinstance(sig.get('nota'), str) or len(sig['nota']) > 16384
@@ -106,14 +108,18 @@ def validar_historica(value):
                 stamp = datetime.fromisoformat(sig['guardado'].replace('Z', '+00:00'))
                 max_stamp = max(max_stamp, stamp) if max_stamp else stamp
             if len(set(roles)) != len(roles): contrato_invalido()
-            merged = 'no' if any(s['marca'] == 'no' for s in group) else 'si' if any(s['marca'] == 'si' for s in group) else None
+            # 7-nov: la marca de Alejandro o de Sayri manda sobre la del Roast Room en la misma
+            # lámina; el consejo sólo cuenta donde ningún humano marcó (igual que el GAS).
+            humanas = [s for s in group if s['rol'] != 'consejo' and s['marca']]
+            base = humanas or group
+            merged = 'no' if any(s['marca'] == 'no' for s in base) else 'si' if any(s['marca'] == 'si' for s in base) else None
             if mark != merged: contrato_invalido()
             signed_notes = [s for s in group if s['nota']]
             expected_note = signed_notes[0]['nota'] if len(signed_notes) == 1 else ' | '.join(s['quien'] + ': ' + s['nota'] for s in signed_notes)
             if notes[i] != expected_note: contrato_invalido()
         note_roles = []
         for sig in proposal_signatures:
-            if (not isinstance(sig, dict) or sig.get('rol') not in ('editor', 'editor2')
+            if (not isinstance(sig, dict) or sig.get('rol') not in ROLES_QUE_DECIDEN
                     or not isinstance(sig.get('quien'), str) or not 0 < len(sig['quien']) <= 256
                     or not isinstance(sig.get('nota'), str) or not 0 < len(sig['nota']) <= 16384
                     or not sello_valido(sig.get('guardado'))):

@@ -115,7 +115,9 @@ def _clave():
 # ejemplo la URL de voz_gemini.py con su `?key=` armada a mano, no se habría tachado en el
 # log de un repo PÚBLICO.)
 VARIABLES_SECRETAS = ('SALA_CLAVE_AGENTE', 'SALA_GAS_EXEC', 'GDRIVE_SA_JSON',
-                      'HF_TOKEN', 'GEMINI_API_KEY', 'CF_API_TOKEN', 'CF_ACCOUNT_ID', 'OPENAI_API_KEY')
+                      'HF_TOKEN', 'GEMINI_API_KEY', 'CF_API_TOKEN', 'CF_ACCOUNT_ID', 'OPENAI_API_KEY',
+                      # 7-nov: el Roast Room trae su propia llave y la de Anthropic (motor Opus).
+                      'SALA_CLAVE_CONSEJO', 'ANTHROPIC_API_KEY')
 
 
 def redactar(texto):
