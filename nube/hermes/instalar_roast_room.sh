@@ -8,8 +8,9 @@
 #   1. Deja ~/sala-edicion al día con main (sólo avance rápido).
 #   2. Enciende la API local de Hermes en el perfil (por omisión «sol», puerto 8642) con una llave
 #      nueva generada aquí, si no estaba encendida. Nunca imprime llaves.
-#   3. Escribe ~/.config/sala-consejo/env (permiso 600) con la liga del Sala, la API de Hermes y las
-#      llaves SALA_CLAVE_AGENTE y SALA_CLAVE_CONSEJO, que toma del .env del perfil (o las pide).
+#   3. Reescribe ~/.config/sala-consejo/env (permiso 600) con la liga de la Sala, la API de Hermes y
+#      las llaves SALA_CLAVE_AGENTE y SALA_CLAVE_CONSEJO que ya traiga ese archivo, el .env del
+#      perfil o, si se corre a mano, las que se peguen.
 #   4. Copia roast_room.sh a los scripts del perfil para el cron «sin agente» de cada hora.
 # Reiniciar el gateway del perfil y crear el cron se hacen después (el guion dice cómo).
 set -euo pipefail
@@ -49,8 +50,11 @@ PUERTO_REAL="$(valor API_SERVER_PORT "$PENV")"; PUERTO_REAL="${PUERTO_REAL:-8642
 LLAVE_API="$(valor API_SERVER_KEY "$PENV")"
 [ -n "$LLAVE_API" ] || { echo "El perfil tiene API_SERVER_ENABLED pero no API_SERVER_KEY; agrégala y vuelve a correr."; exit 1; }
 
-# 3 · llaves de la Sala
-AG="$(valor SALA_CLAVE_AGENTE "$PENV")"; CO="$(valor SALA_CLAVE_CONSEJO "$PENV")"
+# 3 · llaves de la Sala: primero las que Alejandro pegó en ~/.config/sala-consejo/env (desde Files
+# del panel de Hermes), luego las del .env del perfil y, si se corre a mano, se piden.
+AG="$(valor SALA_CLAVE_AGENTE "$CONF")"; CO="$(valor SALA_CLAVE_CONSEJO "$CONF")"
+[ -n "$AG" ] || AG="$(valor SALA_CLAVE_AGENTE "$PENV")"
+[ -n "$CO" ] || CO="$(valor SALA_CLAVE_CONSEJO "$PENV")"
 if [ -z "$AG" ] && [ -t 0 ]; then read -rsp "Pega la llave del agente (CONFIG, fila clave_agente) y Enter: " AG; echo; fi
 if [ -z "$CO" ] && [ -t 0 ]; then read -rsp "Pega la llave del consejo (CONFIG, fila clave_consejo) y Enter: " CO; echo; fi
 [ -n "$AG" ] && [ -n "$CO" ] || { echo "Faltan SALA_CLAVE_AGENTE y/o SALA_CLAVE_CONSEJO en $PENV"; exit 1; }
