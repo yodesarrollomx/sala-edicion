@@ -30,7 +30,9 @@ touch "$PENV"; chmod 600 "$PENV"
 if [ -d "$REPO/.git" ]; then git -C "$REPO" pull --ff-only --quiet
 else git clone --depth 1 --quiet https://github.com/yodesarrollomx/sala-edicion "$REPO"; fi
 
-valor() { grep -E "^$1=" "$2" 2>/dev/null | tail -1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//'; }
+# Que no exista el archivo o la línea es normal (primera corrida): con pipefail, grep sin
+# coincidencia tumbaba el guion antes de leer el .env del perfil (Chromebook, 7-nov).
+valor() { { grep -E "^$1=" "$2" 2>/dev/null || true; } | tail -1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//'; }
 
 # 2 · API local de Hermes en el perfil
 if [ "$(valor API_SERVER_ENABLED "$PENV")" != "true" ]; then

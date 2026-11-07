@@ -204,5 +204,72 @@ class CandadoVerificarTests(unittest.TestCase):
             self.assertNotIn("'accion': 'decidir'", p.read_text(encoding='utf-8'), p.name)
 
 
+class InstaladorHermesTests(unittest.TestCase):
+    """instalar_roast_room.sh en un HOME de mentira, sin red (7-nov-2026).
+
+    En la Chromebook el primer intento se detuvo: con `set -o pipefail`, `valor` fallaba cuando
+    ~/.config/sala-consejo/env todavía no existía, y `set -e` cortaba el guion antes de leer las
+    llaves del .env del perfil.
+    """
+
+    def setUp(self):
+        import shutil
+        import subprocess
+        import tempfile
+        self.sp = subprocess
+        self.tmp = Path(tempfile.mkdtemp(prefix='rr-instalador-'))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.home = self.tmp / 'home'
+        self.perfil = self.home / '.hermes' / 'profiles' / 'sol'
+        self.perfil.mkdir(parents=True)
+        git = ['git', '-c', 'user.name=prueba', '-c', 'user.email=prueba@example.com']
+        remoto, obra = self.tmp / 'remoto.git', self.tmp / 'obra'
+        self.sp.run(['git', 'init', '-q', '--bare', str(remoto)], check=True)
+        (obra / 'nube' / 'hermes').mkdir(parents=True)
+        shutil.copy(ROOT / 'nube' / 'hermes' / 'roast_room.sh', obra / 'nube' / 'hermes' / 'roast_room.sh')
+        self.sp.run(['git', 'init', '-q', str(obra)], check=True)
+        self.sp.run(git + ['-C', str(obra), 'add', '-A'], check=True)
+        self.sp.run(git + ['-C', str(obra), 'commit', '-q', '-m', 'base'], check=True)
+        self.sp.run(['git', '-C', str(obra), 'push', '-q', str(remoto), 'HEAD:refs/heads/main'], check=True)
+        self.sp.run(['git', 'clone', '-q', '-b', 'main', str(remoto), str(self.home / 'sala-edicion')], check=True)
+
+    def instalar(self):
+        env = {k: v for k, v in os.environ.items() if not k.startswith(('SALA_', 'HERMES_'))}
+        env['HOME'] = str(self.home)
+        return self.sp.run(['bash', str(ROOT / 'nube' / 'hermes' / 'instalar_roast_room.sh'), 'sol', '8642'],
+                           stdin=self.sp.DEVNULL, capture_output=True, text=True, env=env, timeout=60)
+
+    def test_toma_las_llaves_del_perfil_sin_archivo_previo(self):
+        (self.perfil / '.env').write_text('SALA_CLAVE_AGENTE=ag-prueba\nSALA_CLAVE_CONSEJO="co-prueba"\n')
+        r = self.instalar()
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        conf = self.home / '.config' / 'sala-consejo' / 'env'
+        texto = conf.read_text()
+        self.assertIn('SALA_CLAVE_AGENTE=ag-prueba\n', texto)
+        self.assertIn('SALA_CLAVE_CONSEJO=co-prueba\n', texto)
+        self.assertIn('HERMES_API_URL=http://127.0.0.1:8642\n', texto)
+        self.assertEqual(conf.stat().st_mode & 0o777, 0o600)
+        guion = self.perfil / 'scripts' / 'roast_room.sh'
+        self.assertEqual(guion.stat().st_mode & 0o777, 0o700)
+        llave_api = [l for l in texto.splitlines() if l.startswith('HERMES_API_KEY=')][0].split('=', 1)[1]
+        for secreto in ('ag-prueba', 'co-prueba', llave_api):
+            self.assertNotIn(secreto, r.stdout + r.stderr)
+        self.assertIn('gateway restart', r.stdout)
+
+    def test_segunda_corrida_no_duplica_la_api(self):
+        (self.perfil / '.env').write_text('SALA_CLAVE_AGENTE=ag-prueba\nSALA_CLAVE_CONSEJO=co-prueba\n')
+        self.assertEqual(self.instalar().returncode, 0)
+        r = self.instalar()
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertEqual((self.perfil / '.env').read_text().count('API_SERVER_KEY='), 1)
+        self.assertNotIn('gateway restart', r.stdout)
+
+    def test_sin_llaves_avisa_y_no_escribe(self):
+        r = self.instalar()
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn('Faltan SALA_CLAVE_AGENTE', r.stdout)
+        self.assertFalse((self.home / '.config' / 'sala-consejo' / 'env').exists())
+
+
 if __name__ == '__main__':
     unittest.main()
