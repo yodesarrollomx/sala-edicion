@@ -239,6 +239,9 @@ class InstaladorHermesTests(unittest.TestCase):
         return self.sp.run(['bash', str(ROOT / 'nube' / 'hermes' / 'instalar_roast_room.sh'), 'sol', '8642'],
                            stdin=self.sp.DEVNULL, capture_output=True, text=True, env=env, timeout=60)
 
+    def leer(self, ruta):
+        return dict(l.split('=', 1) for l in ruta.read_text().splitlines() if '=' in l and not l.startswith('#'))
+
     def test_toma_las_llaves_del_perfil_sin_archivo_previo(self):
         (self.perfil / '.env').write_text('SALA_CLAVE_AGENTE=ag-prueba\nSALA_CLAVE_CONSEJO="co-prueba"\n')
         r = self.instalar()
@@ -247,14 +250,44 @@ class InstaladorHermesTests(unittest.TestCase):
         texto = conf.read_text()
         self.assertIn('SALA_CLAVE_AGENTE=ag-prueba\n', texto)
         self.assertIn('SALA_CLAVE_CONSEJO=co-prueba\n', texto)
-        self.assertIn('HERMES_API_URL=http://127.0.0.1:8642\n', texto)
         self.assertEqual(conf.stat().st_mode & 0o777, 0o600)
         guion = self.perfil / 'scripts' / 'roast_room.sh'
         self.assertEqual(guion.stat().st_mode & 0o777, 0o700)
-        llave_api = [l for l in texto.splitlines() if l.startswith('HERMES_API_KEY=')][0].split('=', 1)[1]
+        llave_api = self.leer(conf)['HERMES_API_KEY']
         for secreto in ('ag-prueba', 'co-prueba', llave_api):
             self.assertNotIn(secreto, r.stdout + r.stderr)
-        self.assertIn('gateway restart', r.stdout)
+        self.assertIn('Reiniciar Gateway', r.stdout)
+
+    def test_gateway_compartido_escucha_en_default_y_entra_por_p_perfil(self):
+        (self.perfil / '.env').write_text('SALA_CLAVE_AGENTE=ag-prueba\nSALA_CLAVE_CONSEJO=co-prueba\n')
+        self.assertEqual(self.instalar().returncode, 0)
+        default = self.leer(self.home / '.hermes' / '.env')
+        self.assertEqual((default['API_SERVER_ENABLED'], default['API_SERVER_HOST'], default['API_SERVER_PORT']),
+                         ('true', '127.0.0.1', '8642'))
+        perfil = self.leer(self.perfil / '.env')
+        self.assertNotIn('API_SERVER_ENABLED', perfil)
+        conf = self.leer(self.home / '.config' / 'sala-consejo' / 'env')
+        self.assertEqual(conf['HERMES_API_URL'], 'http://127.0.0.1:8642/p/sol')
+        # /p/sol se autentica con la llave de sol, no con la del escucha default.
+        self.assertEqual(conf['HERMES_API_KEY'], perfil['API_SERVER_KEY'])
+        self.assertNotEqual(conf['HERMES_API_KEY'], default['API_SERVER_KEY'])
+        self.assertEqual((self.home / '.hermes' / '.env').stat().st_mode & 0o777, 0o600)
+
+    def test_quita_el_escucha_viejo_del_perfil_y_conserva_su_llave(self):
+        (self.perfil / '.env').write_text(
+            'SALA_CLAVE_AGENTE=ag-prueba\nSALA_CLAVE_CONSEJO=co-prueba\nAPI_SERVER_ENABLED=true\n'
+            'API_SERVER_HOST=127.0.0.1\nAPI_SERVER_PORT=8642\nAPI_SERVER_KEY=llave-de-sol\n')
+        (self.home / '.hermes' / '.env').write_text('API_SERVER_ENABLED=true\nAPI_SERVER_PORT=8650\nAPI_SERVER_KEY=llave-default\n')
+        r = self.instalar()
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        perfil = self.leer(self.perfil / '.env')
+        self.assertNotIn('API_SERVER_ENABLED', perfil)
+        self.assertNotIn('API_SERVER_PORT', perfil)
+        self.assertEqual(perfil['API_SERVER_KEY'], 'llave-de-sol')
+        self.assertEqual(self.leer(self.home / '.hermes' / '.env')['API_SERVER_KEY'], 'llave-default')
+        conf = self.leer(self.home / '.config' / 'sala-consejo' / 'env')
+        self.assertEqual((conf['HERMES_API_URL'], conf['HERMES_API_KEY']), ('http://127.0.0.1:8650/p/sol', 'llave-de-sol'))
+        self.assertIn('Reiniciar Gateway', r.stdout)
 
     def test_segunda_corrida_no_duplica_la_api(self):
         (self.perfil / '.env').write_text('SALA_CLAVE_AGENTE=ag-prueba\nSALA_CLAVE_CONSEJO=co-prueba\n')
@@ -262,13 +295,16 @@ class InstaladorHermesTests(unittest.TestCase):
         r = self.instalar()
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         self.assertEqual((self.perfil / '.env').read_text().count('API_SERVER_KEY='), 1)
-        self.assertNotIn('gateway restart', r.stdout)
+        self.assertEqual((self.home / '.hermes' / '.env').read_text().count('API_SERVER_KEY='), 1)
+        self.assertNotIn('Reiniciar Gateway', r.stdout)
 
     def test_sin_llaves_avisa_y_no_escribe(self):
         r = self.instalar()
         self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
         self.assertIn('Faltan SALA_CLAVE_AGENTE', r.stdout)
         self.assertFalse((self.home / '.config' / 'sala-consejo' / 'env').exists())
+        self.assertFalse((self.home / '.hermes' / '.env').exists())
+        self.assertNotIn('API_SERVER', (self.perfil / '.env').read_text())
 
 
 if __name__ == '__main__':

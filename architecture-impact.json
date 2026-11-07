@@ -2,7 +2,7 @@
  "model_revision": "2026-11-07.roast-room.1",
  "model_commit": "0a9b0b0e1bb1004d0e0309a632b3d97a666cd97e",
  "proposal_id": "CHG-SALA-ROAST-ROOM-20261107",
- "summary": "Roast Room: el consejo autoriza las cartas de la mesa con su propio rol y llave (consejo / Roast Room). La marca de Alejandro o de Sayri manda sobre la del consejo en la misma lámina (GAS, contrato de producción y pantalla). Seis jueces por carta con Sol u Opus al azar, pensando por la API local de Hermes con las suscripciones de Dirección (o por API si el repo tuviera llaves), oído Gemini para cortes, CANDADOS y CONSEJO privados, workflow horario y marcador diario. No publica; la llave del agente sigue sin decidir. Código y pruebas locales no acreditan el GAS vivo ni corridas reales.",
+ "summary": "Roast Room: el consejo autoriza las cartas de la mesa con su propio rol y llave (consejo / Roast Room). La marca de Alejandro o de Sayri manda sobre la del consejo en la misma lámina (GAS, contrato de producción y pantalla). Seis jueces por carta con Sol u Opus al azar, pensando por la API local del gateway compartido de Hermes (escucha en default, entrada por /p/sol con la llave y las suscripciones de ese perfil) (o por API si el repo tuviera llaves), oído Gemini para cortes, CANDADOS y CONSEJO privados, workflow horario y marcador diario. No publica; la llave del agente sigue sin decidir. Código y pruebas locales no acreditan el GAS vivo ni corridas reales.",
  "components": [
   "SYS-SALA",
   "GAS-SALA",
@@ -16,7 +16,7 @@
   "EXT-DRIVE"
  ],
  "tests": [
-  "python3 -m unittest tests.sala_consejo_test (24 pruebas: veredicto, veto, abstención, cartas, contrato con precedencia humana, candado de llave, ruta Hermes con proveedor/modelo/imagen, e instalador en HOME de mentira sin red: primera corrida sin ~/.config previo, permisos, idempotencia, sin llaves).",
+  "python3 -m unittest tests.sala_consejo_test (26 pruebas: veredicto, veto, abstención, cartas, contrato con precedencia humana, candado de llave, ruta Hermes con proveedor/modelo/imagen, e instalador en HOME de mentira sin red: primera corrida sin ~/.config previo, permisos, idempotencia, sin llaves no toca Hermes, gateway compartido con escucha en default y entrada por /p/<perfil> con la llave del perfil).",
   "node --test tests/roast-room-gas.test.cjs (5 pruebas del GAS con dobles) y suites existentes produccion-historica, adversaria y fusion-lecturas.",
   "python3 nube/verificar.py: sólo nube/sala_consejo.py decide y sólo con _clave_consejo().",
   "bash -n nube/hermes/roast_room.sh nube/hermes/instalar_roast_room.sh; el cron horario vive en Hermes (sin agente) y la API local sólo escucha en 127.0.0.1.",
