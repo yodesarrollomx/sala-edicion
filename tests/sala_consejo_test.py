@@ -133,6 +133,26 @@ class MotoresTests(unittest.TestCase):
                             for p in partes))
         self.assertEqual(visto['cabeceras']['Authorization'], 'Bearer k-hermes-123456')
 
+    def hermes_contesta_con(self, modelo_respuesta, motor='opus', modelo='claude-opus-5-5'):
+        respuesta = {'model': modelo_respuesta,
+                     'choices': [{'message': {'content': '{"piezas": [{"i": 0, "voto": "si", "candados": [], "nota": ""}]}'}}]}
+        env = {'HERMES_API_URL': 'http://127.0.0.1:8642/p/sol', 'HERMES_API_KEY': 'k-hermes-123456'}
+        with patch.dict(os.environ, env), patch.object(consejo, '_post', return_value=respuesta):
+            return consejo.llamar(motor, modelo, 'sistema', 'texto', [], {})
+
+    def test_voto_de_otro_modelo_no_cuenta_como_opus(self):
+        # Si Hermes no tiene la cuenta de Anthropic y contesta Sol, ese voto no se apunta a Opus:
+        # el marcador Sol contra Opus sería mentira.
+        with self.assertRaises(consejo.ConsejoError):
+            self.hermes_contesta_con('gpt-6.1-sol')
+        with self.assertRaises(consejo.ConsejoError):
+            self.hermes_contesta_con('claude-opus-5-5', motor='sol', modelo='gpt-6.1-sol')
+
+    def test_voto_del_modelo_pedido_si_cuenta(self):
+        self.assertEqual(self.hermes_contesta_con('claude-opus-5-5')['piezas'][0]['voto'], 'si')
+        self.assertEqual(self.hermes_contesta_con('anthropic/claude-opus-5-5-20261101')['piezas'][0]['voto'], 'si')
+        self.assertEqual(self.hermes_contesta_con('gpt-6.1-sol', motor='sol', modelo='gpt-6.1-sol')['piezas'][0]['voto'], 'si')
+
     def test_apagado_no_lee_la_mesa(self):
         with patch.object(consejo, 'leer_reglas', return_value={'consejo_activo': '0'}), \
                 patch.object(consejo.sala, 'get', side_effect=AssertionError('no debe leer la mesa')):

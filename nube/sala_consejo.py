@@ -407,6 +407,9 @@ def modelo_de(motor, reglas):
     return _regla(reglas, 'consejo_modelo_' + motor, {'sol': 'gpt-6.1-sol', 'opus': 'claude-opus-5-5'}[motor])
 
 
+FAMILIA = {'sol': ('gpt', 'sol', 'codex'), 'opus': ('claude', 'opus')}
+
+
 def llamar(motor, modelo, sistema, texto, imagenes, reglas=None):
     url, clave = _hermes()
     if url:
@@ -421,6 +424,12 @@ def llamar(motor, modelo, sistema, texto, imagenes, reglas=None):
                        'navegues: todo lo que necesitas está en este mensaje.')},
                                 {'role': 'user', 'content': contenido}]},
                   {'Authorization': 'Bearer ' + clave}, 'Hermes %s %s' % (motor, modelo))
+        # Si el perfil no tiene la cuenta de ese motor, Hermes puede contestar con otro modelo y
+        # dar 200 igual (7-nov, Chromebook). Ese voto no se apunta al motor pedido: el marcador
+        # Sol contra Opus dejaría de decir la verdad. Sin voto, la carta se abstiene.
+        devuelto = str((r or {}).get('model') or '').lower()
+        if devuelto and not any(f in devuelto for f in FAMILIA[motor]):
+            raise ConsejoError('Hermes contestó con %s en vez de %s' % (devuelto, motor))
         try:
             return _json_de(r['choices'][0]['message']['content'])
         except (KeyError, IndexError, TypeError):

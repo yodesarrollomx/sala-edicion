@@ -16,7 +16,7 @@
   "EXT-DRIVE"
  ],
  "tests": [
-  "python3 -m unittest tests.sala_consejo_test (26 pruebas: veredicto, veto, abstención, cartas, contrato con precedencia humana, candado de llave, ruta Hermes con proveedor/modelo/imagen, e instalador en HOME de mentira sin red: primera corrida sin ~/.config previo, permisos, idempotencia, sin llaves no toca Hermes, gateway compartido con escucha en default y entrada por /p/<perfil> con la llave del perfil).",
+  "python3 -m unittest tests.sala_consejo_test (28 pruebas: veredicto, veto, abstención, cartas, contrato con precedencia humana, candado de llave, ruta Hermes con proveedor/modelo/imagen, voto de otro modelo no se apunta al motor pedido, e instalador en HOME de mentira sin red: primera corrida sin ~/.config previo, permisos, idempotencia, sin llaves no toca Hermes, gateway compartido con escucha en default y entrada por /p/<perfil> con la llave del perfil).",
   "node --test tests/roast-room-gas.test.cjs (5 pruebas del GAS con dobles) y suites existentes produccion-historica, adversaria y fusion-lecturas.",
   "python3 nube/verificar.py: sólo nube/sala_consejo.py decide y sólo con _clave_consejo().",
   "bash -n nube/hermes/roast_room.sh nube/hermes/instalar_roast_room.sh; el cron horario vive en Hermes (sin agente) y la API local sólo escucha en 127.0.0.1.",
