@@ -18,6 +18,8 @@
  *   clave_editor2  → editor2 (Sayri: lee y decide; queda su autoría en 'quien')
  *   clave_lector   → lector  (clientes/socios: solo lectura)
  *   clave_agente   → agente  (la Mac: propone, reporta producción, acusa cosecha)
+ *   clave_consejo  → consejo (7-nov-2026 · Roast Room: autoriza cartas de la mesa; firma «Roast Room»;
+ *                             la marca de un editor en la misma lámina manda sobre la suya)
  */
 
 var TZ = 'America/Hermosillo';
@@ -33,6 +35,11 @@ var PESTANAS = {
   PRODUCCION: ['fecha', 'pieza', 'estado', 'detalle', 'enlace'],
   BITACORA:   ['fecha_hora', 'evento', 'detalle'],
   EXPEDIENTES:['pieza', 'actualizado', 'json'],  // la historia con sus palabras: privada, tras la clave
+  // 7-nov-2026 · Roast Room: los candados (reglas de Alejandro y Sayri, con su origen) y la
+  // bitácora de votos del consejo. Ambas privadas, tras la clave.
+  CANDADOS:   ['id', 'de', 'candado', 'tipo', 'aplica', 'origen', 'activo'],
+  CONSEJO:    ['fecha_hora', 'corrida', 'prop_id', 'lamina', 'tipo', 'motor', 'modelo', 'juez', 'voto',
+               'nota', 'veredicto', 'marca_enviada', 'envio_id', 'humano_despues'],
   // 8-sep: EL CATÁLOGO. Cada lámina tiene un serial que no cambia nunca y una revisión que sube
   // sólo cuando el contenido cambia de verdad. Aquí vive el registro; las imágenes viven en Drive.
   // Con esto la Sala carga SÓLO letras y pide la foto a Drive apenas cuando se le pica.
@@ -148,6 +155,7 @@ function rolDe(clave) {
   if (clave === leerConfig('clave_editor2')) return 'editor2';
   if (clave === leerConfig('clave_lector')) return 'lector';
   if (clave === leerConfig('clave_agente')) return 'agente';
+  if (leerConfig('clave_consejo') && clave === leerConfig('clave_consejo')) return 'consejo';   // 7-nov: Roast Room
   var g = rolPorGracia_(clave); if (g) return g;   // 8-sep: la llave recién rotada sigue valiendo unas horas
   return rolPorPortero_(clave);          // UNA SOLA LLAVE: la sesión del YOD OS también entra
 }
@@ -378,6 +386,7 @@ function vigentePorEditor(decRows, f) {
   return id;                                   // { editor: envio_id, editor2: envio_id }
 }
 function nombreDe(rol) {
+  if (rol === 'consejo') return leerConfig('nombre_consejo') || 'Roast Room';
   var n = leerConfig(rol === 'editor2' ? 'nombre_editor2' : 'nombre_editor');
   return n || (rol === 'editor2' ? 'Sayri' : 'Alejandro');
 }
@@ -429,9 +438,17 @@ function fusionDia_(DE, f) {
         var i2 = Number(d.lamina), m = String(d.marca || '');
         m = (m === 'si' || m === 'no') ? m : null;
         var nota = d.nota_propuesta ? String(d.nota_propuesta) : '';
-        // el NO manda: si a uno no le gusto, se rehace cumpliendo las notas de los dos
+        // el NO manda: si a uno no le gusto, se rehace cumpliendo las notas de los dos.
+        // 7-nov (Roast Room): la marca de un EDITOR manda sobre la del consejo en la misma lámina.
         var prev = fi.laminas[i2] || null;
-        fi.laminas[i2] = (prev === 'no' || m === 'no') ? 'no' : (m || prev);
+        fi.humana = fi.humana || [];
+        if (rol === 'consejo') {
+          if (!fi.humana[i2]) fi.laminas[i2] = (prev === 'no' || m === 'no') ? 'no' : (m || prev);
+        } else {
+          if (m && !fi.humana[i2]) prev = null;           // la marca del consejo cede ante la del editor
+          fi.laminas[i2] = (prev === 'no' || m === 'no') ? 'no' : (m || prev);
+          if (m) fi.humana[i2] = true;
+        }
         fi.firmas[i2] = (fi.firmas[i2] || []).concat([{ quien: quien, marca: m, nota: nota }]);
       } else if (d.nota_propuesta) {
         var t = String(d.nota_propuesta);
@@ -449,6 +466,7 @@ function fusionDia_(DE, f) {
   // cumpla las dos. Una lamina que un editor dejo pendiente y el otro marco, cuenta marcada.
   Object.keys(dec.propuestas).forEach(function (pid) {
     var fi = dec.propuestas[pid];
+    delete fi.humana;
     for (var i = 0; i < fi.laminas.length; i++) {
       if (fi.laminas[i] === undefined) fi.laminas[i] = null;
       var con = (fi.firmas[i] || []).filter(function (x) { return x.nota; });
@@ -518,7 +536,7 @@ function fusionProduccion_(DE) {
   DE.forEach(function (d) {
     if (!d || typeof d !== 'object') throw new Error('produccion_decision_invalida');
     var rol = String(d.quien || 'editor'), pid = String(d.prop_id || ''), t = selloProduccion_(d.guardado);
-    if (['editor', 'editor2'].indexOf(rol) < 0 || !t || !isFinite(t) ||
+    if (['editor', 'editor2', 'consejo'].indexOf(rol) < 0 || !t || !isFinite(t) ||
         (pid && !/^[A-Za-z0-9_.-]{1,256}$/.test(pid)) ||
         !fechaProduccionValida_(fechaDe(d.fecha))) throw new Error('produccion_decision_invalida');
     var esLam = d.lamina !== '' && d.lamina !== null && d.lamina !== undefined;
@@ -554,12 +572,20 @@ function fusionProduccion_(DE) {
     }
     var n = Number(d.lamina), marca = u.marca === 'borrar' ? null : u.marca;
     var previa = fi.laminas[n] || null;
-    fi.laminas[n] = previa === 'no' || marca === 'no' ? 'no' : (marca || previa);
+    fi.humana = fi.humana || [];
+    if (rol === 'consejo') {                       // 7-nov: el Roast Room cede ante cualquier editor
+      if (!fi.humana[n]) fi.laminas[n] = previa === 'no' || marca === 'no' ? 'no' : (marca || previa);
+    } else {
+      if (marca && !fi.humana[n]) previa = null;
+      fi.laminas[n] = previa === 'no' || marca === 'no' ? 'no' : (marca || previa);
+      if (marca) fi.humana[n] = true;
+    }
     fi.firmas[n] = (fi.firmas[n] || []).concat([{ rol: rol, quien: quien, marca: marca,
       nota: u.nota, guardado: new Date(u.t).toISOString() }]);
   });
   Object.keys(dec.propuestas).forEach(function (pid) {
     var fi = dec.propuestas[pid];
+    delete fi.humana;
     for (var i = 0; i < fi.laminas.length; i++) {
       if (fi.laminas[i] === undefined) fi.laminas[i] = null;
       if (!fi.firmas[i]) fi.firmas[i] = [];
@@ -727,6 +753,10 @@ function doGet(e) {
     });
     return json({ ok: true, expedientes: ex });
   }
+  if (p.recurso === 'candados') {                  // 7-nov: los candados de Alejandro y Sayri para el Roast Room
+    if (['consejo', 'agente'].indexOf(rolDe(p.clave)) < 0) return json({ error: 'solo el consejo o el agente' });
+    return json({ ok: true, candados: filas('CANDADOS').filter(function (c) { return String(c.activo) !== '0'; }) });
+  }
   if (p.recurso === 'reglas') {                   // 12-sep: los umbrales y la cascada de motores
     // Los lee el agente (sala_reglas.py) y también el editor, para que Ajustes pueda mostrarlos
     // sin una segunda puerta. No hay nada secreto aquí: son números de producción.
@@ -779,7 +809,7 @@ function doGet(e) {
   cuerpo.rol = rolQuien;
   var nueva = claveNuevaPara_(p.clave);        // 8-sep: si entró con la llave anterior (en gracia), se le manda la nueva
   if (nueva) { cuerpo.clave_nueva = nueva; cuerpo.aviso_llave = 'Tu llave se renovó; la Sala la guardó sola.'; }
-  cuerpo.quien = (rolQuien === 'editor' || rolQuien === 'editor2') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || '');
+  cuerpo.quien = (rolQuien === 'editor' || rolQuien === 'editor2' || rolQuien === 'consejo') ? nombreDe(rolQuien) : (nombrePortero_(p.clave) || '');
   cuerpo.version = 'dos-compuertas-2026-09-12';
   return json(cuerpo);
 }
@@ -1174,8 +1204,18 @@ function doPost(e) {
     return json({ error: 'no reconocí tu entrada (credencial no válida o sin acceso a la Sala)' });
   }
 
+  if (d.accion === 'consejo_registro') {                    // 7-nov: la bitácora del Roast Room
+    if (rol !== 'consejo') return json({ error: 'solo el consejo' });
+    if (!Array.isArray(d.filas) || !d.filas.length || d.filas.length > 400) return json({ error: 'filas inválidas' });
+    var hc = hoja('CONSEJO');
+    var fc = d.filas.map(function (r) { return (Array.isArray(r) ? r : []).slice(0, 14).concat(['', '', '', '', '', '', '', '', '', '', '', '', '', '']).slice(0, 14)
+      .map(function (x) { return String(x === null || x === undefined ? '' : x).slice(0, 2000); }); });
+    hc.getRange(hc.getLastRow() + 1, 1, fc.length, 14).setValues(fc);
+    return json({ ok: true, filas: fc.length });
+  }
+
   if (d.accion === 'decidir') {
-    if (rol !== 'editor' && rol !== 'editor2') return json({ error: 'tu rol solo lee' });
+    if (rol !== 'editor' && rol !== 'editor2' && rol !== 'consejo') return json({ error: 'tu rol solo lee' });
     if (!/^\d{4}-\d{2}-\d{2}$/.test(d.fecha || '')) return json({ error: 'falta la fecha; no se guardó nada' });
     if (!d.envio_id) return json({ error: 'falta envio_id' });
     if (typeof d.propuestas !== 'object') return json({ error: 'revisión mal formada' });

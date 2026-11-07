@@ -27,7 +27,7 @@ def firma(decision):
     groups = decision.get('firmas') or []
     notes = decision.get('firmas_nota') or []
     if (len(groups) != 1 or not any(s.get('marca') == 'no' and
-            s.get('rol') in ('editor', 'editor2') and s.get('guardado') for s in groups[0])
+            s.get('rol') in ('editor', 'editor2', 'consejo') and s.get('guardado') for s in groups[0])
             or not notes or not decision.get('nota')):
         return None
     return hashlib.sha256(canonical(decision).encode()).hexdigest()

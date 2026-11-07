@@ -1,19 +1,26 @@
 {
-  "model_revision": "2026-10-31.ppp-presentaciones.1",
-  "model_commit": "d99f27b5da52c5aab5d3c1ff6625937df35ba8f3",
-  "proposal_id": "CHG-PPP-PRESENTACIONES-20261031",
-  "summary": "Extender el registro privado existente de presentaciones con versiones inmutables ligadas a la revisión PPP vista, registro/recibo/listado por prueba firmada verificada por Portero, autorización explícita de etapa dos y proyección privada sin guion. Mismo catálogo, despliegue y carpeta Drive; sin publicación automática ni cambios financieros. Código local y pruebas sintéticas no acreditan activación productiva.",
-  "components": [
-    "SYS-SALA",
-    "GAS-SALA",
-    "SYS-INVERSION",
-    "GAS-PORTERO"
-  ],
-  "tests": [
-    "node --test tests/presentaciones-gas.test.cjs tests/presentaciones-agente-gas.test.cjs: registro, firma/ACL, replay, recuperación de índice, readback, origen y autorización exactos, proyección privada y chinches por presentación.",
-    "python3 nube/verificar.py",
-    "git diff --check; sintaxis GAS mediante VM con dobles aislados.",
-    "Pendiente: compare/readback del GAS vivo y piloto integrado con worker/Portero y visor, sin inferirlo de estas pruebas locales."
-  ],
-  "rollback": "Desactivar el alcance de presentaciones del agente/Portero y revertir código por PR. Conservar versiones privadas, archivos, extensión del índice, autorizaciones, recibos y chinches; no borrar ni restaurar cálculos o registros de negocio."
+ "model_revision": "2026-11-07.roast-room.1",
+ "model_commit": "0a9b0b0e1bb1004d0e0309a632b3d97a666cd97e",
+ "proposal_id": "CHG-SALA-ROAST-ROOM-20261107",
+ "summary": "Roast Room: el consejo autoriza las cartas de la mesa con su propio rol y llave (consejo / Roast Room). La marca de Alejandro o de Sayri manda sobre la del consejo en la misma lámina (GAS, contrato de producción y pantalla). Seis jueces por carta con Sol u Opus al azar, pensando por la API local de Hermes con las suscripciones de Dirección (o por API si el repo tuviera llaves), oído Gemini para cortes, CANDADOS y CONSEJO privados, workflow horario y marcador diario. No publica; la llave del agente sigue sin decidir. Código y pruebas locales no acreditan el GAS vivo ni corridas reales.",
+ "components": [
+  "SYS-SALA",
+  "GAS-SALA",
+  "SHEET-SALA",
+  "SVC-SALA-PRODUCTOR",
+  "SVC-SALA-EJECUTOR",
+  "EXT-GMAIL",
+  "EXT-ACTIONS",
+  "EXT-OPENAI",
+  "EXT-MOTORES-MEDIA",
+  "EXT-DRIVE"
+ ],
+ "tests": [
+  "python3 -m unittest tests.sala_consejo_test (21 pruebas: veredicto, veto, abstención, cartas, contrato con precedencia humana, candado de llave, ruta Hermes con proveedor/modelo/imagen).",
+  "node --test tests/roast-room-gas.test.cjs (5 pruebas del GAS con dobles) y suites existentes produccion-historica, adversaria y fusion-lecturas.",
+  "python3 nube/verificar.py: sólo nube/sala_consejo.py decide y sólo con _clave_consejo().",
+  "bash -n nube/hermes/roast_room.sh nube/hermes/instalar_roast_room.sh; el cron horario vive en Hermes (sin agente) y la API local sólo escucha en 127.0.0.1.",
+  "Pendiente: versión nueva del GAS vivo, secret SALA_CLAVE_CONSEJO, primera corrida real y su lectura en la Sala."
+ ],
+ "rollback": "REGLAS consejo_activo=0 o desactivar sala-consejo.yml; quitar clave_consejo de CONFIG revoca la llave. Revertir el PR y la versión del GAS. Conservar DECISIONES, CANDADOS y CONSEJO; las marcas del consejo ceden ante cualquier marca humana posterior."
 }
