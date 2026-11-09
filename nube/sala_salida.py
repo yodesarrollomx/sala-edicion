@@ -214,8 +214,12 @@ def leer_tira(pid):
     return _TIRAS[pid]
 
 
-def piezas_vigentes(dia, lector=None):
-    """{slug: (pid, tira, carta)} — de cada pieza, la tira viva más reciente del Sheet."""
+def piezas_vigentes(dia, lector=None, proyeccion=None):
+    """{slug: (pid, tira, carta)} — la tira vigente de cada pieza.
+
+    Quien sabe cuál es la vigente es la mesa (monta, rehace y retira); por eso, si se pudo leer lo
+    que ella publicó (`proyeccion`), esa tira manda. Sin esa lectura, o para una pieza que la mesa
+    todavía no publica, se toma la tira viva más reciente del Sheet."""
     lector = lector or leer_tira
     mejores = {}
     for p in dia.get('propuestas') or []:
@@ -226,7 +230,8 @@ def piezas_vigentes(dia, lector=None):
         if not tira or not tira.get('laminas'):
             continue
         slug = str(tira.get('pieza_slug') or pid.split('-')[0])
-        clave = (str(p.get('fecha_fuente') or p.get('de_antes') or ''), _fecha_de(tira), pid)
+        clave = (bool(proyeccion) and pid in proyeccion,
+                 str(p.get('fecha_fuente') or p.get('de_antes') or ''), _fecha_de(tira), pid)
         if slug not in mejores or clave > mejores[slug][0]:
             mejores[slug] = (clave, pid, tira, p)
     return {s: (pid, t, p) for s, (_, pid, t, p) in mejores.items()}
@@ -321,7 +326,7 @@ def estado_de_piezas(dia_produccion, dia, reglas, expedientes, lector=None, proy
     ya = _publicadas_del_repo() | set(filas_publicada(dia))
     decisiones = ((dia_produccion.get('decisiones') or {}).get('propuestas')) or {}
     filas = []
-    for slug, (pid, tira, carta) in sorted(piezas_vigentes(dia_produccion, lector).items()):
+    for slug, (pid, tira, carta) in sorted(piezas_vigentes(dia_produccion, lector, proyeccion).items()):
         nombre = str(tira.get('pieza') or slug).strip()
         exp = (expedientes or {}).get(nombre)
         fila = {'slug': slug, 'pieza': nombre, 'id': pid, 'promesa': str(tira.get('promesa') or ''),
@@ -331,10 +336,11 @@ def estado_de_piezas(dia_produccion, dia, reglas, expedientes, lector=None, proy
             continue
         try:
             resuelta = produccion.resolver_tira(tira, decisiones.get(pid) or {}, carta)
-        except sala.SalaError:
-            filas.append(dict(fila, estado='en_laminas', motivo='decisión sin contrato; la revisa la mesa'))
+            laminas, motivo = laminas_aprobadas(resuelta)
+        except (sala.SalaError, KeyError, TypeError, ValueError, AttributeError):
+            # una tira o una decisión rara detiene a ESA pieza, no a la salida entera
+            filas.append(dict(fila, estado='en_laminas', motivo='tira o decisión sin contrato; la revisa la mesa'))
             continue
-        laminas, motivo = laminas_aprobadas(resuelta)
         if laminas is None:
             filas.append(dict(fila, estado='en_laminas', motivo=motivo))
             continue

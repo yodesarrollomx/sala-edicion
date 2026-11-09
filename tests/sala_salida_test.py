@@ -305,6 +305,23 @@ class PiezaCompletaTests(unittest.TestCase):
             filas = e.filas()
         self.assertEqual([f['id'] for f in filas], [nueva])
 
+    def test_entre_dos_tiras_vivas_manda_la_que_publico_la_mesa(self):
+        otra = 'tres-opiniones-nube-2026-10-12-zzzzzz'                 # misma fecha y un id «mayor»: sin la mesa ganaría
+        tiras = {PID: tira(), otra: tira(pid_dir='z')}
+        cartas = [carta(), carta(otra)]
+        with Escenario(tiras=tiras, cartas=cartas, decisiones={PID: decision(), otra: decision((None, None))}) as e:
+            self.assertEqual([(f['id'], f['estado']) for f in e.filas()], [(otra, 'en_laminas')])
+            e.proyeccion = {PID}
+            self.assertEqual([(f['id'], f['estado']) for f in e.filas()], [(PID, 'completa')])
+
+    def test_una_tira_rota_no_detiene_a_las_demas(self):
+        rota, buena = 'rota-nube-2026-10-12-000000', PID
+        tiras = {buena: tira(), rota: dict(tira(pid_dir='r'), pieza='Rota', pieza_slug='rota', mapa='no es un mapa')}
+        with Escenario(tiras=tiras, cartas=[carta(), carta(rota)], decisiones={buena: decision(), rota: decision()}) as e:
+            self.assertEqual({f['slug']: f['estado'] for f in e.filas()}, {'rota': 'en_laminas', SLUG: 'completa'})
+            self.assertEqual(e.empacar(), 0)
+            self.assertEqual([c['pieza'] for c in e.de('expediente')], [TITULO])
+
     def test_cortes_de_video_y_ejes_no_son_piezas(self):
         cartas = [carta(), carta('zeta-corte-2026-10-20-aaaaaa'), carta('zeta-nube-1', tipo='eje'),
                   carta('zeta-nube-2', video='https://drive.google.com/file/d/x/preview'), carta('zeta-nube-3')]

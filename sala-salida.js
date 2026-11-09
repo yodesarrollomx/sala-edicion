@@ -78,7 +78,7 @@ async function pintar(){
     ${espera?`<p class="sal-pie"><b>${cuantas(espera,'pieza más','piezas más')}</b> ya ${espera===1?'tiene':'tienen'} sus imágenes aprobadas y ${espera===1?'espera':'esperan'} su texto. Es el paso del consejo; cuando lo escriba, ${espera===1?'aparece':'aparecen'} aquí.</p>`:''}
     ${guardadas.length?`<p class="sal-pie"><b>${cuantas(guardadas.length,'pieza guardada','piezas guardadas')}</b> hasta que tú decidas: ${esc(guardadas.join(' · '))}.</p>`:''}
   </section>`;
-  hoy.innerHTML=html; hoy.querySelectorAll('[data-publicar]').forEach(b=>b.onclick=()=>abrir(b.dataset.publicar));
+  if(hoy._html!==html){ hoy._html=html; hoy.innerHTML=html; hoy.querySelectorAll('[data-publicar]').forEach(b=>b.onclick=()=>abrir(b.dataset.publicar)) }   // sin cambios no se repinta: no se pierde el desplazamiento
   if(typeof avisarPuerta==='function') avisarPuerta('hoy',l.length>0&&DECIDE());
 }
 async function copiar(texto,boton){
