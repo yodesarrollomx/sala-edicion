@@ -2,25 +2,18 @@
  "model_revision": "2026-11-07.roast-room.1",
  "model_commit": "0a9b0b0e1bb1004d0e0309a632b3d97a666cd97e",
  "proposal_id": "CHG-SALA-ROAST-ROOM-20261107",
- "summary": "Roast Room: el consejo autoriza las cartas de la mesa con su propio rol y llave (consejo / Roast Room). La marca de Alejandro o de Sayri manda sobre la del consejo en la misma lámina (GAS, contrato de producción y pantalla). Seis jueces por carta con Sol u Opus al azar, pensando por la API local de Hermes con las suscripciones de Dirección (o por API si el repo tuviera llaves), oído Gemini para cortes, CANDADOS y CONSEJO privados, workflow horario y marcador diario. No publica; la llave del agente sigue sin decidir. Código y pruebas locales no acreditan el GAS vivo ni corridas reales.",
+ "summary": "Motor de escena de pago omni_flash (Gemini Omni Flash por la API oficial de Gemini, misma GEMINI_API_KEY de la voz) dentro del selector adaptativo. Nace apagado: sólo entra con la REGLA omni_flash_tope_dia > 0 puesta por Dirección; motores_vetados prevalece y la reserva diaria se registra antes de consumir. Orden: Wan gratis, Omni, animación por código. Sin conexiones nuevas (EXT-MOTORES-MEDIA ya incluye Gemini), sin cambios en GAS, permisos ni decisiones. Código y pruebas con dobles no acreditan la API viva ni la facturación.",
  "components": [
   "SYS-SALA",
-  "GAS-SALA",
   "SHEET-SALA",
-  "SVC-SALA-PRODUCTOR",
   "SVC-SALA-EJECUTOR",
-  "EXT-GMAIL",
-  "EXT-ACTIONS",
-  "EXT-OPENAI",
-  "EXT-MOTORES-MEDIA",
-  "EXT-DRIVE"
+  "EXT-MOTORES-MEDIA"
  ],
  "tests": [
-  "python3 -m unittest tests.sala_consejo_test (21 pruebas: veredicto, veto, abstención, cartas, contrato con precedencia humana, candado de llave, ruta Hermes con proveedor/modelo/imagen).",
-  "node --test tests/roast-room-gas.test.cjs (5 pruebas del GAS con dobles) y suites existentes produccion-historica, adversaria y fusion-lecturas.",
-  "python3 nube/verificar.py: sólo nube/sala_consejo.py decide y sólo con _clave_consejo().",
-  "bash -n nube/hermes/roast_room.sh nube/hermes/instalar_roast_room.sh; el cron horario vive en Hermes (sin agente) y la API local sólo escucha en 127.0.0.1.",
-  "Pendiente: versión nueva del GAS vivo, secret SALA_CLAVE_CONSEJO, primera corrida real y su lectura en la Sala."
+  "python3 -m unittest tests.adaptativa_test (8 pruebas: pago apagado por omisión, tope y veto, fila de MOTORES sin regla no gasta, orden gratis-pago-código, límite de 15 s, contrato de la petición, lectura del video en línea y por uri, 429 como cuota, llave tachada).",
+  "python3 nube/verificar.py",
+  "git diff --check",
+  "Pendiente: facturación activa en la llave, REGLA omni_flash_tope_dia, primera corrida real con archivo durable y recibo; confirmar el campo response_format.duration contra la API viva."
  ],
- "rollback": "REGLAS consejo_activo=0 o desactivar sala-consejo.yml; quitar clave_consejo de CONFIG revoca la llave. Revertir el PR y la versión del GAS. Conservar DECISIONES, CANDADOS y CONSEJO; las marcas del consejo ceden ante cualquier marca humana posterior."
+ "rollback": "REGLA omni_flash_tope_dia=0 (o vacía) apaga el motor sin tocar código; motores_vetados=omni_flash también. Revertir el PR. Conservar cola, evidencias, recibos y archivos producidos."
 }
