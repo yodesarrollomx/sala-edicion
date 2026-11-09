@@ -1,7 +1,7 @@
 {
- "model_revision": "2026-11-07.roast-room.1",
- "model_commit": "0a9b0b0e1bb1004d0e0309a632b3d97a666cd97e",
- "proposal_id": "CHG-SALA-ROAST-ROOM-20261107",
+ "model_revision": "2026-11-09.sala-corta.2",
+ "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
+ "proposal_id": "CHG-SALA-CORTA-20261109",
  "summary": "Motor de escena de pago omni_flash (Gemini Omni Flash por la API oficial de Gemini, misma GEMINI_API_KEY de la voz) dentro del selector adaptativo. Nace apagado: sólo entra con la REGLA omni_flash_tope_dia > 0 puesta por Dirección; motores_vetados prevalece y la reserva diaria se registra antes de consumir. Orden: Wan gratis, Omni, animación por código. Sin conexiones nuevas (EXT-MOTORES-MEDIA ya incluye Gemini), sin cambios en GAS, permisos ni decisiones. Código y pruebas con dobles no acreditan la API viva ni la facturación. Además, piloto manual de una historia de 15 s (sala-piloto-omni.yml, sólo workflow_dispatch) que lee datos/universo/universo.json y no toca la COLA ni reactiva la producción de video.",
  "components": [
   "SYS-SALA",

@@ -6,6 +6,14 @@ Contexto para Claude Code. **Lee este archivo completo antes de tocar nada.**
 en `docs/SALA-AUDITORIA-NUBE-20261015.md`. Las menciones a Mac/launchd de este
 documento son antecedentes. No introducir dependencias de una computadora local.
 
+**Sala corta · 9-nov-2026 (manda sobre lo anterior):** `docs/SALA-CORTA-20261109.md`.
+Una sola línea: idea elegida → guion → láminas → paquete listo (imágenes + copy en Drive,
+`YOD Editorial/_LISTAS PARA PUBLICAR`) → clic de Dirección para publicar. El **video está en
+pausa** (REGLAS `nube_ejecuta_etapas`; productor y ejecutor sólo a mano) y el **generador de
+ideas** también (REGLAS `semillero_activo` = 0). No agregar automatizaciones ni reactivar
+video o ideas sin que Dirección lo pida. Los horarios de GitHub llegan unas cuatro veces al
+día y con horas de retraso (medido): no prometer «cada hora» por un cron.
+
 ## Qué es esto
 
 El portal diario de producción de contenido de **Yo Desarrollo**. Cada mañana llega un correo con la
