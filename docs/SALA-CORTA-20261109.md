@@ -97,10 +97,12 @@ comentario con la liga, el texto de Facebook y la revisión contra candados. Nad
 
 ## Lo que sigue (cada uno con su propio cambio y su evidencia)
 
-1. **Consejo de nube, que además es el reloj.** Tarea programada de Claude: lee la mesa, juzga
-   con los candados y manda sus veredictos a `sala-consejo.yml`; la Action los valida y decide
-   con la llave del consejo, que sigue viviendo sólo en los secretos de Actions. Al terminar
-   lanza la mesa y el arranque para que la siguiente ronda salga enseguida.
+1. **Consejo de nube, que además es el reloj** (`docs/SALA-CONSEJO-NUBE.md`). Tarea programada
+   de Claude: pide el expediente, juzga con los candados y manda sus votos a `sala-consejo.yml`;
+   la Action los valida y decide con la llave del consejo, que sigue viviendo sólo en los
+   secretos de Actions. Al terminar lanza la mesa y el arranque para que la siguiente ronda salga
+   enseguida. El código entra con la parte 2; falta encenderlo (REGLAS `consejo_motores` =
+   `claude`) y crear la tarea, tras su primera sesión comprobada.
 2. **Paquete automático** al quedar completa una pieza, con su copy.
 3. **Botón «Publicar»** en la Sala, accionado por Dirección.
 4. **Archivo** de los workflows sobrantes y cierre de las PR automáticas viejas.

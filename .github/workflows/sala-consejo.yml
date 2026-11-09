@@ -3,28 +3,48 @@
 # Alejandro: «quienes den la autorización va a ser el roast room», en vivo desde ese día, con su
 # veto y el de Sayri por encima. Publicar sigue siendo sólo el clic de Alejandro.
 #
-# Ese mismo día decidió que los jueces piensen con sus SUSCRIPCIONES a través de Hermes, no con
-# créditos de API: la corrida de cada hora vive en el cron de Hermes, en la Chromebook
-# (nube/hermes/roast_room.sh). Aquí quedan el marcador diario Sol contra Opus (sólo lee) y una
-# corrida a mano, que sólo vota si el repo llega a tener llaves de API.
+# Dos rutas, las dos con sus SUSCRIPCIONES y sin créditos de API:
+#   · Consejo de nube (9-nov-2026, Sala corta: «Al frente y en la nube»). Una tarea programada de
+#     Claude hace de jurado. Aquí corren sus dos mitades, porque ninguna llave pasa por un modelo:
+#       expediente  deja en Drive lo que hay por juzgar (no decide nada);
+#       aplicar     valida los votos contra la mesa viva y firma con la llave del consejo; al
+#                   terminar lanza la mesa y el arranque para que la siguiente ronda salga ya.
+#     Procedimiento del jurado: docs/SALA-CONSEJO-NUBE.md.
+#   · Hermes en la Chromebook (nube/hermes/roast_room.sh), en reserva.
+# Además: el marcador diario por motor (sólo lee) y una corrida a mano, que sólo vota si el repo
+# llega a tener llaves de API.
 #
-# Freno de emergencia: REGLAS consejo_activo = 0.
+# Frenos: REGLAS consejo_activo = 0 apaga todo; quitar «claude» de consejo_motores apaga la nube.
 name: Sala · Roast Room
+run-name: Roast Room · ${{ github.event_name == 'workflow_dispatch' && inputs.modo || 'marcador' }}
 on:
   schedule:
-    - cron: '50 13 * * *'    # 06:50 Hermosillo · marcador Sol contra Opus
+    - cron: '50 13 * * *'    # 06:50 Hermosillo · marcador por motor
   workflow_dispatch:
     inputs:
       modo:
-        description: 'corrida (vota en vivo), ensayo (sólo imprime) o marcador'
+        description: 'expediente y aplicar (consejo de nube), corrida (vota en vivo), ensayo (sólo imprime) o marcador'
         type: choice
-        options: [corrida, ensayo, marcador]
+        options: [corrida, ensayo, marcador, expediente, aplicar]
         default: corrida
+      veredictos:
+        description: 'Sólo para aplicar: JSON con los votos del jurado de nube (docs/SALA-CONSEJO-NUBE.md)'
+        type: string
+        required: false
+        default: ''
+      ensayo:
+        description: 'Sólo para aplicar: valida y dice qué firmaría, sin decidir'
+        type: boolean
+        default: false
 permissions:
   contents: read
+  actions: write               # sólo para oprimir los botones de mesa y arranque tras aplicar
 concurrency:
-  group: sala-roast-room
+  # Cada modo en su fila: un expediente o el marcador en espera no cancelan un «aplicar».
+  group: sala-roast-room-${{ github.event_name == 'workflow_dispatch' && inputs.modo || 'marcador' }}
   cancel-in-progress: false
+env:
+  MODO: ${{ github.event_name == 'workflow_dispatch' && inputs.modo || 'marcador' }}
 jobs:
   consejo:
     if: github.ref == 'refs/heads/main'
@@ -41,10 +61,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Dependencias
+        run: pip install --quiet google-auth requests
       - name: Herramientas para ver los cortes
-        run: |
-          pip install --quiet google-auth requests
-          sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+        if: env.MODO == 'corrida' || env.MODO == 'ensayo'
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
       - name: Sesión del Roast Room
         env:
           SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
@@ -54,5 +75,19 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
-          MODO: ${{ github.event_name == 'workflow_dispatch' && inputs.modo || 'marcador' }}
+          # Los votos llegan como dato por variable de entorno; nunca se interpolan en el guion.
+          CONSEJO_VEREDICTOS: ${{ inputs.veredictos }}
+          CONSEJO_ENSAYO: ${{ inputs.ensayo && '1' || '' }}
         run: python3 nube/sala_consejo.py "$MODO"
+      - name: Que la siguiente ronda salga enseguida
+        # El reloj confiable de la Sala corta: tras decidir, la mesa rehace lo regresado y el
+        # arranque toma las ideas elegidas, sin esperar al horario de GitHub.
+        if: env.MODO == 'aplicar' && !inputs.ensayo
+        env:
+          GH_TOKEN: ${{ github.token }}
+          R: ${{ github.repository }}
+        run: |
+          for proceso in mesa arranque; do
+            gh workflow run sala-cada-hora.yml -R "$R" --ref main -f proceso="$proceso" \
+              || echo "::warning::no se pudo lanzar $proceso; lo recoge el horario"
+          done
