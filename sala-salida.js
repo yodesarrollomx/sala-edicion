@@ -59,7 +59,7 @@ async function sinPaquete(){
 function tarjeta(x,k){
   const img=x.e.portada||(x.p.imagenes[0]||{}).src||'', n=x.p.imagenes.length;
   return `<button class="sal-carta" type="button" data-publicar="${esc(x.nombre)}">
-    <span class="sal-foto">${miniatura(img)?`<img src="${esc(miniatura(img))}" alt="" loading="lazy" decoding="async">`:''}<span class="sal-n">${k+1}</span></span>
+    <span class="sal-foto">${miniatura(img)?`<img src="${esc(miniatura(img))}" alt="" loading="lazy" decoding="async">`:''}<span class="sal-n">${esc(x.p.orden||k+1)}</span></span>
     <b>${esc(x.nombre)}</b><small>${esc(x.p.formato||'Publicación')} · ${cuantas(n,'imagen','imágenes')} · texto listo</small>
     <span class="sal-ir">${DECIDE()?'Publicar →':'Ver →'}</span></button>`;
 }

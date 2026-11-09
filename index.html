@@ -760,7 +760,7 @@ body:has(#temaSala) .chn-pastilla{bottom:calc(var(--nav) + 64px + env(safe-area-
 
   <!-- ④ PRODUCCIÓN: árbol en tiempo real de dónde va cada pieza -->
   <section class="vista" id="vProd">
-    <h2 class="titulo-v">Producción</h2>
+    <h2 class="titulo-v">Cómo va</h2>
     <p class="bajada-v">Cada publicación abierta y el paso en que va: guion, imágenes, texto y salida.</p>
     <div class="fila-estado" style="justify-content:center;margin-bottom:14px">
       <button class="secund" id="prodActualizar" style="width:auto;padding:8px 16px;min-height:40px">Actualizar</button>
@@ -824,7 +824,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='7178789831';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='5365c93033';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2749,7 +2749,8 @@ async function pintarLinea(piezas,destino,compacto){
   for(const i of (IDEAS||[])){ if(!/produccion|elegida|aprobada/i.test(i.estado||'')) continue;
     const slug=normSlug(i.id||i.titulo); if(ya.has(slug)||[...ya].some(s=>s.split('-')[0]===slug.split('-')[0])) continue;
     abiertas.push({slug,nombre:i.titulo||i.id,tira:null,filas:{prospectos:[],escena:[],voz:[],corte:[]}}); ya.add(slug) }
-  const filas=abiertas.map(filaLinea).sort((a,b)=>(b.tuyo-a.tuyo)||(b.rojo-a.rojo)||(b.fab-a.fab)||(b.pct-a.pct));
+  const ordenPaq=f=>{ const q=f.lista&&SalaSalida.paqueteDe(f.z.nombre); return (q&&q.orden)||1e9 };
+  const filas=abiertas.map(filaLinea).sort((a,b)=>(b.tuyo-a.tuyo)||(b.rojo-a.rojo)||(b.fab-a.fab)||(b.pct-a.pct)||(ordenPaq(a)-ordenPaq(b)));
   const nLista=filas.filter(f=>f.lista).length, nTexto=filas.filter(f=>!f.tuyo&&f.sal==='texto').length, nGuard=filas.filter(f=>!f.tuyo&&f.sal==='guardada').length;
   const nTu=filas.filter(f=>f.tuyo&&!f.lista).length, nFab=filas.filter(f=>f.fab).length, nRojo=filas.filter(f=>f.rojo).length, nSig=filas.filter(f=>!f.tuyo&&!f.fab&&!f.rojo&&f.sal!=='texto'&&f.sal!=='guardada').length;
   const rel=!filas.length?'No hay publicaciones abiertas.':
@@ -2784,7 +2785,7 @@ async function pintarLinea(piezas,destino,compacto){
     return html;
   }
   c.innerHTML=`<div class="linea-cab"><p class="rel">${esc(rel)}</p>
-      <div class="chips"><span class="chip"><b>${nLista}</b> listas para publicar</span><span class="chip"><b>${nTu}</b> por decidir</span><span class="chip"><b>${nTexto}</b> esperan su texto</span>${nGuard?`<span class="chip"><b>${nGuard}</b> guardadas</span>`:''}<span class="chip"><b>${nFab}</b> en la fábrica</span><span class="chip"><b>${nRojo}</b> atoradas</span><span class="chip"><b>${nSig}</b> en camino</span></div></div>
+      <div class="chips">${[[nLista,'listas para publicar'],[nTu,'por decidir'],[nTexto,'esperan su texto'],[nGuard,'guardadas'],[nFab,'en la fábrica'],[nRojo,'atoradas'],[nSig,'en camino']].filter(x=>x[0]).map(([n,t])=>`<span class="chip"><b>${n}</b> ${t}</span>`).join('')}</div></div>
     <div class="ln-ley"><span><i style="background:var(--si)"></i>hecho</span><span><i style="background:var(--oro)"></i>produciéndose</span><span><i style="background:var(--azul)"></i>te toca</span><span><i style="background:var(--no)"></i>atorado</span><span><i style="background:var(--linea2)"></i>lo que sigue</span><span>▼ va aquí</span></div>
     ${filas.map(f=>`<button class="ln-fila${f.lista?' lista':''}" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}${f.lista?' data-lista="1"':''}><div class="ln-nom"><b>${esc(f.z.nombre)}</b><small>${f.pct}% · ${f.segs.length} etapas</small></div>
       <div class="ln-barra">${f.segs.map(seg).join('')}</div>

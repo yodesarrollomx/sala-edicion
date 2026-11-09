@@ -14,6 +14,7 @@ Ninguna llave pasa por un modelo. Por eso son tres piezas:
 | Action `sala-consejo.yml`, modo `expediente` | Lee la mesa y deja en Drive lo que hay por juzgar. No decide. | Llaves en los secretos de Actions |
 | Tarea programada de Claude (el jurado) | Mira las imágenes, lee los textos y vota como seis jueces. | Suscripción de Dirección; `gh` y el conector de Drive |
 | Action `sala-consejo.yml`, modo `aplicar` | Valida los votos contra la mesa viva, calcula el veredicto y firma como «Roast Room». Luego lanza la mesa y el arranque. | Llave del consejo, en los secretos de Actions |
+| Action `sala-consejo.yml`, modo `paquete` | Con el texto que escribió el jurado, arma el paquete de cada pieza completa y lo anota en la Sala (`docs/SALA-SALIDA.md`). | Llave del agente; **sin** la llave del consejo |
 
 El veto de Alejandro y de Sayri sigue arriba: una marca suya manda sobre la del consejo. Publicar
 sigue siendo sólo el clic de Dirección.
@@ -30,6 +31,8 @@ oprimiendo los botones de mesa y arranque, así que la siguiente ronda sale ense
 - REGLAS `consejo_nube_cartas` (por omisión 5): cartas por sesión.
 - REGLAS `consejo_aprobar_con` (4): votos a favor, de seis, para aprobar. Con menos de cinco
   jueces completos el consejo se abstiene.
+- REGLAS `salida_activa` = `0`: no se arman paquetes. `salida_excluir`: piezas que no salen hasta
+  que Dirección lo diga. `salida_piezas_por_sesion` (por omisión 3): textos por sesión.
 - Pausar la tarea programada «Consejo de la Sala».
 
 ## Procedimiento de cada sesión
@@ -41,7 +44,8 @@ oprimiendo los botones de mesa y arranque, así que la siguiente ronda sale ense
 2. **Leerlo de Drive** con el conector: carpeta `YOD Editorial/_consejo`, archivo
    `expediente.txt` (JSON). Su campo `corrida` debe ser el número de la corrida del paso 1; si no
    coincide, el expediente es viejo: no se juzga con él.
-3. Si `activo` es `false` o `cartas` viene vacío, saltar al paso 6 con una lista vacía.
+3. Si `activo` es `false` o `cartas` viene vacío, saltar al paso 6 con una lista vacía. La
+   salida (pasos 9 y 10) no depende de eso: se hace siempre que `salida.pendientes` traiga piezas.
 4. **Ver el material.** Por cada carta y cada posición con `abierta: true`, bajar la imagen de
    cada toma (`tomas[].url`, públicas) y mirarla. `dice` es el texto escrito en esa toma.
    `nota_previa` y `notas_previas` son lo que los editores pidieron cambiar: la versión nueva tiene
@@ -60,6 +64,18 @@ oprimiendo los botones de mesa y arranque, así que la siguiente ronda sale ense
 7. **Comprobar** en el registro de esa corrida qué se firmó, qué se ignoró y por qué
    (`gh run view <id> --log`). El registro sólo lleva marcas y conteos.
 8. **Reportar** en 3 a 6 líneas: cartas juzgadas, aprobadas, regresadas y abstenciones.
+9. **Escribir el texto de lo que ya está completo.** `salida.pendientes` trae las piezas con todas
+   sus láminas aprobadas que esperan su texto. Por cada una: mirar sus imágenes (`laminas[].url`),
+   leer lo que dice cada una y escribir el texto de la publicación siguiendo `salida.receta` y los
+   límites de `salida.limites`. En `revision`, de cero a tres notas cortas sólo si algo de las
+   imágenes conviene verlo antes de publicar (por ejemplo, un fondo que no se siente de aquí o un
+   personaje que cambia de aspecto), citando el candado. No se inventan cifras, plazos ni lugares.
+10. **Mandar los textos** y comprobar el registro, igual que con los votos:
+    `gh workflow run sala-consejo.yml -R yodesarrollomx/sala-edicion --ref main -f modo=paquete -f paquetes="$(cat paquetes.json)"`
+    Formato y compuerta en `docs/SALA-SALIDA.md`. Si un texto regresa (el registro dice el código:
+    `plazo`, `ubicacion`…), se corrige en la siguiente sesión; no se reintenta en bucle. Aunque no
+    haya piezas, mandar `{"esquema":1,"paquetes":[]}`: esa corrida asienta lo que Dirección anotó
+    como publicado.
 
 ### El JSON de los votos
 
@@ -114,10 +130,8 @@ oprimiendo los botones de mesa y arranque, así que la siguiente ronda sale ense
 
 ## Lo que todavía no hace
 
-- Armar solo el paquete de publicación (imágenes + copy en `YOD Editorial/_LISTAS PARA
-  PUBLICAR`) cuando una pieza queda completa. Es el paso siguiente; mientras tanto el jurado
-  avisa en su reporte qué piezas quedaron completas.
-- Juzgar video.
+- Juzgar video (en pausa).
+- Publicar: el paquete queda listo y publicar es el clic de Dirección (`docs/SALA-SALIDA.md`).
 
 ## Quién puede lanzar `aplicar`
 
