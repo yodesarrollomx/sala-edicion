@@ -3,7 +3,8 @@ on:
   workflow_call:
   schedule:
     - cron: '5 14 * * *'  # 07:05 Hermosillo; se informa ejecución real por separado
-    - cron: '7,22,37,52 * * * *'  # revisión agregada cada15min
+    # 9-nov-2026 · Sala corta: se retiró la revisión de cada 15 minutos. Es un panel de
+    # diagnóstico (Ajustes → Revisión diaria); una vez al día basta y el botón sigue aquí.
   push:
     branches: [main]
     paths:

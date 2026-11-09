@@ -35,9 +35,11 @@ QUE_HACE = {
                         'Monta la mesa (5:40), siembra y arranca (5:50) y rehace el respaldo espejo (6, 9, 12, 15 y 18 h).',
                         'que la mesa amanezca vacía o la Sala sin plan B si el Sheet no contesta',
                         '5:40 a 18 h'),
+    # 9-nov-2026 · Sala corta: el productor y el ejecutor (video) salieron de esta puerta;
+    # quedan sólo a mano. Lo que late aquí es la línea de carruseles y las chinches.
     'sala-cada-hora.yml': ('Sala · Cada hora',
-                           'Productor (cada hora), puente de chinches, ejecutor y este semáforo (cada 2 h).',
-                           'que un «sí» de la mesa no dispare nada y que las chinches no lleguen',
+                           'Mesa, arranque de ideas elegidas y puente de chinches (cada hora) y este semáforo (cada 2 h). El video está en pausa: productor y ejecutor sólo corren a mano.',
+                           'que una lámina rechazada no se rehaga, que una idea elegida no arranque y que las chinches no lleguen',
                            'cada hora'),
     'verificar.yml': ('Verificador',
                       'Corre las pruebas del repo en cada pull request.',
