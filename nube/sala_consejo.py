@@ -239,6 +239,8 @@ def _tira(pid):
     """La tira de una carta. Desde mediados de octubre las tiras nuevas ya no se guardan en main:
     viajan en el snapshot público y se leen de Pages. Primero el checkout, luego Pages."""
     pid = str(pid)
+    if not re.match(r'^[A-Za-z0-9_-][A-Za-z0-9._-]{0,199}$', pid):
+        return None                                  # un id raro no toca disco ni red
     if pid in _TIRAS:
         return _TIRAS[pid]
     p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datos', 'tiras', pid + '.json')
@@ -247,11 +249,10 @@ def _tira(pid):
         with open(p, encoding='utf-8') as f:
             tira = json.load(f)
     except (OSError, ValueError):
-        if re.match(r'^[A-Za-z0-9._-]{1,200}$', pid):
-            try:
-                tira = json.loads(_bajar(PAGES + 'datos/tiras/' + pid + '.json', 2 * 1024 * 1024))
-            except Exception:                        # noqa: BLE001 — sin tira, quien llama decide
-                tira = None
+        try:
+            tira = json.loads(_bajar(PAGES + 'datos/tiras/' + pid + '.json', 2 * 1024 * 1024))
+        except Exception:                            # noqa: BLE001 — sin tira, quien llama decide
+            tira = None
     _TIRAS[pid] = tira if isinstance(tira, dict) else None
     return _TIRAS[pid]
 
@@ -310,9 +311,12 @@ def sellar_tomas(p, res, elegidas=None):
         if not tomas:
             continue
         if elegidas is not None:
+            valor = elegidas.get(i, elegidas.get(str(i)))
+            if isinstance(valor, bool) or not isinstance(valor, (int, str)):
+                return False
             try:
-                k = int(elegidas.get(i, elegidas.get(str(i))))
-            except (TypeError, ValueError):
+                k = int(valor)
+            except ValueError:
                 return False
         else:
             k = toma_de_portada(lam, rutas[i] if i < len(rutas) else '')
@@ -804,6 +808,13 @@ MAX_VEREDICTOS = 60000                                 # los inputs de workflow_
 ID_SEGURO = re.compile(r'^[A-Za-z0-9._-]{1,200}$')
 
 
+def _entero(reglas, nombre, defecto):
+    try:
+        return int(float(_regla(reglas, nombre, str(defecto))))
+    except ValueError:
+        return defecto
+
+
 def nube_encendida(reglas):
     return _regla(reglas, 'consejo_activo', '0') == '1' and MOTOR_NUBE in motores_pedidos(reglas)
 
@@ -906,14 +917,14 @@ def expediente():
     doc = {'esquema': 1, 'generado': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
            'fecha': sala.hoy_hermosillo(), 'corrida': os.environ.get('GITHUB_RUN_ID', 'local'),
            'activo': nube_encendida(reglas), 'motor': MOTOR_NUBE,
-           'reglas': {'aprobar_con': int(_regla(reglas, 'consejo_aprobar_con', '4')), 'jueces_minimos': 5},
+           'reglas': {'aprobar_con': _entero(reglas, 'consejo_aprobar_con', 4), 'jueces_minimos': 5},
            'jueces': [{'juez': k, 'nombre': n, 'lente': lente or 'ver «especialista» en cada carta'}
                       for k, n, lente in JUECES],
            'candados': [], 'cartas': [], 'omitidas': [], 'pendientes_en_mesa': 0}
     if doc['activo']:
         doc['candados'] = leer_candados()
         cartas = cartas_pendientes(sala.get('dia', fresco='1'))
-        tope = max(1, int(_regla(reglas, 'consejo_nube_cartas', '5')))
+        tope = max(1, _entero(reglas, 'consejo_nube_cartas', 5))
         doc['pendientes_en_mesa'] = len(cartas)
         for carta in cartas:
             pid = str(carta['p']['id'])
@@ -997,8 +1008,8 @@ def aplicar(crudo, ensayo=False):
     conocidos = {c['id'] for c in candados}
     fecha = sala.hoy_hermosillo()
     pendientes = {str(c['p']['id']): c for c in cartas_pendientes(sala.get('dia', fresco='1'))}
-    umbral = int(_regla(reglas, 'consejo_aprobar_con', '4'))
-    firmadas, vistas = 0, set()
+    umbral = _entero(reglas, 'consejo_aprobar_con', 4)
+    firmadas, fallidas, vistas = 0, 0, set()
     for v in entrada:
         pid = v['id']
         if pid in vistas:
@@ -1031,10 +1042,15 @@ def aplicar(crudo, ensayo=False):
         if ensayo:
             sala.avisar('· ENSAYO %s [%s]: %s' % (pid, MOTOR_NUBE, _resumen(res, votos)))
             continue
-        firmar(carta, MOTOR_NUBE, modelo, votos, res, fecha, None, reglas)
-        firmadas += 1
-    sala.avisar('Consejo de nube · %d carta(s) autorizadas o regresadas.' % firmadas)
-    return 0
+        try:
+            firmar(carta, MOTOR_NUBE, modelo, votos, res, fecha, None, reglas)
+            firmadas += 1
+        except (sala.SalaError, ConsejoError) as e:
+            fallidas += 1
+            sala.avisar('· %s: ✗ el Sheet no confirmó la decisión (%s)' % (pid, sala.redactar(str(e))[:160]))
+    sala.avisar('Consejo de nube · %d carta(s) autorizadas o regresadas%s.'
+                % (firmadas, ' · %d sin confirmar' % fallidas if fallidas else ''))
+    return 2 if fallidas else 0
 
 
 # ── el marcador Sol contra Opus ────────────────────────────────────────────────────────────

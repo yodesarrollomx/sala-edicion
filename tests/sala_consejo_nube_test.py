@@ -237,7 +237,8 @@ class AplicarTests(unittest.TestCase):
         self.assertIn('L0 no (3/6)', e.salida.getvalue())
 
     def test_un_si_sin_toma_valida_no_se_firma(self):
-        for tomas in ({}, {'0': 3, '1': 1}, {'0': 'dos', '1': 1}, {'0': 0, '1': 1}, None):
+        for tomas in ({}, {'0': 3, '1': 1}, {'0': 'dos', '1': 1}, {'0': 0, '1': 1}, None,
+                      {'0': True, '1': 1}, {'0': [1], '1': 1}, {'0': 1.5, '1': 1}):
             with self.subTest(tomas=tomas), Escenario() as e:
                 e.aplicar([{'id': PID, 'sello': e.sello(), 'tomas': tomas, 'votos': votos(TODOS)}])
                 self.assertEqual(e.decisiones, [])
@@ -329,6 +330,26 @@ class AplicarTests(unittest.TestCase):
                                                                   'tomas': {'0': 1, '1': 1}, 'votos': votos(TODOS)}])
         self.assertNotIn('::error::', e.salida.getvalue())
         self.assertEqual(len(e.decisiones), 1)
+
+    def test_si_el_sheet_no_confirma_una_carta_las_demas_siguen_y_la_sesion_avisa(self):
+        otra = carta_laminas('otra-nube-2026-11-09-ffffff')
+        with Escenario(el_dia=dia([otra]), tiras={PID: tira(), otra['id']: tira()}) as e:
+            def enviar(fecha, envio, props):
+                if PID in props:
+                    raise consejo.ConsejoError('el GAS no confirmó la decisión del consejo')
+                e.decisiones.append((fecha, envio, props))
+            with patch.object(consejo, 'enviar_decision', enviar):
+                codigo = e.aplicar([{'id': pid, 'sello': e.sello(pid), 'tomas': {'0': 1, '1': 1}, 'votos': votos(TODOS)}
+                                    for pid in (PID, otra['id'])])
+        self.assertEqual(codigo, 2)
+        self.assertEqual([list(d[2]) for d in e.decisiones], [[otra['id']]])
+        self.assertIn('1 sin confirmar', e.salida.getvalue())
+
+    def test_una_regla_mal_escrita_no_tumba_la_sesion(self):
+        with Escenario(reglas=dict(REGLAS, consejo_nube_cartas='muchas', consejo_aprobar_con='')) as e:
+            doc = e.expediente()
+            e.aplicar([{'id': PID, 'sello': e.sello(), 'tomas': {'0': 1, '1': 1}, 'votos': votos(TODOS)}])
+        self.assertEqual((len(doc['cartas']), doc['reglas']['aprobar_con'], len(e.decisiones)), (1, 4, 1))
 
     def test_la_misma_carta_dos_veces_se_firma_una(self):
         with Escenario() as e:
@@ -424,9 +445,10 @@ class TiraTests(unittest.TestCase):
 
     def test_un_id_raro_no_sale_a_la_red(self):
         with patch.object(consejo, '_bajar', side_effect=AssertionError('no debe pedirse')), \
+                patch('builtins.open', side_effect=AssertionError('no debe abrirse')), \
                 patch.dict(consejo._TIRAS, {}, clear=True):
-            self.assertIsNone(consejo._tira('../../secreto'))
-            self.assertIsNone(consejo._tira('a b?c=d'))
+            for raro in ('../../secreto', 'a b?c=d', '.oculto', '', 'x' * 201):
+                self.assertIsNone(consejo._tira(raro))
 
 
 class WorkflowTests(unittest.TestCase):
