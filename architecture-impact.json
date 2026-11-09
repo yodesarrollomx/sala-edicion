@@ -2,21 +2,20 @@
  "model_revision": "2026-11-09.sala-corta.2",
  "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
  "proposal_id": "CHG-SALA-CORTA-20261109",
- "summary": "Sala corta, parte 1 (decisión de Dirección del 9-nov-2026): pausas reversibles y horarios honestos. El generador de ideas respeta la regla nueva semillero_activo (con 0 no lee, no gasta motor y no escribe; sin la regla sigue igual). El productor y el ejecutor salen de horario y quedan sólo a mano porque sirven a escena, voz y corte, la línea de video en pausa; la revisión agregada deja de correr cada 15 minutos y queda diaria. Mesa, arranque, chinches, relevo y semáforo no cambian. La tabla de rutinas y el semáforo dicen lo que de verdad está escrito en los workflows. Incluye además los arreglos del instalador del Roast Room en Hermes y la guardia de identidad del motor (antes PR 376, propuesta CHG-SALA-ROAST-ROOM-20261107), que quedan como ruta de respaldo. No publica, no decide y no agrega llaves. Código y pruebas locales no acreditan corridas reales.",
+ "summary": "Motor de escena de pago omni_flash (Gemini Omni Flash por la API oficial de Gemini, misma GEMINI_API_KEY de la voz) dentro del selector adaptativo. Nace apagado: sólo entra con la REGLA omni_flash_tope_dia > 0 puesta por Dirección; motores_vetados prevalece y la reserva diaria se registra antes de consumir. Orden: Wan gratis, Omni, animación por código. Sin conexiones nuevas (EXT-MOTORES-MEDIA ya incluye Gemini), sin cambios en GAS, permisos ni decisiones. Código y pruebas con dobles no acreditan la API viva ni la facturación. Además, piloto manual de una historia de 15 s (sala-piloto-omni.yml, sólo workflow_dispatch) que lee datos/universo/universo.json y no toca la COLA ni reactiva la producción de video.",
  "components": [
   "SYS-SALA",
   "SHEET-SALA",
-  "SVC-SALA-PRODUCTOR",
   "SVC-SALA-EJECUTOR",
-  "EXT-ACTIONS"
+  "EXT-MOTORES-MEDIA",
+  "EXT-ACTIONS",
+  "EXT-DRIVE"
  ],
  "tests": [
-  "python3 -m unittest tests.sala_corta_test (7 pruebas: con semillero_activo en 0, no, pausa o False el semillero no lee hojas, no piensa y no escribe; sin la regla o con 1 siembra; el arranque de ideas elegidas no consulta la regla; cada horario anunciado en la tabla de rutinas existe en una puerta; lo que quedó a mano no conserva horario escondido y conserva su botón; cada horario de una puerta tiene un trabajo que lo atiende; las corridas diarias declaradas cuadran con el cron).",
-  "Mutación comprobada: quitar la pausa o devolverle horario al productor hace fallar esas pruebas.",
-  "python3 -m unittest discover -s tests -p '*_test.py' y python3 nube/verificar.py.",
-  "python3 -m unittest tests.sala_consejo_test (28 pruebas del Roast Room, incluidas las del instalador en HOME de mentira y la identidad del motor).",
-  "Lectura fresca de REGLAS el 9-nov-2026: nube_ejecuta_etapas=prospecto y consejo_motores=sol. Medición de horarios sobre 68 corridas reales de la puerta «Cada hora» (docs/SALA-CORTA-20261109.md).",
-  "Pendiente: fila semillero_activo=0 en REGLAS al fusionar, consejo de nube con una carta real y siete días de latidos observados."
+  "python3 -m unittest tests.adaptativa_test (8 pruebas: pago apagado por omisión, tope y veto, fila de MOTORES sin regla no gasta, orden gratis-pago-código, límite de 15 s, contrato de la petición, lectura del video en línea y por uri, 429 como cuota, llave tachada).",
+  "python3 nube/verificar.py",
+  "git diff --check",
+  "Pendiente: facturación activa en la llave, REGLA omni_flash_tope_dia, primera corrida real con archivo durable y recibo; confirmar el campo response_format.duration contra la API viva."
  ],
- "rollback": "REGLAS: nube_ejecuta_etapas=voz,escena,corte,prospecto y semillero_activo=1 (o borrar la fila). Revertir este PR devuelve sus horarios al productor, al ejecutor y a la revisión de cada 15 minutos. Conservar DECISIONES, CANDADOS, CONSEJO, IDEAS, medios y paquetes de Drive; nada se borra."
+ "rollback": "REGLA omni_flash_tope_dia=0 (o vacía) apaga el motor sin tocar código; motores_vetados=omni_flash también. Revertir el PR. Conservar cola, evidencias, recibos y archivos producidos."
 }
