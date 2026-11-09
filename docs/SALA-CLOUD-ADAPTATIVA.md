@@ -23,3 +23,11 @@ Nace apagado. Se enciende con la REGLA `omni_flash_tope_dia` = número de clips 
 Orden cuando está autorizado: Wan gratis primero si la voz cabe en 5 s; después Omni (voces de hasta 15 s; pide segundos enteros que cubren la voz, mínimo 3); la animación por código queda como último recurso y sigue cubriendo voces de más de 15 s. El audio de Omni se descarta: la voz aprobada la pone el corte. `escena_omni_modelo` permite fijar otro identificador de modelo.
 
 Pendiente de acreditar: el contrato de la API no se ha probado en vivo. `response_format.duration` proviene de guías de terceros; la primera corrida real con archivo durable y recibo es la evidencia. Apagar: `omni_flash_tope_dia=0`.
+
+## Piloto de historias de 15 segundos (9-nov-2026)
+
+Dirección pidió historias de 15 s en una sola toma, con personajes que se guardan y tramas que se cruzan. El piloto es UNA historia generada sólo de texto, con la voz y los labios del propio Omni (el motor de escena de arriba, en cambio, anima láminas y descarta el audio).
+
+- `datos/universo/universo.json` guarda formato, vértices del negocio, personajes, lugares e historias. Es la semilla; la meta es que viva en el Sheet y se edite desde la Sala. El código no contiene texto de contenido.
+- `nube/piloto_omni.py <historia>` arma el prompt, pasa el veto de ubicaciones y genera. `--simular` no llama a nadie.
+- `.github/workflows/sala-piloto-omni.yml` lo corre sólo a mano. No pasa por la COLA ni por `nube_ejecuta_etapas`: la producción de video sigue en pausa. Sube el MP4 a Drive (`_PILOTOS`) y lo deja como artefacto.

@@ -49,16 +49,23 @@ def duracion(segundos):
 
 
 def peticion(jpg, prompt, segundos, modelo):
-    return {
-        'model': modelo,
-        'input': [
+    """Con `jpg` anima esa imagen; sin ella genera el video sólo del texto."""
+    cuerpo = {'model': modelo, 'input': prompt,
+              'response_format': {'type': 'video', 'duration': '%ds' % segundos,
+                                  'aspect_ratio': '9:16', 'resolution': '720p'}}
+    if jpg:
+        cuerpo['input'] = [
             {'type': 'image', 'data': base64.b64encode(jpg).decode('ascii'), 'mime_type': 'image/jpeg'},
             {'type': 'text', 'text': prompt},
-        ],
-        'generation_config': {'video_config': {'task': 'image_to_video'}},
-        'response_format': {'type': 'video', 'duration': '%ds' % segundos,
-                            'aspect_ratio': '9:16', 'resolution': '720p'},
-    }
+        ]
+        cuerpo['generation_config'] = {'video_config': {'task': 'image_to_video'}}
+    return cuerpo
+
+
+def generar(prompt, segundos, modelo=MODELO, jpg=None):
+    """Los bytes del MP4 tal como lo entrega Omni, CON su audio."""
+    resp = _terminar(llamar('POST', 'interactions', peticion(jpg, prompt, duracion(segundos), modelo)))
+    return extraer_video(resp, _bajar)
 
 
 def llamar(metodo, ruta, cuerpo=None, crudo=False):
@@ -144,9 +151,7 @@ def producir(trabajo, reglas, cat, salida_dir, segundos):
         jpg = io.BytesIO()
         Image.open(origen).convert('RGB').save(jpg, 'JPEG', quality=90)
         prompt = FIDELIDAD + (lam['ve'] or lam['dice']).strip() + SILENCIO
-        resp = _terminar(llamar('POST', 'interactions',
-                                peticion(jpg.getvalue(), prompt, duracion(segundos), modelo)))
         crudo = pathlib.Path(tmp) / 'crudo.mp4'
-        crudo.write_bytes(extraer_video(resp, _bajar))
+        crudo.write_bytes(generar(prompt, segundos, modelo, jpg.getvalue()))
         _asentar(crudo, destino)
     return destino

@@ -73,6 +73,18 @@ class AdaptativaTests(unittest.TestCase):
         cuerpo=o.peticion(b'jpg','mueve',9,'gemini-omni-1.2-flash')
         self.assertEqual({'type':'video','duration':'9s','aspect_ratio':'9:16','resolution':'720p'},cuerpo['response_format'])
         self.assertEqual('image',cuerpo['input'][0]['type'])
+        self.assertEqual('texto',o.peticion(None,'texto',15,'m')['input'])
+        self.assertNotIn('generation_config',o.peticion(None,'texto',15,'m'))
+        import piloto_omni as p
+        u=json.loads(p.UNIVERSO.read_text(encoding='utf-8'))
+        for hid,h in u['historias'].items():
+            prompt,seg=p.armar(u,hid)
+            self.assertEqual(15,seg); self.assertIn(h['dialogo'],prompt); self.assertIn(h['vertice'],u['vertices'])
+            self.assertLessEqual(len(h['dialogo'].split()),38)   # cabe hablado en 15 s
+            import contenido_reglas; contenido_reglas.exigir({'p':prompt},None,'piloto')
+        with patch.object(o,'generar') as g:
+            self.assertEqual(0,p.main(['piloto-terreno','--simular'])); g.assert_not_called()
+            self.assertEqual(2,p.main(['no-existe']))
         def http(code):
             return urllib.error.HTTPError('u',code,'x',{},io.BytesIO(json.dumps({'error':{'code':code,'message':'m AIzaSECRETO'}}).encode()))
         with patch.dict('os.environ',{'GEMINI_API_KEY':'AIzaSECRETO'}):
