@@ -121,7 +121,17 @@ def slugs_con_tira():
 
 
 # ───────────────────────────── el semillero (#20) ─────────────────────────────
+def semillero_en_pausa(reglas):
+    """9-nov-2026 · Sala corta. Dirección pausó el generador de ideas: había 641 guardadas, unas 26
+    elegidas, y seguían naciendo unas 11 al día. REGLAS `semillero_activo` = 0 lo calla, lo lance
+    quien lo lance (horario, botón o recuperación). Sin la regla, o con 1, sigue sembrando."""
+    return str((reglas or {}).get('semillero_activo', '1')).strip().lower() in ('0', 'no', 'false', 'pausa')
+
+
 def semillero(simular, reglas, cola):
+    if semillero_en_pausa(reglas):
+        sala.avisar('· semillero en pausa (REGLAS semillero_activo = 0): no se proponen ideas ni premisas')
+        return 0
     nodos, _ = leer_hoja('arbol', 'nodos', 'arbol.json')
     ideas, fuente = leer_hoja('ideas', 'ideas', 'ideas.json')
     hoy = sala.hoy_hermosillo()

@@ -1,12 +1,18 @@
 # Por qué existe (25-sep-2026): una de las tres puertas de la Sala (ver sala-diario.yml).
 # Aquí late lo que corre todo el día, a los mismos minutos de siempre.
+#
+# 9-nov-2026 · Sala corta (docs/SALA-CORTA-20261109.md). El productor y el ejecutor ya NO
+# tienen horario: abren y corren escena, voz y corte, la línea de video que Dirección puso en
+# pausa, y las láminas rechazadas las rehace el montador de la mesa. Conservan su botón
+# (proceso: productor / ejecutor) y su archivo. Lo medido ese día sobre 68 corridas: GitHub
+# entrega cada horario de esta puerta cada 3 a 7 horas, diga lo que diga el cron; por eso la
+# mesa, el arranque y las chinches se quedan como están y el reloj confiable del ciclo es la
+# tarea programada del consejo, que los lanza por su botón.
 name: Sala · Cada hora
 
 on:
   schedule:
     - cron: '15 */2 * * *'  # semáforo de las máquinas
-    - cron: '20 */2 * * *'  # ejecutor
-    - cron: '10,30,50 * * * *'    # productor (28-sep: cada 20 min, saturar la producción)
     - cron: '45 * * * *'    # puente de chinches
     - cron: '35 * * * *'    # mesa (28-sep: máximo potencial — lo nuevo llega a tu mesa cada hora)
     - cron: '5 * * * *'     # arranque (28-sep: «si elijo una idea, que empiece ya», no hasta mañana)
@@ -28,12 +34,12 @@ jobs:
     if: (github.event.schedule == '15 */2 * * *') || inputs.proceso == 'maquinas'
     uses: ./.github/workflows/sala-maquinas.yml
     secrets: inherit
-  ejecutor:
-    if: (github.event.schedule == '20 */2 * * *') || inputs.proceso == 'ejecutor'
+  ejecutor:        # sólo a mano desde el 9-nov-2026 (video en pausa)
+    if: inputs.proceso == 'ejecutor'
     uses: ./.github/workflows/sala-ejecutor.yml
     secrets: inherit
-  productor:
-    if: (github.event.schedule == '10,30,50 * * * *') || inputs.proceso == 'productor'
+  productor:       # sólo a mano desde el 9-nov-2026 (video en pausa)
+    if: inputs.proceso == 'productor'
     uses: ./.github/workflows/sala-productor.yml
     secrets: inherit
   mesa:
@@ -44,7 +50,7 @@ jobs:
     if: (github.event.schedule == '5 * * * *') || inputs.proceso == 'arranque'
     uses: ./.github/workflows/sala-arranque.yml
     with:
-      modo: arrancar      # sólo arrancar ideas elegidas; el semillero sigue una vez al día
+      modo: arrancar      # sólo arrancar ideas elegidas; el semillero va aparte (y en pausa por REGLAS semillero_activo)
     secrets: inherit
   chinches:
     if: (github.event.schedule == '45 * * * *') || inputs.proceso == 'chinches'

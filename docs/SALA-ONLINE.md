@@ -25,7 +25,9 @@ Un error conserva el snapshot y las decisiones. Las fuentes de Apps Script origi
 ## Rutinas
 
 Los cron existentes mantienen sus frecuencias y Hermosillo (UTC-7):
-productor cada 20 minutos; ejecutor y semáforo cada dos horas; mesa, arranque y chinches cada hora; relevo 06, 09, 12, 15 y 18. Las corridas encadenadas son adicionales. GitHub puede retrasar sus horarios.
+semáforo cada dos horas; mesa, arranque y chinches cada hora; relevo 06, 09, 12, 15 y 18. Las corridas encadenadas son adicionales. GitHub puede retrasar sus horarios.
+
+Desde el 9-nov-2026 (Sala corta, `docs/SALA-CORTA-20261109.md`) el productor y el ejecutor no tienen horario: corren sólo a mano mientras el video esté en pausa. Medido ese día, GitHub entrega cada horario de la puerta «Cada hora» unas cuatro veces al día y la puerta diaria con 5 a 7 horas de retraso.
 
 Revisión diaria 07:05: cola agregada, etapas habilitadas y última ejecución observada por rutina. Ajustes → Revisión diaria. Lecturas rechazadas conservan el último valor y su fecha; si no hay un valor confirmado muestran desconocido. No se publican filas, nombres, notas, correos ni credenciales. El inventario del disparador de correo de Apps Script permanece pendiente; no se inventa su número o frecuencia.
 

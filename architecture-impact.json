@@ -1,26 +1,22 @@
 {
- "model_revision": "2026-11-07.roast-room.1",
- "model_commit": "0a9b0b0e1bb1004d0e0309a632b3d97a666cd97e",
- "proposal_id": "CHG-SALA-ROAST-ROOM-20261107",
- "summary": "Roast Room: el consejo autoriza las cartas de la mesa con su propio rol y llave (consejo / Roast Room). La marca de Alejandro o de Sayri manda sobre la del consejo en la misma lámina (GAS, contrato de producción y pantalla). Seis jueces por carta con Sol u Opus al azar, pensando por la API local de Hermes con las suscripciones de Dirección (o por API si el repo tuviera llaves), oído Gemini para cortes, CANDADOS y CONSEJO privados, workflow horario y marcador diario. No publica; la llave del agente sigue sin decidir. Código y pruebas locales no acreditan el GAS vivo ni corridas reales.",
+ "model_revision": "2026-11-09.sala-corta.2",
+ "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
+ "proposal_id": "CHG-SALA-CORTA-20261109",
+ "summary": "Sala corta, parte 1 (decisión de Dirección del 9-nov-2026): pausas reversibles y horarios honestos. El generador de ideas respeta la regla nueva semillero_activo (con 0 no lee, no gasta motor y no escribe; sin la regla sigue igual). El productor y el ejecutor salen de horario y quedan sólo a mano porque sirven a escena, voz y corte, la línea de video en pausa; la revisión agregada deja de correr cada 15 minutos y queda diaria. Mesa, arranque, chinches, relevo y semáforo no cambian. La tabla de rutinas y el semáforo dicen lo que de verdad está escrito en los workflows. Incluye además los arreglos del instalador del Roast Room en Hermes y la guardia de identidad del motor (antes PR 376, propuesta CHG-SALA-ROAST-ROOM-20261107), que quedan como ruta de respaldo. No publica, no decide y no agrega llaves. Código y pruebas locales no acreditan corridas reales.",
  "components": [
   "SYS-SALA",
-  "GAS-SALA",
   "SHEET-SALA",
   "SVC-SALA-PRODUCTOR",
   "SVC-SALA-EJECUTOR",
-  "EXT-GMAIL",
-  "EXT-ACTIONS",
-  "EXT-OPENAI",
-  "EXT-MOTORES-MEDIA",
-  "EXT-DRIVE"
+  "EXT-ACTIONS"
  ],
  "tests": [
-  "python3 -m unittest tests.sala_consejo_test (21 pruebas: veredicto, veto, abstención, cartas, contrato con precedencia humana, candado de llave, ruta Hermes con proveedor/modelo/imagen).",
-  "node --test tests/roast-room-gas.test.cjs (5 pruebas del GAS con dobles) y suites existentes produccion-historica, adversaria y fusion-lecturas.",
-  "python3 nube/verificar.py: sólo nube/sala_consejo.py decide y sólo con _clave_consejo().",
-  "bash -n nube/hermes/roast_room.sh nube/hermes/instalar_roast_room.sh; el cron horario vive en Hermes (sin agente) y la API local sólo escucha en 127.0.0.1.",
-  "Pendiente: versión nueva del GAS vivo, secret SALA_CLAVE_CONSEJO, primera corrida real y su lectura en la Sala."
+  "python3 -m unittest tests.sala_corta_test (7 pruebas: con semillero_activo en 0, no, pausa o False el semillero no lee hojas, no piensa y no escribe; sin la regla o con 1 siembra; el arranque de ideas elegidas no consulta la regla; cada horario anunciado en la tabla de rutinas existe en una puerta; lo que quedó a mano no conserva horario escondido y conserva su botón; cada horario de una puerta tiene un trabajo que lo atiende; las corridas diarias declaradas cuadran con el cron).",
+  "Mutación comprobada: quitar la pausa o devolverle horario al productor hace fallar esas pruebas.",
+  "python3 -m unittest discover -s tests -p '*_test.py' y python3 nube/verificar.py.",
+  "python3 -m unittest tests.sala_consejo_test (28 pruebas del Roast Room, incluidas las del instalador en HOME de mentira y la identidad del motor).",
+  "Lectura fresca de REGLAS el 9-nov-2026: nube_ejecuta_etapas=prospecto y consejo_motores=sol. Medición de horarios sobre 68 corridas reales de la puerta «Cada hora» (docs/SALA-CORTA-20261109.md).",
+  "Pendiente: fila semillero_activo=0 en REGLAS al fusionar, consejo de nube con una carta real y siete días de latidos observados."
  ],
- "rollback": "REGLAS consejo_activo=0 o desactivar sala-consejo.yml; quitar clave_consejo de CONFIG revoca la llave. Revertir el PR y la versión del GAS. Conservar DECISIONES, CANDADOS y CONSEJO; las marcas del consejo ceden ante cualquier marca humana posterior."
+ "rollback": "REGLAS: nube_ejecuta_etapas=voz,escena,corte,prospecto y semillero_activo=1 (o borrar la fila). Revertir este PR devuelve sus horarios al productor, al ejecutor y a la revisión de cada 15 minutos. Conservar DECISIONES, CANDADOS, CONSEJO, IDEAS, medios y paquetes de Drive; nada se borra."
 }
