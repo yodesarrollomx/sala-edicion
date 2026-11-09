@@ -110,6 +110,7 @@ class Escenario:
                 patch.object(consejo, 'enviar_decision',
                              lambda fecha, envio, props: self.decisiones.append((fecha, envio, props)) or {'ok': True}),
                 patch.object(consejo, 'registrar', lambda filas: self.filas.extend(filas)),
+                patch.object(consejo, '_salida_para_el_jurado', self.salida_doble),
                 patch.object(sala, 'get', get),
                 patch.object(sala, 'hoy_hermosillo', lambda: '2026-11-09'),
                 patch.object(sala, 'enmascarar_en_actions', lambda: None)):
@@ -120,6 +121,12 @@ class Escenario:
 
     def __exit__(self, *exc):
         self.pila.close()
+
+    SALIDA = {'activa': True, 'pendientes': [{'id': 'pieza-completa'}], 'resumen': {'completa': 1}}
+    salida_real = consejo._salida_para_el_jurado
+
+    def salida_doble(self, reglas):
+        return copy.deepcopy(self.SALIDA)
 
     def expediente(self):
         self.codigo = consejo.expediente()
@@ -181,6 +188,23 @@ class ExpedienteTests(unittest.TestCase):
             doc = e.expediente()
         self.assertEqual(doc['cartas'], [])
         self.assertEqual(doc['omitidas'], [{'id': PID, 'motivo': 'sin tira publicada'}])
+
+    def test_el_expediente_trae_las_piezas_que_esperan_su_texto(self):
+        for reglas in (REGLAS, dict(REGLAS, consejo_motores='sol'), dict(REGLAS, consejo_activo='0')):
+            with self.subTest(reglas=reglas), Escenario(reglas=reglas) as e:
+                doc = e.expediente()
+                self.assertEqual(doc['salida'], Escenario.SALIDA)       # no depende de que el jurado esté encendido
+                self.assertIn('Salida · 1 pieza(s) esperan su texto', e.salida.getvalue())
+
+    def test_si_la_salida_no_se_puede_leer_el_expediente_sale_igual(self):
+        with Escenario() as e:
+            with patch.object(consejo, '_salida_para_el_jurado', Escenario.salida_real):
+                doc = e.expediente()                                    # el Sheet de mentira no trae reglas ni expedientes
+            self.assertEqual(e.codigo, 0)
+            self.assertEqual([c['id'] for c in doc['cartas']], [PID])
+            self.assertFalse(doc['salida']['activa'])
+            self.assertEqual(doc['salida']['pendientes'], [])
+            self.assertIn('error', doc['salida'])
 
     def test_apagado_por_regla_no_lee_la_mesa(self):
         for reglas in (dict(REGLAS, consejo_motores='sol'), dict(REGLAS, consejo_activo='0')):
@@ -472,10 +496,12 @@ class WorkflowTests(unittest.TestCase):
 
     def test_los_modos_del_workflow_existen_en_el_codigo(self):
         modos = re.search(r'options: \[([^\]]+)\]', self.TEXTO).group(1).replace(' ', '').split(',')
-        self.assertEqual(set(modos), {'corrida', 'ensayo', 'marcador', 'expediente', 'aplicar'})
+        self.assertEqual(set(modos), {'corrida', 'ensayo', 'marcador', 'expediente', 'aplicar', 'paquete'})
         fuente = (ROOT / 'nube' / 'sala_consejo.py').read_text(encoding='utf-8')
+        salida = (ROOT / 'nube' / 'sala_salida.py').read_text(encoding='utf-8')
         for modo in modos:
-            self.assertIn("'%s'" % modo, fuente.split("if __name__ == '__main__':", 1)[1])
+            donde = salida if modo == 'paquete' else fuente          # «paquete» es de la estación de salida
+            self.assertIn("'%s'" % modo, donde.split("if __name__ == '__main__':", 1)[1])
 
 
 if __name__ == '__main__':

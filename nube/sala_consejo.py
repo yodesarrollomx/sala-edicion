@@ -910,6 +910,21 @@ def _guardar_expediente(doc, reglas):
         raise ConsejoError('no se pudo dejar el expediente en Drive: %s' % sala.redactar(str(e))[:200])
 
 
+def _salida_para_el_jurado(reglas):
+    """Las piezas completas que esperan su texto (estación de salida, `sala_salida.py`). Va en el
+    mismo expediente para que una sola sesión del jurado juzgue y entregue. Si esa lectura falla,
+    el expediente del consejo sale igual: una estación no detiene a la otra."""
+    try:
+        import sala_salida
+        _, dia_p, dia, exp = sala_salida.leer_mesa()
+        filas = sala_salida.estado_de_piezas(dia_p, dia, reglas, exp,
+                                             proyeccion=sala_salida.proyeccion_de_la_mesa())
+        return sala_salida.para_el_jurado(reglas, filas, sala_salida.receta(reglas))
+    except Exception as e:                           # noqa: BLE001 — la salida nunca tumba al consejo
+        sala.avisar('· aviso: la salida no se pudo leer (%s); el expediente sale sin ella' % type(e).__name__)
+        return {'activa': False, 'error': type(e).__name__, 'pendientes': [], 'resumen': {}}
+
+
 def expediente():
     """Deja en Drive lo que el jurado de nube tiene que ver. No decide nada."""
     sala.enmascarar_en_actions()
@@ -940,10 +955,14 @@ def expediente():
                     doc['cartas'].append(c)
     else:
         sala.avisar('Consejo de nube apagado (REGLAS consejo_activo≠1 o consejo_motores sin «claude»).')
+    doc['salida'] = _salida_para_el_jurado(reglas)     # no depende de que el consejo esté encendido
     archivo = _guardar_expediente(doc, reglas)
     sala.avisar('Expediente del consejo de nube · %d carta(s) para juzgar · %d omitida(s) · %d pendientes en la mesa · Drive %s/%s (%s)'
                 % (len(doc['cartas']), len(doc['omitidas']), doc['pendientes_en_mesa'], CARPETA_DRIVE,
                    ARCHIVO_EXPEDIENTE, archivo))
+    sala.avisar('Salida · %d pieza(s) esperan su texto en esta sesión · %s'
+                % (len(doc['salida'].get('pendientes') or []),
+                   ' · '.join('%s %d' % kv for kv in sorted((doc['salida'].get('resumen') or {}).items())) or 'sin lectura'))
     return 0
 
 
