@@ -9,7 +9,8 @@
   "SHEET-SALA",
   "SVC-SALA-PRODUCTOR",
   "SVC-SALA-EJECUTOR",
-  "EXT-ACTIONS"
+  "EXT-ACTIONS",
+  "EXT-MOTORES-MEDIA"
  ],
  "tests": [
   "python3 -m unittest discover -s tests -p '*_test.py' (754 OK). Nuevas en tests/sala_cambios_test.py (27): contrato compartido con la pantalla (tests/fixtures/cambios-casos.json), aplicar sólo sobre láminas aprobadas, montador de punta a punta (rehecha con id nuevo y origen rehecha-de; nada con orden de otra versión), estación (la pieza deja de estar lista), órdenes sin tira vigente contadas y avisadas, pieza publicada ignorada, prioridad con tope de 1, y SoloLecturaTests con ast: sólo sala_cambios.py nombra la llave cambio: y no importa red ni el cliente.",
