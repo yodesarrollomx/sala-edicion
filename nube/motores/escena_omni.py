@@ -12,8 +12,10 @@ el hueco donde hoy la Sala cae a la animación por código.
 
 **Qué está comprobado en vivo** (corrida 42726461524 del 9-nov-2026, llave con prepago): texto
 a video de 15 s con `response_format.duration`, y la respuesta con el video. **No comprobado:**
-imagen a video (`image_to_video`) ni imágenes de referencia de sujeto (`reference_to_video`,
-etiquetas `<IMAGE_REF_N>` en el texto); salen de la guía oficial, que ese día documentaba 1.1.
+imagen a video (`image_to_video`), imágenes de referencia (`reference_to_video`, etiquetas
+`<IMAGE_REF_N>` en el texto: personas, objetos y estilo) ni las dos juntas; salen de la guía
+oficial, que ese día documentaba 1.1. La guía no ofrece referencia de voz ni de audio: la
+voz de un personaje sólo se sostiene describiéndola igual en cada toma.
 Si Google rechaza un campo, el error llega íntegro (tachado) a la evidencia del trabajo.
 
 El audio que genera Omni se descarta: la voz de la Sala es la aprobada (Kokoro/Gemini TTS) y
@@ -49,21 +51,26 @@ def duracion(segundos):
 
 
 def peticion(jpg, prompt, segundos, modelo, referencias=None):
-    """Tres formas de pedir un video:
+    """Cuatro formas de pedir un video:
 
     · sólo texto;
     · con `jpg`: esa imagen es el PRIMER cuadro y se anima (`image_to_video`);
-    · con `referencias` (lista de JPEG): son retratos de los personajes, no cuadros. El texto
-      los nombra como <IMAGE_REF_0>, <IMAGE_REF_1>… en ese orden (`reference_to_video`).
+    · con `referencias` (lista de JPEG): son imágenes de quién y qué sale, no cuadros. El texto
+      las nombra <IMAGE_REF_0>, <IMAGE_REF_1>… en ese orden (`reference_to_video`);
+    · con las dos: primero va el primer cuadro y después las referencias. Ahí no se declara
+      tarea: el texto dice qué es cada imagen («[# Sources <FIRST_FRAME>@Image1]
+      [# References <IMAGE_REF_0>@Image2]», como en la guía oficial).
     """
     cuerpo = {'model': modelo, 'input': prompt,
               'response_format': {'type': 'video', 'duration': '%ds' % segundos,
                                   'aspect_ratio': '9:16', 'resolution': '720p'}}
-    imagenes, tarea = ([jpg], 'image_to_video') if jpg else (list(referencias or []), 'reference_to_video')
+    referencias = list(referencias or [])
+    imagenes = ([jpg] if jpg else []) + referencias
     if imagenes:
         cuerpo['input'] = [{'type': 'image', 'data': base64.b64encode(i).decode('ascii'), 'mime_type': 'image/jpeg'}
                            for i in imagenes] + [{'type': 'text', 'text': prompt}]
-        cuerpo['generation_config'] = {'video_config': {'task': tarea}}
+        if not (jpg and referencias):
+            cuerpo['generation_config'] = {'video_config': {'task': 'image_to_video' if jpg else 'reference_to_video'}}
     return cuerpo
 
 

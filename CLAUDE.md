@@ -18,10 +18,15 @@ día y con horas de retraso (medido): no prometer «cada hora» por un cron.
 `docs/SALA-4.md`. Historias en series de 10 episodios de 15 s con Gemini Omni Flash (de pago).
 Pantalla `historias.html`, nube `nube/sala_v4.py` + `sala-v4.yml`, datos en EXPEDIENTES con llaves
 `v4:` (un dueño por llave; la nube nunca escribe `v4:dec`). No toca la mesa, la COLA ni el Apps
-Script. El gasto lo limita el ajuste «tomas por día». El personaje se mantiene con un retrato
-sacado del piloto (imagen de referencia: sin acreditar en vivo); «no va» en un episodio lo deja
-fuera de la serie; el criterio del guionista y los candados son datos, no código. Mapas de proceso
-en `docs/grafos/`.
+Script. **El canon de producción** (`docs/SALA-CANON.md`) es dato, no código: temporada,
+personajes, lugares, objetos, encuadres y reglas del mundo viven en `v4:universo` y
+`v4:mundo:<clase>` (el mundo se guarda partido para caber en la hoja) y los edita Dirección; cada
+elemento lleva su imagen de referencia en Drive (`_HISTORIAS/_CANON`, anotada en `v4:canon`).
+Antes de cambiar cómo se ve o habla alguien, se cambia su ficha, no el código. Con las imágenes
+encendidas un episodio no se produce hasta que lo que sale en él tenga la suya, y lo que no cuesta
+(bajar imágenes, veto) va antes de reservar. El gasto lo limitan «tomas por día» e «imágenes de
+referencia por día». «No va» en un episodio lo deja fuera de la serie. Mapas de proceso en
+`docs/grafos/`.
 
 **Estación de salida:** `docs/SALA-SALIDA.md`. Una pieza con todas sus láminas aprobadas sale así: el
 jurado escribe el texto, `sala-consejo.yml` · `paquete` (`nube/sala_salida.py`, entra como agente y

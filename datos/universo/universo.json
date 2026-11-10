@@ -1,11 +1,11 @@
 {
- "nota": "El universo de las historias de 15 segundos. Es la SEMILLA: la primera corrida de la Sala 4.0 la copia a la hoja EXPEDIENTES (v4:universo) y desde entonces manda lo que el editor guarde en la pantalla Historias. El código sólo lo lee. Personajes ficticios. No usar ubicaciones vetadas (docs/CONTENIDO-VETADO.md).",
- "version": 1,
+ "nota": "El universo de las historias de 15 segundos: el CANON de producción. Es la SEMILLA: la primera corrida de la Sala 4.0 la copia a la hoja EXPEDIENTES (v4:universo) y desde entonces manda lo que el editor guarde en la pantalla Historias. El código sólo lo lee. Personajes ficticios. No usar ubicaciones vetadas (docs/CONTENIDO-VETADO.md). De dónde sale cada regla: docs/SALA-CANON.md.",
+ "version": 2,
  "formato": {
   "segundos": 15,
-  "estilo": "Vertical 9:16. One single continuous unbroken shot, no cuts, slow handheld cinematic camera that follows the character, natural light, realistic, shallow depth of field.",
-  "audio": "Only the character's voice and natural ambient sound. No music. The character speaks natural Mexican Spanish with lips in sync.",
-  "prohibido": "No on-screen text, no subtitles, no captions, no logos, no watermarks."
+  "estilo": "Vertical 9:16. One single continuous unbroken shot with no cuts, like a long take: a real camera moving through real space (handheld or steadicam), never a still photo with a zoom. Warm documentary realism, bright golden-hour natural light, luminous and inviting, shallow depth of field, 35 mm look. Mexican upper-middle-class people and settings, in a city neighborhood, never rural.",
+  "audio": "Only the voice of the one character who speaks, plus soft, steady natural ambient sound at low volume that never cuts in and out. No music, no narrator, no second voice. The character speaks natural, neutral Mexican Spanish with lips in sync, expressive where the line needs it.",
+  "prohibido": "No on-screen text, no subtitles, no captions, no logos, no watermarks, no legible writing on papers, signs or screens. No zoom-only movement, no slideshow look."
  },
  "ajustes": {
   "semillero": 1,
@@ -13,9 +13,46 @@
   "episodios": 10,
   "tope_clips_dia": 2,
   "piloto_primero": 1,
-  "modelo_guion": "gemini-3.6-flash"
+  "fichas_por_dia": 6,
+  "modelo_guion": "gemini-3.6-flash",
+  "modelo_ficha": "gemini-2.5-flash-image"
  },
- "guionista": "Eres guionista de series cortas verticales para redes de una desarrolladora inmobiliaria y despacho de arquitectura. El protagonista SIEMPRE es un cliente, y cada serie es de una industria distinta. La historia se cuenta en {n} episodios, uno por día. Cada episodio es una sola toma continua de 15 segundos, sin cortes, en un solo lugar, con una sola frase hablada en español natural. Cada episodio termina con un gancho que obliga a ver el siguiente; el último cierra la historia y deja una puerta abierta hacia otra serie. Todas las series pasan en el mismo mundo: cuando haya un personaje conocido disponible, puede cruzarse en el último episodio. La historia enseña el vértice del negocio indicado sin sonar a anuncio: nada de precios, cifras de dinero, marcas, logotipos ni texto en pantalla.",
+ "guionista": "Eres guionista de series cortas verticales para redes de una desarrolladora inmobiliaria y despacho de arquitectura. El protagonista SIEMPRE es un cliente, y cada serie es de una industria distinta. La historia se cuenta en {n} episodios, uno por día. Cada episodio es una sola toma continua de 15 segundos, sin cortes, en un solo lugar, con una sola frase hablada en español natural. La serie completa es UN solo relato pensado de principio a fin, no episodios sueltos: gancho en el primero, el giro antes de la mitad y un cierre con un solo paso siguiente. Cada episodio termina con un gancho que obliga a ver el siguiente; el último cierra la historia y deja una puerta abierta hacia otra serie. La historia enseña el vértice del negocio indicado sin sonar a anuncio: nada de precios, cifras de dinero, marcas, logotipos ni texto en pantalla.",
+ "canon": "EL MUNDO. Todas las historias pasan en el mismo barrio: una cuadra de una ciudad cálida, de clase media alta, urbana y nunca rural, siempre con luz de tarde. En esa cuadra están el terreno de la esquina con su olivo viejo, la casa del patio con la mesa larga y el café de la esquina. Los personajes son vecinos o se conocen de vista.\nCONTINUIDAD. Un personaje se ve, se viste, se mueve y habla igual en todos los episodios y en todas las series: se usa su ficha tal cual, sin inventarle rasgos. Un lugar conserva sus anclas (lo que siempre se ve ahí). Un objeto es el mismo objeto cada vez. Una serie es UNA sola conversación: cada episodio empieza donde quedó el anterior, en lugar, hora y ánimo.\nLO QUE SE VE. La imagen muestra exactamente lo que dice la frase: si se habla de la esquina, se ve la esquina. Lo que se enseña en papel o en pantalla se entiende desde la cámara, sin letras. La cámara se mueve por el espacio; nunca es una foto con acercamiento.\nLA VOZ. En cada episodio habla un solo personaje, con su voz de siempre; no hay narrador. Frases de gente de 40 a 60 años: concretas, sin palabras rebuscadas, y con la emoción que pide el momento.\nLOS CRUCES. Cada serie tiene un objeto propio que la identifica, e incluye al menos un guiño del mundo compartido que nadie explica: la camioneta blanca que pasa, la servilleta, los recibos, la silla de la cabecera. El último episodio siembra la siguiente historia: de fondo aparece su protagonista o su objeto. El arquitecto aparece poco, casi siempre en una videollamada, y propone: nunca ordena.\nLA VERDAD. Son historias de ficción: nunca se presentan como caso real ni como testimonio, y no inventan datos del negocio (ni cifras, ni plazos, ni garantías).",
+ "encuadres": {
+  "seguimiento": {
+   "nombre": "Seguimiento: de la espalda al rostro",
+   "camara": "The camera starts behind the character at shoulder height and follows them as they walk, then arcs smoothly around them to end on their face in a medium close-up."
+  },
+  "revelacion": {
+   "nombre": "Revelación: del objeto al personaje",
+   "camara": "The camera starts on a close detail of the key object and holds for a beat, then pulls back and tilts up in one move to reveal the character and the place."
+  },
+  "rostro": {
+   "nombre": "Acercamiento al rostro",
+   "camara": "Medium shot at eye level; the camera physically moves in slowly, a dolly move and not a zoom, to a close-up of the face while the line is spoken."
+  },
+  "sobre-hombro": {
+   "nombre": "Sobre el hombro",
+   "camara": "Over-the-shoulder shot looking at what the character holds or sees; then the camera slides around the shoulder to catch their reaction in profile."
+  },
+  "mesa": {
+   "nombre": "Alrededor de la mesa",
+   "camara": "The camera glides at seated eye level around the table, passing behind the backs of the people, and settles on the character who speaks."
+  },
+  "amplio": {
+   "nombre": "Plano amplio que se acerca",
+   "camara": "Wide establishing shot that shows the whole place; the camera tracks sideways while the character walks toward it and stops in a medium shot."
+  },
+  "manos": {
+   "nombre": "De las manos al rostro",
+   "camara": "Close-up of the character's hands with the object; the camera tilts up slowly along the arm to the face for the last words."
+  },
+  "ventana": {
+   "nombre": "A través de la reja o la ventana",
+   "camara": "The camera starts looking through a fence, a gate or a car window, a frame within the frame, then moves past it into the open space toward the character."
+  }
+ },
  "vertices": {
   "ppp": {
    "nombre": "Plan de Potencial",
@@ -39,17 +76,228 @@
    "nombre": "Marta",
    "papel": "cliente",
    "industria": "restaurantera",
-   "aspecto": "A Mexican woman in her early fifties, warm tired eyes, dark hair tied back with a few grey strands, olive-green linen shirt with rolled sleeves, small gold earrings, a ring of keys in her hand.",
-   "voz": "Calm, low, honest; sounds relieved, not like an advertisement.",
-   "quiere": "Dejar de pagar por un terreno que no le da nada."
+   "aspecto": "A Mexican woman in her early fifties, medium build, warm brown skin, warm tired eyes with fine smile lines, dark brown hair tied back in a low ponytail with a few grey strands.",
+   "vestuario": "Olive-green linen shirt with rolled sleeves, dark jeans, small gold hoop earrings, a thin gold watch.",
+   "voz": "Calm, low, slightly husky female voice, unhurried; honest and relieved, never like an advertisement.",
+   "gesto": "Turns a ring of keys in her right hand while she thinks.",
+   "quiere": "Dejar de pagar por un terreno que no le da nada.",
+   "objeto": "llaves"
+  },
+  "don-carlos": {
+   "nombre": "Don Carlos",
+   "papel": "cliente",
+   "industria": "ferretero",
+   "aspecto": "A Mexican man of sixty, stocky, brown skin, round friendly face, short salt-and-pepper hair, thick grey moustache, reading glasses hanging from a cord on his chest.",
+   "vestuario": "Short-sleeved blue and white checked shirt, grey work trousers, a pencil behind his right ear.",
+   "voz": "Loud, cheerful, fast-talking male voice that softens when he is unsure.",
+   "gesto": "Takes the pencil from behind his ear and taps it on whatever he is looking at.",
+   "quiere": "Decidir entre vender, rentar o levantar locales en su esquina.",
+   "objeto": "plano"
+  },
+  "sofia": {
+   "nombre": "Sofía",
+   "papel": "cliente",
+   "industria": "diseñadora de interiores",
+   "aspecto": "A Mexican woman of forty-two, slim, light brown skin, shoulder-length dark brown hair with soft waves, expressive dark eyes.",
+   "vestuario": "Cream silk blouse, high-waisted tan trousers, a thin gold necklace, a tan leather tote bag.",
+   "voz": "Clear, bright, quick female voice; curious and decisive.",
+   "gesto": "Sketches shapes in the air with her index finger while she imagines a space.",
+   "quiere": "Que la casa que dibujó en una servilleta se vuelva una obra de autor.",
+   "objeto": "servilleta"
+  },
+  "rodrigo": {
+   "nombre": "Rodrigo",
+   "papel": "cliente",
+   "industria": "médico",
+   "aspecto": "A Mexican man of forty-five, tall, light brown skin, short dark hair greying at the temples, clean-shaven, rectangular tortoiseshell glasses.",
+   "vestuario": "Light blue oxford shirt with the sleeves rolled to the forearm, beige chinos, brown leather belt, steel watch.",
+   "voz": "Warm baritone, measured, a little skeptical at first.",
+   "gesto": "Pushes his glasses up with one finger before he speaks.",
+   "quiere": "Construir sin que la casa termine pesando más de lo que aporta."
+  },
+  "don-roberto": {
+   "nombre": "Don Roberto",
+   "papel": "cliente",
+   "industria": "ganadero retirado",
+   "aspecto": "A Mexican man of sixty-eight, sturdy, deep tan weathered skin, white moustache, thick silver hair combed back.",
+   "vestuario": "Pressed white guayabera, straw palm hat with a dark band, brown leather boots.",
+   "voz": "Deep, gravelly, slow male voice with dry humor.",
+   "gesto": "Takes off his hat and holds it against his chest when something matters.",
+   "quiere": "Levantar sus locales con medida, sabiendo en qué se va cada peso.",
+   "objeto": "libreta"
+  },
+  "miguel": {
+   "nombre": "Miguel",
+   "papel": "cliente",
+   "industria": "contador",
+   "aspecto": "A Mexican man of thirty-eight, medium height, athletic build, brown skin, short black hair, short trimmed beard.",
+   "vestuario": "Navy polo shirt, dark jeans, a slim brown leather folder under his arm.",
+   "voz": "Friendly, steady male voice; talks like someone who listens first.",
+   "gesto": "Pulls out a chair and rests both hands on its back before he sits.",
+   "quiere": "Que su familia decida qué hacer con el terreno de todos, sin discutir.",
+   "objeto": "silla"
+  },
+  "comprador": {
+   "nombre": "El comprador",
+   "papel": "comprador",
+   "industria": "inversionista",
+   "aspecto": "A Mexican man of fifty, lean, light skin, slicked-back dark hair, a thin polite smile.",
+   "vestuario": "Light grey unstructured blazer over a white shirt without a tie, dark trousers, a slim black folder and a tablet in his hand.",
+   "voz": "Smooth, confident, quiet male voice that never rises.",
+   "gesto": "Slides things across the table with two fingers.",
+   "quiere": "Comprar antes de que el dueño sepa lo que su terreno puede dar. No hay mala fe: ya hizo su tarea.",
+   "objeto": "camioneta"
+  },
+  "arquitecto": {
+   "nombre": "El arquitecto",
+   "papel": "asesor",
+   "industria": "Yo Desarrollo",
+   "aspecto": "A man of about forty with a shaved bald head, warm lightly tanned skin, a short neat salt-and-pepper beard and thick black rectangular glasses.",
+   "vestuario": "Olive-green utility shirt with two chest patch pockets, sleeves rolled once.",
+   "voz": "Calm, clear, friendly male voice; explains without rushing and never gives orders.",
+   "gesto": "Opens one hand, palm up, when he offers an option.",
+   "quiere": "Que cada dueño decida con el dato de su propio terreno.",
+   "objeto": "videollamada"
   }
  },
  "lugares": {
+  "cuadra": {
+   "nombre": "La cuadra",
+   "aspecto": "A quiet residential street in an upper-middle-class neighborhood of a warm, dry city: clean sidewalks, low stone and stucco walls, mature trees, a few parked cars, bright late-afternoon sun.",
+   "anclas": "On the corner stands an old olive tree with a twisted trunk; across the street, a cream-colored house with a terracotta-tiled porch; at the end of the block, a corner café with a dark green awning."
+  },
+  "esquina": {
+   "nombre": "El terreno de la esquina",
+   "aspecto": "A fenced vacant corner lot on that same street: flat dry ground with pale grass, sidewalks on two sides, houses and trees around it, warm golden light.",
+   "anclas": "A chain-link fence with a rusty double gate; the old olive tree with a twisted trunk at the corner of the lot."
+  },
   "terreno": {
-   "nombre": "El terreno",
-   "aspecto": "An empty dusty urban lot at golden hour in a hot desert city, dry weeds, a chain-link fence, low houses and power lines in the background, warm orange light, long shadows."
+   "nombre": "El terreno de Marta",
+   "aspecto": "An empty dusty urban lot at golden hour in a hot dry city, dry weeds, low houses and power lines in the background, warm orange light, long shadows.",
+   "anclas": "A chain-link fence with a padlocked gate; far down the street, the dark green awning of the corner café."
+  },
+  "mesa": {
+   "nombre": "La mesa del patio",
+   "aspecto": "A shaded home patio with a long wooden dining table for ten, mismatched chairs, clay tile floor, bougainvillea on a white wall, dappled warm light.",
+   "anclas": "A carved dark-wood high-back chair at the head of the table; coffee cups and a paper napkin holder in the center."
+  },
+  "cafe": {
+   "nombre": "El café de la esquina",
+   "aspecto": "A bright corner café with large windows, small marble tables and wooden chairs, sunlight on the floor.",
+   "anclas": "A dark green awning outside; through the glass, the street corner and the old olive tree."
   }
  },
+ "objetos": {
+  "llaves": {
+   "nombre": "Las llaves del portón",
+   "aspecto": "A ring of four worn brass keys with a small red leather tag.",
+   "significado": "Ser dueño de algo que todavía no se usa. Son de Marta.",
+   "de": "marta"
+  },
+  "recibos": {
+   "nombre": "Los recibos del predial",
+   "aspecto": "A small stack of folded pale-green payment receipts held together with a black binder clip.",
+   "significado": "Lo que el terreno cuesta cada año mientras nadie decide. Guiño que puede traer cualquier dueño."
+  },
+  "servilleta": {
+   "nombre": "La servilleta",
+   "aspecto": "A white paper napkin with a simple house floor plan drawn by hand in blue ballpoint pen, slightly wrinkled, with a coffee ring stain on one corner.",
+   "significado": "La idea de sobremesa: bonita, pero opinada. Aparece cuando alguien todavía decide por corazonada.",
+   "de": "sofia"
+  },
+  "plano": {
+   "nombre": "El plano enrollado",
+   "aspecto": "A rolled architectural plan on white paper, about sixty centimeters long, held with a red rubber band.",
+   "significado": "Lo que el terreno puede llegar a ser, ya medido. Cuando se desenrolla, la historia cambia."
+  },
+  "hoja": {
+   "nombre": "La hoja del Plan",
+   "aspecto": "A single printed page inside an open cream-colored folder: a small lot diagram and three columns of colored bars, clean and schematic, understood from a distance as a diagram, with no legible words.",
+   "significado": "El Plan de Potencial Personalizado: la opinión del terreno, que cabe en una hoja."
+  },
+  "libreta": {
+   "nombre": "La libreta de la obra",
+   "aspecto": "A small worn spiral notebook with a pencil stub tucked into its wire.",
+   "significado": "Lo que se anota a tiempo no se paga después. Es de Don Roberto.",
+   "de": "don-roberto"
+  },
+  "silla": {
+   "nombre": "La silla de la cabecera",
+   "aspecto": "A carved dark-wood high-back dining chair with a woven palm seat, older than the other chairs at the table.",
+   "significado": "El lugar de quien se anima a sentar a los que saben.",
+   "de": "miguel"
+  },
+  "camioneta": {
+   "nombre": "La camioneta blanca",
+   "aspecto": "A clean white double-cab pickup truck with tinted windows, parked or passing slowly along the street.",
+   "significado": "El comprador que ya midió el terreno. Pasa por la cuadra en casi todas las historias y nadie la menciona.",
+   "de": "comprador"
+  },
+  "videollamada": {
+   "nombre": "La videollamada",
+   "aspecto": "An open laptop on a table showing a video call with a bald man in black rectangular glasses and an olive-green shirt, in front of warm vertical wooden slats and a hanging amber light bulb.",
+   "significado": "El primer paso: sentarse con los que saben. Cierra casi todas las series.",
+   "de": "arquitecto"
+  }
+ },
+ "temporada": [
+  {
+   "id": "el-terreno-de-marta",
+   "titulo": "El terreno que no hacía nada",
+   "vertice": "ppp",
+   "protagonista": "marta",
+   "lugar": "terreno",
+   "objeto": "llaves",
+   "guinos": ["recibos", "camioneta", "videollamada"],
+   "premisa": "Marta lleva años pagando por un terreno que heredó y todos le dicen qué hacer con él. Descubre que nadie le ha preguntado al terreno: pide su Plan de Potencial Personalizado y por primera vez decide con un dato.",
+   "siembra": "En el último episodio, al fondo, Don Carlos abre el portón del terreno de la esquina."
+  },
+  {
+   "id": "el-de-la-esquina",
+   "titulo": "El de la esquina",
+   "vertice": "capital",
+   "protagonista": "don-carlos",
+   "lugar": "esquina",
+   "objeto": "plano",
+   "guinos": ["camioneta", "recibos", "llaves"],
+   "premisa": "Al terreno de Don Carlos todos le dicen «el de la esquina». El comprador de la camioneta blanca le desliza una oferta en el café. Don Carlos decide medir antes de contestar y descubre que un proyecto ordenado atrae a quien pone el capital: no tenía que vender ni endeudarse.",
+   "siembra": "En el último episodio, en la mesa de junto del café, Sofía dibuja una casa en una servilleta."
+  },
+  {
+   "id": "la-servilleta",
+   "titulo": "La servilleta",
+   "vertice": "arquitectura",
+   "protagonista": "sofia",
+   "lugar": "cafe",
+   "objeto": "servilleta",
+   "guinos": ["plano", "camioneta", "videollamada"],
+   "premisa": "Sofía dibujó en una servilleta la casa que quiere construir con Rodrigo. Cada pariente le agrega un cuarto. El arquitecto convierte la servilleta en un proyecto de autor: una casa pensada para vivirla hoy y que siga valiendo mañana.",
+   "siembra": "En el último episodio, Don Roberto pasa por la calle con su libreta bajo el brazo."
+  },
+  {
+   "id": "la-libreta",
+   "titulo": "La libreta de Don Roberto",
+   "vertice": "obra",
+   "protagonista": "don-roberto",
+   "lugar": "cuadra",
+   "objeto": "libreta",
+   "guinos": ["plano", "recibos", "camioneta"],
+   "premisa": "Don Roberto levanta sus locales frente a su calle y anota cada gasto en una libreta. Descubre que una obra llevada con medida, semana a semana, avanza con calma: lo que se mide a tiempo se disfruta después.",
+   "siembra": "En el último episodio, Miguel lo invita: el domingo, en la mesa del patio."
+  },
+  {
+   "id": "la-mesa",
+   "titulo": "La mesa",
+   "vertice": "ppp",
+   "protagonista": "miguel",
+   "lugar": "mesa",
+   "objeto": "silla",
+   "guinos": ["llaves", "plano", "servilleta", "libreta", "videollamada"],
+   "invitados": ["marta", "don-carlos", "sofia", "rodrigo", "don-roberto"],
+   "premisa": "Miguel sienta en la mesa larga del patio a los vecinos de la cuadra: Marta, Don Carlos, Sofía y Rodrigo, Don Roberto. Cada uno llega con su objeto y con lo que aprendió. Miguel no tenía que saberlo todo: tenía que sentar a los que saben. Es el cierre de la temporada, donde las historias se juntan.",
+   "siembra": "El último episodio termina con la silla de la cabecera vacía, girada hacia la cámara: esa silla es de quien está viendo."
+  }
+ ],
  "historias": {
   "piloto-terreno": {
    "titulo": "El terreno que no hacía nada",

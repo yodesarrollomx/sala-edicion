@@ -1,5 +1,7 @@
 # Sala 4.0 · historias en episodios de 15 segundos (9-nov-2026).
-# Un solo flujo: semillero → productor → paquete → estado (nube/sala_v4.py).
+# Un solo flujo: semillero → referencias → productor → paquete → estado (nube/sala_v4.py).
+# «Referencias» pinta una imagen por personaje, lugar y objeto del canon (de pago, centavos por
+# imagen; lo limita el ajuste «imágenes de referencia por día»).
 # El video se genera con Gemini Omni Flash, DE PAGO. El gasto lo limita el ajuste
 # «tomas por día» que Dirección pone en la pantalla Historias; en 0 no se produce nada.
 # No pasa por la COLA ni por nube_ejecuta_etapas: la línea vieja de video sigue en pausa.
@@ -19,7 +21,7 @@ on:
       solo:
         description: 'Correr un solo paso'
         type: choice
-        options: ['todos', 'semillero', 'productor', 'paquete']
+        options: ['todos', 'semillero', 'referencias', 'productor', 'paquete']
         default: 'todos'
 
 permissions:
@@ -42,15 +44,18 @@ jobs:
             nube
             datos/universo
             datos/ideas.json
+            politica-imagen.json
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - name: ffmpeg (último cuadro y unión de tomas)
-        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+        # Si la instalación se cuelga (pasó el 9-nov en otro flujo), esta corrida falla pronto y la siguiente lo reintenta.
+        timeout-minutes: 8
+        run: command -v ffmpeg >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg)
       - run: pip install --quiet google-auth requests pillow
-      - name: Semillero, productor, paquete y estado
+      - name: Semillero, referencias, productor, paquete y estado
         working-directory: nube
         env:
           SIMULAR: ${{ inputs.simular }}
@@ -62,5 +67,5 @@ jobs:
         run: |
           args=()
           [ "$SIMULAR" = "true" ] && args+=(--simular)
-          case "$SOLO" in semillero|productor|paquete) args+=(--solo "$SOLO");; esac
+          case "$SOLO" in semillero|referencias|productor|paquete) args+=(--solo "$SOLO");; esac
           python3 sala_v4.py "${args[@]}"

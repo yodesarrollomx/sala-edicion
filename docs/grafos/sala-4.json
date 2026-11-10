@@ -37,8 +37,8 @@
   },
   {
    "id": "universo_ui",
-   "label": "Universo: personajes, lugares, vértices, formato, guionista",
-   "norm_label": "universo: personajes, lugares, vértices, formato, guionista",
+   "label": "Universo = el canon: temporada, personajes, lugares, objetos, encuadres, reglas",
+   "norm_label": "universo = el canon: temporada, personajes, lugares, objetos, encuadres, reglas",
    "community": 1,
    "community_name": "Pantalla nueva: Historias",
    "file_type": "doc",
@@ -47,8 +47,8 @@
   },
   {
    "id": "serie_ui",
-   "label": "Serie: 10 episodios (texto editable, video, sí / pedir cambio / no va)",
-   "norm_label": "serie: 10 episodios (texto editable, video, sí / pedir cambio / no va)",
+   "label": "Serie: su mundo y sus episodios (texto, encuadre, objetos, video, sí / pedir cambio / no va)",
+   "norm_label": "serie: su mundo y sus episodios (texto, encuadre, objetos, video, sí / pedir cambio / no va)",
    "community": 1,
    "community_name": "Pantalla nueva: Historias",
    "file_type": "doc",
@@ -57,8 +57,8 @@
   },
   {
    "id": "ajustes_ui",
-   "label": "Ajustes: tope diario, semillero, duración",
-   "norm_label": "ajustes: tope diario, semillero, duración",
+   "label": "Ajustes: tomas e imágenes por día, semillero, piloto primero",
+   "norm_label": "ajustes: tomas e imágenes por día, semillero, piloto primero",
    "community": 1,
    "community_name": "Pantalla nueva: Historias",
    "file_type": "doc",
@@ -77,8 +77,8 @@
   },
   {
    "id": "exp_u",
-   "label": "EXPEDIENTES v4:universo (lo escribe el editor)",
-   "norm_label": "expedientes v4:universo (lo escribe el editor)",
+   "label": "EXPEDIENTES v4:universo y v4:mundo:<clase> (el canon: lo escribe el editor)",
+   "norm_label": "expedientes v4:universo y v4:mundo:<clase> (el canon: lo escribe el editor)",
    "community": 2,
    "community_name": "Sheet (sin tocar Apps Script)",
    "file_type": "doc",
@@ -109,6 +109,16 @@
    "id": "exp_p",
    "label": "EXPEDIENTES v4:prod:<id> (producción: sólo la nube)",
    "norm_label": "expedientes v4:prod:<id> (producción: sólo la nube)",
+   "community": 2,
+   "community_name": "Sheet (sin tocar Apps Script)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "exp_c",
+   "label": "EXPEDIENTES v4:canon (imágenes de referencia y fallos: sólo la nube)",
+   "norm_label": "expedientes v4:canon (imágenes de referencia y fallos: sólo la nube)",
    "community": 2,
    "community_name": "Sheet (sin tocar Apps Script)",
    "file_type": "doc",
@@ -156,9 +166,19 @@
    "source_location": "sala-4"
   },
   {
+   "id": "referencias",
+   "label": "2 · Referencias: una imagen por personaje, lugar y objeto",
+   "norm_label": "2 · referencias: una imagen por personaje, lugar y objeto",
+   "community": 3,
+   "community_name": "Nube: un solo flujo",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
    "id": "productor",
-   "label": "2 · Productor: genera episodios",
-   "norm_label": "2 · productor: genera episodios",
+   "label": "3 · Productor: genera episodios",
+   "norm_label": "3 · productor: genera episodios",
    "community": 3,
    "community_name": "Nube: un solo flujo",
    "file_type": "doc",
@@ -167,8 +187,8 @@
   },
   {
    "id": "paquete",
-   "label": "3 · Paquete: une y deja listo",
-   "norm_label": "3 · paquete: une y deja listo",
+   "label": "4 · Paquete: une y deja listo",
+   "norm_label": "4 · paquete: une y deja listo",
    "community": 3,
    "community_name": "Nube: un solo flujo",
    "file_type": "doc",
@@ -177,8 +197,8 @@
   },
   {
    "id": "estado",
-   "label": "4 · Estado: qué hizo y qué falta",
-   "norm_label": "4 · estado: qué hizo y qué falta",
+   "label": "5 · Estado: qué hizo y qué falta",
+   "norm_label": "5 · estado: qué hizo y qué falta",
    "community": 3,
    "community_name": "Nube: un solo flujo",
    "file_type": "doc",
@@ -206,6 +226,16 @@
    "source_location": "sala-4"
   },
   {
+   "id": "imagen",
+   "label": "Gemini imagen (pinta las imágenes de referencia)",
+   "norm_label": "gemini imagen (pinta las imágenes de referencia)",
+   "community": 4,
+   "community_name": "Motores",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
    "id": "ffmpeg",
    "label": "ffmpeg (último cuadro, unión)",
    "norm_label": "ffmpeg (último cuadro, unión)",
@@ -226,16 +256,6 @@
    "source_location": "sala-4"
   },
   {
-   "id": "retrato",
-   "label": "Drive · retrato del personaje (un cuadro del piloto)",
-   "norm_label": "drive · retrato del personaje (un cuadro del piloto)",
-   "community": 5,
-   "community_name": "Drive",
-   "file_type": "doc",
-   "source_file": "docs/grafos/construir.py",
-   "source_location": "sala-4"
-  },
-  {
    "id": "listas",
    "label": "Drive · _LISTAS PARA PUBLICAR/Historia · <título>",
    "norm_label": "drive · _listas para publicar/historia · <título>",
@@ -246,9 +266,79 @@
    "source_location": "sala-4"
   },
   {
+   "id": "canon_drive",
+   "label": "Drive · _HISTORIAS/_CANON (pintadas, retratos de piloto, las de Dirección y CANON.txt)",
+   "norm_label": "drive · _historias/_canon (pintadas, retratos de piloto, las de dirección y canon.txt)",
+   "community": 5,
+   "community_name": "Drive",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
    "id": "d_semillero",
    "label": "¿Semillero encendido y faltan propuestas?",
    "norm_label": "¿semillero encendido y faltan propuestas?",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_temporada",
+   "label": "¿Queda una historia de la temporada sin escribir?",
+   "norm_label": "¿queda una historia de la temporada sin escribir?",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_cara",
+   "label": "¿El piloto se produjo sin imagen del protagonista? Su cara sale de ese piloto",
+   "norm_label": "¿el piloto se produjo sin imagen del protagonista? su cara sale de ese piloto",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_ficha",
+   "label": "¿Ya tiene imagen (la de Dirección, o la hecha con la ficha de hoy)?",
+   "norm_label": "¿ya tiene imagen (la de dirección, o la hecha con la ficha de hoy)?",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_fallo",
+   "label": "¿Esa imagen ya falló hoy con la misma ficha?",
+   "norm_label": "¿esa imagen ya falló hoy con la misma ficha?",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_tope_img",
+   "label": "¿Queda tope de imágenes de referencia hoy?",
+   "norm_label": "¿queda tope de imágenes de referencia hoy?",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_escalon",
+   "label": "¿Google rechazó las imágenes? La toma baja un escalón",
+   "norm_label": "¿google rechazó las imágenes? la toma baja un escalón",
    "community": 6,
    "community_name": "Decisiones lógicas",
    "file_type": "doc",
@@ -269,6 +359,26 @@
    "id": "d_tope",
    "label": "¿Queda tope de clips hoy? (el gasto máximo)",
    "norm_label": "¿queda tope de clips hoy? (el gasto máximo)",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_espera",
+   "label": "¿Lo que sale en el episodio ya tiene su imagen al día?",
+   "norm_label": "¿lo que sale en el episodio ya tiene su imagen al día?",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_gratis",
+   "label": "¿Se pudo preparar lo que no cuesta? (imágenes leídas, cuadro de arranque, texto sin veto)",
+   "norm_label": "¿se pudo preparar lo que no cuesta? (imágenes leídas, cuadro de arranque, texto sin veto)",
    "community": 6,
    "community_name": "Decisiones lógicas",
    "file_type": "doc",
@@ -327,8 +437,8 @@
   },
   {
    "id": "d_retrato",
-   "label": "¿El personaje ya tiene retrato? Viaja como imagen de referencia",
-   "norm_label": "¿el personaje ya tiene retrato? viaja como imagen de referencia",
+   "label": "¿Qué imágenes viajan con la toma? Hasta 4: quién sale, objetos y lugar",
+   "norm_label": "¿qué imágenes viajan con la toma? hasta 4: quién sale, objetos y lugar",
    "community": 6,
    "community_name": "Decisiones lógicas",
    "file_type": "doc",
@@ -337,8 +447,8 @@
   },
   {
    "id": "d_cruce",
-   "label": "¿Hay un personaje conocido? Puede cruzarse en el último episodio",
-   "norm_label": "¿hay un personaje conocido? puede cruzarse en el último episodio",
+   "label": "¿Cómo se cruza con las otras historias? Guiños e invitados del plan, o un conocido al final",
+   "norm_label": "¿cómo se cruza con las otras historias? guiños e invitados del plan, o un conocido al final",
    "community": 6,
    "community_name": "Decisiones lógicas",
    "file_type": "doc",
@@ -527,7 +637,7 @@
   },
   {
    "source": "flujo",
-   "target": "productor",
+   "target": "referencias",
    "relation": "paso 2",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
@@ -536,7 +646,7 @@
   },
   {
    "source": "flujo",
-   "target": "paquete",
+   "target": "productor",
    "relation": "paso 3",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
@@ -545,8 +655,17 @@
   },
   {
    "source": "flujo",
-   "target": "estado",
+   "target": "paquete",
    "relation": "paso 4",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "flujo",
+   "target": "estado",
+   "relation": "paso 5",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -582,7 +701,7 @@
   {
    "source": "exp_u",
    "target": "semillero",
-   "relation": "personajes, lugares, vértices",
+   "relation": "el canon: mundo, reglas y encuadres",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -590,8 +709,26 @@
   },
   {
    "source": "d_semillero",
+   "target": "d_temporada",
+   "relation": "sí",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_u",
+   "target": "d_temporada",
+   "relation": "trae la temporada",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_temporada",
    "target": "gemini",
-   "relation": "sí: pide una serie de 10 episodios",
+   "relation": "sí: escribe la historia planeada · no: una libre con cliente nuevo",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -628,6 +765,213 @@
    "source": "semillero",
    "target": "exp_s",
    "relation": "propone serie",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "referencias",
+   "target": "d_serie",
+   "relation": "pregunta",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_serie",
+   "target": "d_cara",
+   "relation": "sí: primero su protagonista",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_p",
+   "target": "d_cara",
+   "relation": "trae el piloto vigente",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_cara",
+   "target": "ffmpeg",
+   "relation": "sí: saca un cuadro del piloto (no cuesta)",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ffmpeg",
+   "target": "canon_drive",
+   "relation": "guarda el retrato",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_cara",
+   "target": "d_ficha",
+   "relation": "no: por cada cosa que la serie usa",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_u",
+   "target": "d_ficha",
+   "relation": "trae la ficha y la imagen de Dirección",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_c",
+   "target": "d_ficha",
+   "relation": "trae lo ya pintado",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_ficha",
+   "target": "estado",
+   "relation": "sí: al día, no gasta",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_ficha",
+   "target": "d_fallo",
+   "relation": "no: hay que pintarla",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_c",
+   "target": "d_fallo",
+   "relation": "recuerda los fallos",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_fallo",
+   "target": "estado",
+   "relation": "sí: espera a mañana o a que cambie la ficha",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_fallo",
+   "target": "d_tope_img",
+   "relation": "no",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "imagen",
+   "target": "exp_c",
+   "relation": "si falla, anota el motivo",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_c",
+   "target": "d_tope_img",
+   "relation": "cuenta las pintadas hoy",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_tope_img",
+   "target": "imagen",
+   "relation": "sí: reserva y pinta",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_tope_img",
+   "target": "estado",
+   "relation": "no: espera a mañana",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "imagen",
+   "target": "canon_drive",
+   "relation": "guarda la imagen",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "referencias",
+   "target": "exp_c",
+   "relation": "anota imagen e índice",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "referencias",
+   "target": "canon_drive",
+   "relation": "deja CANON.txt",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_c",
+   "target": "serie_ui",
+   "relation": "se ve en «El mundo de esta serie»",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "canon_drive",
+   "target": "universo_ui",
+   "relation": "liga para abrir las imágenes",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "serie_ui",
+   "target": "universo_ui",
+   "relation": "«Guardar en el universo»",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -743,8 +1087,62 @@
   },
   {
    "source": "d_tope",
+   "target": "d_espera",
+   "relation": "sí",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_c",
+   "target": "d_espera",
+   "relation": "responde",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_espera",
+   "target": "d_gratis",
+   "relation": "sí, o las imágenes están apagadas",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_espera",
+   "target": "estado",
+   "relation": "no: espera su imagen y no gasta",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "canon_drive",
+   "target": "d_gratis",
+   "relation": "baja las imágenes",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_gratis",
    "target": "d_bloque",
    "relation": "sí: reserva y produce",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_gratis",
+   "target": "serie_ui",
+   "relation": "no: avisa en la serie y no gasta",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -798,7 +1196,7 @@
   {
    "source": "d_continua",
    "target": "d_retrato",
-   "relation": "no",
+   "relation": "con o sin primer cuadro",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -807,25 +1205,52 @@
   {
    "source": "d_retrato",
    "target": "omni",
-   "relation": "pide el clip",
+   "relation": "pide el clip con sus imágenes",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
    "source_file": "docs/grafos/construir.py"
   },
   {
-   "source": "retrato",
+   "source": "exp_u",
    "target": "d_retrato",
-   "relation": "responde",
+   "relation": "1º la imagen que pegó Dirección",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
    "source_file": "docs/grafos/construir.py"
   },
   {
-   "source": "productor",
-   "target": "retrato",
-   "relation": "lo saca del piloto aprobado",
+   "source": "canon_drive",
+   "target": "d_retrato",
+   "relation": "2º la del canon: pintada o salida del piloto",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "omni",
+   "target": "d_escalon",
+   "relation": "contesta",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_escalon",
+   "target": "d_retrato",
+   "relation": "sí: reintenta con menos imágenes, hasta sólo texto",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_escalon",
+   "target": "drive_h",
+   "relation": "no: guarda el video",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -868,9 +1293,18 @@
    "source_file": "docs/grafos/construir.py"
   },
   {
-   "source": "exp_p",
+   "source": "exp_u",
    "target": "d_cruce",
-   "relation": "personajes con retrato",
+   "relation": "guiños e invitados del plan",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_c",
+   "target": "d_cruce",
+   "relation": "personajes que ya tienen imagen",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -879,7 +1313,7 @@
   {
    "source": "d_cruce",
    "target": "exp_s",
-   "relation": "invitado en el episodio final",
+   "relation": "quedan en sus episodios; lo olvidado se coloca",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -895,18 +1329,9 @@
    "source_file": "docs/grafos/construir.py"
   },
   {
-   "source": "omni",
-   "target": "drive_h",
-   "relation": "guarda el video",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "weight": 1.0,
-   "source_file": "docs/grafos/construir.py"
-  },
-  {
    "source": "productor",
    "target": "exp_p",
-   "relation": "anota versión y liga",
+   "relation": "anota versión, liga e imágenes usadas",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,

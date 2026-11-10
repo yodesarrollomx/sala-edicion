@@ -76,8 +76,11 @@ class AdaptativaTests(unittest.TestCase):
         self.assertEqual('texto',o.peticion(None,'texto',15,'m')['input'])
         refs=o.peticion(None,'<IMAGE_REF_0> camina',15,'m',[b'a',b'b'])
         self.assertEqual(['image','image','text'],[x['type'] for x in refs['input']]); self.assertEqual('reference_to_video',refs['generation_config']['video_config']['task'])
-        self.assertEqual('image_to_video',o.peticion(b'j','t',15,'m',[b'a'])['generation_config']['video_config']['task'])   # el primer cuadro manda
-        self.assertEqual(1,len([x for x in o.peticion(b'j','t',15,'m',[b'a'])['input'] if x['type']=='image']))
+        juntas=o.peticion(b'j','t',15,'m',[b'a',b'b'])                 # primer cuadro y referencias en la misma petición
+        self.assertEqual(['image','image','image','text'],[x['type'] for x in juntas['input']])
+        self.assertEqual(base64.b64encode(b'j').decode(),juntas['input'][0]['data'])       # el primer cuadro va primero
+        self.assertNotIn('generation_config',juntas)                    # ahí el texto dice qué es cada imagen
+        self.assertEqual('image_to_video',o.peticion(b'j','t',15,'m')['generation_config']['video_config']['task'])
         self.assertNotIn('generation_config',o.peticion(None,'texto',15,'m'))
         import piloto_omni as p
         u=json.loads(p.UNIVERSO.read_text(encoding='utf-8'))
