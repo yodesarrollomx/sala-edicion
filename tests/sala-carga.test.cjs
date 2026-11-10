@@ -57,6 +57,58 @@ test('la lectura secundaria arranca después de pintar la mesa', () => {
   assert.doesNotMatch(inicio, /traerCola\(\)/);
 });
 
+/* 9-nov-2026 · Dirección: «trae glitches, no carga bien». Medido en su navegador: con el caché del Apps Script
+   frío el día tarda 14 s; la Sala se rendía a los 8 s dos veces y lo listo para publicar nunca se pedía. */
+test('lo listo para publicar no espera a la mesa: arranca al abrir, por su cuenta y una sola vez', () => {
+  const inicio=extraer('(async function(){', "  // Catálogo y vistas auxiliares se cargan");
+  assert.match(inicio, /abrirMesaPublicada\(\);\s*arrancarSalida\(\);/, 'antes de esperar al día');
+  assert.ok(inicio.indexOf('arrancarSalida()')<html.slice(html.indexOf('(async function(){')).indexOf('await traer()'));
+  const salida=extraer('function arrancarSalida(){','async function cargarExpedientes(){');
+  assert.match(salida, /if\(_salidaArrancada\|\|!ENTRADO\(\)\|\|typeof SalaSalida==='undefined'\) return;/);
+  // sólo dos lecturas de la hoja: expedientes y reglas. Catálogo, cola, fábrica e ideas siguen esperando.
+  assert.deepEqual((salida.match(/\b(?:traer[A-Z]\w*|leerExpedientesHoja|cargarExpedientes)\(/g)||[]).sort(),['leerExpedientesHoja(','traerReglasSala(']);
+  assert.match(fs.readFileSync('sala-salida.js','utf8'), /if\(typeof arrancarSalida==='function'\) arrancarSalida\(\);/, 'si la Sala arrancó antes de cargar el archivo, el archivo la despierta');
+});
+
+test('los expedientes se leen una vez, un fallo no se guarda como respuesta y las llaves con prefijo no son publicaciones', async () => {
+  const hecho=[];
+  function ctx(responder){
+    const c={EXP:{},ENTRADO:()=>true,GAS:()=>'https://synthetic.invalid',CLAVE:()=>'k',encodeURIComponent,AbortSignal,SALA_TOPE_DIA_MS:30000,
+      leerJSON:r=>r.json(),SalaSalida:{llegaron:s=>hecho.push(['llegaron',Object.keys(s)]),falla:()=>hecho.push(['falla']),abrirGuardada:()=>hecho.push(['guardada']),pintar:()=>{}},
+      traerReglasSala:async()=>{hecho.push(['reglas'])},llamadas:0,opciones:null};
+    c.fetch=async(url,o)=>{c.llamadas++;c.opciones=o;return responder(c.llamadas)};
+    vm.runInNewContext(extraer('let EXP={}, METR=null, _expP=null, _expHojaP=null;','async function cargarExpedientes(){').replace('let EXP={}, METR=null, _expP=null, _expHojaP=null;','let _expHojaP=null;')+
+      '\nthis.leer=leerExpedientesHoja;this.releer=releerExpedientes;this.arrancar=arrancarSalida;',c);
+    return c;
+  }
+  const ok={ok:true,json:async()=>({ok:true,expedientes:{'Pieza':{estado:'lista'},'v4:serie:1':{x:1},'salida:plan':{orden:['Pieza']}}})};
+  const a=ctx(()=>ok);
+  assert.equal(await a.leer(),true);assert.equal(await a.leer(),true);
+  assert.equal(a.llamadas,1,'dos lectores comparten una petición');
+  assert.deepEqual(Object.keys(a.EXP),['Pieza'],'ni v4: ni salida: entran a Publicaciones');
+  assert.deepEqual(hecho.pop(),['llegaron',['salida:plan']]);
+  assert.ok(a.opciones&&a.opciones.signal,'la lectura tiene tope de tiempo');
+  assert.equal(await a.releer(),true);assert.equal(a.llamadas,2,'Actualizar sí vuelve a preguntar');
+
+  const b=ctx(n=>n===1?{ok:true,json:async()=>({error:'clave incorrecta'})}:ok);
+  assert.equal(await b.leer(),false);assert.deepEqual(b.EXP,{});
+  assert.equal(await b.leer(),true,'el fallo no quedó guardado');assert.equal(b.llamadas,2);
+
+  hecho.length=0;
+  const c=ctx(()=>{throw Error('red')});
+  c.arrancar();c.arrancar();await new Promise(r=>setTimeout(r,5));
+  assert.deepEqual(hecho.map(x=>x[0]).sort(),['falla','guardada','reglas'],'arranca una sola vez y avisa del fallo');
+  const d=ctx(()=>ok);d.ENTRADO=()=>false;d.arrancar();assert.equal(d.llamadas,0,'sin sesión no pregunta nada');
+});
+
+test('el indicador de carga no le pone a toda la página el esqueleto de una carta', () => {
+  assert.doesNotMatch(html, /html\.cargando/);
+  assert.doesNotMatch(html, /documentElement\.classList\.(?:add|remove|toggle)\('cargando'/);
+  assert.match(html, /html\.trayendo::before\{/);assert.match(html, /html\.trayendo #actualizando\{display:flex\}/);
+  assert.match(html, /document\.documentElement\.classList\.add\('trayendo'\)/);assert.match(html, /document\.documentElement\.classList\.remove\('trayendo'\)/);
+  assert.match(html, /\n\.cargando\{position:absolute;inset:0;display:grid;/, 'el esqueleto de carta sigue existiendo, con su nombre');
+});
+
 test('ninguna solicitud secundaria o comprobación de versión arranca antes de Hoy', () => {
   assert.doesNotMatch(html, /setTimeout\(actualizarLineaHoy,2500\)/);
   assert.doesNotMatch(html, /setTimeout\(vigilarVersion,4000\)/);
@@ -175,15 +227,41 @@ test('lámina aprobada sin paquete dice que falta su texto, sin prometer cuándo
   assert.equal(JSON.stringify(z),before);
 });
 
-test('con el paquete hecho la pieza es de Dirección: «publícala», y va primero',async()=>{
+test('con el paquete hecho la pieza es de Dirección: «lista», va primero y no apura a publicar',async()=>{
   const s=sala(),z=s.piece();
   s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,imagenes:[{n:1,src:'synthetic.png'}]}};
   const f=s.ctx.filaLinea(z),rendered=await s.render(z);
   assert.deepEqual([f.lista,f.tuyo,f.quien,f.paso],[true,true,'lista',null]);
-  assert.match(f.que,/^Lista para publicar: 1 imagen y su texto\.$/);
-  assert.match(rendered,/data-lista="1"/);assert.match(rendered,/publícala/);assert.match(rendered,/Publicar →/);
-  assert.match(rendered,/1 está lista para publicar/);
+  assert.match(f.que,/^Lista para lanzar: 1 imagen y su texto\.$/);assert.equal(f.cuando,'Toca para abrirla.');
+  assert.match(rendered,/data-lista="1"/);assert.match(rendered,/<span class="quien lista">lista<\/span>/);
+  assert.doesNotMatch(rendered,/publícala|Publicar →|Toca para publicarla/i,'Dirección junta montón antes de lanzar (9-nov)');
+  assert.match(rendered,/1 está lista para lanzar/);
   assert.deepEqual([...f.segs.map(x=>x.c)],['hecho','hecho','hecho','tu']);
+});
+
+test('el avance nunca pasa de 100 %: sólo cuentan las etapas de la línea de esa pieza',async()=>{
+  // nació para video y hoy camina como carrusel: conserva voz, escena y corte hechos
+  const s=sala(),z=s.piece(Object.fromEntries(['voz','escena','corte'].map(etapa=>[etapa,[{id:etapa,etapa,estado:'hecho'}]])));
+  s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,imagenes:[{n:1,src:'synthetic.png'}]}};
+  vm.runInContext("REGLAS_SALA={nube_ejecuta_etapas:'prospecto'}",s.ctx);   // video en pausa: la línea es de 4 etapas
+  const f=s.ctx.filaLinea(z);
+  assert.equal(f.segs.length,4);
+  assert.equal(f.pct,75,'guion, imágenes y texto hechos; falta salir (antes decía 150)');
+  assert.equal(f.pct,Math.round(100*f.segs.filter(x=>x.c==='hecho').length/f.segs.length));
+});
+
+test('en «Cómo va» lo listo sigue el orden de salida de los editores, no el de llegada a Drive',async()=>{
+  const s=sala();
+  const pieza=(nombre,slug,orden)=>{const z=s.piece();const tira={...z.tira,pieza:nombre,pieza_slug:slug};
+    s.ctx.EXP[nombre]={estado:'lista',paquete:{orden,imagenes:[{n:1,src:slug+'.png'}]}};return {...z,slug,nombre,tira};};
+  const a=pieza('Pieza A','a',1),b=pieza('Pieza B','b',2),c=pieza('Pieza C','c',3);
+  const linea=s.ctx.$('#linea');
+  s.ctx.$=sel=>sel==='#salidaHoy'?null:linea;s.ctx.ENTRADO=()=>true;   // aquí sólo se mira la Línea: el montón no tiene dónde pintarse
+  const orden=async()=>{await s.ctx.pintarLinea([a,b,c],'linea',true);return [...linea.innerHTML.matchAll(/data-pieza="([^"]+)"/g)].map(m=>m[1]);};
+  assert.deepEqual(await orden(),['Pieza A','Pieza B','Pieza C']);
+  s.ctx.SalaSalida.llegaron({'salida:plan':{orden:['Pieza C','Pieza A','Pieza B']}});
+  await new Promise(r=>setTimeout(r,5));
+  assert.deepEqual(await orden(),['Pieza C','Pieza A','Pieza B']);
 });
 
 test('una pieza guardada por regla no promete texto: espera la decisión de Dirección',async()=>{
@@ -265,7 +343,8 @@ test('día: máximo dos peticiones, incluso con topes explícitos y varias crede
    fetch:async()=>{calls++;if(rejected)return {ok:true,json:async()=>({error:'clave incorrecta'})};throw Error('red');}};
   vm.runInNewContext(extraer("let _ultimoErrorLlave='';",'async function conMarcasDeAntes')+'\nthis.run=traer;',ctx);
   await assert.rejects(()=>ctx.run('',99,60000,true));
-  assert.equal(calls,2);assert.deepEqual(delays,[8000,400,8000]);
+  // 9-nov: el día tiene su propio tope (30 s). En frío midió 14 s y con 8 s fallaba siempre. Siguen siendo dos peticiones.
+  assert.equal(calls,2);assert.deepEqual(delays,[30000,400,30000]);
  }
 });
 test('el timeout del día incluye la descarga del cuerpo JSON',async()=>{

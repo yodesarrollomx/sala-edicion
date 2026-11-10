@@ -67,7 +67,7 @@ a{color:var(--oro)}
 .puertas button.avisa .punto{display:block}
 @media (min-width:960px){
   .puertas{left:auto;right:18px;bottom:auto;top:14px;border:1px solid var(--linea);border-radius:999px;padding:4px;gap:2px;box-shadow:var(--sombra)}
-  .puertas button{flex-direction:row;gap:7px;min-height:40px;padding:0 14px;max-width:none;border-radius:999px;font-size:13px}
+  .puertas button{flex:0 0 auto;white-space:nowrap;flex-direction:row;gap:7px;min-height:40px;padding:0 14px;max-width:none;border-radius:999px;font-size:13px}   /* 9-nov: «Cómo va» se partía en dos renglones */
   .puertas button svg{width:18px;height:18px}
   .puertas button .punto{margin:0 0 14px 4px;position:static}
   body:has(#barraSinEntrar:not([hidden])) .puertas{top:54px}
@@ -635,12 +635,15 @@ p.fechas{font-size:12.5px;color:var(--guia)} button.liga{background:none;border:
 .tour .saltar{margin-top:10px;background:none;border:0;color:var(--guia);font-size:14px;text-decoration:underline;min-height:40px}
 
 /* indicador de carga */
-html.cargando::before{content:'';position:fixed;top:0;left:0;height:3px;width:100%;z-index:9999;pointer-events:none;
+/* 9-nov: la clase del indicador se llamaba `cargando`, igual que el esqueleto de una carta (`.cargando{position:absolute;
+   inset:0;display:grid;font-size:13px;…}`). Con una lectura en vuelo TODA la página heredaba ese esqueleto: se encogía al
+   centro sobre fondo oscuro, con la letra más chica, y regresaba al terminar. Ahora se llama `trayendo`. */
+html.trayendo::before{content:'';position:fixed;top:0;left:0;height:3px;width:100%;z-index:9999;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--oro),transparent);background-size:40% 100%;animation:barra 1.1s linear infinite}
 @keyframes barra{from{background-position:-40% 0}to{background-position:140% 0}}
 #actualizando{position:fixed;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:9998;display:none;align-items:center;gap:8px;
   padding:6px 12px;border-radius:999px;background:var(--tarjeta);border:1px solid var(--oro);color:var(--oro);font-size:12px;font-weight:600;letter-spacing:.04em;pointer-events:none;box-shadow:var(--sombra)}
-html.cargando #actualizando{display:flex}
+html.trayendo #actualizando{display:flex}
 #actualizando{max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #actualizando i{width:10px;height:10px;border-radius:50%;border:2px solid var(--oro-suave);border-top-color:var(--oro);animation:gira .8s linear infinite}
 @keyframes gira{to{transform:rotate(360deg)}}
@@ -668,9 +671,9 @@ html.cargando #actualizando{display:flex}
   border-bottom:1px solid var(--no);font-weight:600;font-size:13.5px;line-height:1.35;padding:10px 16px}
 /* Al revisar dictado, sólo el aviso más reciente queda visible. */
 body > .chn-aviso:has(~ .chn-aviso){display:none!important}
-</style><link rel="stylesheet" href="tablero-sala.css?v=20261109-vista"><link rel="stylesheet" href="sala2.css">
+</style><link rel="stylesheet" href="tablero-sala.css?v=20261109-monton"><link rel="stylesheet" href="sala2.css">
 </head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
-<link rel="stylesheet" href="sala-salida.css?v=20261109-salida1">
+<link rel="stylesheet" href="sala-salida.css?v=20261109-monton2">
 <script src="sala-correcciones.js?v=20261015-4"></script>
 <script src="politica-imagen.js?v=hidream-o1-20261017"></script>
 <script src="video-revision.js?v=20261020-nativo1"></script>
@@ -825,7 +828,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='f284cdfb61';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='33ad045b14';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -865,9 +868,9 @@ window.fetch=async function(...a){
   const u=String((a[0]&&a[0].url)||a[0]||''), m=u.match(/[?&]recurso=(\w+)/), post=a[1]&&/post/i.test(a[1].method||'');
   const k=Symbol(); _enVuelo.set(k,m?(NOM_RECURSO[m[1]]||m[1]):(post?'guardando':''));
   if(!_vivos){ _t0Pildora=Date.now(); clearInterval(_tPildora); _tPildora=setInterval(pintaPildora,1000) }
-  _vivos++; document.documentElement.classList.add('cargando'); pintaPildora();
+  _vivos++; document.documentElement.classList.add('trayendo'); pintaPildora();
   try{ return await _fetch0(...a) }
-  finally{ _enVuelo.delete(k); _vivos=Math.max(0,_vivos-1); if(!_vivos){ clearInterval(_tPildora); document.documentElement.classList.remove('cargando') } }
+  finally{ _enVuelo.delete(k); _vivos=Math.max(0,_vivos-1); if(!_vivos){ clearInterval(_tPildora); document.documentElement.classList.remove('trayendo') } }
 };
 const bloquear=on=>document.body.classList.toggle('bloqueado',!!on);
 /* (Se retiró el relevo por postMessage: publicaba la llave con destino '*' —cualquier sitio
@@ -974,7 +977,12 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&CAPAS.length){ e.p
 
 /* ══ datos (idéntico contrato: recurso=dia, respaldo en datos/manifiesto.json) ══ */
 let _ultimoErrorLlave='';
-const SALA_TIMEOUT_MS=8000, SALA_REINTENTOS=1, SALA_BACKOFF_MS=400;
+/* 9-nov (medido desde el navegador de Dirección): con el caché del Apps Script frío, leer el día tarda 14 s;
+   tibio, menos de 3 s; y cualquier escritura lo enfría. Con 8 s de tope el primer intento fallaba SIEMPRE en
+   frío, el segundo arrancaba otro cálculo igual de lento y la Sala se quedaba en «sin conexión» hasta un clic.
+   La última mesa ya se ve desde el primer segundo, así que esperar a la hoja no retrasa nada: el día tiene su
+   propio tope. Siguen siendo dos peticiones como máximo y sin ciclos automáticos. */
+const SALA_TIMEOUT_MS=8000, SALA_TOPE_DIA_MS=30000, SALA_REINTENTOS=1, SALA_BACKOFF_MS=400;
 window.SalaRendimiento=[];
 function medirSala(tipo,inicio,resultado,intento){
   window.SalaRendimiento.push({tipo,ms:Math.round(performance.now()-inicio),resultado,intento});
@@ -998,7 +1006,7 @@ async function traer(f,intentos,tope,sinRespaldo){
   const llaves=_llaveViva?[_llaveViva,...LLAVES().filter(k=>k!==_llaveViva)]:LLAVES();
   let k=0;
   if(ENTRADO())for(let i=0;i<N;i++){
-    const inicio=performance.now(),ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),Math.min(tope||SALA_TIMEOUT_MS,SALA_TIMEOUT_MS));
+    const inicio=performance.now(),ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),Math.min(tope||SALA_TOPE_DIA_MS,SALA_TOPE_DIA_MS));
     try{
       const llave=llaves[k];
       const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(llave)+(f?'&f='+encodeURIComponent(f):''),{signal:ctl.signal});
@@ -1228,7 +1236,7 @@ function estadoInicial(){
   // pendiente, lo que hay en `dec` ya viene del Sheet o de un borrador recién fusionado — no hay
   // nada que subir. Antes esto decía «Guardando…» para siempre porque `c.hoy` cuenta marcas en
   // `pasos` (lo decidido), no envíos sin confirmar; sin `guard.env` (sesión nueva) se quedaba pegado.
-  if(!_subiendo&&!_tSubir) return pintarEstado('', (c.hoy||yaHoy)?`Hoy decidiste ${c.hoy+yaHoy} · guardado en el Sheet`:'Nada decidido aún');
+  if(!_subiendo&&!_tSubir) return pintarEstado('', (c.hoy||yaHoy)?`Hoy decidiste ${c.hoy+yaHoy} · guardado en el Sheet`:(pasos.length?'Nada decidido aún':'Nada por revisar hoy'));
   return pintarEstado('local','Guardando…');
 }
 
@@ -2088,7 +2096,36 @@ function pintarPanelMira(){
 }
 
 /* ══ Publicaciones ══ */
-let EXP={}, METR=null, _expP=null;
+let EXP={}, METR=null, _expP=null, _expHojaP=null;
+/* 9-nov (queja de Dirección: «no carga bien»): lo listo para publicar ya no espera a la mesa. La hoja de
+   expedientes se lee UNA vez al abrir, en paralelo con el día, y la comparten la salida y Publicaciones.
+   Un fallo no se guarda como respuesta: quien pregunte después vuelve a leer. Las llaves con prefijo no son
+   publicaciones: `v4:` es de Historias (Sala 4.0) y `salida:` es el plan de salida que guardan los editores. */
+function leerExpedientesHoja(){
+  if(!ENTRADO()) return Promise.resolve(false);
+  if(!_expHojaP) _expHojaP=(async()=>{
+    try{ const r=await fetch(GAS()+'?recurso=expedientes&clave='+encodeURIComponent(CLAVE()),{signal:AbortSignal.timeout(SALA_TOPE_DIA_MS)});
+      const j=await leerJSON(r);
+      if(!r.ok||!j||!j.expedientes||typeof j.expedientes!=='object') throw Error('sin expedientes');
+      const salida={};
+      Object.entries(j.expedientes).forEach(([n,e])=>{ if(n.startsWith('v4:')) return; if(n.startsWith('salida:')){ salida[n]=e; return } EXP[n]=e });
+      if(typeof SalaSalida!=='undefined') SalaSalida.llegaron(salida);
+      return true;
+    }catch(e){ _expHojaP=null; return false }
+  })();
+  return _expHojaP;
+}
+function releerExpedientes(){ _expHojaP=null; return leerExpedientesHoja() }
+/* Se llama dos veces a propósito: al arrancar la Sala y al terminar de cargar sala-salida.js (lo que pase
+   primero no encuentra al otro). Sólo la primera vez que estén los dos hace algo. */
+let _salidaArrancada=false;
+function arrancarSalida(){
+  if(_salidaArrancada||!ENTRADO()||typeof SalaSalida==='undefined') return;
+  _salidaArrancada=true;
+  SalaSalida.abrirGuardada();   // lo último que este aparato vio de la hoja, mientras llega lo de ahora
+  leerExpedientesHoja().then(ok=>{ if(!ok) SalaSalida.falla() });
+  traerReglasSala().then(()=>SalaSalida.pintar());
+}
 async function cargarExpedientes(){
   try{ METR=await (await fetch('datos/metricas.json?v='+Date.now())).json() }catch(e){}
   try{ const g=await (await fetch('datos/progreso.json?v='+Date.now())).json();
@@ -2097,12 +2134,7 @@ async function cargarExpedientes(){
     (z.piezas||[]).forEach(p=>{ PZ[p.pieza]={...p,actualizado:z.actualizado} }) }catch(e){}
   // La historia lleva tus palabras textuales: vive en el Sheet, tras la credencial.
   // (Antes estaba en el repo público, que cualquiera puede descargar.)
-  if(ENTRADO()){
-    try{ const r=await fetch(GAS()+'?recurso=expedientes&clave='+encodeURIComponent(CLAVE()));
-      const j=await leerJSON(r);
-      if(j&&j.expedientes) Object.entries(j.expedientes).forEach(([n,e])=>{ if(!n.startsWith('v4:')) EXP[n]=e });   // 9-nov: las llaves v4: son de Historias (Sala 4.0), no publicaciones
-    }catch(e){}
-  }
+  await leerExpedientesHoja();
   let idxE=[]; try{ idxE=await (await fetch('datos/expedientes/index.json?v='+Date.now())).json() }catch(e){}
   for(const it of idxE){ if(!EXP[it.pieza]) EXP[it.pieza]={pieza:it.pieza,hitos:[],sinLlave:!ENTRADO()};
     if(PZ[it.pieza]&&EXP[it.pieza].estado!=='publicada') EXP[it.pieza].estado=esPublicada(it.pieza)?'publicada':PZ[it.pieza].estado; }
@@ -2180,8 +2212,9 @@ function pintarAjustes(){
       ${ENTRADO()?'':`<button class="listo" style="margin-top:0" id="ajEntrar">Entrar</button>`}</div>
     <div class="bloque-aj"><h4>Cómo se usa</h4><ol>${DECIDE()?`
       <li><b>La línea es una sola:</b> idea → guion → imágenes → texto → tú publicas. Todo corre en la nube.</li>
-      <li><b>«Te toca» tiene dos cosas.</b> Lo que hay que decidir (aprobar, pedir cambio o «no va») y lo que ya está <b>listo para publicar</b>.</li>
-      <li><b>Para publicar:</b> abre la pieza lista, baja sus imágenes de Drive, copia el texto y la liga, publícala en Instagram y Facebook y toca <b>«Ya la publiqué»</b>.</li>
+      <li><b>«Te toca» tiene dos cosas.</b> Lo que hay que decidir (aprobar, pedir cambio o «no va») y <b>tu montón</b>: lo que ya está listo para lanzar, en el orden en que va a salir.</li>
+      <li><b>Arma tu salida sin prisa:</b> arriba del montón eliges cuántas por semana (te dice para cuántas semanas alcanza), el día de arranque y el orden («Cambiar el orden»). Nada sale solo.</li>
+      <li><b>Cuando decidas publicar:</b> abre la pieza, baja sus imágenes de Drive, copia el texto y la liga, publícala en Instagram y Facebook y toca <b>«Ya la publiqué»</b>.</li>
       <li><b>«Cómo va»</b> enseña cada pieza y en qué paso está, sin que tengas que decidir nada.</li>
       <li><b>Todo se guarda solo.</b> La píldora de arriba dice «Guardado ✓» cuando ya subió. Si dice «sin señal», no repitas: sube sola.</li>
       <li><b>¿Te equivocaste?</b> «Deshacer la última» o «ver mis respuestas» → Cambiar.</li>`:`
@@ -2710,7 +2743,7 @@ function filaLinea(z){
   else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola.`;
   if(publicada){ que='Publicación registrada.' }
   else if(lista){ quien='lista'; const n=SalaSalida.paqueteDe(z.nombre).imagenes.length;
-    que=`Lista para publicar: ${n} ${n===1?'imagen':'imágenes'} y su texto.`; cuando=DECIDE()?'Toca para publicarla.':'Publicar es de los editores.' }
+    que=`Lista para lanzar: ${n} ${n===1?'imagen':'imágenes'} y su texto.`; cuando=DECIDE()?'Toca para abrirla.':'Publicar es de los editores.' }
   else if(aqui<0){ que='Material listo. Publicación por confirmar.' }
   else if(!mesa&&/esperando tu s|elige una opci|en tu mesa/i.test(falta)){ quien='sig'; que='No pude leer tu mesa de hoy: entra (o actualiza) para saber si te toca algo.'; cuando='' }
   else if(tuyo){ quien='tu'; que=mesa?`Te toca: ${pend.length} en tu mesa de hoy${falta?' ('+falta+')':''}.`:`Te toca: ${falta}.`; const f=fechaDeTiraL(t); cuando='Toca para decidir ahora'+(f?' · esperando desde el '+fechaCorta(f):''); }
@@ -2734,7 +2767,9 @@ function filaLinea(z){
     cuando=pausa?'Los paquetes están en pausa.':'Es el paso del consejo; cuando lo escriba, aparece en «Te toca».' }
   else if(et[aqui][0]==='publicada'){ que='Publicación por confirmar.' }
   else { que=`Sigue: ${nomEt}.`; cuando='Sin avance confirmado para esta etapa.' }
-  const pct=Math.round(100*h.size/et.length);
+  // 9-nov: sólo cuentan las etapas de ESTA línea. Una pieza que nació para video y hoy camina como carrusel
+  // conservaba voz, escenas y corte como hechas: 6 de 4 daba «150%».
+  const pct=Math.round(100*et.filter(x=>h.has(x[0])).length/et.length);
   if(tuyo&&nota) cuando+=' · '+nota;
   return {z,segs,quien,que,cuando,pct,run,tuyo,lista,sal,paso:pend.length?pend[0]:null,rojo:!!(fallos.length||viejos.length),fab:!tuyo&&quien==='fab'};
 }
@@ -2750,13 +2785,15 @@ async function pintarLinea(piezas,destino,compacto){
   for(const i of (IDEAS||[])){ if(!/produccion|elegida|aprobada/i.test(i.estado||'')) continue;
     const slug=normSlug(i.id||i.titulo); if(ya.has(slug)||[...ya].some(s=>s.split('-')[0]===slug.split('-')[0])) continue;
     abiertas.push({slug,nombre:i.titulo||i.id,tira:null,filas:{prospectos:[],escena:[],voz:[],corte:[]}}); ya.add(slug) }
-  const ordenPaq=f=>{ const q=f.lista&&SalaSalida.paqueteDe(f.z.nombre); return (q&&q.orden)||1e9 };
+  // lo listo va en el orden de salida que fijaron los editores (el del montón), no en el de llegada a Drive
+  const lugarSalida=new Map((typeof SalaSalida!=='undefined'?SalaSalida.pendientes():[]).map((x,i)=>[x.nombre,i]));
+  const ordenPaq=f=>f.lista&&lugarSalida.has(f.z.nombre)?lugarSalida.get(f.z.nombre):1e9;
   const filas=abiertas.map(filaLinea).sort((a,b)=>(b.tuyo-a.tuyo)||(b.rojo-a.rojo)||(b.fab-a.fab)||(b.pct-a.pct)||(ordenPaq(a)-ordenPaq(b)));
   const nLista=filas.filter(f=>f.lista).length, nTexto=filas.filter(f=>!f.tuyo&&f.sal==='texto').length, nGuard=filas.filter(f=>!f.tuyo&&f.sal==='guardada').length;
   const nTu=filas.filter(f=>f.tuyo&&!f.lista).length, nFab=filas.filter(f=>f.fab).length, nRojo=filas.filter(f=>f.rojo).length, nSig=filas.filter(f=>!f.tuyo&&!f.fab&&!f.rojo&&f.sal!=='texto'&&f.sal!=='guardada').length;
   const rel=!filas.length?'No hay publicaciones abiertas.':
     `${filas.length} publicaciones abiertas. `+[
-      nLista?`${nLista} ${nLista===1?'está lista':'están listas'} para publicar`:'',
+      nLista?`${nLista} ${nLista===1?'está lista':'están listas'} para lanzar`:'',
       nTu?`${nTu} ${nTu===1?'espera':'esperan'} tu decisión`:'',
       nTexto?`${nTexto} con imágenes aprobadas ${nTexto===1?'espera':'esperan'} su texto`:'',
       nGuard?`${nGuard} ${nGuard===1?'está guardada y espera':'están guardadas y esperan'} tu decisión`:'',
@@ -2780,17 +2817,17 @@ async function pintarLinea(piezas,destino,compacto){
       <div class="ln-tarjetas">${filas.map(f=>{ const l=((f.z.tira&&f.z.tira.laminas)||[]).find(x=>x.src);
         return `<button class="ln-mfila${f.lista?' lista':''}" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}${f.lista?' data-lista="1"':''}>${l?`<img class="ln-portada" loading="lazy" alt="" src="${esc(ligera(fuenteLamina(l,l.src)))}">`:'<span class="ln-portada vacia">sin lámina aún</span>'}<b>${esc(f.z.nombre)}</b>
         <div class="ln-barra">${f.segs.map(s=>`<div class="ln-seg ${s.c}${s.aqui?' aqui':''}"><i></i></div>`).join('')}</div>
-        <span class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',lista:'publícala',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span> ${esc(f.que)} <span class="cuando">${esc(f.cuando.split(' · Además')[0])}</span></span><span class="ln-accion">${f.paso!=null?'Decidir →':f.lista?'Publicar →':'Ver →'}</span></button>`}).join('')}</div>
+        <span class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',lista:'lista',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span> ${esc(f.que)} <span class="cuando">${esc(f.cuando.split(' · Además')[0])}</span></span><span class="ln-accion">${f.paso!=null?'Decidir →':f.lista?'Abrir →':'Ver →'}</span></button>`}).join('')}</div>
       <button class="secund ln-vertodo" data-irprod>Ver todo en Producción →</button></div>`;
     if(c){ c.innerHTML=html; enganchaLinea(c) }
     return html;
   }
   c.innerHTML=`<div class="linea-cab"><p class="rel">${esc(rel)}</p>
-      <div class="chips">${[[nLista,'listas para publicar'],[nTu,'por decidir'],[nTexto,'esperan su texto'],[nGuard,'guardadas'],[nFab,'en la fábrica'],[nRojo,'atoradas'],[nSig,'en camino']].filter(x=>x[0]).map(([n,t])=>`<span class="chip"><b>${n}</b> ${t}</span>`).join('')}</div></div>
+      <div class="chips">${[[nLista,'listas para lanzar'],[nTu,'por decidir'],[nTexto,'esperan su texto'],[nGuard,'guardadas'],[nFab,'en la fábrica'],[nRojo,'atoradas'],[nSig,'en camino']].filter(x=>x[0]).map(([n,t])=>`<span class="chip"><b>${n}</b> ${t}</span>`).join('')}</div></div>
     <div class="ln-ley"><span><i style="background:var(--si)"></i>hecho</span><span><i style="background:var(--oro)"></i>produciéndose</span><span><i style="background:var(--azul)"></i>te toca</span><span><i style="background:var(--no)"></i>atorado</span><span><i style="background:var(--linea2)"></i>lo que sigue</span><span>▼ va aquí</span></div>
     ${filas.map(f=>`<button class="ln-fila${f.lista?' lista':''}" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}${f.lista?' data-lista="1"':''}><div class="ln-nom"><b>${esc(f.z.nombre)}</b><small>${f.pct}% · ${f.segs.length} etapas</small></div>
       <div class="ln-barra">${f.segs.map(seg).join('')}</div>
-      <div class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',lista:'publícala',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span><br>${esc(f.que)}<span class="cuando">${esc(f.cuando)}</span></div></button>`).join('')}
+      <div class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',lista:'lista',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span><br>${esc(f.que)}<span class="cuando">${esc(f.cuando)}</span></div></button>`).join('')}
     ${pend.length?`<div class="ln-pend"><h4>${recados.length?'Lo que quedó a medias':'Guardado'}</h4><ul>${pend.map(p=>`<li>${p}</li>`).join('')}</ul></div>`:''}`;
   enganchaLinea(c);
   return '';
@@ -3069,7 +3106,7 @@ async function fichaPieza(nombre){
   const etapas=etapasDe(formatoDePieza(z)).map(x=>x[0]), deVideo=etapas.includes('corte');
   const paq=typeof SalaSalida!=='undefined'?SalaSalida.paqueteDe(nombre):null;
   const terminada=publicada||(!!t&&(t.laminas||[]).length>0&&!abiertas.length&&(!deVideo||!colaViva));
-  hoja(`<div class="arb-ficha"><h3>${esc(nombre)}</h3><p class="arb-sub">${terminada?(publicada?'<b class="ok-tag">Publicada ✓</b>':paq?'<b class="ok-tag">Lista para publicar ✓</b> — imágenes y texto en Drive':'<b class="ok-tag">Imágenes aprobadas ✓</b> — falta su texto; lo escribe el consejo'):'en producción · '+esc(quefaltaPara(t,g,false))}</p>
+  hoja(`<div class="arb-ficha"><h3>${esc(nombre)}</h3><p class="arb-sub">${terminada?(publicada?'<b class="ok-tag">Publicada ✓</b>':paq?'<b class="ok-tag">Lista para lanzar ✓</b> — imágenes y texto en Drive':'<b class="ok-tag">Imágenes aprobadas ✓</b> — falta su texto; lo escribe el consejo'):'en producción · '+esc(quefaltaPara(t,g,false))}</p>
     ${paq&&!publicada?`<button class="listo" id="fPublicar">${DECIDE()?'Publicarla →':'Ver el paquete →'}</button>`:''}
     ${terminada&&t?`<button class="${paq&&!publicada?'secund':'listo'}" id="fVerHist">▶ Verla como historia</button>`:''}
     <div class="pasos">
@@ -3261,6 +3298,7 @@ async function guardarMesaLocal(groups,day,publicada=false){
 }
 function retirarMesaLocal(){
   if(typeof SalaMesaLocal!=='undefined') SalaMesaLocal.clear(localStorage);
+  if(typeof SalaSalida!=='undefined') SalaSalida.olvidar();
   _cacheMesa=null; _diaParaCache=null; _mesaPublica=false;
   if(_mesaLocal){ cerrarCapas(); D=null; _pintado=false; if(window.SalaTablero) window.SalaTablero.clear(); }
 }
@@ -3409,7 +3447,7 @@ function pintarEsperandoSheet(){
   if(!_reintentando){ _reintentando=true; reintentarSheet(0) }
 }
 function avisarRespaldo(){
-  if(_mesaLocal){ pintarEstado('cola','Copia disponible · sin conexión; usa Actualizar'); return; }
+  if(_mesaLocal){ pintarEstado('cola','El Sheet no contestó · ves lo último guardado'); return; }
   $('#subt').textContent='Sin señal con el Sheet · te muestro la copia'+((typeof D!=='undefined'&&D&&D.fecha)?' del '+D.fecha:'')+' · consulta de lectura';
   pintarEstado('cola','Sin señal con el Sheet · puedes reintentar');
 }
@@ -3491,6 +3529,7 @@ setInterval(vigilarVersion,600000);
   // Es consulta fechada, nunca una autorización para decidir sobre datos antiguos.
   if(!await abrirMesaLocal())pintarCargando();
   if(!_cacheMesa||_mesaPublica)abrirMesaPublicada();
+  arrancarSalida();   // 9-nov: lo listo para publicar no depende de que el día llegue
   // Catálogo y vistas auxiliares se cargan al pintar la primera carta, sin competir con el día.
   try{ aplicarDia(normalizarDia(await conMarcasDeAntes(await traer(),''))) }
   catch(e){
@@ -3506,7 +3545,16 @@ setInterval(vigilarVersion,600000);
 $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 $('#deshacer').onclick=()=>{ if(!candadoLibre()||!hist.length) return; irA(hist.pop()) };
 $('#verresp').onclick=abrirRespuestas; $('#btnEntrar').onclick=abrirEntrar;
-$('#btnReintentar').onclick=async()=>{ pintarEstado('subiendo','Reintentando…'); await subirCola(); await subir(); };
+$('#btnReintentar').onclick=async()=>{
+  // 9-nov: con la mesa en copia este botón sólo reintentaba SUBIR (y no había nada que subir): la mesa seguía igual.
+  if((_mesaLocal||(D&&D._respaldo))&&!leerLS('sala_cola',[]).length){
+    pintarEstado('subiendo','Preguntando al Sheet…');
+    if(typeof SalaSalida!=='undefined') SalaSalida.actualizar();
+    if(window.SalaTablero) await window.SalaTablero.refresh(true);
+    if(_mesaLocal||(D&&D._respaldo)) avisarRespaldo();
+    return;
+  }
+  pintarEstado('subiendo','Reintentando…'); await subirCola(); await subir(); };
 document.addEventListener('keydown',e=>{ if(document.body.classList.contains('sala-tablero')||CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.key==='ArrowRight'&&$('#btnSi')&&$('#btnSi').hidden) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
   if(e.key==='ArrowRight') decidir('si'); if(e.key==='ArrowLeft') decidir('no') });
 const _bProdAct=$('#prodActualizar'); if(_bProdAct) _bProdAct.onclick=()=>{ _tCola=_tFab=_tIdeas=0; pintarProduccion() };
@@ -3516,7 +3564,7 @@ setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subir
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); _tSubir=null; subir() } } });
 window.addEventListener('resize',()=>{ if(DECIDE()) pintarPanel(); else pintarPanelMira() });
 </script>
-<script src="sala-salida.js?v=20261109-salida1"></script>
-<script src="tablero-sala.js?v=20261020-progresivo"></script>
+<script src="sala-salida.js?v=20261109-monton2"></script>
+<script src="tablero-sala.js?v=20261109-plegada"></script>
 <script src="sala2.js" defer></script>
 </body></html>

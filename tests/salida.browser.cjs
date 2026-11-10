@@ -1,4 +1,5 @@
-/* Salida de la Sala corta en el navegador: lo listo para publicar, la hoja de publicar y «Ya la publiqué».
+/* Salida de la Sala corta en el navegador: el montón listo para lanzar (orden, ritmo, arranque), la hoja de publicar
+   y «Ya la publiqué».
    Datos sintéticos; ninguna petición sale de la máquina y las escrituras se interceptan y se cuentan. */
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..');
@@ -20,6 +21,24 @@ const expedientes=()=>({'Pieza Uno':{pieza:'Pieza Uno',estado:'lista',portada:'l
   copy:{texto:TEXTO,instagram:TEXTO+'\n(la liga te espera en el primer comentario)',comentario:LIGA_IG,facebook:TEXTO+'\n'+LIGA_FB,revision:['Lámina 3: el fondo se ve ajeno.']},hitos:[]}});
 const dia=rol=>({fecha:'2026-11-09',rol,quien:'Editor sintético',propuestas:[],decisiones:{editores:[],propuestas:{}},produccion:[]});
 
+/* el sitio y sus datos públicos, iguales para los dos recorridos */
+async function estatico(route,u,rol){
+ if(u.hostname!=='127.0.0.1')return route.fulfill({body:'',contentType:'application/javascript'});
+ if(u.pathname==='/version-online.json')return route.fulfill({json:{}});
+ if(u.pathname==='/datos/medios-publicos.json')return route.fulfill({status:404,body:''});
+ if(u.pathname==='/datos/manifiesto.json')return route.fulfill({json:dia(rol)});
+ if(u.pathname==='/datos/tiras/index.json')return route.fulfill({json:PIEZAS.map(p=>p[0])});
+ if(u.pathname==='/datos/mesa-estado.json')return route.fulfill({json:{schema:1,revisado_en:'2026-11-09T22:00:00Z',
+   publicaciones:PIEZAS.map(p=>({id:p[0],laminas:Array.from({length:p[4]},(_,i)=>({n:i+1,estado:'aprobada'}))}))}});
+ const t=PIEZAS.find(p=>u.pathname==='/datos/tiras/'+p[0]+'.json');
+ if(t)return route.fulfill({json:tira(t)});
+ if(u.pathname==='/datos/universo/universo.json')return route.fulfill({json:{formato:{segundos:15},vertices:{ppp:{nombre:'Plan de Potencial'}},personajes:{marta:{nombre:'Marta',papel:'cliente'}},lugares:{terreno:{nombre:'El terreno'}},
+   historias:{h1:{titulo:'Historia sintética',vertice:'ppp',personajes:['marta'],lugar:'terreno',dialogo:'Una línea de prueba.'}}}});
+ if(u.pathname.startsWith('/datos/'))return route.fulfill({json:u.pathname.endsWith('/index.json')?[]:{}});
+ if(u.pathname.startsWith('/laminas/'))return route.fulfill({body:PNG,contentType:'image/png'});
+ return route.continue();
+}
+
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port+'/';
@@ -39,30 +58,28 @@ const dia=rol=>({fecha:'2026-11-09',rol,quien:'Editor sintético',propuestas:[],
     if(r==='reglas')return route.fulfill({json:{ok:true,reglas:{nube_ejecuta_etapas:'prospecto',salida_excluir:'tres',semillero_activo:'0'},motores:[]}});
     return route.fulfill({json:{ok:true,cola:[],fabrica:[],ideas:[]}});
    }
-   if(u.hostname!=='127.0.0.1')return route.fulfill({body:'',contentType:'application/javascript'});
-   if(u.pathname==='/version-online.json')return route.fulfill({json:{}});
-   if(u.pathname==='/datos/medios-publicos.json')return route.fulfill({status:404,body:''});
-   if(u.pathname==='/datos/manifiesto.json')return route.fulfill({json:dia(rol)});
-   if(u.pathname==='/datos/tiras/index.json')return route.fulfill({json:PIEZAS.map(p=>p[0])});
-   if(u.pathname==='/datos/mesa-estado.json')return route.fulfill({json:{schema:1,revisado_en:'2026-11-09T22:00:00Z',
-     publicaciones:PIEZAS.map(p=>({id:p[0],laminas:Array.from({length:p[4]},(_,i)=>({n:i+1,estado:'aprobada'}))}))}});
-   const t=PIEZAS.find(p=>u.pathname==='/datos/tiras/'+p[0]+'.json');
-   if(t)return route.fulfill({json:tira(t)});
-   if(u.pathname==='/datos/universo/universo.json')return route.fulfill({json:{formato:{segundos:15},vertices:{ppp:{nombre:'Plan de Potencial'}},personajes:{marta:{nombre:'Marta',papel:'cliente'}},lugares:{terreno:{nombre:'El terreno'}},
-     historias:{h1:{titulo:'Historia sintética',vertice:'ppp',personajes:['marta'],lugar:'terreno',dialogo:'Una línea de prueba.'}}}});
-   if(u.pathname.startsWith('/datos/'))return route.fulfill({json:u.pathname.endsWith('/index.json')?[]:{}});
-   if(u.pathname.startsWith('/laminas/'))return route.fulfill({body:PNG,contentType:'image/png'});
-   return route.continue();
+   return estatico(route,u,rol);
   });
   await page.goto(base);
   // «Te toca» abre con lo listo para publicar, lo que espera texto y lo guardado por regla
   await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
   await page.waitForFunction(()=>document.querySelectorAll('#salidaHoy .sal-pie').length===2,null,{timeout:30000});
-  assert.equal(await page.locator('#salidaHoy h2').textContent(),'1 lista para publicar');
+  assert.equal(await page.locator('#salidaHoy h2').textContent(),'1 lista para lanzar');
+  assert.match(await page.locator('#salidaHoy header p').first().innerText(),/^A 3 por semana alcanza para 1 semana\. Nada sale solo: tú das el clic de publicar\.$/);
   const pies=await page.locator('#salidaHoy .sal-pie').allTextContents();
   assert.match(pies[0],/^2 piezas más ya tienen sus imágenes aprobadas y esperan su texto/);
-  assert.match(pies[1],/^1 pieza guardada hasta que tú decidas: Pieza Tres\./);
-  assert.equal(await page.locator('#salidaHoy .sal-ir').textContent(),rol==='editor'?'Publicar →':'Ver →');
+  assert.match(pies[1],/^1 pieza guardada \(no sale hasta que tú digas; nada se borra\): Pieza Tres\./);
+  assert.equal(await page.locator('#salidaHoy .sal-ir').textContent(),'Abrir →');
+  assert.equal(await page.locator('#salidaHoy .sal-cuando').textContent(),'Semana 1');
+  assert.equal(await page.locator('#salidaHoy .sal-plan').count(),rol==='editor'?1:0,'el plan de salida es de los editores');
+  // con montón y nada por revisar, la mesa se pliega a un renglón; se abre y se vuelve a plegar
+  await page.waitForSelector('#tableroHoy[data-level="plegada"]');
+  assert.equal(await page.locator('.bt-column').count(),0);
+  assert.match(await page.locator('.bt-plegada').innerText(),/LA MESA EDITORIAL\s+4 publicaciones · nada por revisar/);
+  await page.locator('[data-abrir-mesa]').click();await page.waitForSelector('.bt-column');
+  assert.equal(await page.locator('.bt-column').count(),4);
+  await page.locator('[data-plegar]').click();await page.waitForSelector('#tableroHoy[data-level="plegada"]');
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight<3200),'«Te toca» ya no es una pared de páginas aprobadas');
   assert.ok(await page.locator('#salidaHoy .sal-foto img').evaluate(i=>i.complete&&i.naturalWidth>0),'la portada del paquete se ve');
   const box=await page.locator('#salidaHoy .sal').boundingBox();assert.ok(box.x>=0&&box.x+box.width<=width+1,'sin desbordar la pantalla');
 
@@ -71,12 +88,14 @@ const dia=rol=>({fecha:'2026-11-09',rol,quien:'Editor sintético',propuestas:[],
   await page.waitForSelector('#linea .ln-fila',{timeout:30000});
   assert.equal(await page.locator('#vHoy').evaluate(e=>getComputedStyle(e).display),'none','la mesa no tapa «Cómo va»');
   const filas=Object.fromEntries(await page.evaluate(()=>[...document.querySelectorAll('#linea .ln-fila')].map(f=>[f.querySelector('.ln-nom b').textContent,f.querySelector('.ln-rel').innerText.replace(/\s+/g,' ')])));
-  assert.match(filas['Pieza Uno'],/PUBLÍCALA Lista para publicar: 3 imágenes y su texto\./i);
+  assert.match(filas['Pieza Uno'],/^LISTA Lista para lanzar: 3 imágenes y su texto\./i);
+  assert.doesNotMatch(Object.values(filas).join(' '),/publícala|150%/i);
+  assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#linea .ln-nom small')].map(x=>parseInt(x.textContent,10)).filter(n=>!(n>=0&&n<=100))),[],'ningún avance pasa de 100 %');
   assert.match(filas['Pieza Dos'],/Imágenes aprobadas\. Falta su texto\./);
   assert.match(filas['Pieza Tres'],/Guardada: no sale hasta que tú lo digas/);
   assert.match(filas['Pieza Cuatro'],/Imágenes aprobadas\. Falta su texto\./,'con el video en pausa, lo que nació para video camina como carrusel');
   assert.equal(await page.locator('#linea .ln-fila').first().locator('.ln-nom b').textContent(),'Pieza Uno','lo listo para publicar va primero');
-  assert.match(await page.locator('#linea .rel').textContent(),/4 publicaciones abiertas\. 1 está lista para publicar, 2 con imágenes aprobadas esperan su texto, 1 está guardada y espera tu decisión\./);
+  assert.match(await page.locator('#linea .rel').textContent(),/4 publicaciones abiertas\. 1 está lista para lanzar, 2 con imágenes aprobadas esperan su texto, 1 está guardada y espera tu decisión\./);
   assert.match(await page.locator('#universo').innerText(),/HISTORIAS DE 15 SEGUNDOS[\s\S]*Historia sintética[\s\S]*se graba cuando enciendas el video/i);
 
   // la hoja de publicar, desde la Línea
@@ -113,12 +132,125 @@ const dia=rol=>({fecha:'2026-11-09',rol,quien:'Editor sintético',propuestas:[],
    await page.reload();
    await page.waitForFunction(()=>document.querySelectorAll('#salidaHoy .sal-pie').length===2,null,{timeout:30000});
    assert.equal(await page.locator('#salidaHoy .sal-carta').count(),0);
-   assert.equal(await page.locator('#salidaHoy h2').textContent(),'Todavía no hay nada listo para publicar');
+   assert.equal(await page.locator('#salidaHoy h2').textContent(),'Todavía no hay nada listo para lanzar');
+   await page.waitForSelector('.bt-column');   // sin montón, la mesa vuelve a verse entera
    assert.equal(writes.length,1,'recargar no repite la anotación');
    assert.ok(!writes.some(x=>x.accion==='decidir'));
   }
   if(process.env.SALIDA_CAPTURAS&&rol==='editor'){fs.mkdirSync(process.env.SALIDA_CAPTURAS,{recursive:true});await page.screenshot({path:path.join(process.env.SALIDA_CAPTURAS,'salida-'+width+'.png')});}
   assert.deepEqual(errors,[]);console.log(JSON.stringify({width,rol,errors:0,realWrites:0,interceptedWrites:writes.length}));
+  await context.close();
+ }
+ /* ── El montón: se pinta sin esperar al día, el orden / ritmo / arranque son del editor y se guardan en UNA llave
+       de la hoja, y lo último visto se recuerda en el aparato (sólo para quien lo guardó). ── */
+ for(const width of [390,1440]){
+  const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage(),errors=[],writes=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.addInitScript(()=>{if(!localStorage.getItem('sala_clave')){localStorage.setItem('sala_clave','synthetic');localStorage.setItem('sala_rol','editor');localStorage.setItem('sala_guia','1');localStorage.setItem('sala_guia_v3','1');}});
+  const lista=(nombre,orden,slug)=>({pieza:nombre,estado:'lista',portada:`laminas/${slug}/L1.png`,
+   paquete:{carpeta:orden+' · '+nombre,orden,url:'https://drive.google.com/drive/folders/sintetica',formato:'Lámina',slug,sello:String(orden).repeat(12),imagenes:[{n:1,src:`laminas/${slug}/L1.png`,archivo:'01.png',dice:nombre}]},
+   copy:{texto:TEXTO,instagram:TEXTO,comentario:LIGA_IG,facebook:TEXTO,revision:[]},hitos:[]});
+  const hoja={'Pieza A':lista('Pieza A',1,'uno'),'Pieza B':lista('Pieza B',2,'dos'),'Pieza C':lista('Pieza C',3,'tres'),'v4:estado':{x:1}};
+  const modo={dia:'lento',exp:'ok',guardar:'ok'};let diaContestado=false;
+  await page.route('**/*',async route=>{
+   const req=route.request(),u=new URL(req.url());
+   if(req.method()==='POST'){const d=JSON.parse(req.postData()||'{}');writes.push(d);
+    if(d.accion==='expediente'){if(modo.guardar==='rechaza')return route.fulfill({json:{error:'solo el agente'}});hoja[d.pieza]=d.expediente;}
+    return route.fulfill({json:{ok:true}});}
+   if(u.hostname==='script.google.com'){
+    const r=u.searchParams.get('recurso');
+    if(r==='dia'){if(modo.dia==='lento')await new Promise(x=>setTimeout(x,4000));diaContestado=true;return route.fulfill({json:dia('editor')}).catch(()=>{});}
+    if(r==='expedientes'){if(modo.exp==='cuelga')return;if(modo.exp==='cae')return route.abort('failed');return route.fulfill({json:{ok:true,expedientes:hoja}});}
+    if(r==='reglas')return route.fulfill({json:{ok:true,reglas:{nube_ejecuta_etapas:'prospecto',semillero_activo:'0'},motores:[]}});
+    return route.fulfill({json:{ok:true,cola:[],fabrica:[],ideas:[]}});
+   }
+   return estatico(route,u,'editor');
+  });
+  const nombres=()=>page.locator('#salidaHoy .sal-carta b').allTextContents();
+  const escrituras=n=>page.waitForFunction(()=>true).then(async()=>{for(let i=0;i<60&&writes.length<n;i++)await page.waitForTimeout(100);assert.equal(writes.length,n);});
+  await page.goto(base);
+  await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  // 1) el montón no esperó al día, y con una lectura en vuelo la página conserva su forma
+  assert.equal(diaContestado,false,'lo listo para lanzar se pinta antes de que conteste el día');
+  assert.deepEqual(await page.evaluate(()=>{const h=document.documentElement,c=getComputedStyle(h);return [h.classList.contains('trayendo'),c.display,c.position,c.fontSize,Math.round(document.body.getBoundingClientRect().width)===document.documentElement.clientWidth];}),[true,'block','static','16px',true]);
+  assert.deepEqual(await nombres(),['Pieza A','Pieza B','Pieza C']);
+  assert.equal(await page.locator('#salidaHoy h2').textContent(),'3 listas para lanzar');
+  // 2) cambiar el orden: nada se escribe hasta «Guardar el orden»; cancelar no guarda
+  await page.locator('[data-ordenar]').click();
+  await page.locator('.sal-carta.ordenando[data-pieza="Pieza C"] [data-lugar]').selectOption('1');
+  await page.waitForFunction(()=>document.querySelector('#salidaHoy .sal-carta b').textContent==='Pieza C');
+  await page.locator('.sal-carta.ordenando[data-pieza="Pieza B"] [data-paso="-1"]').click();
+  await page.waitForFunction(()=>[...document.querySelectorAll('#salidaHoy .sal-carta b')].map(b=>b.textContent).join()==='Pieza C,Pieza B,Pieza A');
+  assert.equal(writes.length,0);
+  await page.locator('[data-orden-ok]').click();await escrituras(1);
+  assert.deepEqual([writes[0].accion,writes[0].pieza,writes[0].expediente.orden,writes[0].expediente.por_semana,writes[0].expediente.por,writes[0].clave],['expediente','salida:plan',['Pieza C','Pieza B','Pieza A'],3,'editor','synthetic']);
+  await page.waitForFunction(()=>/Plan guardado en el Sheet/.test(document.querySelector('#salidaHoy .sal-estado').textContent));
+  await page.locator('[data-ordenar]').click();
+  await page.locator('.sal-carta.ordenando[data-pieza="Pieza A"] [data-lugar]').selectOption('1');
+  await page.locator('[data-orden-no]').click();
+  assert.deepEqual(await nombres(),['Pieza C','Pieza B','Pieza A']);assert.equal(writes.length,1);
+  // 3) el ritmo: varios toques seguidos son UNA escritura
+  await page.locator('[data-ritmo="1"]').click();await page.locator('[data-ritmo="1"]').click();
+  await page.waitForFunction(()=>/A 5 por semana alcanza para 1 semana/.test(document.querySelector('#salidaHoy header').innerText));
+  await escrituras(2);
+  assert.deepEqual([writes[1].expediente.por_semana,writes[1].expediente.orden],[5,['Pieza C','Pieza B','Pieza A']]);
+  // 4) el día de arranque pone fecha a cada una
+  const futuro=new Date(Date.now()+21*864e5).toISOString().slice(0,10);
+  await page.locator('#salArranque').fill(futuro);await page.locator('#salArranque').dispatchEvent('change');
+  await page.waitForFunction(()=>/desde el .+ alcanza hasta el /.test(document.querySelector('#salidaHoy header').innerText));
+  assert.match(await page.locator('#salidaHoy .sal-cuando').first().textContent(),/^[a-záé]{3} \d{1,2} [a-z]{3}$/);
+  await escrituras(3);assert.equal(writes[2].expediente.arranque,futuro);
+  await page.waitForFunction(()=>/Plan guardado en el Sheet/.test(document.querySelector('#salidaHoy .sal-estado').textContent));
+  // 4b) si la primera sale hoy, «Te toca» lo dice (arranque de hoy y ritmo diario: hoy siempre toca)
+  const hoy=new Date(Date.now()-7*36e5).toISOString().slice(0,10);
+  await page.locator('[data-ritmo="1"]').click();await page.locator('[data-ritmo="1"]').click();
+  await page.locator('#salArranque').fill(hoy);await page.locator('#salArranque').dispatchEvent('change');
+  await page.waitForFunction(()=>/^Hoy toca «Pieza C»\. A 7 por semana/.test(document.querySelector('#salidaHoy header p').innerText));
+  assert.match(await page.locator('#salidaHoy .sal-cuando').first().textContent(),/^Hoy · [a-záé]{3} \d{1,2} [a-z]{3}$/);
+  assert.equal(await page.locator('#salidaHoy .sal-carta.hoy').count(),1);
+  await page.locator('[data-ritmo="-1"]').click();await page.locator('[data-ritmo="-1"]').click();
+  await page.locator('#salArranque').fill(futuro);await page.locator('#salArranque').dispatchEvent('change');
+  await page.waitForFunction(()=>/^A 5 por semana, desde el /.test(document.querySelector('#salidaHoy header p').innerText));
+  assert.equal(await page.locator('#salidaHoy .sal-carta.hoy').count(),0);
+  for(let i=0;i<40&&!(writes.length&&writes[writes.length-1].expediente.arranque===futuro&&writes[writes.length-1].expediente.por_semana===5);i++)await page.waitForTimeout(100);
+  await page.waitForFunction(()=>/Plan guardado en el Sheet/.test(document.querySelector('#salidaHoy .sal-estado').textContent));
+  // 5) la hoja de la pieza dice en qué lugar sale
+  await page.locator('#salidaHoy [data-publicar]').first().click();await page.waitForSelector('.sal-hoja');
+  assert.match(await page.locator('.sal-sub').textContent(),/sale en el lugar 1 de 3 \(/);
+  await page.evaluate(()=>cerrarCapas());
+  // 6) al recargar el plan viene de la hoja; con la hoja colgada, el montón sale de lo que guardó el aparato
+  modo.dia='ok';await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&document.querySelectorAll('#salidaHoy .sal-carta').length===3);
+  assert.deepEqual(await nombres(),['Pieza C','Pieza B','Pieza A']);
+  assert.match(await page.locator('#salidaHoy header').innerText(),/A 5 por semana, desde el /);
+  // lo que YOD OS puede leer de este aparato: cuántas hay y cuándo se vio; ni títulos ni textos
+  const resumen=await page.evaluate(()=>JSON.parse(localStorage.getItem('sala_resumen_v1')));
+  assert.deepEqual(Object.keys(resumen).sort(),['cuando','listas']);assert.equal(resumen.listas,3);assert.ok(Date.now()-resumen.cuando<60000);
+  modo.exp='cuelga';await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  assert.deepEqual(await nombres(),['Pieza C','Pieza B','Pieza A']);
+  assert.match(await page.locator('#salidaHoy .sal-nota').textContent(),/Lo último que este aparato guardó; confirmando con el Sheet/);
+  // 7) si la hoja se cae lo dice y ofrece reintentar; al volver, lo recién empacado entra al final
+  modo.exp='cae';await page.reload();await page.waitForSelector('#salidaHoy .sal-nota [data-releer]',{timeout:30000});
+  assert.match(await page.locator('#salidaHoy .sal-nota').textContent(),/El Sheet no contestó: ves lo último que este aparato guardó/);
+  assert.equal(await page.locator('#salidaHoy .sal-carta').count(),3);
+  hoja['Pieza D']=lista('Pieza D',4,'cuatro');modo.exp='ok';
+  await page.locator('#salidaHoy .sal-nota [data-releer]').click();
+  await page.waitForFunction(()=>document.querySelectorAll('#salidaHoy .sal-carta').length===4,null,{timeout:30000});
+  assert.deepEqual(await nombres(),['Pieza C','Pieza B','Pieza A','Pieza D']);
+  // 8) una llave que la hoja no deja escribir: se dice, y el cambio se queda en el aparato
+  modo.guardar='rechaza';const antes=writes.length;
+  await page.locator('[data-ritmo="-1"]').click();
+  await page.waitForFunction(()=>/todavía no puede guardar el plan/.test(document.querySelector('#salidaHoy .sal-estado').textContent),null,{timeout:15000});
+  assert.equal(writes.length,antes+1);
+  assert.match(await page.locator('#salidaHoy header').innerText(),/A 4 por semana/);
+  // 9) nunca decide ni publica, y sólo escribió el plan
+  assert.deepEqual([...new Set(writes.map(w=>w.accion+':'+w.pieza))],['expediente:salida:plan']);
+  // 10) otra llave en el mismo aparato no ve lo que guardó la primera
+  modo.exp='cuelga';await page.evaluate(()=>localStorage.setItem('sala_clave','otra-llave'));
+  await page.reload();await page.waitForSelector('#tableroHoy .bt-column,#tableroHoy .bt-plegada',{timeout:30000});await page.waitForTimeout(800);
+  assert.equal(await page.locator('#salidaHoy .sal-carta').count(),0,'la copia guardada es de quien la guardó');
+  assert.deepEqual(await page.evaluate(()=>[localStorage.getItem('sala_salida_local_v1'),localStorage.getItem('sala_resumen_v1')]),[null,null]);
+  assert.deepEqual(errors,[]);console.log(JSON.stringify({width,recorrido:'monton',errors:0,realWrites:0,soloElPlan:writes.every(w=>w.accion==='expediente'&&w.pieza==='salida:plan')}));
   await context.close();
  }}finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
