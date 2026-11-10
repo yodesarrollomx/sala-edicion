@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>graphify - graph.html</title>
+<script src="https://unpkg.com/vis-network@9.1.6/standalone/umd/vis-network.min.js"
+        integrity="sha384-Ux6phic9PEHJ38YtrijhkzyJ8yQlH8i/+buBR8s3mAZOJrP1gwyvAcIYl3GWtpX1"
+        crossorigin="anonymous"></script>
+<style>
+  :root {
+    --bg: #0f0f1a; --panel: #1a1a2e; --border: #2a2a4e; --input-border: #3a3a5e;
+    --text: #e0e0e0; --text-2: #aaa; --text-3: #ccc; --muted: #555; --count: #666;
+    --neighbor-border: #333; --node-label: #ffffff;
+  }
+  [data-theme="light"] {
+    --bg: #ffffff; --panel: #f8f9fa; --border: #d9dee5; --input-border: #c3cad4;
+    --text: #222222; --text-2: #666666; --text-3: #333333; --muted: #888888; --count: #777777;
+    --neighbor-border: #ccc; --node-label: #222222;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; display: flex; height: 100vh; overflow: hidden; }
+  #graph { flex: 1; }
+  #sidebar { width: 280px; background: var(--panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  #search-wrap { padding: 12px; border-bottom: 1px solid var(--border); }
+  #search { width: 100%; background: var(--bg); border: 1px solid var(--input-border); color: var(--text); padding: 7px 10px; border-radius: 6px; font-size: 13px; outline: none; }
+  #search:focus { border-color: #4E79A7; }
+  #search-results { max-height: 140px; overflow-y: auto; padding: 4px 12px; border-bottom: 1px solid var(--border); display: none; }
+  .search-item { padding: 4px 6px; cursor: pointer; border-radius: 4px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .search-item:hover { background: var(--border); }
+  #info-panel { padding: 14px; border-bottom: 1px solid var(--border); min-height: 140px; }
+  #info-panel h3 { font-size: 13px; color: var(--text-2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  #info-content { font-size: 13px; color: var(--text-3); line-height: 1.6; }
+  #info-content .field { margin-bottom: 5px; }
+  #info-content .field b { color: var(--text); }
+  #info-content .empty { color: var(--muted); font-style: italic; }
+  .neighbor-link { display: block; padding: 2px 6px; margin: 2px 0; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid var(--neighbor-border); }
+  .neighbor-link:hover { background: var(--border); }
+  #neighbors-list { max-height: 160px; overflow-y: auto; margin-top: 4px; }
+  #legend-wrap { flex: 1; overflow-y: auto; padding: 12px; }
+  #legend-wrap h3 { font-size: 13px; color: var(--text-2); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .legend-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; border-radius: 4px; font-size: 12px; }
+  .legend-item:hover { background: var(--border); padding-left: 4px; }
+  .legend-item.dimmed { opacity: 0.35; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .legend-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .legend-count { color: var(--count); font-size: 11px; }
+  #stats { padding: 10px 14px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+  #legend-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 4px 0; }
+  #legend-controls label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; color: var(--text-2); user-select: none; }
+  #legend-controls label:hover { color: var(--text); }
+  .legend-cb, #select-all-cb { appearance: none; -webkit-appearance: none; width: 14px; height: 14px; border: 1.5px solid var(--input-border); border-radius: 3px; background: var(--bg); cursor: pointer; position: relative; flex-shrink: 0; }
+  .legend-cb:checked, #select-all-cb:checked { background: #4E79A7; border-color: #4E79A7; }
+  .legend-cb:checked::after, #select-all-cb:checked::after { content: ''; position: absolute; left: 3.5px; top: 1px; width: 4px; height: 7px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  #select-all-cb:indeterminate { background: #4E79A7; border-color: #4E79A7; }
+  #select-all-cb:indeterminate::after { content: ''; position: absolute; left: 2px; top: 5px; width: 8px; height: 2px; background: #fff; border: none; transform: none; }
+  #theme-wrap { display: flex; gap: 4px; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  #theme-wrap button { flex: 1; background: var(--bg); color: var(--text-2); border: 1px solid var(--input-border); border-radius: 4px; padding: 3px 0; font-size: 11px; cursor: pointer; }
+  #theme-wrap button:hover { color: var(--text); }
+  #theme-wrap button[aria-pressed="true"] { background: #4E79A7; border-color: #4E79A7; color: #fff; }
+</style>
+<script id="graphify-theme-init">
+// Apply the saved theme before first paint (#3894). No saved choice keeps the
+// historical dark look; "system" follows prefers-color-scheme.
+(function () {
+  var pref = null;
+  try { pref = localStorage.getItem('graphify-theme'); } catch (e) {}
+  var t = pref === 'light' ? 'light'
+    : pref === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light'
+    : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+<div id="graph"></div>
+<div id="sidebar">
+  <div id="theme-wrap" role="group" aria-label="Theme">
+    <button type="button" data-theme-choice="light">Light</button>
+    <button type="button" data-theme-choice="dark">Dark</button>
+    <button type="button" data-theme-choice="system">System</button>
+  </div>
+  <div id="search-wrap">
+    <input id="search" type="text" placeholder="Search nodes..." autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+  <div id="info-panel">
+    <h3>Node Info</h3>
+    <div id="info-content"><span class="empty">Click a node to inspect it</span></div>
+  </div>
+  <div id="legend-wrap">
+    <h3>Communities</h3>
+    <div id="legend-controls">
+      <label><input type="checkbox" id="select-all-cb" checked onchange="toggleAllCommunities(!this.checked)">Select All</label>
+    </div>
+    <div id="legend"></div>
+  </div>
+  <div id="stats">35 nodes &middot; 51 edges &middot; 8 communities</div>
+</div>
+<script>
+const RAW_NODES = [{"id": "alejandro", "label": "Alejandro (edita y decide)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "Alejandro (edita y decide)", "community": 0, "community_name": "Personas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "sayri", "label": "Sayri (decide en la mesa de siempre)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 14.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Sayri (decide en la mesa de siempre)", "community": 0, "community_name": "Personas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 1}, {"id": "historias", "label": "historias.html \u00b7 Series \u00b7 Episodios \u00b7 Universo \u00b7 Ajustes", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 35.7, "font": {"size": 12, "color": "#ffffff"}, "title": "historias.html \u00b7 Series \u00b7 Episodios \u00b7 Universo \u00b7 Ajustes", "community": 1, "community_name": "Pantalla nueva: Historias", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 6}, {"id": "universo_ui", "label": "Universo: personajes, lugares, v\u00e9rtices, formato", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "Universo: personajes, lugares, v\u00e9rtices, formato", "community": 1, "community_name": "Pantalla nueva: Historias", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "serie_ui", "label": "Serie: 10 episodios (texto editable, video, s\u00ed / cambio / no)", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 27.1, "font": {"size": 12, "color": "#ffffff"}, "title": "Serie: 10 episodios (texto editable, video, s\u00ed / cambio / no)", "community": 1, "community_name": "Pantalla nueva: Historias", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 4}, {"id": "ajustes_ui", "label": "Ajustes: tope diario, semillero, duraci\u00f3n", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "Ajustes: tope diario, semillero, duraci\u00f3n", "community": 1, "community_name": "Pantalla nueva: Historias", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "gas", "label": "Apps Script /exec (acciones que ya existen)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 40.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Apps Script /exec (acciones que ya existen)", "community": 2, "community_name": "Sheet (sin tocar Apps Script)", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 7}, {"id": "exp_u", "label": "EXPEDIENTES v4:universo (lo escribe el editor)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 27.1, "font": {"size": 12, "color": "#ffffff"}, "title": "EXPEDIENTES v4:universo (lo escribe el editor)", "community": 2, "community_name": "Sheet (sin tocar Apps Script)", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 4}, {"id": "exp_s", "label": "EXPEDIENTES v4:serie:\u003cid> (texto de la historia)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "EXPEDIENTES v4:serie:\u003cid> (texto de la historia)", "community": 2, "community_name": "Sheet (sin tocar Apps Script)", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "exp_d", "label": "EXPEDIENTES v4:dec:\u003cid> (decisiones: s\u00f3lo el editor)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 27.1, "font": {"size": 12, "color": "#ffffff"}, "title": "EXPEDIENTES v4:dec:\u003cid> (decisiones: s\u00f3lo el editor)", "community": 2, "community_name": "Sheet (sin tocar Apps Script)", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 4}, {"id": "exp_p", "label": "EXPEDIENTES v4:prod:\u003cid> (producci\u00f3n: s\u00f3lo la nube)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 27.1, "font": {"size": 12, "color": "#ffffff"}, "title": "EXPEDIENTES v4:prod:\u003cid> (producci\u00f3n: s\u00f3lo la nube)", "community": 2, "community_name": "Sheet (sin tocar Apps Script)", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 4}, {"id": "ideas", "label": "IDEAS pasadas (se leen, no se tocan)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 14.3, "font": {"size": 0, "color": "#ffffff"}, "title": "IDEAS pasadas (se leen, no se tocan)", "community": 2, "community_name": "Sheet (sin tocar Apps Script)", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 1}, {"id": "flujo", "label": "sala-v4.yml (horario + bot\u00f3n)", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 27.1, "font": {"size": 12, "color": "#ffffff"}, "title": "sala-v4.yml (horario + bot\u00f3n)", "community": 3, "community_name": "Nube: un solo flujo", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 4}, {"id": "semillero", "label": "1 \u00b7 Semillero limpio: propone series", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 40.0, "font": {"size": 12, "color": "#ffffff"}, "title": "1 \u00b7 Semillero limpio: propone series", "community": 3, "community_name": "Nube: un solo flujo", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 7}, {"id": "productor", "label": "2 \u00b7 Productor: genera episodios", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 35.7, "font": {"size": 12, "color": "#ffffff"}, "title": "2 \u00b7 Productor: genera episodios", "community": 3, "community_name": "Nube: un solo flujo", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 6}, {"id": "paquete", "label": "3 \u00b7 Paquete: une y deja listo", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 27.1, "font": {"size": 12, "color": "#ffffff"}, "title": "3 \u00b7 Paquete: une y deja listo", "community": 3, "community_name": "Nube: un solo flujo", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 4}, {"id": "estado", "label": "4 \u00b7 Estado: qu\u00e9 hizo y qu\u00e9 falta", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "4 \u00b7 Estado: qu\u00e9 hizo y qu\u00e9 falta", "community": 3, "community_name": "Nube: un solo flujo", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "gemini", "label": "Gemini texto (historias y copy)", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "Gemini texto (historias y copy)", "community": 4, "community_name": "Motores", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "omni", "label": "Gemini Omni Flash (video 15 s con voz)", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "Gemini Omni Flash (video 15 s con voz)", "community": 4, "community_name": "Motores", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "ffmpeg", "label": "ffmpeg (\u00faltimo cuadro, uni\u00f3n)", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "ffmpeg (\u00faltimo cuadro, uni\u00f3n)", "community": 4, "community_name": "Motores", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "drive_h", "label": "Drive \u00b7 _HISTORIAS/\u003cserie>/E01-v1.mp4", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "Drive \u00b7 _HISTORIAS/\u003cserie>/E01-v1.mp4", "community": 5, "community_name": "Drive", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "listas", "label": "YOD Editorial/_LISTAS PARA PUBLICAR/\u003cserie>", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "YOD Editorial/_LISTAS PARA PUBLICAR/\u003cserie>", "community": 5, "community_name": "Drive", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "d_semillero", "label": "\u00bfSemillero encendido y faltan propuestas?", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "\u00bfSemillero encendido y faltan propuestas?", "community": 6, "community_name": "Decisiones l\u00f3gicas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "d_serie", "label": "\u00bfLa serie est\u00e1 aprobada?", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 22.9, "font": {"size": 12, "color": "#ffffff"}, "title": "\u00bfLa serie est\u00e1 aprobada?", "community": 6, "community_name": "Decisiones l\u00f3gicas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 3}, {"id": "d_tope", "label": "\u00bfQueda tope de clips hoy? (el gasto m\u00e1ximo)", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 27.1, "font": {"size": 12, "color": "#ffffff"}, "title": "\u00bfQueda tope de clips hoy? (el gasto m\u00e1ximo)", "community": 6, "community_name": "Decisiones l\u00f3gicas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 4}, {"id": "d_orden", "label": "\u00bfCu\u00e1l es el siguiente episodio sin video o con \u00abcambio\u00bb?", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 22.9, "font": {"size": 12, "color": "#ffffff"}, "title": "\u00bfCu\u00e1l es el siguiente episodio sin video o con \u00abcambio\u00bb?", "community": 6, "community_name": "Decisiones l\u00f3gicas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 3}, {"id": "d_bloque", "label": "\u00bfEpisodio de 15 s o bloque de 30 s (dos tomas)?", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "\u00bfEpisodio de 15 s o bloque de 30 s (dos tomas)?", "community": 6, "community_name": "Decisiones l\u00f3gicas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "d_continua", "label": "\u00bfMisma escena que el anterior? Arranca en su \u00faltimo cuadro", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 22.9, "font": {"size": 12, "color": "#ffffff"}, "title": "\u00bfMisma escena que el anterior? Arranca en su \u00faltimo cuadro", "community": 6, "community_name": "Decisiones l\u00f3gicas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 3}, {"id": "d_veto", "label": "\u00bfTrae ubicaci\u00f3n vetada? Se rechaza", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "\u00bfTrae ubicaci\u00f3n vetada? Se rechaza", "community": 6, "community_name": "Decisiones l\u00f3gicas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "d_cambio", "label": "\u00bfEl editor pidi\u00f3 cambio? Versi\u00f3n nueva con su nota", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "\u00bfEl editor pidi\u00f3 cambio? Versi\u00f3n nueva con su nota", "community": 6, "community_name": "Decisiones l\u00f3gicas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "d_completa", "label": "\u00bfLos 10 episodios tienen \u00abs\u00ed\u00bb?", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 22.9, "font": {"size": 12, "color": "#ffffff"}, "title": "\u00bfLos 10 episodios tienen \u00abs\u00ed\u00bb?", "community": 6, "community_name": "Decisiones l\u00f3gicas", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 3}, {"id": "k_mesa", "label": "La Sala de siempre (l\u00e1minas y carruseles)", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "La Sala de siempre (l\u00e1minas y carruseles)", "community": 7, "community_name": "Lo que se conserva", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}, {"id": "k_inviolables", "label": "Reglas inviolables y candados", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 14.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Reglas inviolables y candados", "community": 7, "community_name": "Lo que se conserva", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 1}, {"id": "k_pausa", "label": "Video viejo en pausa (COLA, Wan, Kokoro)", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 14.3, "font": {"size": 0, "color": "#ffffff"}, "title": "Video viejo en pausa (COLA, Wan, Kokoro)", "community": 7, "community_name": "Lo que se conserva", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 1}, {"id": "k_publicar", "label": "Publicar: siempre el clic de Direcci\u00f3n", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 18.6, "font": {"size": 12, "color": "#ffffff"}, "title": "Publicar: siempre el clic de Direcci\u00f3n", "community": 7, "community_name": "Lo que se conserva", "source_file": "docs/grafos/construir.py", "file_type": "doc", "degree": 2}];
+const RAW_EDGES = [{"from": "alejandro", "to": "historias", "label": "entra con su llave", "title": "entra con su llave [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "sayri", "to": "k_mesa", "label": "sigue igual", "title": "sigue igual [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "historias", "to": "universo_ui", "label": "puerta", "title": "puerta [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "historias", "to": "serie_ui", "label": "puerta", "title": "puerta [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "historias", "to": "ajustes_ui", "label": "puerta", "title": "puerta [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "universo_ui", "to": "gas", "label": "guarda (accion expediente)", "title": "guarda (accion expediente) [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "serie_ui", "to": "gas", "label": "guarda texto y decisi\u00f3n", "title": "guarda texto y decisi\u00f3n [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ajustes_ui", "to": "gas", "label": "guarda", "title": "guarda [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "gas", "to": "exp_u", "label": "escribe", "title": "escribe [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "gas", "to": "exp_s", "label": "escribe", "title": "escribe [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "gas", "to": "exp_d", "label": "escribe", "title": "escribe [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "gas", "to": "historias", "label": "lee expedientes al instante", "title": "lee expedientes al instante [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "exp_u", "to": "d_semillero", "label": "define", "title": "define [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "exp_u", "to": "semillero", "label": "personajes, lugares, v\u00e9rtices", "title": "personajes, lugares, v\u00e9rtices [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "exp_u", "to": "d_tope", "label": "define el tope", "title": "define el tope [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "exp_d", "to": "d_serie", "label": "responde", "title": "responde [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "exp_d", "to": "d_cambio", "label": "trae la nota", "title": "trae la nota [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "exp_d", "to": "d_completa", "label": "responde", "title": "responde [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "exp_p", "to": "d_tope", "label": "cuenta lo gastado hoy", "title": "cuenta lo gastado hoy [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "exp_p", "to": "serie_ui", "label": "aparece para revisar", "title": "aparece para revisar [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ideas", "to": "semillero", "label": "nutren", "title": "nutren [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "flujo", "to": "semillero", "label": "paso 1", "title": "paso 1 [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "flujo", "to": "productor", "label": "paso 2", "title": "paso 2 [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "flujo", "to": "paquete", "label": "paso 3", "title": "paso 3 [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "flujo", "to": "estado", "label": "paso 4", "title": "paso 4 [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "semillero", "to": "d_semillero", "label": "pregunta", "title": "pregunta [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "semillero", "to": "gemini", "label": "pide 10 episodios", "title": "pide 10 episodios [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "semillero", "to": "d_veto", "label": "pasa por", "title": "pasa por [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "semillero", "to": "exp_s", "label": "propone serie", "title": "propone serie [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "productor", "to": "d_serie", "label": "pregunta", "title": "pregunta [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "productor", "to": "d_veto", "label": "pasa por", "title": "pasa por [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "productor", "to": "exp_p", "label": "anota versi\u00f3n y liga", "title": "anota versi\u00f3n y liga [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "paquete", "to": "d_completa", "label": "pregunta", "title": "pregunta [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "paquete", "to": "gemini", "label": "escribe el copy", "title": "escribe el copy [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "paquete", "to": "listas", "label": "deja el paquete", "title": "deja el paquete [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "estado", "to": "exp_p", "label": "deja el resumen", "title": "deja el resumen [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "omni", "to": "drive_h", "label": "guarda el video", "title": "guarda el video [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "drive_h", "to": "serie_ui", "label": "se ve ah\u00ed mismo", "title": "se ve ah\u00ed mismo [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "listas", "to": "k_publicar", "label": "espera", "title": "espera [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "d_serie", "to": "d_tope", "label": "s\u00ed", "title": "s\u00ed [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "d_tope", "to": "d_orden", "label": "s\u00ed", "title": "s\u00ed [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "d_orden", "to": "d_bloque", "label": "elige", "title": "elige [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "d_bloque", "to": "d_continua", "label": "por toma", "title": "por toma [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "d_continua", "to": "ffmpeg", "label": "saca el \u00faltimo cuadro", "title": "saca el \u00faltimo cuadro [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "d_continua", "to": "omni", "label": "pide el clip", "title": "pide el clip [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "d_cambio", "to": "d_orden", "label": "vuelve a la fila", "title": "vuelve a la fila [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "d_completa", "to": "ffmpeg", "label": "une los 10", "title": "une los 10 [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "k_mesa", "to": "historias", "label": "liga en el men\u00fa", "title": "liga en el men\u00fa [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "k_inviolables", "to": "productor", "label": "siguen mandando", "title": "siguen mandando [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "k_pausa", "to": "productor", "label": "no se reactiva: es otro camino", "title": "no se reactiva: es otro camino [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "k_publicar", "to": "alejandro", "label": "su clic", "title": "su clic [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}];
+const LEGEND = [{"cid": 0, "color": "#4E79A7", "label": "Personas", "count": 2}, {"cid": 1, "color": "#F28E2B", "label": "Pantalla nueva: Historias", "count": 4}, {"cid": 2, "color": "#E15759", "label": "Sheet (sin tocar Apps Script)", "count": 6}, {"cid": 3, "color": "#76B7B2", "label": "Nube: un solo flujo", "count": 5}, {"cid": 4, "color": "#59A14F", "label": "Motores", "count": 3}, {"cid": 5, "color": "#EDC948", "label": "Drive", "count": 2}, {"cid": 6, "color": "#B07AA1", "label": "Decisiones l\u00f3gicas", "count": 9}, {"cid": 7, "color": "#FF9DA7", "label": "Lo que se conserva", "count": 4}];
+
+// HTML-escape helper — prevents XSS when injecting graph data into innerHTML
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Build vis datasets
+const nodesDS = new vis.DataSet(RAW_NODES.map((n, i) => ({
+  id: n.id, label: n.label, color: n.color, size: n.size,
+  font: n.font, title: n.title,
+  // Fermat/golden-angle spiral seed positions (#3699): spreading nodes out
+  // before physics runs keeps avoidOverlap from computing near-zero-distance
+  // repulsion that blows the BarnesHut recursion into a stack overflow on large
+  // graphs. `i` is the map index — physics still settles small graphs identically.
+  x: 30 * Math.sqrt(i) * Math.cos(i * 2.4),
+  y: 30 * Math.sqrt(i) * Math.sin(i * 2.4),
+  community: n.community, community_name: n.community_name,
+  source_file: n.source_file, file_type: n.file_type, degree: n.degree,
+  member_count: n.member_count,
+})));
+
+const edgesDS = new vis.DataSet(RAW_EDGES.map((e, i) => ({
+  id: i, from: e.from, to: e.to,
+  label: '',
+  title: e.title,
+  dashes: e.dashes,
+  width: e.width,
+  color: e.color,
+  arrows: { to: { enabled: true, scaleFactor: 0.5 } },
+})));
+
+const container = document.getElementById('graph');
+const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, {
+  physics: {
+    enabled: true,
+    solver: 'forceAtlas2Based',
+    forceAtlas2Based: {
+      gravitationalConstant: -60,
+      centralGravity: 0.005,
+      springLength: 120,
+      springConstant: 0.08,
+      damping: 0.4,
+      avoidOverlap: 0.8,
+    },
+    stabilization: { iterations: 200, fit: true },
+  },
+  interaction: {
+    hover: true,
+    tooltipDelay: 100,
+    hideEdgesOnDrag: true,
+    navigationButtons: false,
+    keyboard: false,
+  },
+  nodes: { shape: 'dot', borderWidth: 1.5 },
+  edges: { smooth: { type: 'continuous', roundness: 0.2 }, selectionWidth: 3 },
+});
+
+// Theme toggle (#3894): Light / Dark / System, persisted in localStorage.
+const THEME_KEY = 'graphify-theme';
+const themeMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+let themeLabelColor = '#ffffff';  // matches the per-node font color set in Python
+function themePref() {
+  let p = null;
+  try { p = localStorage.getItem(THEME_KEY); } catch (e) {}
+  return (p === 'light' || p === 'dark' || p === 'system') ? p : null;
+}
+function applyTheme(pref) {
+  const t = pref === 'light' ? 'light' : (pref === 'system' && themeMQ && themeMQ.matches) ? 'light' : 'dark';
+  const root = document.documentElement;
+  if (!root) return;
+  root.setAttribute('data-theme', t);
+  document.querySelectorAll('[data-theme-choice]').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.themeChoice === (pref || 'dark')));
+  });
+  const labelColor = getComputedStyle(root).getPropertyValue('--node-label').trim();
+  if (labelColor && labelColor !== themeLabelColor) {
+    themeLabelColor = labelColor;
+    nodesDS.update(nodesDS.get().map(n => ({ id: n.id, font: Object.assign({}, n.font, { color: labelColor }) })));
+  }
+}
+document.querySelectorAll('[data-theme-choice]').forEach(b => {
+  b.addEventListener('click', () => {
+    const pref = b.dataset.themeChoice;
+    try { localStorage.setItem(THEME_KEY, pref); } catch (e) {}
+    applyTheme(pref);
+  });
+});
+if (themeMQ) {
+  const onSchemeChange = () => { if (themePref() === 'system') applyTheme('system'); };
+  if (themeMQ.addEventListener) themeMQ.addEventListener('change', onSchemeChange);
+  else if (themeMQ.addListener) themeMQ.addListener(onSchemeChange);
+}
+applyTheme(themePref());
+
+network.once('stabilizationIterationsDone', () => {
+  network.setOptions({ physics: { enabled: false } });
+});
+
+function showInfo(nodeId) {
+  const n = nodesDS.get(nodeId);
+  if (!n) return;
+  const neighborIds = network.getConnectedNodes(nodeId);
+  const neighborItems = neighborIds.map(nid => {
+    const nb = nodesDS.get(nid);
+    const color = nb ? nb.color.background : '#555';
+    return `<span class="neighbor-link" style="border-left-color:${esc(color)}" data-nid="${esc(nid)}">${esc(nb ? nb.label : nid)}</span>`;
+  }).join('');
+  const isMetaNode = !n.file_type && !n.source_file;
+  let html = `<div class="field"><b>${esc(n.label)}</b></div>`;
+  if (!isMetaNode) {
+    html += `<div class="field">Type: ${esc(n.file_type || 'unknown')}</div>`;
+  }
+  html += `<div class="field">Community: ${esc(n.community_name || '')}</div>`;
+  if (!isMetaNode) {
+    html += `<div class="field">Source: ${esc(n.source_file || '-')}</div>`;
+  } else if (n.member_count !== undefined && n.member_count !== null) {
+    html += `<div class="field">Members: ${esc(n.member_count)}</div>`;
+  }
+  html += `<div class="field">Degree: ${n.degree}</div>`;
+  if (neighborIds.length) {
+    html += `<div class="field" style="margin-top:8px;color:var(--text-2);font-size:11px">Neighbors (${neighborIds.length})</div><div id="neighbors-list">${neighborItems}</div>`;
+  }
+  document.getElementById('info-content').innerHTML = html;
+}
+
+function focusNode(nodeId) {
+  network.focus(nodeId, { scale: 1.4, animation: true });
+  network.selectNodes([nodeId]);
+  showInfo(nodeId);
+}
+
+// Neighbor links use a data attribute + one delegated listener rather than an
+// inline onclick. A node id/label sourced from a document or a scraped URL
+// (graphify add) can contain a double-quote; dropping the stringified id
+// unescaped into a quoted onclick both broke every link and allowed a hostile
+// source to inject an event handler into the local report (stored XSS, #1838).
+// esc() on data-nid keeps the value inside the attribute; the listener reads it
+// back verbatim. Bound to document so it survives the innerHTML rebuild that
+// recreates #neighbors-list on each showInfo().
+document.addEventListener('click', e => {
+  const el = e.target.closest('.neighbor-link');
+  if (el && el.dataset.nid !== undefined) focusNode(el.dataset.nid);
+});
+
+// Sidebar tooltips reuse vis-network's .vis-tooltip style and 100ms tooltipDelay.
+// Names get one only when CSS ellipsis truncates them (the full text is still in
+// the DOM); counts always get one, to say what the number is. Text is set with
+// textContent only (labels are untrusted). Delegated on document so rows rebuilt
+// later (search results, showInfo()) are covered.
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'vis-tooltip';
+sidebarTip.style.cssText = 'white-space: normal; max-width: 360px; overflow-wrap: break-word;';
+document.body.appendChild(sidebarTip);
+let sidebarTipTimer = null;
+let sidebarTipEl = null;    // element whose text the tooltip shows
+let sidebarTipZone = null;  // element the pointer must leave to hide it
+function hideSidebarTip() {
+  clearTimeout(sidebarTipTimer);
+  sidebarTip.style.visibility = 'hidden';
+  sidebarTip.textContent = '';
+  sidebarTipEl = sidebarTipZone = null;
+}
+document.addEventListener('mouseover', e => {
+  const zone = e.target.closest && e.target.closest('.legend-count, .legend-item, .search-item, .neighbor-link');
+  // Anywhere on a legend row except its count (dot, checkbox, gaps, padding)
+  // stands for the row's name, so moving within the row never re-triggers it.
+  const el = zone && zone.classList.contains('legend-item') ? zone.querySelector('.legend-label') : zone;
+  if (!el || el === sidebarTipEl) return;
+  hideSidebarTip();
+  const isCount = el.classList.contains('legend-count');
+  if (!isCount && el.scrollWidth <= el.clientWidth) return;
+  const text = isCount ? `${el.textContent} ${el.textContent === '1' ? 'node' : 'nodes'}` : el.textContent;
+  sidebarTipEl = el;
+  sidebarTipZone = zone;
+  const x = e.clientX, y = e.clientY;
+  sidebarTipTimer = setTimeout(() => {
+    sidebarTip.textContent = text;
+    sidebarTip.style.left = sidebarTip.style.top = '0px';  // measure at full max-width
+    sidebarTip.style.visibility = 'visible';
+    const w = sidebarTip.offsetWidth, h = sidebarTip.offsetHeight;
+    sidebarTip.style.left = Math.max(4, Math.min(x + 12, window.innerWidth - w - 4)) + 'px';
+    sidebarTip.style.top = (y + 16 + h > window.innerHeight ? Math.max(4, y - h - 8) : y + 16) + 'px';
+  }, 100);
+});
+document.addEventListener('mouseout', e => {
+  if (sidebarTipZone && !sidebarTipZone.contains(e.relatedTarget)) hideSidebarTip();
+});
+// A click rebuilds or hides the row (showInfo(), search pick) without a mouseout.
+document.addEventListener('mousedown', hideSidebarTip);
+
+// Track hovered node — hover detection is more reliable than click params
+let hoveredNodeId = null;
+network.on('hoverNode', params => {
+  hoveredNodeId = params.node;
+  container.style.cursor = 'pointer';
+});
+network.on('blurNode', () => {
+  hoveredNodeId = null;
+  container.style.cursor = 'default';
+});
+container.addEventListener('click', () => {
+  if (hoveredNodeId !== null) {
+    showInfo(hoveredNodeId);
+    network.selectNodes([hoveredNodeId]);
+  }
+});
+network.on('click', params => {
+  if (params.nodes.length > 0) {
+    showInfo(params.nodes[0]);
+  } else if (hoveredNodeId === null) {
+    document.getElementById('info-content').innerHTML = '<span class="empty">Click a node to inspect it</span>';
+  }
+});
+
+const searchInput = document.getElementById('search');
+const searchResults = document.getElementById('search-results');
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  searchResults.innerHTML = '';
+  if (!q) { searchResults.style.display = 'none'; return; }
+  const matches = RAW_NODES.filter(n => n.label.toLowerCase().includes(q)).slice(0, 20);
+  if (!matches.length) { searchResults.style.display = 'none'; return; }
+  searchResults.style.display = 'block';
+  matches.forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'search-item';
+    el.textContent = n.label;
+    el.style.borderLeft = `3px solid ${n.color.background}`;
+    el.style.paddingLeft = '8px';
+    el.onclick = () => {
+      network.focus(n.id, { scale: 1.5, animation: true });
+      network.selectNodes([n.id]);
+      showInfo(n.id);
+      searchResults.style.display = 'none';
+      searchInput.value = '';
+    };
+    searchResults.appendChild(el);
+  });
+});
+document.addEventListener('click', e => {
+  if (!searchResults.contains(e.target) && e.target !== searchInput)
+    searchResults.style.display = 'none';
+});
+
+const hiddenCommunities = new Set();
+
+const selectAllCb = document.getElementById('select-all-cb');
+
+function updateSelectAllState() {
+  const total = LEGEND.length;
+  const hidden = hiddenCommunities.size;
+  selectAllCb.checked = hidden === 0;
+  selectAllCb.indeterminate = hidden > 0 && hidden < total;
+}
+
+function toggleAllCommunities(hide) {
+  document.querySelectorAll('.legend-item').forEach(item => {
+    hide ? item.classList.add('dimmed') : item.classList.remove('dimmed');
+  });
+  document.querySelectorAll('.legend-cb').forEach(cb => {
+    cb.checked = !hide;
+  });
+  LEGEND.forEach(c => {
+    if (hide) hiddenCommunities.add(c.cid); else hiddenCommunities.delete(c.cid);
+  });
+  const updates = RAW_NODES.map(n => ({ id: n.id, hidden: hide }));
+  nodesDS.update(updates);
+  updateSelectAllState();
+}
+
+const legendEl = document.getElementById('legend');
+LEGEND.forEach(c => {
+  const item = document.createElement('div');
+  item.className = 'legend-item';
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.className = 'legend-cb';
+  cb.checked = true;
+  cb.addEventListener('change', (e) => {
+    e.stopPropagation();
+    if (cb.checked) {
+      hiddenCommunities.delete(c.cid);
+      item.classList.remove('dimmed');
+    } else {
+      hiddenCommunities.add(c.cid);
+      item.classList.add('dimmed');
+    }
+    const updates = RAW_NODES
+      .filter(n => n.community === c.cid)
+      .map(n => ({ id: n.id, hidden: !cb.checked }));
+    nodesDS.update(updates);
+    updateSelectAllState();
+  });
+  item.innerHTML = `<div class="legend-dot" style="background:${c.color}"></div>
+    <span class="legend-label">${c.label}</span>
+    <span class="legend-count">${c.count}</span>`;
+  item.prepend(cb);
+  item.onclick = (e) => {
+    if (e.target === cb) return;
+    cb.checked = !cb.checked;
+    cb.dispatchEvent(new Event('change'));
+  };
+  legendEl.appendChild(item);
+});
+</script>
+<script>
+// Render hyperedges as shaded regions
+const hyperedges = [];
+// afterDrawing passes ctx already transformed to network coordinate space.
+// Draw node positions raw — no manual pan/zoom/DPR math needed.
+
+// Andrew's monotone chain. Returns the hull in counter-clockwise order, which
+// is what the perimeter must be traced in. Collinear and duplicate points
+// collapse to the extremes, so degenerate member sets render as a segment
+// rather than a zero-area crossed path.
+function convexHull(pts) {
+    const p = pts.slice().sort((a, b) => (a.x - b.x) || (a.y - b.y));
+    if (p.length < 3) return p;
+    const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+    const build = seq => {
+        const out = [];
+        for (const q of seq) {
+            while (out.length >= 2 && cross(out[out.length - 2], out[out.length - 1], q) <= 0) out.pop();
+            out.push(q);
+        }
+        out.pop();
+        return out;
+    };
+    const hull = build(p).concat(build(p.slice().reverse()));
+    return hull.length >= 3 ? hull : p;
+}
+network.on('afterDrawing', function(ctx) {
+    hyperedges.forEach(h => {
+        const positions = h.nodes
+            .map(nid => network.getPositions([nid])[nid])
+            .filter(p => p !== undefined);
+        if (positions.length < 2) return;
+        ctx.save();
+        ctx.globalAlpha = 0.12;
+        ctx.fillStyle = '#6366f1';
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // Centroid and expanded hull in network coordinates.
+        // The perimeter must follow hull order, not h.nodes order: tracing the
+        // raw member order self-intersects whenever the layout does not happen
+        // to place members in angular order, filling as crossed wedges.
+        const cx = positions.reduce((s, p) => s + p.x, 0) / positions.length;
+        const cy = positions.reduce((s, p) => s + p.y, 0) / positions.length;
+        const hull = convexHull(positions);
+        const expanded = hull.map(p => ({
+            x: cx + (p.x - cx) * 1.15,
+            y: cy + (p.y - cy) * 1.15
+        }));
+        ctx.moveTo(expanded[0].x, expanded[0].y);
+        expanded.slice(1).forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 0.4;
+        ctx.stroke();
+        // Label
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = '#4f46e5';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(h.label, cx, cy - 5);
+        ctx.restore();
+    });
+});
+</script>
+</body>
+</html>

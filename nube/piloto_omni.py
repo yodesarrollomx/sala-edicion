@@ -53,7 +53,10 @@ def main(argv=None):
         sala.avisar('✗ no existe la historia «%s»; hay: %s' % (a.historia, ', '.join(universo['historias'])))
         return 2
     prompt, segundos = armar(universo, a.historia)
-    contenido_reglas.exigir({'prompt': prompt}, None, 'piloto')   # ubicaciones vetadas
+    malas = contenido_reglas.prohibidas(prompt)                  # ubicaciones vetadas
+    if malas:
+        sala.avisar('✗ ubicación vetada en el prompt: %s' % ', '.join(malas))
+        return 4
     sala.avisar('— prompt (%d s) —\n%s' % (segundos, prompt))
     if a.simular:
         return 0

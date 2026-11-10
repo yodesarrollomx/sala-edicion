@@ -1,0 +1,66 @@
+# Sala 4.0 · historias en episodios de 15 segundos (9-nov-2026).
+# Un solo flujo: semillero → productor → paquete → estado (nube/sala_v4.py).
+# El video se genera con Gemini Omni Flash, DE PAGO. El gasto lo limita el ajuste
+# «tomas por día» que Dirección pone en la pantalla Historias; en 0 no se produce nada.
+# No pasa por la COLA ni por nube_ejecuta_etapas: la línea vieja de video sigue en pausa.
+# Los horarios de GitHub llegan unas cuatro veces al día y con retraso (medido el 9-nov):
+# el horario de abajo es una intención, no un reloj. El botón siempre está.
+name: Sala 4.0 · Historias
+
+on:
+  schedule:
+    - cron: '10 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      simular:
+        description: 'Sólo decir qué haría, sin escribir ni gastar'
+        type: boolean
+        default: false
+      solo:
+        description: 'Correr un solo paso'
+        type: choice
+        options: ['todos', 'semillero', 'productor', 'paquete']
+        default: 'todos'
+
+permissions:
+  contents: read
+
+# Nunca dos corridas a la vez: el documento de producción se lee, se cambia y se escribe.
+concurrency:
+  group: sala-v4
+  cancel-in-progress: false
+
+jobs:
+  historias:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            nube
+            datos/universo
+            datos/ideas.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: ffmpeg (último cuadro y unión de tomas)
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+      - run: pip install --quiet google-auth requests pillow
+      - name: Semillero, productor, paquete y estado
+        working-directory: nube
+        env:
+          SIMULAR: ${{ inputs.simular }}
+          SOLO: ${{ inputs.solo }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: |
+          args=()
+          [ "$SIMULAR" = "true" ] && args+=(--simular)
+          case "$SOLO" in semillero|productor|paquete) args+=(--solo "$SOLO");; esac
+          python3 sala_v4.py "${args[@]}"

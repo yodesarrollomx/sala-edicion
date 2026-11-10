@@ -1,0 +1,1022 @@
+{
+ "directed": true,
+ "multigraph": false,
+ "graph": {
+  "name": "sala-actual"
+ },
+ "nodes": [
+  {
+   "id": "alejandro",
+   "label": "Alejandro (editor)",
+   "norm_label": "alejandro (editor)",
+   "community": 0,
+   "community_name": "Personas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "sayri",
+   "label": "Sayri (editor2)",
+   "norm_label": "sayri (editor2)",
+   "community": 0,
+   "community_name": "Personas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "lector",
+   "label": "Cliente / socio (lector)",
+   "norm_label": "cliente / socio (lector)",
+   "community": 0,
+   "community_name": "Personas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "consejo",
+   "label": "Roast Room (consejo virtual)",
+   "norm_label": "roast room (consejo virtual)",
+   "community": 0,
+   "community_name": "Personas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "sala",
+   "label": "La Sala · index.html (Hoy · Publicaciones · Ajustes)",
+   "norm_label": "la sala · index.html (hoy · publicaciones · ajustes)",
+   "community": 1,
+   "community_name": "Pantalla (GitHub Pages)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "borrador",
+   "label": "Borrador local y cola de envíos",
+   "norm_label": "borrador local y cola de envíos",
+   "community": 1,
+   "community_name": "Pantalla (GitHub Pages)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "respaldo",
+   "label": "Respaldo espejo datos/manifiesto.json",
+   "norm_label": "respaldo espejo datos/manifiesto.json",
+   "community": 1,
+   "community_name": "Pantalla (GitHub Pages)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "gas",
+   "label": "Apps Script /exec",
+   "norm_label": "apps script /exec",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "propuestas",
+   "label": "PROPUESTAS (la mesa)",
+   "norm_label": "propuestas (la mesa)",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "decisiones",
+   "label": "DECISIONES",
+   "norm_label": "decisiones",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "produccion",
+   "label": "PRODUCCION + BITACORA",
+   "norm_label": "produccion + bitacora",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "reglas",
+   "label": "REGLAS",
+   "norm_label": "reglas",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "motores_h",
+   "label": "MOTORES",
+   "norm_label": "motores",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "cola",
+   "label": "COLA de trabajos",
+   "norm_label": "cola de trabajos",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "candados",
+   "label": "CANDADOS (21)",
+   "norm_label": "candados (21)",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "expedientes",
+   "label": "EXPEDIENTES",
+   "norm_label": "expedientes",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "ideas",
+   "label": "IDEAS / ÁRBOL (641 ideas)",
+   "norm_label": "ideas / árbol (641 ideas)",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "correo",
+   "label": "Correo de las 7:00",
+   "norm_label": "correo de las 7:00",
+   "community": 2,
+   "community_name": "Sheet + Apps Script",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "arranque",
+   "label": "Semillero y arranque (ideas, guion, lámina 1)",
+   "norm_label": "semillero y arranque (ideas, guion, lámina 1)",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "mesa",
+   "label": "Montador de la mesa",
+   "norm_label": "montador de la mesa",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "relevo",
+   "label": "Relevo (cosecha el día)",
+   "norm_label": "relevo (cosecha el día)",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "productor",
+   "label": "Productor (abre compuertas, encola)",
+   "norm_label": "productor (abre compuertas, encola)",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "ejecutor",
+   "label": "Ejecutor (escena, voz, corte)",
+   "norm_label": "ejecutor (escena, voz, corte)",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "chinches",
+   "label": "Puente de chinches",
+   "norm_label": "puente de chinches",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "semaforo",
+   "label": "Semáforo de máquinas",
+   "norm_label": "semáforo de máquinas",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "verificar",
+   "label": "Verificar + publicar Pages",
+   "norm_label": "verificar + publicar pages",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "consejo_wf",
+   "label": "Workflow del Roast Room",
+   "norm_label": "workflow del roast room",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "cron",
+   "label": "Horarios de GitHub (46 workflows)",
+   "norm_label": "horarios de github (46 workflows)",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "gemini",
+   "label": "Gemini (texto, voz)",
+   "norm_label": "gemini (texto, voz)",
+   "community": 4,
+   "community_name": "Motores externos",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "wan",
+   "label": "Wan en HuggingFace (escena gratis ≤5 s)",
+   "norm_label": "wan en huggingface (escena gratis ≤5 s)",
+   "community": 4,
+   "community_name": "Motores externos",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "kokoro",
+   "label": "Kokoro (voz local)",
+   "norm_label": "kokoro (voz local)",
+   "community": 4,
+   "community_name": "Motores externos",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "imagen",
+   "label": "Motores de imagen",
+   "norm_label": "motores de imagen",
+   "community": 4,
+   "community_name": "Motores externos",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "ffmpeg",
+   "label": "ffmpeg (corte)",
+   "norm_label": "ffmpeg (corte)",
+   "community": 4,
+   "community_name": "Motores externos",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "drive",
+   "label": "Drive · unidad compartida (_producidos)",
+   "norm_label": "drive · unidad compartida (_producidos)",
+   "community": 5,
+   "community_name": "Drive",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "listas",
+   "label": "YOD Editorial/_LISTAS PARA PUBLICAR",
+   "norm_label": "yod editorial/_listas para publicar",
+   "community": 5,
+   "community_name": "Drive",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "d_rol",
+   "label": "¿Qué rol tiene la llave? (editor decide, agente no)",
+   "norm_label": "¿qué rol tiene la llave? (editor decide, agente no)",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "d_no",
+   "label": "¿Algún editor dijo «no»? El «no» manda",
+   "norm_label": "¿algún editor dijo «no»? el «no» manda",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "d_eje",
+   "label": "¿Es un eje? Se cierra con un solo sí",
+   "norm_label": "¿es un eje? se cierra con un solo sí",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "d_peticion",
+   "label": "¿La pieza tiene petición abierta? Nada avanza",
+   "norm_label": "¿la pieza tiene petición abierta? nada avanza",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "d_etapas",
+   "label": "¿nube_ejecuta_etapas incluye la etapa?",
+   "norm_label": "¿nube_ejecuta_etapas incluye la etapa?",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "d_tope",
+   "label": "¿Queda tope diario del motor?",
+   "norm_label": "¿queda tope diario del motor?",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "d_veto",
+   "label": "¿Trae ubicación vetada? Se rechaza entera",
+   "norm_label": "¿trae ubicación vetada? se rechaza entera",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "d_rehecha",
+   "label": "¿Es rehecha? id nuevo + origen",
+   "norm_label": "¿es rehecha? id nuevo + origen",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "a_video",
+   "label": "Video gratuito rechazado (zoom, voz fea)",
+   "norm_label": "video gratuito rechazado (zoom, voz fea)",
+   "community": 7,
+   "community_name": "Atorones medidos",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "a_salida",
+   "label": "Sin copy ni publicador",
+   "norm_label": "sin copy ni publicador",
+   "community": 7,
+   "community_name": "Atorones medidos",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "a_reloj",
+   "label": "Los horarios llegan ~4 veces al día",
+   "norm_label": "los horarios llegan ~4 veces al día",
+   "community": 7,
+   "community_name": "Atorones medidos",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
+   "id": "a_laminas",
+   "label": "44 % de láminas rechazadas",
+   "norm_label": "44 % de láminas rechazadas",
+   "community": 7,
+   "community_name": "Atorones medidos",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  }
+ ],
+ "links": [
+  {
+   "source": "correo",
+   "target": "alejandro",
+   "relation": "avisa con la liga",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "alejandro",
+   "target": "sala",
+   "relation": "revisa y decide",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "sayri",
+   "target": "sala",
+   "relation": "revisa y decide",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "lector",
+   "target": "sala",
+   "relation": "sólo mira",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "sala",
+   "target": "borrador",
+   "relation": "guarda en el clic",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "borrador",
+   "target": "gas",
+   "relation": "envía decidir",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "sala",
+   "target": "gas",
+   "relation": "lee el día",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "gas",
+   "target": "respaldo",
+   "relation": "si no contesta, la Sala cae aquí",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "gas",
+   "target": "d_rol",
+   "relation": "valida",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_rol",
+   "target": "decisiones",
+   "relation": "editor: escribe",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "gas",
+   "target": "propuestas",
+   "relation": "lee/escribe",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "decisiones",
+   "target": "d_no",
+   "relation": "fusiona por pieza",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_no",
+   "target": "d_eje",
+   "relation": "luego",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "gas",
+   "target": "correo",
+   "relation": "disparo diario",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "cron",
+   "target": "arranque",
+   "relation": "lanza",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "cron",
+   "target": "mesa",
+   "relation": "lanza",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "cron",
+   "target": "relevo",
+   "relation": "lanza",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "cron",
+   "target": "chinches",
+   "relation": "lanza",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "cron",
+   "target": "semaforo",
+   "relation": "lanza",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "cron",
+   "target": "consejo_wf",
+   "relation": "lanza",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "cron",
+   "target": "a_reloj",
+   "relation": "padece",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ideas",
+   "target": "arranque",
+   "relation": "ideas elegidas",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "arranque",
+   "target": "gemini",
+   "relation": "pide guion",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "arranque",
+   "target": "imagen",
+   "relation": "pide lámina 1",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "arranque",
+   "target": "d_veto",
+   "relation": "pasa por",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "arranque",
+   "target": "propuestas",
+   "relation": "propone",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "mesa",
+   "target": "propuestas",
+   "relation": "monta cartas",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "mesa",
+   "target": "d_rehecha",
+   "relation": "si rehace",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "mesa",
+   "target": "imagen",
+   "relation": "rehace láminas con «no»",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "relevo",
+   "target": "decisiones",
+   "relation": "cosecha",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "relevo",
+   "target": "respaldo",
+   "relation": "reescribe",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "relevo",
+   "target": "d_peticion",
+   "relation": "revisa primero",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "productor",
+   "target": "decisiones",
+   "relation": "lee aprobadas",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "productor",
+   "target": "cola",
+   "relation": "encola",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "productor",
+   "target": "reglas",
+   "relation": "lee umbrales",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "cola",
+   "target": "ejecutor",
+   "relation": "trabajos",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ejecutor",
+   "target": "d_etapas",
+   "relation": "pregunta",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ejecutor",
+   "target": "d_tope",
+   "relation": "pregunta",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "motores_h",
+   "target": "d_tope",
+   "relation": "define",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "reglas",
+   "target": "d_etapas",
+   "relation": "define",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ejecutor",
+   "target": "wan",
+   "relation": "escena",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ejecutor",
+   "target": "kokoro",
+   "relation": "voz",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ejecutor",
+   "target": "gemini",
+   "relation": "voz de respaldo",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ejecutor",
+   "target": "ffmpeg",
+   "relation": "corte",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ejecutor",
+   "target": "drive",
+   "relation": "guarda producto",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ejecutor",
+   "target": "produccion",
+   "relation": "reporta",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "wan",
+   "target": "a_video",
+   "relation": "no alcanza el estándar",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "imagen",
+   "target": "a_laminas",
+   "relation": "imagen no cuadra con el texto",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "sala",
+   "target": "produccion",
+   "relation": "chinches y recados",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "produccion",
+   "target": "chinches",
+   "relation": "cosecha",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "chinches",
+   "target": "verificar",
+   "relation": "abre issue",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "consejo_wf",
+   "target": "candados",
+   "relation": "juzga con",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "consejo",
+   "target": "consejo_wf",
+   "relation": "veredictos",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "consejo_wf",
+   "target": "decisiones",
+   "relation": "registra",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "semaforo",
+   "target": "sala",
+   "relation": "publica estado",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "verificar",
+   "target": "sala",
+   "relation": "publica",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "expedientes",
+   "target": "sala",
+   "relation": "historia de piezas",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "propuestas",
+   "target": "listas",
+   "relation": "paquete a mano (9-nov)",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "listas",
+   "target": "alejandro",
+   "relation": "publica él",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "listas",
+   "target": "a_salida",
+   "relation": "no existía",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  }
+ ],
+ "hyperedges": []
+}
