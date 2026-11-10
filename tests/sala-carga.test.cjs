@@ -141,6 +141,8 @@ function sala(){
     NOM_COLA:{prospectos:'las candidatas de lámina',voz:'la voz',escena:'la escena',corte:'el corte'}});
   ctx.esPublicada=nombre=>ctx.publicadas.has(nombre);
   ctx.nomCola=e=>ctx.NOM_COLA[e]||e;
+  ctx.DECIDE=()=>true;
+  vm.runInContext(fs.readFileSync('sala-salida.js','utf8'),ctx);   // la salida real: estado y paquete de cada pieza
   for(const source of [
     block('function normSlug(s){','// una lámina puede tener'),
     block('function ejeEligioLamina(l){','function evidenciaSrc(f){'),
@@ -163,12 +165,53 @@ function sala(){
   return {ctx,piece,render};
 }
 
-test('lámina aprobada sin trabajo en cola pide confirmar texto, sin promesa de producción',async()=>{
+test('lámina aprobada sin paquete dice que falta su texto, sin prometer cuándo',async()=>{
   const s=sala(),z=s.piece(),before=JSON.stringify(z),rendered=await s.render(z);
-  assert.match(rendered,/Texto de publicación por confirmar/);
-  assert.doesNotMatch(rendered,/Productor lo pone|≈|hace después|próxima ronda/);
+  assert.match(rendered,/Imágenes aprobadas\. Falta su texto\./);
+  assert.match(rendered,/Es el paso del consejo/);
+  assert.doesNotMatch(rendered,/Productor lo pone|≈|hace después|próxima ronda|próxima sesión|\d+:\d\d/);
   assert.equal(s.ctx.filaLinea(z).fab,false);
+  assert.equal(s.ctx.filaLinea(z).sal,'texto');
   assert.equal(JSON.stringify(z),before);
+});
+
+test('con el paquete hecho la pieza es de Dirección: «publícala», y va primero',async()=>{
+  const s=sala(),z=s.piece();
+  s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,imagenes:[{n:1,src:'synthetic.png'}]}};
+  const f=s.ctx.filaLinea(z),rendered=await s.render(z);
+  assert.deepEqual([f.lista,f.tuyo,f.quien,f.paso],[true,true,'lista',null]);
+  assert.match(f.que,/^Lista para publicar: 1 imagen y su texto\.$/);
+  assert.match(rendered,/data-lista="1"/);assert.match(rendered,/publícala/);assert.match(rendered,/Publicar →/);
+  assert.match(rendered,/1 está lista para publicar/);
+  assert.deepEqual([...f.segs.map(x=>x.c)],['hecho','hecho','hecho','tu']);
+});
+
+test('una pieza guardada por regla no promete texto: espera la decisión de Dirección',async()=>{
+  const s=sala(),z=s.piece();
+  vm.runInContext("REGLAS_SALA={salida_excluir:'otra, synthetic',nube_ejecuta_etapas:'prospecto'}",s.ctx);
+  const f=s.ctx.filaLinea(z),rendered=await s.render(z);
+  assert.equal(f.sal,'guardada');
+  assert.match(f.que,/Guardada: no sale hasta que tú lo digas/);
+  assert.match(rendered,/1 está guardada y espera tu decisión/);
+  assert.doesNotMatch(rendered,/Es el paso del consejo/);
+});
+
+test('con los paquetes en pausa el relator lo dice',async()=>{
+  const s=sala(),z=s.piece();
+  vm.runInContext("REGLAS_SALA={salida_activa:'0'}",s.ctx);
+  assert.equal(s.ctx.filaLinea(z).cuando,'Los paquetes están en pausa.');
+});
+
+test('con el video en pausa, lo que nació para video camina como carrusel y sus trabajos viejos no cuentan',async()=>{
+  const s=sala(),z=s.piece({voz:[{id:'q1',etapa:'voz',estado:'fallo',evidencia:{error:'cuota'}}]});
+  assert.equal(s.ctx.filaLinea(z).rojo,true,'sin reglas leídas se conserva la lectura de siempre');
+  vm.runInContext("REGLAS_SALA={nube_ejecuta_etapas:'prospecto'}",s.ctx);
+  const f=s.ctx.filaLinea(z);
+  assert.deepEqual([...f.segs.map(x=>x.k)],['guion','laminas','copy','publicada']);
+  assert.deepEqual([f.rojo,f.sal],[false,'texto']);
+  vm.runInContext("REGLAS_SALA={nube_ejecuta_etapas:'voz,escena,corte,prospecto'}",s.ctx);
+  assert.equal(s.ctx.filaLinea(z).segs.length,7);
+  assert.equal(s.ctx.filaLinea(z).rojo,true);
 });
 
 test('una publicación registrada no vuelve a pedir publicarla ni cuenta como abierta',async()=>{
@@ -205,7 +248,7 @@ test('un trabajo en curso conserva su etapa y no promete una terminación sin re
 test('voz, escena y corte hechos no se presentan como producción todavía activa',async()=>{
   const s=sala(),z=s.piece(Object.fromEntries(['voz','escena','corte'].map(etapa=>[etapa,[{id:etapa,etapa,estado:'hecho'}]])));
   const rendered=await s.render(z);
-  assert.match(rendered,/Texto de publicación por confirmar/);
+  assert.match(rendered,/Imágenes aprobadas\. Falta su texto\./);
   assert.doesNotMatch(rendered,/En proceso:|trabajo en cola|pone en cola|≈/);
   assert.equal(s.ctx.filaLinea(z).fab,false);
 });

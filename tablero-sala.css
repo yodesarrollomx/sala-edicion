@@ -1,6 +1,8 @@
 /* Sala: tablero → publicación → opciones. */
 body.sala-tablero[data-vista="hoy"] .app{max-width:none;padding:20px 24px calc(var(--nav) + 24px)}
-body.sala-tablero #vHoy{display:block;max-width:none}
+/* 9-nov: sin [data-vista="hoy"] la mesa seguía pintada encima de «Cómo va» y de Ajustes: en el
+   teléfono había que bajar 15 000 px para encontrar la Línea. La mesa sólo se ve en «Te toca». */
+body.sala-tablero[data-vista="hoy"] #vHoy{display:block;max-width:none}
 body.sala-tablero #vHoy>.cab{padding:0;margin:0}
 body.sala-tablero #vHoy>.cab>#fechaTxt,body.sala-tablero #titulo,body.sala-tablero #subt{display:none}
 body.sala-tablero #vHoy>.cab .fila-estado{justify-content:flex-end;margin:0 0 8px;max-width:100%;min-width:0}

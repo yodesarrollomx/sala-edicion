@@ -15,7 +15,7 @@ Este documento manda sobre las menciones anteriores a horarios y a la línea de 
 | Láminas | 432 juzgadas: 244 sí y 188 no (44 % de rechazo). Motivo más repetido: «La imagen no cuadra con el texto». |
 | Ideas | 641 guardadas, unas 26 elegidas, unas 11 nuevas al día. |
 | Maquinaria | 46 workflows, unas 100 PR automáticas abiertas, 126 ramas de trabajo. |
-| Aprobado sin publicar | 4 carruseles completos y unas 6 láminas sueltas. |
+| Aprobado sin publicar | 4 carruseles completos y unas 6 láminas sueltas. **Corregido ese mismo día con lo que publica la mesa: las 27 piezas vivas tenían todas sus láminas aprobadas (94 imágenes).** |
 
 El cuello no era la aprobación. Era que el video gratuito no alcanza el estándar y que no había
 salida, mientras la maquinaria seguía creciendo.
@@ -97,11 +97,18 @@ comentario con la liga, el texto de Facebook y la revisión contra candados. Nad
 
 ## Lo que sigue (cada uno con su propio cambio y su evidencia)
 
-1. **Consejo de nube, que además es el reloj.** Tarea programada de Claude: lee la mesa, juzga
-   con los candados y manda sus veredictos a `sala-consejo.yml`; la Action los valida y decide
-   con la llave del consejo, que sigue viviendo sólo en los secretos de Actions. Al terminar
-   lanza la mesa y el arranque para que la siguiente ronda salga enseguida.
-2. **Paquete automático** al quedar completa una pieza, con su copy.
+1. **Consejo de nube, que además es el reloj** (`docs/SALA-CONSEJO-NUBE.md`). Tarea programada
+   de Claude: pide el expediente, juzga con los candados y manda sus votos a `sala-consejo.yml`;
+   la Action los valida y decide con la llave del consejo, que sigue viviendo sólo en los
+   secretos de Actions. Al terminar lanza la mesa y el arranque para que la siguiente ronda salga
+   enseguida. El código entra con la parte 2; falta encenderlo (REGLAS `consejo_motores` =
+   `claude`) y crear la tarea, tras su primera sesión comprobada.
+2. **Estación de salida** (`docs/SALA-SALIDA.md`, parte 3): al quedar completa una pieza el
+   jurado escribe su texto y `sala-consejo.yml` · `paquete` arma el paquete y lo anota en la Sala.
+   «Te toca» enseña lo listo para publicar y «Ya la publiqué»; «Cómo va» dice en qué paso va cada
+   pieza. Tres piezas quedan guardadas por regla (`salida_excluir`) hasta que Dirección decida:
+   Las 48 Horas (su imagen promete un plazo), El Apodo del Terreno y Así Se Ve Saber («No va» al
+   video el 20-oct).
 3. **Botón «Publicar»** en la Sala, accionado por Dirección.
 4. **Archivo** de los workflows sobrantes y cierre de las PR automáticas viejas.
 
