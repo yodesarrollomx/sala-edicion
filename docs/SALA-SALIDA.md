@@ -144,7 +144,8 @@ para nunca quedarnos… que vayamos armando un paquete para ir lanzando». Por e
 - **Lo que el plan no nombra** (lo recién empacado) entra al final, por el número de su carpeta.
 - **El calendario** reparte así: 1 → miércoles · 2 → martes y jueves · 3 → lunes, miércoles y viernes ·
   4 → lunes, martes, jueves y viernes · 5 → lunes a viernes · 6 → lunes a sábado · 7 → diario. Si el
-  día de arranque ya pasó, corre desde hoy. Es una guía: **nada sale solo**.
+  día de arranque ya pasó, corre desde hoy. Si a la primera le toca hoy, el montón lo dice («Hoy toca
+  «…»») y resalta su tarjeta. Es una guía: **nada sale solo**.
 - **La mesa se pliega** a un renglón cuando hay montón y nada por revisar («Ver la mesa» la abre). Con
   algo por revisar, o sin montón, se ve entera como antes.
 - El número de la carpeta en Drive es el orden de llegada y **no cambia** al reordenar: la Sala abre

@@ -119,7 +119,7 @@ const corta=f=>{ try{ return new Date(f+'T12:00:00').toLocaleDateString('es-MX',
 const larga=f=>{ try{ return new Date(f+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}).replace(',','') }catch(e){ return f } };
 /* desde cuándo corre el calendario: el arranque que fijó el editor, o hoy si ese día ya pasó */
 function desde(){ return PLAN.arranque?(PLAN.arranque>hoyHmo()?PLAN.arranque:hoyHmo()):'' }
-function cuando(i,fechas){ return fechas[i]?corta(fechas[i]):'Semana '+(Math.floor(i/PLAN.por_semana)+1) }
+function cuando(i,fechas){ return fechas[i]?(fechas[i]===hoyHmo()?'Hoy · ':'')+corta(fechas[i]):'Semana '+(Math.floor(i/PLAN.por_semana)+1) }
 function tarjeta(x,i,fechas,n){
   const img=x.e.portada||(x.p.imagenes[0]||{}).src||'', k=x.p.imagenes.length, foto=miniatura(img);
   const dentro=`<span class="sal-foto">${foto?`<img src="${esc(foto)}" alt="" loading="lazy" decoding="async">`:''}<span class="sal-n">${i+1}</span></span>
@@ -128,7 +128,7 @@ function tarjeta(x,i,fechas,n){
     <span class="sal-mueve"><button type="button" data-paso="-1" aria-label="Sale antes: ${esc(x.nombre)}" ${i?'':'disabled'}>◀</button>
       <select data-lugar aria-label="Lugar de salida de ${esc(x.nombre)}">${Array.from({length:n},(_,j)=>`<option value="${j+1}"${j===i?' selected':''}>${j+1}</option>`).join('')}</select>
       <button type="button" data-paso="1" aria-label="Sale después: ${esc(x.nombre)}" ${i<n-1?'':'disabled'}>▶</button></span></div>`;
-  return `<button class="sal-carta" type="button" data-publicar="${esc(x.nombre)}">${dentro}<span class="sal-ir">Abrir →</span></button>`;
+  return `<button class="sal-carta${fechas[i]===hoyHmo()?' hoy':''}" type="button" data-publicar="${esc(x.nombre)}">${dentro}<span class="sal-ir">Abrir →</span></button>`;
 }
 function resumen(n,fechas){
   const sem=alcance(n,PLAN.por_semana), ritmo=`A ${PLAN.por_semana} por semana`;
@@ -157,7 +157,7 @@ async function pintar(){
     else if(sabe&&(n||espera||guardadas.length)) html=`<section class="sal${ORDEN?' en-orden':''}" aria-label="Listas para publicar">
     <div class="sal-cab"><header><span class="bt-eyebrow">TU MONTÓN</span>
       <h2>${n?cuantas(n,'lista para lanzar','listas para lanzar'):'Todavía no hay nada listo para lanzar'}</h2>
-      <p>${n?resumen(n,fechas)+' Nada sale solo: tú das el clic de publicar.':'En cuanto una pieza tenga sus imágenes aprobadas y su texto, aparece aquí.'}</p>
+      <p>${n?(fechas[0]===hoyHmo()?`Hoy toca <b>«${esc(vista[0].nombre)}»</b>. `:'')+resumen(n,fechas)+' Nada sale solo: tú das el clic de publicar.':'En cuanto una pieza tenga sus imágenes aprobadas y su texto, aparece aquí.'}</p>
       ${!vivo?`<p class="sal-nota">${fallo?'El Sheet no contestó: ves lo último que este aparato guardó.':'Lo último que este aparato guardó; confirmando con el Sheet…'}${fallo?' <button type="button" class="sal-mini" data-releer>Reintentar</button>':''}</p>`:''}</header>
       ${controles(n)}</div>
     ${n?`<div class="sal-rejilla">${vista.map((x,i)=>tarjeta(x,i,fechas,n)).join('')}</div>`:''}
