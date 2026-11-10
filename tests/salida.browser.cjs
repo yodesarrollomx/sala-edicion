@@ -88,12 +88,14 @@ async function estatico(route,u,rol){
   await page.waitForSelector('#linea .ln-fila',{timeout:30000});
   assert.equal(await page.locator('#vHoy').evaluate(e=>getComputedStyle(e).display),'none','la mesa no tapa «Cómo va»');
   const filas=Object.fromEntries(await page.evaluate(()=>[...document.querySelectorAll('#linea .ln-fila')].map(f=>[f.querySelector('.ln-nom b').textContent,f.querySelector('.ln-rel').innerText.replace(/\s+/g,' ')])));
-  assert.match(filas['Pieza Uno'],/PUBLÍCALA Lista para publicar: 3 imágenes y su texto\./i);
+  assert.match(filas['Pieza Uno'],/^LISTA Lista para lanzar: 3 imágenes y su texto\./i);
+  assert.doesNotMatch(Object.values(filas).join(' '),/publícala|150%/i);
+  assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#linea .ln-nom small')].map(x=>parseInt(x.textContent,10)).filter(n=>!(n>=0&&n<=100))),[],'ningún avance pasa de 100 %');
   assert.match(filas['Pieza Dos'],/Imágenes aprobadas\. Falta su texto\./);
   assert.match(filas['Pieza Tres'],/Guardada: no sale hasta que tú lo digas/);
   assert.match(filas['Pieza Cuatro'],/Imágenes aprobadas\. Falta su texto\./,'con el video en pausa, lo que nació para video camina como carrusel');
   assert.equal(await page.locator('#linea .ln-fila').first().locator('.ln-nom b').textContent(),'Pieza Uno','lo listo para publicar va primero');
-  assert.match(await page.locator('#linea .rel').textContent(),/4 publicaciones abiertas\. 1 está lista para publicar, 2 con imágenes aprobadas esperan su texto, 1 está guardada y espera tu decisión\./);
+  assert.match(await page.locator('#linea .rel').textContent(),/4 publicaciones abiertas\. 1 está lista para lanzar, 2 con imágenes aprobadas esperan su texto, 1 está guardada y espera tu decisión\./);
   assert.match(await page.locator('#universo').innerText(),/HISTORIAS DE 15 SEGUNDOS[\s\S]*Historia sintética[\s\S]*se graba cuando enciendas el video/i);
 
   // la hoja de publicar, desde la Línea

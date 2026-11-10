@@ -227,15 +227,41 @@ test('lámina aprobada sin paquete dice que falta su texto, sin prometer cuándo
   assert.equal(JSON.stringify(z),before);
 });
 
-test('con el paquete hecho la pieza es de Dirección: «publícala», y va primero',async()=>{
+test('con el paquete hecho la pieza es de Dirección: «lista», va primero y no apura a publicar',async()=>{
   const s=sala(),z=s.piece();
   s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,imagenes:[{n:1,src:'synthetic.png'}]}};
   const f=s.ctx.filaLinea(z),rendered=await s.render(z);
   assert.deepEqual([f.lista,f.tuyo,f.quien,f.paso],[true,true,'lista',null]);
-  assert.match(f.que,/^Lista para publicar: 1 imagen y su texto\.$/);
-  assert.match(rendered,/data-lista="1"/);assert.match(rendered,/publícala/);assert.match(rendered,/Publicar →/);
-  assert.match(rendered,/1 está lista para publicar/);
+  assert.match(f.que,/^Lista para lanzar: 1 imagen y su texto\.$/);assert.equal(f.cuando,'Toca para abrirla.');
+  assert.match(rendered,/data-lista="1"/);assert.match(rendered,/<span class="quien lista">lista<\/span>/);
+  assert.doesNotMatch(rendered,/publícala|Publicar →|Toca para publicarla/i,'Dirección junta montón antes de lanzar (9-nov)');
+  assert.match(rendered,/1 está lista para lanzar/);
   assert.deepEqual([...f.segs.map(x=>x.c)],['hecho','hecho','hecho','tu']);
+});
+
+test('el avance nunca pasa de 100 %: sólo cuentan las etapas de la línea de esa pieza',async()=>{
+  // nació para video y hoy camina como carrusel: conserva voz, escena y corte hechos
+  const s=sala(),z=s.piece(Object.fromEntries(['voz','escena','corte'].map(etapa=>[etapa,[{id:etapa,etapa,estado:'hecho'}]])));
+  s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,imagenes:[{n:1,src:'synthetic.png'}]}};
+  vm.runInContext("REGLAS_SALA={nube_ejecuta_etapas:'prospecto'}",s.ctx);   // video en pausa: la línea es de 4 etapas
+  const f=s.ctx.filaLinea(z);
+  assert.equal(f.segs.length,4);
+  assert.equal(f.pct,75,'guion, imágenes y texto hechos; falta salir (antes decía 150)');
+  assert.equal(f.pct,Math.round(100*f.segs.filter(x=>x.c==='hecho').length/f.segs.length));
+});
+
+test('en «Cómo va» lo listo sigue el orden de salida de los editores, no el de llegada a Drive',async()=>{
+  const s=sala();
+  const pieza=(nombre,slug,orden)=>{const z=s.piece();const tira={...z.tira,pieza:nombre,pieza_slug:slug};
+    s.ctx.EXP[nombre]={estado:'lista',paquete:{orden,imagenes:[{n:1,src:slug+'.png'}]}};return {...z,slug,nombre,tira};};
+  const a=pieza('Pieza A','a',1),b=pieza('Pieza B','b',2),c=pieza('Pieza C','c',3);
+  const linea=s.ctx.$('#linea');
+  s.ctx.$=sel=>sel==='#salidaHoy'?null:linea;s.ctx.ENTRADO=()=>true;   // aquí sólo se mira la Línea: el montón no tiene dónde pintarse
+  const orden=async()=>{await s.ctx.pintarLinea([a,b,c],'linea',true);return [...linea.innerHTML.matchAll(/data-pieza="([^"]+)"/g)].map(m=>m[1]);};
+  assert.deepEqual(await orden(),['Pieza A','Pieza B','Pieza C']);
+  s.ctx.SalaSalida.llegaron({'salida:plan':{orden:['Pieza C','Pieza A','Pieza B']}});
+  await new Promise(r=>setTimeout(r,5));
+  assert.deepEqual(await orden(),['Pieza C','Pieza A','Pieza B']);
 });
 
 test('una pieza guardada por regla no promete texto: espera la decisión de Dirección',async()=>{

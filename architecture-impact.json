@@ -2,7 +2,7 @@
  "model_revision": "2026-11-09.sala-corta.2",
  "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
  "proposal_id": "CHG-SALA-CORTA-20261109",
- "summary": "La Sala abre bien y enseña primero el montón listo para lanzar. Dirección (9-nov): «trae glitches, no carga bien, está rara, no me gusta el orden… no voy a publicar aún, quiero hacer montón… armando un paquete para ir lanzando». Medido en su navegador: el indicador de carga le ponía a <html> la clase del esqueleto de carta (la página cambiaba de forma en cada lectura); el día en frío tarda 14 s y la Sala esperaba 8 s dos veces; lo listo para publicar sólo se pedía cuando el día llegaba. Cambios, todos en la pantalla (sin tocar Apps Script ni la nube): la clase pasa a llamarse `trayendo`; el día tiene tope propio de 30 s (siguen siendo dos peticiones, sin ciclos); los expedientes y las reglas se piden al abrir, en paralelo, y lo último visto se pinta desde el aparato (copia privada por identidad, 7 días); «Reintentar ahora» vuelve a leer; «Te toca» abre con el montón en rejilla, en orden de salida, con ritmo por semana, día de arranque y orden editables por los editores; ese plan se guarda en EXPEDIENTES con la llave `salida:plan` usando accion=expediente (ya existente; la nube no la escribe); la mesa se pliega a un renglón cuando hay montón y nada por revisar; una publicación de una lámina ya no ocupa toda la pantalla.",
+ "summary": "Pulido de «Cómo va» tras ver el cambio 383 ya publicado en el navegador de Dirección (9-nov). (1) El avance decía «150%»: contaba etapas que ya no son de la línea de esa pieza (una pieza que nació para video y hoy camina como carrusel conserva voz, escena y corte hechos); ahora sólo cuentan las etapas de su línea y nunca pasa de 100. (2) Dirección dijo que no publica todavía y junta montón: las piezas listas ya no dicen «publícala / Toca para publicarla / Publicar →» sino «lista / Lista para lanzar / Abrir →». (3) En «Cómo va» lo listo sigue el orden de salida que fijaron los editores (el del montón), no el de llegada a Drive. (4) La guía de Ajustes explica el montón y su plan. Sólo pantalla; sin cambios en Apps Script, Drive ni la nube.",
  "components": [
   "SYS-SALA",
   "SHEET-SALA",
@@ -12,12 +12,10 @@
   "EXT-DRIVE"
  ],
  "tests": [
-  "node --test tests/*.test.cjs tests/*.test.mjs (183 OK; nuevas: orden con plan, mover, calendario, plan hostil, copia en el aparato sin llaves, arranque de la salida, lectura única de expedientes, clase del indicador, tope del día).",
-  "node tests/salida.browser.cjs (teléfono y escritorio, editor y lector: publicar; y el montón: se pinta antes que el día, la página conserva su forma con una lectura en vuelo, ordenar/cancelar/guardar, ritmo en una sola escritura, arranque con fechas, plan desde la hoja al recargar, hoja colgada y caída con copia del aparato, llave que no puede guardar, otra identidad no ve la copia; sólo escribe `salida:plan`).",
-  "node tests/tablero-sala.browser.cjs · mesa-local.browser.cjs · arranque-progresivo.browser.cjs · sala2.browser.cjs (sin regresión).",
-  "python3 -m unittest discover -s tests -p \"*_test.py\" (727 OK) · python3 nube/verificar.py (todo en orden).",
-  "Réplica local con el sitio publicado y un backend con demoras reales (día 14 s en frío): el montón a los 4.7 s en la primera visita y a 1.4 s en la segunda; el día llega a los 14 s sin clic.",
-  "Pendiente: verlo en el navegador de Dirección tras publicar (tarea SALA-03 del Buzón)."
+  "node --test tests/*.test.cjs tests/*.test.mjs (185 OK; nuevas: el avance nunca pasa de 100 % con el video en pausa, «Cómo va» sigue el orden del plan, lo listo no apura a publicar).",
+  "node tests/salida.browser.cjs (teléfono y escritorio): ninguna fila dice «publícala» ni pasa de 100 %; el resto del recorrido sin cambios.",
+  "node tests/tablero-sala.browser.cjs · mesa-local · arranque-progresivo · sala2 (sin regresión) · python3 nube/verificar.py (todo en orden).",
+  "Visto en vivo antes del cambio (navegador de Dirección, 02:30Z): «150% · 4 etapas» y «PUBLÍCALA» en las 24 filas listas."
  ],
- "rollback": "Revertir el PR devuelve la fila de listas, la mesa abierta y los topes de 8 s. La fila `salida:plan` de EXPEDIENTES puede quedarse (nada más la lee) o borrarse a mano; la copia del aparato (`sala_salida_local_v1`, `sala_salida_plan_v1`) caduca sola. No se toca Apps Script, Drive ni la nube."
+ "rollback": "Revertir el PR devuelve los textos anteriores y el avance sin tope. Nada que restaurar en hojas, Drive ni nube."
 }
