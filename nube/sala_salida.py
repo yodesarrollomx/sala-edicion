@@ -294,6 +294,9 @@ def _es_publicada(e):
                for h in e.get('hitos') or [] if isinstance(h, dict))
 
 
+es_publicada = _es_publicada   # 9-nov: la misma regla, pública, para que la mesa no rehaga una pieza ya publicada
+
+
 def _publicadas_del_repo():
     """Lo que la casa ya registró como publicado antes de la nube («una publicada no vuelve»)."""
     out = set()

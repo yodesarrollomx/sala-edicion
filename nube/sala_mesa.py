@@ -37,6 +37,7 @@ import tempfile
 import sala_cambios as cambios
 import sala_cliente as sala
 import sala_produccion as produccion
+import sala_salida
 from motores import cerebro, imagen
 from motores._comun import MotorError
 from contenido_reglas import ContenidoVetado, exigir, normalizar, prohibidas, ubicaciones
@@ -498,7 +499,8 @@ CAMPOS_SELECCION = ('propuestas_vivas', 'propuestas_con_laminas', 'fuentes_recup
                     'tiras_excluidas_publicadas', 'tiras_sin_fuente_al_procesar',
                     'tiras_sin_laminas_abiertas', 'tiras_con_laminas_abiertas',
                     'laminas_abiertas', 'tiras_sin_laminas_listas',
-                    'tiras_con_validacion_pendiente', 'tiras_con_guion_heredado', 'tiras_preparadas')
+                    'tiras_con_validacion_pendiente', 'tiras_con_guion_heredado', 'tiras_preparadas',
+                    'ordenes_de_cambio', 'ordenes_sin_tira_vigente')
 
 
 def conteos_seleccion(dia, antes, vigentes, recuperadas=0, sin_sheet=False):
@@ -606,10 +608,11 @@ def main():
     cupo_bloqueado = False
     servicio_bloqueado = False
 
-    ordenes = {}
+    ordenes, exp = {}, {}
     if not args.sin_sheet:
         try:
-            ordenes = cambios.leer((sala.get('expedientes') or {}).get('expedientes'))
+            exp = (sala.get('expedientes') or {}).get('expedientes') or {}
+            ordenes = cambios.leer(exp)
         except sala.SalaError as e:
             # Sin esta lectura la mesa hace su trabajo de siempre; las órdenes esperan a la siguiente vuelta.
             sala.avisar('⚠ no pude leer las órdenes de cambio (%s): esta vuelta no reabre láminas aprobadas' % e)
@@ -628,7 +631,15 @@ def main():
     from sala_publicaciones import proyectar
     publicaciones = None if args.sin_sheet else proyectar(piezas, dia_orden, produccion.resolver_tira)
     orden = piezas_por_prioridad(piezas, dia_orden)
+    # 9-nov: las órdenes de las piezas con tira vigente van primero, para que el tope de láminas no las deje esperando.
+    orden = [x for x in orden if x[1][0] in ordenes] + [x for x in orden if x[1][0] not in ordenes]
     seleccion = conteos_seleccion(dia_orden, piezas_antes, piezas, recuperadas, args.sin_sheet)
+    seleccion['ordenes_de_cambio'] = len(ordenes)
+    vigentes_ids = {tid for _, (tid, _t) in orden}
+    for tid_orden in sorted(ordenes):
+        if tid_orden not in vigentes_ids:
+            seleccion['ordenes_sin_tira_vigente'] += 1
+            sala.avisar('⚠ orden de cambio sin tira vigente: %s — no se rehace (la versión ya no es la vigente)' % tid_orden)
     for slug, (tid, t) in orden:
         if args.pieza and slug != args.pieza:
             seleccion['tiras_fuera_filtro_pieza'] += 1
@@ -637,16 +648,23 @@ def main():
         if nombre.lower() in ya_salieron:
             seleccion['tiras_excluidas_publicadas'] += 1
             sala.avisar('· %s: ya publicada, no vuelve a la mesa' % nombre)
+            if tid in ordenes:
+                sala.avisar('⚠ %s: trae una orden de cambio pero ya está publicada; no se rehace' % nombre)
             continue
         if not args.sin_sheet:
             live = {p['id'] for p in contexto_produccion()['propuestas']}
             if tid not in live:
                 seleccion['tiras_sin_fuente_al_procesar'] += 1
+                if tid in ordenes:
+                    sala.avisar('⚠ %s: trae una orden de cambio pero su tira no tiene fuente en el Sheet; no se rehace' % nombre)
                 continue
         if isinstance(t.get('guion'), str):
             seleccion['tiras_con_guion_heredado'] += 1
             sala.avisar('· guion heredado: sólo láminas existentes; continuación visual sin confirmar')
         ord_pieza = cambios.de_tira(ordenes, tid)
+        if ord_pieza and sala_salida.es_publicada(exp.get(nombre)):
+            sala.avisar('⚠ %s: su expediente dice que ya está publicada; la orden de cambio se ignora' % nombre)
+            ord_pieza = {}
         pend = abiertas(tid, t, leer_sheet=not args.sin_sheet, ordenes=ord_pieza)
         if not pend:
             seleccion['tiras_sin_laminas_abiertas'] += 1

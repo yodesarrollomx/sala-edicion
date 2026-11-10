@@ -168,8 +168,10 @@ class MesaTests(unittest.TestCase):
 
 
 class MontadorTests(unittest.TestCase):
-    def correr(self, root, expedientes):
+    def correr(self, root, expedientes, piezas=None, decisiones=None, tope='4'):
         notas = []
+        self.avisos = []
+        piezas = piezas or {'48-horas': (P, tira_de_una())}
 
         def tomas_de_mentira(slug, referencia, lam, nota, reglas, cola, carpeta, cuantas):
             notas.append((lam['n'], nota))
@@ -183,11 +185,12 @@ class MontadorTests(unittest.TestCase):
                      'huella': hashlib.md5(b'imagen-nueva').hexdigest()}], []
 
         dia = {'fecha': '2026-11-10', 'dias': ['2026-11-10'],
-               'propuestas': [{'id': P, 'laminas': ['laminas/t/L1-1.jpg']}], 'decisiones': {'propuestas': {P: si()}}}
+               'propuestas': [{'id': pid, 'laminas': ['laminas/t/L1-1.jpg']} for pid, _ in piezas.values()],
+               'decisiones': {'propuestas': decisiones or {P: si()}}}
 
         def get(recurso, **kw):
             if recurso == 'reglas':
-                return {'reglas': {'mesa_tope_laminas': '4', 'mesa_tomas_por_lamina': '1'}}
+                return {'reglas': {'mesa_tope_laminas': tope, 'mesa_tomas_por_lamina': '1'}}
             if recurso == 'expedientes':
                 if expedientes is None:
                     raise sala.SalaError('el Sheet no contestó')
@@ -199,11 +202,11 @@ class MontadorTests(unittest.TestCase):
                 patch.object(mesa, 'PLAN', root / 'plan.json'), \
                 patch.object(mesa, 'contexto_produccion', return_value=dia), \
                 patch.object(mesa, 'hidratar_tiras_activas', return_value=0), \
-                patch.object(mesa, 'tiras_por_pieza', return_value={'48-horas': (P, tira_de_una())}), \
+                patch.object(mesa, 'tiras_por_pieza', return_value=piezas), \
                 patch.object(mesa, 'publicadas', return_value=set()), \
                 patch.object(mesa, 'producir_tomas', side_effect=tomas_de_mentira), \
                 patch.object(prod, 'peticiones_abiertas', return_value=False), \
-                patch.object(sala, 'avisar'), patch.object(sala, 'post') as post, \
+                patch.object(sala, 'avisar', side_effect=lambda *a, **k: self.avisos.append(' '.join(map(str, a)))), patch.object(sala, 'post') as post, \
                 patch.object(sala, 'get', side_effect=get):
             codigo = mesa.main()
         post.assert_not_called()                                      # producir no monta ni decide
@@ -240,6 +243,50 @@ class MontadorTests(unittest.TestCase):
                 (root / 'datos' / 'tiras').mkdir(parents=True)
                 codigo, cartas, notas = self.correr(root, expedientes)
                 self.assertEqual((codigo, cartas, notas), (0, [], []), expedientes)
+
+    def seleccion(self):
+        linea = next(a for a in self.avisos if a.startswith('selección Mesa:'))
+        return json.loads(linea[len('selección Mesa:'):])
+
+    def _en_tmp(self):
+        td = tempfile.TemporaryDirectory()
+        self.addCleanup(td.cleanup)
+        root = Path(td.name)
+        (root / 'datos' / 'tiras').mkdir(parents=True)
+        return root
+
+    def test_una_orden_sobre_una_tira_que_no_es_la_vigente_se_avisa_y_no_produce(self):
+        vieja = '48-horas-nube-2026-10-01-000000'
+        codigo, cartas, notas = self.correr(self._en_tmp(), {'cambio:48-horas': orden(tira=vieja)})
+        self.assertEqual((codigo, cartas, notas), (0, [], []))
+        sel = self.seleccion()
+        self.assertEqual((sel['ordenes_de_cambio'], sel['ordenes_sin_tira_vigente']), (1, 1))
+        self.assertTrue(any('orden de cambio sin tira vigente: ' + vieja in a for a in self.avisos), self.avisos)
+
+    def test_una_orden_vigente_cuenta_y_no_se_avisa_como_perdida(self):
+        self.correr(self._en_tmp(), {'cambio:48-horas': orden()})
+        sel = self.seleccion()
+        self.assertEqual((sel['ordenes_de_cambio'], sel['ordenes_sin_tira_vigente']), (1, 0))
+        self.assertFalse(any('sin tira vigente' in a for a in self.avisos))
+
+    def test_una_orden_sobre_una_pieza_publicada_segun_su_expediente_se_ignora(self):
+        exp = {'cambio:48-horas': orden(), 'Las 48 Horas': {'estado': 'publicada'}}
+        codigo, cartas, notas = self.correr(self._en_tmp(), exp)
+        self.assertEqual((codigo, cartas, notas), (0, [], []))
+        self.assertTrue(any('Las 48 Horas' in a and 'publicada' in a for a in self.avisos), self.avisos)
+
+    def test_las_piezas_con_orden_van_primero_aunque_el_tope_sea_de_una_lamina(self):
+        # «aaa» (primera por slug) tiene un «no» por rehacer; «zeta» trae la orden: con tope 1 sólo una se produce.
+        pa, pz = 'aaa-arranque-2026-09-24-aaaaaa', 'zeta-arranque-2026-09-24-bbbbbb'
+        ta = dict(tira_de_una(), pieza='Aaa', pieza_slug='aaa')
+        tz = dict(tira_de_una(), pieza='Zeta', pieza_slug='zeta')
+        piezas = {'aaa': (pa, ta), 'zeta': (pz, tz)}
+        decisiones = {pa: {'laminas': ['no'], 'notas': ['más luz']}, pz: si()}
+        exp = {'cambio:zeta': dict(orden(tira=pz), pieza='Zeta')}
+        codigo, cartas, notas = self.correr(self._en_tmp(), exp, piezas=piezas, decisiones=decisiones, tope='1')
+        self.assertEqual(codigo, 0)
+        self.assertEqual(notas, [(1, NOTA)])                          # se produjo la de la orden
+        self.assertEqual([c['carta']['origen'] for c in cartas], ['rehecha-de ' + pz])
 
     def test_si_no_se_pueden_leer_las_ordenes_la_mesa_sigue_sin_reabrir(self):
         with tempfile.TemporaryDirectory() as td:
