@@ -13,6 +13,9 @@ on:
       - 'medios-publicos.js'
       - 'tablero-sala.*'
       - 'sala-correcciones.js'
+      - 'sala-salida.*'
+      - 'tests/salida.browser.cjs'
+      - 'tests/sala-salida.test.cjs'
       - 'tests/tablero-sala*'
       - 'tests/sala-imagenes.test.cjs'
       - 'nube/motores/imagen_hidream.py'
@@ -54,7 +57,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/tablero-publicaciones.test.cjs tests/tablero-sala.test.cjs tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs tests/sala-modelos.test.cjs
+      - run: node --test tests/tablero-publicaciones.test.cjs tests/tablero-sala.test.cjs tests/sala-carga.test.cjs tests/sala-imagenes.test.cjs tests/sala-modelos.test.cjs tests/sala-salida.test.cjs
       - name: Navegador Chromium
         run: |
           npm install --no-save --package-lock=false playwright
@@ -66,6 +69,7 @@ jobs:
           node tests/mesa-local.browser.cjs
           node tests/arranque-progresivo.browser.cjs
           node tests/sala2.browser.cjs
+          node tests/salida.browser.cjs
       - name: Historias (Sala 4.0) contra un backend simulado
         run: node --test tests/historias.test.cjs
       - uses: actions/upload-artifact@v4

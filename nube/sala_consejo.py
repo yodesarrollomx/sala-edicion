@@ -232,13 +232,98 @@ def _jpg_b64(datos):
     return base64.b64encode(datos).decode('ascii')
 
 
+_TIRAS = {}
+
+
 def _tira(pid):
+    """La tira de una carta. Desde mediados de octubre las tiras nuevas ya no se guardan en main:
+    viajan en el snapshot público y se leen de Pages. Primero el checkout, luego Pages."""
+    pid = str(pid)
+    if not re.match(r'^[A-Za-z0-9_-][A-Za-z0-9._-]{0,199}$', pid):
+        return None                                  # un id raro no toca disco ni red
+    if pid in _TIRAS:
+        return _TIRAS[pid]
     p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datos', 'tiras', pid + '.json')
+    tira = None
     try:
         with open(p, encoding='utf-8') as f:
-            return json.load(f)
+            tira = json.load(f)
     except (OSError, ValueError):
-        return None
+        try:
+            tira = json.loads(_bajar(PAGES + 'datos/tiras/' + pid + '.json', 2 * 1024 * 1024))
+        except Exception:                            # noqa: BLE001 — sin tira, quien llama decide
+            tira = None
+    _TIRAS[pid] = tira if isinstance(tira, dict) else None
+    return _TIRAS[pid]
+
+
+# ── las tomas: aprobar una lámina es aprobar UNA imagen ────────────────────────────────────
+# El contrato de producción (`sala_produccion.resolver_tira`) no acepta un «sí» sobre una lámina
+# con tomas si su nota no dice cuál: `[toma elegida: k]`, lo mismo que escribe la Sala al tocar
+# «Ésta». Un «sí» del consejo sin esa marca tumbaba la corrida entera del montador.
+
+def _ruta(x):
+    return str((x.get('src') if isinstance(x, dict) else x) or '')
+
+
+def laminas_de_carta(p, tira):
+    """La lámina de la tira que corresponde a cada posición de la carta (None si no aparece)."""
+    tira = tira or {}
+    mapa = tira.get('mapa') or {str(k + 1): n for k, n in enumerate(tira.get('decidir') or [])}
+    por_n = {str(l.get('n')): l for l in tira.get('laminas') or [] if isinstance(l, dict)}
+    return [por_n.get(str(mapa.get(str(i + 1), i + 1))) for i in range(len(p.get('laminas') or []))]
+
+
+def tomas_de(lam):
+    return [c for c in (lam or {}).get('candidatas') or [] if isinstance(c, dict)]
+
+
+def toma_de_portada(lam, ruta):
+    """En base 1, cuál de las tomas es la imagen que la carta enseña. 0 si la lámina no trae
+    tomas (no hace falta marca); None si trae tomas y ninguna es la que se juzgó."""
+    tomas = tomas_de(lam)
+    if not tomas:
+        return 0
+    for k, c in enumerate(tomas):
+        if ruta and ruta in (str(c.get('src') or ''), str(c.get('original') or '')):
+            return k + 1
+    return None
+
+
+def sellar_tomas(p, res, elegidas=None):
+    """Pone `[toma elegida: k]` en la nota de cada «sí» sobre una lámina con tomas. `elegidas`
+    ({posición: k}) es la toma que el jurado votó; sin ella vale la que la carta enseña, que es la
+    única que vieron. Devuelve False si algún «sí» no se puede acreditar: entonces no se firma."""
+    if p.get('tipo') != 'laminas' or not any(r['marca'] == 'si' for r in res.values()):
+        return True
+    tira = _tira(p.get('id'))
+    if not tira:
+        return False
+    lams = laminas_de_carta(p, tira)
+    rutas = [_ruta(x) for x in p.get('laminas') or []]
+    for i, r in res.items():
+        if r['marca'] != 'si':
+            continue
+        lam = lams[i] if i < len(lams) else None
+        if lam is None:
+            return False
+        tomas = tomas_de(lam)
+        if not tomas:
+            continue
+        if elegidas is not None:
+            valor = elegidas.get(i, elegidas.get(str(i)))
+            if isinstance(valor, bool) or not isinstance(valor, (int, str)):
+                return False
+            try:
+                k = int(valor)
+            except ValueError:
+                return False
+        else:
+            k = toma_de_portada(lam, rutas[i] if i < len(rutas) else '')
+        if not k or not 0 < k <= len(tomas):
+            return False
+        r['nota'] = '[toma elegida: %d]' % k
+    return True
 
 
 def _id_drive(url):
@@ -390,8 +475,15 @@ def _hermes():
     return (url, clave) if url and clave else (None, None)
 
 
+MOTOR_NUBE = 'claude'                                  # el consejo de nube (tarea programada), ver más abajo
+
+
+def motores_pedidos(reglas):
+    return [m.strip() for m in _regla(reglas, 'consejo_motores', 'sol,opus').split(',') if m.strip()]
+
+
 def motores_disponibles(reglas):
-    pedidos = [m.strip() for m in _regla(reglas, 'consejo_motores', 'sol,opus').split(',') if m.strip()]
+    pedidos = motores_pedidos(reglas)
     if _hermes()[0]:
         return [m for m in pedidos if m in ('sol', 'opus')]
     hay = {'sol': bool(os.environ.get('OPENAI_API_KEY', '').strip()),
@@ -583,6 +675,49 @@ def veredicto(votos, abiertas, candados, umbral, minimo=5):
     return res
 
 
+# ── la firma: el único camino por el que una decisión del consejo llega al Sheet ───────────
+
+def _resumen(res, votos):
+    return ', '.join('L%d %s (%d/%d)' % (i, r['marca'], r['a_favor'], len(votos)) for i, r in sorted(res.items()))
+
+
+def firmar(carta, motor, modelo, votos, res, fecha, oido=None, reglas=None):
+    """Manda la decisión con la llave del consejo y deja la bitácora en CONSEJO. Lo usan las dos
+    rutas (Hermes y la tarea de nube); ninguna decide por otro lado. El registro público sólo
+    lleva marcas y conteos: las notas viven en el Sheet."""
+    p = carta['p']
+    pid = str(p['id'])
+    marcas, notas = [None] * carta['n'], [''] * carta['n']
+    for i, r in res.items():
+        marcas[i], notas[i] = r['marca'], r['nota']
+    envio_id = 'consejo-%s-%s-%s' % (motor, fecha, hashlib.sha256(
+        (pid + json.dumps(marcas) + datetime.datetime.utcnow().isoformat()).encode()).hexdigest()[:10])
+    # Un corte regresado lleva su «NO VA» a nivel carta, igual que lo escribe Alejandro: es lo
+    # que `revision_video.firma` exige para rehacerlo. En láminas la nota va por lámina.
+    nota_carta = ''
+    if p.get('tipo') == 'eje' and p.get('video') and marcas == ['no']:
+        nota_carta = 'NO VA — ' + notas[0]
+    enviar_decision(fecha, envio_id, {pid: {'laminas': marcas, 'notas': notas, 'nota': nota_carta}})
+    sala.avisar('· %s [%s]: %s' % (pid, motor, _resumen(res, votos)))
+    sello = sala.hoy_hermosillo() + ' ' + (datetime.datetime.utcnow() - datetime.timedelta(hours=7)).strftime('%H:%M:%S')
+    corrida_id = os.environ.get('GITHUB_RUN_ID', 'local')
+    filas = []
+    for i, r in sorted(res.items()):
+        for k, nombre, _ in JUECES:
+            v = votos.get(k, {}).get(i)
+            if v:
+                filas.append([sello, corrida_id, pid, i, p.get('tipo'), motor, modelo, nombre,
+                              v['voto'], v['nota'], '', '', envio_id, ''])
+        filas.append([sello, corrida_id, pid, i, p.get('tipo'), motor, modelo, 'VEREDICTO',
+                      '', r['nota'], '%d de %d%s' % (r['a_favor'], len(votos), ' · veto' if r['veto'] else ''),
+                      r['marca'], envio_id, ''])
+    if oido:
+        filas.append([sello, corrida_id, pid, '', p.get('tipo'), 'oido', _regla(reglas, 'consejo_oido', ''),
+                      'OÍDO', '', json.dumps(oido, ensure_ascii=False)[:1500], '', '', envio_id, ''])
+    registrar(filas)
+    return envio_id
+
+
 # ── la corrida ─────────────────────────────────────────────────────────────────────────────
 
 def _llamadas_hoy(fecha):
@@ -602,6 +737,9 @@ def corrida(ensayo=False):
         return 0
     motores = motores_disponibles(reglas)
     if not motores:
+        if set(motores_pedidos(reglas)) == {MOTOR_NUBE}:
+            sala.avisar('Roast Room en reserva: REGLAS consejo_motores sólo pide «claude», el consejo de nube.')
+            return 0
         sala.avisar('✗ ningún motor del consejo está disponible (HERMES_API_URL, o bien OPENAI_API_KEY / ANTHROPIC_API_KEY).')
         return 2
     candados = leer_candados()
@@ -639,41 +777,299 @@ def corrida(ensayo=False):
             else:
                 sala.avisar('· %s: me abstengo, ningún motor reunió al jurado' % pid)
                 continue
-        marcas, notas = [None] * carta['n'], [''] * carta['n']
-        for i, r in res.items():
-            marcas[i], notas[i] = r['marca'], r['nota']
-        envio_id = 'consejo-%s-%s-%s' % (motor, fecha, hashlib.sha256(
-            (pid + json.dumps(marcas) + datetime.datetime.utcnow().isoformat()).encode()).hexdigest()[:10])
-        resumen = ', '.join('L%d %s (%d/%d)' % (i, r['marca'], r['a_favor'], len(votos)) for i, r in sorted(res.items()))
-        if ensayo:
-            sala.avisar('· ENSAYO %s [%s]: %s' % (pid, motor, resumen))
+        # Por Hermes el jurado sólo vio la imagen que la carta enseña: ésa es la toma que aprueba.
+        if not sellar_tomas(carta['p'], res):
+            sala.avisar('· %s: me abstengo, no pude acreditar qué toma se aprobó' % pid)
             continue
-        # Un corte regresado lleva su «NO VA» a nivel carta, igual que lo escribe Alejandro: es lo
-        # que `revision_video.firma` exige para rehacerlo. En láminas la nota va por lámina.
-        nota_carta = ''
-        if carta['p'].get('tipo') == 'eje' and carta['p'].get('video') and marcas == ['no']:
-            nota_carta = 'NO VA — ' + notas[0]
-        enviar_decision(fecha, envio_id, {pid: {'laminas': marcas, 'notas': notas, 'nota': nota_carta}})
+        if ensayo:
+            sala.avisar('· ENSAYO %s [%s]: %s' % (pid, motor, _resumen(res, votos)))
+            continue
+        firmar(carta, motor, modelo, votos, res, fecha, oido, reglas)
         juzgadas += 1
-        sala.avisar('· %s [%s]: %s' % (pid, motor, resumen))
-        sello = sala.hoy_hermosillo() + ' ' + (datetime.datetime.utcnow() - datetime.timedelta(hours=7)).strftime('%H:%M:%S')
-        corrida_id = os.environ.get('GITHUB_RUN_ID', 'local')
-        filas = []
-        for i, r in sorted(res.items()):
-            for k, nombre, _ in JUECES:
-                v = votos.get(k, {}).get(i)
-                if v:
-                    filas.append([sello, corrida_id, pid, i, carta['p'].get('tipo'), motor, modelo, nombre,
-                                  v['voto'], v['nota'], '', '', envio_id, ''])
-            filas.append([sello, corrida_id, pid, i, carta['p'].get('tipo'), motor, modelo, 'VEREDICTO',
-                          '', r['nota'], '%d de %d%s' % (r['a_favor'], len(votos), ' · veto' if r['veto'] else ''),
-                          r['marca'], envio_id, ''])
-        if oido:
-            filas.append([sello, corrida_id, pid, '', carta['p'].get('tipo'), 'oido', _regla(reglas, 'consejo_oido', ''),
-                          'OÍDO', '', json.dumps(oido, ensure_ascii=False)[:1500], '', '', envio_id, ''])
-        registrar(filas)
     sala.avisar('Roast Room · %d carta(s) autorizadas o regresadas en esta corrida.' % juzgadas)
     return 0
+
+
+# ── el consejo de nube: la tarea programada juzga; aquí se valida y se firma ───────────────
+# 9-nov-2026 · Sala corta. Dirección: «Al frente y en la nube», con su suscripción y sin créditos
+# de API. Una tarea programada de Claude hace de jurado. Como ninguna llave pasa por un modelo,
+# el trabajo se parte en dos y las dos mitades corren en Actions:
+#
+#   expediente  lee la mesa con las llaves de siempre y deja en Drive (YOD Editorial/_consejo/
+#               expediente.txt) lo que hay por juzgar: cartas, tomas, guion y candados.
+#   aplicar     recibe los votos de los seis jueces, los valida contra la mesa VIVA, calcula el
+#               veredicto con la misma regla de siempre (`veredicto`) y firma con `firmar`.
+#
+# Los votos son dato, no instrucción: lo que no cuadra con la mesa se ignora y el registro
+# público sólo lleva marcas y conteos.
+CARPETA_DRIVE = '_consejo'
+ARCHIVO_EXPEDIENTE = 'expediente.txt'
+MAX_VEREDICTOS = 60000                                 # los inputs de workflow_dispatch topan en 65 535
+ID_SEGURO = re.compile(r'^[A-Za-z0-9._-]{1,200}$')
+
+
+def _entero(reglas, nombre, defecto):
+    try:
+        return int(float(_regla(reglas, nombre, str(defecto))))
+    except ValueError:
+        return defecto
+
+
+def nube_encendida(reglas):
+    return _regla(reglas, 'consejo_activo', '0') == '1' and MOTOR_NUBE in motores_pedidos(reglas)
+
+
+def _opciones(p):
+    op = p.get('opciones')
+    return op if isinstance(op, list) else (op or {}).get('candidatas') or []
+
+
+def sello_de_carta(carta, tira):
+    """Ata un veredicto a la carta exacta que se juzgó: su id, lo que enseña y sus tomas. No es
+    la identidad de una lámina (ésa es su catálogo, invariante 29): sólo dice «esto fue lo que
+    vio el jurado»."""
+    p = carta['p']
+    if p.get('tipo') == 'laminas':
+        cuerpo = [[_ruta(x)] + [str(c.get('src') or '') for c in tomas_de(lam)]
+                  for x, lam in zip(p.get('laminas') or [], laminas_de_carta(p, tira))]
+    else:
+        cuerpo = [json.dumps(c, ensure_ascii=False, sort_keys=True) if isinstance(c, dict) else str(c)
+                  for c in _opciones(p)]
+    return hashlib.sha256(json.dumps([str(p.get('id')), p.get('tipo'), cuerpo],
+                                     ensure_ascii=False).encode()).hexdigest()[:12]
+
+
+def carta_para_expediente(carta):
+    """Lo que el jurado necesita de una carta, o (None, motivo) si no se puede juzgar."""
+    p = carta['p']
+    pid = str(p['id'])
+    base = {'id': pid, 'titulo': str(p.get('titulo') or ''), 'tipo': p.get('tipo'),
+            'origen': str(p.get('origen') or ''), 'abiertas': list(carta['abiertas']),
+            'notas_previas': [str(n)[:700] for n in carta.get('notas_previas') or [] if n][:8],
+            'especialista': _especialista(carta)}
+    tira = None
+    if p.get('tipo') == 'laminas':
+        tira = _tira(pid)
+        if not tira:
+            return None, 'sin tira publicada'
+        lams = laminas_de_carta(p, tira)
+        piezas = []
+        for i, x in enumerate(p.get('laminas') or []):
+            lam = lams[i]
+            if lam is None:
+                if i in carta['abiertas']:
+                    return None, 'la tira no trae la lámina de la posición %d' % i
+                lam = {}
+            piezas.append({
+                'i': i, 'n': lam.get('n'), 'abierta': i in carta['abiertas'],
+                'dice': str(lam.get('dice') or ''), 've': str(lam.get('ve') or ''),
+                'entiende': str(lam.get('entiende') or ''),
+                'nota_previa': str(lam.get('nota_previa') or '')[:700],
+                'url': _url_imagen(_ruta(x)),
+                'tomas': [{'toma': k + 1, 'titulo': str(c.get('titulo') or ''),
+                           'dice': str(c.get('dice') or lam.get('dice') or ''), 've': str(c.get('ve') or ''),
+                           'porque': str(c.get('texto') or '')[:400],
+                           'url': _url_imagen(str(c.get('src') or c.get('original') or ''))}
+                          for k, c in enumerate(tomas_de(lam))]})
+        guion = tira.get('guion')
+        base.update({
+            'pieza': str(tira.get('pieza') or ''), 'promesa': str(tira.get('promesa') or ''),
+            'formato': str(tira.get('formato') or ''), 'nota_de_la_carta': str(tira.get('nota') or '')[:600],
+            'piezas': piezas,
+            'serie': [{'n': l.get('n'), 'dice': str(l.get('dice') or ''), 'estado': str(l.get('estado') or '')}
+                      for l in tira.get('laminas') or [] if isinstance(l, dict)][:12],
+            'guion': ([{'n': g.get('n'), 'dice': str(g.get('dice') or ''), 've': str(g.get('ve') or ''),
+                        'entiende': str(g.get('entiende') or '')} for g in guion if isinstance(g, dict)][:12]
+                      if isinstance(guion, list) else str(guion or '')[:3000])})
+    else:
+        op = p.get('opciones')
+        base['porque'] = '' if isinstance(op, list) else str((op or {}).get('porque') or '')[:600]
+        base['opciones'] = []
+        for i, c in enumerate(_opciones(p)):
+            c = c if isinstance(c, dict) else {'titulo': str(c)}
+            base['opciones'].append({'i': i, 'abierta': i in carta['abiertas'], 'titulo': str(c.get('titulo') or ''),
+                                     'texto': str(c.get('texto') or c.get('dice') or '')[:1500],
+                                     'url': _url_imagen(c['src']) if c.get('src') else ''})
+    base['sello'] = sello_de_carta(carta, tira)
+    return base, ''
+
+
+def _guardar_expediente(doc, reglas):
+    import sala_drive
+    raiz = _regla(reglas, 'drive_raiz', '')
+    if not raiz:
+        raise ConsejoError('falta drive_raiz en REGLAS; sin Drive el jurado de nube no recibe el expediente')
+    try:
+        carpeta = sala_drive.ruta_carpetas(raiz, CARPETA_DRIVE)
+        with tempfile.TemporaryDirectory() as tmp:
+            ruta = os.path.join(tmp, ARCHIVO_EXPEDIENTE)
+            with open(ruta, 'w', encoding='ascii') as f:   # ASCII puro: se lee igual desde cualquier conector
+                json.dump(doc, f, ensure_ascii=True, indent=1)
+            return sala_drive.subir(ruta, carpeta, ARCHIVO_EXPEDIENTE)
+    except sala_drive.DriveError as e:
+        raise ConsejoError('no se pudo dejar el expediente en Drive: %s' % sala.redactar(str(e))[:200])
+
+
+def _salida_para_el_jurado(reglas):
+    """Las piezas completas que esperan su texto (estación de salida, `sala_salida.py`). Va en el
+    mismo expediente para que una sola sesión del jurado juzgue y entregue. Si esa lectura falla,
+    el expediente del consejo sale igual: una estación no detiene a la otra."""
+    try:
+        import sala_salida
+        _, dia_p, dia, exp = sala_salida.leer_mesa()
+        filas = sala_salida.estado_de_piezas(dia_p, dia, reglas, exp,
+                                             proyeccion=sala_salida.proyeccion_de_la_mesa())
+        return sala_salida.para_el_jurado(reglas, filas, sala_salida.receta(reglas))
+    except Exception as e:                           # noqa: BLE001 — la salida nunca tumba al consejo
+        sala.avisar('· aviso: la salida no se pudo leer (%s); el expediente sale sin ella' % type(e).__name__)
+        return {'activa': False, 'error': type(e).__name__, 'pendientes': [], 'resumen': {}}
+
+
+def expediente():
+    """Deja en Drive lo que el jurado de nube tiene que ver. No decide nada."""
+    sala.enmascarar_en_actions()
+    reglas = leer_reglas()
+    doc = {'esquema': 1, 'generado': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+           'fecha': sala.hoy_hermosillo(), 'corrida': os.environ.get('GITHUB_RUN_ID', 'local'),
+           'activo': nube_encendida(reglas), 'motor': MOTOR_NUBE,
+           'reglas': {'aprobar_con': _entero(reglas, 'consejo_aprobar_con', 4), 'jueces_minimos': 5},
+           'jueces': [{'juez': k, 'nombre': n, 'lente': lente or 'ver «especialista» en cada carta'}
+                      for k, n, lente in JUECES],
+           'candados': [], 'cartas': [], 'omitidas': [], 'pendientes_en_mesa': 0}
+    if doc['activo']:
+        doc['candados'] = leer_candados()
+        cartas = cartas_pendientes(sala.get('dia', fresco='1'))
+        tope = max(1, _entero(reglas, 'consejo_nube_cartas', 5))
+        doc['pendientes_en_mesa'] = len(cartas)
+        for carta in cartas:
+            pid = str(carta['p']['id'])
+            if carta['p'].get('video'):
+                doc['omitidas'].append({'id': pid, 'motivo': 'corte de video: en pausa, lo ven los editores'})
+            elif len(doc['cartas']) >= tope:
+                doc['omitidas'].append({'id': pid, 'motivo': 'tope por sesión; entra en la siguiente'})
+            else:
+                c, motivo = carta_para_expediente(carta)
+                if c is None:
+                    doc['omitidas'].append({'id': pid, 'motivo': motivo})
+                else:
+                    doc['cartas'].append(c)
+    else:
+        sala.avisar('Consejo de nube apagado (REGLAS consejo_activo≠1 o consejo_motores sin «claude»).')
+    doc['salida'] = _salida_para_el_jurado(reglas)     # no depende de que el consejo esté encendido
+    archivo = _guardar_expediente(doc, reglas)
+    sala.avisar('Expediente del consejo de nube · %d carta(s) para juzgar · %d omitida(s) · %d pendientes en la mesa · Drive %s/%s (%s)'
+                % (len(doc['cartas']), len(doc['omitidas']), doc['pendientes_en_mesa'], CARPETA_DRIVE,
+                   ARCHIVO_EXPEDIENTE, archivo))
+    sala.avisar('Salida · %d pieza(s) esperan su texto en esta sesión · %s'
+                % (len(doc['salida'].get('pendientes') or []),
+                   ' · '.join('%s %d' % kv for kv in sorted((doc['salida'].get('resumen') or {}).items())) or 'sin lectura'))
+    return 0
+
+
+def leer_veredictos(crudo):
+    """Valida la FORMA de lo que mandó el jurado de nube. Devuelve (modelo, cartas)."""
+    crudo = str(crudo or '')
+    if len(crudo) > MAX_VEREDICTOS:
+        raise ConsejoError('los veredictos pesan más de lo que cabe en una sesión')
+    try:
+        d = json.loads(crudo)
+    except ValueError:
+        raise ConsejoError('los veredictos no son JSON')
+    if not isinstance(d, dict) or d.get('esquema') != 1 or d.get('motor') != MOTOR_NUBE:
+        raise ConsejoError('veredictos sin esquema 1 o de un motor que no es «claude»')
+    cartas = d.get('cartas')
+    if not isinstance(cartas, list) or len(cartas) > 20:
+        raise ConsejoError('los veredictos no traen una lista de cartas (máx. 20)')
+    for c in cartas:
+        if not isinstance(c, dict) or not isinstance(c.get('id'), str) or not isinstance(c.get('votos'), dict):
+            raise ConsejoError('carta mal formada en los veredictos')
+    modelo = str(d.get('modelo') or '')
+    return (modelo if re.match(r'^[A-Za-z0-9._\[\]-]{1,60}$', modelo) else 'sin-declarar'), cartas
+
+
+def votos_validos(crudo, abiertas, conocidos):
+    """{juez: {posición: voto}} sólo con los jueces que votaron TODAS las piezas abiertas, igual
+    que `juzgar`. Un candado que no existe en CANDADOS se descarta: no puede vetar."""
+    out = {}
+    for clave, _, _ in JUECES:
+        lista = (crudo or {}).get(clave)
+        if not isinstance(lista, list):
+            continue
+        votos = {}
+        for v in lista:
+            if not isinstance(v, dict) or isinstance(v.get('i'), bool):
+                continue
+            try:
+                i = int(v.get('i'))
+            except (TypeError, ValueError):
+                continue
+            if i in abiertas and v.get('voto') in ('si', 'no'):
+                votos[i] = {'voto': v['voto'], 'nota': str(v.get('nota') or '')[:300],
+                            'candados': [str(x) for x in (v.get('candados') or [])
+                                         if isinstance(x, (str, int)) and str(x) in conocidos][:8]}
+        if set(votos) == set(abiertas):
+            out[clave] = votos
+    return out
+
+
+def aplicar(crudo, ensayo=False):
+    """Convierte los votos del jurado de nube en decisiones del consejo, o se abstiene."""
+    sala.enmascarar_en_actions()
+    reglas = leer_reglas()
+    if not nube_encendida(reglas):
+        sala.avisar('Consejo de nube apagado (REGLAS consejo_activo≠1 o consejo_motores sin «claude»); no se aplica nada.')
+        return 0
+    modelo, entrada = leer_veredictos(crudo)
+    if not entrada:
+        sala.avisar('Consejo de nube · sesión sin veredictos.')
+        return 0
+    candados = leer_candados()
+    conocidos = {c['id'] for c in candados}
+    fecha = sala.hoy_hermosillo()
+    pendientes = {str(c['p']['id']): c for c in cartas_pendientes(sala.get('dia', fresco='1'))}
+    umbral = _entero(reglas, 'consejo_aprobar_con', 4)
+    firmadas, fallidas, vistas = 0, 0, set()
+    for v in entrada:
+        pid = v['id']
+        if pid in vistas:
+            continue                                   # una carta, un veredicto
+        vistas.add(pid)
+        carta = pendientes.get(pid)
+        if not carta:
+            sala.avisar('· %s: ya no está pendiente en la mesa; se ignora'
+                        % (pid if ID_SEGURO.match(pid) else '(id que no es de la mesa)'))
+            continue
+        p = carta['p']
+        if p.get('video'):
+            sala.avisar('· %s: es un corte de video; el consejo de nube no lo juzga' % pid)
+            continue
+        tira = _tira(pid) if p.get('tipo') == 'laminas' else None
+        if p.get('tipo') == 'laminas' and not tira:
+            sala.avisar('· %s: me abstengo, no encontré su tira' % pid)
+            continue
+        if sello_de_carta(carta, tira) != str(v.get('sello') or ''):
+            sala.avisar('· %s: cambió desde el expediente; se juzga en la siguiente sesión' % pid)
+            continue
+        votos = votos_validos(v['votos'], carta['abiertas'], conocidos)
+        res = veredicto(votos, carta['abiertas'], candados, umbral)
+        if res is None:
+            sala.avisar('· %s: me abstengo, sólo %d de 6 jueces votaron todas las piezas' % (pid, len(votos)))
+            continue
+        if not sellar_tomas(p, res, elegidas=v.get('tomas') if isinstance(v.get('tomas'), dict) else {}):
+            sala.avisar('· %s: me abstengo, un «sí» no dice qué toma aprueba' % pid)
+            continue
+        if ensayo:
+            sala.avisar('· ENSAYO %s [%s]: %s' % (pid, MOTOR_NUBE, _resumen(res, votos)))
+            continue
+        try:
+            firmar(carta, MOTOR_NUBE, modelo, votos, res, fecha, None, reglas)
+            firmadas += 1
+        except (sala.SalaError, ConsejoError) as e:
+            fallidas += 1
+            sala.avisar('· %s: ✗ el Sheet no confirmó la decisión (%s)' % (pid, sala.redactar(str(e))[:160]))
+    sala.avisar('Consejo de nube · %d carta(s) autorizadas o regresadas%s.'
+                % (firmadas, ' · %d sin confirmar' % fallidas if fallidas else ''))
+    return 2 if fallidas else 0
 
 
 # ── el marcador Sol contra Opus ────────────────────────────────────────────────────────────
@@ -717,6 +1113,13 @@ if __name__ == '__main__':
     try:
         if modo == 'marcador':
             sys.exit(marcador())
+        if modo == 'expediente':
+            sys.exit(expediente())
+        if modo == 'aplicar':
+            sys.exit(aplicar(os.environ.get('CONSEJO_VEREDICTOS', ''),
+                             ensayo=os.environ.get('CONSEJO_ENSAYO', '').strip().lower() in ('1', 'true', 'si')))
+        if modo not in ('corrida', 'ensayo'):
+            raise ConsejoError('modo desconocido: %s' % modo[:40])
         sys.exit(corrida(ensayo=(modo == 'ensayo')))
     except (sala.SalaError, ConsejoError) as e:
         sala.avisar('✗ Roast Room:', e)

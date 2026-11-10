@@ -20,6 +20,18 @@ series de 10 episodios de 15 s con Gemini Omni Flash (de pago). Pantalla `histor
 nube nunca escribe `v4:dec`). No toca la mesa, la COLA ni el Apps Script. El gasto lo limita el
 ajuste «tomas por día». Mapas de proceso en `docs/grafos/`.
 
+**Estación de salida:** `docs/SALA-SALIDA.md`. Una pieza con todas sus láminas aprobadas sale así: el
+jurado escribe el texto, `sala-consejo.yml` · `paquete` (`nube/sala_salida.py`, entra como agente y
+sin la llave del consejo) arma `YOD Editorial/_LISTAS PARA PUBLICAR/<N · Título>` y lo anota en
+EXPEDIENTES; «Te toca» lo enseña con «Ya la publiqué». La tira vigente es la que publica la mesa
+(`datos/mesa-estado.json`), no «la más reciente». Publicar nunca se automatiza.
+
+**Consejo de nube (Roast Room):** `docs/SALA-CONSEJO-NUBE.md`. Una tarea programada de Claude
+juzga; `sala-consejo.yml` hace las dos mitades con llaves (`expediente` y `aplicar`) y ninguna
+llave pasa por un modelo. Toda aprobación de una lámina con tomas lleva `[toma elegida: k]`: sin
+eso `sala_produccion.resolver_tira` la rechaza y se cae el montador. Las tiras nuevas no están en
+`main`: viajan en el snapshot y se leen de Pages.
+
 ## Qué es esto
 
 El portal diario de producción de contenido de **Yo Desarrollo**. Cada mañana llega un correo con la

@@ -202,6 +202,59 @@ def subir(ruta_local, carpeta_id, nombre=None):
     return r.json()['id']
 
 
+def listar(padre_id):
+    """Los hijos directos de una carpeta: [{id, name, mimeType, md5Checksum}]. Lo usa la estación
+    de salida para no duplicar un paquete que ya existe ni volver a subir una imagen idéntica."""
+    hijos, pagina = [], None
+    while True:
+        params = {'q': "'%s' in parents and trashed = false" % padre_id,
+                  'fields': 'nextPageToken,files(id,name,mimeType,md5Checksum)', 'pageSize': 200}
+        if pagina:
+            params['pageToken'] = pagina
+        try:
+            r = _peticion('GET', API + '/files', params=params)
+        except DriveError as e:
+            if ' 404' in str(e):                     # carpeta recién creada: todavía «no existe» para la búsqueda
+                return hijos
+            raise
+        datos = r.json()
+        hijos += [h for h in datos.get('files') or [] if isinstance(h, dict)]
+        pagina = datos.get('nextPageToken')
+        if not pagina or len(hijos) >= 2000:
+            return hijos
+
+
+def subir_documento(nombre, html, carpeta_id):
+    """Crea (o reescribe, mismo id) un Documento de Google a partir de HTML. Es el texto del
+    paquete: quien publica lo abre en el teléfono y copia. Idempotente por nombre, como subir()."""
+    existente = None
+    for h in listar(carpeta_id):
+        if h.get('name') == nombre and h.get('mimeType') == 'application/vnd.google-apps.document':
+            existente = h['id']
+            break
+    metadatos = {'name': nombre}
+    if not existente:
+        metadatos.update({'parents': [carpeta_id], 'mimeType': 'application/vnd.google-apps.document'})
+    limites = [('metadata', (None, json.dumps(metadatos), 'application/json')),
+               ('file', (nombre + '.html', html.encode('utf-8'), 'text/html'))]
+    if existente:
+        r = _peticion('PATCH', API_SUBIDA + '/files/%s' % existente,
+                      params={'uploadType': 'multipart'}, files=limites)
+    else:
+        r = _peticion('POST', API_SUBIDA + '/files',
+                      params={'uploadType': 'multipart'}, files=limites)
+    return r.json()['id']
+
+
+def mover(id_archivo, origen_id, destino_id):
+    """Cambia un archivo o carpeta de carpeta, sin copiar ni borrar: el paquete publicado sale
+    de «listas para publicar» y queda guardado en «publicadas»."""
+    _peticion('PATCH', API + '/files/%s' % id_archivo,
+              params={'addParents': destino_id, 'removeParents': origen_id, 'fields': 'id'},
+              json={}, headers={'Content-Type': 'application/json'})
+    return id_archivo
+
+
 def bajar(id_archivo, destino):
     """Baja UN archivo por su id a una ruta local. Usa el contenido tal cual (alt=media):
     para una imagen basta; Drive no reencodea."""
