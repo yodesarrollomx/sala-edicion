@@ -124,6 +124,46 @@ la corrida termina en rojo: esa pieza se reintenta sin duplicar nada.
 - Desde la Sala, **«Ya la publiqué»** agrega una fila `publicada` a PRODUCCION (con la liga y, si
   Dirección cambió el texto, el que usó). En su siguiente sesión la estación cierra el expediente.
 
+## El montón y el plan de salida (en «Te toca»)
+
+El 9-nov, ya con 24 publicaciones listas, Dirección dijo: «no voy a publicar aún, quiero hacer montón
+para nunca quedarnos… que vayamos armando un paquete para ir lanzando». Por eso «Te toca» abre con
+**el montón**: todo lo listo, en una rejilla, en el orden en que va a salir.
+
+- **Qué se ve.** Cuántas hay, para cuántas semanas alcanza al ritmo elegido y, si hay día de
+  arranque, la fecha de cada una. Abajo, lo que espera su texto y lo guardado por regla.
+- **El plan es de los editores y se cambia sin código**: cuántas por semana (1 a 7), el día de
+  arranque (opcional) y el orden («Cambiar el orden» → flechas o elegir el lugar → «Guardar el orden»).
+- **Dónde vive.** Una sola fila de EXPEDIENTES con la llave **`salida:plan`**:
+  `{v, orden:[nombres], por_semana, arranque, cuando, por}`. La escribe la Sala con la llave del
+  editor (`accion: expediente`, la misma que usa Historias) y **la nube nunca la escribe**. Las llaves
+  con prefijo (`v4:`, `salida:`) no son publicaciones y no entran a la lista de Publicaciones.
+- **Si no sube**, el cambio se queda en el aparato y se reintenta al abrir. Hoy la hoja sólo deja
+  guardar a la llave de Dirección (`editor`); con la de Sayri (`editor2`) la Sala lo dice y conserva
+  su cambio en su aparato (falta abrirlo en el Apps Script; es la misma tarea que Historias).
+- **Lo que el plan no nombra** (lo recién empacado) entra al final, por el número de su carpeta.
+- **El calendario** reparte así: 1 → miércoles · 2 → martes y jueves · 3 → lunes, miércoles y viernes ·
+  4 → lunes, martes, jueves y viernes · 5 → lunes a viernes · 6 → lunes a sábado · 7 → diario. Si el
+  día de arranque ya pasó, corre desde hoy. Es una guía: **nada sale solo**.
+- **La mesa se pliega** a un renglón cuando hay montón y nada por revisar («Ver la mesa» la abre). Con
+  algo por revisar, o sin montón, se ve entera como antes.
+- El número de la carpeta en Drive es el orden de llegada y **no cambia** al reordenar: la Sala abre
+  cada carpeta por su liga.
+
+## Cómo abre (medido el 9-nov en el navegador de Dirección)
+
+| Lo que pasaba | La causa | Cómo quedó |
+|---|---|---|
+| La página se encogía al centro sobre fondo oscuro y regresaba, una y otra vez | El indicador de carga le ponía a `<html>` la clase `cargando`, la misma del esqueleto de una carta (`position:absolute; display:grid; font-size:13px…`) | La clase se llama `trayendo` |
+| «Copia disponible · sin conexión» hasta tocar un botón | Con el caché del Apps Script frío el día tarda **14 s** (tibio, 2.6 s) y cualquier escritura lo enfría; la Sala esperaba 8 s, dos veces | El día tiene su propio tope: 30 s (`SALA_TOPE_DIA_MS`), dos peticiones como máximo, sin ciclos. La última mesa se ve desde el primer segundo |
+| Lo listo para publicar aparecía al minuto, o nunca | Los expedientes sólo se pedían cuando el día llegaba | Se piden al abrir, en paralelo (`arrancarSalida`), y lo último visto se pinta al instante desde el aparato |
+| «Reintentar ahora» no hacía nada | Con la mesa en copia sólo reintentaba *subir* | Vuelve a preguntar al Sheet |
+| Una publicación de una sola lámina ocupaba toda la pantalla | `repeat(auto-fit,minmax(155px,1fr))` | Cada página crece hasta 260 px |
+
+Lo guardado en el aparato (`sala_salida_local_v1`) es sólo para pintar: lleva título, portada, imágenes,
+texto y la liga de la carpeta de las piezas listas; pertenece a quien lo guardó (misma huella que la
+mesa local), dura siete días y se borra si la hoja rechaza la llave. No da permiso de nada.
+
 ## Frenos (REGLAS; todos opcionales)
 
 | Regla | Por omisión | Qué hace |
@@ -148,12 +188,17 @@ la corrida termina en rojo: esa pieza se reintenta sin duplicar nada.
 
 - El botón «Publicar» que suba a Instagram y Facebook desde la Sala (va con su propio PR; publicar
   seguirá siendo el clic de Dirección).
+- Renombrar las carpetas de Drive según el orden del plan.
+- Calentar el caché del día después de cada escritura de la nube (hoy lo calienta el disparador de
+  diez minutos del Apps Script; entre una escritura y el siguiente disparo el día tarda 14 s).
 - Traer los números de cada publicación a la Sala (hoy las métricas se leían desde la Mac).
 - Empacar historias de 15 segundos: el video sigue en pausa.
 
 ## Pruebas
 
 `tests/sala_salida_test.py` (estación), `tests/sala-salida.test.cjs` y `tests/sala-carga.test.cjs`
-(pantalla, sin navegador) y `tests/salida.browser.cjs` (recorrido completo en teléfono y escritorio).
+(pantalla, sin navegador) y `tests/salida.browser.cjs` (dos recorridos en teléfono y escritorio: publicar,
+y el montón con su orden, ritmo, arranque, copia en el aparato, hoja lenta, hoja caída y llave que no
+puede guardar).
 Código y pruebas locales no acreditan corridas reales: la primera corrida con Drive y el Sheet de
 verdad queda registrada en el Buzón.

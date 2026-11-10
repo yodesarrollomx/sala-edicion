@@ -30,3 +30,13 @@ Traza real aportada por Claude, atribuida al20-oct15:32Z sobre c528567: /exec in
 El espejo gas/Code.gs muestra autenticación delegada a dos Porteros y seis lecturas completas de pestañas al fallar cache del día. No demuestra dónde se detiene la versión viva. No se modifica ni se afirma desplegar ese espejo. El workflow Medir lectura de Sala ejecuta dos GET del día con agente,8s cada uno y400ms entre ellos; registra sólo métricas y cache_hit si existe. Primera y consecutiva no demuestran runtime frío/caliente. Sin acceso al editor/ejecuciones no se pueden atribuir cuotas ni etapa exacta.
 
 Validación local final:52 pruebas Node,13 controles nube/verificar.py, prueba del presupuesto/privacidad de sonda y recorrido completo tablero/tira/carrusel. Reapertura sintética146/169ms. Primera visita sintética última corrida1415/317ms bajo carga: no garantía subsegundo. La primera tarjeta aparece y se cachea antes de soltar servidor,medios,inventario y tira lenta. Cero POST y errores JS. Atlas ampliado en PR291 conserva propuesta paralela de revisión de tomas PR290.
+
+## 9-nov-2026 · el día tiene su propio tope
+
+Medido desde el navegador de Dirección (sesión de editor, Chromebook de 2.7 GB): `recurso=dia` con
+`fresco=1` tardó 14.1 s; con caché, 2.6 a 3.0 s; `expedientes` 2.4 s; `reglas` 2.5 s. Con el tope de
+8000 ms los dos intentos del día fallaban cada vez que el caché estaba frío (cualquier escritura lo
+enfría) y la Sala se quedaba en copia hasta un clic. Como la última mesa ya se pinta de inmediato, el
+tope del día pasa a 30000 ms (`SALA_TOPE_DIA_MS`); los archivos públicos conservan 8000 ms. Siguen
+siendo dos peticiones como máximo, sin ciclo automático. Lo listo para publicar ya no espera al día
+(`arrancarSalida`). Detalle y tabla de causas: `docs/SALA-SALIDA.md`, «Cómo abre».

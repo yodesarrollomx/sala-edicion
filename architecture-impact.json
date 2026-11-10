@@ -2,7 +2,7 @@
  "model_revision": "2026-11-09.sala-corta.2",
  "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
  "proposal_id": "CHG-SALA-CORTA-20261109",
- "summary": "Sala 4.0: historias en series de episodios de 15 s (bloques de 30 s con dos tomas) generadas con Gemini Omni Flash. Pantalla nueva historias.html (Series, Universo, Ajustes) que lee y escribe la hoja EXPEDIENTES con recurso=expedientes y accion=expediente ya existentes; sin cambios en Apps Script. Nube: nube/sala_v4.py y sala-v4.yml (semillero, productor, paquete, estado) con horario y botón. Un dueño por llave v4: (editor: universo, serie, dec; nube: prod, estado); la nube no escribe decisiones. Tope diario de tomas reservado antes de gastar. index.html sólo gana una liga y deja de listar llaves v4: en Publicaciones. No pasa por la COLA ni reactiva la línea vieja de video.",
+ "summary": "La Sala abre bien y enseña primero el montón listo para lanzar. Dirección (9-nov): «trae glitches, no carga bien, está rara, no me gusta el orden… no voy a publicar aún, quiero hacer montón… armando un paquete para ir lanzando». Medido en su navegador: el indicador de carga le ponía a <html> la clase del esqueleto de carta (la página cambiaba de forma en cada lectura); el día en frío tarda 14 s y la Sala esperaba 8 s dos veces; lo listo para publicar sólo se pedía cuando el día llegaba. Cambios, todos en la pantalla (sin tocar Apps Script ni la nube): la clase pasa a llamarse `trayendo`; el día tiene tope propio de 30 s (siguen siendo dos peticiones, sin ciclos); los expedientes y las reglas se piden al abrir, en paralelo, y lo último visto se pinta desde el aparato (copia privada por identidad, 7 días); «Reintentar ahora» vuelve a leer; «Te toca» abre con el montón en rejilla, en orden de salida, con ritmo por semana, día de arranque y orden editables por los editores; ese plan se guarda en EXPEDIENTES con la llave `salida:plan` usando accion=expediente (ya existente; la nube no la escribe); la mesa se pliega a un renglón cuando hay montón y nada por revisar; una publicación de una lámina ya no ocupa toda la pantalla.",
  "components": [
   "SYS-SALA",
   "SHEET-SALA",
@@ -12,11 +12,12 @@
   "EXT-DRIVE"
  ],
  "tests": [
-  "python3 -m unittest tests.v4_test (10 pruebas: dueños por llave, la nube no decide, semilla y ajustes, validación y veto sobre todo el texto, piloto primero, cambio por versión, reserva del tope antes de gastar, fallo que detiene, bloque de 30 s con continuidad, semillero, paquete con ffmpeg real).",
-  "node --test tests/historias.test.cjs (4 recorridos en navegador contra un backend simulado: semilla, ajustes, universo, aprobar, ver video, pedir cambio, edición con conteo de palabras, sin llave, hoja caída, rol que sólo lee).",
-  "python3 -m unittest discover -s tests -p \"*_test.py\" (642 OK)",
-  "python3 nube/verificar.py",
-  "Pendiente: comprobar accion=expediente en vivo con agente y editor; primera serie real; consistencia de personaje entre episodios."
+  "node --test tests/*.test.cjs tests/*.test.mjs (183 OK; nuevas: orden con plan, mover, calendario, plan hostil, copia en el aparato sin llaves, arranque de la salida, lectura única de expedientes, clase del indicador, tope del día).",
+  "node tests/salida.browser.cjs (teléfono y escritorio, editor y lector: publicar; y el montón: se pinta antes que el día, la página conserva su forma con una lectura en vuelo, ordenar/cancelar/guardar, ritmo en una sola escritura, arranque con fechas, plan desde la hoja al recargar, hoja colgada y caída con copia del aparato, llave que no puede guardar, otra identidad no ve la copia; sólo escribe `salida:plan`).",
+  "node tests/tablero-sala.browser.cjs · mesa-local.browser.cjs · arranque-progresivo.browser.cjs · sala2.browser.cjs (sin regresión).",
+  "python3 -m unittest discover -s tests -p \"*_test.py\" (727 OK) · python3 nube/verificar.py (todo en orden).",
+  "Réplica local con el sitio publicado y un backend con demoras reales (día 14 s en frío): el montón a los 4.7 s en la primera visita y a 1.4 s en la segunda; el día llega a los 14 s sin clic.",
+  "Pendiente: verlo en el navegador de Dirección tras publicar (tarea SALA-03 del Buzón)."
  ],
- "rollback": "Ajustes de Historias: tomas por día en 0 y semillero apagado; o desactivar el workflow sala-v4.yml. Revertir el PR quita la pantalla y la liga. Conservar las filas v4: de EXPEDIENTES y los videos de Drive."
+ "rollback": "Revertir el PR devuelve la fila de listas, la mesa abierta y los topes de 8 s. La fila `salida:plan` de EXPEDIENTES puede quedarse (nada más la lee) o borrarse a mano; la copia del aparato (`sala_salida_local_v1`, `sala_salida_plan_v1`) caduca sola. No se toca Apps Script, Drive ni la nube."
 }

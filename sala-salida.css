@@ -1,19 +1,59 @@
-/* Salida de la Sala corta (9-nov-2026): lo listo para publicar y la hoja de publicar. */
+/* Salida de la Sala corta (9-nov-2026): el montón listo para lanzar y la hoja de publicar. */
 body:not(.sala-tablero) #salidaHoy{display:none}
 .sal{border:1px solid var(--linea);background:var(--tarjeta);border-radius:20px;padding:20px;margin:0 0 20px}
-.sal header h2{font:26px/1.12 var(--serif);font-weight:400;letter-spacing:-.01em;margin:6px 0 6px}
+.sal-cab{display:flex;justify-content:space-between;align-items:flex-end;gap:14px 28px;flex-wrap:wrap}
+.sal-cab header{flex:1 1 380px;min-width:0}
+.sal header h2{font:28px/1.1 var(--serif);font-weight:400;letter-spacing:-.01em;margin:6px 0 6px}
 .sal header p{margin:0;color:var(--gris);font-size:14px;line-height:1.45}
-.sal-fila{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;padding:16px 2px 6px;margin:0 -2px;-webkit-overflow-scrolling:touch}
-.sal-carta{flex:0 0 min(62%,220px);scroll-snap-align:start;display:flex;flex-direction:column;gap:4px;text-align:left;border:1px solid var(--linea2);border-radius:16px;background:var(--fondo);padding:0 0 12px;overflow:hidden;color:inherit;min-height:44px}
-.sal-carta:hover,.sal-carta:focus-visible{border-color:var(--oro)}
+.sal header p b{color:var(--tinta);font-weight:600}
+.sal header p.sal-nota{margin-top:6px;font-size:12.5px;color:var(--guia)}
+/* el plan de salida: ritmo, día de arranque y orden */
+.sal-plan{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sal-ritmo{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--linea2);border-radius:999px;padding:2px;font-size:13px;background:var(--fondo)}
+.sal-ritmo span{padding:0 6px;white-space:nowrap}
+.sal-ritmo button{width:38px;height:38px;border:0;border-radius:50%;background:none;font-size:18px;line-height:1;color:inherit;cursor:pointer}
+.sal-ritmo button:hover:not(:disabled){background:var(--oro-suave)}
+.sal-ritmo button:disabled{opacity:.35;cursor:default}
+.sal-arr{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--linea2);border-radius:999px;padding:2px 8px 2px 14px;font-size:13px;background:var(--fondo);min-height:44px}
+.sal-arr input{border:0;background:none;font:inherit;color:inherit;min-height:38px;padding:0 2px;color-scheme:light dark}
+.sal-b{min-height:44px;border:1px solid var(--linea2);border-radius:999px;background:var(--fondo);padding:0 16px;font-size:13px;font-weight:600;color:inherit;cursor:pointer;white-space:nowrap}
+.sal-b:hover{border-color:var(--oro)}
+.sal-b.fuerte{background:var(--tinta);border-color:var(--tinta);color:var(--fondo)}
+.sal-ritmo button:focus-visible,.sal-arr input:focus-visible,.sal-b:focus-visible,.sal-carta:focus-visible,.sal-mueve button:focus-visible,.sal-mueve select:focus-visible{outline:3px solid var(--oro);outline-offset:2px}
+.sal-ayuda{font-size:12.5px;color:var(--gris)}
+/* la rejilla: todo el montón a la vista, en el orden en que sale */
+.sal-rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:14px;padding:18px 0 4px}
+.sal-carta{display:flex;flex-direction:column;gap:3px;text-align:left;border:1px solid var(--linea2);border-radius:14px;background:var(--fondo);padding:0 0 10px;overflow:hidden;color:inherit;min-width:0;cursor:pointer}
+.sal-carta:hover{border-color:var(--oro)}
+.sal-carta.ordenando{cursor:default;border-style:dashed}
 .sal-foto{position:relative;display:block;aspect-ratio:4/5;background:var(--linea)}
 .sal-foto img{width:100%;height:100%;object-fit:cover;display:block}
 .sal-n{position:absolute;left:8px;top:8px;min-width:26px;height:26px;border-radius:13px;background:rgba(20,18,14,.78);color:#fff;font-size:13px;font-weight:600;display:grid;place-items:center;padding:0 7px}
-.sal-carta b{font:17px/1.2 var(--serif);font-weight:400;padding:8px 12px 0}
-.sal-carta small{color:var(--gris);font-size:12px;padding:0 12px}
-.sal-ir{margin:6px 12px 0;align-self:flex-start;background:var(--oro);color:#191408;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600}
+.sal-carta b{font:16px/1.2 var(--serif);font-weight:400;padding:8px 10px 0;overflow-wrap:anywhere}
+.sal-carta small{color:var(--gris);font-size:11.5px;line-height:1.35;padding:0 10px}
+.sal-carta small.sal-cuando{color:var(--tinta);font-weight:600}
+.sal-ir{margin:auto 10px 0;padding-top:6px;font-size:12px;font-weight:600;color:var(--oro)}
+.sal-mueve{display:flex;align-items:center;gap:4px;margin:auto 8px 0;padding-top:8px}
+.sal-mueve button{flex:none;width:40px;height:40px;border:1px solid var(--linea2);border-radius:10px;background:var(--tarjeta);color:inherit;font-size:13px;cursor:pointer}
+.sal-mueve button:disabled{opacity:.3;cursor:default}
+.sal-mueve select{flex:1;min-width:0;height:40px;border:1px solid var(--linea2);border-radius:10px;background:var(--tarjeta);color:inherit;font:inherit;font-size:14px;text-align:center}
+.sal-estado{margin:10px 0 0;font-size:12.5px;color:var(--guia)}
+.sal-estado:empty{display:none}
 .sal-pie{margin:14px 0 0;padding-top:14px;border-top:1px solid var(--linea);color:var(--gris);font-size:13.5px;line-height:1.45}
 .sal-pie b{color:var(--tinta);font-weight:600}
+@media (max-width:560px){
+  .sal{padding:14px;border-radius:16px}
+  .sal header h2{font-size:24px}
+  .sal-plan{width:100%}
+  .sal-arr{order:3}
+  .sal-rejilla{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:14px}
+  .sal-carta{border-radius:11px;padding-bottom:8px}
+  .sal-carta b{font-size:13.5px;padding:6px 7px 0}
+  .sal-carta small{font-size:10.5px;padding:0 7px}
+  .sal-ir{margin:auto 7px 0;font-size:11px}
+  .sal-n{min-width:22px;height:22px;font-size:12px;left:6px;top:6px;padding:0 6px}
+  .sal.en-orden .sal-rejilla{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 
 /* la hoja de publicar */
 .sal-hoja h3{margin-bottom:2px}
@@ -57,4 +97,4 @@ a.sal-liga{display:grid;place-items:center;text-decoration:none;color:inherit}
 .uni-hist small{display:block;color:var(--guia);font-size:12px;margin:2px 0 6px}
 .uni-hist q{display:block;quotes:"«" "»";font-size:14px;line-height:1.45;color:var(--tinta)}
 .uni-est{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--azul-suave);color:var(--azul)}
-@media (min-width:900px){ .sal-carta{flex-basis:200px} .sal-img{flex-basis:150px} }
+@media (min-width:900px){ .sal-img{flex-basis:150px} }
