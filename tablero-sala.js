@@ -158,11 +158,22 @@ function render(){
  document.body.classList.add("sala-tablero");
  const f=group(),cg=S.choice&&S.groups.find(g=>g.id===S.choice.group),cl=cg&&(cg.t.laminas||[]).find(l=>Number(l.n)===S.choice.n);
  const vg=f?[f]:visible(),pending=S.groups.reduce((n,g)=>n+counts(g).amarillo,0);
+ // 9-nov: con montón listo para lanzar y nada por revisar, la mesa se pliega a un renglón. Antes quedaban
+ // 27 publicaciones ya aprobadas (35 000 px y 94 fotos) entre el editor y lo único que tenía que ver.
+ const conMonton=typeof SalaSalida!=="undefined"&&SalaSalida.hay();
+ let porDecidir=false;try{porDecidir=eligible()&&pasos.some(x=>!marcaDe(x));}catch(e){}   // guion o corte en espera: la mesa no se pliega
+ if(!f&&!S.choice&&!S.abierta&&!pending&&!porDecidir&&conMonton){
+  root.dataset.level="plegada";root.dataset.transition="false";
+  if(imageObserver)imageObserver.disconnect();
+  root.innerHTML=`<section class="bt-plegada"><div><span class="bt-eyebrow">LA MESA EDITORIAL</span><p>${S.loaded?`<b>${S.groups.length} ${S.groups.length===1?"publicación":"publicaciones"}</b> · nada por revisar`:"Leyendo la mesa…"}</p>${S.cached?`<small>${S.publicPreview?"Copia publicada del":"Copia guardada el"} ${esc(new Date(S.savedAt).toLocaleString('es-MX'))}. Las decisiones se habilitan cuando el Sheet confirma.</small>`:""}</div><button data-abrir-mesa ${S.groups.length?"":"disabled"}>Ver la mesa</button></section>`;
+  root.querySelector("[data-abrir-mesa]").onclick=()=>{S.abierta=true;render();};
+  return;
+ }
  const oldX=root.querySelector(".bt-pan")?.scrollLeft||0;
  root.dataset.level=S.choice?"opciones":f?"publicacion":"tablero";
  root.dataset.transition=String(previousLevel!==root.dataset.level);
  root.innerHTML=`${S.cached?`<p class="bt-notice bt-local" role="status">${S.publicPreview?"Copia publicada del":"Copia guardada el"} ${esc(new Date(S.savedAt).toLocaleString('es-MX'))} · Actualizando. Puedes consultar; las decisiones se habilitan al confirmar la mesa vigente.</p>`:''}<div class="bt-heading"><div><span class="bt-eyebrow">SALA DE EDICIÓN</span><h1>${f?esc(f.t.pieza||f.p.titulo):"La mesa editorial"}</h1><p>${f?"Lee la secuencia completa. Abre una página para revisar sus tomas.":S.groups.length+" "+(S.groups.length===1?"publicación":"publicaciones")+" en mesa · "+pending+" páginas por revisar"}</p></div>
- <div class="bt-heading-actions"><button data-refresh ${S.busy?"disabled":""}>${S.busy?"Actualizando…":"↻ Actualizar"}</button><button data-legacy ${S.cached?"disabled":""}>Otras revisiones</button></div></div>
+ <div class="bt-heading-actions">${!f&&conMonton&&!pending&&!porDecidir?`<button data-plegar>Plegar la mesa</button>`:""}<button data-refresh ${S.busy?"disabled":""}>${S.busy?"Actualizando…":"↻ Actualizar"}</button><button data-legacy ${S.cached?"disabled":""}>Otras revisiones</button></div></div>
  ${!f&&!S.cached?`<div class="bt-editorial-intro"><div><span class="bt-eyebrow">TU CRITERIO, ANTES DE PRODUCIR</span><h2>Una historia. Cada detalle.</h2><p>Revisa el mensaje, compara las tomas y deja una decisión clara. Tus notas acompañan cada página.</p></div><button class="bt-start" data-next ${pending?"":"disabled"}>${pending?"Empezar revisión ↗":"Sin páginas por revisar"}</button></div>`:""}
  <div class="bt-bar"><div class="bt-legend"><span class="bt-dot amarillo">Revisar</span><span class="bt-dot verde">Aprobada</span><span class="bt-dot rojo">Cambio pedido</span><span class="bt-dot produccion">Producción</span></div>
  <div class="bt-levels"><button data-back ${!f?"disabled":""} aria-label="Alejar, volver al tablero">−</button><span>${S.choice?"Revisión":f?"Libro abierto":"Vista general"}</span><button data-zoom aria-label="Acercar">${S.choice?"↗":"+"}</button></div></div>
@@ -339,6 +350,7 @@ function bind(){
  root.querySelector("[data-reopen]")?.addEventListener("click",pedirNuevaRevision);
  root.querySelector("[data-zoom]")?.addEventListener("click",()=>{if(S.choice)root.querySelector("[data-full-photo]")?.click();else if(S.focus){const g=group();chooseFrame(g,g.t.laminas[0]?.n);}else open(visible()[0]);});
  root.querySelector("[data-refresh]")?.addEventListener("click",()=>refresh(true));
+ root.querySelector("[data-plegar]")?.addEventListener("click",()=>{S.abierta=false;render();window.scrollTo(0,0);});
  root.querySelector("[data-legacy]")?.addEventListener("click",()=>{cerrarCapas();document.body.classList.remove("sala-tablero");document.body.classList.add("sala-turno");pintarCartas();});
  root.querySelectorAll("[data-eje]").forEach(b=>b.onclick=()=>{if(S.cached)return;cerrarCapas();document.body.classList.remove("sala-tablero");document.body.classList.add("sala-turno");const k=pasos.findIndex(x=>x.pid===b.dataset.eje);if(k>=0){idx=k;irVista("hoy");pintarCartas();}});
  root.querySelectorAll(".bt-photo img,.bt-main-photo").forEach(im=>{im.onerror=()=>{

@@ -82,7 +82,7 @@ const day=()=>({fecha:'2026-10-20',rol:'editor',quien:'Editor sintético',ultima
   // Red caída conserva la copia y la nota; un respaldo no se convierte en mesa vigente.
   networkFail=true;
   await page.reload({waitUntil:'domcontentloaded'});await page.waitForSelector('.bt-local');
-  await page.waitForFunction(()=>document.querySelector('#estado').textContent.includes('sin conexión'));
+  await page.waitForFunction(()=>document.querySelector('#estado').textContent.includes('El Sheet no contestó'));
   assert.equal(await page.locator('.bt-column').count(),1);
   assert.equal(await page.evaluate(()=>DECIDE()),false);
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sala2-2026-10-20')).dec['synthetic-v1'].notas[0]),'Conservar mi nota');
