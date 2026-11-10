@@ -8,6 +8,7 @@ Lo que se prueba, sin red:
   · la estación de salida deja de dar por lista (o por completa) una pieza con orden de cambio;
   · nada de esto decide: la aprobación sigue en DECISIONES y la carta nueva espera al editor.
 """
+import ast
 import copy
 import hashlib
 import json
@@ -280,6 +281,79 @@ class SalidaTests(unittest.TestCase):
             fila = e.filas()[0]
             self.assertEqual((fila['estado'], fila['motivo']), ('en_laminas', 'cambio pedido por un editor (L1)'))
             self.assertEqual(salida.para_el_jurado(e.reglas, e.filas(), 'receta')['pendientes'], [])
+
+
+class SoloLecturaTests(unittest.TestCase):
+    """La nube sólo LEE las órdenes de cambio: sólo sala_cambios.py nombra la llave `cambio:` en código."""
+    NUBE = ROOT / 'nube'
+
+    @staticmethod
+    def arbol(ruta):
+        return ast.parse(ruta.read_text(encoding='utf-8'), filename=str(ruta))
+
+    @staticmethod
+    def documentacion(arbol):
+        """Ids de los textos que son documentación: el primer enunciado de módulo, clase o función."""
+        ids = set()
+        for nodo in ast.walk(arbol):
+            if isinstance(nodo, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and nodo.body:
+                primero = nodo.body[0]
+                if isinstance(primero, ast.Expr) and isinstance(primero.value, ast.Constant) \
+                        and isinstance(primero.value.value, str):
+                    ids.add(id(primero.value))
+        return ids
+
+    def otros_modulos(self):
+        return sorted(r for r in self.NUBE.glob('*.py') if r.name != 'sala_cambios.py')
+
+    def test_la_llave_cambio_solo_aparece_en_sala_cambios(self):
+        culpables = []
+        for ruta in self.otros_modulos():
+            arbol = self.arbol(ruta)
+            doc = self.documentacion(arbol)
+            for nodo in ast.walk(arbol):
+                if isinstance(nodo, ast.Constant) and isinstance(nodo.value, str) \
+                        and 'cambio:' in nodo.value and id(nodo) not in doc:
+                    culpables.append('%s:%d' % (ruta.name, nodo.lineno))
+        self.assertEqual(culpables, [],
+                         'Sólo sala_cambios.py puede nombrar la llave «cambio:» en código. '
+                         'Fuera de ese módulo aparece en: ' + ', '.join(culpables))
+
+    def test_sala_cambios_no_importa_red_ni_cliente(self):
+        prohibidos = {'sala_cliente', 'urllib', 'requests', 'http', 'subprocess'}
+        usados = set()
+        for nodo in ast.walk(self.arbol(self.NUBE / 'sala_cambios.py')):
+            if isinstance(nodo, ast.Import):
+                usados.update(a.name.split('.')[0] for a in nodo.names)
+            elif isinstance(nodo, ast.ImportFrom) and nodo.module and nodo.level == 0:
+                usados.add(nodo.module.split('.')[0])
+        malos = sorted(usados & prohibidos)
+        self.assertEqual(malos, [],
+                         'sala_cambios.py sólo lee: no debe importar red ni el cliente de EXPEDIENTES. '
+                         'Importa: ' + ', '.join(malos))
+
+    def test_solo_sala_cambios_usa_su_prefijo(self):
+        culpables = []
+        for ruta in self.otros_modulos():
+            arbol = self.arbol(ruta)
+            alias = set()       # `import sala_cambios as X` → X
+            for nodo in ast.walk(arbol):
+                if isinstance(nodo, ast.Import):
+                    alias.update(a.asname or a.name for a in nodo.names if a.name == 'sala_cambios')
+                elif isinstance(nodo, ast.ImportFrom) and nodo.module == 'sala_cambios':
+                    for a in nodo.names:
+                        if a.name in ('PREFIJO', '*'):
+                            culpables.append('%s:%d (importa PREFIJO)' % (ruta.name, nodo.lineno))
+
+            for nodo in ast.walk(arbol):
+                if isinstance(nodo, ast.Attribute) and nodo.attr == 'PREFIJO' \
+                        and isinstance(nodo.value, ast.Name) and nodo.value.id in alias:
+                    culpables.append('%s:%d' % (ruta.name, nodo.lineno))
+                elif alias and isinstance(nodo, ast.Constant) and nodo.value == 'PREFIJO':
+                    culpables.append('%s:%d (getattr)' % (ruta.name, nodo.lineno))
+        self.assertEqual(culpables, [],
+                         'Sólo sala_cambios.py usa su PREFIJO: la llave se arma allí y en ningún otro módulo. '
+                         'Fuera de ese módulo aparece en: ' + ', '.join(culpables))
 
 
 if __name__ == '__main__':
