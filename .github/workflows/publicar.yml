@@ -38,8 +38,7 @@ jobs:
       name: github-pages
       url: ${{ steps.despliegue.outputs.page_url }}
     runs-on: ubuntu-latest
-    # 30 y no 20: el despliegue de abajo puede esperar hasta 20 minutos (ver su nota).
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -89,11 +88,6 @@ jobs:
           [ "$actual" = "$PUBLICAR_SHA" ] || exit 1
       - id: despliegue
         uses: actions/deploy-pages@v4
-        with:
-          # 10-nov-2026: un commit nuevo tardaba 73–96 s en sincronizar; el 98c6df1 pasó de 10 minutos,
-          # la acción lo canceló y desde entonces cada despliegue de ese mismo commit se quedó sin
-          # estado hasta caer. Con 20 minutos un día lento de GitHub no deja el commit atorado.
-          timeout: 1200000
       - name: Confirmar recibo exacto del sitio antes de declarar publicado
         env:
           GH_TOKEN: ${{ github.token }}

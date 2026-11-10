@@ -2,7 +2,7 @@
  "model_revision": "2026-11-09.sala-corta.2",
  "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
  "proposal_id": "CHG-SALA-CORTA-20261109",
- "summary": "Destrabe tras fusionar el canon de la Sala 4.0 (PR #382, commit 98c6df1). (1) Publicación: el primer despliegue de 98c6df1 se quedó más de 10 minutos en «syncing_files», deploy-pages lo canceló por tiempo y desde entonces todo despliegue de ese mismo commit (código y datos de los robots) se quedó sin estado hasta caer. Un commit nuevo en main da un despliegue nuevo; además el paso de despliegue espera ahora hasta 20 minutos (antes 10) y el trabajo hasta 30, para que un día lento de GitHub no deje un commit atorado. (2) Semillero de la Sala 4.0: un borrador de Dirección («Nueva serie», origen editor) ya no cuenta como propuesta en espera; en vivo, uno en blanco más la propuesta que esperaba llegaron al tope y frenaron la primera historia de la temporada. La pantalla Historias lo llama «Borrador tuyo». Sin cambios en Apps Script, mesa, COLA ni contenido publicado.",
+ "summary": "Corrección de la nota del cambio 386 sobre GitHub Pages. La hipótesis era que un commit nuevo en main destrababa la publicación; no fue así: el despliegue de ce19f40 también se quedó en «syncing_files» y GitHub lo cortó a los 10 minutos. deploy-pages no acepta esperar más de 10 minutos, así que el tiempo de espera de 20 minutos no tenía efecto: publicar.yml vuelve a como estaba antes del 386. CLAUDE.md dice ahora lo observado y que relanzar el mismo commit no sirve. Sin cambios de comportamiento en la Sala, la nube ni la hoja.",
  "components": [
   "SYS-SALA",
   "SHEET-SALA",
@@ -12,11 +12,9 @@
   "EXT-DRIVE"
  ],
  "tests": [
-  "python3 -m unittest tests.v4_test (24 pruebas; nueva: un borrador de Dirección no frena al semillero y dos propuestas del semillero sí).",
-  "node --test tests/historias.test.cjs (9 recorridos; nuevo: un borrador se llama «Borrador tuyo» y Ajustes dice que los borradores no cuentan).",
-  "python3 -m unittest discover -s tests -p \"*_test.py\" · python3 nube/verificar.py · node --test tests/*.test.cjs tests/*.test.mjs.",
-  "En vivo antes del cambio (10-nov): despliegues 42753931215, 42755682696, 42755742605 y 42757997609 de 98c6df1 caídos por tiempo en deploy-pages; corrida 42755180401 de la Sala 4.0 dijo «ya hay 2 serie(s) esperando decisión» con un borrador vacío (v4:serie:20261110-nueva-mwa1lche, origen editor) y «El Heredero del Olivo».",
-  "Pendiente: ver el despliegue del commit nuevo en verde y la pantalla Historias nueva en vivo."
+  "Evidencia en vivo: despliegue 42762117604 (ce19f40, 10-nov 05:27Z) con timeout: 1200000 en sus entradas, «syncing_files» de 05:28:08 a 05:37:54 y «Timeout reached» a los 10 minutos.",
+  "Paquetes comparados por su lista de archivos: 42752837731 (el último bueno, a735485) y 42762117604 tienen los mismos 2 257 archivos más docs/SALA-CANON.md; 898 095 703 y 898 161 368 bytes.",
+  "python3 nube/verificar.py · python3 -m unittest discover -s tests -p \"*_test.py\"."
  ],
- "rollback": "Revertir el PR devuelve el tiempo de espera de 10 minutos y el conteo anterior del semillero. Nada que restaurar en hojas ni en Drive."
+ "rollback": "Revertir el PR vuelve a poner la nota anterior (equivocada) y el tiempo de espera sin efecto."
 }

@@ -136,9 +136,14 @@ siempre. Manual de arranque y de prueba: `nube/README.md`.
 | hook `pre-push` del sello | `nube/verificar.py`, exigido en cada push y cada PR |
 | (no existía) | `.github/workflows/publicar.yml`: push a `main` → verificar → Pages |
 
-**Pages atorado (10-nov-2026):** si `deploy-pages` se cancela por tiempo, cada nuevo despliegue de ese
-mismo commit se queda sin estado hasta caer (también los de datos de los robots). No relanzar el mismo
-commit: destraba un commit nuevo en `main`. Por eso el despliegue espera hasta 20 minutos.
+**Pages que no termina (10-nov-2026, desde las 04:08Z):** GitHub se queda en «syncing_files» y corta el
+despliegue a los 10 minutos; `deploy-pages` no acepta esperar más (el tope de 10 minutos es suyo). Pasó
+con dos commits distintos (98c6df1 y ce19f40) y con paquetes iguales al último que sí salió (2 258
+archivos, 856 MiB), así que no es el contenido; antes un commit nuevo tardaba de 73 a 96 s. Después de
+un corte, relanzar ese mismo commit se queda sin estado: no sirve. Las publicaciones de los robots lo
+reintentan solas. El sitio pesa 856 MiB y GitHub recomienda no pasar de 1 GB: si no se compone, la
+salida es achicar el sitio (sacar videos e imágenes pesadas de Pages) o pedir ayuda a GitHub; lo decide
+Dirección.
 
 Cinco cosas que no cambian y que conviene tener presentes al tocar esto:
 
