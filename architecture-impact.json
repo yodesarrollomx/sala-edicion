@@ -2,7 +2,7 @@
  "model_revision": "2026-11-09.sala-corta.2",
  "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
  "proposal_id": "CHG-SALA-CORTA-20261109",
- "summary": "Sala 4.0: historias en series de episodios de 15 s (bloques de 30 s con dos tomas) generadas con Gemini Omni Flash. Pantalla nueva historias.html (Series, Universo, Ajustes) que lee y escribe la hoja EXPEDIENTES con recurso=expedientes y accion=expediente ya existentes; sin cambios en Apps Script. Nube: nube/sala_v4.py y sala-v4.yml (semillero, productor, paquete, estado) con horario y botón. Un dueño por llave v4: (editor: universo, serie, dec; nube: prod, estado); la nube no escribe decisiones. Tope diario de tomas reservado antes de gastar. index.html sólo gana una liga y deja de listar llaves v4: en Publicaciones. No pasa por la COLA ni reactiva la línea vieja de video.",
+ "summary": "Sala 4.0, segunda vuelta sobre lo ya publicado (PR #381): el personaje se mantiene entre episodios con un retrato sacado del piloto que viaja a Gemini Omni Flash como imagen de referencia (reference_to_video), con caída a sólo texto si Google la rechaza; personajes guardados en el universo que entran como invitados en otras series y cruce propuesto por el semillero en el último episodio; el semillero y el texto para publicar leen CANDADOS; el criterio del guionista y el modelo de texto pasan a ser datos editables en historias.html; «no va» en un episodio lo deja fuera de la serie; el paquete sale en _LISTAS PARA PUBLICAR/Historia · <título> con COPY.txt y se rehace si cambian las versiones aprobadas; la carpeta de Drive se asegura antes de reservar o gastar; ningún documento v4: mayor a 45 000 caracteres. Sin cambios en Apps Script, en la mesa ni en la COLA. Un dueño por llave v4: (editor: universo, serie, dec; nube: prod, estado).",
  "components": [
   "SYS-SALA",
   "SHEET-SALA",
@@ -12,11 +12,13 @@
   "EXT-DRIVE"
  ],
  "tests": [
-  "python3 -m unittest tests.v4_test (10 pruebas: dueños por llave, la nube no decide, semilla y ajustes, validación y veto sobre todo el texto, piloto primero, cambio por versión, reserva del tope antes de gastar, fallo que detiene, bloque de 30 s con continuidad, semillero, paquete con ffmpeg real).",
-  "node --test tests/historias.test.cjs (4 recorridos en navegador contra un backend simulado: semilla, ajustes, universo, aprobar, ver video, pedir cambio, edición con conteo de palabras, sin llave, hoja caída, rol que sólo lee).",
-  "python3 -m unittest discover -s tests -p \"*_test.py\" (642 OK)",
+  "python3 -m unittest tests.v4_test (18 pruebas: dueños por llave y tope de celda, la nube no decide, semilla y ajustes, validación y veto sobre todo el texto, prompts con retratos e invitado, piloto primero, cambio por versión, «no va» que deja fuera, reserva del tope antes de gastar, Drive antes de reservar, fallo que detiene, bloque de 30 s con continuidad, retrato del piloto, retrato rechazado por Google, primer cuadro rechazado sin perder la toma pagada, unión con clip mudo, semillero, candados, historias que se cruzan, paquete que se rehace; ffmpeg real).",
+  "node --test tests/historias.test.cjs (6 recorridos en navegador contra un backend simulado: semilla, ajustes, universo y guionista, aprobar, ver video y salida a Drive, pedir cambio, edición con conteo de palabras, sin llave, hoja caída, rol que sólo lee, guardar personaje e invitados, «no va» y regreso, paquete viejo).",
+  "python3 -m unittest tests.adaptativa_test (forma de la petición con imágenes de referencia y clasificación de errores por HTTP).",
+  "python3 -m unittest discover -s tests -p \"*_test.py\"",
   "python3 nube/verificar.py",
-  "Pendiente: comprobar accion=expediente en vivo con agente y editor; primera serie real; consistencia de personaje entre episodios."
+  "En vivo el 9-nov-2026: simulación (corrida 42737798270) y semillero real (corrida 42737957598, propuso «El Heredero del Olivo»); la pantalla publicada la mostró con la llave de Dirección.",
+  "Pendiente: imágenes de referencia contra Google, primera serie completa y primer paquete."
  ],
  "rollback": "Ajustes de Historias: tomas por día en 0 y semillero apagado; o desactivar el workflow sala-v4.yml. Revertir el PR quita la pantalla y la liga. Conservar las filas v4: de EXPEDIENTES y los videos de Drive."
 }

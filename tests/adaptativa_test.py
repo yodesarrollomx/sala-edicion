@@ -74,6 +74,10 @@ class AdaptativaTests(unittest.TestCase):
         self.assertEqual({'type':'video','duration':'9s','aspect_ratio':'9:16','resolution':'720p'},cuerpo['response_format'])
         self.assertEqual('image',cuerpo['input'][0]['type'])
         self.assertEqual('texto',o.peticion(None,'texto',15,'m')['input'])
+        refs=o.peticion(None,'<IMAGE_REF_0> camina',15,'m',[b'a',b'b'])
+        self.assertEqual(['image','image','text'],[x['type'] for x in refs['input']]); self.assertEqual('reference_to_video',refs['generation_config']['video_config']['task'])
+        self.assertEqual('image_to_video',o.peticion(b'j','t',15,'m',[b'a'])['generation_config']['video_config']['task'])   # el primer cuadro manda
+        self.assertEqual(1,len([x for x in o.peticion(b'j','t',15,'m',[b'a'])['input'] if x['type']=='image']))
         self.assertNotIn('generation_config',o.peticion(None,'texto',15,'m'))
         import piloto_omni as p
         u=json.loads(p.UNIVERSO.read_text(encoding='utf-8'))
@@ -90,6 +94,12 @@ class AdaptativaTests(unittest.TestCase):
         with patch.dict('os.environ',{'GEMINI_API_KEY':'AIzaSECRETO'}):
             with patch('urllib.request.urlopen',side_effect=http(429)), self.assertRaises(MotorError) as e:o.llamar('POST','interactions',{})
             self.assertTrue(e.exception.intermitente and e.exception.esperar)
+            def http_texto(code,nombre):
+                return urllib.error.HTTPError('u',code,'x',{},io.BytesIO(json.dumps({'error':{'code':nombre,'message':'m'}}).encode()))
+            with patch('urllib.request.urlopen',side_effect=http_texto(429,'too_many_requests')), self.assertRaises(MotorError) as e:o.llamar('POST','interactions',{})
+            self.assertTrue(e.exception.intermitente and e.exception.esperar and e.exception.http==429)   # así contestó Google el 9-nov
+            with patch('urllib.request.urlopen',side_effect=http_texto(400,'invalid_request')), self.assertRaises(MotorError) as e:o.llamar('POST','interactions',{})
+            self.assertEqual((False,400),(e.exception.intermitente,e.exception.http))
             with patch('urllib.request.urlopen',side_effect=http(400)), self.assertRaises(MotorError) as e:o.llamar('POST','interactions',{})
             self.assertFalse(e.exception.intermitente)
         with patch.dict('os.environ',{'GEMINI_API_KEY':''}), self.assertRaises(MotorError):o.llamar('POST','interactions',{})

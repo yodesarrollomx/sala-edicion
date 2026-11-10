@@ -10,11 +10,11 @@ es rechazada). Por eso nace APAGADO: sólo entra si Dirección pone la REGLA
 Para qué sirve: Wan (gratis) sólo cubre voces de hasta 5 s; Omni cubre de 3 a 15 s, que es
 el hueco donde hoy la Sala cae a la animación por código.
 
-**Contrato NO comprobado en vivo** (9-nov-2026). El endpoint, la forma de la entrada y la de
-la respuesta salen de la guía oficial (`ai.google.dev/gemini-api/docs/omni`, que ese día aún
-mostraba 1.1). El campo `response_format.duration` ("9s") sale de dos guías de terceros, no
-de la oficial. La primera corrida real con una llave con facturación es la que lo acredita;
-si Google rechaza un campo, el error llega íntegro (tachado) a la evidencia del trabajo.
+**Qué está comprobado en vivo** (corrida 42726461524 del 9-nov-2026, llave con prepago): texto
+a video de 15 s con `response_format.duration`, y la respuesta con el video. **No comprobado:**
+imagen a video (`image_to_video`) ni imágenes de referencia de sujeto (`reference_to_video`,
+etiquetas `<IMAGE_REF_N>` en el texto); salen de la guía oficial, que ese día documentaba 1.1.
+Si Google rechaza un campo, el error llega íntegro (tachado) a la evidencia del trabajo.
 
 El audio que genera Omni se descarta: la voz de la Sala es la aprobada (Kokoro/Gemini TTS) y
 la monta el corte. Regla 100 (lámina ENTERA): se asienta igual que Wan, sin recortar.
@@ -48,23 +48,29 @@ def duracion(segundos):
     return max(MIN_S, min(MAX_S, math.ceil(float(segundos))))
 
 
-def peticion(jpg, prompt, segundos, modelo):
-    """Con `jpg` anima esa imagen; sin ella genera el video sólo del texto."""
+def peticion(jpg, prompt, segundos, modelo, referencias=None):
+    """Tres formas de pedir un video:
+
+    · sólo texto;
+    · con `jpg`: esa imagen es el PRIMER cuadro y se anima (`image_to_video`);
+    · con `referencias` (lista de JPEG): son retratos de los personajes, no cuadros. El texto
+      los nombra como <IMAGE_REF_0>, <IMAGE_REF_1>… en ese orden (`reference_to_video`).
+    """
     cuerpo = {'model': modelo, 'input': prompt,
               'response_format': {'type': 'video', 'duration': '%ds' % segundos,
                                   'aspect_ratio': '9:16', 'resolution': '720p'}}
-    if jpg:
-        cuerpo['input'] = [
-            {'type': 'image', 'data': base64.b64encode(jpg).decode('ascii'), 'mime_type': 'image/jpeg'},
-            {'type': 'text', 'text': prompt},
-        ]
-        cuerpo['generation_config'] = {'video_config': {'task': 'image_to_video'}}
+    imagenes, tarea = ([jpg], 'image_to_video') if jpg else (list(referencias or []), 'reference_to_video')
+    if imagenes:
+        cuerpo['input'] = [{'type': 'image', 'data': base64.b64encode(i).decode('ascii'), 'mime_type': 'image/jpeg'}
+                           for i in imagenes] + [{'type': 'text', 'text': prompt}]
+        cuerpo['generation_config'] = {'video_config': {'task': tarea}}
     return cuerpo
 
 
-def generar(prompt, segundos, modelo=MODELO, jpg=None):
+def generar(prompt, segundos, modelo=MODELO, jpg=None, referencias=None):
     """Los bytes del MP4 tal como lo entrega Omni, CON su audio."""
-    resp = _terminar(llamar('POST', 'interactions', peticion(jpg, prompt, duracion(segundos), modelo)))
+    resp = _terminar(llamar('POST', 'interactions',
+                            peticion(jpg, prompt, duracion(segundos), modelo, referencias)))
     return extraer_video(resp, _bajar)
 
 
@@ -90,10 +96,11 @@ def llamar(metodo, ruta, cuerpo=None, crudo=False):
             err = json.loads(texto).get('error') or {}
         except ValueError:
             err = {}
-        codigo = err.get('code') or e.code
-        error = MotorError('omni_flash %s: %s' % (codigo, limpio(err.get('message') or texto)),
-                           intermitente=codigo in (429, 500, 503))
-        error.esperar = codigo == 429            # cuota: pausa el motor, no cuenta como fallo técnico
+        # La API nombra sus errores con texto («too_many_requests»); lo que clasifica es el HTTP.
+        error = MotorError('omni_flash %s: %s' % (err.get('code') or e.code, limpio(err.get('message') or texto)),
+                           intermitente=e.code in (429, 500, 502, 503))
+        error.http = e.code
+        error.esperar = e.code == 429            # cuota o saldo: pausa el motor, no es fallo técnico
         raise error
     except (urllib.error.URLError, TimeoutError) as e:
         raise MotorError('omni_flash no contestó: %s' % limpio(e), intermitente=True)

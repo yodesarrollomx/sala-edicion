@@ -14,11 +14,14 @@ ideas** también (REGLAS `semillero_activo` = 0). No agregar automatizaciones ni
 video o ideas sin que Dirección lo pida. Los horarios de GitHub llegan unas cuatro veces al
 día y con horas de retraso (medido): no prometer «cada hora» por un cron.
 
-**Sala 4.0 · 9-nov-2026 (camino aparte, pedido por Dirección):** `docs/SALA-4.md`. Historias en
-series de 10 episodios de 15 s con Gemini Omni Flash (de pago). Pantalla `historias.html`, nube
-`nube/sala_v4.py` + `sala-v4.yml`, datos en EXPEDIENTES con llaves `v4:` (un dueño por llave; la
-nube nunca escribe `v4:dec`). No toca la mesa, la COLA ni el Apps Script. El gasto lo limita el
-ajuste «tomas por día». Mapas de proceso en `docs/grafos/`.
+**Sala 4.0 · 9-nov-2026 (camino aparte, pedido por Dirección; en vivo desde ese día):**
+`docs/SALA-4.md`. Historias en series de 10 episodios de 15 s con Gemini Omni Flash (de pago).
+Pantalla `historias.html`, nube `nube/sala_v4.py` + `sala-v4.yml`, datos en EXPEDIENTES con llaves
+`v4:` (un dueño por llave; la nube nunca escribe `v4:dec`). No toca la mesa, la COLA ni el Apps
+Script. El gasto lo limita el ajuste «tomas por día». El personaje se mantiene con un retrato
+sacado del piloto (imagen de referencia: sin acreditar en vivo); «no va» en un episodio lo deja
+fuera de la serie; el criterio del guionista y los candados son datos, no código. Mapas de proceso
+en `docs/grafos/`.
 
 **Estación de salida:** `docs/SALA-SALIDA.md`. Una pieza con todas sus láminas aprobadas sale así: el
 jurado escribe el texto, `sala-consejo.yml` · `paquete` (`nube/sala_salida.py`, entra como agente y

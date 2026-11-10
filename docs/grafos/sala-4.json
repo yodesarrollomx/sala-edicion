@@ -37,8 +37,8 @@
   },
   {
    "id": "universo_ui",
-   "label": "Universo: personajes, lugares, vértices, formato",
-   "norm_label": "universo: personajes, lugares, vértices, formato",
+   "label": "Universo: personajes, lugares, vértices, formato, guionista",
+   "norm_label": "universo: personajes, lugares, vértices, formato, guionista",
    "community": 1,
    "community_name": "Pantalla nueva: Historias",
    "file_type": "doc",
@@ -47,8 +47,8 @@
   },
   {
    "id": "serie_ui",
-   "label": "Serie: 10 episodios (texto editable, video, sí / cambio / no)",
-   "norm_label": "serie: 10 episodios (texto editable, video, sí / cambio / no)",
+   "label": "Serie: 10 episodios (texto editable, video, sí / pedir cambio / no va)",
+   "norm_label": "serie: 10 episodios (texto editable, video, sí / pedir cambio / no va)",
    "community": 1,
    "community_name": "Pantalla nueva: Historias",
    "file_type": "doc",
@@ -119,6 +119,16 @@
    "id": "ideas",
    "label": "IDEAS pasadas (se leen, no se tocan)",
    "norm_label": "ideas pasadas (se leen, no se tocan)",
+   "community": 2,
+   "community_name": "Sheet (sin tocar Apps Script)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "candados",
+   "label": "CANDADOS de Dirección (se leen)",
+   "norm_label": "candados de dirección (se leen)",
    "community": 2,
    "community_name": "Sheet (sin tocar Apps Script)",
    "file_type": "doc",
@@ -216,9 +226,19 @@
    "source_location": "sala-4"
   },
   {
+   "id": "retrato",
+   "label": "Drive · retrato del personaje (un cuadro del piloto)",
+   "norm_label": "drive · retrato del personaje (un cuadro del piloto)",
+   "community": 5,
+   "community_name": "Drive",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
    "id": "listas",
-   "label": "YOD Editorial/_LISTAS PARA PUBLICAR/<serie>",
-   "norm_label": "yod editorial/_listas para publicar/<serie>",
+   "label": "Drive · _LISTAS PARA PUBLICAR/Historia · <título>",
+   "norm_label": "drive · _listas para publicar/historia · <título>",
    "community": 5,
    "community_name": "Drive",
    "file_type": "doc",
@@ -266,6 +286,26 @@
    "source_location": "sala-4"
   },
   {
+   "id": "d_piloto",
+   "label": "¿El piloto (primer episodio en pie) ya tiene «sí»?",
+   "norm_label": "¿el piloto (primer episodio en pie) ya tiene «sí»?",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_fuera",
+   "label": "¿El episodio tiene «no va»? Queda fuera: ni se produce ni se publica",
+   "norm_label": "¿el episodio tiene «no va»? queda fuera: ni se produce ni se publica",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
    "id": "d_bloque",
    "label": "¿Episodio de 15 s o bloque de 30 s (dos tomas)?",
    "norm_label": "¿episodio de 15 s o bloque de 30 s (dos tomas)?",
@@ -279,6 +319,26 @@
    "id": "d_continua",
    "label": "¿Misma escena que el anterior? Arranca en su último cuadro",
    "norm_label": "¿misma escena que el anterior? arranca en su último cuadro",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_retrato",
+   "label": "¿El personaje ya tiene retrato? Viaja como imagen de referencia",
+   "norm_label": "¿el personaje ya tiene retrato? viaja como imagen de referencia",
+   "community": 6,
+   "community_name": "Decisiones lógicas",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-4"
+  },
+  {
+   "id": "d_cruce",
+   "label": "¿Hay un personaje conocido? Puede cruzarse en el último episodio",
+   "norm_label": "¿hay un personaje conocido? puede cruzarse en el último episodio",
    "community": 6,
    "community_name": "Decisiones lógicas",
    "file_type": "doc",
@@ -307,8 +367,8 @@
   },
   {
    "id": "d_completa",
-   "label": "¿Los 10 episodios tienen «sí»?",
-   "norm_label": "¿los 10 episodios tienen «sí»?",
+   "label": "¿Cada episodio en pie tiene «sí» sobre su última versión?",
+   "norm_label": "¿cada episodio en pie tiene «sí» sobre su última versión?",
    "community": 6,
    "community_name": "Decisiones lógicas",
    "file_type": "doc",
@@ -529,9 +589,18 @@
    "source_file": "docs/grafos/construir.py"
   },
   {
-   "source": "semillero",
+   "source": "d_semillero",
    "target": "gemini",
-   "relation": "pide 10 episodios",
+   "relation": "sí: pide una serie de 10 episodios",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_semillero",
+   "target": "estado",
+   "relation": "no: lo dice y no propone",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -541,6 +610,15 @@
    "source": "semillero",
    "target": "d_veto",
    "relation": "pasa por",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_veto",
+   "target": "estado",
+   "relation": "sí: no se propone ni se produce, y se avisa",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -575,8 +653,71 @@
   },
   {
    "source": "d_serie",
-   "target": "d_tope",
+   "target": "d_fuera",
    "relation": "sí",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_serie",
+   "target": "serie_ui",
+   "relation": "no: espera a Dirección",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_d",
+   "target": "d_fuera",
+   "relation": "responde",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_fuera",
+   "target": "d_orden",
+   "relation": "los que siguen en pie",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_orden",
+   "target": "d_piloto",
+   "relation": "elige",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_d",
+   "target": "d_piloto",
+   "relation": "responde",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_piloto",
+   "target": "d_tope",
+   "relation": "sí, o es el piloto mismo",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_piloto",
+   "target": "serie_ui",
+   "relation": "no: espera el «sí» del piloto",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -602,8 +743,17 @@
   },
   {
    "source": "d_tope",
-   "target": "d_orden",
-   "relation": "sí",
+   "target": "d_bloque",
+   "relation": "sí: reserva y produce",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_tope",
+   "target": "estado",
+   "relation": "no: espera a mañana",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -628,15 +778,6 @@
    "source_file": "docs/grafos/construir.py"
   },
   {
-   "source": "d_orden",
-   "target": "d_bloque",
-   "relation": "elige",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "weight": 1.0,
-   "source_file": "docs/grafos/construir.py"
-  },
-  {
    "source": "d_bloque",
    "target": "d_continua",
    "relation": "por toma",
@@ -648,7 +789,7 @@
   {
    "source": "d_continua",
    "target": "ffmpeg",
-   "relation": "saca el último cuadro",
+   "relation": "sí: saca el último cuadro",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -656,8 +797,89 @@
   },
   {
    "source": "d_continua",
+   "target": "d_retrato",
+   "relation": "no",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_retrato",
    "target": "omni",
    "relation": "pide el clip",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "retrato",
+   "target": "d_retrato",
+   "relation": "responde",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "productor",
+   "target": "retrato",
+   "relation": "lo saca del piloto aprobado",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "ffmpeg",
+   "target": "omni",
+   "relation": "primer cuadro",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "candados",
+   "target": "semillero",
+   "relation": "obligan al guion",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "candados",
+   "target": "paquete",
+   "relation": "obligan al texto",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "semillero",
+   "target": "d_cruce",
+   "relation": "pregunta",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "exp_p",
+   "target": "d_cruce",
+   "relation": "personajes con retrato",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_cruce",
+   "target": "exp_s",
+   "relation": "invitado en el episodio final",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -729,7 +951,16 @@
   {
    "source": "d_completa",
    "target": "ffmpeg",
-   "relation": "une los 10",
+   "relation": "sí: une los aprobados",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_completa",
+   "target": "serie_ui",
+   "relation": "no: faltan decisiones",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,

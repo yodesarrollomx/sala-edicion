@@ -79,7 +79,7 @@ const GAS_DEF='https://script.google.com/macros/s/AKfycbx61UWsEYCL_dHzi0JrUv3GuA
 const LS=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const GAS=()=>LS('sala_gas')||GAS_DEF;
 const CLAVE=()=>LS('pyod_clave_v1')||LS('sala_clave')||'';     // la misma llave viva de la Sala; no se copia
-const PALABRAS=38, VETADAS=['hermosillo','sonora','mexico'], USD_CLIP=1.05;
+const PALABRAS=38, VETADAS=['hermosillo','sonora','mexico'], USD_CLIP=1.05, LIMITE_CELDA=45000;
 const $=s=>document.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plano=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
@@ -108,20 +108,22 @@ async function cargar(){
     if(!j||j.ok!==true||typeof j.expedientes!=='object') throw new Error((j&&j.error)||'la hoja no contestó');
     E=separar(j.expedientes); CARGADO=true; avisar('');
   }catch(err){ avisar('No pude leer la hoja: '+esc(err.message)+'. Lo que ves puede no estar al día.','mal') }
-  if(!E.universo&&!SEMILLA){ try{ SEMILLA=await (await fetch('datos/universo/universo.json?v='+Date.now())).json() }catch(e){} }
+  if(!SEMILLA){ try{ SEMILLA=await (await fetch('datos/universo/universo.json?v='+Date.now())).json() }catch(e){} }
   pintar();
 }
-const AJ_FABRICA={semillero:1,propuestas_en_espera:2,episodios:10,tope_clips_dia:2,piloto_primero:1,listas_carpeta:''};
+const AJ_FABRICA={semillero:1,propuestas_en_espera:2,episodios:10,tope_clips_dia:2,piloto_primero:1,modelo_guion:'gemini-3.6-flash'};
 function universo(){
   const u=JSON.parse(JSON.stringify(E.universo||SEMILLA||{}));
   u.ajustes=Object.assign({},AJ_FABRICA,u.ajustes||{});
   for(const k of ['vertices','personajes','lugares']) u[k]=u[k]||{};
   u.formato=u.formato||{};
+  if(!String(u.guionista||'').trim()) u.guionista=(SEMILLA&&SEMILLA.guionista)||'';
   delete u.historias; delete u.nota;
   return u;
 }
 async function guardar(clase,id,doc){
   if(!CARGADO){ avisar('Todavía no leo la hoja; no guardo a ciegas. Recarga la página.','mal'); return false }
+  if(JSON.stringify(doc).length>LIMITE_CELDA){ avisar('No se guardó: ya es demasiado texto para la hoja. Acorta descripciones o quita lo que no uses.','mal'); return false }
   try{
     const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({accion:'expediente',clave:CLAVE(),pieza:'v4:'+clase+(id?':'+id:''),expediente:doc})});
@@ -140,30 +142,43 @@ function avisar(html,clase){ $('#aviso').innerHTML=html?`<div class="aviso ${cla
 const ultima=(prod,n)=>{const vs=((((prod||{}).episodios||{})[String(n)])||{}).versiones||[];return vs.length?vs[vs.length-1]:null};
 function marcaVigente(dec,prod,n){
   const u=ultima(prod,n), m=(((dec||{}).episodios||{})[String(n)])||{};
-  return u&&entero(m.v)===entero(u.v)?m:{};
+  return entero(m.v)===entero((u||{}).v)?m:{};
+}
+const enPie=(s,dec,prod)=>(s.episodios||[]).filter(ep=>marcaVigente(dec,prod,ep.n).marca!=='no');   // «no va» = queda fuera
+const aprobados=(s,dec,prod)=>(s.episodios||[]).filter(ep=>ultima(prod,ep.n)&&marcaVigente(dec,prod,ep.n).marca==='si');
+function completa(s,dec,prod){ const van=aprobados(s,dec,prod); return van.length>0&&van.length===enPie(s,dec,prod).length }
+function paqueteAlDia(s,dec,prod){
+  const p=(prod||{}).paquete; if(!p||!completa(s,dec,prod)) return false;
+  if(!p.versiones) return true;
+  const van=aprobados(s,dec,prod), k=Object.keys(p.versiones);
+  return k.length===van.length&&van.every(ep=>entero(p.versiones[String(ep.n)])===entero(ultima(prod,ep.n).v));
 }
 function estadoEp(s,dec,prod,ep){
   const u=ultima(prod,ep.n), m=marcaVigente(dec,prod,ep.n);
+  if(m.marca==='no') return ['No va · queda fuera','no'];
   if(!u) return (dec||{}).serie==='si'?['En fila para producir','']:['Sin video',''];
   if(m.marca==='si') return ['Aprobado','si'];
-  if(m.marca==='no') return ['No va','no'];
   if(m.marca==='cambio') return ['Cambio pedido · se rehace','azul'];
   return ['Listo para que lo veas',''];
 }
 function estadoSerie(s,dec,prod){
   if((dec||{}).serie==='no') return ['Descartada','no'];
   if((dec||{}).serie!=='si') return ['Propuesta · espera tu decisión',''];
-  if((prod||{}).paquete) return ['Paquete listo en Drive','si'];
-  const eps=s.episodios||[], ok=eps.filter(ep=>marcaVigente(dec,prod,ep.n).marca==='si').length;
+  if(paqueteAlDia(s,dec,prod)) return ['Paquete listo en Drive','si'];
+  if(completa(s,dec,prod)) return ['Todo aprobado · la nube arma el paquete','azul'];
+  const eps=enPie(s,dec,prod), ok=aprobados(s,dec,prod).length;
   const porVer=eps.filter(ep=>ultima(prod,ep.n)&&!marcaVigente(dec,prod,ep.n).marca).length;
   return [porVer?`${porVer} por revisar · ${ok} de ${eps.length} aprobados`:`En producción · ${ok} de ${eps.length} aprobados`,porVer?'':'azul'];
 }
+const retratoDe=(pid,s,prod)=>String(((((prod||{}).retratos||{})[pid])||{}).drive||((Object.assign({},universo().personajes,s.personajes||{})[pid])||{}).referencia_drive||'');
+const gastoDe=prod=>Object.values((prod||{}).episodios||{}).reduce((t,e)=>t+(e.versiones||[]).reduce((x,r)=>x+(Number(r.costo_usd_aprox)||0),0),0);
 function problemas(s){
   const p=[], u=universo(), quien=Object.assign({},u.personajes,s.personajes||{}), donde=Object.assign({},u.lugares,s.lugares||{});
   if(!String(s.titulo||'').trim()) p.push('Falta el título.');
   if(!quien[s.personaje]) p.push('Elige un personaje.');
   (s.episodios||[]).forEach((ep,i)=>{
     if(!donde[ep.lugar||s.lugar]) p.push(`Episodio ${i+1}: elige un lugar.`);
+    (ep.invitados||[]).forEach(g=>{ if(!quien[g]) p.push(`Episodio ${i+1}: el invitado ya no existe.`) });
     const tomas=entero(ep.bloque,15)>=30?2:1;
     for(let t=1;t<=tomas;t++){ const suf=t===1?'':'2';
       if(!String(ep['accion'+suf]||'').trim()) p.push(`Episodio ${i+1}: falta la acción${suf?' de la segunda toma':''}.`);
@@ -195,7 +210,9 @@ function opciones(mapa,sel){ return Object.entries(mapa).map(([k,v])=>`<option v
 function vSerie(id){
   const s=E.serie[id], dec=E.dec[id]||{}, prod=E.prod[id]||{}, u=universo();
   const quien=Object.assign({},u.personajes,s.personajes||{}), donde=Object.assign({},u.lugares,s.lugares||{});
-  const [txt,cl]=estadoSerie(s,dec,prod), pr=problemas(s);
+  const [txt,cl]=estadoSerie(s,dec,prod), pr=problemas(s), otros=Object.entries(quien).filter(([k])=>k!==s.personaje);
+  const prota=quien[s.personaje]||{}, retrato=retratoDe(s.personaje,s,prod), enUniverso=u.personajes[s.personaje];
+  const guardado=enUniverso&&String(enUniverso.referencia_drive||'')===retrato, aviso=((prod.avisos||[]).slice(-1)[0])||null, gasto=gastoDe(prod);
   const eps=(s.episodios||[]).map((ep,i)=>{
     const [et,ec]=estadoEp(s,dec,prod,ep), ult=ultima(prod,ep.n), m=marcaVigente(dec,prod,ep.n), b30=entero(ep.bloque,15)>=30;
     const frase=(suf)=>`<label for="d${suf}${i}">Lo que dice${suf?' (segunda toma)':''}</label>
@@ -204,13 +221,17 @@ function vSerie(id){
     return `<section class="ep">
       <div class="fila entre"><div class="fila"><span class="num">${esc(ep.n)}</span><h3>${esc(ep.titulo||'Episodio '+ep.n)}</h3></div><span class="chip ${ec}">${esc(et)}</span></div>
       <p class="dice">«${esc(ep.dialogo||'')}»</p>
-      ${ult?`<div data-video="${i}"><button class="btn" data-ver="${esc(ult.drive)}" data-en="${i}">Ver el video (versión ${esc(ult.v)})</button></div>
-        <div class="fila" style="margin:8px 0">
-          <button class="btn si" data-marca="si" data-n="${esc(ep.n)}"${m.marca==='si'?' disabled':''}>Sí</button>
-          <button class="btn" data-pedir="${i}">Pedir cambio</button>
-          <button class="btn no" data-marca="no" data-n="${esc(ep.n)}"${m.marca==='no'?' disabled':''}>No va</button>
-        </div>
-        <div data-cambio="${i}" hidden><label for="n${i}">¿Qué hay que cambiar?</label><textarea id="n${i}" data-nota="${esc(ep.n)}"></textarea>
+      ${ult?`<div data-video="${i}"></div>
+        <div class="fila"><button class="btn" data-ver="${esc(ult.drive)}" data-en="${i}">Ver el video (versión ${esc(ult.v)})</button>
+          <a class="btn liga" href="https://drive.google.com/file/d/${encodeURIComponent(ult.drive)}/view" target="_blank" rel="noopener">Abrir en Drive</a></div>
+        ${ult.aviso?`<p class="sub">Aviso de la nube: ${esc(ult.aviso)}</p>`:''}`:''}
+      <div class="fila" style="margin:8px 0">
+        ${ult?`<button class="btn si" data-marca="si" data-n="${esc(ep.n)}"${m.marca==='si'?' disabled':''}>Sí</button>
+          <button class="btn" data-pedir="${i}">Pedir cambio</button>`:''}
+        ${m.marca==='no'?`<button class="btn" data-marca="vuelve" data-n="${esc(ep.n)}">Regresarlo a la serie</button>`
+          :`<button class="btn no" data-marca="no" data-n="${esc(ep.n)}">No va</button>`}
+      </div>
+      ${ult?`<div data-cambio="${i}" hidden><label for="n${i}">¿Qué hay que cambiar?</label><textarea id="n${i}" data-nota="${esc(ep.n)}"></textarea>
           <div class="fila" style="margin:8px 0"><button class="btn oro" data-marca="cambio" data-n="${esc(ep.n)}">Enviar el cambio</button></div></div>
         ${m.marca==='cambio'&&m.nota?`<p class="sub">Pediste: ${esc(m.nota)}</p>`:''}`:''}
       <details><summary>Editar el episodio</summary>
@@ -224,6 +245,7 @@ function vSerie(id){
         </div>
         ${b30?`${frase('2')}<label for="a2${i}">Lo que pasa en la segunda toma (en inglés)</label><textarea id="a2${i}" data-ep="${i}" data-campo="accion2">${esc(ep.accion2||'')}</textarea>`:''}
         <label class="fila" style="font-weight:500"><input type="checkbox" data-ep="${i}" data-campo="continua"${ep.continua?' checked':''} style="width:auto"> Empieza donde terminó el episodio anterior (misma escena)</label>
+        ${otros.length?`<label>Invitados de otras historias</label><div class="fila">${otros.map(([k,v])=>`<label class="fila" style="font-weight:500;margin:0"><input type="checkbox" data-inv="${esc(k)}" data-de="${i}"${(ep.invitados||[]).includes(k)?' checked':''} style="width:auto"> ${esc(v.nombre||k)}</label>`).join('')}</div>`:''}
       </details></section>`}).join('');
   return `<button class="btn liga" data-accion="volver">← Todas las series</button>
   <div class="tarjeta">
@@ -237,9 +259,16 @@ function vSerie(id){
       <div><label for="sPer">Protagonista (el cliente)</label><select id="sPer" data-serie-campo="personaje">${opciones(quien,s.personaje)}</select></div>
     </div>
     ${pr.length?`<div class="aviso mal" style="margin-top:12px"><ul class="plano">${pr.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
-    <p class="sub" style="margin-top:10px">Aprobar la serie autoriza producirla: cada toma de 15 segundos cuesta alrededor de ${USD_CLIP.toFixed(2)} USD y el tope del día está en Ajustes.</p>
+    <p class="sub" style="margin-top:10px">Aprobar la serie autoriza producirla: cada toma de 15 segundos cuesta alrededor de ${USD_CLIP.toFixed(2)} USD y el tope del día está en Ajustes.${gasto?` Esta serie lleva alrededor de ${gasto.toFixed(2)} USD.`:''}</p>
+    ${prod.paquete?`<p style="margin:10px 0 0"><a href="https://drive.google.com/drive/folders/${encodeURIComponent(prod.paquete.carpeta)}" target="_blank" rel="noopener">Abrir el paquete en Drive</a>${paqueteAlDia(s,dec,prod)?(prod.paquete.con_textos?'':' (sin textos para publicar: escríbelos tú)'):' (es el anterior: la nube lo rehace cuando todo esté aprobado)'}</p>`:''}
+    ${aviso?`<div class="aviso mal" style="margin:12px 0 0">La nube avisó: ${esc(aviso.texto)}</div>`:''}
   </div>
-  <div class="tarjeta">${eps||'<p class="vacio">Sin episodios.</p>'}
+  ${prota.nombre?`<div class="tarjeta"><div class="fila entre"><div><h3>${esc(prota.nombre)}</h3>
+      <p class="sub">${retrato?'Ya tiene retrato: sale igual en los episodios que siguen.':'Su retrato se toma del primer episodio cuando le des «sí».'}</p></div>
+      ${guardado?'<span class="chip si">En el universo</span>':`<button class="btn" data-accion="guardar-personaje">Guardar en el universo</button>`}</div>
+    <p class="sub">Guardado en el universo puede volver como invitado en otras historias.</p></div>`:''}
+  <div class="tarjeta"><p class="sub" style="margin-bottom:6px">En cada episodio: «Sí» lo aprueba, «Pedir cambio» lo rehace con tu nota y «No va» lo deja fuera de la serie.</p>
+    ${eps||'<p class="vacio">Sin episodios.</p>'}
     <div class="fila" style="margin-top:14px"><button class="btn oro" data-accion="guardar-serie">Guardar cambios de texto</button></div></div>`;
 }
 function fichas(mapa,clase,campos){
@@ -264,6 +293,12 @@ function vUniverso(){
     <label for="fAud">Audio (en inglés)</label><textarea id="fAud" data-f="audio">${esc(f.audio||'')}</textarea>
     <label for="fPro">Prohibido en pantalla (en inglés)</label><textarea id="fPro" data-f="prohibido">${esc(f.prohibido||'')}</textarea>
   </div>
+  <h2 style="margin-top:22px">Instrucciones para el guionista</h2>
+  <div class="tarjeta">
+    <label for="uGui">Cómo deben escribirse las historias (lo lee el modelo que las propone)</label>
+    <textarea id="uGui" data-g="1" style="min-height:220px">${esc(u.guionista||'')}</textarea>
+    <p class="sub">Escribe {n} donde vaya el número de episodios. La estrategia común y los candados de la Sala se agregan solos.</p>
+  </div>
   <button class="btn oro" data-accion="guardar-universo">Guardar el universo</button>`;
 }
 function vAjustes(){
@@ -276,7 +311,8 @@ function vAjustes(){
       <div><label for="ajTope">Tomas de 15 segundos por día, como máximo</label><input type="number" id="ajTope" min="0" max="40" value="${esc(tope)}"></div>
     </div>
     <p class="sub" id="ajCosto">Gasto máximo al día: alrededor de ${(tope*USD_CLIP).toFixed(2)} USD. En 0 no se produce nada.</p>
-    <label class="fila" style="font-weight:500"><input type="checkbox" id="ajPil"${entero(a.piloto_primero,1)?' checked':''} style="width:auto"> Producir primero el episodio 1 y esperar tu «sí» antes de seguir</label>
+    <label class="fila" style="font-weight:500"><input type="checkbox" id="ajPil"${entero(a.piloto_primero,1)?' checked':''} style="width:auto"> Producir primero un solo episodio (el piloto) y esperar tu «sí» antes de seguir</label>
+    <label for="ajMod">Modelo que escribe las historias</label><input type="text" id="ajMod" value="${esc(a.modelo_guion||'')}" autocomplete="off" spellcheck="false">
     <div class="fila" style="margin-top:14px"><button class="btn oro" data-accion="guardar-ajustes">Guardar ajustes</button></div>
   </div>
   <div class="tarjeta"><h2>Última corrida</h2>${est?`<p class="sub">${esc(String(est.cuando||'').replace('T',' ').replace('Z',' UTC'))} · ${esc(est.clips_hoy)} de ${esc(est.tope)} tomas usadas hoy</p>
@@ -288,17 +324,21 @@ function vAjustes(){
 function recogerSerie(id){
   const s=JSON.parse(JSON.stringify(E.serie[id]));
   document.querySelectorAll('[data-serie-campo]').forEach(el=>{ s[el.dataset.serieCampo]=el.value });
-  document.querySelectorAll('[data-ep]').forEach(el=>{ const ep=s.episodios[+el.dataset.ep], c=el.dataset.campo;
+  document.querySelectorAll('[data-ep][data-campo]').forEach(el=>{ const ep=s.episodios[+el.dataset.ep], c=el.dataset.campo;
     ep[c]= el.type==='checkbox'?el.checked : c==='bloque'?entero(el.value,15) : el.value });
+  s.episodios.forEach((ep,i)=>{ const cajas=[...document.querySelectorAll(`[data-inv][data-de="${i}"]`)];
+    if(cajas.length) ep.invitados=cajas.filter(c=>c.checked).map(c=>c.dataset.inv) });
   return s;
 }
 async function marcar(id,n,marca){
-  const prod=E.prod[id]||{}, u=ultima(prod,n); if(!u) return;
+  const prod=E.prod[id]||{}, u=ultima(prod,n);
+  if(marca==='vuelve') marca='';                       // regresa a la serie: se borra el «no va»
+  if(!u&&marca!=='no'&&marca!=='') return;             // sin video sólo se puede dejar fuera o regresar
   let nota='';
   if(marca==='cambio'){ const el=document.querySelector(`[data-nota="${n}"]`); nota=(el&&el.value||'').trim();
     if(!nota){ avisar('Escribe qué hay que cambiar.','mal'); return } }
   const dec=JSON.parse(JSON.stringify(E.dec[id]||{})); dec.episodios=dec.episodios||{};
-  dec.episodios[String(n)]={v:u.v,marca,nota,cuando:new Date().toISOString()};
+  dec.episodios[String(n)]={v:u?u.v:0,marca,nota,cuando:new Date().toISOString()};
   if(await guardar('dec',id,dec)) pintar();
 }
 document.addEventListener('click',async ev=>{
@@ -306,7 +346,8 @@ document.addEventListener('click',async ev=>{
   if(b.closest('#tabs')){ VISTA=b.dataset.v; ABIERTA=null; pintar(); return }
   if(b.dataset.abrir){ ABIERTA=b.dataset.abrir; pintar(); window.scrollTo(0,0); return }
   if(b.dataset.ver){ document.querySelector(`[data-video="${b.dataset.en}"]`).innerHTML=
-      `<iframe class="video" src="https://drive.google.com/file/d/${encodeURIComponent(b.dataset.ver)}/preview" allow="autoplay" title="Video del episodio"></iframe>`; return }
+      `<iframe class="video" src="https://drive.google.com/file/d/${encodeURIComponent(b.dataset.ver)}/preview" allow="autoplay" title="Video del episodio"></iframe>
+       <p class="sub">Si aquí no carga, toca «Abrir en Drive».</p>`; return }
   if(b.dataset.pedir){ const c=document.querySelector(`[data-cambio="${b.dataset.pedir}"]`); c.hidden=!c.hidden; if(!c.hidden) c.querySelector('textarea').focus(); return }
   if(b.dataset.marca){ await marcar(ABIERTA,b.dataset.n,b.dataset.marca); return }
   if(b.dataset.serie){ const dec=JSON.parse(JSON.stringify(E.dec[ABIERTA]||{})); dec.serie=b.dataset.serie; dec.cuando=new Date().toISOString();
@@ -320,12 +361,18 @@ document.addEventListener('click',async ev=>{
       episodios:Array.from({length:n},(_,i)=>({n:i+1,titulo:'',accion:'',dialogo:'',gancho:'',bloque:15,continua:false})),origen:'editor',creada:new Date().toISOString()};
     if(await guardar('serie',id,s)){ ABIERTA=id; pintar() } return }
   if(a==='guardar-serie'){ const s=recogerSerie(ABIERTA); if(await guardar('serie',ABIERTA,s)) pintar(); return }
+  if(a==='guardar-personaje'){ if(!E.universo&&!SEMILLA){ avisar('No pude leer el universo de fábrica; recarga la página.','mal'); return }
+    const s=E.serie[ABIERTA], u=universo(), pid=s.personaje, p=Object.assign({},u.personajes,s.personajes||{})[pid]; if(!p) return;
+    const retrato=retratoDe(pid,s,E.prod[ABIERTA]);
+    u.personajes[pid]=Object.assign({},p,retrato?{referencia_drive:retrato}:{});     // con su retrato: así puede volver igual en otra historia
+    if(await guardar('universo','',u)) pintar(); return }
   if(a==='guardar-universo'||a==='guardar-ajustes'||b.dataset.agregar||b.dataset.quitar){
     if(!E.universo&&!SEMILLA){ avisar('No pude leer el universo de fábrica; no guardo uno vacío. Recarga la página.','mal'); return } }
   if(a==='guardar-universo'||b.dataset.agregar||b.dataset.quitar){
     const u=universo();
     document.querySelectorAll('[data-u]').forEach(el=>{ (u[el.dataset.u][el.dataset.k]=u[el.dataset.u][el.dataset.k]||{})[el.dataset.c]=el.value });
     document.querySelectorAll('[data-f]').forEach(el=>{ u.formato[el.dataset.f]=el.value });
+    const gui=document.querySelector('[data-g]'); if(gui) u.guionista=gui.value;
     if(b.dataset.agregar){ const nombre=(document.querySelector(`[data-nuevo="${b.dataset.agregar}"]`).value||'').trim(); if(!nombre){ avisar('Escribe el nombre primero.','mal'); return } let k=slug(nombre),i=2; while(u[b.dataset.agregar][k]) k=slug(nombre)+'-'+(i++);
       u[b.dataset.agregar][k]={nombre} }
     if(b.dataset.quitar){ const usa=Object.values(E.serie).some(s=>s[b.dataset.quitar==='personajes'?'personaje':b.dataset.quitar==='lugares'?'lugar':'vertice']===b.dataset.k);
@@ -333,7 +380,7 @@ document.addEventListener('click',async ev=>{
     if(await guardar('universo','',u)) pintar(); return }
   if(a==='guardar-ajustes'){ const u=universo();
     Object.assign(u.ajustes,{semillero:$('#ajSem').checked?1:0,propuestas_en_espera:entero($('#ajEsp').value,2),episodios:Math.max(1,entero($('#ajEps').value,10)),
-      tope_clips_dia:entero($('#ajTope').value,0),piloto_primero:$('#ajPil').checked?1:0});
+      tope_clips_dia:entero($('#ajTope').value,0),piloto_primero:$('#ajPil').checked?1:0,modelo_guion:$('#ajMod').value.trim()||AJ_FABRICA.modelo_guion});
     if(await guardar('universo','',u)) pintar(); return }
 });
 document.addEventListener('input',ev=>{

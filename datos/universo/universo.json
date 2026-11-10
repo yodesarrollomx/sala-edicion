@@ -13,8 +13,9 @@
   "episodios": 10,
   "tope_clips_dia": 2,
   "piloto_primero": 1,
-  "listas_carpeta": "1OamVBbBzFbpRP-95oRY2PSWD_6uKP_Tf"
+  "modelo_guion": "gemini-3.6-flash"
  },
+ "guionista": "Eres guionista de series cortas verticales para redes de una desarrolladora inmobiliaria y despacho de arquitectura. El protagonista SIEMPRE es un cliente, y cada serie es de una industria distinta. La historia se cuenta en {n} episodios, uno por día. Cada episodio es una sola toma continua de 15 segundos, sin cortes, en un solo lugar, con una sola frase hablada en español natural. Cada episodio termina con un gancho que obliga a ver el siguiente; el último cierra la historia y deja una puerta abierta hacia otra serie. Todas las series pasan en el mismo mundo: cuando haya un personaje conocido disponible, puede cruzarse en el último episodio. La historia enseña el vértice del negocio indicado sin sonar a anuncio: nada de precios, cifras de dinero, marcas, logotipos ni texto en pantalla.",
  "vertices": {
   "ppp": {
    "nombre": "Plan de Potencial",
