@@ -206,6 +206,12 @@ se ve en vez de quedarse diciendo «Producción la rehace» para siempre.
 - Una orden contra una versión que ya no es la vigente **se ignora por diseño**: la versión nueva
   debe pasar por la mesa.
 - «Cómo va» lo sabe por `SalaSalida.cambioDePieza`; funciona también para una pieza sin paquete.
+- Si la mesa no puede atender una orden (por ejemplo, la lámina ya no existe en la tira), el aviso sale en
+  el **registro de la corrida** de la nube y como un número en `datos/mesa-estado.json`; **no** en la
+  pantalla. Una orden sobre una versión anterior que ya se rehízo **no cuenta como perdida**: es historia.
+- La ficha de la pieza («Cómo va» → tocar la fila) tampoco ofrece «Publicarla» mientras haya una orden
+  pedida o ya rehecha. Su botón «¿Algo más que cambiar del sistema o de la pieza? Escríbelo como encargo»
+  es otra puerta: crea un encargo, no una orden de cambio.
 
 ## Cómo abre (medido el 9-nov en el navegador de Dirección)
 

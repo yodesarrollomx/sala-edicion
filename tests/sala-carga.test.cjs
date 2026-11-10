@@ -314,7 +314,7 @@ test('«Cómo va» con orden de cambio: pedido, volvió y pieza sin paquete (cam
   // pedido, sin pendientes en la mesa
   resp={estado:'pedido',ordenes};let f=hay([]);
   assert.deepEqual([f.quien,f.lista,f.tuyo],['fab',false,false]);
-  assert.equal(f.que,'Cambio pedido en la imagen 2, 3: Producción la rehace con tu nota.');
+  assert.equal(f.que,'Cambio pedido en las imágenes 2 y 3: Producción la rehace con tu nota.');
   assert.equal(f.cuando,'Puede tardar varias horas; cuando esté lista llega a tu mesa para que la apruebes.');
   // volvió, sin pendientes: el paquete viejo no se ofrece
   s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
@@ -396,6 +396,52 @@ test('voz, escena y corte hechos no se presentan como producción todavía activ
   assert.match(rendered,/Imágenes aprobadas\. Falta su texto\./);
   assert.doesNotMatch(rendered,/En proceso:|trabajo en cola|pone en cola|≈/);
   assert.equal(s.ctx.filaLinea(z).fab,false);
+});
+
+
+/* ficha de la pieza y hoja de la lámina: con una orden de cambio el paquete viejo no se ofrece (9-nov) */
+function conVista(s,quien='editor'){
+  const c=s.ctx,sal={};
+  c.hoja=(h,id)=>{sal.html=h;sal.id=id;const q=sel=>sel[0]==='#'&&h.includes('id="'+sel.slice(1)+'"')?{}:null;return {querySelector:q}};
+  c.$=sel=>{const id=sel.slice(1);return sal.html&&sal.html.includes('id="'+id+'"')?{}:null};
+  c.armarPiezas=async()=>[c.__z];c.formatoDePieza=()=>'carrusel';c.laminaAbierta=()=>null;c.pasoHTML=(n,e,b)=>`<div>${n}${b||''}</div>`;
+  c.nodoDePieza=()=>({});c.fichaIdeaProd=()=>{throw Error('sin ficha')};c.cerrarCapas=()=>{};
+  c.serialDe=()=>'';c.fechaBonita=()=>'';c.notaDeLamina=()=>'';c.enMesaTira=()=>null;c.conSeguro=()=>{};c.pedirNota=()=>{};
+  c.idx=0;c.lockeadas=[];c.DECIDE=()=>quien==='editor';
+  for(const f of [block('async function fichaPieza(nombre){','function pasoHTML'.length?'\n}\n':'')])
+    vm.runInContext(f+'\n}',c);
+  return sal;
+}
+test('la ficha de la pieza no ofrece publicar un paquete viejo con un cambio pedido o ya rehecho',async()=>{
+  const s=sala(),z=s.piece();s.ctx.__z=z;const sal=conVista(s);
+  s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
+  s.ctx.SalaSalida.llegaron({});
+  await s.ctx.fichaPieza(z.nombre);
+  assert.match(sal.html,/id="fPublicar"/,'sin orden: se ofrece');
+  s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v1',ordenes:[{n:1,nota:'x'}]}});
+  assert.equal(s.ctx.SalaSalida.cambioDePieza(z.nombre,'synthetic').estado,'pedido');
+  await s.ctx.fichaPieza(z.nombre);
+  assert.doesNotMatch(sal.html,/id="fPublicar"/);assert.match(sal.html,/Cambio pedido<\/b>: este paquete ya no es el que va a salir/);
+  // 'volvio': la versión empacada es la de la orden y la mesa ya trae otra
+  s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v1',paquete:'synthetic-v1',ordenes:[]}});
+  s.ctx.SalaTablero={pidDe:()=>'synthetic-v2'};
+  assert.equal(s.ctx.SalaSalida.cambioDePieza(z.nombre,'synthetic').estado,'volvio');
+  await s.ctx.fichaPieza(z.nombre);
+  assert.doesNotMatch(sal.html,/id="fPublicar"/);assert.match(sal.html,/Hay una versión nueva<\/b>; vuelve a tu montón/);
+  assert.match(sal.html,/Escríbelo como encargo/);assert.doesNotMatch(sal.html,/la reabre/);
+});
+
+test('verLamina: «Pedir cambio a esta lámina» sólo con editor, hoja leída y pieza no publicada',()=>{
+  const s=sala(),z=s.piece();const sal=conVista(s);
+  const t=z.tira;t.laminas[0].estado='aprobada';
+  vm.runInContext(block('function verLamina(t,n){','/* 7-sep (Alejandro)')+'\n',s.ctx);
+  const ver=()=>{sal.html='';s.ctx.verLamina(t,1);return /id="reabrirLam"/.test(sal.html)};
+  assert.equal(ver(),false,'sin hoja leída no aparece');
+  s.ctx.SalaSalida.llegaron({});
+  assert.equal(ver(),true,'editor con hoja leída');
+  assert.match(sal.html,/Pedir cambio a esta lámina/);
+  s.ctx.publicadas.add(t.pieza);assert.equal(ver(),false,'pieza publicada');
+  s.ctx.publicadas.clear();s.ctx.DECIDE=()=>false;assert.equal(ver(),false,'lector');
 });
 
 }
