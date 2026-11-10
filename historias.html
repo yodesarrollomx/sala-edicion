@@ -212,7 +212,7 @@ function estadoEp(s,dec,prod,ep){
 }
 function estadoSerie(s,dec,prod){
   if((dec||{}).serie==='no') return ['Descartada','no'];
-  if((dec||{}).serie!=='si') return ['Propuesta · espera tu decisión',''];
+  if((dec||{}).serie!=='si') return [s.origen==='editor'?'Borrador tuyo · apruébala cuando esté lista':'Propuesta · espera tu decisión',''];
   if(paqueteAlDia(s,dec,prod)) return ['Paquete listo en Drive','si'];
   if(completa(s,dec,prod)) return ['Todo aprobado · la nube arma el paquete','azul'];
   const eps=enPie(s,dec,prod), ok=aprobados(s,dec,prod).length;
@@ -427,7 +427,7 @@ function vAjustes(){
   return `<div class="tarjeta">
     <label class="fila casilla"><input type="checkbox" id="ajSem"${entero(a.semillero)?' checked':''}> Semillero encendido (propone series solo)</label>
     <div class="dos">
-      <div><label for="ajEsp">Series propuestas en espera, como máximo</label><input type="number" id="ajEsp" min="0" max="10" value="${esc(a.propuestas_en_espera)}"></div>
+      <div><label for="ajEsp">Propuestas del semillero en espera, como máximo (tus borradores no cuentan)</label><input type="number" id="ajEsp" min="0" max="10" value="${esc(a.propuestas_en_espera)}"></div>
       <div><label for="ajEps">Episodios por serie</label><input type="number" id="ajEps" min="1" max="30" value="${esc(a.episodios)}"></div>
       <div><label for="ajTope">Tomas de 15 segundos por día, como máximo</label><input type="number" id="ajTope" min="0" max="40" value="${esc(tope)}"></div>
       <div><label for="ajFic">Imágenes de referencia por día, como máximo</label><input type="number" id="ajFic" min="0" max="40" value="${esc(fic)}"></div>
