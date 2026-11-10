@@ -315,7 +315,7 @@ async function estatico(route,u,rol){
   await page.locator('#puertas [data-v="prod"]').click();await page.waitForSelector('#linea .ln-fila',{timeout:30000});
   await page.waitForFunction(()=>[...document.querySelectorAll('#linea .ln-fila')].some(f=>/Cambio pedido en la imagen 2/.test(f.innerText)),null,{timeout:30000});
   const filas=Object.fromEntries(await page.evaluate(()=>[...document.querySelectorAll('#linea .ln-fila')].map(f=>[f.querySelector('.ln-nom b').textContent,f.querySelector('.ln-rel').innerText.replace(/\s+/g,' ')])));
-  assert.match(filas['Pieza Uno'],/Cambio pedido en la imagen 2: Producción la rehace con tu nota\./);
+  assert.match(filas['Pieza Uno'],/Cambio pedido en la imagen 2, con la nota del editor\./);
   assert.match(filas['Pieza Tres'],/Lista para lanzar: 1 imagen y su texto\./);
   await page.locator('#puertas [data-v="hoy"]').click();
   // 4) al recargar, la orden viene de la hoja

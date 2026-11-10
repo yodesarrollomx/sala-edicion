@@ -194,8 +194,8 @@ paquete no coinciden), manda el que la saca del montón.
 **En la nube.** Las piezas con orden van primero en la ronda de la mesa, para que el tope de láminas no
 las deje esperando. La mesa cuenta en `datos/mesa-estado.json` (sólo números) `ordenes_de_cambio` y
 `ordenes_sin_tira_vigente`, y avisa en el registro de la corrida por cada orden que no puede atender (su
-tira ya no es la vigente, no tiene fuente en el Sheet o la pieza ya se publicó). Así una orden perdida
-se ve en vez de quedarse diciendo «Producción la rehace» para siempre.
+tira ya no es la vigente, no tiene fuente en el Sheet o la pieza ya se publicó). Así quien revisa la
+corrida ve una orden perdida; la pantalla no la marca como perdida (sigue diciendo «cambio pedido»).
 
 **Límites conocidos.**
 
@@ -206,7 +206,8 @@ se ve en vez de quedarse diciendo «Producción la rehace» para siempre.
 - Una orden contra una versión que ya no es la vigente **se ignora por diseño**: la versión nueva
   debe pasar por la mesa.
 - «Cómo va» lo sabe por `SalaSalida.cambioDePieza`; funciona también para una pieza sin paquete.
-- Si la mesa no puede atender una orden (por ejemplo, la lámina ya no existe en la tira), el aviso sale en
+- Si la mesa no puede atender una orden (su tira ya no es la vigente, no tiene fuente en el Sheet o la
+  pieza ya se publicó), el aviso sale en
   el **registro de la corrida** de la nube y como un número en `datos/mesa-estado.json`; **no** en la
   pantalla. Una orden sobre una versión anterior que ya se rehízo **no cuenta como perdida**: es historia.
 - La ficha de la pieza («Cómo va» → tocar la fila) tampoco ofrece «Publicarla» mientras haya una orden

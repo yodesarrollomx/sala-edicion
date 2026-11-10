@@ -828,7 +828,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='ff0ce2be47';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='6efbd8414a';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2759,7 +2759,7 @@ function filaLinea(z){
   else if(viejos.length) nota=`Además, ${nomCola(viejos[0].etapa)} figura en curso desde el ${fechaCorta(viejos[0].actualizado)}; su finalización no está confirmada.`;
   else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola.`;
   if(publicada){ que='Publicación registrada.' }
-  else if(cEst==='pedido'&&!pend.length){ quien='fab'; const ns=cOrd.map(o=>o.n); que=`Cambio pedido en ${ns.length===1?'la imagen '+ns[0]:'las imágenes '+(ns.length>1?ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1]:'')}: Producción la rehace con tu nota.`; cuando='Puede tardar varias horas; cuando esté lista llega a tu mesa para que la apruebes.' }
+  else if(cEst==='pedido'&&!pend.length){ quien='fab'; const ns=cOrd.map(o=>o.n); que=`Cambio pedido en ${ns.length===1?'la imagen '+ns[0]:'las imágenes '+(ns.length>1?ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1]:'')}, con la nota del editor.`; cuando='Suele tardar varias horas; cuando esté lista llega a la mesa para aprobarla.' }
   else if(cEst==='volvio'&&!pend.length){ quien='fab'; que='Hay una versión nueva. Cuando esté aprobada y con su paquete nuevo, vuelve a tu montón.'; cuando='' }
   else if(lista){ quien='lista'; const n=SalaSalida.paqueteDe(z.nombre).imagenes.length;
     que=`Lista para lanzar: ${n} ${n===1?'imagen':'imágenes'} y su texto.`; cuando=DECIDE()?'Toca para abrirla.':'Publicar es de los editores.' }
@@ -3126,7 +3126,7 @@ async function fichaPieza(nombre){
   // 9-nov: con una orden de cambio viva o ya atendida, el paquete viejo NO se ofrece para publicar
   const cp=typeof SalaSalida!=='undefined'&&SalaSalida.cambioDePieza?SalaSalida.cambioDePieza(nombre,z.slug):null, cEst=(cp&&cp.estado)||'';
   const paq=typeof SalaSalida!=='undefined'&&!cEst?SalaSalida.paqueteDe(nombre):null;
-  const avisoCambio=cEst==='volvio'?'<b>Hay una versión nueva</b>; vuelve a tu montón con su paquete nuevo.':'<b>Cambio pedido</b>: este paquete ya no es el que va a salir.';
+  const avisoCambio=cEst==='volvio'?'<b>Hay una versión nueva</b>; vuelve a tu montón con su paquete nuevo.':(typeof SalaSalida!=='undefined'&&SalaSalida.paqueteDe(nombre))?'<b>Cambio pedido</b>: este paquete ya no es el que va a salir.':'<b>Cambio pedido</b>: Producción la rehace con la nota del editor.';
   const terminada=publicada||(!!t&&(t.laminas||[]).length>0&&!abiertas.length&&(!deVideo||!colaViva));
   hoja(`<div class="arb-ficha"><h3>${esc(nombre)}</h3><p class="arb-sub">${terminada?(publicada?'<b class="ok-tag">Publicada ✓</b>':cEst?avisoCambio:paq?'<b class="ok-tag">Lista para lanzar ✓</b> — imágenes y texto en Drive':'<b class="ok-tag">Imágenes aprobadas ✓</b> — falta su texto; lo escribe el consejo'):'en producción · '+esc(quefaltaPara(t,g,false))}</p>
     ${paq&&!publicada?`<button class="listo" id="fPublicar">${DECIDE()?'Publicarla →':'Ver el paquete →'}</button>`:''}

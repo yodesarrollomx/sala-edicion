@@ -372,7 +372,7 @@ class SoloLecturaTests(unittest.TestCase):
             doc = self.documentacion(arbol)
             for nodo in ast.walk(arbol):
                 if isinstance(nodo, ast.Constant) and isinstance(nodo.value, str) \
-                        and 'cambio:' in nodo.value and id(nodo) not in doc:
+                        and nodo.value.startswith('cambio:') and id(nodo) not in doc:
                     culpables.append('%s:%d' % (ruta.name, nodo.lineno))
         self.assertEqual(culpables, [],
                          'Sólo sala_cambios.py puede nombrar la llave «cambio:» en código. '

@@ -279,8 +279,8 @@ test('una pieza lista con cambio pedido sale del montón y «Cómo va» dice que
   s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v1',ordenes:[{n:1,nota:'Más luminosa'}]}});
   const f=s.ctx.filaLinea(z);
   assert.deepEqual([f.lista,f.tuyo,f.quien],[false,false,'fab']);
-  assert.equal(f.que,'Cambio pedido en la imagen 1: Producción la rehace con tu nota.');
-  assert.equal(f.cuando,'Puede tardar varias horas; cuando esté lista llega a tu mesa para que la apruebes.');
+  assert.equal(f.que,'Cambio pedido en la imagen 1, con la nota del editor.');
+  assert.equal(f.cuando,'Suele tardar varias horas; cuando esté lista llega a la mesa para aprobarla.');
   assert.equal(s.ctx.SalaSalida.pendientes().length,0);
   // sin mesa que confirme la versión no se ofrece «quitar» (quitable:false)
   assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.enCambio())),[{slug:'synthetic',nombre:'Pieza sintética',estado:'pedido',ordenes:[{n:1,nota:'Más luminosa',cuando:'',por:''}],quitable:false}]);
@@ -314,8 +314,8 @@ test('«Cómo va» con orden de cambio: pedido, volvió y pieza sin paquete (cam
   // pedido, sin pendientes en la mesa
   resp={estado:'pedido',ordenes};let f=hay([]);
   assert.deepEqual([f.quien,f.lista,f.tuyo],['fab',false,false]);
-  assert.equal(f.que,'Cambio pedido en las imágenes 2 y 3: Producción la rehace con tu nota.');
-  assert.equal(f.cuando,'Puede tardar varias horas; cuando esté lista llega a tu mesa para que la apruebes.');
+  assert.equal(f.que,'Cambio pedido en las imágenes 2 y 3, con la nota del editor.');
+  assert.equal(f.cuando,'Suele tardar varias horas; cuando esté lista llega a la mesa para aprobarla.');
   // volvió, sin pendientes: el paquete viejo no se ofrece
   s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
   resp={estado:'volvio',ordenes:[]};f=hay([]);
@@ -327,7 +327,7 @@ test('«Cómo va» con orden de cambio: pedido, volvió y pieza sin paquete (cam
   // pieza SIN paquete («Las 48 Horas»): antes decía «Guardada»
   delete s.ctx.EXP[z.nombre];
   resp={estado:'pedido',ordenes:[{n:1,nota:'x'}]};f=hay([]);
-  assert.equal(f.que,'Cambio pedido en la imagen 1: Producción la rehace con tu nota.');
+  assert.equal(f.que,'Cambio pedido en la imagen 1, con la nota del editor.');
   assert.doesNotMatch(f.que,/Guardada/);
 });
 
