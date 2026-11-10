@@ -51,7 +51,8 @@ function pendientes(){ return listas(typeof EXP!=='undefined'?EXP:{},n=>esPublic
 /* las que tienen todas sus imágenes aprobadas y todavía no tienen paquete: unas esperan su texto y
    otras están guardadas por regla (REGLAS salida_excluir) hasta que Dirección decida */
 async function sinPaquete(){
-  try{ const piezas=(typeof LINEA_PIEZAS!=='undefined'&&LINEA_PIEZAS)||await armarPiezas();
+  // Sólo con la Línea ya calculada: abrir la Sala no debe bajar todas las tiras para pintar este aviso.
+  try{ const piezas=(typeof LINEA_PIEZAS!=='undefined'&&LINEA_PIEZAS)||null; if(!piezas) return {espera:0,guardadas:[]};
     const l=piezas.filter(z=>z.tira&&!esPublicada(z.nombre)&&!paqueteDe(z.nombre)&&hechasDe(z,false).has('laminas'));
     const guardada=z=>typeof salidaGuardada==='function'&&salidaGuardada(z.slug);
     return {espera:l.filter(z=>!guardada(z)).length, guardadas:l.filter(guardada).map(z=>z.nombre)} }catch(e){ return {espera:0,guardadas:[]} }
@@ -65,9 +66,10 @@ function tarjeta(x,k){
 }
 async function pintar(){
   const hoy=$('#salidaHoy'); if(!hoy) return;
-  if(!ENTRADO()){ hoy.innerHTML=''; return }
-  if(!Object.keys(EXP).length){ try{ await (_expP=_expP||cargarExpedientes()) }catch(e){} }
-  if(typeof traerReglasSala==='function'){ try{ await traerReglasSala() }catch(e){} }
+  if(!ENTRADO()){ hoy.innerHTML=''; hoy._html=''; return }
+  // No adelanta lecturas: los expedientes y las reglas llegan con la carga secundaria de la Sala
+  // (primero la mesa y su primera foto); cuando llegan, la Sala vuelve a llamar aquí.
+  if(!Object.keys(EXP).length) return;
   conciliar();
   const l=pendientes(), {espera,guardadas}=await sinPaquete();
   const html=!l.length&&!espera&&!guardadas.length?'':`<section class="sal" aria-label="Listas para publicar">
