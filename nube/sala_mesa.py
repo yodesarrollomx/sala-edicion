@@ -491,6 +491,15 @@ def piezas_por_prioridad(piezas, dia):
         key=lambda x: priority(x)[0], reverse=True)
 
 
+def ancestros_de(t):
+    """Ids de las tiras de las que viene `t` siguiendo `base` (con guarda de ciclos), como piezas_por_prioridad."""
+    out, pid = set(), str(t.get("base") or "")
+    while pid and pid not in out and produccion.PID.fullmatch(pid):
+        out.add(pid)
+        pid = str((_leer(TIRAS / (pid + ".json"), {}) or {}).get("base") or "")
+    return out
+
+
 TIPOS_DIAGNOSTICO = ('idea', 'guion', 'eje', 'lamina', 'laminas', 'voz', 'escena',
                     'video', 'corte', 'copy', 'otros')
 CAMPOS_SELECCION = ('propuestas_vivas', 'propuestas_con_laminas', 'fuentes_recuperadas',
@@ -636,6 +645,8 @@ def main():
     seleccion = conteos_seleccion(dia_orden, piezas_antes, piezas, recuperadas, args.sin_sheet)
     seleccion['ordenes_de_cambio'] = len(ordenes)
     vigentes_ids = {tid for _, (tid, _t) in orden}
+    for _, (_tid, _t) in orden:                  # una orden ya atendida (su tira es ancestro de la vigente) es historia, no pérdida
+        vigentes_ids |= ancestros_de(_t)
     for tid_orden in sorted(ordenes):
         if tid_orden not in vigentes_ids:
             seleccion['ordenes_sin_tira_vigente'] += 1

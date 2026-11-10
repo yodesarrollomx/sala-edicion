@@ -238,10 +238,10 @@ async function pintar(){
     ${n?`<div class="sal-rejilla">${vista.map((x,i)=>tarjeta(x,i,fechas,n)).join('')}</div>`:''}
     <p class="sal-estado" role="status" aria-live="polite">${esc(_aviso)}</p>
     ${espera?`<p class="sal-pie"><b>${cuantas(espera,'pieza más','piezas más')}</b> ya ${espera===1?'tiene':'tienen'} sus imágenes aprobadas y ${espera===1?'espera':'esperan'} su texto. Es el paso del consejo; cuando lo escriba, ${espera===1?'aparece':'aparecen'} aquí.</p>`:''}
-    ${cambios.length?`<div class="sal-pie sal-cambios"><p><b>${cuantas(cambios.length,'pieza con cambio pedido','piezas con cambio pedido')}</b> (mientras, no ${cambios.length===1?'está':'están'} en el montón):</p>
+    ${cambios.length?`<div class="sal-pie sal-cambios"><p><b>${cuantas(cambios.length,'pieza fuera del montón por un cambio','piezas fuera del montón por un cambio')}</b>:</p>
       <ul>${cambios.map(x=>{ const notas=x.ordenes.map(o=>` · imagen ${o.n}: «${esc(o.nota)}»`).join(''), uno=x.ordenes.length===1;
         const quitar=x.estado==='pedido'&&x.quitable&&puedePedirCambio(x.nombre)?x.ordenes.map(o=>` <button type="button" class="sal-mini" data-quitar-cambio="${esc(x.slug)}" data-n="${o.n}">${uno?'Quitar la petición':'Quitar la de la imagen '+o.n}</button>`).join(''):'';
-        return `<li><span><b>${esc(x.nombre)}</b>${notas}. ${x.estado==='volvio'?'Hay una versión nueva: cuando esté aprobada y con su paquete nuevo, vuelve aquí.':'Producción la rehace con tu nota (puede tardar varias horas).'}</span>${quitar}</li>` }).join('')}</ul></div>`:''}
+        return `<li><span><b>${esc(x.nombre)}</b>${notas}. ${x.estado==='volvio'?'Hay una versión nueva: cuando esté aprobada y con su paquete nuevo, vuelve aquí.':'Pedido a Producción con la nota del editor; suele tardar varias horas.'}</span>${quitar}</li>` }).join('')}</ul></div>`:''}
     ${guardadas.length?`<p class="sal-pie"><b>${cuantas(guardadas.length,'pieza guardada','piezas guardadas')}</b> (no ${guardadas.length===1?'sale':'salen'} hasta que tú digas; nada se borra): ${esc(guardadas.join(' · '))}.</p>`:''}
   </section>`;
   }
@@ -253,7 +253,7 @@ function enlazar(hoy){
   hoy.querySelectorAll('[data-publicar]').forEach(b=>b.onclick=()=>abrir(b.dataset.publicar));
   hoy.querySelectorAll('[data-releer]').forEach(b=>b.onclick=()=>actualizar());
   hoy.querySelectorAll('[data-quitar-cambio]').forEach(b=>b.onclick=async()=>{ b.disabled=true; avisar('Quitando la petición…'); pintar();
-    const r=await quitarCambio(b.dataset.quitarCambio,Number(b.dataset.n)); avisar(r.ok?'Petición quitada: la pieza sigue como estaba aprobada.':r.motivo); pintar() });
+    const r=await quitarCambio(b.dataset.quitarCambio,Number(b.dataset.n)); avisar(r.ok?'Petición quitada.':r.motivo); pintar() });
   hoy.querySelectorAll('[data-ritmo]').forEach(b=>b.onclick=()=>cambiarPlan({por_semana:Math.max(1,Math.min(7,PLAN.por_semana+Number(b.dataset.ritmo)))}));
   const arr=hoy.querySelector('#salArranque'); if(arr) arr.onchange=()=>cambiarPlan({arranque:arr.value||''});
   const ord=hoy.querySelector('[data-ordenar]'); if(ord) ord.onclick=()=>{ ORDEN=pendientes().map(x=>x.nombre); avisar(''); pintar() };
@@ -307,6 +307,7 @@ async function pedirCambio(pedido){
   if(!Number.isInteger(n)||n<1||n>99) return no('No pude identificar la imagen.');
   if(!String(pedido.nota||'').trim()) return no('Escribe qué debe cambiar.');
   const mesa=enMesaDe(slug); if(mesa&&mesa!==tira) return no('Esa versión ya no es la vigente: la versión nueva está en tu mesa.');
+  const r=estadoDe(pieza,slug); if(r.estado&&r.c&&r.c.tira!==tira&&mesa!==tira) return no('Esta pieza ya tiene un cambio pedido sobre otra versión. Pídelo desde tu mesa, en la versión que está ahí.');
   const p=paqueteVigente(pieza,slug), nuevo=conOrden(CAMBIOS[slug],{pieza,tira,paquete:p?p.id:'',n,nota:pedido.nota,quien:ROL(),ahora:new Date().toISOString()});
   if(!nuevo.ordenes.some(o=>o.n===n)) return no('Escribe qué debe cambiar.');
   try{ await subirCambio(slug,nuevo) }
@@ -349,20 +350,22 @@ async function copiar(texto,boton){
 function abrir(nombre){
   const e=expDe(nombre), p=paquete(e); if(!p) return;
   const c=partes(e.copy), borr=leer(BORRADOR,{}), sello=String(p.sello||''), mio=borr[nombre]&&borr[nombre].sello===sello?String(borr[nombre].texto||''):'';
-  const n=p.imagenes.length, puede=DECIDE()&&!esPublicada(nombre), cambio=cambioDePieza(nombre,p.slug).estado;
+  const n=p.imagenes.length, puede=DECIDE()&&!esPublicada(nombre), cambio=cambioDePieza(nombre,p.slug).estado, fuera=cambio!=='';
+  const nImg=(im,k)=>Number(im.n)||k+1;   // la misma numeración que se manda y que sale en el pie
   const l=pendientes(), i=l.findIndex(x=>x.nombre===nombre), fechas=fechasDeSalida(l.length,PLAN.por_semana,desde());
   const v=hoja(`<div class="sal-hoja">
     <h3>${esc(nombre)}</h3>
     <p class="sal-sub">${esc(p.formato||'Publicación')} · ${cuantas(n,'imagen','imágenes')}${p.nota_formato?' · '+esc(p.nota_formato):''}${i>=0?` · sale en el lugar ${i+1} de ${l.length} (${esc(cuando(i,fechas))})`:''}</p>
-    <div class="sal-tira" role="list">${p.imagenes.map((im,k)=>`<button type="button" role="listitem" class="sal-img" data-zoom="${esc(im.src)}" aria-label="Imagen ${k+1} de ${n}: ${esc(im.dice||'')}. Ampliar">${miniatura(im.src)?`<img src="${esc(miniatura(im.src))}" alt="" loading="lazy">`:''}<i>${k+1}</i></button>`).join('')}</div>
+    ${fuera?`<div class="sal-ojo sal-fuera" role="status"><b>${cambio==='pedido'?'Esta pieza tiene un cambio pedido: este paquete ya no es el que va a salir.':'Hay una versión nueva de esta pieza: este paquete ya no es el que va a salir.'}</b></div>`:''}
+    <div class="sal-tira" role="list">${p.imagenes.map((im,k)=>`<button type="button" role="listitem" class="sal-img" data-zoom="${esc(im.src)}" aria-label="Imagen ${nImg(im,k)} de ${n}: ${esc(im.dice||'')}. Ampliar">${miniatura(im.src)?`<img src="${esc(miniatura(im.src))}" alt="" loading="lazy">`:''}<i>${nImg(im,k)}</i></button>`).join('')}</div>
     ${c.revision.length?`<div class="sal-ojo"><b>Antes de publicar, mira esto</b><ul>${c.revision.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
     <div class="sal-paso"><h4><i>1</i>Las imágenes</h4>
       <p>Están en Drive, numeradas en el orden en que van.</p>
       ${/^https:\/\/drive\.google\.com\//.test(p.url||'')?`<a class="secund sal-liga" href="${esc(p.url)}" target="_blank" rel="noopener">Abrir la carpeta en Drive ↗</a>`:''}
-      ${puede&&puedePedirCambio(nombre)&&cambio!=='volvio'&&ID_TIRA.test(String(p.id||''))&&SLUG_OK.test(String(p.slug||''))?`<button type="button" class="sal-mini" id="salCambio" aria-expanded="false" aria-controls="salCambioCaja">Pedir cambio a una imagen</button>
+      ${puede&&!fuera&&puedePedirCambio(nombre)&&ID_TIRA.test(String(p.id||''))&&SLUG_OK.test(String(p.slug||''))?`<button type="button" class="sal-mini" id="salCambio" aria-expanded="false" aria-controls="salCambioCaja">Pedir cambio a una imagen</button>
       <div class="sal-cambio" id="salCambioCaja" hidden>
         ${n>1?`<label class="sal-lab" for="salCambioN">¿Cuál imagen?</label>
-        <select id="salCambioN">${p.imagenes.map((im,k)=>`<option value="${Number(im.n)||k+1}">Imagen ${k+1}${im.dice?' · '+esc(String(im.dice).slice(0,48)):''}</option>`).join('')}</select>`:''}
+        <select id="salCambioN">${p.imagenes.map((im,k)=>`<option value="${nImg(im,k)}">Imagen ${nImg(im,k)}${im.dice?' · '+esc(String(im.dice).slice(0,48)):''}</option>`).join('')}</select>`:''}
         <label class="sal-lab" for="salCambioNota">Qué debe cambiar</label>
         <textarea id="salCambioNota" rows="3" maxlength="${NOTA_MAX}" placeholder="Una línea basta. Producción la toma como orden de trabajo."></textarea>
         <button type="button" class="secund" id="salCambioOk">Enviar a Producción</button>
@@ -376,12 +379,12 @@ function abrir(nombre){
     <div class="sal-paso"><h4><i>3</i>La liga (primer comentario en Instagram)</h4>
       <p class="sal-url">${esc(c.comentario)}</p>
       <button type="button" class="secund" id="salCom">Copiar la liga</button></div>
-    ${puede?`<div class="sal-paso fin"><h4><i>4</i>Cuando ya esté publicada</h4>
+    ${puede&&!fuera?`<div class="sal-paso fin"><h4><i>4</i>Cuando ya esté publicada</h4>
       <label class="sal-lab" for="salPost">Liga de la publicación (si la tienes a la mano)</label>
       <input id="salPost" type="url" inputmode="url" autocomplete="off" placeholder="https://www.instagram.com/p/…">
       <button type="button" class="listo" id="salYa">Ya la publiqué</button>
       <p class="aviso" id="salAviso" role="status" aria-live="polite"></p></div>`
-      :`<p class="nota-pie">${esPublicada(nombre)?'Esta pieza ya está anotada como publicada.':'Publicar y anotar la publicación corresponde a los editores.'}</p>`}
+      :`<p class="nota-pie">${esPublicada(nombre)?'Esta pieza ya está anotada como publicada.':fuera?'Este paquete no se publica: espera la versión nueva.':'Publicar y anotar la publicación corresponde a los editores.'}</p>`}
   </div>`,'publicar-'+normSlug(nombre));
   const q=s=>v.querySelector(s), txt=q('#salTexto');
   v.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{ if(typeof abrirZoom==='function') abrirZoom(b.dataset.zoom) });

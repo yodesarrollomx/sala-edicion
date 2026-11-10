@@ -263,6 +263,18 @@ class MontadorTests(unittest.TestCase):
         self.assertEqual((sel['ordenes_de_cambio'], sel['ordenes_sin_tira_vigente']), (1, 1))
         self.assertTrue(any('orden de cambio sin tira vigente: ' + vieja in a for a in self.avisos), self.avisos)
 
+    def test_una_orden_ya_atendida_sobre_la_tira_base_de_la_vigente_no_cuenta_como_perdida(self):
+        # la vigente es la rehecha (base P) y la orden quedó sobre P: es historia, no pérdida
+        rehecha = '48-horas-nube-2026-11-10-abc123'
+        t = dict(tira_de_una(), base=P)
+        root = self._en_tmp()
+        (root / 'datos' / 'tiras' / (P + '.json')).write_text(json.dumps(tira_de_una()))
+        self.correr(root, {'cambio:48-horas': orden()}, piezas={'48-horas': (rehecha, t)},
+                    decisiones={rehecha: si()})
+        sel = self.seleccion()
+        self.assertEqual((sel['ordenes_de_cambio'], sel['ordenes_sin_tira_vigente']), (1, 0))
+        self.assertFalse(any('sin tira vigente' in a for a in self.avisos), self.avisos)
+
     def test_una_orden_vigente_cuenta_y_no_se_avisa_como_perdida(self):
         self.correr(self._en_tmp(), {'cambio:48-horas': orden()})
         sel = self.seleccion()

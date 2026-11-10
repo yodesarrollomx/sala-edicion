@@ -306,7 +306,7 @@ async function estatico(route,u,rol){
   await page.waitForFunction(()=>!document.querySelector('.sal-hoja'),null,{timeout:15000});await montonDe(1);
   assert.deepEqual(await nombres(),['Pieza Tres']);
   assert.equal(await page.locator('#salidaHoy h2').textContent(),'1 lista para lanzar');
-  assert.match((await page.locator('#salidaHoy .sal-cambios').innerText()).replace(/\s+/g,' '),/^1 pieza con cambio pedido \(.+\): Pieza Uno · imagen 2: «Más luminosa y sin letrero»\. Producción la rehace con tu nota \(puede tardar varias horas\)\. Quitar la petición$/);
+  assert.match((await page.locator('#salidaHoy .sal-cambios').innerText()).replace(/\s+/g,' '),/^1 pieza fuera del montón por un cambio: Pieza Uno · imagen 2: «Más luminosa y sin letrero»\. Pedido a Producción con la nota del editor; suele tardar varias horas\. Quitar la petición$/);
   assert.match(await page.locator('#salidaHoy .sal-estado').textContent(),/Cambio pedido\. «Pieza Uno» sale de tu montón/);
   for(let i=0;i<40&&(await page.evaluate(()=>(JSON.parse(localStorage.getItem('sala_resumen_v1')||'{}')).listas))!==1;i++)await page.waitForTimeout(100);
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sala_resumen_v1')).listas),1,'YOD OS cuenta lo que sí está en el montón');
@@ -376,13 +376,22 @@ async function estatico(route,u,rol){
   assert.equal(await page.locator('#salidaHoy [data-quitar-cambio]').count(),0,'sin confirmación de la mesa no hay botón de quitar');
   assert.equal((await page.evaluate(()=>SalaSalida.quitarCambio('uno',1))).motivo,'No pude confirmar con tu mesa si Producción ya la rehízo. Actualiza e inténtalo otra vez.');
   assert.equal(writes.length,antesSV,'quitar sin confirmación no escribe');
+  // F2: una orden viva de segunda vuelta no se pisa desde el paquete viejo con la mesa sin saber
+  assert.equal((await page.evaluate(t=>SalaSalida.pedirCambio({slug:'uno',pieza:'Pieza Uno',tira:t,n:2,nota:'Otra imagen'}),PIEZAS[0][0])).motivo,'Esta pieza ya tiene un cambio pedido sobre otra versión. Pídelo desde tu mesa, en la versión que está ahí.');
+  assert.equal(writes.length,antesSV,'pedir sobre otra versión no escribe');
   // la mesa enseña la versión rehecha, sin paquete nuevo: Producción aún no la atiende → se puede quitar
   await ponMesa(REHECHA);
-  assert.match(await pie(),/Producción la rehace con tu nota \(puede tardar varias horas\)\. Quitar la petición$/);
+  assert.match(await pie(),/Pedido a Producción con la nota del editor; suele tardar varias horas\. Quitar la petición$/);
+  // F1: con el cambio pedido el paquete viejo no se ofrece para publicar ni para pedir otro cambio
+  const fuera=async txt=>{await page.evaluate(()=>SalaSalida.abrir('Pieza Uno'));await page.waitForSelector('.sal-hoja');
+    assert.equal(await page.locator('#salYa').count(),0,'sin «Ya la publiqué»');assert.equal(await page.locator('#salCambio').count(),0,'sin «Pedir cambio a una imagen»');
+    assert.equal((await page.locator('.sal-fuera').innerText()).trim(),txt);await page.evaluate(()=>cerrarCapas())};
+  await fuera('Esta pieza tiene un cambio pedido: este paquete ya no es el que va a salir.');
   // la mesa ya trae una versión todavía más nueva: 'volvio', sin botón de quitar
   await ponMesa('uno-nube-2026-11-11-ffffff');
   assert.match(await pie(),/Hay una versión nueva: cuando esté aprobada y con su paquete nuevo, vuelve aquí\./);
   assert.equal(await page.locator('#salidaHoy [data-quitar-cambio]').count(),0,'lo que ya se rehízo no se quita desde el montón');
+  await fuera('Hay una versión nueva de esta pieza: este paquete ya no es el que va a salir.');
   assert.deepEqual(await nombres(),['Pieza Tres']);
   assert.equal((await page.evaluate(()=>SalaSalida.quitarCambio('uno',1))).motivo,'Producción ya la rehízo: decide la versión nueva en tu mesa.');
   assert.equal((await page.evaluate(()=>SalaSalida.quitarCambio('uno',7))).motivo,'Esa petición ya no está.');
@@ -401,7 +410,7 @@ async function estatico(route,u,rol){
   await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
   assert.equal(await page.locator('#salidaHoy .sal-carta[data-publicar="Pieza Uno"]').count(),0);
   assert.equal(await page.locator('#salidaHoy .sal-cambios li').count(),1,'un renglón por pieza');
-  assert.match(await pie(),/^1 pieza con cambio pedido .*Pieza Uno\. Hay una versión nueva/);
+  assert.match(await pie(),/^1 pieza fuera del montón por un cambio.*Pieza Uno\. Hay una versión nueva/);
   assert.equal(await page.locator('#salidaHoy [data-quitar-cambio]').count(),0);
   // H5: dos registros de la misma pieza (llaves distintas): manda el que la oculta
   hoja['cambio:uno']={v:1,pieza:'Pieza Uno',tira:PIEZAS[0][0],paquete:PIEZAS[0][0],ordenes:[]};
@@ -418,6 +427,13 @@ async function estatico(route,u,rol){
   await escrituras(antesH4+1);
   assert.equal(writes[antesH4].expediente.paquete,T3,'`paquete` = el id del paquete de ese slug');
   hoja['cambio:tres']={v:1,pieza:'Pieza Tres',tira:T3,paquete:T3,ordenes:[]};
+  // F5: una pieza SIN paquete (como «Las 48 Horas») con orden viva aparece como renglón en el pie
+  hoja['cambio:dos']={v:1,pieza:'Pieza Dos',tira:PIEZAS[1][0],paquete:'',ordenes:[{n:1,nota:'Sin paquete aún',cuando:'2026-11-10T05:00:00.000Z',por:'editor'}]};
+  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
+  assert.match(await pie(),/Pieza Dos · imagen 1: «Sin paquete aún»\. Pedido a Producción con la nota del editor; suele tardar varias horas\. Quitar la petición/);
+  assert.equal(await page.locator('#salidaHoy .sal-carta[data-publicar="Pieza Dos"]').count(),0);
+  delete hoja['cambio:dos'];
   // (b) una pieza publicada no ofrece pedir cambio y se rechaza con su motivo
   await page.evaluate(()=>localStorage.setItem('sala_publicadas_v1',JSON.stringify({'Pieza Tres':{fecha:'2026-11-09',liga:'',sello:'3'.repeat(12)}})));
   assert.deepEqual(await page.evaluate(()=>[SalaSalida.puedePedirCambio(),SalaSalida.puedePedirCambio('Pieza Tres'),SalaSalida.puedePedirCambio('Pieza Uno')]),[true,false,true]);
