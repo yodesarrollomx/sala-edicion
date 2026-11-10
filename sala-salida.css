@@ -26,6 +26,7 @@ body:not(.sala-tablero) #salidaHoy{display:none}
 .sal-carta{display:flex;flex-direction:column;gap:3px;text-align:left;border:1px solid var(--linea2);border-radius:14px;background:var(--fondo);padding:0 0 10px;overflow:hidden;color:inherit;min-width:0;cursor:pointer}
 .sal-carta:hover{border-color:var(--oro)}
 .sal-carta.ordenando{cursor:default;border-style:dashed}
+.sal-carta.hoy{border-color:var(--oro);box-shadow:0 0 0 2px var(--oro-suave)}
 .sal-foto{position:relative;display:block;aspect-ratio:4/5;background:var(--linea)}
 .sal-foto img{width:100%;height:100%;object-fit:cover;display:block}
 .sal-n{position:absolute;left:8px;top:8px;min-width:26px;height:26px;border-radius:13px;background:rgba(20,18,14,.78);color:#fff;font-size:13px;font-weight:600;display:grid;place-items:center;padding:0 7px}

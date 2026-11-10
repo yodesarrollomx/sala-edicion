@@ -88,12 +88,14 @@ async function estatico(route,u,rol){
   await page.waitForSelector('#linea .ln-fila',{timeout:30000});
   assert.equal(await page.locator('#vHoy').evaluate(e=>getComputedStyle(e).display),'none','la mesa no tapa «Cómo va»');
   const filas=Object.fromEntries(await page.evaluate(()=>[...document.querySelectorAll('#linea .ln-fila')].map(f=>[f.querySelector('.ln-nom b').textContent,f.querySelector('.ln-rel').innerText.replace(/\s+/g,' ')])));
-  assert.match(filas['Pieza Uno'],/PUBLÍCALA Lista para publicar: 3 imágenes y su texto\./i);
+  assert.match(filas['Pieza Uno'],/^LISTA Lista para lanzar: 3 imágenes y su texto\./i);
+  assert.doesNotMatch(Object.values(filas).join(' '),/publícala|150%/i);
+  assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#linea .ln-nom small')].map(x=>parseInt(x.textContent,10)).filter(n=>!(n>=0&&n<=100))),[],'ningún avance pasa de 100 %');
   assert.match(filas['Pieza Dos'],/Imágenes aprobadas\. Falta su texto\./);
   assert.match(filas['Pieza Tres'],/Guardada: no sale hasta que tú lo digas/);
   assert.match(filas['Pieza Cuatro'],/Imágenes aprobadas\. Falta su texto\./,'con el video en pausa, lo que nació para video camina como carrusel');
   assert.equal(await page.locator('#linea .ln-fila').first().locator('.ln-nom b').textContent(),'Pieza Uno','lo listo para publicar va primero');
-  assert.match(await page.locator('#linea .rel').textContent(),/4 publicaciones abiertas\. 1 está lista para publicar, 2 con imágenes aprobadas esperan su texto, 1 está guardada y espera tu decisión\./);
+  assert.match(await page.locator('#linea .rel').textContent(),/4 publicaciones abiertas\. 1 está lista para lanzar, 2 con imágenes aprobadas esperan su texto, 1 está guardada y espera tu decisión\./);
   assert.match(await page.locator('#universo').innerText(),/HISTORIAS DE 15 SEGUNDOS[\s\S]*Historia sintética[\s\S]*se graba cuando enciendas el video/i);
 
   // la hoja de publicar, desde la Línea
@@ -199,6 +201,19 @@ async function estatico(route,u,rol){
   assert.match(await page.locator('#salidaHoy .sal-cuando').first().textContent(),/^[a-záé]{3} \d{1,2} [a-z]{3}$/);
   await escrituras(3);assert.equal(writes[2].expediente.arranque,futuro);
   await page.waitForFunction(()=>/Plan guardado en el Sheet/.test(document.querySelector('#salidaHoy .sal-estado').textContent));
+  // 4b) si la primera sale hoy, «Te toca» lo dice (arranque de hoy y ritmo diario: hoy siempre toca)
+  const hoy=new Date(Date.now()-7*36e5).toISOString().slice(0,10);
+  await page.locator('[data-ritmo="1"]').click();await page.locator('[data-ritmo="1"]').click();
+  await page.locator('#salArranque').fill(hoy);await page.locator('#salArranque').dispatchEvent('change');
+  await page.waitForFunction(()=>/^Hoy toca «Pieza C»\. A 7 por semana/.test(document.querySelector('#salidaHoy header p').innerText));
+  assert.match(await page.locator('#salidaHoy .sal-cuando').first().textContent(),/^Hoy · [a-záé]{3} \d{1,2} [a-z]{3}$/);
+  assert.equal(await page.locator('#salidaHoy .sal-carta.hoy').count(),1);
+  await page.locator('[data-ritmo="-1"]').click();await page.locator('[data-ritmo="-1"]').click();
+  await page.locator('#salArranque').fill(futuro);await page.locator('#salArranque').dispatchEvent('change');
+  await page.waitForFunction(()=>/^A 5 por semana, desde el /.test(document.querySelector('#salidaHoy header p').innerText));
+  assert.equal(await page.locator('#salidaHoy .sal-carta.hoy').count(),0);
+  for(let i=0;i<40&&!(writes.length&&writes[writes.length-1].expediente.arranque===futuro&&writes[writes.length-1].expediente.por_semana===5);i++)await page.waitForTimeout(100);
+  await page.waitForFunction(()=>/Plan guardado en el Sheet/.test(document.querySelector('#salidaHoy .sal-estado').textContent));
   // 5) la hoja de la pieza dice en qué lugar sale
   await page.locator('#salidaHoy [data-publicar]').first().click();await page.waitForSelector('.sal-hoja');
   assert.match(await page.locator('.sal-sub').textContent(),/sale en el lugar 1 de 3 \(/);
@@ -235,7 +250,7 @@ async function estatico(route,u,rol){
   await page.reload();await page.waitForSelector('#tableroHoy .bt-column,#tableroHoy .bt-plegada',{timeout:30000});await page.waitForTimeout(800);
   assert.equal(await page.locator('#salidaHoy .sal-carta').count(),0,'la copia guardada es de quien la guardó');
   assert.deepEqual(await page.evaluate(()=>[localStorage.getItem('sala_salida_local_v1'),localStorage.getItem('sala_resumen_v1')]),[null,null]);
-  assert.deepEqual(errors,[]);console.log(JSON.stringify({width,recorrido:'monton',errors:0,realWrites:0,interceptedWrites:writes.length}));
+  assert.deepEqual(errors,[]);console.log(JSON.stringify({width,recorrido:'monton',errors:0,realWrites:0,soloElPlan:writes.every(w=>w.accion==='expediente'&&w.pieza==='salida:plan')}));
   await context.close();
  }}finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
