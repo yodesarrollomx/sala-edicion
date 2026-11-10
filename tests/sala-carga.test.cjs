@@ -81,12 +81,13 @@ test('los expedientes se leen una vez, un fallo no se guarda como respuesta y la
       '\nthis.leer=leerExpedientesHoja;this.releer=releerExpedientes;this.arrancar=arrancarSalida;',c);
     return c;
   }
-  const ok={ok:true,json:async()=>({ok:true,expedientes:{'Pieza':{estado:'lista'},'v4:serie:1':{x:1},'salida:plan':{orden:['Pieza']}}})};
+  const ok={ok:true,json:async()=>({ok:true,expedientes:{'Pieza':{estado:'lista'},'v4:serie:1':{x:1},'salida:plan':{orden:['Pieza']},
+    'cambio:pieza':{tira:'pieza-nube-2026-11-09-abc123',ordenes:[{n:1,nota:'Más luminosa'}]}}})};
   const a=ctx(()=>ok);
   assert.equal(await a.leer(),true);assert.equal(await a.leer(),true);
   assert.equal(a.llamadas,1,'dos lectores comparten una petición');
-  assert.deepEqual(Object.keys(a.EXP),['Pieza'],'ni v4: ni salida: entran a Publicaciones');
-  assert.deepEqual(hecho.pop(),['llegaron',['salida:plan']]);
+  assert.deepEqual(Object.keys(a.EXP),['Pieza'],'ni v4: ni salida: ni cambio: entran a Publicaciones');
+  assert.deepEqual(hecho.pop(),['llegaron',['salida:plan','cambio:pieza']],'el plan y las órdenes de cambio van con la salida');
   assert.ok(a.opciones&&a.opciones.signal,'la lectura tiene tope de tiempo');
   assert.equal(await a.releer(),true);assert.equal(a.llamadas,2,'Actualizar sí vuelve a preguntar');
 
@@ -262,6 +263,33 @@ test('en «Cómo va» lo listo sigue el orden de salida de los editores, no el d
   s.ctx.SalaSalida.llegaron({'salida:plan':{orden:['Pieza C','Pieza A','Pieza B']}});
   await new Promise(r=>setTimeout(r,5));
   assert.deepEqual(await orden(),['Pieza C','Pieza A','Pieza B']);
+});
+
+test('una pieza lista con cambio pedido sale del montón y «Cómo va» dice que se está rehaciendo',async()=>{
+  const s=sala(),z=s.piece();
+  s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
+  const linea=s.ctx.$('#linea');
+  s.ctx.$=sel=>sel==='#salidaHoy'?null:linea;s.ctx.ENTRADO=()=>true;
+  assert.equal(s.ctx.filaLinea(z).lista,true);
+  // la orden es para OTRA versión de la pieza (la mesa ya la rehízo): no cuenta
+  s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v0',ordenes:[{n:1,nota:'Más luminosa'}]}});
+  assert.equal(s.ctx.filaLinea(z).lista,true);
+  assert.deepEqual([...s.ctx.SalaSalida.pendientes().map(x=>x.nombre)],['Pieza sintética']);
+  // la orden es para ESTA versión: deja de estar lista, pasa a la fábrica y ya no se cuenta en el montón
+  s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v1',ordenes:[{n:1,nota:'Más luminosa'}]}});
+  const f=s.ctx.filaLinea(z);
+  assert.deepEqual([f.lista,f.tuyo,f.quien],[false,false,'fab']);
+  assert.equal(f.que,'Cambio pedido en la imagen 1: Producción la rehace con tu nota.');
+  assert.equal(f.cuando,'Vuelve a tu mesa para que la apruebes.');
+  assert.equal(s.ctx.SalaSalida.pendientes().length,0);
+  assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.enCambio())),[{slug:'synthetic',nombre:'Pieza sintética',ordenes:[{n:1,nota:'Más luminosa',cuando:'',por:''}]}]);
+  assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.cambioDe('synthetic-v1',1))),{n:1,nota:'Más luminosa',cuando:'',por:''});
+  assert.equal(s.ctx.SalaSalida.cambioDe('synthetic-v1',2),null);
+  const rendered=await s.render(z);
+  assert.doesNotMatch(rendered,/está lista para lanzar|data-lista="1"/);
+  // sin órdenes en la hoja vuelve a estar lista
+  s.ctx.SalaSalida.llegaron({});
+  assert.equal(s.ctx.filaLinea(z).lista,true);
 });
 
 test('una pieza guardada por regla no promete texto: espera la decisión de Dirección',async()=>{

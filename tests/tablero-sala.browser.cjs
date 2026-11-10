@@ -28,7 +28,7 @@ for(const [i,name] of ['L2','B'].entries()){
 const mediaRaw=JSON.stringify(mediaManifest),mediaPin=crypto.createHash('sha256').update(mediaRaw).digest('hex');
 async function prepare(browser,width,role="editor",mobile=false,embedded=false,media={mode:'legacy'}){
  const context=await browser.newContext({viewport:{width,height:mobile?844:1000},isMobile:mobile,hasTouch:mobile});
- const page=await context.newPage(),writes=[],errors=[],releaseReads=[];
+ const page=await context.newPage(),writes=[],errors=[],releaseReads=[],expedientes={};
  const visibleDay=()=>{
   const value=media.emptyDay?{...day(role),propuestas:[]}:day(role);
   if(media.cuts)value.propuestas.push(...[0,1,9].map(n=>({id:'synthetic-cut-'+n,tipo:'eje',titulo:'REEL · Pieza '+n+' · corte completo · para revisar',origen:'corte-de synthetic-'+n,laminas:[],opciones:{candidatas:[{titulo:'Conservar este corte'}]}})));
@@ -46,8 +46,9 @@ async function prepare(browser,width,role="editor",mobile=false,embedded=false,m
   if(u.pathname==='/yod-portal/chinche.js'){await route.fulfill({contentType:'application/javascript',body:chincheSource});return;}
 
   if(u.hostname==="script.google.com"||u.hostname==="script.googleusercontent.com"){
-   if(req.method()==="POST"){const body=JSON.parse(req.postData()||"{}");writes.push(body);await route.fulfill({json:{ok:true}});return;}
+   if(req.method()==="POST"){const body=JSON.parse(req.postData()||"{}");writes.push(body);if(body.accion==="expediente")expedientes[body.pieza]=body.expediente;await route.fulfill({json:{ok:true}});return;}
    const resource=u.searchParams.get("recurso");
+   if(resource==="expedientes"){await route.fulfill({json:{ok:true,expedientes}});return;}
    await route.fulfill({json:resource==="dia"?visibleDay():resource==="cola"?{ok:true,cola:[{pieza:"synthetic-1",etapa:"voz",estado:"corriendo",item:"2"}]}:resource==="entrada"?{ok:true,rol:role}: {ok:true,reglas:{},propuestas:[]}});return;
   }
   if(mediaAssets.has(req.url())){releaseReads.push(req.url());await route.fulfill({contentType:'image/jpeg',body:mediaAssets.get(req.url())});return;}
@@ -290,14 +291,20 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    assert.equal(await view.evaluate(()=>D.propuestas.length),0,'inventario no inventa propuestas ni votos');
    await view.locator('[data-open="synthetic-0"]').click();await view.locator('[data-lamina="2"]').click();
    assert.equal(await view.locator('[data-vote]:enabled').count(),0);
-   assert.equal(await view.locator('[data-reopen]:enabled').count(),1,'una aprobación con origen confirmado admite una nueva petición');
+   await view.locator('[data-reopen]:enabled').waitFor();   // la hoja ya contestó: se puede pedir cambio a una página aprobada
+   assert.equal(await view.locator('[data-reopen]:enabled').count(),1,'una página aprobada admite una petición de cambio');
    assert.match(await view.locator('.bt-main-photo').getAttribute('src'),/B.jpg/);
    assert.equal(r.writes.length,0,'abrir historial no emite decisiones');
    await view.locator('[data-reopen]').click();
    await view.locator('#notaT').fill('Revisar contraste: petición explícita sintética');
    await view.locator('#notaOk').click();
-   await view.waitForFunction(()=>dec['synthetic-0-base']?.laminas[1]==='no');
-   assert.equal(await view.evaluate(()=>dec['synthetic-0-base'].notas[1]),'Revisar contraste: petición explícita sintética');
+   await view.locator('[data-unreopen]').waitFor();
+   // 9-nov: la petición es una orden del editor sobre ESTA versión (llave cambio:<slug>), no un «no» sobre la propuesta original
+   assert.deepEqual(r.writes.map(w=>[w.accion,w.pieza,w.expediente&&w.expediente.tira,w.expediente&&w.expediente.ordenes.map(o=>[o.n,o.nota])]),
+    [['expediente','cambio:synthetic-0','synthetic-0',[[2,'Revisar contraste: petición explícita sintética']]]]);
+   assert.equal(await view.evaluate(()=>Object.keys(dec).length),0,'pedir cambio a lo aprobado no es una marca de la mesa');
+   assert.match(await view.locator('.bt-choice .bt-editor-note').last().innerText(),/CAMBIO PEDIDO\s+Revisar contraste: petición explícita sintética/i);
+   assert.equal(await view.locator('.bt-choice .bt-choice-copy > .bt-dot').innerText(),'Cambio pedido');
    assert.equal(await view.evaluate(()=>TIRAS['synthetic-0'].laminas[1].estado),'rehecha','la solicitud no reescribe la historia');
    assert.deepEqual(r.errors,[]);
    await r.context.close();

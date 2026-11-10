@@ -98,18 +98,30 @@ test("avanzar conserva orden aunque la actual ya esté aprobada; vuelve sólo al
  assert.equal(board.siguientePendiente([],null),null);
  assert.equal(board.siguientePendiente(list,null).n,1);
 });
-test("reabrir exige nota, misma sesión, versión y origen; no modifica sin confirmación",()=>{
+test("pedir cambio a una página aprobada exige nota, misma sesión, versión y origen; viaja como orden y no toca la aprobación",async()=>{
  const source=fs.readFileSync(require.resolve('../tablero-sala.js'),'utf8');
  const a=source.indexOf('function canReopen('),b=source.indexOf('function renderChoice',a);
- let role='editor',fresh=true,context={pid:'a',lamina:1,version:2},callback,calls=[];
- const g={id:'a',p:{_consulta:true},t:{base:'original-a',laminas:[{n:1,estado:'aprobada'}]}};
- const ctx={S:{choice:{group:'a',n:1},groups:[g]},eligible:()=>fresh&&role==='editor',ROL:()=>role,api:{contexto:()=>context},pedirNota:fn=>callback=fn,reabrirAprobada:(...args)=>calls.push(args),render(){}};
- vm.runInNewContext(source.slice(a,b)+';this.request=pedirNuevaRevision;',ctx);
- ctx.request();callback(' ');assert.equal(calls.length,0);
- ctx.request();role='lector';callback('Cambiar luz');assert.equal(calls.length,0);
- role='editor';ctx.request();context={...context,version:3};callback('Cambiar luz');assert.equal(calls.length,0);
- ctx.request();g.t.base='otro';callback('Cambiar luz');assert.equal(calls.length,0);
- ctx.request();fresh=false;callback('Cambiar luz');assert.equal(calls.length,0);
- fresh=true;ctx.request();callback(' Cambiar luz ');assert.equal(calls.length,1);assert.equal(calls[0][2],'Cambiar luz');
- assert.equal(g.t.laminas[0].estado,'aprobada');
+ let role='editor',fresh=true,context={pid:'a',lamina:1,version:2},callback=null,calls=[],orden=null,quitadas=[];
+ // una pieza de una sola imagen con su tira de arranque: sin base (así estaba «Las 48 Horas» el 9-nov)
+ const g={id:'a',pid:'tira-a',p:{_consulta:true},t:{pieza:'Pieza A',pieza_slug:'a',base:null,laminas:[{n:1,estado:'aprobada'}]}};
+ const ctx={S:{choice:{group:'a',n:1},groups:[g],notice:''},DECIDE:()=>role==='editor',ROL:()=>role,api:{contexto:()=>context},pedirNota:fn=>callback=fn,render(){},
+  SalaSalida:{cambioDe:(pid,n)=>orden&&pid==='tira-a'&&n===1?orden:null,puedePedirCambio:()=>fresh&&role==='editor',
+   pedirCambio:async p=>{calls.push(p);return {ok:true};},quitarCambioDeTira:async(pid,n)=>{quitadas.push([pid,n]);return {ok:true};}}};
+ vm.runInNewContext(source.slice(a,b)+';this.request=pedirNuevaRevision;this.quitar=quitarPeticion;this.puede=canReopen;',ctx);
+ assert.equal(ctx.puede(g,g.t.laminas[0]),true,'una tira sin base también se puede reabrir');
+ ctx.request();await callback(' ');assert.equal(calls.length,0);
+ ctx.request();role='lector';await callback('Cambiar luz');assert.equal(calls.length,0);
+ role='editor';ctx.request();context={...context,version:3};await callback('Cambiar luz');assert.equal(calls.length,0);
+ ctx.request();g.pid='tira-b';await callback('Cambiar luz');assert.equal(calls.length,0);g.pid='tira-a';
+ callback=null;fresh=false;ctx.request();assert.equal(callback,null,'sin la hoja confirmada ni siquiera se abre la nota');
+ fresh=true;ctx.request();await callback(' Cambiar luz ');
+ assert.deepEqual(JSON.parse(JSON.stringify(calls)),[{slug:'a',pieza:'Pieza A',tira:'tira-a',n:1,nota:'Cambiar luz'}]);
+ assert.equal(g.t.laminas[0].estado,'aprobada','la aprobación no se toca: se suma una orden');
+ // con la orden viva no se pide otra: se puede quitar, y sólo un editor
+ orden={n:1,nota:'Cambiar luz'};assert.equal(ctx.puede(g,g.t.laminas[0]),false);
+ callback=null;ctx.request();assert.equal(callback,null);
+ await ctx.quitar();assert.deepEqual(quitadas,[['tira-a',1]]);
+ role='lector';await ctx.quitar();assert.equal(quitadas.length,1);
+ // el camino viejo (un «no» sobre la propuesta original, que la nube no cosechaba) ya no se usa aquí
+ assert.ok(!/reabrirAprobada\(/.test(source));
 });

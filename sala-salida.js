@@ -12,6 +12,10 @@
      pieza (`nube/sala_salida.py` → EXPEDIENTES); aquí sólo se lee;
    · el PLAN DE SALIDA (orden, cuántas por semana, día de arranque) es de los editores: vive en
      EXPEDIENTES con la llave `salida:plan` y la nube nunca lo escribe;
+   · la ORDEN DE CAMBIO («pedir cambio a una imagen ya aprobada») también es de los editores: vive
+     en EXPEDIENTES con la llave `cambio:<slug>` y nombra la versión (tira) para la que se pidió.
+     La nube sólo la lee: el montador rehace esa imagen con la nota y trae la carta nueva a la mesa.
+     Mientras, la pieza sale del montón. La aprobación anterior no se borra;
    · «Ya la publiqué» agrega UNA fila a PRODUCCION con el transporte de siempre
      (`SalaCorrecciones`: se guarda en el aparato antes de mandar y no se repite). La nube cierra
      el expediente en su siguiente sesión; mientras, este aparato ya la da por publicada.
@@ -22,6 +26,8 @@ const LLAVE='sala_publicadas_v1', BORRADOR='sala_salida_texto_v1', GUARDADA='sal
 /* lo único que YOD OS lee de aquí (mismo origen): cuántas hay listas y cuándo se vio. Sin títulos ni textos. */
 const RESUMEN='sala_resumen_v1';
 const PLAN_LLAVE='salida:plan', DIA_MS=864e5, VIGENCIA=7*DIA_MS, TOPE_GUARDADA=1500000;
+/* órdenes de cambio: una llave por pieza; la nota es lo que lee Producción (mismo tope que en la nube) */
+const CAMBIO_LLAVE='cambio:', NOTA_MAX=600, ID_TIRA=/^[A-Za-z0-9_-][A-Za-z0-9._-]{0,199}$/, SLUG_OK=/^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/;
 /* qué días de la semana sale algo según cuántas por semana (0 = domingo) */
 const DIAS={1:[3],2:[2,4],3:[1,3,5],4:[1,2,4,5],5:[1,2,3,4,5],6:[1,2,3,4,5,6],7:[0,1,2,3,4,5,6]};
 
@@ -73,16 +79,39 @@ function estado(nombre,hechas,etapas,expedientes,publicada){
   return (etapas||[]).some(k=>['voz','escenas','corte'].includes(k)&&!hechas.has(k))?'video':'texto';
 }
 function cuantas(n,uno,varios){ return n+' '+(n===1?uno:varios) }
+/* una orden de cambio como venga de la hoja o del aparato, en una forma en la que se puede confiar
+   (las mismas reglas que nube/sala_cambios.py: una nota por imagen, en una línea, con tope) */
+function cambioLimpio(c){
+  c=c&&typeof c==='object'&&!Array.isArray(c)?c:{};
+  const tira=typeof c.tira==='string'&&ID_TIRA.test(c.tira)?c.tira:'', porN=new Map();
+  for(const o of Array.isArray(c.ordenes)?c.ordenes.slice(0,20):[]){
+    const n=o&&o.n, nota=o&&typeof o.nota==='string'?o.nota.replace(/\s+/g,' ').trim().slice(0,NOTA_MAX):'';
+    if(!Number.isInteger(n)||n<1||n>99||!nota) continue;
+    porN.set(n,{n,nota,cuando:typeof o.cuando==='string'?o.cuando.slice(0,40):'',por:typeof o.por==='string'?o.por.slice(0,40):''});
+  }
+  return {v:1, pieza:typeof c.pieza==='string'?c.pieza.trim().slice(0,160):'', tira, ordenes:tira?[...porN.values()].sort((a,b)=>a.n-b.n):[],
+    cuando:typeof c.cuando==='string'?c.cuando.slice(0,40):'', por:typeof c.por==='string'?c.por.slice(0,40):''};
+}
+/* las órdenes que siguen vivas para la versión `tira` de la pieza: cuando la mesa la rehace nace otra
+   tira y la orden queda como historia, sin que nadie tenga que limpiarla */
+function ordenesVigentes(cambio,tira){ const c=cambioLimpio(cambio); return tira&&c.tira===tira?c.ordenes:[] }
+/* la orden nueva sobre lo que ya hubiera: una por imagen; si la pieza cambió de versión se empieza de cero */
+function conOrden(previo,pedido){
+  const c=cambioLimpio(previo), n=Number(pedido.n), base=c.tira===pedido.tira?c.ordenes.filter(o=>o.n!==n):[];
+  return cambioLimpio({pieza:pedido.pieza||c.pieza, tira:pedido.tira, ordenes:[...base,{n,nota:pedido.nota,cuando:pedido.ahora,por:pedido.quien}], cuando:pedido.ahora, por:pedido.quien});
+}
+function sinOrden(previo,n,quien,ahora){ const c=cambioLimpio(previo); return cambioLimpio({...c, ordenes:c.ordenes.filter(o=>o.n!==Number(n)), cuando:ahora, por:quien}) }
 /* lo mínimo de cada pieza lista para volver a pintarla al abrir, sin nada que parezca una llave */
 function paraGuardar(lista){
   const secreto=/^(?:clave(?:_.*)?|token|access_token|refresh_token|authorization|password)$/i, out={};
   for(const x of lista){ const p=x.p, c=x.e.copy||{};
     out[x.nombre]={estado:x.e.estado||'lista', portada:x.e.portada||'',
-      paquete:{orden:p.orden, formato:p.formato, nota_formato:p.nota_formato, url:p.url, sello:p.sello, imagenes:p.imagenes.map(i=>({src:i.src,dice:i.dice}))},
+      paquete:{orden:p.orden, formato:p.formato, nota_formato:p.nota_formato, url:p.url, sello:p.sello, id:p.id, slug:p.slug, imagenes:p.imagenes.map(i=>({n:i.n,src:i.src,dice:i.dice}))},
       copy:{texto:c.texto, instagram:c.instagram, facebook:c.facebook, comentario:c.comentario, revision:c.revision}} }
   return JSON.parse(JSON.stringify(out,(k,v)=>secreto.test(k)?undefined:v));
 }
-const puro={paquete,planLimpio,listas,mover,fechasDeSalida,alcance,partes,ligaValida,estado,cuantas,paraGuardar,PLAN_LLAVE};
+const puro={paquete,planLimpio,listas,mover,fechasDeSalida,alcance,partes,ligaValida,estado,cuantas,paraGuardar,PLAN_LLAVE,
+  cambioLimpio,ordenesVigentes,conOrden,sinOrden,CAMBIO_LLAVE,NOTA_MAX};
 if(typeof module==='object'&&module.exports){ module.exports=puro; return }
 
 /* ── pantalla ───────────────────────────────────────────────────────────────────────────── */
@@ -90,6 +119,8 @@ const leer=(k,d)=>{ try{ const v=JSON.parse(localStorage.getItem(k)||'null'); re
 const guardar=(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); return true }catch(e){ return false } };
 /* vivo: ya contestó la hoja en esta visita · GUARD: lo último que este aparato vio de ella */
 let vivo=false, fallo=false, GUARD=null, PLAN=planLimpio((leer(PLAN_LOCAL,{})||{}).plan), ORDEN=null, _tPlan=0, _aviso='', _tAviso=0, _releyendo=false;
+/* slug → orden de cambio vigente o no; viene de la hoja y se recuerda en el aparato junto con lo listo */
+let CAMBIOS={};
 function publicadaAqui(n){ const m=leer(LLAVE,{}); return !!(m[n]&&m[n].fecha) }
 /* de dónde se lee: la hoja si ya contestó; si no, lo guardado en el aparato; sin ninguna de las dos, lo que haya */
 function exps(){ return !vivo&&GUARD?GUARD:(typeof EXP!=='undefined'?EXP:{}) }
@@ -98,7 +129,22 @@ function paqueteDe(n){ return paquete(expDe(n)) }
 function deHoy(){ return (typeof fecha!=='undefined'&&fecha)||new Date(Date.now()-7*36e5).toISOString().slice(0,10) }
 function hoyHmo(){ return new Date(Date.now()-7*36e5).toISOString().slice(0,10) }
 const miniatura=src=>typeof ligera==='function'?ligera(src):src;
-function pendientes(){ return listas(exps(),n=>esPublicada(n),PLAN) }
+/* todo lo que tiene paquete y no ha salido; de ahí, lo que tiene una orden de cambio viva sale del montón */
+function conPaquete(){ return listas(exps(),n=>esPublicada(n),PLAN) }
+function cambiosDeTira(pid){ if(!pid) return []; for(const c of Object.values(CAMBIOS)){ const o=ordenesVigentes(c,pid); if(o.length) return o } return [] }
+function llaveDeTira(pid){ return Object.keys(CAMBIOS).find(s=>ordenesVigentes(CAMBIOS[s],pid).length)||'' }
+function pendientes(){ return conPaquete().filter(x=>!cambiosDeTira(x.p.id).length) }
+/* las piezas con cambio pedido: las del montón y, si la mesa ya dijo cuál es su versión vigente, las demás */
+function enCambio(){
+  const delMonton=conPaquete().map(x=>({slug:llaveDeTira(x.p.id),nombre:x.nombre,ordenes:cambiosDeTira(x.p.id)})).filter(x=>x.ordenes.length);
+  const vistas=new Set(delMonton.map(x=>x.slug)), pidDe=root.SalaTablero&&root.SalaTablero.pidDe, otras=[];
+  if(typeof pidDe==='function') for(const [slug,c] of Object.entries(CAMBIOS)){
+    if(vistas.has(slug)||!c.ordenes.length) continue;
+    let pid=null; try{ pid=pidDe(slug) }catch(e){}
+    if(pid&&pid===c.tira) otras.push({slug,nombre:c.pieza||slug,ordenes:c.ordenes});
+  }
+  return delMonton.concat(otras);
+}
 function hay(){ try{ return ENTRADO()&&pendientes().length>0 }catch(e){ return false } }
 function puedeOrdenar(){ return DECIDE()&&(vivo||!!GUARD) }
 async function dueno(){
@@ -149,12 +195,12 @@ async function pintar(){
   let html='';
   if(ENTRADO()){
     if(vivo) conciliar();
-    const sabe=vivo||!!GUARD, l=sabe?pendientes():[], n=l.length, {espera,guardadas}=await sinPaquete();
+    const sabe=vivo||!!GUARD, l=sabe?pendientes():[], n=l.length, {espera,guardadas}=await sinPaquete(), cambios=sabe?enCambio():[];
     if(ORDEN&&!n) ORDEN=null;
     const vista=ORDEN?ORDEN.map(nombre=>l.find(x=>x.nombre===nombre)).filter(Boolean):l;
     const fechas=fechasDeSalida(n,PLAN.por_semana,desde());
     if(!sabe&&fallo) html=`<section class="sal sal-aviso" aria-label="Listas para publicar"><header><span class="bt-eyebrow">TU MONTÓN</span><h2>No pude leer lo que está listo</h2><p>El Sheet no contestó. Tus publicaciones siguen en Drive y en la hoja; sólo falta volver a preguntar.</p></header><div class="sal-plan"><button type="button" class="sal-b fuerte" data-releer>Reintentar</button></div></section>`;
-    else if(sabe&&(n||espera||guardadas.length)) html=`<section class="sal${ORDEN?' en-orden':''}" aria-label="Listas para publicar">
+    else if(sabe&&(n||espera||guardadas.length||cambios.length)) html=`<section class="sal${ORDEN?' en-orden':''}" aria-label="Listas para publicar">
     <div class="sal-cab"><header><span class="bt-eyebrow">TU MONTÓN</span>
       <h2>${n?cuantas(n,'lista para lanzar','listas para lanzar'):'Todavía no hay nada listo para lanzar'}</h2>
       <p>${n?(fechas[0]===hoyHmo()?`Hoy toca <b>«${esc(vista[0].nombre)}»</b>. `:'')+resumen(n,fechas)+' Nada sale solo: tú das el clic de publicar.':'En cuanto una pieza tenga sus imágenes aprobadas y su texto, aparece aquí.'}</p>
@@ -163,6 +209,8 @@ async function pintar(){
     ${n?`<div class="sal-rejilla">${vista.map((x,i)=>tarjeta(x,i,fechas,n)).join('')}</div>`:''}
     <p class="sal-estado" role="status" aria-live="polite">${esc(_aviso)}</p>
     ${espera?`<p class="sal-pie"><b>${cuantas(espera,'pieza más','piezas más')}</b> ya ${espera===1?'tiene':'tienen'} sus imágenes aprobadas y ${espera===1?'espera':'esperan'} su texto. Es el paso del consejo; cuando lo escriba, ${espera===1?'aparece':'aparecen'} aquí.</p>`:''}
+    ${cambios.length?`<div class="sal-pie sal-cambios"><p><b>${cuantas(cambios.length,'pieza con cambio pedido','piezas con cambio pedido')}</b> (Producción la rehace con tu nota y vuelve a tu mesa para que la apruebes; mientras, no está en el montón):</p>
+      <ul>${cambios.map(x=>x.ordenes.map(o=>`<li><span><b>${esc(x.nombre)}</b> · imagen ${o.n}: «${esc(o.nota)}»</span>${DECIDE()&&vivo?` <button type="button" class="sal-mini" data-quitar-cambio="${esc(x.slug)}" data-n="${o.n}">Quitar la petición</button>`:''}</li>`).join('')).join('')}</ul></div>`:''}
     ${guardadas.length?`<p class="sal-pie"><b>${cuantas(guardadas.length,'pieza guardada','piezas guardadas')}</b> (no ${guardadas.length===1?'sale':'salen'} hasta que tú digas; nada se borra): ${esc(guardadas.join(' · '))}.</p>`:''}
   </section>`;
   }
@@ -173,6 +221,8 @@ async function pintar(){
 function enlazar(hoy){
   hoy.querySelectorAll('[data-publicar]').forEach(b=>b.onclick=()=>abrir(b.dataset.publicar));
   hoy.querySelectorAll('[data-releer]').forEach(b=>b.onclick=()=>actualizar());
+  hoy.querySelectorAll('[data-quitar-cambio]').forEach(b=>b.onclick=async()=>{ b.disabled=true; avisar('Quitando la petición…'); pintar();
+    const r=await quitarCambio(b.dataset.quitarCambio,Number(b.dataset.n)); avisar(r.ok?'Petición quitada: la pieza sigue como estaba aprobada.':r.motivo); pintar() });
   hoy.querySelectorAll('[data-ritmo]').forEach(b=>b.onclick=()=>cambiarPlan({por_semana:Math.max(1,Math.min(7,PLAN.por_semana+Number(b.dataset.ritmo)))}));
   const arr=hoy.querySelector('#salArranque'); if(arr) arr.onchange=()=>cambiarPlan({arranque:arr.value||''});
   const ord=hoy.querySelector('[data-ordenar]'); if(ord) ord.onclick=()=>{ ORDEN=pendientes().map(x=>x.nombre); avisar(''); pintar() };
@@ -204,6 +254,46 @@ async function subirPlan(){
   }catch(e){ if(PLAN.cuando===sello) avisar(/solo el agente|solo lee|rol/i.test(String(e&&e.message||e))?'Tu llave todavía no puede guardar el plan en el Sheet; quedó en este aparato.':'El plan no subió al Sheet; quedó en este aparato y se reintenta al abrir.') }
   pintar();
 }
+/* ── órdenes de cambio: no se dan por pedidas hasta que la hoja las confirma ─────────────── */
+function puedePedirCambio(){ return DECIDE()&&vivo }
+async function subirCambio(slug,registro){
+  const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({accion:'expediente',clave:CLAVE(),pieza:CAMBIO_LLAVE+slug,expediente:registro})});
+  const j=await leerJSON(r); if(!r.ok||!j||j.ok!==true) throw Error((j&&j.error)||'sin confirmación');
+}
+const sinPermiso=e=>/solo el agente|solo lee|rol/i.test(String(e&&e.message||e));
+async function trasCambio(){
+  await pintar(); recordar();
+  try{ if(root.SalaTablero&&typeof root.SalaTablero.render==='function') root.SalaTablero.render() }catch(e){}
+  if(typeof LINEA_PIEZAS!=='undefined') _lineaHoyT=0;
+  if(document.body.dataset.vista==='prod'&&typeof pintarProduccion==='function') pintarProduccion();
+}
+async function pedirCambio(pedido){
+  const slug=String(pedido&&pedido.slug||''), tira=String(pedido&&pedido.tira||''), n=Number(pedido&&pedido.n);
+  if(!puedePedirCambio()||!SLUG_OK.test(slug)||!ID_TIRA.test(tira)) return {ok:false,motivo:'Todavía no se puede pedir el cambio: falta que conteste el Sheet.'};
+  const nuevo=conOrden(CAMBIOS[slug],{pieza:pedido.pieza,tira,n,nota:pedido.nota,quien:ROL(),ahora:new Date().toISOString()});
+  if(!nuevo.ordenes.some(o=>o.n===n)) return {ok:false,motivo:'Escribe qué debe cambiar.'};
+  try{ await subirCambio(slug,nuevo) }
+  catch(e){ return {ok:false,motivo:sinPermiso(e)?'Tu llave todavía no puede pedir cambios desde la Sala. No se pidió nada.':'El Sheet no contestó. No se pidió nada: inténtalo otra vez.'} }
+  CAMBIOS[slug]=nuevo; await trasCambio(); return {ok:true};
+}
+async function quitarCambio(slug,n){
+  slug=String(slug||''); const previo=CAMBIOS[slug];
+  if(!DECIDE()||!previo||!SLUG_OK.test(slug)) return {ok:false,motivo:'Esa petición ya no está.'};
+  const nuevo=sinOrden(previo,n,ROL(),new Date().toISOString());
+  try{ await subirCambio(slug,nuevo) }
+  catch(e){ return {ok:false,motivo:sinPermiso(e)?'Tu llave todavía no puede quitar peticiones desde la Sala. No se quitó nada.':'El Sheet no contestó. No se quitó nada: inténtalo otra vez.'} }
+  if(nuevo.ordenes.length) CAMBIOS[slug]=nuevo; else delete CAMBIOS[slug];
+  await trasCambio(); return {ok:true};
+}
+function quitarCambioDeTira(pid,n){ return quitarCambio(llaveDeTira(pid),n) }
+/* para la mesa y «Cómo va»: la orden viva de una imagen de esa versión, y las de una pieza del montón */
+function cambioDe(pid,n){ return cambiosDeTira(pid).find(o=>o.n===Number(n))||null }
+function cambiosDe(nombre){ const p=paqueteDe(nombre); return p?cambiosDeTira(p.id):[] }
+function cargarCambios(crudo){
+  const out={};
+  for(const [slug,v] of Object.entries(crudo&&typeof crudo==='object'&&!Array.isArray(crudo)?crudo:{})){ const c=cambioLimpio(v); if(SLUG_OK.test(slug)&&c.tira&&c.ordenes.length) out[slug]=c }
+  return out;
+}
 async function copiar(texto,boton){
   let ok=false;
   try{ await navigator.clipboard.writeText(texto); ok=true }catch(e){
@@ -224,7 +314,16 @@ function abrir(nombre){
     ${c.revision.length?`<div class="sal-ojo"><b>Antes de publicar, mira esto</b><ul>${c.revision.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
     <div class="sal-paso"><h4><i>1</i>Las imágenes</h4>
       <p>Están en Drive, numeradas en el orden en que van.</p>
-      ${/^https:\/\/drive\.google\.com\//.test(p.url||'')?`<a class="secund sal-liga" href="${esc(p.url)}" target="_blank" rel="noopener">Abrir la carpeta en Drive ↗</a>`:''}</div>
+      ${/^https:\/\/drive\.google\.com\//.test(p.url||'')?`<a class="secund sal-liga" href="${esc(p.url)}" target="_blank" rel="noopener">Abrir la carpeta en Drive ↗</a>`:''}
+      ${puede&&puedePedirCambio()&&ID_TIRA.test(String(p.id||''))&&SLUG_OK.test(String(p.slug||''))?`<button type="button" class="sal-mini" id="salCambio" aria-expanded="false" aria-controls="salCambioCaja">Pedir cambio a una imagen</button>
+      <div class="sal-cambio" id="salCambioCaja" hidden>
+        ${n>1?`<label class="sal-lab" for="salCambioN">¿Cuál imagen?</label>
+        <select id="salCambioN">${p.imagenes.map((im,k)=>`<option value="${Number(im.n)||k+1}">Imagen ${k+1}${im.dice?' · '+esc(String(im.dice).slice(0,48)):''}</option>`).join('')}</select>`:''}
+        <label class="sal-lab" for="salCambioNota">Qué debe cambiar</label>
+        <textarea id="salCambioNota" rows="3" maxlength="${NOTA_MAX}" placeholder="Una línea basta. Producción la toma como orden de trabajo."></textarea>
+        <button type="button" class="secund" id="salCambioOk">Enviar a Producción</button>
+        <p class="aviso" id="salCambioAviso" role="status" aria-live="polite">La pieza sale de tu montón y vuelve cuando apruebes su versión nueva.</p>
+      </div>`:''}</div>
     <div class="sal-paso"><h4><i>2</i>El texto</h4>
       <p>Cámbialo aquí si quieres; se copia tal como lo dejes.</p>
       <textarea id="salTexto" rows="9" spellcheck="true" aria-label="Texto de la publicación">${esc(mio||c.texto)}</textarea>
@@ -247,6 +346,17 @@ function abrir(nombre){
   q('#salIg').onclick=ev=>copiar(txt.value.trim()+c.ig,ev.currentTarget);
   q('#salFb').onclick=ev=>copiar(txt.value.trim()+c.fb,ev.currentTarget);
   q('#salCom').onclick=ev=>copiar(c.comentario,ev.currentTarget);
+  const pide=q('#salCambio');
+  if(pide){ const caja=q('#salCambioCaja'), nota=q('#salCambioNota'), dice=q('#salCambioAviso'), manda=q('#salCambioOk');
+    pide.onclick=()=>{ caja.hidden=!caja.hidden; pide.setAttribute('aria-expanded',String(!caja.hidden)); if(!caja.hidden) nota.focus() };
+    manda.onclick=async()=>{
+      const texto=nota.value.trim(); if(!texto){ dice.textContent='Escribe qué debe cambiar: sin una línea, Producción no sabe qué hacer.'; nota.focus(); return }
+      const cual=q('#salCambioN'), num=cual?Number(cual.value):Number(p.imagenes[0].n)||1;
+      manda.disabled=true; dice.textContent='Enviando…';
+      const r=await pedirCambio({slug:p.slug,pieza:nombre,tira:p.id,n:num,nota:texto});
+      if(!r.ok){ manda.disabled=false; dice.textContent=r.motivo; return }
+      cerrarCapa('publicar-'+normSlug(nombre)); avisar('Cambio pedido. «'+nombre+'» sale de tu montón y vuelve cuando apruebes su versión nueva.'); pintar();
+    } }
   const ya=q('#salYa'); if(!ya) return;
   ya.onclick=async()=>{
     const av=q('#salAviso'), liga=q('#salPost').value.trim();
@@ -276,9 +386,9 @@ function conciliar(){
 /* ── lo último que este aparato vio: se pinta al abrir, mientras contesta la hoja ───────── */
 async function recordar(){
   if(!vivo) return;
-  try{ const l=pendientes(); localStorage.setItem(RESUMEN,JSON.stringify({listas:l.length,cuando:Date.now()}));
+  try{ localStorage.setItem(RESUMEN,JSON.stringify({listas:pendientes().length,cuando:Date.now()}));
     const owner=await dueno(); if(!owner) return;
-    const raw=JSON.stringify({schema:1,owner,savedAt:Date.now(),exp:paraGuardar(l)});
+    const raw=JSON.stringify({schema:1,owner,savedAt:Date.now(),exp:paraGuardar(conPaquete()),cambios:CAMBIOS});
     if(raw.length<=TOPE_GUARDADA) localStorage.setItem(GUARDADA,raw) }catch(e){}
 }
 async function abrirGuardada(){
@@ -287,13 +397,14 @@ async function abrirGuardada(){
     const owner=await dueno(), x=JSON.parse(raw), ahora=Date.now();
     if(!owner||raw.length>TOPE_GUARDADA||!x||x.schema!==1||x.owner!==owner||!(ahora-x.savedAt<VIGENCIA)||x.savedAt>ahora+60000||!x.exp||typeof x.exp!=='object'){ olvidar(); return }
     if(vivo) return;   // la hoja contestó mientras se comprobaba de quién es la copia
-    GUARD=x.exp; pintar();
+    GUARD=x.exp; CAMBIOS=cargarCambios(x.cambios); pintar();
   }catch(e){ olvidar() }
 }
-function olvidar(){ GUARD=null; try{ localStorage.removeItem(GUARDADA); localStorage.removeItem(RESUMEN) }catch(e){} }
-/* la hoja contestó: `salida` trae las llaves `salida:` (hoy, el plan) */
+function olvidar(){ GUARD=null; if(!vivo) CAMBIOS={}; try{ localStorage.removeItem(GUARDADA); localStorage.removeItem(RESUMEN) }catch(e){} }
+/* la hoja contestó: `salida` trae las llaves `salida:` (el plan) y `cambio:` (las órdenes de cambio) */
 function llegaron(salida){
   vivo=true; fallo=false; GUARD=null;
+  CAMBIOS=cargarCambios(Object.fromEntries(Object.entries(salida||{}).filter(([k])=>k.startsWith(CAMBIO_LLAVE)).map(([k,v])=>[k.slice(CAMBIO_LLAVE.length),v])));
   const remoto=salida&&salida[PLAN_LLAVE]?planLimpio(salida[PLAN_LLAVE]):null, loc=leer(PLAN_LOCAL,null), mio=loc&&loc.plan?planLimpio(loc.plan):null;
   if(mio&&loc.pendiente&&(!remoto||mio.cuando>remoto.cuando)){ PLAN=mio; if(DECIDE()){ clearTimeout(_tPlan); _tPlan=setTimeout(subirPlan,0) } }
   else if(remoto){ PLAN=remoto; guardar(PLAN_LOCAL,{plan:remoto,pendiente:false}) }
@@ -306,6 +417,7 @@ async function actualizar(){
   try{ const ok=await releerExpedientes(); if(!ok){ if(!vivo) fallo=true; avisar('El Sheet no contestó. Sigues viendo lo último guardado.') } else avisar('') }
   finally{ _releyendo=false; pintar() }
 }
-root.SalaSalida=Object.assign({pintar,abrir,publicadaAqui,paqueteDe,pendientes,conciliar,hay,llegaron,falla,abrirGuardada,olvidar,actualizar,plan:()=>PLAN},puro);
+root.SalaSalida=Object.assign({pintar,abrir,publicadaAqui,paqueteDe,pendientes,conciliar,hay,llegaron,falla,abrirGuardada,olvidar,actualizar,plan:()=>PLAN,
+  puedePedirCambio,pedirCambio,quitarCambio,quitarCambioDeTira,cambioDe,cambiosDe,enCambio},puro);
 if(typeof arrancarSalida==='function') arrancarSalida();   // si la Sala ya arrancó antes de que cargara este archivo
 })(globalThis);

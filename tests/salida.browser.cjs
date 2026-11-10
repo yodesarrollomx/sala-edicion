@@ -111,8 +111,11 @@ async function estatico(route,u,rol){
   assert.equal(await copia('#salCom'),LIGA_IG);
   if(rol==='lector'){
    assert.equal(await page.locator('#salYa').count(),0,'un lector no anota publicaciones');
+   assert.equal(await page.locator('#salCambio').count(),0,'ni pide cambios');
    assert.equal(writes.length,0);
   }else{
+   assert.equal(await page.locator('#salCambio').count(),1,'un editor puede pedir cambio a una imagen de la pieza lista');
+   assert.equal(await page.locator('#salCambioCaja').isHidden(),true,'pero no estorba: se abre sólo si lo toca');
    // el texto se puede cambiar y se copia como quedó
    await page.locator('#salTexto').fill('Mi versión del texto.');
    assert.equal(await copia('#salIg'),'Mi versión del texto.\n(la liga te espera en el primer comentario)');
@@ -251,6 +254,117 @@ async function estatico(route,u,rol){
   assert.equal(await page.locator('#salidaHoy .sal-carta').count(),0,'la copia guardada es de quien la guardó');
   assert.deepEqual(await page.evaluate(()=>[localStorage.getItem('sala_salida_local_v1'),localStorage.getItem('sala_resumen_v1')]),[null,null]);
   assert.deepEqual(errors,[]);console.log(JSON.stringify({width,recorrido:'monton',errors:0,realWrites:0,soloElPlan:writes.every(w=>w.accion==='expediente'&&w.pieza==='salida:plan')}));
+  await context.close();
+ }
+ /* ── Pedir cambio a una imagen YA APROBADA (9-nov, DEC-08 «Las 48 Horas»): desde la hoja de una pieza lista y desde
+       la mesa. Es una orden del editor en la llave `cambio:<slug>` de la hoja, atada a la versión (tira) de la pieza:
+       la pieza sale del montón mientras se rehace, y la petición se puede quitar. Nunca es una marca de la mesa. ── */
+ for(const width of [390,1440]){
+  const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage(),errors=[],writes=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.addInitScript(()=>{if(!localStorage.getItem('sala_clave')){localStorage.setItem('sala_clave','synthetic');localStorage.setItem('sala_rol','editor');localStorage.setItem('sala_guia','1');localStorage.setItem('sala_guia_v3','1');}});
+  const lista=(i,n)=>{const [pid,slug,nombre,formato]=PIEZAS[i];return {pieza:nombre,estado:'lista',portada:`laminas/${slug}/L1.png`,
+   paquete:{carpeta:(i+1)+' · '+nombre,orden:i+1,url:'https://drive.google.com/drive/folders/sintetica',formato,id:pid,slug,sello:String(i+1).repeat(12),
+    imagenes:Array.from({length:n},(_,k)=>({n:k+1,src:`laminas/${slug}/L${k+1}.png`,archivo:`0${k+1}.png`,dice:`${nombre} lámina ${k+1}`}))},
+   copy:{texto:TEXTO,instagram:TEXTO,comentario:LIGA_IG,facebook:TEXTO,revision:[]},hitos:[]};};
+  const hoja={'Pieza Uno':lista(0,3),'Pieza Tres':lista(2,1)},modo={guardar:'ok'};
+  await page.route('**/*',async route=>{
+   const req=route.request(),u=new URL(req.url());
+   if(req.method()==='POST'){const d=JSON.parse(req.postData()||'{}');writes.push(d);
+    if(d.accion==='expediente'){if(modo.guardar==='rechaza')return route.fulfill({json:{error:'solo el agente'}});hoja[d.pieza]=d.expediente;}
+    return route.fulfill({json:{ok:true}});}
+   if(u.hostname==='script.google.com'){
+    const r=u.searchParams.get('recurso');
+    if(r==='dia')return route.fulfill({json:dia('editor')});
+    if(r==='expedientes')return route.fulfill({json:{ok:true,expedientes:hoja}});
+    if(r==='reglas')return route.fulfill({json:{ok:true,reglas:{nube_ejecuta_etapas:'prospecto',semillero_activo:'0'},motores:[]}});
+    return route.fulfill({json:{ok:true,cola:[],fabrica:[],ideas:[]}});
+   }
+   return estatico(route,u,'editor');
+  });
+  const nombres=()=>page.locator('#salidaHoy .sal-carta b').allTextContents();
+  const escrituras=async n=>{for(let i=0;i<80&&writes.length<n;i++)await page.waitForTimeout(100);assert.equal(writes.length,n);};
+  const montonDe=n=>page.waitForFunction(k=>!document.querySelector('#salidaHoy .sal-nota')&&document.querySelectorAll('#salidaHoy .sal-carta').length===k,n,{timeout:30000});
+  await page.goto(base);
+  await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});await montonDe(2);
+  // 1) en la hoja de una pieza lista: sin nota no se pide nada
+  await page.locator('#salidaHoy [data-publicar="Pieza Uno"]').click();await page.waitForSelector('.sal-hoja');
+  await page.locator('#salCambio').click();
+  assert.equal(await page.locator('#salCambioN option').count(),3,'una opción por imagen');
+  await page.locator('#salCambioOk').click();
+  assert.match(await page.locator('#salCambioAviso').textContent(),/Escribe qué debe cambiar/);assert.equal(writes.length,0);
+  // 2) con nota: UNA escritura a la llave de la pieza, con su versión y la imagen; la pieza sale del montón
+  await page.locator('#salCambioN').selectOption('2');
+  await page.locator('#salCambioNota').fill('  Más   luminosa\ny sin letrero ');
+  await page.locator('#salCambioOk').click();await escrituras(1);
+  const w=writes[0];
+  assert.deepEqual([w.accion,w.pieza,w.clave,w.expediente.v,w.expediente.pieza,w.expediente.tira],['expediente','cambio:uno','synthetic',1,'Pieza Uno',PIEZAS[0][0]]);
+  assert.deepEqual(w.expediente.ordenes.map(o=>[o.n,o.nota,o.por]),[[2,'Más luminosa y sin letrero','editor']]);
+  assert.ok(!isNaN(Date.parse(w.expediente.ordenes[0].cuando)));
+  await page.waitForFunction(()=>!document.querySelector('.sal-hoja'),null,{timeout:15000});await montonDe(1);
+  assert.deepEqual(await nombres(),['Pieza Tres']);
+  assert.equal(await page.locator('#salidaHoy h2').textContent(),'1 lista para lanzar');
+  assert.match((await page.locator('#salidaHoy .sal-cambios').innerText()).replace(/\s+/g,' '),/^1 pieza con cambio pedido \(.+\): Pieza Uno · imagen 2: «Más luminosa y sin letrero» Quitar la petición$/);
+  assert.match(await page.locator('#salidaHoy .sal-estado').textContent(),/Cambio pedido\. «Pieza Uno» sale de tu montón/);
+  for(let i=0;i<40&&(await page.evaluate(()=>(JSON.parse(localStorage.getItem('sala_resumen_v1')||'{}')).listas))!==1;i++)await page.waitForTimeout(100);
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sala_resumen_v1')).listas),1,'YOD OS cuenta lo que sí está en el montón');
+  const caja=await page.locator('#salidaHoy .sal').boundingBox();assert.ok(caja.x>=0&&caja.x+caja.width<=width+1,'sin desbordar la pantalla');
+  // 3) «Cómo va» dice que se está rehaciendo y ya no la cuenta como lista
+  await page.locator('#puertas [data-v="prod"]').click();await page.waitForSelector('#linea .ln-fila',{timeout:30000});
+  await page.waitForFunction(()=>[...document.querySelectorAll('#linea .ln-fila')].some(f=>/Cambio pedido en la imagen 2/.test(f.innerText)),null,{timeout:30000});
+  const filas=Object.fromEntries(await page.evaluate(()=>[...document.querySelectorAll('#linea .ln-fila')].map(f=>[f.querySelector('.ln-nom b').textContent,f.querySelector('.ln-rel').innerText.replace(/\s+/g,' ')])));
+  assert.match(filas['Pieza Uno'],/Cambio pedido en la imagen 2: Producción la rehace con tu nota\./);
+  assert.match(filas['Pieza Tres'],/Lista para lanzar: 1 imagen y su texto\./);
+  await page.locator('#puertas [data-v="hoy"]').click();
+  // 4) al recargar, la orden viene de la hoja
+  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
+  assert.deepEqual(await nombres(),['Pieza Tres']);
+  // 5) desde la mesa: la página aprobada de una pieza de UNA imagen (su tira no tiene base) ya deja pedir cambio
+  await page.locator('[data-abrir-mesa]').click();await page.waitForSelector('.bt-column');
+  await page.locator('#tableroHoy [data-open="tres"]').click();await page.waitForSelector('#tableroHoy [data-frame="1"]');
+  await page.locator('#tableroHoy [data-frame="1"]').click();await page.waitForSelector('.bt-choice [data-reopen]');
+  assert.equal(await page.locator('.bt-choice [data-reopen]').isDisabled(),false);
+  assert.match(await page.locator('.bt-choice .bt-gesture-hint').textContent(),/Si algo no te convence, pide un cambio con una nota/);
+  await page.locator('.bt-choice [data-reopen]').click();await page.waitForSelector('#notaT');
+  await page.locator('#notaT').fill('Cambia el texto: quita el plazo');await page.locator('#notaOk').click();await escrituras(2);
+  assert.deepEqual([writes[1].accion,writes[1].pieza,writes[1].expediente.tira,writes[1].expediente.pieza,writes[1].expediente.ordenes.map(o=>[o.n,o.nota])],
+   ['expediente','cambio:tres',PIEZAS[2][0],'Pieza Tres',[[1,'Cambia el texto: quita el plazo']]]);
+  await page.waitForSelector('.bt-choice [data-unreopen]');
+  assert.match((await page.locator('.bt-choice .bt-editor-note').last().innerText()).replace(/\s+/g,' '),/^CAMBIO PEDIDO Cambia el texto: quita el plazo$/i);
+  assert.match(await page.locator('.bt-choice .bt-notice').textContent(),/Tu petición quedó guardada en el Sheet\./);
+  assert.match(await page.locator('.bt-choice .bt-gesture-hint').textContent(),/^Cambio pedido: Producción rehace esta página con tu nota y te la trae para aprobar\./);
+  assert.equal(await page.locator('.bt-choice [data-reopen]').count(),0,'con la orden viva no se pide otra vez');
+  assert.equal(await page.locator('#salidaHoy .sal-carta').count(),0,'las dos piezas salieron del montón');
+  assert.equal(await page.locator('#salidaHoy .sal-cambios li').count(),2);
+  // 6) quitar la petición desde la mesa: la página sigue aprobada y la pieza vuelve al montón
+  await page.locator('.bt-choice [data-unreopen]').click();await escrituras(3);
+  assert.deepEqual([writes[2].pieza,writes[2].expediente.tira,writes[2].expediente.ordenes],['cambio:tres',PIEZAS[2][0],[]]);
+  await page.waitForSelector('.bt-choice [data-reopen]');
+  assert.match(await page.locator('.bt-choice .bt-notice').textContent(),/Petición quitada/);
+  await page.evaluate(()=>cerrarCapas());await montonDe(1);
+  assert.deepEqual(await nombres(),['Pieza Tres']);
+  // 7) quitar la otra desde el montón
+  await page.locator('#salidaHoy [data-quitar-cambio="uno"]').click();await escrituras(4);
+  assert.deepEqual([writes[3].pieza,writes[3].expediente.ordenes],['cambio:uno',[]]);
+  await montonDe(2);
+  assert.equal(await page.locator('#salidaHoy .sal-cambios').count(),0);
+  assert.match(await page.locator('#salidaHoy .sal-estado').textContent(),/Petición quitada/);
+  // 8) una llave que la hoja no deja escribir: se dice, no se da por pedido y la pieza sigue en el montón
+  modo.guardar='rechaza';
+  await page.locator('#salidaHoy [data-publicar="Pieza Tres"]').click();await page.waitForSelector('.sal-hoja');
+  await page.locator('#salCambio').click();
+  assert.equal(await page.locator('#salCambioN').count(),0,'con una sola imagen no hay nada que elegir');
+  await page.locator('#salCambioNota').fill('Otra pareja');await page.locator('#salCambioOk').click();await escrituras(5);
+  await page.waitForFunction(()=>/Tu llave todavía no puede pedir cambios/.test(document.querySelector('#salCambioAviso').textContent),null,{timeout:15000});
+  assert.equal(await page.locator('.sal-hoja').count(),1);assert.equal(await page.locator('#salCambioOk').isDisabled(),false);
+  await page.evaluate(()=>cerrarCapas());
+  assert.deepEqual(await nombres(),['Pieza Uno','Pieza Tres']);assert.equal(await page.locator('#salidaHoy .sal-cambios').count(),0);
+  // 9) nunca decide ni publica: sólo escribió órdenes de cambio
+  assert.deepEqual([...new Set(writes.map(x=>x.accion))],['expediente']);
+  assert.ok(writes.every(x=>/^cambio:(uno|tres)$/.test(x.pieza)));
+  if(process.env.SALIDA_CAPTURAS){fs.mkdirSync(process.env.SALIDA_CAPTURAS,{recursive:true});await page.screenshot({path:path.join(process.env.SALIDA_CAPTURAS,'cambio-'+width+'.png')});}
+  assert.deepEqual(errors,[]);console.log(JSON.stringify({width,recorrido:'cambio',errors:0,realWrites:0,ordenes:writes.length}));
   await context.close();
  }}finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

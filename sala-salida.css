@@ -99,3 +99,16 @@ a.sal-liga{display:grid;place-items:center;text-decoration:none;color:inherit}
 .uni-hist q{display:block;quotes:"«" "»";font-size:14px;line-height:1.45;color:var(--tinta)}
 .uni-est{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--azul-suave);color:var(--azul)}
 @media (min-width:900px){ .sal-img{flex-basis:150px} }
+
+/* ── Pedir cambio a una imagen ya aprobada (9-nov) ─────────────────────────────────────────
+   Dentro de la hoja de la pieza: discreto, porque lo normal es que la pieza salga como está.
+   En el montón: las piezas con cambio pedido, con su nota y cómo quitar la petición. */
+.sal-cambio{margin:8px 0 6px;padding:12px;border:1px solid var(--linea2);border-radius:14px;background:var(--tarjeta)}
+.sal-cambio[hidden]{display:none}
+.sal-cambio textarea{min-height:84px;width:100%}
+.sal-cambio select{width:100%;min-height:44px;border:2px solid var(--linea2);border-radius:12px;padding:0 10px;font:inherit;background:var(--fondo);color:var(--tinta);margin:0 0 10px}
+.sal-cambio select:focus,.sal-cambio textarea:focus{outline:none;border-color:var(--oro)}
+.sal-cambios p{margin:0 0 6px}
+.sal-cambios ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sal-cambios li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px}
+.sal-cambios li span{min-width:0;overflow-wrap:anywhere}

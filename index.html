@@ -673,7 +673,7 @@ html.trayendo #actualizando{display:flex}
 body > .chn-aviso:has(~ .chn-aviso){display:none!important}
 </style><link rel="stylesheet" href="tablero-sala.css?v=20261109-monton"><link rel="stylesheet" href="sala2.css">
 </head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
-<link rel="stylesheet" href="sala-salida.css?v=20261109-monton2">
+<link rel="stylesheet" href="sala-salida.css?v=20261109-cambio">
 <script src="sala-correcciones.js?v=20261015-4"></script>
 <script src="politica-imagen.js?v=hidream-o1-20261017"></script>
 <script src="video-revision.js?v=20261020-nativo1"></script>
@@ -828,7 +828,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='33ad045b14';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='6925aaa549';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1396,21 +1396,25 @@ function verDireccion(t){
 }
 function verLamina(t,n){
   const l=(t.laminas||[]).find(z=>z.n===n); if(!l) return;
-  const reab=t.base&&dec[t.base]&&dec[t.base].laminas[n-1]==='no';
+  // 9-nov: la petición de cambio a una lámina aprobada es una orden (llave `cambio:` de EXPEDIENTES) sobre ESTA tira
+  const tid=Object.keys(TIRAS).find(k=>TIRAS[k]===t)||'', conOrdenes=typeof SalaSalida!=='undefined'&&!!SalaSalida.cambioDe;
+  const orden=conOrdenes&&tid?SalaSalida.cambioDe(tid,n):null;
+  const reab=!!orden||(t.base&&dec[t.base]&&dec[t.base].laminas[n-1]==='no');
   const em=enMesaTira(t,n);
   const v=hoja(`<h3>Lámina ${n} de ${t.laminas.length}</h3>
     <p>${reab?'Ya pediste cambio a esta lámina aunque estaba aprobada.':l.estado==='aprobada'?'Ya está aprobada: no vuelve a preguntarse.':'Ésta es la que se rehízo con la nota.'}</p>
     <p class="fechas">${serialDe(l.src)?`<b class="serial">${esc(serialDe(l.src))}</b> · `:``}Versión ${l.version||1} · salió ${fechaBonita(l.fecha)}${(l.versiones||[]).length>1?` · <button type="button" class="liga" data-versiones="${esc(Object.keys(TIRAS).find(k=>TIRAS[k]===t)||'')}" data-n="${n}">ver las ${l.versiones.length} versiones</button>`:''}</p>
-    ${reab?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(dec[t.base].notas[n-1]||'')}»</p><button class="secund" id="quitarReab">Quitar la petición</button>`:''}
-    ${(!reab&&l.estado==='aprobada'&&DECIDE()&&t.base)?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
+    ${reab?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(orden?orden.nota:(dec[t.base].notas[n-1]||''))}»</p><button class="secund" id="quitarReab">Quitar la petición</button>`:''}
+    ${(!reab&&l.estado==='aprobada'&&DECIDE()&&conOrdenes&&tid&&t.pieza_slug&&SalaSalida.puedePedirCambio())?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
     ${(em&&DECIDE())?(em.m==='no'?`<p style="color:var(--no)"><b>Ya pediste cambio hoy:</b> «${esc(em.nota||'')}»</p><button class="secund" id="cambiarMesa">Cambiar la nota</button>`:`<p style="font-size:13px;color:var(--gris)">${em.m==='si'?'Hoy la aprobaste. Si la quieres mejorar, pide el cambio aquí.':'Está en tu mesa de hoy. Puedes decidirla desde aquí.'}</p><button class="secund" id="cambiarMesa">Pedir cambio a esta lámina</button>`):''}
     <img src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="Lámina ${n}" style="width:100%;border-radius:14px;background:#141210">
     <p style="margin-top:12px"><b>Dice:</b> ${esc((l.dice||'').replace(' / ',' · '))}</p>
     ${l.ve?`<p><b>Se ve:</b> ${esc(l.ve)}</p>`:''}
     ${notaDeLamina(t,l)?`<p style="color:var(--no)"><b>La nota:</b> «${esc(notaDeLamina(t,l))}»</p>`:''}`,'lamina'+n);
-  const br=v.querySelector('#reabrirLam'); if(br) br.onclick=()=>pedirNota(nota=>reabrirAprobada(t,l,nota));
+  const br=v.querySelector('#reabrirLam'); if(br) br.onclick=()=>pedirNota(nota=>reabrirAprobada(t,l,nota,tid));
   const bm=v.querySelector('#cambiarMesa'); if(bm) bm.onclick=()=>pedirNota(nota=>cambioDesdeTira(em,nota),em.m==='no'?em.nota:'');
-  const bq=v.querySelector('#quitarReab'); if(bq) conSeguro(bq,()=>quitarReapertura(t.base,n-1));
+  const bq=v.querySelector('#quitarReab'); if(bq) conSeguro(bq,()=>{ if(!orden){ quitarReapertura(t.base,n-1); return }
+    cerrarCapas(); SalaSalida.quitarCambioDeTira(tid,n).then(r=>avisoDeCambio(r.ok?'Petición quitada':'No se quitó la petición',r.ok?'La lámina sigue aprobada como estaba.':r.motivo)) });
 }
 /* 7-sep (Alejandro): «en la lámina 4 no me deja solicitar cambios como en la lámina 3». La 4 era una rehecha
    que vive HOY en la mesa; el botón solo salía en aprobadas. Ahora la tira también decide las de la mesa. */
@@ -1432,7 +1436,19 @@ function cambioDesdeTira(em,nota){
    como marca «no» de la propuesta ORIGINAL (t.base) en el mismo envío del día; Producción la cosecha como
    reapertura. Nunca borra la aprobación de la historia: se suma una orden de cambio. */
 const reaperturas=()=>Object.entries(dec).filter(([pid,d])=>d&&d._reabierta&&(d.laminas||[]).some(m=>m==='no'));
-function reabrirAprobada(t,l,nota){
+function avisoDeCambio(titulo,texto){
+  hoja(`<h3>${esc(titulo)}</h3><p>${esc(texto)}</p><button class="listo" type="button" id="cambioEntendido">Entendido</button>`,'cambio-aviso');
+  const b=document.getElementById('cambioEntendido'); if(b) b.onclick=()=>cerrarCapa('cambio-aviso');
+}
+function reabrirAprobada(t,l,nota,tid){
+  /* 9-nov: en la nube nadie cosechaba el «no» sobre t.base (lo hacía la Mac). Con la tira identificada, la
+     petición viaja como orden de cambio y se confirma con la hoja; sin eso queda el camino anterior. */
+  if(tid&&t.pieza_slug&&typeof SalaSalida!=='undefined'&&SalaSalida.pedirCambio){
+    cerrarCapas();
+    SalaSalida.pedirCambio({slug:t.pieza_slug,pieza:t.pieza||'',tira:tid,n:Number(l.n),nota}).then(r=>
+      avisoDeCambio(r.ok?'Cambio pedido':'No se pidió el cambio',r.ok?'Producción rehace esta lámina con tu nota y te la trae para aprobar. La aprobación anterior sigue en su historia.':r.motivo));
+    return;
+  }
   const pid=t.base; if(!pid) return;
   const n=(t.laminas||[]).length;
   if(!dec[pid]) dec[pid]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:'',_reabierta:true,_tira:t.pieza||''};
@@ -2108,7 +2124,7 @@ function leerExpedientesHoja(){
       const j=await leerJSON(r);
       if(!r.ok||!j||!j.expedientes||typeof j.expedientes!=='object') throw Error('sin expedientes');
       const salida={};
-      Object.entries(j.expedientes).forEach(([n,e])=>{ if(n.startsWith('v4:')) return; if(n.startsWith('salida:')){ salida[n]=e; return } EXP[n]=e });
+      Object.entries(j.expedientes).forEach(([n,e])=>{ if(n.startsWith('v4:')) return; if(n.startsWith('salida:')||n.startsWith('cambio:')){ salida[n]=e; return } EXP[n]=e });
       if(typeof SalaSalida!=='undefined') SalaSalida.llegaron(salida);
       return true;
     }catch(e){ _expHojaP=null; return false }
@@ -2214,6 +2230,7 @@ function pintarAjustes(){
       <li><b>La línea es una sola:</b> idea → guion → imágenes → texto → tú publicas. Todo corre en la nube.</li>
       <li><b>«Te toca» tiene dos cosas.</b> Lo que hay que decidir (aprobar, pedir cambio o «no va») y <b>tu montón</b>: lo que ya está listo para lanzar, en el orden en que va a salir.</li>
       <li><b>Arma tu salida sin prisa:</b> arriba del montón eliges cuántas por semana (te dice para cuántas semanas alcanza), el día de arranque y el orden («Cambiar el orden»). Nada sale solo.</li>
+      <li><b>¿Algo de una pieza lista no te convence?</b> Ábrela y toca «Pedir cambio a una imagen»: escribe una línea y Producción la rehace. La pieza sale del montón y vuelve cuando apruebes su versión nueva.</li>
       <li><b>Cuando decidas publicar:</b> abre la pieza, baja sus imágenes de Drive, copia el texto y la liga, publícala en Instagram y Facebook y toca <b>«Ya la publiqué»</b>.</li>
       <li><b>«Cómo va»</b> enseña cada pieza y en qué paso está, sin que tengas que decidir nada.</li>
       <li><b>Todo se guarda solo.</b> La píldora de arriba dice «Guardado ✓» cuando ya subió. Si dice «sin señal», no repitas: sube sola.</li>
@@ -2720,7 +2737,9 @@ function filaLinea(z){
   // 23-sep: con la mesa vacía («Listo por hoy») esto caía a la tira vieja y decía «te toca» sobre
   // propuestas ya retiradas. Si el día cargó, la mesa manda aunque esté vacía.
   const mesa=!!(D&&Array.isArray(D.propuestas));
-  const pend=mesa?pasosPendientesDe(z):[], lista=sal==='lista'&&!pend.length, tuyo=pend.length>0||lista;
+  // 9-nov: un editor pidió cambiar una imagen ya aprobada de esta pieza: sale del montón mientras se rehace
+  const enCambio=typeof SalaSalida!=='undefined'&&SalaSalida.cambiosDe?SalaSalida.cambiosDe(z.nombre):[];
+  const pend=mesa?pasosPendientesDe(z):[], lista=sal==='lista'&&!pend.length&&!enCambio.length, tuyo=pend.length>0||lista;
   const cambio=!tuyo&&/pidió cambio/i.test(falta), esperaRonda=!tuyo&&/esperando tu s|elige una opci|en tu mesa/i.test(falta);
   // 9-nov: con el video en pausa, un trabajo viejo de voz, escena o corte ya no dice nada de la pieza
   const todas=videoEnPausa()?[].concat(g.prospectos||[]):[].concat(g.prospectos||[],g.voz||[],g.escena||[],g.corte||[]);
@@ -2742,6 +2761,7 @@ function filaLinea(z){
   else if(viejos.length) nota=`Además, ${nomCola(viejos[0].etapa)} figura en curso desde el ${fechaCorta(viejos[0].actualizado)}; su finalización no está confirmada.`;
   else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola.`;
   if(publicada){ que='Publicación registrada.' }
+  else if(enCambio.length&&!pend.length){ quien='fab'; que=`Cambio pedido en la imagen ${enCambio.map(o=>o.n).join(', ')}: Producción la rehace con tu nota.`; cuando='Vuelve a tu mesa para que la apruebes.' }
   else if(lista){ quien='lista'; const n=SalaSalida.paqueteDe(z.nombre).imagenes.length;
     que=`Lista para lanzar: ${n} ${n===1?'imagen':'imágenes'} y su texto.`; cuando=DECIDE()?'Toca para abrirla.':'Publicar es de los editores.' }
   else if(aqui<0){ que='Material listo. Publicación por confirmar.' }
@@ -3564,7 +3584,7 @@ setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subir
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); _tSubir=null; subir() } } });
 window.addEventListener('resize',()=>{ if(DECIDE()) pintarPanel(); else pintarPanelMira() });
 </script>
-<script src="sala-salida.js?v=20261109-monton2"></script>
-<script src="tablero-sala.js?v=20261109-plegada"></script>
+<script src="sala-salida.js?v=20261109-cambio"></script>
+<script src="tablero-sala.js?v=20261109-cambio"></script>
 <script src="sala2.js" defer></script>
 </body></html>
