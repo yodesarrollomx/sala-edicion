@@ -306,7 +306,18 @@ async function touch(page,points,type){let session=sessions.get(page);if(!sessio
    assert.match(await view.locator('.bt-choice .bt-editor-note').last().innerText(),/CAMBIO PEDIDO\s+Revisar contraste: petición explícita sintética/i);
    assert.equal(await view.locator('.bt-choice .bt-choice-copy > .bt-dot').innerText(),'Cambio pedido');
    assert.equal(await view.evaluate(()=>TIRAS['synthetic-0'].laminas[1].estado),'rehecha','la solicitud no reescribe la historia');
+   assert.equal(await view.evaluate(()=>SalaTablero.pidDe('synthetic-0')),'synthetic-0','la mesa en vivo dice qué versión enseña');
    assert.deepEqual(r.errors,[]);
+   await r.context.close();
+  }
+  {// 9-nov: con el día de respaldo (copia, no la hoja viva) no se pide cambio a una página aprobada y no se escribe nada
+   const r=await prepare(b,1440,'editor',false,false,{mode:'legacy',emptyDay:true}),view=r.view;
+   await view.locator('[data-open="synthetic-0"]').click();await view.locator('[data-lamina="2"]').click();
+   await view.locator('[data-reopen]:enabled').waitFor();
+   await view.evaluate(()=>{D._respaldo=true;SalaTablero.render();});
+   assert.equal(await view.locator('[data-reopen]:enabled').count(),0,'sin la hoja viva no se ofrece «Pedir cambio»');
+   assert.equal(await view.locator(".bt-choice .bt-decisions button:has-text(\"Pedir cambio\"):enabled").count(),0,"el botón de la mesa queda apagado");
+   assert.equal(r.writes.length,0);assert.deepEqual(r.errors,[]);
    await r.context.close();
   }
   const missing=await prepare(b,390,'editor',true,false,{mode:'missing'});

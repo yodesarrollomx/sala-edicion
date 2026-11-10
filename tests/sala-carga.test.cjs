@@ -270,6 +270,7 @@ test('una pieza lista con cambio pedido sale del montón y «Cómo va» dice que
   s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
   const linea=s.ctx.$('#linea');
   s.ctx.$=sel=>sel==='#salidaHoy'?null:linea;s.ctx.ENTRADO=()=>true;
+  if(!s.ctx.SalaSalida.cambioDePieza) s.ctx.SalaSalida.cambioDePieza=nombre=>{const e=s.ctx.SalaSalida.enCambio().find(x=>x.nombre===nombre);return e?{estado:'pedido',ordenes:e.ordenes}:{estado:'',ordenes:[]}};
   assert.equal(s.ctx.filaLinea(z).lista,true);
   // la orden es para OTRA versión de la pieza (la mesa ya la rehízo): no cuenta
   s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v0',ordenes:[{n:1,nota:'Más luminosa'}]}});
@@ -290,6 +291,35 @@ test('una pieza lista con cambio pedido sale del montón y «Cómo va» dice que
   // sin órdenes en la hoja vuelve a estar lista
   s.ctx.SalaSalida.llegaron({});
   assert.equal(s.ctx.filaLinea(z).lista,true);
+});
+
+test('«Cómo va» con orden de cambio: pedido, volvió y pieza sin paquete (cambioDePieza simulado según el contrato)',()=>{
+  const s=sala(),z=s.piece();
+  const llamadas=[];let resp={estado:'',ordenes:[]};
+  s.ctx.SalaSalida.cambioDePieza=(nombre,slug)=>{llamadas.push([nombre,slug]);return resp};
+  const ordenes=[{n:2,nota:'Más luminosa'},{n:3,nota:'Sin texto'}];
+  const hay=(pend)=>{s.ctx.pasosPendientesDe=()=>pend;return s.ctx.filaLinea(z)};
+  // estado vacío: no cambia nada y recibió nombre y slug de la pieza
+  assert.equal(hay([]).quien==='fab',false);
+  assert.deepEqual(llamadas[0],[z.nombre,z.slug]);
+  // pedido, sin pendientes en la mesa
+  resp={estado:'pedido',ordenes};let f=hay([]);
+  assert.deepEqual([f.quien,f.lista,f.tuyo],['fab',false,false]);
+  assert.equal(f.que,'Cambio pedido en la imagen 2, 3: Producción la rehace con tu nota.');
+  assert.equal(f.cuando,'Vuelve a tu mesa para que la apruebes.');
+  // volvió, sin pendientes: el paquete viejo no se ofrece
+  s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
+  resp={estado:'volvio',ordenes:[]};f=hay([]);
+  assert.deepEqual([f.quien,f.lista,f.tuyo],['fab',false,false]);
+  assert.equal(f.que,'Se rehízo con tu nota. Cuando se rearme su paquete vuelve a tu montón.');
+  // con pendientes en la mesa manda «Te toca», en cualquiera de los dos estados
+  for(const estado of ['pedido','volvio']){resp={estado,ordenes};f=hay([0]);
+    assert.deepEqual([f.quien,f.tuyo],['tu',true]);assert.match(f.que,/^Te toca: 1 en tu mesa de hoy/)}
+  // pieza SIN paquete («Las 48 Horas»): antes decía «Guardada»
+  delete s.ctx.EXP[z.nombre];
+  resp={estado:'pedido',ordenes:[{n:1,nota:'x'}]};f=hay([]);
+  assert.equal(f.que,'Cambio pedido en la imagen 1: Producción la rehace con tu nota.');
+  assert.doesNotMatch(f.que,/Guardada/);
 });
 
 test('una pieza guardada por regla no promete texto: espera la decisión de Dirección',async()=>{

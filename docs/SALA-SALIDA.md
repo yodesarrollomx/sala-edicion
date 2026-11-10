@@ -151,6 +151,48 @@ para nunca quedarnos… que vayamos armando un paquete para ir lanzando». Por e
 - El número de la carpeta en Drive es el orden de llegada y **no cambia** al reordenar: la Sala abre
   cada carpeta por su liga.
 
+## Pedir cambio a una pieza lista (orden de cambio)
+
+**Para qué.** Un editor ve mal una imagen que ya estaba aprobada y pide rehacerla, aunque la pieza ya
+esté en el montón. La aprobación anterior no se borra: queda en la historia y se suma una orden.
+
+**La llave.** Una fila de EXPEDIENTES por pieza, llave **`cambio:<slug>`**:
+`{v:1, pieza, tira, paquete, ordenes:[{n, nota, cuando, por}], cuando, por}`.
+
+- `tira`: la versión de la pieza sobre la que se pidió. La orden **vale sólo para esa tira**.
+- `paquete`: la versión que estaba empacada al pedir (o vacío). Sólo lo usa la pantalla.
+- `ordenes`: una por imagen (`n` = número de lámina) con la nota del editor.
+
+**Quién escribe y quién lee.** La escriben **los editores**, desde la Sala, con su llave
+(`accion: expediente`, como `salida:plan`). La nube **sólo la lee** (`nube/sala_cambios.py`): la mesa
+rehace la lámina con la nota y crea una tira nueva (`origen: rehecha-de <tira>`). La nube nunca
+escribe `cambio:`; una prueba lo vigila.
+
+**Mientras la orden siga viva**, la estación no empaca la pieza y la pantalla la saca del montón.
+En el pie del montón y en «Cómo va» se ve en uno de dos estados:
+
+- **Pedido**: Producción todavía no la atiende. «Producción la rehace con tu nota.» Aquí se puede
+  «Quitar la petición».
+- **Volvió**: ya se rehízo (o hay una versión más nueva en camino). El paquete viejo no se ofrece, no se
+  puede quitar y la versión nueva se decide en la mesa. Cuando se rearma su paquete, vuelve al montón.
+
+**Segunda vuelta.** Si se pide otro cambio sobre la versión rehecha antes de que se vuelva a empacar,
+el registro cambia de `tira`. Sin el campo `paquete`, el paquete viejo reaparecía como listo para
+publicar. Con él, la Sala sabe que ese paquete es anterior a la orden y lo mantiene fuera del montón.
+
+**Quitar la petición.** Es escribir el mismo registro con `ordenes: []`; conserva `tira` y `paquete`.
+Sólo se puede mientras el estado sea «pedido». Piezas ya publicadas no se rehacen.
+
+**Límites conocidos.**
+
+- Dos aparatos sobre la misma pieza: **gana el último** que escribe.
+- Según la copia pública del Apps Script (`gas/Code.gs`), `accion: expediente` sólo acepta los roles
+  agente y editor: Sayri (`editor2`) todavía no puede pedir ni quitar cambios (lo mismo le pasa con
+  `salida:plan`). La pantalla se lo dice y no da nada por pedido.
+- Una orden contra una versión que ya no es la vigente **se ignora por diseño**: la versión nueva
+  debe pasar por la mesa.
+- «Cómo va» lo sabe por `SalaSalida.cambioDePieza`; funciona también para una pieza sin paquete.
+
 ## Cómo abre (medido el 9-nov en el navegador de Dirección)
 
 | Lo que pasaba | La causa | Cómo quedó |

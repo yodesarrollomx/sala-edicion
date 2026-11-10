@@ -828,7 +828,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='6925aaa549';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='3ddcd2cb2a';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1405,7 +1405,7 @@ function verLamina(t,n){
     <p>${reab?'Ya pediste cambio a esta lámina aunque estaba aprobada.':l.estado==='aprobada'?'Ya está aprobada: no vuelve a preguntarse.':'Ésta es la que se rehízo con la nota.'}</p>
     <p class="fechas">${serialDe(l.src)?`<b class="serial">${esc(serialDe(l.src))}</b> · `:``}Versión ${l.version||1} · salió ${fechaBonita(l.fecha)}${(l.versiones||[]).length>1?` · <button type="button" class="liga" data-versiones="${esc(Object.keys(TIRAS).find(k=>TIRAS[k]===t)||'')}" data-n="${n}">ver las ${l.versiones.length} versiones</button>`:''}</p>
     ${reab?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(orden?orden.nota:(dec[t.base].notas[n-1]||''))}»</p><button class="secund" id="quitarReab">Quitar la petición</button>`:''}
-    ${(!reab&&l.estado==='aprobada'&&DECIDE()&&conOrdenes&&tid&&t.pieza_slug&&SalaSalida.puedePedirCambio())?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
+    ${(!reab&&l.estado==='aprobada'&&DECIDE()&&conOrdenes&&tid&&t.pieza_slug&&SalaSalida.puedePedirCambio(t.pieza))?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
     ${(em&&DECIDE())?(em.m==='no'?`<p style="color:var(--no)"><b>Ya pediste cambio hoy:</b> «${esc(em.nota||'')}»</p><button class="secund" id="cambiarMesa">Cambiar la nota</button>`:`<p style="font-size:13px;color:var(--gris)">${em.m==='si'?'Hoy la aprobaste. Si la quieres mejorar, pide el cambio aquí.':'Está en tu mesa de hoy. Puedes decidirla desde aquí.'}</p><button class="secund" id="cambiarMesa">Pedir cambio a esta lámina</button>`):''}
     <img src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="Lámina ${n}" style="width:100%;border-radius:14px;background:#141210">
     <p style="margin-top:12px"><b>Dice:</b> ${esc((l.dice||'').replace(' / ',' · '))}</p>
@@ -1432,29 +1432,25 @@ function cambioDesdeTira(em,nota){
   pintarEstado('local','Cambio anotado · se guarda');
 }
 /* REABRIR (5-sep, Alejandro): «si la abro y quiero volver a revisarla porque Sayri o yo queremos mejorar
-   algo que aunque pensamos que estaba bien está mal… que se pueda pedir para rehacer». La petición viaja
-   como marca «no» de la propuesta ORIGINAL (t.base) en el mismo envío del día; Producción la cosecha como
-   reapertura. Nunca borra la aprobación de la historia: se suma una orden de cambio. */
+   algo que aunque pensamos que estaba bien está mal… que se pueda pedir para rehacer». Nunca borra la
+   aprobación de la historia: se suma una petición. 9-nov: lo anotado antes como marca «no» de la propuesta
+   ORIGINAL (t.base) se sigue leyendo y se puede quitar, pero ya no es el camino para pedir cambios (en la
+   nube nadie lo cosecha): hoy se pide con la orden de cambio (`SalaSalida.pedirCambio`). */
 const reaperturas=()=>Object.entries(dec).filter(([pid,d])=>d&&d._reabierta&&(d.laminas||[]).some(m=>m==='no'));
 function avisoDeCambio(titulo,texto){
   hoja(`<h3>${esc(titulo)}</h3><p>${esc(texto)}</p><button class="listo" type="button" id="cambioEntendido">Entendido</button>`,'cambio-aviso');
   const b=document.getElementById('cambioEntendido'); if(b) b.onclick=()=>cerrarCapa('cambio-aviso');
 }
 function reabrirAprobada(t,l,nota,tid){
-  /* 9-nov: en la nube nadie cosechaba el «no» sobre t.base (lo hacía la Mac). Con la tira identificada, la
-     petición viaja como orden de cambio y se confirma con la hoja; sin eso queda el camino anterior. */
+  /* 9-nov: la petición viaja como orden de cambio (llave `cambio:` de EXPEDIENTES) y se confirma con la hoja.
+     Sin ese camino se avisa: el «no» viejo sobre t.base ya no lo cosecha nadie. */
   if(tid&&t.pieza_slug&&typeof SalaSalida!=='undefined'&&SalaSalida.pedirCambio){
     cerrarCapas();
     SalaSalida.pedirCambio({slug:t.pieza_slug,pieza:t.pieza||'',tira:tid,n:Number(l.n),nota}).then(r=>
       avisoDeCambio(r.ok?'Cambio pedido':'No se pidió el cambio',r.ok?'Producción rehace esta lámina con tu nota y te la trae para aprobar. La aprobación anterior sigue en su historia.':r.motivo));
     return;
   }
-  const pid=t.base; if(!pid) return;
-  const n=(t.laminas||[]).length;
-  if(!dec[pid]) dec[pid]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:'',_reabierta:true,_tira:t.pieza||''};
-  dec[pid].laminas[l.n-1]='no'; dec[pid].notas[l.n-1]=nota;
-  cerrarCapas(); programarSubida(); if(pasos[idx]) pintarTira(pasos[idx]); pintarPanel();
-  pintarEstado('local','Petición anotada · se guarda');
+  avisoDeCambio('No se pidió el cambio','Todavía no se puede pedir el cambio desde aquí. Actualiza la página e inténtalo otra vez.');
 }
 function quitarReapertura(pid,i){
   if(!dec[pid]) return; dec[pid].laminas[i]=''; dec[pid].notas[i]='';
@@ -2738,8 +2734,10 @@ function filaLinea(z){
   // propuestas ya retiradas. Si el día cargó, la mesa manda aunque esté vacía.
   const mesa=!!(D&&Array.isArray(D.propuestas));
   // 9-nov: un editor pidió cambiar una imagen ya aprobada de esta pieza: sale del montón mientras se rehace
-  const enCambio=typeof SalaSalida!=='undefined'&&SalaSalida.cambiosDe?SalaSalida.cambiosDe(z.nombre):[];
-  const pend=mesa?pasosPendientesDe(z):[], lista=sal==='lista'&&!pend.length&&!enCambio.length, tuyo=pend.length>0||lista;
+  // (también sirve sin paquete: «Las 48 Horas» no tiene y antes decía «Guardada»)
+  const cp=typeof SalaSalida!=='undefined'&&SalaSalida.cambioDePieza?SalaSalida.cambioDePieza(z.nombre,z.slug):null;
+  const cEst=(cp&&cp.estado)||'', cOrd=(cp&&cp.ordenes)||[];
+  const pend=mesa?pasosPendientesDe(z):[], lista=sal==='lista'&&!pend.length&&!cEst, tuyo=pend.length>0||lista;
   const cambio=!tuyo&&/pidió cambio/i.test(falta), esperaRonda=!tuyo&&/esperando tu s|elige una opci|en tu mesa/i.test(falta);
   // 9-nov: con el video en pausa, un trabajo viejo de voz, escena o corte ya no dice nada de la pieza
   const todas=videoEnPausa()?[].concat(g.prospectos||[]):[].concat(g.prospectos||[],g.voz||[],g.escena||[],g.corte||[]);
@@ -2761,7 +2759,8 @@ function filaLinea(z){
   else if(viejos.length) nota=`Además, ${nomCola(viejos[0].etapa)} figura en curso desde el ${fechaCorta(viejos[0].actualizado)}; su finalización no está confirmada.`;
   else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola.`;
   if(publicada){ que='Publicación registrada.' }
-  else if(enCambio.length&&!pend.length){ quien='fab'; que=`Cambio pedido en la imagen ${enCambio.map(o=>o.n).join(', ')}: Producción la rehace con tu nota.`; cuando='Vuelve a tu mesa para que la apruebes.' }
+  else if(cEst==='pedido'&&!pend.length){ quien='fab'; que=`Cambio pedido en la imagen ${cOrd.map(o=>o.n).join(', ')}: Producción la rehace con tu nota.`; cuando='Vuelve a tu mesa para que la apruebes.' }
+  else if(cEst==='volvio'&&!pend.length){ quien='fab'; que='Se rehízo con tu nota. Cuando se rearme su paquete vuelve a tu montón.'; cuando='' }
   else if(lista){ quien='lista'; const n=SalaSalida.paqueteDe(z.nombre).imagenes.length;
     que=`Lista para lanzar: ${n} ${n===1?'imagen':'imágenes'} y su texto.`; cuando=DECIDE()?'Toca para abrirla.':'Publicar es de los editores.' }
   else if(aqui<0){ que='Material listo. Publicación por confirmar.' }

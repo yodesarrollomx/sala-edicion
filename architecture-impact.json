@@ -2,20 +2,17 @@
  "model_revision": "2026-11-09.sala-corta.2",
  "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
  "proposal_id": "CHG-SALA-CORTA-20261109",
- "summary": "Pulido de «Cómo va» tras ver el cambio 383 ya publicado en el navegador de Dirección (9-nov). (1) El avance decía «150%»: contaba etapas que ya no son de la línea de esa pieza (una pieza que nació para video y hoy camina como carrusel conserva voz, escena y corte hechos); ahora sólo cuentan las etapas de su línea y nunca pasa de 100. (2) Dirección dijo que no publica todavía y junta montón: las piezas listas ya no dicen «publícala / Toca para publicarla / Publicar →» sino «lista / Lista para lanzar / Abrir →». (3) En «Cómo va» lo listo sigue el orden de salida que fijaron los editores (el del montón), no el de llegada a Drive. (4) La guía de Ajustes explica el montón y su plan. Sólo pantalla; sin cambios en Apps Script, Drive ni la nube.",
+ "summary": "Pedir cambio a una imagen YA aprobada (SALA-63; atiende DEC-08, «Las 48 Horas»). Antes: «Pedir cambio» sobre una página aprobada sólo existía si la tira tenía base y viajaba como un «no» sobre t.base que en la nube nadie cosechaba (lo hacía la Mac). Ahora es una orden de cambio: un registro explícito del editor en EXPEDIENTES, llave cambio:<slug> ({pieza, tira, paquete, ordenes:[{n, nota}]}), escrito con la accion expediente que ya existía (sin tocar Apps Script). La nube sólo la lee (nube/sala_cambios.py, sin cliente; una prueba con ast lo vigila): la mesa trata la lámina aprobada con orden como un «no» con su nota y produce la rehecha con id nuevo y origen rehecha-de; la estación de salida no escribe texto ni empaca la pieza mientras la orden siga viva. La orden vale sólo para su tira: al rehacerse queda como historia. En la Sala: «Pedir cambio a una imagen» en la hoja de una pieza lista y «Pedir cambio» en la mesa aunque la tira no tenga base; la pieza sale del montón (también en la segunda vuelta, gracias al campo paquete y a la función pura retiro) y la mesa, el pie del montón y «Cómo va» lo dicen; «Quitar la petición» mientras Producción no la atienda. La aprobación anterior no se borra. Guardias: sólo editores, con la hoja leída en esta visita, nunca desde una copia guardada de la mesa ni sobre una pieza publicada.",
  "components": [
   "SYS-SALA",
+  "GAS-SALA",
   "SHEET-SALA",
+  "SVC-SALA-PRODUCTOR",
   "SVC-SALA-EJECUTOR",
-  "EXT-MOTORES-MEDIA",
-  "EXT-ACTIONS",
-  "EXT-DRIVE"
+  "EXT-ACTIONS"
  ],
  "tests": [
-  "node --test tests/*.test.cjs tests/*.test.mjs (185 OK; nuevas: el avance nunca pasa de 100 % con el video en pausa, «Cómo va» sigue el orden del plan, lo listo no apura a publicar).",
-  "node tests/salida.browser.cjs (teléfono y escritorio): ninguna fila dice «publícala» ni pasa de 100 %; el resto del recorrido sin cambios.",
-  "node tests/tablero-sala.browser.cjs · mesa-local · arranque-progresivo · sala2 (sin regresión) · python3 nube/verificar.py (todo en orden).",
-  "Visto en vivo antes del cambio (navegador de Dirección, 02:30Z): «150% · 4 etapas» y «PUBLÍCALA» en las 24 filas listas."
+  "PENDIENTE"
  ],
- "rollback": "Revertir el PR devuelve los textos anteriores y el avance sin tope. Nada que restaurar en hojas, Drive ni nube."
+ "rollback": "Revertir el PR quita los botones y la lectura de órdenes; las llaves cambio: que ya existan en EXPEDIENTES quedan como historia sin efecto (nada las lee) y las piezas vuelven al montón con su paquete. Nada que restaurar en Drive ni en Apps Script."
 }
