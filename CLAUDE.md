@@ -136,6 +136,10 @@ siempre. Manual de arranque y de prueba: `nube/README.md`.
 | hook `pre-push` del sello | `nube/verificar.py`, exigido en cada push y cada PR |
 | (no existía) | `.github/workflows/publicar.yml`: push a `main` → verificar → Pages |
 
+**Pages atorado (10-nov-2026):** si `deploy-pages` se cancela por tiempo, cada nuevo despliegue de ese
+mismo commit se queda sin estado hasta caer (también los de datos de los robots). No relanzar el mismo
+commit: destraba un commit nuevo en `main`. Por eso el despliegue espera hasta 20 minutos.
+
 Cinco cosas que no cambian y que conviene tener presentes al tocar esto:
 
 - **La nube entra como `agente` y punto.** `nube/sala_cliente.py` se niega a mandar

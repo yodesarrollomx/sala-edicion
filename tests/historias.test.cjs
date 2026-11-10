@@ -118,6 +118,13 @@ test('guardado partido: si una parte no llega se dice, nada queda a medias y el 
   assert.equal(exp['v4:universo'].ajustes.tope_clips_dia,3);assert.ok(exp['v4:mundo:objetos'].servilleta);
   assert.deepEqual(x.errores,[]);await x.b.close();
 });
+test('un borrador de «Nueva serie» se llama borrador, no propuesta',async()=>{
+  const exp={'v4:serie:s1':serie,'v4:serie:b1':Object.assign({},serie,{id:'b1',titulo:'',origen:'editor',creada:'2026-11-10T01:59:42Z'})};
+  const {b,p,errores}=await abrir(exp);const t=await p.textContent('#vista');
+  assert.match(t,/Borrador tuyo · apruébala cuando esté lista/);assert.match(t,/Propuesta · espera tu decisión/);
+  await p.click('#tabs [data-v=ajustes]');assert.match(await p.textContent('label[for=ajEsp]'),/tus borradores no cuentan/);
+  assert.deepEqual(errores,[]);await b.close();
+});
 test('personajes que se guardan y se cruzan, avisos y paquete',async()=>{
   const raul={nombre:'Raúl',industria:'ferretero',aspecto:'A man.',voz:'warm',quiere:'x'};
   const s2=Object.assign(JSON.parse(JSON.stringify(serie)),{id:'s2',titulo:'El local',personaje:'raul',personajes:{raul}});

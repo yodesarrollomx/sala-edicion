@@ -480,6 +480,21 @@ class V4Tests(unittest.TestCase):
         v.semillero(VACIO(), propio, False, pensar, SIN_CANDADOS)
         self.assertTrue(pedidos[-1][1].startswith('Escribe comedias de 10 partes.'))        # el criterio es un dato de Dirección
 
+    def test_un_borrador_de_direccion_no_frena_al_semillero(self):
+        # 9-nov (corrida 42755180401): un «Nueva serie» en blanco más la propuesta que ya esperaba llegaron al
+        # tope de 2 y el semillero no propuso la primera historia de la temporada. Un borrador no es una propuesta.
+        e = VACIO()
+        e['serie']['vieja'] = dict(serie(id='vieja'), origen='semillero')
+        e['serie']['borrador'] = dict(serie(id='borrador', titulo='', episodios=[]), origen='editor')
+        r = v.semillero(e, self.u, False, lambda t, i: CRUDO, SIN_CANDADOS)
+        self.assertIn('serie propuesta', r)
+        self.assertEqual(['el-terreno-de-marta'], [s.get('temporada') for s in e['serie'].values() if s.get('temporada')])
+        # dos propuestas del semillero sí lo frenan, vengan o no con su origen anotado (las de antes no lo traían)
+        dos = VACIO(); dos['serie'] = {'a': dict(serie(id='a'), origen='semillero'), 'b': serie(id='b'), 'c': dict(serie(id='c'), origen='editor')}
+        n = len(self.guardados)
+        self.assertEqual('ya hay 2 serie(s) esperando decisión', v.semillero(dos, self.u, False, lambda t, i: CRUDO, SIN_CANDADOS))
+        self.assertEqual(n, len(self.guardados))
+
     def test_semillero_libre_cuando_no_hay_temporada(self):
         pedidos, libre = [], dict(self.u, temporada=[])
         e = VACIO()

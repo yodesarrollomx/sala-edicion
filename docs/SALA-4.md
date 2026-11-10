@@ -43,7 +43,8 @@ serie cambia de industria y enseña un vértice del negocio.
    Todo es texto y se cambia ahí mismo; cada sección se abre sólo cuando se necesita. Arriba está la
    liga a la carpeta de las imágenes del canon en Drive: para usar una imagen propia de alguien o de
    algo, se sube ahí y se pega su liga en la ficha.
-6. **Ajustes**: semillero encendido o apagado, cuántas propuestas esperan, episodios por serie,
+6. **Ajustes**: semillero encendido o apagado, cuántas propuestas del semillero esperan (los
+   borradores de Dirección no cuentan), episodios por serie,
    **tomas por día** e **imágenes de referencia por día** (los dos topes de gasto), piloto primero y
    los modelos que escriben y pintan.
 
@@ -176,6 +177,10 @@ guarda.
 - *Un personaje «nuevo» con el nombre de uno del mundo*: es el del mundo; nadie cambia de cara.
 - *El mundo que deja de caber en una celda*: se guarda partido por clases (ver arriba).
 - *Un modelo de Google retirado o renombrado*: la simulación pregunta la lista y lo dice sin gastar.
+- *Un borrador en blanco frenaba al semillero* (visto en vivo el 10-nov, corrida 42755180401): «Nueva
+  serie» crea la serie al tocarla, y un borrador sin escribir contaba como propuesta en espera. Con la
+  que ya esperaba llegó al tope de 2 y el semillero no propuso la primera historia de la temporada.
+  Ahora sólo cuentan las propuestas del semillero, y la pantalla llama «Borrador tuyo» a un borrador.
 
 ## Comprobado en vivo (9-nov-2026, hora de Hermosillo)
 
@@ -185,6 +190,10 @@ guarda.
 - La nube lee la hoja como agente: corrida de simulación 42737798270.
 - La nube siembra el universo y propone una serie de 10 episodios: corrida 42737957598 dejó
   «El Heredero del Olivo», y la pantalla la mostró como «Propuesta · espera tu decisión».
+- Con el canon ya fusionado (commit 98c6df1, 10-nov): la simulación 42755029456 encontró en Google
+  los tres modelos (guion, imágenes y video), y la corrida real 42755180401 creó en Drive
+  `_HISTORIAS/_CANON` con sus tres carpetas y `CANON.txt`, leído desde Drive: trae a los 8 personajes,
+  5 lugares, 9 objetos y la temporada. Sin gasto: no había series aprobadas.
 
 ## Lo que NO está acreditado
 
