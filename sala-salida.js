@@ -19,6 +19,8 @@
 (function(root){
 'use strict';
 const LLAVE='sala_publicadas_v1', BORRADOR='sala_salida_texto_v1', GUARDADA='sala_salida_local_v1', PLAN_LOCAL='sala_salida_plan_v1';
+/* lo único que YOD OS lee de aquí (mismo origen): cuántas hay listas y cuándo se vio. Sin títulos ni textos. */
+const RESUMEN='sala_resumen_v1';
 const PLAN_LLAVE='salida:plan', DIA_MS=864e5, VIGENCIA=7*DIA_MS, TOPE_GUARDADA=1500000;
 /* qué días de la semana sale algo según cuántas por semana (0 = domingo) */
 const DIAS={1:[3],2:[2,4],3:[1,3,5],4:[1,2,4,5],5:[1,2,3,4,5],6:[1,2,3,4,5,6],7:[0,1,2,3,4,5,6]};
@@ -274,8 +276,9 @@ function conciliar(){
 /* ── lo último que este aparato vio: se pinta al abrir, mientras contesta la hoja ───────── */
 async function recordar(){
   if(!vivo) return;
-  try{ const owner=await dueno(); if(!owner) return;
-    const raw=JSON.stringify({schema:1,owner,savedAt:Date.now(),exp:paraGuardar(pendientes())});
+  try{ const l=pendientes(); localStorage.setItem(RESUMEN,JSON.stringify({listas:l.length,cuando:Date.now()}));
+    const owner=await dueno(); if(!owner) return;
+    const raw=JSON.stringify({schema:1,owner,savedAt:Date.now(),exp:paraGuardar(l)});
     if(raw.length<=TOPE_GUARDADA) localStorage.setItem(GUARDADA,raw) }catch(e){}
 }
 async function abrirGuardada(){
@@ -287,7 +290,7 @@ async function abrirGuardada(){
     GUARD=x.exp; pintar();
   }catch(e){ olvidar() }
 }
-function olvidar(){ GUARD=null; try{ localStorage.removeItem(GUARDADA) }catch(e){} }
+function olvidar(){ GUARD=null; try{ localStorage.removeItem(GUARDADA); localStorage.removeItem(RESUMEN) }catch(e){} }
 /* la hoja contestó: `salida` trae las llaves `salida:` (hoy, el plan) */
 function llegaron(salida){
   vivo=true; fallo=false; GUARD=null;

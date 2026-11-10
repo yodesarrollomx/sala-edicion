@@ -164,6 +164,9 @@ Lo guardado en el aparato (`sala_salida_local_v1`) es sólo para pintar: lleva t
 texto y la liga de la carpeta de las piezas listas; pertenece a quien lo guardó (misma huella que la
 mesa local), dura siete días y se borra si la hoja rechaza la llave. No da permiso de nada.
 
+Para YOD OS (mismo origen) la Sala deja además `sala_resumen_v1`: `{listas, cuando}`. Es sólo el número
+de piezas listas y la hora en que se vio; sin títulos ni textos. Se borra junto con la copia.
+
 ## Frenos (REGLAS; todos opcionales)
 
 | Regla | Por omisión | Qué hace |

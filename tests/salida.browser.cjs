@@ -208,6 +208,9 @@ async function estatico(route,u,rol){
   await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&document.querySelectorAll('#salidaHoy .sal-carta').length===3);
   assert.deepEqual(await nombres(),['Pieza C','Pieza B','Pieza A']);
   assert.match(await page.locator('#salidaHoy header').innerText(),/A 5 por semana, desde el /);
+  // lo que YOD OS puede leer de este aparato: cuántas hay y cuándo se vio; ni títulos ni textos
+  const resumen=await page.evaluate(()=>JSON.parse(localStorage.getItem('sala_resumen_v1')));
+  assert.deepEqual(Object.keys(resumen).sort(),['cuando','listas']);assert.equal(resumen.listas,3);assert.ok(Date.now()-resumen.cuando<60000);
   modo.exp='cuelga';await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
   assert.deepEqual(await nombres(),['Pieza C','Pieza B','Pieza A']);
   assert.match(await page.locator('#salidaHoy .sal-nota').textContent(),/Lo último que este aparato guardó; confirmando con el Sheet/);
@@ -231,7 +234,7 @@ async function estatico(route,u,rol){
   modo.exp='cuelga';await page.evaluate(()=>localStorage.setItem('sala_clave','otra-llave'));
   await page.reload();await page.waitForSelector('#tableroHoy .bt-column,#tableroHoy .bt-plegada',{timeout:30000});await page.waitForTimeout(800);
   assert.equal(await page.locator('#salidaHoy .sal-carta').count(),0,'la copia guardada es de quien la guardó');
-  assert.equal(await page.evaluate(()=>localStorage.getItem('sala_salida_local_v1')),null);
+  assert.deepEqual(await page.evaluate(()=>[localStorage.getItem('sala_salida_local_v1'),localStorage.getItem('sala_resumen_v1')]),[null,null]);
   assert.deepEqual(errors,[]);console.log(JSON.stringify({width,recorrido:'monton',errors:0,realWrites:0,interceptedWrites:writes.length}));
   await context.close();
  }}finally{await browser.close();server.close();}
