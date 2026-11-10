@@ -634,7 +634,10 @@ def semillero(e, universo, simular, pensar=None, leer_candados=None):
     aj = universo['ajustes']
     if not entero(aj.get('semillero')):
         return 'semillero apagado en Ajustes'
-    espera = [i for i, s in e['serie'].items() if (e['dec'].get(i) or {}).get('serie') not in ('si', 'no')]
+    # Sólo cuentan las propuestas: un borrador de Dirección («Nueva serie», aunque esté en blanco)
+    # no frena al semillero. Pasó el 9-nov: un borrador vacío detuvo la primera historia de la temporada.
+    espera = [i for i, s in e['serie'].items()
+              if s.get('origen') != 'editor' and (e['dec'].get(i) or {}).get('serie') not in ('si', 'no')]
     if len(espera) >= entero(aj.get('propuestas_en_espera'), 2):
         return 'ya hay %d serie(s) esperando decisión' % len(espera)
     plan = temporada_pendiente(universo, e)
