@@ -281,7 +281,7 @@ test('una pieza lista con cambio pedido sale del montón y «Cómo va» dice que
   const f=s.ctx.filaLinea(z);
   assert.deepEqual([f.lista,f.tuyo,f.quien],[false,false,'fab']);
   assert.equal(f.que,'Cambio pedido en la imagen 1: Producción la rehace con tu nota.');
-  assert.equal(f.cuando,'Vuelve a tu mesa para que la apruebes.');
+  assert.equal(f.cuando,'Puede tardar varias horas; cuando esté lista llega a tu mesa para que la apruebes.');
   assert.equal(s.ctx.SalaSalida.pendientes().length,0);
   assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.enCambio())),[{slug:'synthetic',nombre:'Pieza sintética',ordenes:[{n:1,nota:'Más luminosa',cuando:'',por:''}]}]);
   assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.cambioDe('synthetic-v1',1))),{n:1,nota:'Más luminosa',cuando:'',por:''});
@@ -306,12 +306,12 @@ test('«Cómo va» con orden de cambio: pedido, volvió y pieza sin paquete (cam
   resp={estado:'pedido',ordenes};let f=hay([]);
   assert.deepEqual([f.quien,f.lista,f.tuyo],['fab',false,false]);
   assert.equal(f.que,'Cambio pedido en la imagen 2, 3: Producción la rehace con tu nota.');
-  assert.equal(f.cuando,'Vuelve a tu mesa para que la apruebes.');
+  assert.equal(f.cuando,'Puede tardar varias horas; cuando esté lista llega a tu mesa para que la apruebes.');
   // volvió, sin pendientes: el paquete viejo no se ofrece
   s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
   resp={estado:'volvio',ordenes:[]};f=hay([]);
   assert.deepEqual([f.quien,f.lista,f.tuyo],['fab',false,false]);
-  assert.equal(f.que,'Se rehízo con tu nota. Cuando se rearme su paquete vuelve a tu montón.');
+  assert.equal(f.que,'Hay una versión nueva. Cuando esté aprobada y con su paquete nuevo, vuelve a tu montón.');
   // con pendientes en la mesa manda «Te toca», en cualquiera de los dos estados
   for(const estado of ['pedido','volvio']){resp={estado,ordenes};f=hay([0]);
     assert.deepEqual([f.quien,f.tuyo],['tu',true]);assert.match(f.que,/^Te toca: 1 en tu mesa de hoy/)}

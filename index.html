@@ -828,7 +828,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='3ddcd2cb2a';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='3715d52aa8';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -1447,7 +1447,7 @@ function reabrirAprobada(t,l,nota,tid){
   if(tid&&t.pieza_slug&&typeof SalaSalida!=='undefined'&&SalaSalida.pedirCambio){
     cerrarCapas();
     SalaSalida.pedirCambio({slug:t.pieza_slug,pieza:t.pieza||'',tira:tid,n:Number(l.n),nota}).then(r=>
-      avisoDeCambio(r.ok?'Cambio pedido':'No se pidió el cambio',r.ok?'Producción rehace esta lámina con tu nota y te la trae para aprobar. La aprobación anterior sigue en su historia.':r.motivo));
+      avisoDeCambio(r.ok?'Cambio pedido':'No se pidió el cambio',r.ok?'Producción rehace esta lámina con tu nota y te la trae para aprobar (puede tardar varias horas). La aprobación anterior sigue en su historia.':r.motivo));
     return;
   }
   avisoDeCambio('No se pidió el cambio','Todavía no se puede pedir el cambio desde aquí. Actualiza la página e inténtalo otra vez.');
@@ -2759,8 +2759,8 @@ function filaLinea(z){
   else if(viejos.length) nota=`Además, ${nomCola(viejos[0].etapa)} figura en curso desde el ${fechaCorta(viejos[0].actualizado)}; su finalización no está confirmada.`;
   else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola.`;
   if(publicada){ que='Publicación registrada.' }
-  else if(cEst==='pedido'&&!pend.length){ quien='fab'; que=`Cambio pedido en la imagen ${cOrd.map(o=>o.n).join(', ')}: Producción la rehace con tu nota.`; cuando='Vuelve a tu mesa para que la apruebes.' }
-  else if(cEst==='volvio'&&!pend.length){ quien='fab'; que='Se rehízo con tu nota. Cuando se rearme su paquete vuelve a tu montón.'; cuando='' }
+  else if(cEst==='pedido'&&!pend.length){ quien='fab'; que=`Cambio pedido en la imagen ${cOrd.map(o=>o.n).join(', ')}: Producción la rehace con tu nota.`; cuando='Puede tardar varias horas; cuando esté lista llega a tu mesa para que la apruebes.' }
+  else if(cEst==='volvio'&&!pend.length){ quien='fab'; que='Hay una versión nueva. Cuando esté aprobada y con su paquete nuevo, vuelve a tu montón.'; cuando='' }
   else if(lista){ quien='lista'; const n=SalaSalida.paqueteDe(z.nombre).imagenes.length;
     que=`Lista para lanzar: ${n} ${n===1?'imagen':'imágenes'} y su texto.`; cuando=DECIDE()?'Toca para abrirla.':'Publicar es de los editores.' }
   else if(aqui<0){ que='Material listo. Publicación por confirmar.' }

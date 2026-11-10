@@ -135,12 +135,13 @@ test("pedir cambio a una página aprobada exige nota, misma sesión, versión y 
 test("pidDe: la versión de la mesa sólo se da con la mesa en vivo, con grupo y con láminas",()=>{
  const source=fs.readFileSync(require.resolve('../tablero-sala.js'),'utf8');
  const a=source.indexOf('api.pidDe='),b=source.indexOf('\n',a);
- const S={cached:false,groups:[{id:'a',pid:'tira-a',t:{pieza_slug:'a',laminas:[{n:1}]}},{id:'v',pid:'tira-v',t:{pieza_slug:'v',laminas:[]}}]},api={};
+ const S={cached:false,loaded:true,groups:[{id:'a',pid:'tira-a',t:{pieza_slug:'a',laminas:[{n:1}]}},{id:'v',pid:'tira-v',t:{pieza_slug:'v',laminas:[]}}]},api={};
  vm.runInNewContext(source.slice(a,b),{S,api});
  assert.equal(api.pidDe('a'),'tira-a');
  assert.equal(api.pidDe('otra'),null,'sin grupo');
  assert.equal(api.pidDe('v'),null,'grupo sin láminas');
  S.cached=true;assert.equal(api.pidDe('a'),null,'copia guardada o vista publicada: no se sabe');
+ S.cached=false;S.loaded=false;assert.equal(api.pidDe('a'),null,'mesa sin cargar: no se sabe');
 });
 test("el botón «Quitar la petición» sólo se activa con eligible() y puedePedirCambio()",()=>{
  const source=fs.readFileSync(require.resolve('../tablero-sala.js'),'utf8');

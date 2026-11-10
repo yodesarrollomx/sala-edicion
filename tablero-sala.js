@@ -281,7 +281,7 @@ function renderChoice(g,l){
  ${md.nota.replace(/\s*\[toma elegida: \d+\]/g,"")?`<blockquote class="bt-editor-note"><span class="bt-eyebrow">TU NOTA AL MARGEN</span><p>${esc(md.nota.replace(/\s*\[toma elegida: \d+\]/g,""))}</p></blockquote>`:""}
  ${md.orden?`<blockquote class="bt-editor-note"><span class="bt-eyebrow">CAMBIO PEDIDO</span><p>${esc(md.orden.nota)}</p></blockquote>`:""}
  <div class="bt-decision-panel"><span class="bt-eyebrow">TU DECISIÓN · ${os.length?"TOMA "+(k+1):"SIN TOMA"}</span><div class="bt-decisions"><button class="bt-approve" data-vote="si" ${!writable||!o?"disabled":""}>Aprobar esta toma</button>${md.orden?`<button class="bt-reject" data-unreopen ${eligible()&&salidaDe()&&salidaDe().puedePedirCambio()?"":"disabled"}>Quitar la petición</button>`:`<button class="bt-reject" ${canReopen(g,l)?"data-reopen":'data-vote="no"'} ${!writable&&!canReopen(g,l)?"disabled":""}>Pedir cambio</button>`}</div>
- <p class="bt-gesture-hint">${md.orden?"Cambio pedido: Producción rehace esta página con tu nota y te la trae para aprobar. La aprobación anterior sigue en su historia.":writable?"Comparar no decide. Aprueba esta toma o pide un cambio con una nota.":l.estado==="aprobada"?(canReopen(g,l)?"Esta página ya está aprobada. Si algo no te convence, pide un cambio con una nota: su historia se conserva.":"Esta página ya está aprobada. Su historia se conserva."):"Vista de lectura: puedes comparar sin cambiar decisiones."}</p>
+ <p class="bt-gesture-hint">${md.orden?"Cambio pedido: Producción rehace esta página con tu nota y te la trae para aprobar (puede tardar varias horas). La aprobación anterior sigue en su historia.":writable?"Comparar no decide. Aprueba esta toma o pide un cambio con una nota.":l.estado==="aprobada"?(canReopen(g,l)?"Esta página ya está aprobada. Si algo no te convence, pide un cambio con una nota: su historia se conserva.":"Esta página ya está aprobada. Su historia se conserva."):"Vista de lectura: puedes comparar sin cambiar decisiones."}</p>
 
  <p class="bt-notice" role="status">${esc(S.notice)}</p></div>
  <button class="bt-next-review" data-next>Siguiente por revisar →</button></div></div>`;
@@ -454,8 +454,8 @@ async function refresh(live=false,preview=false){
 api.preview=()=>refresh(false,true);
 api.restore=cache=>{S.groups=cache.groups;S.loaded=true;S.cached=true;S.publicPreview=cache.source==='published';S.savedAt=S.publicPreview?Date.parse(cache.day.fecha+'T12:00:00'):cache.savedAt;render();requestAnimationFrame(()=>requestAnimationFrame(()=>{performance.mark("sala-mesa-local-visible");if(!performance.getEntriesByName("sala-contenido-visible").length)performance.mark("sala-contenido-visible");}));};
 api.clear=()=>{S.groups=[];S.focus=S.choice=null;S.cached=false;S.loaded=false;root.innerHTML="";document.body.classList.remove("sala-tablero");};
-// 9-nov: con copia guardada o vista publicada la mesa no es la vigente: no se sabe la versión.
-api.pidDe=slug=>{if(S.cached)return null;const g=S.groups.find(x=>((x.t&&x.t.pieza_slug)||x.id)===slug);return g&&g.pid&&(g.t.laminas||[]).length?g.pid:null;};
+// 9-nov: con copia guardada, vista publicada o la mesa sin cargar no se sabe qué versión es la vigente.
+api.pidDe=slug=>{if(S.cached||!S.loaded)return null;const g=S.groups.find(x=>((x.t&&x.t.pieza_slug)||x.id)===slug);return g&&g.pid&&(g.t.laminas||[]).length?g.pid:null;};
 api.refresh=refresh;api.render=render;api.produccionActualizada=()=>{if(!S.choice)render();};
 const returnButton=document.createElement("button");returnButton.className="bt-return";returnButton.textContent="← Volver al tablero";returnButton.onclick=()=>{document.body.classList.remove("sala-turno");render();};document.getElementById("vHoy").prepend(returnButton);
 let wheelTotal=0,lastWheel=0;
