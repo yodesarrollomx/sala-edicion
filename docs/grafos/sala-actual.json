@@ -276,6 +276,16 @@
    "source_location": "sala-actual"
   },
   {
+   "id": "salida",
+   "label": "Estación de salida (arma el paquete, 9-nov)",
+   "norm_label": "estación de salida (arma el paquete, 9-nov)",
+   "community": 3,
+   "community_name": "Nube (GitHub Actions)",
+   "file_type": "doc",
+   "source_file": "docs/grafos/construir.py",
+   "source_location": "sala-actual"
+  },
+  {
    "id": "cron",
    "label": "Horarios de GitHub (46 workflows)",
    "norm_label": "horarios de github (46 workflows)",
@@ -446,16 +456,6 @@
    "source_location": "sala-actual"
   },
   {
-   "id": "a_salida",
-   "label": "Sin copy ni publicador",
-   "norm_label": "sin copy ni publicador",
-   "community": 7,
-   "community_name": "Atorones medidos",
-   "file_type": "doc",
-   "source_file": "docs/grafos/construir.py",
-   "source_location": "sala-actual"
-  },
-  {
    "id": "a_reloj",
    "label": "Los horarios llegan ~4 veces al día",
    "norm_label": "los horarios llegan ~4 veces al día",
@@ -568,6 +568,15 @@
    "source_file": "docs/grafos/construir.py"
   },
   {
+   "source": "d_rol",
+   "target": "sala",
+   "relation": "agente o lector: «tu rol solo lee»",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
    "source": "gas",
    "target": "propuestas",
    "relation": "lee/escribe",
@@ -587,8 +596,26 @@
   },
   {
    "source": "d_no",
+   "target": "mesa",
+   "relation": "sí: la lámina se rehace",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_no",
    "target": "d_eje",
-   "relation": "luego",
+   "relation": "no: sigue",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_eje",
+   "target": "productor",
+   "relation": "cerrado: puede avanzar",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -703,9 +730,9 @@
    "source_file": "docs/grafos/construir.py"
   },
   {
-   "source": "arranque",
+   "source": "d_veto",
    "target": "propuestas",
-   "relation": "propone",
+   "relation": "limpia: entra a la mesa",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -724,6 +751,15 @@
    "source": "mesa",
    "target": "d_rehecha",
    "relation": "si rehace",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_rehecha",
+   "target": "propuestas",
+   "relation": "sí: carta nueva que retira a la vieja",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -760,6 +796,15 @@
    "source": "relevo",
    "target": "d_peticion",
    "relation": "revisa primero",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_peticion",
+   "target": "productor",
+   "relation": "sin petición abierta: puede producir",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -811,9 +856,27 @@
    "source_file": "docs/grafos/construir.py"
   },
   {
-   "source": "ejecutor",
+   "source": "d_etapas",
    "target": "d_tope",
-   "relation": "pregunta",
+   "relation": "sí: revisa el motor",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_etapas",
+   "target": "cola",
+   "relation": "no (así está hoy): el trabajo espera",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "d_tope",
+   "target": "ejecutor",
+   "relation": "sí: usa ese motor · no: prueba el siguiente",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -991,9 +1054,27 @@
    "source_file": "docs/grafos/construir.py"
   },
   {
-   "source": "propuestas",
+   "source": "consejo_wf",
+   "target": "salida",
+   "relation": "con todas las láminas aprobadas",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "salida",
    "target": "listas",
-   "relation": "paquete a mano (9-nov)",
+   "relation": "deja imágenes en orden y texto",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 1.0,
+   "source_file": "docs/grafos/construir.py"
+  },
+  {
+   "source": "salida",
+   "target": "expedientes",
+   "relation": "anota el paquete",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,
@@ -1002,16 +1083,7 @@
   {
    "source": "listas",
    "target": "alejandro",
-   "relation": "publica él",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "weight": 1.0,
-   "source_file": "docs/grafos/construir.py"
-  },
-  {
-   "source": "listas",
-   "target": "a_salida",
-   "relation": "no existía",
+   "relation": "publica él («Ya la publiqué»)",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 1.0,

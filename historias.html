@@ -11,7 +11,7 @@
   Sala 4.0 · Historias en episodios de 15 segundos (9-nov-2026).
   Lee y escribe la hoja EXPEDIENTES con acciones que el Apps Script YA atiende
   (recurso=expedientes, accion=expediente). No decide por la mesa de siempre ni la toca.
-  Dueños: el editor escribe v4:universo, v4:serie:<id> y v4:dec:<id>; la nube, v4:prod y v4:estado.
+  Dueños: el editor escribe v4:universo y v4:mundo:<clase> (el canon), v4:serie:<id> y v4:dec:<id>; la nube, v4:prod, v4:canon y v4:estado.
   INVIOLABLE 11: ningún botón depende de un temporizador; el estado cambia en el clic.
 -->
 <style>
@@ -58,6 +58,13 @@ textarea{min-height:68px;resize:vertical}
 details summary{cursor:pointer;font-weight:600;padding:6px 0}
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:10px} @media(max-width:520px){.dos{grid-template-columns:1fr}}
 ul.plano{list-style:none;margin:0;padding:0}
+ul.mundo li{border-top:1px solid var(--linea);padding:10px 0} ul.mundo li:first-child{border-top:0}
+details.grupo{background:var(--tarjeta);border:1px solid var(--linea);border-radius:14px;padding:4px 14px;margin:0 0 10px}
+details.grupo>summary{font-family:var(--serif);font-weight:400;font-size:22px;padding:10px 0}
+details.grupo .tarjeta{background:var(--fondo)}
+.cuantos{font-family:var(--sans);font-size:13px;color:var(--guia);font-variant-numeric:tabular-nums}
+label.casilla{font-weight:500;margin:6px 0;gap:8px;flex-wrap:nowrap;align-items:flex-start} label.casilla input{width:auto;flex:none;margin-top:4px}
+#vista[inert]{opacity:.55}
 </style></head>
 <body>
 <div class="app">
@@ -79,23 +86,30 @@ const GAS_DEF='https://script.google.com/macros/s/AKfycbx61UWsEYCL_dHzi0JrUv3GuA
 const LS=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const GAS=()=>LS('sala_gas')||GAS_DEF;
 const CLAVE=()=>LS('pyod_clave_v1')||LS('sala_clave')||'';     // la misma llave viva de la Sala; no se copia
-const PALABRAS=38, VETADAS=['hermosillo','sonora','mexico'], USD_CLIP=1.05;
+const PALABRAS=38, VETADAS=['hermosillo','sonora','mexico'], USD_CLIP=1.05, USD_FICHA=0.04, LIMITE_CELDA=45000, VERSION_CANON=2;
+const CLASES=['personajes','lugares','objetos'], DE_CLASE={personajes:'personaje',lugares:'lugar',objetos:'objeto'};
 const $=s=>document.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plano=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const slug=t=>plano(t).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)||'x';
 const palabras=t=>String(t||'').trim().split(/\s+/).filter(Boolean).length;
 const entero=(v,d=0)=>{const n=parseInt(v,10);return Number.isFinite(n)&&n>=0?n:d};
+const copia=x=>JSON.parse(JSON.stringify(x));
+/* El id de un archivo de Drive, venga como id o como liga; lo que no es ninguna de las dos (la liga de una carpeta, un texto) no cuenta. */
+const idDrive=t=>{const x=String(t||'').trim(), m=/\/d\/([A-Za-z0-9_-]{20,})|[?&]id=([A-Za-z0-9_-]{20,})/.exec(x);return m?(m[1]||m[2]):/^[A-Za-z0-9_-]{20,}$/.test(x)?x:''};
 
-let E={universo:null,serie:{},dec:{},prod:{},estado:null}, VISTA='series', ABIERTA=null, SEMILLA=null, CARGADO=false;
+let E={universo:null,mundo:{},serie:{},dec:{},prod:{},canon:null,estado:null}, VISTA='series', ABIERTA=null, SEMILLA=null, CARGADO=false;
+const DESPLEGADAS=new Set();           // las secciones que dejó abiertas: sobreviven a cada repintado
+const abierta=k=>`data-seccion="${esc(k)}"${DESPLEGADAS.has(k)?' open':''}`;
 
 /* ---------- datos ---------- */
 function separar(exp){
-  const e={universo:null,serie:{},dec:{},prod:{},estado:null};
+  const e={universo:null,mundo:{},serie:{},dec:{},prod:{},canon:null,estado:null};
   for(const [k,doc] of Object.entries(exp||{})){
     if(!k.startsWith('v4:')||!doc||typeof doc!=='object') continue;
     const [clase,...r]=k.slice(3).split(':'), id=r.join(':');
-    if(clase==='universo'||clase==='estado') e[clase]=doc;
+    if(['universo','estado','canon'].includes(clase)) e[clase]=doc;
+    else if(clase==='mundo'&&CLASES.includes(id)) e.mundo[id]=doc;        // cada clase del mundo, en su propia celda
     else if(['serie','dec','prod'].includes(clase)&&id) e[clase][id]=doc;
   }
   return e;
@@ -108,31 +122,68 @@ async function cargar(){
     if(!j||j.ok!==true||typeof j.expedientes!=='object') throw new Error((j&&j.error)||'la hoja no contestó');
     E=separar(j.expedientes); CARGADO=true; avisar('');
   }catch(err){ avisar('No pude leer la hoja: '+esc(err.message)+'. Lo que ves puede no estar al día.','mal') }
-  if(!E.universo&&!SEMILLA){ try{ SEMILLA=await (await fetch('datos/universo/universo.json?v='+Date.now())).json() }catch(e){} }
+  if(!SEMILLA){ try{ SEMILLA=await (await fetch('datos/universo/universo.json?v='+Date.now())).json() }catch(e){} }
   pintar();
 }
-const AJ_FABRICA={semillero:1,propuestas_en_espera:2,episodios:10,tope_clips_dia:2,piloto_primero:1,listas_carpeta:''};
+const AJ_FABRICA={semillero:1,propuestas_en_espera:2,episodios:10,tope_clips_dia:2,piloto_primero:1,fichas_por_dia:6,modelo_guion:'gemini-3.6-flash',modelo_ficha:'gemini-2.5-flash-image'};
+const vacio=v=>!v||(typeof v==='object'&&!Object.keys(v).length);
 function universo(){
-  const u=JSON.parse(JSON.stringify(E.universo||SEMILLA||{}));
+  let u=copia(E.universo||SEMILLA||{});
+  const base=SEMILLA||{};
+  if(entero(u.version,1)<VERSION_CANON&&SEMILLA){      // guardado antes del canon: recibe lo nuevo sin perder lo suyo (igual que la nube)
+    u.formato=copia(base.formato||{}); u.version=VERSION_CANON;
+    for(const k of ['encuadres','objetos','canon','temporada']) if(vacio(u[k])) u[k]=copia(base[k]||(k==='temporada'?[]:k==='canon'?'':{}));
+    for(const k of ['personajes','lugares']) u[k]=Object.assign({},u[k]||{},copia(base[k]||{}));
+  }
+  for(const c of CLASES){ const aparte=E.mundo[c];      // lo que vive en su propia celda manda; ni aparte ni adentro: el de fábrica
+    if(aparte&&typeof aparte==='object') u[c]=copia(aparte); else if(!u[c]||typeof u[c]!=='object') u[c]=copia(base[c]||{}) }
   u.ajustes=Object.assign({},AJ_FABRICA,u.ajustes||{});
-  for(const k of ['vertices','personajes','lugares']) u[k]=u[k]||{};
+  for(const k of ['vertices','encuadres',...CLASES]) u[k]=(u[k]&&typeof u[k]==='object')?u[k]:{};
+  u.temporada=(Array.isArray(u.temporada)?u.temporada:[]).filter(t=>t&&t.id);
   u.formato=u.formato||{};
+  for(const k of ['guionista','canon']) if(!String(u[k]||'').trim()) u[k]=base[k]||'';
   delete u.historias; delete u.nota;
   return u;
 }
-async function guardar(clase,id,doc){
+/* Guarda uno o varios documentos, en orden: [[clase, id, doc], …]. Mientras dura, la pantalla no deja escribir ni tocar:
+   al terminar se repinta y lo tecleado a media espera se perdería. Dice «Guardado» sólo cuando terminó todo. */
+async function guardarVarios(partes){
   if(!CARGADO){ avisar('Todavía no leo la hoja; no guardo a ciegas. Recarga la página.','mal'); return false }
+  const gorda=partes.find(([,,doc])=>JSON.stringify(doc).length>LIMITE_CELDA);
+  if(gorda){ avisar(`No se guardó: ${gorda[0]==='mundo'?'los '+esc(gorda[1])+' ya son':'ya es'} demasiado texto para la hoja. Acorta descripciones o quita lo que no uses.`,'mal'); return false }
+  const v=$('#vista'); let hechas=0;
+  v.inert=true; v.setAttribute('aria-busy','true'); avisar('Guardando… Si tarda mucho, recarga la página.');
   try{
-    const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({accion:'expediente',clave:CLAVE(),pieza:'v4:'+clase+(id?':'+id:''),expediente:doc})});
-    const j=JSON.parse(await r.text());
-    if(!j||j.ok!==true) throw new Error((j&&j.error)||'sin confirmación');
-    if(clase==='universo') E.universo=doc; else E[clase][id]=doc;
+    for(const [clase,id,doc] of partes){
+      const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify({accion:'expediente',clave:CLAVE(),pieza:'v4:'+clase+(id?':'+id:''),expediente:doc})});
+      const j=JSON.parse(await r.text());
+      if(!j||j.ok!==true) throw new Error((j&&j.error)||'sin confirmación');
+      if(clase==='universo') E.universo=doc; else E[clase][id]=doc;
+      hechas++;
+    }
     avisar('Guardado.','bien'); return true;
   }catch(err){
-    avisar('No se guardó: '+esc(err.message)+(/solo el agente/.test(err.message)?' — por ahora sólo la llave de Dirección puede editar aquí.':''),'mal');
+    avisar((hechas?'Se guardó una parte, pero no todo: vuelve a tocar el botón de guardar. ':'No se guardó: ')+esc(err.message)+(/solo el agente/.test(err.message)?' — por ahora sólo la llave de Dirección puede editar aquí.':''),'mal');
     return false;
-  }
+  }finally{ v.inert=false; v.removeAttribute('aria-busy') }
+}
+const guardar=(clase,id,doc)=>guardarVarios([[clase,id,doc]]);
+/* El universo se guarda partido: los personajes, los lugares y los objetos van cada uno en su propia celda de la hoja
+   (v4:mundo:<clase>) y lo demás en v4:universo; así el mundo puede crecer. Sólo viaja lo que cambió, y el mundo va primero. */
+async function guardarUniverso(u){
+  if(!CARGADO){ avisar('Todavía no leo la hoja; no guardo a ciegas. Recarga la página.','mal'); return false }
+  const malas=ligasMalas(u); if(malas){ avisar(malas,'mal'); return false }
+  const nucleo=Object.assign({},u), partes=[];
+  for(const c of CLASES){ delete nucleo[c]; if(JSON.stringify(u[c]||{})!==JSON.stringify(E.mundo[c]||null)) partes.push(['mundo',c,u[c]||{}]) }
+  if(JSON.stringify(nucleo)!==JSON.stringify(E.universo||null)) partes.push(['universo','',nucleo]);
+  if(!partes.length){ avisar('No había cambios que guardar.','bien'); return true }
+  return guardarVarios(partes);
+}
+/* Una imagen propia tiene que ser la liga de un ARCHIVO de Drive; la de una carpeta o un texto cualquiera no sirve. */
+function ligasMalas(mapas){
+  const malas=CLASES.flatMap(c=>Object.values(mapas[c]||{}).filter(x=>x&&String(x.referencia_drive||'').trim()&&!idDrive(x.referencia_drive)).map(x=>x.nombre||'sin nombre'));
+  return malas.length?`No se guardó: la imagen de «${esc(malas.join('», «'))}» no es la liga de un archivo de Drive. Abre la imagen en Drive, copia su liga y pégala aquí; la liga de una carpeta no sirve.`:'';
 }
 function avisar(html,clase){ $('#aviso').innerHTML=html?`<div class="aviso ${clase||''}">${html}</div>`:'' }
 
@@ -140,37 +191,72 @@ function avisar(html,clase){ $('#aviso').innerHTML=html?`<div class="aviso ${cla
 const ultima=(prod,n)=>{const vs=((((prod||{}).episodios||{})[String(n)])||{}).versiones||[];return vs.length?vs[vs.length-1]:null};
 function marcaVigente(dec,prod,n){
   const u=ultima(prod,n), m=(((dec||{}).episodios||{})[String(n)])||{};
-  return u&&entero(m.v)===entero(u.v)?m:{};
+  return entero(m.v)===entero((u||{}).v)?m:{};
+}
+const enPie=(s,dec,prod)=>(s.episodios||[]).filter(ep=>marcaVigente(dec,prod,ep.n).marca!=='no');   // «no va» = queda fuera
+const aprobados=(s,dec,prod)=>(s.episodios||[]).filter(ep=>ultima(prod,ep.n)&&marcaVigente(dec,prod,ep.n).marca==='si');
+function completa(s,dec,prod){ const van=aprobados(s,dec,prod); return van.length>0&&van.length===enPie(s,dec,prod).length }
+function paqueteAlDia(s,dec,prod){
+  const p=(prod||{}).paquete; if(!p||!completa(s,dec,prod)) return false;
+  if(!p.versiones) return true;
+  const van=aprobados(s,dec,prod), k=Object.keys(p.versiones);
+  return k.length===van.length&&van.every(ep=>entero(p.versiones[String(ep.n)])===entero(ultima(prod,ep.n).v));
 }
 function estadoEp(s,dec,prod,ep){
   const u=ultima(prod,ep.n), m=marcaVigente(dec,prod,ep.n);
+  if(m.marca==='no') return ['No va · queda fuera','no'];
   if(!u) return (dec||{}).serie==='si'?['En fila para producir','']:['Sin video',''];
   if(m.marca==='si') return ['Aprobado','si'];
-  if(m.marca==='no') return ['No va','no'];
   if(m.marca==='cambio') return ['Cambio pedido · se rehace','azul'];
   return ['Listo para que lo veas',''];
 }
 function estadoSerie(s,dec,prod){
   if((dec||{}).serie==='no') return ['Descartada','no'];
   if((dec||{}).serie!=='si') return ['Propuesta · espera tu decisión',''];
-  if((prod||{}).paquete) return ['Paquete listo en Drive','si'];
-  const eps=s.episodios||[], ok=eps.filter(ep=>marcaVigente(dec,prod,ep.n).marca==='si').length;
+  if(paqueteAlDia(s,dec,prod)) return ['Paquete listo en Drive','si'];
+  if(completa(s,dec,prod)) return ['Todo aprobado · la nube arma el paquete','azul'];
+  const eps=enPie(s,dec,prod), ok=aprobados(s,dec,prod).length;
   const porVer=eps.filter(ep=>ultima(prod,ep.n)&&!marcaVigente(dec,prod,ep.n).marca).length;
   return [porVer?`${porVer} por revisar · ${ok} de ${eps.length} aprobados`:`En producción · ${ok} de ${eps.length} aprobados`,porVer?'':'azul'];
 }
+/* El mundo de una serie: lo del universo más lo suyo (lo suyo manda). */
+const mundoDe=(s,u)=>Object.fromEntries(CLASES.map(c=>[c,Object.assign({},u[c],s[c]||{})]));
+const llaveCanon=(s,clase,id,u)=>((s[clase]||{})[id]||!(u[clase]||{})[id])?`${s.id}:${id}`:id;
+/* La imagen de referencia de un elemento: la que puso Dirección y, si no, la del canon (la pintó la nube o salió de un piloto). */
+function refDe(clase,id,s,u){
+  const propia=idDrive(((mundoDe(s,u)[clase]||{})[id]||{}).referencia_drive); if(propia) return [propia,'la pusiste tú'];
+  const reg=(((E.canon||{})[clase]||{})[llaveCanon(s,clase,id,u)])||{};
+  return reg.drive?[String(reg.drive),reg.de?'salió del piloto':'la pintó la nube']:['',''];
+}
+/* Por qué no se pudo pintar la imagen de un elemento, si la nube lo intentó y falló. */
+const fallaDe=(clase,id,s,u)=>String(((((E.canon||{}).fallas||{})[clase+':'+llaveCanon(s,clase,id,u)])||{}).motivo||'');
+/* Lo que una serie usa, en orden: protagonista, lugar, objetos, invitados y demás lugares. */
+function usaDe(s,m){
+  const out=[], vistos=new Set(), eps=s.episodios||[];
+  const agrega=(c,id,papel)=>{ if(m[c][id]&&!vistos.has(c+id)){ vistos.add(c+id); out.push([c,id,papel]) } };
+  agrega('personajes',s.personaje,'protagonista'); agrega('lugares',s.lugar,'lugar principal'); agrega('objetos',s.objeto,'objeto de la serie');
+  eps.forEach(ep=>(ep.objetos||[]).forEach(o=>agrega('objetos',o,'objeto')));
+  eps.forEach(ep=>{ (ep.invitados||[]).forEach(i=>agrega('personajes',i,'invitado')); agrega('lugares',ep.lugar,'lugar') });
+  return out;
+}
+const gastoDe=prod=>Object.values((prod||{}).episodios||{}).reduce((t,e)=>t+(e.versiones||[]).reduce((x,r)=>x+(Number(r.costo_usd_aprox)||0),0),0);
 function problemas(s){
-  const p=[], u=universo(), quien=Object.assign({},u.personajes,s.personajes||{}), donde=Object.assign({},u.lugares,s.lugares||{});
+  const p=[], u=universo(), m=mundoDe(s,u);
   if(!String(s.titulo||'').trim()) p.push('Falta el título.');
-  if(!quien[s.personaje]) p.push('Elige un personaje.');
+  if(!m.personajes[s.personaje]) p.push('Elige un personaje.');
   (s.episodios||[]).forEach((ep,i)=>{
-    if(!donde[ep.lugar||s.lugar]) p.push(`Episodio ${i+1}: elige un lugar.`);
+    if(!m.lugares[ep.lugar||s.lugar]) p.push(`Episodio ${i+1}: elige un lugar.`);
+    (ep.invitados||[]).forEach(g=>{ if(!m.personajes[g]) p.push(`Episodio ${i+1}: el invitado ya no existe.`) });
+    (ep.objetos||[]).forEach(g=>{ if(!m.objetos[g]) p.push(`Episodio ${i+1}: un objeto ya no existe.`) });
+    if(ep.encuadre&&!u.encuadres[ep.encuadre]) p.push(`Episodio ${i+1}: el encuadre ya no existe.`);
     const tomas=entero(ep.bloque,15)>=30?2:1;
     for(let t=1;t<=tomas;t++){ const suf=t===1?'':'2';
       if(!String(ep['accion'+suf]||'').trim()) p.push(`Episodio ${i+1}: falta la acción${suf?' de la segunda toma':''}.`);
       if(palabras(ep['dialogo'+suf])>PALABRAS) p.push(`Episodio ${i+1}: la frase no cabe en 15 segundos (máximo ${PALABRAS} palabras).`);
     }
   });
-  const todo=plano(JSON.stringify([s.titulo,s.trama,s.episodios,s.personajes,s.lugares]));
+  CLASES.forEach(c=>Object.values(s[c]||{}).forEach(x=>{ if(x&&String(x.referencia_drive||'').trim()&&!idDrive(x.referencia_drive)) p.push(`La imagen de «${x.nombre||'sin nombre'}» no es la liga de un archivo de Drive.`) }));
+  const todo=plano(JSON.stringify([s.titulo,s.trama,s.episodios,s.personajes,s.lugares,s.objetos]));
   const malas=VETADAS.filter(v=>new RegExp('(^|[^a-z0-9])'+v+'([^a-z0-9]|$)').test(todo));
   if(malas.length) p.push('Trae una ubicación vetada: '+malas.join(', ')+'.');
   return p;
@@ -191,40 +277,81 @@ function vSeries(){
     <button class="btn oro" data-accion="nueva">Nueva serie</button></div>`+
     (tarjetas||`<p class="vacio">Todavía no hay series. El semillero propone una en su siguiente corrida, o crea la tuya con «Nueva serie».</p>`);
 }
-function opciones(mapa,sel){ return Object.entries(mapa).map(([k,v])=>`<option value="${esc(k)}"${k===sel?' selected':''}>${esc(v.nombre||k)}</option>`).join('') }
+function opciones(mapa,sel,ninguno){ return (ninguno?`<option value=""${sel?'':' selected'}>${esc(ninguno)}</option>`:'')+
+  Object.entries(mapa).map(([k,v])=>`<option value="${esc(k)}"${k===sel?' selected':''}>${esc(v.nombre||k)}</option>`).join('') }
+function casillas(mapa,marcadas,atributos,fuera){ return Object.entries(mapa).filter(([k])=>!(fuera||[]).includes(k)).map(([k,v])=>
+  `<label class="fila casilla"><input type="checkbox" ${atributos} value="${esc(k)}"${(marcadas||[]).includes(k)?' checked':''}> ${esc(v.nombre||k)}</label>`).join('') }
+/* Qué se edita de cada cosa del canon: [campo, etiqueta, 1 = texto largo | nombre de la clase donde se elige]. */
+const SUYA='Tu propia imagen: súbela a la carpeta del canon en Drive y pega aquí su liga (vacío = la pinta la nube)';
+const CAMPOS={
+  vertices:[['nombre','Nombre'],['mensaje','Lo que debe quedar claro',1]],
+  personajes:[['nombre','Nombre'],['papel','Papel (cliente, asesor, comprador…)'],['industria','Industria'],['aspecto','Cara, edad y complexión (en inglés, para que salga igual)',1],
+    ['vestuario','Lo que siempre trae puesto (en inglés)',1],['voz','Cómo suena (en inglés)'],['gesto','Un gesto que lo distingue (en inglés)'],['quiere','Qué quiere'],['objeto','Su objeto','objetos'],['referencia_drive',SUYA]],
+  lugares:[['nombre','Nombre'],['aspecto','Cómo se ve (en inglés)',1],['anclas','Lo que siempre se ve ahí (en inglés)',1],['referencia_drive',SUYA]],
+  objetos:[['nombre','Nombre'],['aspecto','Cómo se ve (en inglés)',1],['significado','Qué significa en las historias',1],['de','De quién es','personajes'],['referencia_drive',SUYA]],
+  encuadres:[['nombre','Nombre'],['camara','Cómo se mueve la cámara (en inglés)',1]],
+};
+/* Las fichas de una clase. attr 'u' = del universo; 'su' = propias de la serie abierta. imagen(k) → [id de Drive, de dónde salió]. */
+function fichas(mapa,clase,attr,u,imagen){
+  return Object.entries(mapa).map(([k,v])=>{ const idb=`${attr}-${clase}-${esc(k)}`, [fid,origen]=imagen?imagen(k):['',''];
+    return `<details class="tarjeta" ${abierta(attr+':'+clase+':'+k)}><summary>${esc(v.nombre||k)}</summary>
+    ${CAMPOS[clase].map(([c,et,tipo])=>`<label for="${idb}-${c}">${et}</label>${tipo===1
+      ?`<textarea id="${idb}-${c}" data-${attr}="${clase}" data-k="${esc(k)}" data-c="${c}">${esc(v[c]||'')}</textarea>`
+      :typeof tipo==='string'?`<select id="${idb}-${c}" data-${attr}="${clase}" data-k="${esc(k)}" data-c="${c}">${opciones(u[tipo],v[c]||'','— ninguno —')}</select>`
+      :`<input type="text" id="${idb}-${c}" data-${attr}="${clase}" data-k="${esc(k)}" data-c="${c}" value="${esc(v[c]||'')}" autocomplete="off">`}`).join('')}
+    ${imagen?`<p class="sub" style="margin-top:8px">${fid?`Imagen de referencia: <a href="https://drive.google.com/file/d/${encodeURIComponent(fid)}/view" target="_blank" rel="noopener">verla en Drive</a> (${esc(origen)}).`
+      :'Todavía no tiene imagen: la nube la pinta cuando una serie aprobada lo use.'}</p>`:''}
+    <button class="btn no" style="margin-top:10px" data-quitar="${clase}" data-k="${esc(k)}" data-de="${attr}">Quitar</button></details>`}).join('');
+}
 function vSerie(id){
-  const s=E.serie[id], dec=E.dec[id]||{}, prod=E.prod[id]||{}, u=universo();
-  const quien=Object.assign({},u.personajes,s.personajes||{}), donde=Object.assign({},u.lugares,s.lugares||{});
-  const [txt,cl]=estadoSerie(s,dec,prod), pr=problemas(s);
+  const s=E.serie[id], dec=E.dec[id]||{}, prod=E.prod[id]||{}, u=universo(), m=mundoDe(s,u);
+  const [txt,cl]=estadoSerie(s,dec,prod), pr=problemas(s), aviso=((prod.avisos||[]).slice(-1)[0])||null, gasto=gastoDe(prod);
   const eps=(s.episodios||[]).map((ep,i)=>{
-    const [et,ec]=estadoEp(s,dec,prod,ep), ult=ultima(prod,ep.n), m=marcaVigente(dec,prod,ep.n), b30=entero(ep.bloque,15)>=30;
+    const [et,ec]=estadoEp(s,dec,prod,ep), ult=ultima(prod,ep.n), mv=marcaVigente(dec,prod,ep.n), b30=entero(ep.bloque,15)>=30;
     const frase=(suf)=>`<label for="d${suf}${i}">Lo que dice${suf?' (segunda toma)':''}</label>
       <textarea id="d${suf}${i}" data-ep="${i}" data-campo="dialogo${suf}">${esc(ep['dialogo'+suf]||'')}</textarea>
       <span class="cuenta ${palabras(ep['dialogo'+suf])>PALABRAS?'mal':''}" data-cuenta="${i}${suf}">${palabras(ep['dialogo'+suf])} de ${PALABRAS} palabras</span>`;
     return `<section class="ep">
       <div class="fila entre"><div class="fila"><span class="num">${esc(ep.n)}</span><h3>${esc(ep.titulo||'Episodio '+ep.n)}</h3></div><span class="chip ${ec}">${esc(et)}</span></div>
       <p class="dice">«${esc(ep.dialogo||'')}»</p>
-      ${ult?`<div data-video="${i}"><button class="btn" data-ver="${esc(ult.drive)}" data-en="${i}">Ver el video (versión ${esc(ult.v)})</button></div>
-        <div class="fila" style="margin:8px 0">
-          <button class="btn si" data-marca="si" data-n="${esc(ep.n)}"${m.marca==='si'?' disabled':''}>Sí</button>
-          <button class="btn" data-pedir="${i}">Pedir cambio</button>
-          <button class="btn no" data-marca="no" data-n="${esc(ep.n)}"${m.marca==='no'?' disabled':''}>No va</button>
-        </div>
-        <div data-cambio="${i}" hidden><label for="n${i}">¿Qué hay que cambiar?</label><textarea id="n${i}" data-nota="${esc(ep.n)}"></textarea>
+      ${ult?`<div data-video="${i}"></div>
+        <div class="fila"><button class="btn" data-ver="${esc(ult.drive)}" data-en="${i}">Ver el video (versión ${esc(ult.v)})</button>
+          <a class="btn liga" href="https://drive.google.com/file/d/${encodeURIComponent(ult.drive)}/view" target="_blank" rel="noopener">Abrir en Drive</a></div>
+        ${ult.aviso?`<p class="sub">Aviso de la nube: ${esc(ult.aviso)}</p>`:''}`:''}
+      <div class="fila" style="margin:8px 0">
+        ${ult?`<button class="btn si" data-marca="si" data-n="${esc(ep.n)}"${mv.marca==='si'?' disabled':''}>Sí</button>
+          <button class="btn" data-pedir="${i}">Pedir cambio</button>`:''}
+        ${mv.marca==='no'?`<button class="btn" data-marca="vuelve" data-n="${esc(ep.n)}">Regresarlo a la serie</button>`
+          :`<button class="btn no" data-marca="no" data-n="${esc(ep.n)}">No va</button>`}
+      </div>
+      ${ult?`<div data-cambio="${i}" hidden><label for="n${i}">¿Qué hay que cambiar?</label><textarea id="n${i}" data-nota="${esc(ep.n)}"></textarea>
           <div class="fila" style="margin:8px 0"><button class="btn oro" data-marca="cambio" data-n="${esc(ep.n)}">Enviar el cambio</button></div></div>
-        ${m.marca==='cambio'&&m.nota?`<p class="sub">Pediste: ${esc(m.nota)}</p>`:''}`:''}
-      <details><summary>Editar el episodio</summary>
+        ${mv.marca==='cambio'&&mv.nota?`<p class="sub">Pediste: ${esc(mv.nota)}</p>`:''}`:''}
+      <details ${abierta('ep:'+id+':'+ep.n)}><summary>Editar el episodio</summary>
         <label for="t${i}">Título</label><input type="text" id="t${i}" data-ep="${i}" data-campo="titulo" value="${esc(ep.titulo||'')}">
         ${frase('')}
-        <label for="a${i}">Lo que pasa (acción y cámara, en inglés)</label><textarea id="a${i}" data-ep="${i}" data-campo="accion">${esc(ep.accion||'')}</textarea>
+        <label for="to${i}">Cómo lo dice (en inglés)</label><input type="text" id="to${i}" data-ep="${i}" data-campo="tono" value="${esc(ep.tono||'')}" autocomplete="off">
+        <label for="a${i}">Lo que pasa (en inglés)</label><textarea id="a${i}" data-ep="${i}" data-campo="accion">${esc(ep.accion||'')}</textarea>
         <label for="g${i}">Gancho del último segundo (en inglés)</label><textarea id="g${i}" data-ep="${i}" data-campo="gancho">${esc(ep.gancho||'')}</textarea>
         <div class="dos">
-          <div><label for="l${i}">Lugar</label><select id="l${i}" data-ep="${i}" data-campo="lugar">${opciones(donde,ep.lugar||s.lugar)}</select></div>
+          <div><label for="e${i}">Encuadre</label><select id="e${i}" data-ep="${i}" data-campo="encuadre">${opciones(u.encuadres,ep.encuadre||'','— el de siempre —')}</select></div>
+          <div><label for="l${i}">Lugar</label><select id="l${i}" data-ep="${i}" data-campo="lugar">${opciones(m.lugares,ep.lugar||s.lugar)}</select></div>
           <div><label for="b${i}">Duración</label><select id="b${i}" data-ep="${i}" data-campo="bloque"><option value="15"${b30?'':' selected'}>15 segundos (una toma)</option><option value="30"${b30?' selected':''}>30 segundos (dos tomas)</option></select></div>
         </div>
         ${b30?`${frase('2')}<label for="a2${i}">Lo que pasa en la segunda toma (en inglés)</label><textarea id="a2${i}" data-ep="${i}" data-campo="accion2">${esc(ep.accion2||'')}</textarea>`:''}
-        <label class="fila" style="font-weight:500"><input type="checkbox" data-ep="${i}" data-campo="continua"${ep.continua?' checked':''} style="width:auto"> Empieza donde terminó el episodio anterior (misma escena)</label>
+        <label class="fila casilla"><input type="checkbox" data-ep="${i}" data-campo="continua"${ep.continua?' checked':''}> Empieza donde terminó el episodio anterior (misma escena)</label>
+        ${Object.keys(m.objetos).length?`<label>Objetos que se ven</label><div class="fila">${casillas(m.objetos,ep.objetos,`data-obj="1" data-de="${i}"`)}</div>`:''}
+        ${Object.keys(m.personajes).length>1?`<label>Invitados de otras historias</label><div class="fila">${casillas(m.personajes,ep.invitados,`data-inv="1" data-de="${i}"`,[s.personaje])}</div>`:''}
       </details></section>`}).join('');
+  const pinta=entero(u.ajustes.fichas_por_dia)>0, usa=usaDe(s,m), sinImagen=usa.filter(([c,k])=>!refDe(c,k,s,u)[0]).length;
+  const mundo=usa.map(([c,k,papel])=>{ const [fid,origen]=refDe(c,k,s,u), propio=!!(s[c]||{})[k], falla=fallaDe(c,k,s,u);
+    return `<li class="fila entre"><div><b>${esc(m[c][k].nombre||k)}</b> <span class="sub">${esc(papel)}</span>
+      <p class="sub">${fid?`Imagen lista (${esc(origen)}): sale igual en cada episodio. <a href="https://drive.google.com/file/d/${encodeURIComponent(fid)}/view" target="_blank" rel="noopener">Verla</a>`
+        :falla?`La nube no pudo pintar su imagen: ${esc(falla)}. Cambia su ficha o pon tu propia imagen; si no se deja, apaga las imágenes de referencia en Ajustes.`
+        :!pinta?(c==='personajes'&&k===s.personaje?'Sin imagen: las imágenes de referencia están apagadas, así que su cara se toma del primer episodio que apruebes.':'Sin imagen: las imágenes de referencia están apagadas en Ajustes.')
+        :dec.serie==='si'?'Sin imagen todavía: la nube la pinta en su siguiente corrida.':'Sin imagen todavía: la nube la pinta cuando apruebes la serie.'}</p></div>
+      ${!propio?'':u[c][k]?'<span class="chip si">En el universo</span>':`<button class="btn" data-pasar="${c}" data-k="${esc(k)}">Guardar en el universo</button>`}</li>`}).join('');
+  const propias=CLASES.map(c=>Object.keys(s[c]||{}).length?`<h3 style="margin-top:12px">${c[0].toUpperCase()+c.slice(1)} de esta serie</h3>${fichas(s[c],c,'su',m,k=>refDe(c,k,s,u))}`:'').join('');
   return `<button class="btn liga" data-accion="volver">← Todas las series</button>
   <div class="tarjeta">
     <div class="fila entre"><span class="chip ${cl}">${esc(txt)}</span>
@@ -234,71 +361,146 @@ function vSerie(id){
     <label for="sTra">La historia en una línea</label><textarea id="sTra" data-serie-campo="trama">${esc(s.trama||'')}</textarea>
     <div class="dos">
       <div><label for="sVer">Vértice del negocio</label><select id="sVer" data-serie-campo="vertice">${opciones(u.vertices,s.vertice)}</select></div>
-      <div><label for="sPer">Protagonista (el cliente)</label><select id="sPer" data-serie-campo="personaje">${opciones(quien,s.personaje)}</select></div>
+      <div><label for="sPer">Protagonista (el cliente)</label><select id="sPer" data-serie-campo="personaje">${opciones(m.personajes,s.personaje)}</select></div>
+      <div><label for="sLug">Lugar principal</label><select id="sLug" data-serie-campo="lugar">${opciones(m.lugares,s.lugar)}</select></div>
+      <div><label for="sObj">Objeto de la serie</label><select id="sObj" data-serie-campo="objeto">${opciones(m.objetos,s.objeto||'','— ninguno —')}</select></div>
     </div>
     ${pr.length?`<div class="aviso mal" style="margin-top:12px"><ul class="plano">${pr.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
-    <p class="sub" style="margin-top:10px">Aprobar la serie autoriza producirla: cada toma de 15 segundos cuesta alrededor de ${USD_CLIP.toFixed(2)} USD y el tope del día está en Ajustes.</p>
+    <p class="sub" style="margin-top:10px">Aprobar la serie autoriza producirla: cada toma de 15 segundos cuesta alrededor de ${USD_CLIP.toFixed(2)} USD y el tope del día está en Ajustes.${gasto?` Esta serie lleva alrededor de ${gasto.toFixed(2)} USD.`:''}</p>
+    ${prod.paquete?`<p style="margin:10px 0 0"><a href="https://drive.google.com/drive/folders/${encodeURIComponent(prod.paquete.carpeta)}" target="_blank" rel="noopener">Abrir el paquete en Drive</a>${paqueteAlDia(s,dec,prod)?(prod.paquete.con_textos?'':' (sin textos para publicar: escríbelos tú)'):' (es el anterior: la nube lo rehace cuando todo esté aprobado)'}</p>`:''}
+    ${aviso?`<div class="aviso mal" style="margin:12px 0 0">La nube avisó: ${esc(aviso.texto)}</div>`:''}
   </div>
-  <div class="tarjeta">${eps||'<p class="vacio">Sin episodios.</p>'}
+  <div class="tarjeta"><h3>El mundo de esta serie</h3>
+    <p class="sub">Quién y qué sale. Cada uno lleva su imagen de referencia para verse igual en todos los episodios.${pinta&&sinImagen&&dec.serie==='si'?' Un episodio no se produce hasta que lo que sale en él tenga su imagen.':''}</p>
+    <ul class="plano mundo">${mundo||'<li class="sub">Todavía no usa nada.</li>'}</ul>
+    ${propias?`<details ${abierta('propias:'+id)}><summary>Editar las fichas propias de esta serie</summary>${propias}</details>`:''}
+  </div>
+  <div class="tarjeta"><p class="sub" style="margin-bottom:6px">En cada episodio: «Sí» lo aprueba, «Pedir cambio» lo rehace con tu nota y «No va» lo deja fuera de la serie.</p>
+    ${eps||'<p class="vacio">Sin episodios.</p>'}
     <div class="fila" style="margin-top:14px"><button class="btn oro" data-accion="guardar-serie">Guardar cambios de texto</button></div></div>`;
 }
-function fichas(mapa,clase,campos){
-  return Object.entries(mapa).map(([k,v])=>`<details class="tarjeta"><summary>${esc(v.nombre||k)}</summary>
-    ${campos.map(([c,et,largo])=>`<label for="${clase}-${esc(k)}-${c}">${et}</label>${largo
-      ?`<textarea id="${clase}-${esc(k)}-${c}" data-u="${clase}" data-k="${esc(k)}" data-c="${c}">${esc(v[c]||'')}</textarea>`
-      :`<input type="text" id="${clase}-${esc(k)}-${c}" data-u="${clase}" data-k="${esc(k)}" data-c="${c}" value="${esc(v[c]||'')}">`}`).join('')}
-    <button class="btn no" style="margin-top:10px" data-quitar="${clase}" data-k="${esc(k)}">Quitar</button></details>`).join('');
+const seccion=(clave,titulo,cuantos,cuerpo)=>`<details class="grupo" ${abierta('sec:'+clave)}><summary>${esc(titulo)}${cuantos===''?'':` <span class="cuantos">${cuantos}</span>`}</summary>${cuerpo}</details>`;
+const agregar=(clase,que)=>`<div class="fila" style="margin-top:8px"><input type="text" style="flex:1;min-width:160px" data-nuevo="${clase}" aria-label="Nombre ${que}" placeholder="Nombre ${que}"><button class="btn" data-agregar="${clase}">Agregar</button></div>`;
+function estadoPlan(t){
+  const de=Object.entries(E.serie).filter(([,s])=>s.temporada===t.id).map(([id])=>(E.dec[id]||{}).serie||'espera');
+  return de.includes('si')?['Aprobada','si']:de.includes('espera')?['Propuesta','']:de.length?['Descartada · se vuelve a escribir','no']:['Sin escribir todavía','azul'];
 }
 function vUniverso(){
-  const u=universo(), f=u.formato;
-  return `<p class="sub" style="margin-bottom:12px">Lo que guardes aquí lo usan el semillero y la producción desde su siguiente corrida.</p>
-  <h2>Vértices del negocio</h2>${fichas(u.vertices,'vertices',[['nombre','Nombre'],['mensaje','Lo que debe quedar claro',1]])}
-  <div class="fila"><input type="text" style="flex:1;min-width:160px" data-nuevo="vertices" aria-label="Nombre del vértice nuevo" placeholder="Nombre del vértice nuevo"><button class="btn" data-agregar="vertices">Agregar</button></div>
-  <h2 style="margin-top:22px">Personajes</h2>${fichas(u.personajes,'personajes',[['nombre','Nombre'],['industria','Industria'],['aspecto','Cómo se ve (en inglés, para que salga igual)',1],['voz','Cómo suena (en inglés)'],['quiere','Qué quiere']])}
-  <div class="fila"><input type="text" style="flex:1;min-width:160px" data-nuevo="personajes" aria-label="Nombre del personaje nuevo" placeholder="Nombre del personaje nuevo"><button class="btn" data-agregar="personajes">Agregar</button></div>
-  <h2 style="margin-top:22px">Lugares</h2>${fichas(u.lugares,'lugares',[['nombre','Nombre'],['aspecto','Cómo se ve (en inglés)',1]])}
-  <div class="fila"><input type="text" style="flex:1;min-width:160px" data-nuevo="lugares" aria-label="Nombre del lugar nuevo" placeholder="Nombre del lugar nuevo"><button class="btn" data-agregar="lugares">Agregar</button></div>
-  <h2 style="margin-top:22px">Formato de todas las tomas</h2>
-  <div class="tarjeta">
-    <label for="fEst">Estilo de cámara (en inglés)</label><textarea id="fEst" data-f="estilo">${esc(f.estilo||'')}</textarea>
-    <label for="fAud">Audio (en inglés)</label><textarea id="fAud" data-f="audio">${esc(f.audio||'')}</textarea>
-    <label for="fPro">Prohibido en pantalla (en inglés)</label><textarea id="fPro" data-f="prohibido">${esc(f.prohibido||'')}</textarea>
-  </div>
-  <button class="btn oro" data-accion="guardar-universo">Guardar el universo</button>`;
+  const u=universo(), f=u.formato, img=c=>k=>refDe(c,k,{},u);
+  const temporada=u.temporada.map((t,i)=>{ const [et,ec]=estadoPlan(t);
+    return `<details class="tarjeta" ${abierta('t:'+t.id)}><summary>${i+1}. ${esc(t.titulo||t.id)} <span class="chip ${ec}">${esc(et)}</span></summary>
+      <label for="tt${i}">Título</label><input type="text" id="tt${i}" data-t="${i}" data-c="titulo" value="${esc(t.titulo||'')}">
+      <label for="tp${i}">De qué trata</label><textarea id="tp${i}" data-t="${i}" data-c="premisa" style="min-height:110px">${esc(t.premisa||'')}</textarea>
+      <div class="dos">
+        <div><label for="tv${i}">Vértice del negocio</label><select id="tv${i}" data-t="${i}" data-c="vertice">${opciones(u.vertices,t.vertice)}</select></div>
+        <div><label for="tr${i}">Protagonista</label><select id="tr${i}" data-t="${i}" data-c="protagonista">${opciones(u.personajes,t.protagonista)}</select></div>
+        <div><label for="tl${i}">Lugar principal</label><select id="tl${i}" data-t="${i}" data-c="lugar">${opciones(u.lugares,t.lugar)}</select></div>
+        <div><label for="to${i}">Objeto de la serie</label><select id="to${i}" data-t="${i}" data-c="objeto">${opciones(u.objetos,t.objeto||'','— ninguno —')}</select></div>
+      </div>
+      <label>Guiños del mundo que deben verse</label><div class="fila">${casillas(u.objetos,t.guinos,`data-tl="${i}" data-lista="guinos"`)}</div>
+      <label>Invitados de otras historias</label><div class="fila">${casillas(u.personajes,t.invitados,`data-tl="${i}" data-lista="invitados"`,[t.protagonista])}</div>
+      <label for="ts${i}">Lo que siembra el último episodio</label><textarea id="ts${i}" data-t="${i}" data-c="siembra">${esc(t.siembra||'')}</textarea>
+      <div class="fila" style="margin-top:10px">${i?`<button class="btn" data-subir="${i}">Subirla un lugar</button>`:''}<button class="btn no" data-quitar-t="${i}">Quitarla de la temporada</button></div>
+    </details>`}).join('');
+  return `<p class="sub" style="margin-bottom:12px">Este es el canon: lo que guardes aquí lo usan el semillero y la producción desde su siguiente corrida.
+    ${(E.canon||{}).carpeta?`<a href="https://drive.google.com/drive/folders/${encodeURIComponent(E.canon.carpeta)}" target="_blank" rel="noopener">Abrir las imágenes del canon en Drive</a>: ahí está quién es quién, y ahí puedes dejar tus propias imágenes.`
+      :'La carpeta de las imágenes del canon aparece aquí después de la siguiente corrida de la nube.'}</p>
+  ${seccion('temporada','La temporada: las historias que se cruzan',u.temporada.length,`<p class="sub">El semillero las escribe en este orden. Cuando se acaban, propone historias libres con clientes nuevos.</p>${temporada}
+    <div class="fila" style="margin-top:8px"><input type="text" style="flex:1;min-width:160px" data-nuevo-t aria-label="Título de la historia nueva" placeholder="Título de la historia nueva"><button class="btn" data-agregar-t="1">Agregar</button></div>`)}
+  ${seccion('personajes','Personajes',Object.keys(u.personajes).length,fichas(u.personajes,'personajes','u',u,img('personajes'))+agregar('personajes','del personaje nuevo'))}
+  ${seccion('lugares','Lugares',Object.keys(u.lugares).length,fichas(u.lugares,'lugares','u',u,img('lugares'))+agregar('lugares','del lugar nuevo'))}
+  ${seccion('objetos','Objetos',Object.keys(u.objetos).length,fichas(u.objetos,'objetos','u',u,img('objetos'))+agregar('objetos','del objeto nuevo'))}
+  ${seccion('encuadres','Encuadres',Object.keys(u.encuadres).length,`<p class="sub">Cómo se mueve la cámara. Cada episodio elige uno.</p>${fichas(u.encuadres,'encuadres','u',u)}${agregar('encuadres','del encuadre nuevo')}`)}
+  ${seccion('reglas','Reglas del mundo','',`<label for="uCan">Lo que nunca cambia entre historias (lo lee el modelo que las escribe)</label>
+    <textarea id="uCan" data-canon="1" style="min-height:260px">${esc(u.canon||'')}</textarea>`)}
+  ${seccion('formato','Formato de todas las tomas','',`<label for="fEst">Estilo de cámara y de imagen (en inglés)</label><textarea id="fEst" data-f="estilo" style="min-height:120px">${esc(f.estilo||'')}</textarea>
+    <label for="fAud">Audio y voz (en inglés)</label><textarea id="fAud" data-f="audio">${esc(f.audio||'')}</textarea>
+    <label for="fPro">Prohibido en pantalla (en inglés)</label><textarea id="fPro" data-f="prohibido">${esc(f.prohibido||'')}</textarea>`)}
+  ${seccion('vertices','Vértices del negocio',Object.keys(u.vertices).length,fichas(u.vertices,'vertices','u',u)+agregar('vertices','del vértice nuevo'))}
+  ${seccion('guionista','Instrucciones para el guionista','',`<label for="uGui">Cómo deben escribirse las historias (lo lee el modelo que las propone)</label>
+    <textarea id="uGui" data-g="1" style="min-height:220px">${esc(u.guionista||'')}</textarea>
+    <p class="sub">Escribe {n} donde vaya el número de episodios. La estrategia común y los candados de la Sala se agregan solos.</p>`)}
+  <button class="btn oro" style="margin-top:12px" data-accion="guardar-universo">Guardar el universo</button>`;
 }
 function vAjustes(){
-  const a=universo().ajustes, est=E.estado, tope=entero(a.tope_clips_dia);
+  const a=universo().ajustes, est=E.estado, tope=entero(a.tope_clips_dia), fic=entero(a.fichas_por_dia);
   return `<div class="tarjeta">
-    <label class="fila" style="font-weight:500"><input type="checkbox" id="ajSem"${entero(a.semillero)?' checked':''} style="width:auto"> Semillero encendido (propone series solo)</label>
+    <label class="fila casilla"><input type="checkbox" id="ajSem"${entero(a.semillero)?' checked':''}> Semillero encendido (propone series solo)</label>
     <div class="dos">
       <div><label for="ajEsp">Series propuestas en espera, como máximo</label><input type="number" id="ajEsp" min="0" max="10" value="${esc(a.propuestas_en_espera)}"></div>
       <div><label for="ajEps">Episodios por serie</label><input type="number" id="ajEps" min="1" max="30" value="${esc(a.episodios)}"></div>
       <div><label for="ajTope">Tomas de 15 segundos por día, como máximo</label><input type="number" id="ajTope" min="0" max="40" value="${esc(tope)}"></div>
+      <div><label for="ajFic">Imágenes de referencia por día, como máximo</label><input type="number" id="ajFic" min="0" max="40" value="${esc(fic)}"></div>
     </div>
     <p class="sub" id="ajCosto">Gasto máximo al día: alrededor de ${(tope*USD_CLIP).toFixed(2)} USD. En 0 no se produce nada.</p>
-    <label class="fila" style="font-weight:500"><input type="checkbox" id="ajPil"${entero(a.piloto_primero,1)?' checked':''} style="width:auto"> Producir primero el episodio 1 y esperar tu «sí» antes de seguir</label>
+    <p class="sub">Cada imagen de referencia cuesta alrededor de ${USD_FICHA.toFixed(2)} USD y se pinta una sola vez por personaje, lugar u objeto. Con las imágenes encendidas, un episodio espera a que lo que sale en él tenga la suya. En 0 no se pintan: la cara del protagonista se toma del primer episodio que apruebes.</p>
+    <label class="fila casilla"><input type="checkbox" id="ajPil"${entero(a.piloto_primero,1)?' checked':''}> Producir primero un solo episodio (el piloto) y esperar tu «sí» antes de seguir</label>
+    <div class="dos">
+      <div><label for="ajMod">Modelo que escribe las historias</label><input type="text" id="ajMod" value="${esc(a.modelo_guion||'')}" autocomplete="off" spellcheck="false"></div>
+      <div><label for="ajModF">Modelo que pinta las imágenes de referencia</label><input type="text" id="ajModF" value="${esc(a.modelo_ficha||'')}" autocomplete="off" spellcheck="false"></div>
+    </div>
     <div class="fila" style="margin-top:14px"><button class="btn oro" data-accion="guardar-ajustes">Guardar ajustes</button></div>
   </div>
-  <div class="tarjeta"><h2>Última corrida</h2>${est?`<p class="sub">${esc(String(est.cuando||'').replace('T',' ').replace('Z',' UTC'))} · ${esc(est.clips_hoy)} de ${esc(est.tope)} tomas usadas hoy</p>
+  <div class="tarjeta"><h2>Última corrida</h2>${est?`<p class="sub">${esc(String(est.cuando||'').replace('T',' ').replace('Z',' UTC'))} · ${esc(est.clips_hoy)} de ${esc(est.tope)} tomas usadas hoy${est.imagenes_hoy?` · ${esc(est.imagenes_hoy)} imágenes de referencia`:''}</p>
     <ul>${(est.pasos||[]).map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`:'<p class="vacio">La nube todavía no ha corrido.</p>'}
     <p class="sub">La nube pasa varias veces al día; los horarios de GitHub no son exactos.</p></div>`;
 }
 
 /* ---------- acciones ---------- */
+/* Las mismas casillas marcadas que ya había (en cualquier orden): la lista no se toca, ni se le cambia el orden. */
+const mismas=(marcadas,antes)=>marcadas.length===(antes||[]).length&&marcadas.every(k=>(antes||[]).includes(k));
 function recogerSerie(id){
-  const s=JSON.parse(JSON.stringify(E.serie[id]));
+  const s=copia(E.serie[id]);
   document.querySelectorAll('[data-serie-campo]').forEach(el=>{ s[el.dataset.serieCampo]=el.value });
-  document.querySelectorAll('[data-ep]').forEach(el=>{ const ep=s.episodios[+el.dataset.ep], c=el.dataset.campo;
+  document.querySelectorAll('[data-ep][data-campo]').forEach(el=>{ const ep=s.episodios[+el.dataset.ep], c=el.dataset.campo;
     ep[c]= el.type==='checkbox'?el.checked : c==='bloque'?entero(el.value,15) : el.value });
+  s.episodios.forEach((ep,i)=>{ if(ep.lugar===s.lugar) delete ep.lugar;
+    for(const [attr,campo] of [['inv','invitados'],['obj','objetos']]){ const cajas=[...document.querySelectorAll(`[data-${attr}][data-de="${i}"]`)];
+      if(!cajas.length) continue;
+      const marcadas=cajas.filter(c=>c.checked).map(c=>c.value);
+      if(!mismas(marcadas,ep[campo])) ep[campo]=marcadas } });
+  document.querySelectorAll('[data-su]').forEach(el=>{ const c=el.dataset.su; if((s[c]||{})[el.dataset.k]) s[c][el.dataset.k][el.dataset.c]=el.value });
   return s;
 }
+function recogerUniverso(){
+  const u=universo();
+  // Un campo vacío que la ficha no traía no se le agrega: así lo que no se tocó queda idéntico y no se vuelve a guardar.
+  document.querySelectorAll('[data-u]').forEach(el=>{ const f=(u[el.dataset.u][el.dataset.k]=u[el.dataset.u][el.dataset.k]||{}), c=el.dataset.c;
+    if(el.value!==''||c in f) f[c]=el.value });
+  document.querySelectorAll('[data-f]').forEach(el=>{ u.formato[el.dataset.f]=el.value });
+  const gui=$('[data-g]'); if(gui) u.guionista=gui.value;
+  const can=$('[data-canon]'); if(can) u.canon=can.value;
+  document.querySelectorAll('[data-t]').forEach(el=>{ const t=u.temporada[+el.dataset.t], c=el.dataset.c; if(t&&(el.value!==''||c in t)) t[c]=el.value });
+  u.temporada.forEach((t,i)=>{ for(const lista of ['guinos','invitados']){ const cajas=[...document.querySelectorAll(`[data-tl="${i}"][data-lista="${lista}"]`)];
+    if(!cajas.length) continue;
+    const marcadas=cajas.filter(c=>c.checked).map(c=>c.value).filter(k=>k!==t.protagonista||lista!=='invitados');
+    if(!mismas(marcadas,t[lista])) t[lista]=marcadas } });
+  return u;
+}
+/* Quién usa algo del universo: no se quita lo que una serie o la temporada necesita. */
+function usadoPor(clase,k,u){
+  for(const s of Object.values(E.serie)){ const eps=s.episodios||[], suyo=(s[clase]||{})[k];
+    if(suyo) continue;
+    if((clase==='personajes'&&(s.personaje===k||eps.some(e=>(e.invitados||[]).includes(k))))||(clase==='lugares'&&(s.lugar===k||eps.some(e=>e.lugar===k)))
+      ||(clase==='objetos'&&(s.objeto===k||eps.some(e=>(e.objetos||[]).includes(k))))||(clase==='encuadres'&&eps.some(e=>e.encuadre===k))||(clase==='vertices'&&s.vertice===k))
+      return `la serie «${s.titulo||s.id}»`;
+  }
+  for(const t of u.temporada){
+    if((clase==='personajes'&&(t.protagonista===k||(t.invitados||[]).includes(k)))||(clase==='lugares'&&t.lugar===k)
+      ||(clase==='objetos'&&(t.objeto===k||(t.guinos||[]).includes(k)))||(clase==='vertices'&&t.vertice===k)) return `la temporada («${t.titulo||t.id}»)`;
+  }
+  if(clase==='objetos'&&Object.values(u.personajes).some(p=>p.objeto===k)) return 'la ficha de un personaje';
+  return '';
+}
 async function marcar(id,n,marca){
-  const prod=E.prod[id]||{}, u=ultima(prod,n); if(!u) return;
+  const prod=E.prod[id]||{}, u=ultima(prod,n);
+  if(marca==='vuelve') marca='';                       // regresa a la serie: se borra el «no va»
+  if(!u&&marca!=='no'&&marca!=='') return;             // sin video sólo se puede dejar fuera o regresar
   let nota='';
   if(marca==='cambio'){ const el=document.querySelector(`[data-nota="${n}"]`); nota=(el&&el.value||'').trim();
     if(!nota){ avisar('Escribe qué hay que cambiar.','mal'); return } }
-  const dec=JSON.parse(JSON.stringify(E.dec[id]||{})); dec.episodios=dec.episodios||{};
-  dec.episodios[String(n)]={v:u.v,marca,nota,cuando:new Date().toISOString()};
+  const dec=copia(E.dec[id]||{}); dec.episodios=dec.episodios||{};
+  dec.episodios[String(n)]={v:u?u.v:0,marca,nota,cuando:new Date().toISOString()};
   if(await guardar('dec',id,dec)) pintar();
 }
 document.addEventListener('click',async ev=>{
@@ -306,35 +508,51 @@ document.addEventListener('click',async ev=>{
   if(b.closest('#tabs')){ VISTA=b.dataset.v; ABIERTA=null; pintar(); return }
   if(b.dataset.abrir){ ABIERTA=b.dataset.abrir; pintar(); window.scrollTo(0,0); return }
   if(b.dataset.ver){ document.querySelector(`[data-video="${b.dataset.en}"]`).innerHTML=
-      `<iframe class="video" src="https://drive.google.com/file/d/${encodeURIComponent(b.dataset.ver)}/preview" allow="autoplay" title="Video del episodio"></iframe>`; return }
+      `<iframe class="video" src="https://drive.google.com/file/d/${encodeURIComponent(b.dataset.ver)}/preview" allow="autoplay" title="Video del episodio"></iframe>
+       <p class="sub">Si aquí no carga, toca «Abrir en Drive».</p>`; return }
   if(b.dataset.pedir){ const c=document.querySelector(`[data-cambio="${b.dataset.pedir}"]`); c.hidden=!c.hidden; if(!c.hidden) c.querySelector('textarea').focus(); return }
   if(b.dataset.marca){ await marcar(ABIERTA,b.dataset.n,b.dataset.marca); return }
-  if(b.dataset.serie){ const dec=JSON.parse(JSON.stringify(E.dec[ABIERTA]||{})); dec.serie=b.dataset.serie; dec.cuando=new Date().toISOString();
+  if(b.dataset.serie){ const dec=copia(E.dec[ABIERTA]||{}), partes=[]; dec.serie=b.dataset.serie; dec.cuando=new Date().toISOString();
     if(b.dataset.serie==='si'){ const s=recogerSerie(ABIERTA); if(problemas(s).length){ avisar('Corrige lo marcado antes de aprobar.','mal'); return }
-      if(JSON.stringify(s)!==JSON.stringify(E.serie[ABIERTA])&&!await guardar('serie',ABIERTA,s)) return }
-    if(await guardar('dec',ABIERTA,dec)) pintar(); return }
+      if(JSON.stringify(s)!==JSON.stringify(E.serie[ABIERTA])) partes.push(['serie',ABIERTA,s]) }      // lo que editó viaja con su aprobación, primero
+    if(await guardarVarios(partes.concat([['dec',ABIERTA,dec]]))) pintar(); return }
   const a=b.dataset.accion;
   if(a==='volver'){ ABIERTA=null; pintar(); return }
   if(a==='nueva'){ const u=universo(), n=entero(u.ajustes.episodios,10), id=new Date().toISOString().slice(0,10).replace(/-/g,'')+'-nueva-'+Date.now().toString(36);
-    const s={id,titulo:'',trama:'',vertice:Object.keys(u.vertices)[0]||'',personaje:Object.keys(u.personajes)[0]||'',lugar:Object.keys(u.lugares)[0]||'',
-      episodios:Array.from({length:n},(_,i)=>({n:i+1,titulo:'',accion:'',dialogo:'',gancho:'',bloque:15,continua:false})),origen:'editor',creada:new Date().toISOString()};
+    const s={id,titulo:'',trama:'',vertice:Object.keys(u.vertices)[0]||'',personaje:Object.keys(u.personajes)[0]||'',lugar:Object.keys(u.lugares)[0]||'',objeto:'',
+      episodios:Array.from({length:n},(_,i)=>({n:i+1,titulo:'',accion:'',dialogo:'',gancho:'',bloque:15,continua:false,encuadre:'',tono:'',objetos:[],invitados:[]})),origen:'editor',creada:new Date().toISOString()};
     if(await guardar('serie',id,s)){ ABIERTA=id; pintar() } return }
-  if(a==='guardar-serie'){ const s=recogerSerie(ABIERTA); if(await guardar('serie',ABIERTA,s)) pintar(); return }
-  if(a==='guardar-universo'||a==='guardar-ajustes'||b.dataset.agregar||b.dataset.quitar){
-    if(!E.universo&&!SEMILLA){ avisar('No pude leer el universo de fábrica; no guardo uno vacío. Recarga la página.','mal'); return } }
-  if(a==='guardar-universo'||b.dataset.agregar||b.dataset.quitar){
-    const u=universo();
-    document.querySelectorAll('[data-u]').forEach(el=>{ (u[el.dataset.u][el.dataset.k]=u[el.dataset.u][el.dataset.k]||{})[el.dataset.c]=el.value });
-    document.querySelectorAll('[data-f]').forEach(el=>{ u.formato[el.dataset.f]=el.value });
-    if(b.dataset.agregar){ const nombre=(document.querySelector(`[data-nuevo="${b.dataset.agregar}"]`).value||'').trim(); if(!nombre){ avisar('Escribe el nombre primero.','mal'); return } let k=slug(nombre),i=2; while(u[b.dataset.agregar][k]) k=slug(nombre)+'-'+(i++);
-      u[b.dataset.agregar][k]={nombre} }
-    if(b.dataset.quitar){ const usa=Object.values(E.serie).some(s=>s[b.dataset.quitar==='personajes'?'personaje':b.dataset.quitar==='lugares'?'lugar':'vertice']===b.dataset.k);
-      if(usa){ avisar('No se quita: una serie lo usa.','mal'); return } delete u[b.dataset.quitar][b.dataset.k] }
-    if(await guardar('universo','',u)) pintar(); return }
+  if(a==='guardar-serie'){ const s=recogerSerie(ABIERTA), malas=ligasMalas(s); if(malas){ avisar(malas,'mal'); return } if(await guardar('serie',ABIERTA,s)) pintar(); return }
+  const delUniverso=a==='guardar-universo'||a==='guardar-ajustes'||b.dataset.agregar||b.dataset.agregarT||b.dataset.subir||b.dataset.quitarT||b.dataset.pasar||(b.dataset.quitar&&b.dataset.de==='u');
+  if(delUniverso&&!E.universo&&!SEMILLA){ avisar('No pude leer el universo de fábrica; no guardo uno vacío. Recarga la página.','mal'); return }
+  if(b.dataset.pasar){                                  // algo propio de la serie pasa al mundo compartido, con su imagen
+    const s=E.serie[ABIERTA], u=universo(), c=b.dataset.pasar, k=b.dataset.k, ficha=(s[c]||{})[k]; if(!ficha) return;
+    const [fid]=refDe(c,k,s,u);
+    u[c][k]=Object.assign({},ficha,fid?{referencia_drive:fid}:{});
+    if(await guardarUniverso(u)) pintar(); return }
+  if(b.dataset.quitar&&b.dataset.de==='su'){            // una ficha propia de la serie
+    const s=recogerSerie(ABIERTA), c=b.dataset.quitar, k=b.dataset.k, u=universo();
+    const usa=(c==='personajes'&&(s.personaje===k||s.episodios.some(e=>(e.invitados||[]).includes(k))))||(c==='lugares'&&(s.lugar===k||s.episodios.some(e=>e.lugar===k)))
+      ||(c==='objetos'&&(s.objeto===k||s.episodios.some(e=>(e.objetos||[]).includes(k))));
+    if(usa&&!u[c][k]){ avisar('No se quita: esta serie lo usa y no existe en el universo.','mal'); return }
+    delete s[c][k]; if(await guardar('serie',ABIERTA,s)) pintar(); return }
+  if(a==='guardar-universo'||b.dataset.agregar||b.dataset.quitar||b.dataset.agregarT||b.dataset.subir||b.dataset.quitarT){
+    const u=recogerUniverso();
+    if(b.dataset.agregar){ const c=b.dataset.agregar, nombre=(document.querySelector(`[data-nuevo="${c}"]`).value||'').trim(); if(!nombre){ avisar('Escribe el nombre primero.','mal'); return }
+      let k=slug(nombre),i=2; while(u[c][k]) k=slug(nombre)+'-'+(i++);
+      u[c][k]={nombre}; DESPLEGADAS.add('u:'+c+':'+k) }
+    if(b.dataset.quitar){ const quien=usadoPor(b.dataset.quitar,b.dataset.k,u); if(quien){ avisar('No se quita: lo usa '+esc(quien)+'.','mal'); return } delete u[b.dataset.quitar][b.dataset.k] }
+    if(b.dataset.agregarT){ const titulo=(($('[data-nuevo-t]')||{}).value||'').trim(); if(!titulo){ avisar('Escribe el título primero.','mal'); return }
+      let k=slug(titulo),i=2; while(u.temporada.some(t=>t.id===k)) k=slug(titulo)+'-'+(i++);
+      u.temporada.push({id:k,titulo,premisa:'',vertice:Object.keys(u.vertices)[0]||'',protagonista:Object.keys(u.personajes)[0]||'',lugar:Object.keys(u.lugares)[0]||'',objeto:'',guinos:[],invitados:[],siembra:''}); DESPLEGADAS.add('t:'+k) }
+    if(b.dataset.subir){ const i=+b.dataset.subir; if(i>0) u.temporada.splice(i-1,2,u.temporada[i],u.temporada[i-1]) }
+    if(b.dataset.quitarT){ u.temporada.splice(+b.dataset.quitarT,1) }
+    if(await guardarUniverso(u)) pintar(); return }
   if(a==='guardar-ajustes'){ const u=universo();
     Object.assign(u.ajustes,{semillero:$('#ajSem').checked?1:0,propuestas_en_espera:entero($('#ajEsp').value,2),episodios:Math.max(1,entero($('#ajEps').value,10)),
-      tope_clips_dia:entero($('#ajTope').value,0),piloto_primero:$('#ajPil').checked?1:0});
-    if(await guardar('universo','',u)) pintar(); return }
+      tope_clips_dia:entero($('#ajTope').value,0),fichas_por_dia:entero($('#ajFic').value,0),piloto_primero:$('#ajPil').checked?1:0,
+      modelo_guion:$('#ajMod').value.trim()||AJ_FABRICA.modelo_guion,modelo_ficha:$('#ajModF').value.trim()||AJ_FABRICA.modelo_ficha});
+    if(await guardarUniverso(u)) pintar(); return }
 });
 document.addEventListener('input',ev=>{
   const el=ev.target;
@@ -342,6 +560,8 @@ document.addEventListener('input',ev=>{
     if(c){ const n=palabras(el.value); c.textContent=n+' de '+PALABRAS+' palabras'; c.classList.toggle('mal',n>PALABRAS) } }
   if(el.id==='ajTope'){ $('#ajCosto').textContent='Gasto máximo al día: alrededor de '+(entero(el.value)*USD_CLIP).toFixed(2)+' USD. En 0 no se produce nada.' }
 });
+/* Lo que se abre se queda abierto aunque la pantalla se repinte al guardar (el evento no burbujea: se escucha en captura). */
+document.addEventListener('toggle',ev=>{ const k=ev.target&&ev.target.dataset&&ev.target.dataset.seccion; if(k){ ev.target.open?DESPLEGADAS.add(k):DESPLEGADAS.delete(k) } },true);
 cargar();
 </script>
 </body></html>
