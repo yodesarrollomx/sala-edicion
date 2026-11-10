@@ -376,6 +376,27 @@
    ],
    "tira": "",
    "ordenes": {}
+  },
+  {
+   "caso": "con el campo paquete (sólo lo usa la pantalla: la nube lo ignora)",
+   "registro": {
+    "v": 1,
+    "pieza": "Las 48 Horas",
+    "tira": "48-horas-nube-2026-11-10-abc123",
+    "paquete": "48-horas-arranque-2026-09-24-e98d7d",
+    "ordenes": [
+     {
+      "n": 1,
+      "nota": "Quita el plazo.",
+      "cuando": "2026-11-10T03:30:00.000Z",
+      "por": "editor"
+     }
+    ]
+   },
+   "tira": "48-horas-nube-2026-11-10-abc123",
+   "ordenes": {
+    "1": "Quita el plazo."
+   }
   }
  ]
 }

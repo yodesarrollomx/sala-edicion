@@ -81,6 +81,7 @@ function estado(nombre,hechas,etapas,expedientes,publicada){
 function cuantas(n,uno,varios){ return n+' '+(n===1?uno:varios) }
 /* una orden de cambio como venga de la hoja o del aparato, en una forma en la que se puede confiar
    (las mismas reglas que nube/sala_cambios.py: una nota por imagen, en una línea, con tope) */
+const idOk=x=>typeof x==='string'&&ID_TIRA.test(x)?x:'';
 function cambioLimpio(c){
   c=c&&typeof c==='object'&&!Array.isArray(c)?c:{};
   const tira=typeof c.tira==='string'&&ID_TIRA.test(c.tira)?c.tira:'', porN=new Map();
@@ -89,7 +90,7 @@ function cambioLimpio(c){
     if(!Number.isInteger(n)||n<1||n>99||!nota) continue;
     porN.set(n,{n,nota,cuando:typeof o.cuando==='string'?o.cuando.slice(0,40):'',por:typeof o.por==='string'?o.por.slice(0,40):''});
   }
-  return {v:1, pieza:typeof c.pieza==='string'?c.pieza.trim().slice(0,160):'', tira, ordenes:tira?[...porN.values()].sort((a,b)=>a.n-b.n):[],
+  return {v:1, pieza:typeof c.pieza==='string'?c.pieza.trim().slice(0,160):'', tira, paquete:idOk(c.paquete), ordenes:tira?[...porN.values()].sort((a,b)=>a.n-b.n):[],
     cuando:typeof c.cuando==='string'?c.cuando.slice(0,40):'', por:typeof c.por==='string'?c.por.slice(0,40):''};
 }
 /* las órdenes que siguen vivas para la versión `tira` de la pieza: cuando la mesa la rehace nace otra
@@ -97,10 +98,23 @@ function cambioLimpio(c){
 function ordenesVigentes(cambio,tira){ const c=cambioLimpio(cambio); return tira&&c.tira===tira?c.ordenes:[] }
 /* la orden nueva sobre lo que ya hubiera: una por imagen; si la pieza cambió de versión se empieza de cero */
 function conOrden(previo,pedido){
-  const c=cambioLimpio(previo), n=Number(pedido.n), base=c.tira===pedido.tira?c.ordenes.filter(o=>o.n!==n):[];
-  return cambioLimpio({pieza:pedido.pieza||c.pieza, tira:pedido.tira, ordenes:[...base,{n,nota:pedido.nota,cuando:pedido.ahora,por:pedido.quien}], cuando:pedido.ahora, por:pedido.quien});
+  const c=cambioLimpio(previo), n=Number(pedido.n), mismo=c.tira===pedido.tira, base=mismo?c.ordenes.filter(o=>o.n!==n):[];
+  /* `paquete`: la versión empacada cuando se pidió; en la segunda vuelta (misma tira) se conserva la primera */
+  return cambioLimpio({pieza:pedido.pieza||c.pieza, tira:pedido.tira, paquete:mismo?(c.paquete||idOk(pedido.paquete)):idOk(pedido.paquete), ordenes:[...base,{n,nota:pedido.nota,cuando:pedido.ahora,por:pedido.quien}], cuando:pedido.ahora, por:pedido.quien});
 }
 function sinOrden(previo,n,quien,ahora){ const c=cambioLimpio(previo); return cambioLimpio({...c, ordenes:c.ordenes.filter(o=>o.n!==Number(n)), cuando:ahora, por:quien}) }
+/* qué pasa con una pieza frente a su orden de cambio: '' (nada: puede estar en el montón) · 'pedido' (orden viva que
+   Producción aún no atiende: se puede quitar) · 'volvio' (ya se rehízo o viene otra versión: el paquete viejo no se
+   ofrece y se decide en la mesa). `empacada` = versión del paquete vigente ('' si no hay); `enMesa` = versión que la
+   mesa enseña hoy ('' si no se sabe). Una orden que ya no corresponde a nada vigente es historia. */
+function retiro(cambio,empacada,enMesa){
+  const c=cambioLimpio(cambio); empacada=String(empacada||''); enMesa=String(enMesa||''); if(!c.tira) return '';
+  const vivo=c.ordenes.length>0, nueva=!!enMesa&&enMesa!==c.tira;
+  if(empacada&&c.tira===empacada) return nueva?'volvio':vivo?'pedido':'';   // quitada pero la mesa ya trae otra: no se ofrece el paquete viejo
+  if(empacada&&c.paquete===empacada) return vivo&&!nueva?'pedido':'volvio';
+  if(!empacada) return vivo&&!nueva?'pedido':'';
+  return '';
+}
 /* lo mínimo de cada pieza lista para volver a pintarla al abrir, sin nada que parezca una llave */
 function paraGuardar(lista){
   const secreto=/^(?:clave(?:_.*)?|token|access_token|refresh_token|authorization|password)$/i, out={};
@@ -111,7 +125,7 @@ function paraGuardar(lista){
   return JSON.parse(JSON.stringify(out,(k,v)=>secreto.test(k)?undefined:v));
 }
 const puro={paquete,planLimpio,listas,mover,fechasDeSalida,alcance,partes,ligaValida,estado,cuantas,paraGuardar,PLAN_LLAVE,
-  cambioLimpio,ordenesVigentes,conOrden,sinOrden,CAMBIO_LLAVE,NOTA_MAX};
+  cambioLimpio,ordenesVigentes,conOrden,sinOrden,retiro,CAMBIO_LLAVE,NOTA_MAX};
 if(typeof module==='object'&&module.exports){ module.exports=puro; return }
 
 /* ── pantalla ───────────────────────────────────────────────────────────────────────────── */
@@ -129,21 +143,36 @@ function paqueteDe(n){ return paquete(expDe(n)) }
 function deHoy(){ return (typeof fecha!=='undefined'&&fecha)||new Date(Date.now()-7*36e5).toISOString().slice(0,10) }
 function hoyHmo(){ return new Date(Date.now()-7*36e5).toISOString().slice(0,10) }
 const miniatura=src=>typeof ligera==='function'?ligera(src):src;
-/* todo lo que tiene paquete y no ha salido; de ahí, lo que tiene una orden de cambio viva sale del montón */
+/* todo lo que tiene paquete y no ha salido; de ahí, lo que tiene una orden de cambio sale del montón */
 function conPaquete(){ return listas(exps(),n=>esPublicada(n),PLAN) }
 function cambiosDeTira(pid){ if(!pid) return []; for(const c of Object.values(CAMBIOS)){ const o=ordenesVigentes(c,pid); if(o.length) return o } return [] }
 function llaveDeTira(pid){ return Object.keys(CAMBIOS).find(s=>ordenesVigentes(CAMBIOS[s],pid).length)||'' }
-function pendientes(){ return conPaquete().filter(x=>!cambiosDeTira(x.p.id).length) }
-/* las piezas con cambio pedido: las del montón y, si la mesa ya dijo cuál es su versión vigente, las demás */
+/* la versión que la mesa enseña hoy para esa pieza; '' si la mesa no existe todavía o no lo sabe */
+function enMesaDe(slug){ try{ const f=root.SalaTablero&&root.SalaTablero.pidDe, v=typeof f==='function'&&slug?f(slug):null; return typeof v==='string'?v:'' }catch(e){ return '' } }
+/* el paquete vigente de una pieza: por su nombre o, si no, por la carpeta (slug) */
+function paqueteVigente(nombre,slug){ let p=nombre?paqueteDe(nombre):null; if(!p&&slug) for(const e of Object.values(exps())){ const q=paquete(e); if(q&&q.slug===slug){ p=q; break } } return p }
+/* UNA sola cuenta para el montón, el pie y «Cómo va». Evalúa todos los registros de la pieza (la llave pedida, la de su
+   carpeta, o los que la nombran) y manda el primero que la retira. `mesa` = versión que enseña la mesa (de la primera
+   llave que la sepa). Devuelve {estado, ordenes, slug, c, mesa, quitable}; quitable = se puede quitar con confirmación
+   POSITIVA de la mesa (enseña justo la versión de la orden). */
+function estadoDe(nombre,slug){
+  const p=paqueteVigente(nombre,slug), emp=p&&ID_TIRA.test(String(p.id||''))?String(p.id):'';
+  const claves=[...new Set([slug,p&&p.slug,...Object.keys(CAMBIOS).filter(k=>nombre&&CAMBIOS[k].pieza===nombre)].filter(k=>k&&CAMBIOS[k]))];
+  const mesa=[slug,p&&p.slug,...claves].map(k=>k?enMesaDe(k):'').find(Boolean)||'', pub=!!nombre&&esPublicada(nombre);
+  let gana=null;
+  for(const k of claves){ const c=CAMBIOS[k], e=pub?'':retiro(c,emp,mesa); if(e){ gana={estado:e,ordenes:c.ordenes,slug:k,c,mesa,quitable:e==='pedido'&&mesa===c.tira}; break } }
+  return gana||{estado:'',ordenes:[],slug:claves[0]||slug||'',c:claves[0]?CAMBIOS[claves[0]]:null,mesa,quitable:false};
+}
+function pendientes(){ return conPaquete().filter(x=>!estadoDe(x.nombre,x.p.slug).estado) }
+/* el pie del montón: toda pieza con paquete que no está en el montón (y no publicada) está aquí, más las que piden cambio y
+   todavía no tienen paquete */
 function enCambio(){
-  const delMonton=conPaquete().map(x=>({slug:llaveDeTira(x.p.id),nombre:x.nombre,ordenes:cambiosDeTira(x.p.id)})).filter(x=>x.ordenes.length);
-  const vistas=new Set(delMonton.map(x=>x.slug)), pidDe=root.SalaTablero&&root.SalaTablero.pidDe, otras=[];
-  if(typeof pidDe==='function') for(const [slug,c] of Object.entries(CAMBIOS)){
-    if(vistas.has(slug)||!c.ordenes.length) continue;
-    let pid=null; try{ pid=pidDe(slug) }catch(e){}
-    if(pid&&pid===c.tira) otras.push({slug,nombre:c.pieza||slug,ordenes:c.ordenes});
-  }
-  return delMonton.concat(otras);
+  const out=[], vistas=new Set();
+  for(const x of conPaquete()){ const r=estadoDe(x.nombre,x.p.slug); if(r.estado){ vistas.add(x.nombre); out.push({slug:r.slug,nombre:x.nombre,estado:r.estado,ordenes:r.ordenes,quitable:r.quitable}) } }
+  for(const [slug,c] of Object.entries(CAMBIOS)){ const nombre=c.pieza||slug;
+    if(vistas.has(nombre)||esPublicada(nombre)||paqueteVigente(nombre,slug)) continue;
+    const r=estadoDe(nombre,slug); if(r.estado==='pedido'){ vistas.add(nombre); out.push({slug:r.slug,nombre,estado:'pedido',ordenes:r.ordenes,quitable:r.quitable}) } }
+  return out;
 }
 function hay(){ try{ return ENTRADO()&&pendientes().length>0 }catch(e){ return false } }
 function puedeOrdenar(){ return DECIDE()&&(vivo||!!GUARD) }
@@ -209,8 +238,10 @@ async function pintar(){
     ${n?`<div class="sal-rejilla">${vista.map((x,i)=>tarjeta(x,i,fechas,n)).join('')}</div>`:''}
     <p class="sal-estado" role="status" aria-live="polite">${esc(_aviso)}</p>
     ${espera?`<p class="sal-pie"><b>${cuantas(espera,'pieza más','piezas más')}</b> ya ${espera===1?'tiene':'tienen'} sus imágenes aprobadas y ${espera===1?'espera':'esperan'} su texto. Es el paso del consejo; cuando lo escriba, ${espera===1?'aparece':'aparecen'} aquí.</p>`:''}
-    ${cambios.length?`<div class="sal-pie sal-cambios"><p><b>${cuantas(cambios.length,'pieza con cambio pedido','piezas con cambio pedido')}</b> (Producción la rehace con tu nota y vuelve a tu mesa para que la apruebes; mientras, no está en el montón):</p>
-      <ul>${cambios.map(x=>x.ordenes.map(o=>`<li><span><b>${esc(x.nombre)}</b> · imagen ${o.n}: «${esc(o.nota)}»</span>${DECIDE()&&vivo?` <button type="button" class="sal-mini" data-quitar-cambio="${esc(x.slug)}" data-n="${o.n}">Quitar la petición</button>`:''}</li>`).join('')).join('')}</ul></div>`:''}
+    ${cambios.length?`<div class="sal-pie sal-cambios"><p><b>${cuantas(cambios.length,'pieza con cambio pedido','piezas con cambio pedido')}</b> (mientras, no ${cambios.length===1?'está':'están'} en el montón):</p>
+      <ul>${cambios.map(x=>{ const notas=x.ordenes.map(o=>` · imagen ${o.n}: «${esc(o.nota)}»`).join(''), uno=x.ordenes.length===1;
+        const quitar=x.estado==='pedido'&&x.quitable&&puedePedirCambio(x.nombre)?x.ordenes.map(o=>` <button type="button" class="sal-mini" data-quitar-cambio="${esc(x.slug)}" data-n="${o.n}">${uno?'Quitar la petición':'Quitar la de la imagen '+o.n}</button>`).join(''):'';
+        return `<li><span><b>${esc(x.nombre)}</b>${notas}. ${x.estado==='volvio'?'Hay una versión nueva: cuando esté aprobada y con su paquete nuevo, vuelve aquí.':'Producción la rehace con tu nota (puede tardar varias horas).'}</span>${quitar}</li>` }).join('')}</ul></div>`:''}
     ${guardadas.length?`<p class="sal-pie"><b>${cuantas(guardadas.length,'pieza guardada','piezas guardadas')}</b> (no ${guardadas.length===1?'sale':'salen'} hasta que tú digas; nada se borra): ${esc(guardadas.join(' · '))}.</p>`:''}
   </section>`;
   }
@@ -255,7 +286,7 @@ async function subirPlan(){
   pintar();
 }
 /* ── órdenes de cambio: no se dan por pedidas hasta que la hoja las confirma ─────────────── */
-function puedePedirCambio(){ return DECIDE()&&vivo }
+function puedePedirCambio(nombre){ return !!(DECIDE()&&vivo&&!(nombre&&esPublicada(nombre))) }
 async function subirCambio(slug,registro){
   const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({accion:'expediente',clave:CLAVE(),pieza:CAMBIO_LLAVE+slug,expediente:registro})});
   const j=await leerJSON(r); if(!r.ok||!j||j.ok!==true) throw Error((j&&j.error)||'sin confirmación');
@@ -268,30 +299,43 @@ async function trasCambio(){
   if(document.body.dataset.vista==='prod'&&typeof pintarProduccion==='function') pintarProduccion();
 }
 async function pedirCambio(pedido){
-  const slug=String(pedido&&pedido.slug||''), tira=String(pedido&&pedido.tira||''), n=Number(pedido&&pedido.n);
-  if(!puedePedirCambio()||!SLUG_OK.test(slug)||!ID_TIRA.test(tira)) return {ok:false,motivo:'Todavía no se puede pedir el cambio: falta que conteste el Sheet.'};
-  const nuevo=conOrden(CAMBIOS[slug],{pieza:pedido.pieza,tira,n,nota:pedido.nota,quien:ROL(),ahora:new Date().toISOString()});
-  if(!nuevo.ordenes.some(o=>o.n===n)) return {ok:false,motivo:'Escribe qué debe cambiar.'};
+  pedido=pedido||{}; const slug=String(pedido.slug||''), tira=String(pedido.tira||''), n=Number(pedido.n), pieza=String(pedido.pieza||''), no=motivo=>({ok:false,motivo});
+  if(!DECIDE()) return no('Pedir cambios es de los editores.');
+  if(!vivo) return no('Todavía no se puede pedir el cambio: falta que conteste el Sheet.');
+  if(pieza&&esPublicada(pieza)) return no('Esta pieza ya está publicada: no se rehace.');
+  if(!SLUG_OK.test(slug)||!ID_TIRA.test(tira)) return no('No pude identificar la pieza o su versión. Actualiza la página e inténtalo otra vez.');
+  if(!Number.isInteger(n)||n<1||n>99) return no('No pude identificar la imagen.');
+  if(!String(pedido.nota||'').trim()) return no('Escribe qué debe cambiar.');
+  const mesa=enMesaDe(slug); if(mesa&&mesa!==tira) return no('Esa versión ya no es la vigente: la versión nueva está en tu mesa.');
+  const p=paqueteVigente(pieza,slug), nuevo=conOrden(CAMBIOS[slug],{pieza,tira,paquete:p?p.id:'',n,nota:pedido.nota,quien:ROL(),ahora:new Date().toISOString()});
+  if(!nuevo.ordenes.some(o=>o.n===n)) return no('Escribe qué debe cambiar.');
   try{ await subirCambio(slug,nuevo) }
-  catch(e){ return {ok:false,motivo:sinPermiso(e)?'Tu llave todavía no puede pedir cambios desde la Sala. No se pidió nada.':'El Sheet no contestó. No se pidió nada: inténtalo otra vez.'} }
+  catch(e){ return no(sinPermiso(e)?'Tu llave todavía no puede pedir cambios desde la Sala. No se pidió nada.':'El Sheet no contestó. No se pidió nada: inténtalo otra vez.') }
   CAMBIOS[slug]=nuevo; await trasCambio(); return {ok:true};
 }
 async function quitarCambio(slug,n){
-  slug=String(slug||''); const previo=CAMBIOS[slug];
-  if(!DECIDE()||!previo||!SLUG_OK.test(slug)) return {ok:false,motivo:'Esa petición ya no está.'};
+  slug=String(slug||''); const previo=CAMBIOS[slug], no=motivo=>({ok:false,motivo});
+  if(!DECIDE()) return no('Pedir cambios es de los editores.');
+  if(!vivo) return no('Todavía no se puede quitar la petición: falta que conteste el Sheet.');
+  if(!SLUG_OK.test(slug)||!previo||!previo.ordenes.some(o=>o.n===Number(n))) return no('Esa petición ya no está.');
+  const nombre=previo.pieza||slug;
+  if(esPublicada(nombre)) return no('Esta pieza ya está publicada: no se rehace.');
+  const r=estadoDe(nombre,slug);
+  if(!r.mesa) return no('No pude confirmar con tu mesa si Producción ya la rehízo. Actualiza e inténtalo otra vez.');
+  if(r.mesa!==previo.tira||retiro(previo,(paqueteVigente(nombre,slug)||{}).id,r.mesa)!=='pedido') return no('Producción ya la rehízo: decide la versión nueva en tu mesa.');
   const nuevo=sinOrden(previo,n,ROL(),new Date().toISOString());
   try{ await subirCambio(slug,nuevo) }
-  catch(e){ return {ok:false,motivo:sinPermiso(e)?'Tu llave todavía no puede quitar peticiones desde la Sala. No se quitó nada.':'El Sheet no contestó. No se quitó nada: inténtalo otra vez.'} }
-  if(nuevo.ordenes.length) CAMBIOS[slug]=nuevo; else delete CAMBIOS[slug];
+  catch(e){ return no(sinPermiso(e)?'Tu llave todavía no puede quitar peticiones desde la Sala. No se quitó nada.':'El Sheet no contestó. No se quitó nada: inténtalo otra vez.') }
+  CAMBIOS[slug]=nuevo;   // se conserva aunque quede sin órdenes: 'volvio' necesita saber la tira y el paquete
   await trasCambio(); return {ok:true};
 }
 function quitarCambioDeTira(pid,n){ return quitarCambio(llaveDeTira(pid),n) }
-/* para la mesa y «Cómo va»: la orden viva de una imagen de esa versión, y las de una pieza del montón */
+/* para la mesa y «Cómo va»: la orden viva de una imagen de esa versión, y el estado de una pieza frente a su orden */
 function cambioDe(pid,n){ return cambiosDeTira(pid).find(o=>o.n===Number(n))||null }
-function cambiosDe(nombre){ const p=paqueteDe(nombre); return p?cambiosDeTira(p.id):[] }
+function cambioDePieza(nombre,slug){ const r=estadoDe(nombre,slug); return {estado:r.estado,ordenes:r.ordenes} }
 function cargarCambios(crudo){
   const out={};
-  for(const [slug,v] of Object.entries(crudo&&typeof crudo==='object'&&!Array.isArray(crudo)?crudo:{})){ const c=cambioLimpio(v); if(SLUG_OK.test(slug)&&c.tira&&c.ordenes.length) out[slug]=c }
+  for(const [slug,v] of Object.entries(crudo&&typeof crudo==='object'&&!Array.isArray(crudo)?crudo:{})){ const c=cambioLimpio(v); if(SLUG_OK.test(slug)&&c.tira) out[slug]=c }
   return out;
 }
 async function copiar(texto,boton){
@@ -305,7 +349,7 @@ async function copiar(texto,boton){
 function abrir(nombre){
   const e=expDe(nombre), p=paquete(e); if(!p) return;
   const c=partes(e.copy), borr=leer(BORRADOR,{}), sello=String(p.sello||''), mio=borr[nombre]&&borr[nombre].sello===sello?String(borr[nombre].texto||''):'';
-  const n=p.imagenes.length, puede=DECIDE()&&!esPublicada(nombre);
+  const n=p.imagenes.length, puede=DECIDE()&&!esPublicada(nombre), cambio=cambioDePieza(nombre,p.slug).estado;
   const l=pendientes(), i=l.findIndex(x=>x.nombre===nombre), fechas=fechasDeSalida(l.length,PLAN.por_semana,desde());
   const v=hoja(`<div class="sal-hoja">
     <h3>${esc(nombre)}</h3>
@@ -315,7 +359,7 @@ function abrir(nombre){
     <div class="sal-paso"><h4><i>1</i>Las imágenes</h4>
       <p>Están en Drive, numeradas en el orden en que van.</p>
       ${/^https:\/\/drive\.google\.com\//.test(p.url||'')?`<a class="secund sal-liga" href="${esc(p.url)}" target="_blank" rel="noopener">Abrir la carpeta en Drive ↗</a>`:''}
-      ${puede&&puedePedirCambio()&&ID_TIRA.test(String(p.id||''))&&SLUG_OK.test(String(p.slug||''))?`<button type="button" class="sal-mini" id="salCambio" aria-expanded="false" aria-controls="salCambioCaja">Pedir cambio a una imagen</button>
+      ${puede&&puedePedirCambio(nombre)&&cambio!=='volvio'&&ID_TIRA.test(String(p.id||''))&&SLUG_OK.test(String(p.slug||''))?`<button type="button" class="sal-mini" id="salCambio" aria-expanded="false" aria-controls="salCambioCaja">Pedir cambio a una imagen</button>
       <div class="sal-cambio" id="salCambioCaja" hidden>
         ${n>1?`<label class="sal-lab" for="salCambioN">¿Cuál imagen?</label>
         <select id="salCambioN">${p.imagenes.map((im,k)=>`<option value="${Number(im.n)||k+1}">Imagen ${k+1}${im.dice?' · '+esc(String(im.dice).slice(0,48)):''}</option>`).join('')}</select>`:''}
@@ -355,7 +399,7 @@ function abrir(nombre){
       manda.disabled=true; dice.textContent='Enviando…';
       const r=await pedirCambio({slug:p.slug,pieza:nombre,tira:p.id,n:num,nota:texto});
       if(!r.ok){ manda.disabled=false; dice.textContent=r.motivo; return }
-      cerrarCapa('publicar-'+normSlug(nombre)); avisar('Cambio pedido. «'+nombre+'» sale de tu montón y vuelve cuando apruebes su versión nueva.'); pintar();
+      cerrarCapa('publicar-'+normSlug(nombre)); avisar('Cambio pedido. «'+nombre+'» sale de tu montón; Producción lo toma en su siguiente vuelta (puede tardar varias horas) y vuelve cuando apruebes su versión nueva.'); pintar();
     } }
   const ya=q('#salYa'); if(!ya) return;
   ya.onclick=async()=>{
@@ -418,6 +462,6 @@ async function actualizar(){
   finally{ _releyendo=false; pintar() }
 }
 root.SalaSalida=Object.assign({pintar,abrir,publicadaAqui,paqueteDe,pendientes,conciliar,hay,llegaron,falla,abrirGuardada,olvidar,actualizar,plan:()=>PLAN,
-  puedePedirCambio,pedirCambio,quitarCambio,quitarCambioDeTira,cambioDe,cambiosDe,enCambio},puro);
+  puedePedirCambio,pedirCambio,quitarCambio,quitarCambioDeTira,cambioDe,cambioDePieza,enCambio},puro);
 if(typeof arrancarSalida==='function') arrancarSalida();   // si la Sala ya arrancó antes de que cargara este archivo
 })(globalThis);

@@ -181,7 +181,21 @@ el registro cambia de `tira`. Sin el campo `paquete`, el paquete viejo reaparec�
 publicar. Con él, la Sala sabe que ese paquete es anterior a la orden y lo mantiene fuera del montón.
 
 **Quitar la petición.** Es escribir el mismo registro con `ordenes: []`; conserva `tira` y `paquete`.
-Sólo se puede mientras el estado sea «pedido». Piezas ya publicadas no se rehacen.
+Sólo se puede mientras el estado sea «pedido» **y la mesa confirme** que todavía enseña la versión de la
+orden (`SalaTablero.pidDe`). Si la Sala no lo puede confirmar (mesa sin cargar o en copia guardada), no
+ofrece el botón: quitar a ciegas podía devolver al montón un paquete que Producción ya estaba rehaciendo.
+Piezas ya publicadas no se rehacen.
+
+**Una sola cuenta.** El montón, su pie y «Cómo va» salen de la misma función (`estadoDe` en
+`sala-salida.js`, sobre la función pura `retiro`): toda pieza con paquete y no publicada está en el montón
+o en el pie, con un renglón por pieza. Si una pieza tiene dos registros (el slug de la mesa y el de su
+paquete no coinciden), manda el que la saca del montón.
+
+**En la nube.** Las piezas con orden van primero en la ronda de la mesa, para que el tope de láminas no
+las deje esperando. La mesa cuenta en `datos/mesa-estado.json` (sólo números) `ordenes_de_cambio` y
+`ordenes_sin_tira_vigente`, y avisa en el registro de la corrida por cada orden que no puede atender (su
+tira ya no es la vigente, no tiene fuente en el Sheet o la pieza ya se publicó). Así una orden perdida
+se ve en vez de quedarse diciendo «Producción la rehace» para siempre.
 
 **Límites conocidos.**
 

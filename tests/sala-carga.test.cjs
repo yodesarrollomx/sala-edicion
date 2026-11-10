@@ -270,7 +270,6 @@ test('una pieza lista con cambio pedido sale del montón y «Cómo va» dice que
   s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
   const linea=s.ctx.$('#linea');
   s.ctx.$=sel=>sel==='#salidaHoy'?null:linea;s.ctx.ENTRADO=()=>true;
-  if(!s.ctx.SalaSalida.cambioDePieza) s.ctx.SalaSalida.cambioDePieza=nombre=>{const e=s.ctx.SalaSalida.enCambio().find(x=>x.nombre===nombre);return e?{estado:'pedido',ordenes:e.ordenes}:{estado:'',ordenes:[]}};
   assert.equal(s.ctx.filaLinea(z).lista,true);
   // la orden es para OTRA versión de la pieza (la mesa ya la rehízo): no cuenta
   s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v0',ordenes:[{n:1,nota:'Más luminosa'}]}});
@@ -283,11 +282,21 @@ test('una pieza lista con cambio pedido sale del montón y «Cómo va» dice que
   assert.equal(f.que,'Cambio pedido en la imagen 1: Producción la rehace con tu nota.');
   assert.equal(f.cuando,'Puede tardar varias horas; cuando esté lista llega a tu mesa para que la apruebes.');
   assert.equal(s.ctx.SalaSalida.pendientes().length,0);
-  assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.enCambio())),[{slug:'synthetic',nombre:'Pieza sintética',ordenes:[{n:1,nota:'Más luminosa',cuando:'',por:''}]}]);
+  // sin mesa que confirme la versión no se ofrece «quitar» (quitable:false)
+  assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.enCambio())),[{slug:'synthetic',nombre:'Pieza sintética',estado:'pedido',ordenes:[{n:1,nota:'Más luminosa',cuando:'',por:''}],quitable:false}]);
   assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.cambioDe('synthetic-v1',1))),{n:1,nota:'Más luminosa',cuando:'',por:''});
   assert.equal(s.ctx.SalaSalida.cambioDe('synthetic-v1',2),null);
   const rendered=await s.render(z);
   assert.doesNotMatch(rendered,/está lista para lanzar|data-lista="1"/);
+  // segunda vuelta: otra orden sobre la versión rehecha (v2) antes de reempacar; el paquete v1 sigue fuera del montón
+  s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v2',paquete:'synthetic-v1',ordenes:[{n:1,nota:'Otra vez'}]}});
+  assert.deepEqual([s.ctx.filaLinea(z).lista,s.ctx.SalaSalida.pendientes().length],[false,0]);
+  // la mesa ya trae una versión más nueva (v3): «volvió», el paquete viejo no se ofrece y no hay botón de quitar
+  s.ctx.SalaTablero={pidDe:slug=>slug==='synthetic'?'synthetic-v3':null};
+  const v=s.ctx.filaLinea(z);
+  assert.deepEqual([v.lista,v.quien,v.que],[false,'fab','Hay una versión nueva. Cuando esté aprobada y con su paquete nuevo, vuelve a tu montón.']);
+  assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.enCambio().map(x=>[x.estado,x.quitable]))),[['volvio',false]]);
+  delete s.ctx.SalaTablero;
   // sin órdenes en la hoja vuelve a estar lista
   s.ctx.SalaSalida.llegaron({});
   assert.equal(s.ctx.filaLinea(z).lista,true);

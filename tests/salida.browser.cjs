@@ -263,11 +263,13 @@ async function estatico(route,u,rol){
   const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage(),errors=[],writes=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(()=>{if(!localStorage.getItem('sala_clave')){localStorage.setItem('sala_clave','synthetic');localStorage.setItem('sala_rol','editor');localStorage.setItem('sala_guia','1');localStorage.setItem('sala_guia_v3','1');}});
+  /* el arnés de la mesa (sustituye al pidDe real, que no se puede reasignar): `SalaTablero.pidDe(slug)` enseña la versión de cada pieza (las de PIEZAS); window.__mesaPid se cambia a mano */
+  await page.addInitScript(mapa=>{window.__mesaMapa=mapa;window.__mesaPid=slug=>mapa[slug]||null;let api;Object.defineProperty(window,'SalaTablero',{configurable:true,get:()=>api,set:x=>{if(x&&typeof x==='object')Object.defineProperty(x,'pidDe',{configurable:true,get:()=>slug=>window.__mesaPid(slug),set(){}});api=x}})},Object.fromEntries(PIEZAS.map(p=>[p[1],p[0]])));
   const lista=(i,n)=>{const [pid,slug,nombre,formato]=PIEZAS[i];return {pieza:nombre,estado:'lista',portada:`laminas/${slug}/L1.png`,
    paquete:{carpeta:(i+1)+' · '+nombre,orden:i+1,url:'https://drive.google.com/drive/folders/sintetica',formato,id:pid,slug,sello:String(i+1).repeat(12),
     imagenes:Array.from({length:n},(_,k)=>({n:k+1,src:`laminas/${slug}/L${k+1}.png`,archivo:`0${k+1}.png`,dice:`${nombre} lámina ${k+1}`}))},
    copy:{texto:TEXTO,instagram:TEXTO,comentario:LIGA_IG,facebook:TEXTO,revision:[]},hitos:[]};};
-  const hoja={'Pieza Uno':lista(0,3),'Pieza Tres':lista(2,1)},modo={guardar:'ok'};
+  const hoja={'Pieza Uno':lista(0,3),'Pieza Tres':lista(2,1)},modo={guardar:'ok',exp:'ok'};
   await page.route('**/*',async route=>{
    const req=route.request(),u=new URL(req.url());
    if(req.method()==='POST'){const d=JSON.parse(req.postData()||'{}');writes.push(d);
@@ -276,7 +278,7 @@ async function estatico(route,u,rol){
    if(u.hostname==='script.google.com'){
     const r=u.searchParams.get('recurso');
     if(r==='dia')return route.fulfill({json:dia('editor')});
-    if(r==='expedientes')return route.fulfill({json:{ok:true,expedientes:hoja}});
+    if(r==='expedientes'){if(modo.exp==='cae')return route.abort('failed');return route.fulfill({json:{ok:true,expedientes:hoja}});}
     if(r==='reglas')return route.fulfill({json:{ok:true,reglas:{nube_ejecuta_etapas:'prospecto',semillero_activo:'0'},motores:[]}});
     return route.fulfill({json:{ok:true,cola:[],fabrica:[],ideas:[]}});
    }
@@ -304,7 +306,7 @@ async function estatico(route,u,rol){
   await page.waitForFunction(()=>!document.querySelector('.sal-hoja'),null,{timeout:15000});await montonDe(1);
   assert.deepEqual(await nombres(),['Pieza Tres']);
   assert.equal(await page.locator('#salidaHoy h2').textContent(),'1 lista para lanzar');
-  assert.match((await page.locator('#salidaHoy .sal-cambios').innerText()).replace(/\s+/g,' '),/^1 pieza con cambio pedido \(.+\): Pieza Uno · imagen 2: «Más luminosa y sin letrero» Quitar la petición$/);
+  assert.match((await page.locator('#salidaHoy .sal-cambios').innerText()).replace(/\s+/g,' '),/^1 pieza con cambio pedido \(.+\): Pieza Uno · imagen 2: «Más luminosa y sin letrero»\. Producción la rehace con tu nota \(puede tardar varias horas\)\. Quitar la petición$/);
   assert.match(await page.locator('#salidaHoy .sal-estado').textContent(),/Cambio pedido\. «Pieza Uno» sale de tu montón/);
   for(let i=0;i<40&&(await page.evaluate(()=>(JSON.parse(localStorage.getItem('sala_resumen_v1')||'{}')).listas))!==1;i++)await page.waitForTimeout(100);
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sala_resumen_v1')).listas),1,'YOD OS cuenta lo que sí está en el montón');
@@ -333,7 +335,7 @@ async function estatico(route,u,rol){
   await page.waitForSelector('.bt-choice [data-unreopen]');
   assert.match((await page.locator('.bt-choice .bt-editor-note').last().innerText()).replace(/\s+/g,' '),/^CAMBIO PEDIDO Cambia el texto: quita el plazo$/i);
   assert.match(await page.locator('.bt-choice .bt-notice').textContent(),/Tu petición quedó guardada en el Sheet\./);
-  assert.match(await page.locator('.bt-choice .bt-gesture-hint').textContent(),/^Cambio pedido: Producción rehace esta página con tu nota y te la trae para aprobar\./);
+  assert.match(await page.locator('.bt-choice .bt-gesture-hint').textContent(),/^Cambio pedido: Producción rehace esta página con tu nota y te la trae para aprobar \(puede tardar varias horas\)\./);
   assert.equal(await page.locator('.bt-choice [data-reopen]').count(),0,'con la orden viva no se pide otra vez');
   assert.equal(await page.locator('#salidaHoy .sal-carta').count(),0,'las dos piezas salieron del montón');
   assert.equal(await page.locator('#salidaHoy .sal-cambios li').count(),2);
@@ -360,6 +362,78 @@ async function estatico(route,u,rol){
   assert.equal(await page.locator('.sal-hoja').count(),1);assert.equal(await page.locator('#salCambioOk').isDisabled(),false);
   await page.evaluate(()=>cerrarCapas());
   assert.deepEqual(await nombres(),['Pieza Uno','Pieza Tres']);assert.equal(await page.locator('#salidaHoy .sal-cambios').count(),0);
+  // 8b) segunda vuelta: el registro ya es de la versión rehecha y trae `paquete` (la empacada). El paquete viejo NO vuelve al montón
+  modo.guardar='ok';const REHECHA='uno-nube-2026-11-10-eeeeee',antesSV=writes.length;
+  hoja['cambio:uno']={v:1,pieza:'Pieza Uno',tira:REHECHA,paquete:PIEZAS[0][0],ordenes:[{n:1,nota:'Segunda vuelta',cuando:'2026-11-10T05:00:00.000Z',por:'editor'}],cuando:'2026-11-10T05:00:00.000Z',por:'editor'};
+  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
+  assert.deepEqual(await nombres(),['Pieza Tres'],'el paquete viejo no se ofrece como listo');
+  const pie=()=>page.locator('#salidaHoy .sal-cambios').innerText().then(t=>t.replace(/\s+/g,' '));
+  assert.match(await pie(),/Pieza Uno · imagen 1: «Segunda vuelta»/);
+  const ponMesa=v=>page.evaluate(async v=>{window.__mesaPid=s=>s==='uno'?v:(window.__mesaMapa[s]||null);await SalaSalida.pintar()},v);
+  // con la mesa sin saber su versión no se quita nada (no se puede confirmar que Producción no la haya rehecho) y no se escribe
+  await ponMesa(null);
+  assert.equal(await page.locator('#salidaHoy [data-quitar-cambio]').count(),0,'sin confirmación de la mesa no hay botón de quitar');
+  assert.equal((await page.evaluate(()=>SalaSalida.quitarCambio('uno',1))).motivo,'No pude confirmar con tu mesa si Producción ya la rehízo. Actualiza e inténtalo otra vez.');
+  assert.equal(writes.length,antesSV,'quitar sin confirmación no escribe');
+  // la mesa enseña la versión rehecha, sin paquete nuevo: Producción aún no la atiende → se puede quitar
+  await ponMesa(REHECHA);
+  assert.match(await pie(),/Producción la rehace con tu nota \(puede tardar varias horas\)\. Quitar la petición$/);
+  // la mesa ya trae una versión todavía más nueva: 'volvio', sin botón de quitar
+  await ponMesa('uno-nube-2026-11-11-ffffff');
+  assert.match(await pie(),/Hay una versión nueva: cuando esté aprobada y con su paquete nuevo, vuelve aquí\./);
+  assert.equal(await page.locator('#salidaHoy [data-quitar-cambio]').count(),0,'lo que ya se rehízo no se quita desde el montón');
+  assert.deepEqual(await nombres(),['Pieza Tres']);
+  assert.equal((await page.evaluate(()=>SalaSalida.quitarCambio('uno',1))).motivo,'Producción ya la rehízo: decide la versión nueva en tu mesa.');
+  assert.equal((await page.evaluate(()=>SalaSalida.quitarCambio('uno',7))).motivo,'Esa petición ya no está.');
+  assert.deepEqual(await page.evaluate(()=>SalaSalida.cambioDePieza('Pieza Uno','uno').estado),'volvio');
+  // pedir cambio sobre una versión que ya no es la vigente en la mesa
+  assert.equal((await page.evaluate(t=>SalaSalida.pedirCambio({slug:'uno',pieza:'Pieza Uno',tira:t,n:1,nota:'x'}),PIEZAS[0][0])).motivo,'Esa versión ya no es la vigente: la versión nueva está en tu mesa.');
+  await ponMesa(null);
+  // motivos de rechazo, en su orden (ninguno escribe)
+  const pide=o=>page.evaluate(o=>SalaSalida.pedirCambio(o),o), T3=PIEZAS[2][0];
+  assert.equal((await pide({slug:'tres',pieza:'Pieza Tres',tira:'../x',n:1,nota:'x'})).motivo,'No pude identificar la pieza o su versión. Actualiza la página e inténtalo otra vez.');
+  assert.equal((await pide({slug:'tres',pieza:'Pieza Tres',tira:T3,n:0,nota:'x'})).motivo,'No pude identificar la imagen.');
+  assert.equal((await pide({slug:'tres',pieza:'Pieza Tres',tira:T3,n:1,nota:'   '})).motivo,'Escribe qué debe cambiar.');
+  // H2: registro de segunda vuelta SIN órdenes (quitadas): la pieza no vuelve al montón y su nombre sigue en el pie
+  hoja['cambio:uno']={v:1,pieza:'Pieza Uno',tira:REHECHA,paquete:PIEZAS[0][0],ordenes:[]};
+  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
+  assert.equal(await page.locator('#salidaHoy .sal-carta[data-publicar="Pieza Uno"]').count(),0);
+  assert.equal(await page.locator('#salidaHoy .sal-cambios li').count(),1,'un renglón por pieza');
+  assert.match(await pie(),/^1 pieza con cambio pedido .*Pieza Uno\. Hay una versión nueva/);
+  assert.equal(await page.locator('#salidaHoy [data-quitar-cambio]').count(),0);
+  // H5: dos registros de la misma pieza (llaves distintas): manda el que la oculta
+  hoja['cambio:uno']={v:1,pieza:'Pieza Uno',tira:PIEZAS[0][0],paquete:PIEZAS[0][0],ordenes:[]};
+  hoja['cambio:uno-viejo']={v:1,pieza:'Pieza Uno',tira:PIEZAS[0][0],paquete:PIEZAS[0][0],ordenes:[{n:2,nota:'La otra llave',cuando:'2026-11-10T05:00:00.000Z',por:'editor'}]};
+  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
+  assert.deepEqual(await nombres(),['Pieza Tres'],'gana el registro que oculta');
+  assert.match(await pie(),/Pieza Uno · imagen 2: «La otra llave»/);
+  delete hoja['cambio:uno-viejo'];delete hoja['cambio:uno'];
+  // H4: el nombre que manda la mesa no es la llave del expediente: el paquete se halla por su slug
+  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});await montonDe(2);
+  const antesH4=writes.length;
+  assert.equal((await pide({slug:'tres',pieza:'Nombre que no es llave',tira:T3,n:1,nota:'x'})).ok,true);
+  await escrituras(antesH4+1);
+  assert.equal(writes[antesH4].expediente.paquete,T3,'`paquete` = el id del paquete de ese slug');
+  hoja['cambio:tres']={v:1,pieza:'Pieza Tres',tira:T3,paquete:T3,ordenes:[]};
+  // (b) una pieza publicada no ofrece pedir cambio y se rechaza con su motivo
+  await page.evaluate(()=>localStorage.setItem('sala_publicadas_v1',JSON.stringify({'Pieza Tres':{fecha:'2026-11-09',liga:'',sello:'3'.repeat(12)}})));
+  assert.deepEqual(await page.evaluate(()=>[SalaSalida.puedePedirCambio(),SalaSalida.puedePedirCambio('Pieza Tres'),SalaSalida.puedePedirCambio('Pieza Uno')]),[true,false,true]);
+  assert.equal((await pide({slug:'tres',pieza:'Pieza Tres',tira:T3,n:1,nota:'x'})).motivo,'Esta pieza ya está publicada: no se rehace.');
+  await page.evaluate(()=>SalaSalida.abrir('Pieza Tres'));await page.waitForSelector('.sal-hoja');
+  assert.equal(await page.locator('#salCambio').count(),0,'una pieza publicada no ofrece «Pedir cambio a una imagen»');
+  assert.equal(await page.locator('#salYa').count(),0);
+  await page.evaluate(()=>{localStorage.removeItem('sala_publicadas_v1');cerrarCapas()});
+  // (c) sin la hoja leída no se pide ni se quita nada
+  const antesC=writes.length;modo.exp='cae';await page.reload();await page.waitForSelector('#salidaHoy .sal-nota [data-releer]',{timeout:30000});
+  assert.equal(await page.evaluate(()=>SalaSalida.puedePedirCambio()),false);
+  assert.equal((await pide({slug:'tres',pieza:'Pieza Tres',tira:T3,n:1,nota:'x'})).motivo,'Todavía no se puede pedir el cambio: falta que conteste el Sheet.');
+  assert.equal((await page.evaluate(()=>SalaSalida.quitarCambio('uno',1))).motivo,'Todavía no se puede quitar la petición: falta que conteste el Sheet.');
+  assert.equal(await page.locator('#salidaHoy [data-quitar-cambio]').count(),0);
+  assert.equal(writes.length,antesC,'nada de lo anterior escribe');
+  modo.exp='ok';
   // 9) nunca decide ni publica: sólo escribió órdenes de cambio
   assert.deepEqual([...new Set(writes.map(x=>x.accion))],['expediente']);
   assert.ok(writes.every(x=>/^cambio:(uno|tres)$/.test(x.pieza)));

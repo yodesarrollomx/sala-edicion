@@ -12,7 +12,11 @@
   "EXT-ACTIONS"
  ],
  "tests": [
-  "PENDIENTE"
+  "python3 -m unittest discover -s tests -p '*_test.py' (754 OK). Nuevas en tests/sala_cambios_test.py (27): contrato compartido con la pantalla (tests/fixtures/cambios-casos.json), aplicar sólo sobre láminas aprobadas, montador de punta a punta (rehecha con id nuevo y origen rehecha-de; nada con orden de otra versión), estación (la pieza deja de estar lista), órdenes sin tira vigente contadas y avisadas, pieza publicada ignorada, prioridad con tope de 1, y SoloLecturaTests con ast: sólo sala_cambios.py nombra la llave cambio: y no importa red ni el cliente.",
+  "node --test tests/*.test.cjs tests/*.test.mjs (193 OK): tabla de retiro (primera y segunda vuelta, quitada, sin paquete, inválida), paquete en conOrden/sinOrden, mismo contrato que la nube, guardia de la mesa (eligible y pieza publicada), pidDe nulo con copia guardada o sin cargar, «Cómo va» en pedido/volvió/sin paquete con el sala-salida.js real.",
+  "node tests/salida.browser.cjs (teléfono y escritorio, recorridos monton y cambio, 0 errores, 0 escrituras reales): pedir desde la hoja y desde la mesa sin base, segunda vuelta fuera del montón, «volvió» sin botón, quitar sólo con la mesa confirmando, dos registros de la misma pieza, pieza publicada, sin hoja leída, los siete motivos.",
+  "node tests/tablero-sala.browser.cjs · mesa-local · arranque-progresivo · sala2 (sin regresión; el día de respaldo no ofrece «Pedir cambio») · python3 nube/verificar.py (todo en orden; sello al día).",
+  "Mutaciones: siete en la primera entrega y las del auditor en la segunda (ver PR); la prueba de solo lectura falla si un módulo de nube/ arma 'cambio:'."
  ],
  "rollback": "Revertir el PR quita los botones y la lectura de órdenes; las llaves cambio: que ya existan en EXPEDIENTES quedan como historia sin efecto (nada las lee) y las piezas vuelven al montón con su paquete. Nada que restaurar en Drive ni en Apps Script."
 }
