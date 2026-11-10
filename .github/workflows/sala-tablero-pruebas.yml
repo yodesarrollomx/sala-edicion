@@ -6,6 +6,8 @@ on:
   pull_request:
     paths:
       - 'index.html'
+      - 'historias.html'
+      - 'tests/historias.test.cjs'
       - 'sala2.*'
       - 'tests/sala2.browser.cjs'
       - 'medios-publicos.js'
@@ -64,6 +66,8 @@ jobs:
           node tests/mesa-local.browser.cjs
           node tests/arranque-progresivo.browser.cjs
           node tests/sala2.browser.cjs
+      - name: Historias (Sala 4.0) contra un backend simulado
+        run: node --test tests/historias.test.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -1,16 +1,37 @@
 {
- "nota": "El universo de las historias de 15 segundos. Semilla del piloto (9-nov-2026). Todo lo que cambia entre historias vive aquí como dato; el código sólo lo lee. Personajes ficticios. No usar ubicaciones vetadas (docs/CONTENIDO-VETADO.md).",
+ "nota": "El universo de las historias de 15 segundos. Es la SEMILLA: la primera corrida de la Sala 4.0 la copia a la hoja EXPEDIENTES (v4:universo) y desde entonces manda lo que el editor guarde en la pantalla Historias. El código sólo lo lee. Personajes ficticios. No usar ubicaciones vetadas (docs/CONTENIDO-VETADO.md).",
+ "version": 1,
  "formato": {
   "segundos": 15,
   "estilo": "Vertical 9:16. One single continuous unbroken shot, no cuts, slow handheld cinematic camera that follows the character, natural light, realistic, shallow depth of field.",
   "audio": "Only the character's voice and natural ambient sound. No music. The character speaks natural Mexican Spanish with lips in sync.",
   "prohibido": "No on-screen text, no subtitles, no captions, no logos, no watermarks."
  },
+ "ajustes": {
+  "semillero": 1,
+  "propuestas_en_espera": 2,
+  "episodios": 10,
+  "tope_clips_dia": 2,
+  "piloto_primero": 1,
+  "listas_carpeta": "1OamVBbBzFbpRP-95oRY2PSWD_6uKP_Tf"
+ },
  "vertices": {
-  "ppp": {"nombre": "Plan de Potencial", "mensaje": "Antes de construir o vender, hay que saber cuánto puede dar de verdad un terreno."},
-  "capital": {"nombre": "Captación de capital", "mensaje": "Un proyecto ordenado atrae inversionistas."},
-  "arquitectura": {"nombre": "Arquitectura de autor", "mensaje": "El diseño es lo que vuelve valioso lo que se construye."},
-  "obra": {"nombre": "Control de obra", "mensaje": "Lo que no se mide en obra se paga después."}
+  "ppp": {
+   "nombre": "Plan de Potencial",
+   "mensaje": "Antes de construir o vender, hay que saber cuánto puede dar de verdad un terreno."
+  },
+  "capital": {
+   "nombre": "Captación de capital",
+   "mensaje": "Un proyecto ordenado atrae inversionistas."
+  },
+  "arquitectura": {
+   "nombre": "Arquitectura de autor",
+   "mensaje": "El diseño es lo que vuelve valioso lo que se construye."
+  },
+  "obra": {
+   "nombre": "Control de obra",
+   "mensaje": "Lo que no se mide en obra se paga después."
+  }
  },
  "personajes": {
   "marta": {
@@ -32,12 +53,16 @@
   "piloto-terreno": {
    "titulo": "El terreno que no hacía nada",
    "vertice": "ppp",
-   "personajes": ["marta"],
+   "personajes": [
+    "marta"
+   ],
    "lugar": "terreno",
    "accion": "She walks slowly across the lot toward the camera, looks around at the empty ground, then stops and looks straight into the lens with a small relieved smile.",
    "dialogo": "Tres años pagando por este terreno y nunca supe qué hacer con él. Hasta que alguien me dijo cuánto puede dar de verdad. Hoy ya sé qué voy a construir aquí.",
    "gancho": "In the last second, a hand enters the frame from the side and offers her a rolled architectural plan; she takes it.",
-   "cruza_con": ["arquitectura"]
+   "cruza_con": [
+    "arquitectura"
+   ]
   }
  }
 }

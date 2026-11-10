@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="icon" href="favicon.ico" sizes="any">
+<title>Historias · Sala 4.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&display=swap">
+<!--
+  Sala 4.0 · Historias en episodios de 15 segundos (9-nov-2026).
+  Lee y escribe la hoja EXPEDIENTES con acciones que el Apps Script YA atiende
+  (recurso=expedientes, accion=expediente). No decide por la mesa de siempre ni la toca.
+  Dueños: el editor escribe v4:universo, v4:serie:<id> y v4:dec:<id>; la nube, v4:prod y v4:estado.
+  INVIOLABLE 11: ningún botón depende de un temporizador; el estado cambia en el clic.
+-->
+<style>
+:root{--fondo:#f6f3ec;--tarjeta:#fffdf9;--linea:#e3ddd0;--linea2:#cfc7b6;--tinta:#1c1a16;--gris:#5f5a50;--guia:#7a7365;
+  --si:#2f8a5b;--si-suave:#e3f4ea;--no:#c0503f;--no-suave:#fbe9e5;--oro:#b08637;--oro-suave:#f7edd8;--azul:#3b6ea8;--azul-suave:#e6eef8;
+  --serif:'Instrument Serif',Georgia,serif;--sans:'Instrument Sans',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root{--fondo:#131316;--tarjeta:#1b1b20;--linea:#2b2b33;--linea2:#3a3a45;--tinta:#f2efe8;--gris:#b0aa9f;--guia:#8e877c;
+  --si:#57a582;--si-suave:#1c3529;--no:#d4796a;--no-suave:#3a221e;--oro:#d9b46f;--oro-suave:#332b19;--azul:#7fa6d9;--azul-suave:#1c2838}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--oro);outline-offset:2px}
+a{color:var(--azul)}
+.app{max-width:760px;margin:0 auto;padding:16px 16px 96px}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:8px 0 14px}
+h1{font-family:var(--serif);font-weight:400;font-size:34px;line-height:1.1;margin:0;text-wrap:balance}
+h2{font-family:var(--serif);font-weight:400;font-size:25px;line-height:1.15;margin:0 0 4px;text-wrap:balance}
+h3{font-size:15px;font-weight:600;margin:0}
+.sub{color:var(--guia);font-size:14px;margin:0}
+nav{display:flex;gap:6px;margin:0 0 16px;border-bottom:1px solid var(--linea);overflow-x:auto}
+nav button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px;color:var(--gris);font-weight:500;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--tinta);border-bottom-color:var(--oro)}
+.tarjeta{background:var(--tarjeta);border:1px solid var(--linea);border-radius:14px;padding:16px;margin:0 0 12px}
+.fila{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.entre{justify-content:space-between}
+.chip{display:inline-block;font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--oro-suave);color:var(--oro);white-space:nowrap}
+.chip.si{background:var(--si-suave);color:var(--si)} .chip.no{background:var(--no-suave);color:var(--no)} .chip.azul{background:var(--azul-suave);color:var(--azul)}
+.btn{border:1px solid var(--linea2);background:var(--tarjeta);border-radius:10px;padding:9px 14px;font-weight:600;min-height:42px}
+.btn.si{background:var(--si);border-color:var(--si);color:#fff} .btn.no{color:var(--no);border-color:var(--no)}
+.btn.oro{background:var(--oro);border-color:var(--oro);color:#fff} .btn.liga{border:0;background:none;color:var(--azul);padding:9px 4px}
+.btn[disabled]{opacity:.5;cursor:default}
+label{display:block;font-size:13px;font-weight:600;color:var(--gris);margin:10px 0 4px}
+input[type=text],input[type=number],textarea,select{width:100%;border:1px solid var(--linea2);border-radius:10px;padding:9px 11px;background:var(--fondo)}
+textarea{min-height:68px;resize:vertical}
+.cuenta{font-size:12.5px;color:var(--guia);font-variant-numeric:tabular-nums} .cuenta.mal{color:var(--no);font-weight:600}
+.ep{border-top:1px solid var(--linea);padding:14px 0 4px} .ep:first-of-type{border-top:0;padding-top:4px}
+.num{font-family:var(--serif);font-size:22px;min-width:2ch;font-variant-numeric:tabular-nums}
+.dice{font-family:var(--serif);font-size:19px;line-height:1.3;margin:6px 0}
+.video{width:100%;aspect-ratio:9/16;max-height:70vh;border:0;border-radius:12px;background:#000;margin:8px 0}
+.aviso{border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:14.5px;background:var(--azul-suave);color:var(--azul)}
+.aviso.mal{background:var(--no-suave);color:var(--no)} .aviso.bien{background:var(--si-suave);color:var(--si)}
+.vacio{color:var(--guia);text-align:center;padding:28px 8px}
+details summary{cursor:pointer;font-weight:600;padding:6px 0}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:10px} @media(max-width:520px){.dos{grid-template-columns:1fr}}
+ul.plano{list-style:none;margin:0;padding:0}
+</style></head>
+<body>
+<div class="app">
+  <header>
+    <div><h1>Historias</h1><p class="sub">Una historia en 10 días, un episodio de 15 segundos por día.</p></div>
+    <a href="./">← La Sala</a>
+  </header>
+  <div id="aviso" role="status" aria-live="polite"></div>
+  <nav role="tablist" id="tabs">
+    <button role="tab" data-v="series" aria-selected="true">Series</button>
+    <button role="tab" data-v="universo" aria-selected="false">Universo</button>
+    <button role="tab" data-v="ajustes" aria-selected="false">Ajustes</button>
+  </nav>
+  <main id="vista"></main>
+</div>
+<script>
+'use strict';
+const GAS_DEF='https://script.google.com/macros/s/AKfycbx61UWsEYCL_dHzi0JrUv3GuAUFSDWW4iCmlNmbDDvWBIYY4Hhqkf6sYmt4d8UGIlk7MA/exec';
+const LS=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const GAS=()=>LS('sala_gas')||GAS_DEF;
+const CLAVE=()=>LS('pyod_clave_v1')||LS('sala_clave')||'';     // la misma llave viva de la Sala; no se copia
+const PALABRAS=38, VETADAS=['hermosillo','sonora','mexico'], USD_CLIP=1.05;
+const $=s=>document.querySelector(s);
+const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const plano=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const slug=t=>plano(t).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)||'x';
+const palabras=t=>String(t||'').trim().split(/\s+/).filter(Boolean).length;
+const entero=(v,d=0)=>{const n=parseInt(v,10);return Number.isFinite(n)&&n>=0?n:d};
+
+let E={universo:null,serie:{},dec:{},prod:{},estado:null}, VISTA='series', ABIERTA=null, SEMILLA=null, CARGADO=false;
+
+/* ---------- datos ---------- */
+function separar(exp){
+  const e={universo:null,serie:{},dec:{},prod:{},estado:null};
+  for(const [k,doc] of Object.entries(exp||{})){
+    if(!k.startsWith('v4:')||!doc||typeof doc!=='object') continue;
+    const [clase,...r]=k.slice(3).split(':'), id=r.join(':');
+    if(clase==='universo'||clase==='estado') e[clase]=doc;
+    else if(['serie','dec','prod'].includes(clase)&&id) e[clase][id]=doc;
+  }
+  return e;
+}
+async function cargar(){
+  if(!CLAVE()){ avisar('No has entrado. Abre primero <a href="./">la Sala</a> con tu llave y vuelve.','mal'); pintar(); return }
+  try{
+    const r=await fetch(GAS()+'?recurso=expedientes&clave='+encodeURIComponent(CLAVE()));
+    const j=JSON.parse(await r.text());
+    if(!j||j.ok!==true||typeof j.expedientes!=='object') throw new Error((j&&j.error)||'la hoja no contestó');
+    E=separar(j.expedientes); CARGADO=true; avisar('');
+  }catch(err){ avisar('No pude leer la hoja: '+esc(err.message)+'. Lo que ves puede no estar al día.','mal') }
+  if(!E.universo&&!SEMILLA){ try{ SEMILLA=await (await fetch('datos/universo/universo.json?v='+Date.now())).json() }catch(e){} }
+  pintar();
+}
+const AJ_FABRICA={semillero:1,propuestas_en_espera:2,episodios:10,tope_clips_dia:2,piloto_primero:1,listas_carpeta:''};
+function universo(){
+  const u=JSON.parse(JSON.stringify(E.universo||SEMILLA||{}));
+  u.ajustes=Object.assign({},AJ_FABRICA,u.ajustes||{});
+  for(const k of ['vertices','personajes','lugares']) u[k]=u[k]||{};
+  u.formato=u.formato||{};
+  delete u.historias; delete u.nota;
+  return u;
+}
+async function guardar(clase,id,doc){
+  if(!CARGADO){ avisar('Todavía no leo la hoja; no guardo a ciegas. Recarga la página.','mal'); return false }
+  try{
+    const r=await fetch(GAS(),{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({accion:'expediente',clave:CLAVE(),pieza:'v4:'+clase+(id?':'+id:''),expediente:doc})});
+    const j=JSON.parse(await r.text());
+    if(!j||j.ok!==true) throw new Error((j&&j.error)||'sin confirmación');
+    if(clase==='universo') E.universo=doc; else E[clase][id]=doc;
+    avisar('Guardado.','bien'); return true;
+  }catch(err){
+    avisar('No se guardó: '+esc(err.message)+(/solo el agente/.test(err.message)?' — por ahora sólo la llave de Dirección puede editar aquí.':''),'mal');
+    return false;
+  }
+}
+function avisar(html,clase){ $('#aviso').innerHTML=html?`<div class="aviso ${clase||''}">${html}</div>`:'' }
+
+/* ---------- estados derivados (la misma lógica que nube/sala_v4.py) ---------- */
+const ultima=(prod,n)=>{const vs=((((prod||{}).episodios||{})[String(n)])||{}).versiones||[];return vs.length?vs[vs.length-1]:null};
+function marcaVigente(dec,prod,n){
+  const u=ultima(prod,n), m=(((dec||{}).episodios||{})[String(n)])||{};
+  return u&&entero(m.v)===entero(u.v)?m:{};
+}
+function estadoEp(s,dec,prod,ep){
+  const u=ultima(prod,ep.n), m=marcaVigente(dec,prod,ep.n);
+  if(!u) return (dec||{}).serie==='si'?['En fila para producir','']:['Sin video',''];
+  if(m.marca==='si') return ['Aprobado','si'];
+  if(m.marca==='no') return ['No va','no'];
+  if(m.marca==='cambio') return ['Cambio pedido · se rehace','azul'];
+  return ['Listo para que lo veas',''];
+}
+function estadoSerie(s,dec,prod){
+  if((dec||{}).serie==='no') return ['Descartada','no'];
+  if((dec||{}).serie!=='si') return ['Propuesta · espera tu decisión',''];
+  if((prod||{}).paquete) return ['Paquete listo en Drive','si'];
+  const eps=s.episodios||[], ok=eps.filter(ep=>marcaVigente(dec,prod,ep.n).marca==='si').length;
+  const porVer=eps.filter(ep=>ultima(prod,ep.n)&&!marcaVigente(dec,prod,ep.n).marca).length;
+  return [porVer?`${porVer} por revisar · ${ok} de ${eps.length} aprobados`:`En producción · ${ok} de ${eps.length} aprobados`,porVer?'':'azul'];
+}
+function problemas(s){
+  const p=[], u=universo(), quien=Object.assign({},u.personajes,s.personajes||{}), donde=Object.assign({},u.lugares,s.lugares||{});
+  if(!String(s.titulo||'').trim()) p.push('Falta el título.');
+  if(!quien[s.personaje]) p.push('Elige un personaje.');
+  (s.episodios||[]).forEach((ep,i)=>{
+    if(!donde[ep.lugar||s.lugar]) p.push(`Episodio ${i+1}: elige un lugar.`);
+    const tomas=entero(ep.bloque,15)>=30?2:1;
+    for(let t=1;t<=tomas;t++){ const suf=t===1?'':'2';
+      if(!String(ep['accion'+suf]||'').trim()) p.push(`Episodio ${i+1}: falta la acción${suf?' de la segunda toma':''}.`);
+      if(palabras(ep['dialogo'+suf])>PALABRAS) p.push(`Episodio ${i+1}: la frase no cabe en 15 segundos (máximo ${PALABRAS} palabras).`);
+    }
+  });
+  const todo=plano(JSON.stringify([s.titulo,s.trama,s.episodios,s.personajes,s.lugares]));
+  const malas=VETADAS.filter(v=>new RegExp('(^|[^a-z0-9])'+v+'([^a-z0-9]|$)').test(todo));
+  if(malas.length) p.push('Trae una ubicación vetada: '+malas.join(', ')+'.');
+  return p;
+}
+
+/* ---------- vistas ---------- */
+function pintar(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===VISTA)));
+  $('#vista').innerHTML = VISTA==='universo'?vUniverso():VISTA==='ajustes'?vAjustes():(ABIERTA&&E.serie[ABIERTA]?vSerie(ABIERTA):vSeries());
+}
+function vSeries(){
+  const ids=Object.keys(E.serie).sort((a,b)=>String(E.serie[b].creada||'').localeCompare(String(E.serie[a].creada||'')));
+  const tarjetas=ids.map(id=>{const s=E.serie[id],[txt,cl]=estadoSerie(s,E.dec[id],E.prod[id]);
+    return `<button class="tarjeta" style="display:block;width:100%;text-align:left" data-abrir="${esc(id)}">
+      <div class="fila entre"><h2>${esc(s.titulo||'Sin título')}</h2><span class="chip ${cl}">${esc(txt)}</span></div>
+      <p class="sub">${esc(s.trama||'')}</p></button>`}).join('');
+  return `<div class="fila entre" style="margin-bottom:12px"><p class="sub">${ids.length} serie${ids.length===1?'':'s'}</p>
+    <button class="btn oro" data-accion="nueva">Nueva serie</button></div>`+
+    (tarjetas||`<p class="vacio">Todavía no hay series. El semillero propone una en su siguiente corrida, o crea la tuya con «Nueva serie».</p>`);
+}
+function opciones(mapa,sel){ return Object.entries(mapa).map(([k,v])=>`<option value="${esc(k)}"${k===sel?' selected':''}>${esc(v.nombre||k)}</option>`).join('') }
+function vSerie(id){
+  const s=E.serie[id], dec=E.dec[id]||{}, prod=E.prod[id]||{}, u=universo();
+  const quien=Object.assign({},u.personajes,s.personajes||{}), donde=Object.assign({},u.lugares,s.lugares||{});
+  const [txt,cl]=estadoSerie(s,dec,prod), pr=problemas(s);
+  const eps=(s.episodios||[]).map((ep,i)=>{
+    const [et,ec]=estadoEp(s,dec,prod,ep), ult=ultima(prod,ep.n), m=marcaVigente(dec,prod,ep.n), b30=entero(ep.bloque,15)>=30;
+    const frase=(suf)=>`<label for="d${suf}${i}">Lo que dice${suf?' (segunda toma)':''}</label>
+      <textarea id="d${suf}${i}" data-ep="${i}" data-campo="dialogo${suf}">${esc(ep['dialogo'+suf]||'')}</textarea>
+      <span class="cuenta ${palabras(ep['dialogo'+suf])>PALABRAS?'mal':''}" data-cuenta="${i}${suf}">${palabras(ep['dialogo'+suf])} de ${PALABRAS} palabras</span>`;
+    return `<section class="ep">
+      <div class="fila entre"><div class="fila"><span class="num">${esc(ep.n)}</span><h3>${esc(ep.titulo||'Episodio '+ep.n)}</h3></div><span class="chip ${ec}">${esc(et)}</span></div>
+      <p class="dice">«${esc(ep.dialogo||'')}»</p>
+      ${ult?`<div data-video="${i}"><button class="btn" data-ver="${esc(ult.drive)}" data-en="${i}">Ver el video (versión ${esc(ult.v)})</button></div>
+        <div class="fila" style="margin:8px 0">
+          <button class="btn si" data-marca="si" data-n="${esc(ep.n)}"${m.marca==='si'?' disabled':''}>Sí</button>
+          <button class="btn" data-pedir="${i}">Pedir cambio</button>
+          <button class="btn no" data-marca="no" data-n="${esc(ep.n)}"${m.marca==='no'?' disabled':''}>No va</button>
+        </div>
+        <div data-cambio="${i}" hidden><label for="n${i}">¿Qué hay que cambiar?</label><textarea id="n${i}" data-nota="${esc(ep.n)}"></textarea>
+          <div class="fila" style="margin:8px 0"><button class="btn oro" data-marca="cambio" data-n="${esc(ep.n)}">Enviar el cambio</button></div></div>
+        ${m.marca==='cambio'&&m.nota?`<p class="sub">Pediste: ${esc(m.nota)}</p>`:''}`:''}
+      <details><summary>Editar el episodio</summary>
+        <label for="t${i}">Título</label><input type="text" id="t${i}" data-ep="${i}" data-campo="titulo" value="${esc(ep.titulo||'')}">
+        ${frase('')}
+        <label for="a${i}">Lo que pasa (acción y cámara, en inglés)</label><textarea id="a${i}" data-ep="${i}" data-campo="accion">${esc(ep.accion||'')}</textarea>
+        <label for="g${i}">Gancho del último segundo (en inglés)</label><textarea id="g${i}" data-ep="${i}" data-campo="gancho">${esc(ep.gancho||'')}</textarea>
+        <div class="dos">
+          <div><label for="l${i}">Lugar</label><select id="l${i}" data-ep="${i}" data-campo="lugar">${opciones(donde,ep.lugar||s.lugar)}</select></div>
+          <div><label for="b${i}">Duración</label><select id="b${i}" data-ep="${i}" data-campo="bloque"><option value="15"${b30?'':' selected'}>15 segundos (una toma)</option><option value="30"${b30?' selected':''}>30 segundos (dos tomas)</option></select></div>
+        </div>
+        ${b30?`${frase('2')}<label for="a2${i}">Lo que pasa en la segunda toma (en inglés)</label><textarea id="a2${i}" data-ep="${i}" data-campo="accion2">${esc(ep.accion2||'')}</textarea>`:''}
+        <label class="fila" style="font-weight:500"><input type="checkbox" data-ep="${i}" data-campo="continua"${ep.continua?' checked':''} style="width:auto"> Empieza donde terminó el episodio anterior (misma escena)</label>
+      </details></section>`}).join('');
+  return `<button class="btn liga" data-accion="volver">← Todas las series</button>
+  <div class="tarjeta">
+    <div class="fila entre"><span class="chip ${cl}">${esc(txt)}</span>
+      <div class="fila">${dec.serie==='si'?'':`<button class="btn si" data-serie="si"${pr.length?' disabled':''}>Aprobar la serie</button>`}
+      ${dec.serie==='no'?'':`<button class="btn no" data-serie="no">No va</button>`}</div></div>
+    <label for="sTit">Título</label><input type="text" id="sTit" data-serie-campo="titulo" value="${esc(s.titulo||'')}">
+    <label for="sTra">La historia en una línea</label><textarea id="sTra" data-serie-campo="trama">${esc(s.trama||'')}</textarea>
+    <div class="dos">
+      <div><label for="sVer">Vértice del negocio</label><select id="sVer" data-serie-campo="vertice">${opciones(u.vertices,s.vertice)}</select></div>
+      <div><label for="sPer">Protagonista (el cliente)</label><select id="sPer" data-serie-campo="personaje">${opciones(quien,s.personaje)}</select></div>
+    </div>
+    ${pr.length?`<div class="aviso mal" style="margin-top:12px"><ul class="plano">${pr.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+    <p class="sub" style="margin-top:10px">Aprobar la serie autoriza producirla: cada toma de 15 segundos cuesta alrededor de ${USD_CLIP.toFixed(2)} USD y el tope del día está en Ajustes.</p>
+  </div>
+  <div class="tarjeta">${eps||'<p class="vacio">Sin episodios.</p>'}
+    <div class="fila" style="margin-top:14px"><button class="btn oro" data-accion="guardar-serie">Guardar cambios de texto</button></div></div>`;
+}
+function fichas(mapa,clase,campos){
+  return Object.entries(mapa).map(([k,v])=>`<details class="tarjeta"><summary>${esc(v.nombre||k)}</summary>
+    ${campos.map(([c,et,largo])=>`<label for="${clase}-${esc(k)}-${c}">${et}</label>${largo
+      ?`<textarea id="${clase}-${esc(k)}-${c}" data-u="${clase}" data-k="${esc(k)}" data-c="${c}">${esc(v[c]||'')}</textarea>`
+      :`<input type="text" id="${clase}-${esc(k)}-${c}" data-u="${clase}" data-k="${esc(k)}" data-c="${c}" value="${esc(v[c]||'')}">`}`).join('')}
+    <button class="btn no" style="margin-top:10px" data-quitar="${clase}" data-k="${esc(k)}">Quitar</button></details>`).join('');
+}
+function vUniverso(){
+  const u=universo(), f=u.formato;
+  return `<p class="sub" style="margin-bottom:12px">Lo que guardes aquí lo usan el semillero y la producción desde su siguiente corrida.</p>
+  <h2>Vértices del negocio</h2>${fichas(u.vertices,'vertices',[['nombre','Nombre'],['mensaje','Lo que debe quedar claro',1]])}
+  <div class="fila"><input type="text" style="flex:1;min-width:160px" data-nuevo="vertices" aria-label="Nombre del vértice nuevo" placeholder="Nombre del vértice nuevo"><button class="btn" data-agregar="vertices">Agregar</button></div>
+  <h2 style="margin-top:22px">Personajes</h2>${fichas(u.personajes,'personajes',[['nombre','Nombre'],['industria','Industria'],['aspecto','Cómo se ve (en inglés, para que salga igual)',1],['voz','Cómo suena (en inglés)'],['quiere','Qué quiere']])}
+  <div class="fila"><input type="text" style="flex:1;min-width:160px" data-nuevo="personajes" aria-label="Nombre del personaje nuevo" placeholder="Nombre del personaje nuevo"><button class="btn" data-agregar="personajes">Agregar</button></div>
+  <h2 style="margin-top:22px">Lugares</h2>${fichas(u.lugares,'lugares',[['nombre','Nombre'],['aspecto','Cómo se ve (en inglés)',1]])}
+  <div class="fila"><input type="text" style="flex:1;min-width:160px" data-nuevo="lugares" aria-label="Nombre del lugar nuevo" placeholder="Nombre del lugar nuevo"><button class="btn" data-agregar="lugares">Agregar</button></div>
+  <h2 style="margin-top:22px">Formato de todas las tomas</h2>
+  <div class="tarjeta">
+    <label for="fEst">Estilo de cámara (en inglés)</label><textarea id="fEst" data-f="estilo">${esc(f.estilo||'')}</textarea>
+    <label for="fAud">Audio (en inglés)</label><textarea id="fAud" data-f="audio">${esc(f.audio||'')}</textarea>
+    <label for="fPro">Prohibido en pantalla (en inglés)</label><textarea id="fPro" data-f="prohibido">${esc(f.prohibido||'')}</textarea>
+  </div>
+  <button class="btn oro" data-accion="guardar-universo">Guardar el universo</button>`;
+}
+function vAjustes(){
+  const a=universo().ajustes, est=E.estado, tope=entero(a.tope_clips_dia);
+  return `<div class="tarjeta">
+    <label class="fila" style="font-weight:500"><input type="checkbox" id="ajSem"${entero(a.semillero)?' checked':''} style="width:auto"> Semillero encendido (propone series solo)</label>
+    <div class="dos">
+      <div><label for="ajEsp">Series propuestas en espera, como máximo</label><input type="number" id="ajEsp" min="0" max="10" value="${esc(a.propuestas_en_espera)}"></div>
+      <div><label for="ajEps">Episodios por serie</label><input type="number" id="ajEps" min="1" max="30" value="${esc(a.episodios)}"></div>
+      <div><label for="ajTope">Tomas de 15 segundos por día, como máximo</label><input type="number" id="ajTope" min="0" max="40" value="${esc(tope)}"></div>
+    </div>
+    <p class="sub" id="ajCosto">Gasto máximo al día: alrededor de ${(tope*USD_CLIP).toFixed(2)} USD. En 0 no se produce nada.</p>
+    <label class="fila" style="font-weight:500"><input type="checkbox" id="ajPil"${entero(a.piloto_primero,1)?' checked':''} style="width:auto"> Producir primero el episodio 1 y esperar tu «sí» antes de seguir</label>
+    <div class="fila" style="margin-top:14px"><button class="btn oro" data-accion="guardar-ajustes">Guardar ajustes</button></div>
+  </div>
+  <div class="tarjeta"><h2>Última corrida</h2>${est?`<p class="sub">${esc(String(est.cuando||'').replace('T',' ').replace('Z',' UTC'))} · ${esc(est.clips_hoy)} de ${esc(est.tope)} tomas usadas hoy</p>
+    <ul>${(est.pasos||[]).map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`:'<p class="vacio">La nube todavía no ha corrido.</p>'}
+    <p class="sub">La nube pasa varias veces al día; los horarios de GitHub no son exactos.</p></div>`;
+}
+
+/* ---------- acciones ---------- */
+function recogerSerie(id){
+  const s=JSON.parse(JSON.stringify(E.serie[id]));
+  document.querySelectorAll('[data-serie-campo]').forEach(el=>{ s[el.dataset.serieCampo]=el.value });
+  document.querySelectorAll('[data-ep]').forEach(el=>{ const ep=s.episodios[+el.dataset.ep], c=el.dataset.campo;
+    ep[c]= el.type==='checkbox'?el.checked : c==='bloque'?entero(el.value,15) : el.value });
+  return s;
+}
+async function marcar(id,n,marca){
+  const prod=E.prod[id]||{}, u=ultima(prod,n); if(!u) return;
+  let nota='';
+  if(marca==='cambio'){ const el=document.querySelector(`[data-nota="${n}"]`); nota=(el&&el.value||'').trim();
+    if(!nota){ avisar('Escribe qué hay que cambiar.','mal'); return } }
+  const dec=JSON.parse(JSON.stringify(E.dec[id]||{})); dec.episodios=dec.episodios||{};
+  dec.episodios[String(n)]={v:u.v,marca,nota,cuando:new Date().toISOString()};
+  if(await guardar('dec',id,dec)) pintar();
+}
+document.addEventListener('click',async ev=>{
+  const b=ev.target.closest('button'); if(!b) return;
+  if(b.closest('#tabs')){ VISTA=b.dataset.v; ABIERTA=null; pintar(); return }
+  if(b.dataset.abrir){ ABIERTA=b.dataset.abrir; pintar(); window.scrollTo(0,0); return }
+  if(b.dataset.ver){ document.querySelector(`[data-video="${b.dataset.en}"]`).innerHTML=
+      `<iframe class="video" src="https://drive.google.com/file/d/${encodeURIComponent(b.dataset.ver)}/preview" allow="autoplay" title="Video del episodio"></iframe>`; return }
+  if(b.dataset.pedir){ const c=document.querySelector(`[data-cambio="${b.dataset.pedir}"]`); c.hidden=!c.hidden; if(!c.hidden) c.querySelector('textarea').focus(); return }
+  if(b.dataset.marca){ await marcar(ABIERTA,b.dataset.n,b.dataset.marca); return }
+  if(b.dataset.serie){ const dec=JSON.parse(JSON.stringify(E.dec[ABIERTA]||{})); dec.serie=b.dataset.serie; dec.cuando=new Date().toISOString();
+    if(b.dataset.serie==='si'){ const s=recogerSerie(ABIERTA); if(problemas(s).length){ avisar('Corrige lo marcado antes de aprobar.','mal'); return }
+      if(JSON.stringify(s)!==JSON.stringify(E.serie[ABIERTA])&&!await guardar('serie',ABIERTA,s)) return }
+    if(await guardar('dec',ABIERTA,dec)) pintar(); return }
+  const a=b.dataset.accion;
+  if(a==='volver'){ ABIERTA=null; pintar(); return }
+  if(a==='nueva'){ const u=universo(), n=entero(u.ajustes.episodios,10), id=new Date().toISOString().slice(0,10).replace(/-/g,'')+'-nueva-'+Date.now().toString(36);
+    const s={id,titulo:'',trama:'',vertice:Object.keys(u.vertices)[0]||'',personaje:Object.keys(u.personajes)[0]||'',lugar:Object.keys(u.lugares)[0]||'',
+      episodios:Array.from({length:n},(_,i)=>({n:i+1,titulo:'',accion:'',dialogo:'',gancho:'',bloque:15,continua:false})),origen:'editor',creada:new Date().toISOString()};
+    if(await guardar('serie',id,s)){ ABIERTA=id; pintar() } return }
+  if(a==='guardar-serie'){ const s=recogerSerie(ABIERTA); if(await guardar('serie',ABIERTA,s)) pintar(); return }
+  if(a==='guardar-universo'||a==='guardar-ajustes'||b.dataset.agregar||b.dataset.quitar){
+    if(!E.universo&&!SEMILLA){ avisar('No pude leer el universo de fábrica; no guardo uno vacío. Recarga la página.','mal'); return } }
+  if(a==='guardar-universo'||b.dataset.agregar||b.dataset.quitar){
+    const u=universo();
+    document.querySelectorAll('[data-u]').forEach(el=>{ (u[el.dataset.u][el.dataset.k]=u[el.dataset.u][el.dataset.k]||{})[el.dataset.c]=el.value });
+    document.querySelectorAll('[data-f]').forEach(el=>{ u.formato[el.dataset.f]=el.value });
+    if(b.dataset.agregar){ const nombre=(document.querySelector(`[data-nuevo="${b.dataset.agregar}"]`).value||'').trim(); if(!nombre){ avisar('Escribe el nombre primero.','mal'); return } let k=slug(nombre),i=2; while(u[b.dataset.agregar][k]) k=slug(nombre)+'-'+(i++);
+      u[b.dataset.agregar][k]={nombre} }
+    if(b.dataset.quitar){ const usa=Object.values(E.serie).some(s=>s[b.dataset.quitar==='personajes'?'personaje':b.dataset.quitar==='lugares'?'lugar':'vertice']===b.dataset.k);
+      if(usa){ avisar('No se quita: una serie lo usa.','mal'); return } delete u[b.dataset.quitar][b.dataset.k] }
+    if(await guardar('universo','',u)) pintar(); return }
+  if(a==='guardar-ajustes'){ const u=universo();
+    Object.assign(u.ajustes,{semillero:$('#ajSem').checked?1:0,propuestas_en_espera:entero($('#ajEsp').value,2),episodios:Math.max(1,entero($('#ajEps').value,10)),
+      tope_clips_dia:entero($('#ajTope').value,0),piloto_primero:$('#ajPil').checked?1:0});
+    if(await guardar('universo','',u)) pintar(); return }
+});
+document.addEventListener('input',ev=>{
+  const el=ev.target;
+  if(el.dataset&&/^dialogo/.test(el.dataset.campo||'')){ const c=document.querySelector(`[data-cuenta="${el.dataset.ep}${el.dataset.campo.replace('dialogo','')}"]`);
+    if(c){ const n=palabras(el.value); c.textContent=n+' de '+PALABRAS+' palabras'; c.classList.toggle('mal',n>PALABRAS) } }
+  if(el.id==='ajTope'){ $('#ajCosto').textContent='Gasto máximo al día: alrededor de '+(entero(el.value)*USD_CLIP).toFixed(2)+' USD. En 0 no se produce nada.' }
+});
+cargar();
+</script>
+</body></html>
