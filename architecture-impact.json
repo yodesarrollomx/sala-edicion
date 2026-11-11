@@ -2,21 +2,22 @@
  "model_revision": "2026-11-09.sala-corta.2",
  "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
  "proposal_id": "CHG-SALA-CORTA-20261109",
- "summary": "Destrabe tras fusionar el canon de la Sala 4.0 (PR #382, commit 98c6df1). (1) Publicación: el primer despliegue de 98c6df1 se quedó más de 10 minutos en «syncing_files», deploy-pages lo canceló por tiempo y desde entonces todo despliegue de ese mismo commit (código y datos de los robots) se quedó sin estado hasta caer. Un commit nuevo en main da un despliegue nuevo; además el paso de despliegue espera ahora hasta 20 minutos (antes 10) y el trabajo hasta 30, para que un día lento de GitHub no deje un commit atorado. (2) Semillero de la Sala 4.0: un borrador de Dirección («Nueva serie», origen editor) ya no cuenta como propuesta en espera; en vivo, uno en blanco más la propuesta que esperaba llegaron al tope y frenaron la primera historia de la temporada. La pantalla Historias lo llama «Borrador tuyo». Sin cambios en Apps Script, mesa, COLA ni contenido publicado.",
+ "summary": "Pedir cambio a una imagen YA aprobada (SALA-63; atiende DEC-08, «Las 48 Horas»). Antes: «Pedir cambio» sobre una página aprobada sólo existía si la tira tenía base y viajaba como un «no» sobre t.base que en la nube nadie cosechaba (lo hacía la Mac). Ahora es una orden de cambio: un registro explícito del editor en EXPEDIENTES, llave cambio:<slug> ({pieza, tira, paquete, ordenes:[{n, nota}]}), escrito con la accion expediente que ya existía (sin tocar Apps Script). La nube sólo la lee (nube/sala_cambios.py, sin cliente; una prueba con ast lo vigila): la mesa trata la lámina aprobada con orden como un «no» con su nota y produce la rehecha con id nuevo y origen rehecha-de; la estación de salida no escribe texto ni empaca la pieza mientras la orden siga viva. La orden vale sólo para su tira: al rehacerse queda como historia. En la Sala: «Pedir cambio a una imagen» en la hoja de una pieza lista y «Pedir cambio» en la mesa aunque la tira no tenga base; la pieza sale del montón (también en la segunda vuelta, gracias al campo paquete y a la función pura retiro) y la mesa, el pie del montón y «Cómo va» lo dicen; «Quitar la petición» mientras Producción no la atienda. La aprobación anterior no se borra. Guardias: sólo editores, con la hoja leída en esta visita, nunca desde una copia guardada de la mesa ni sobre una pieza publicada.",
  "components": [
   "SYS-SALA",
+  "GAS-SALA",
   "SHEET-SALA",
+  "SVC-SALA-PRODUCTOR",
   "SVC-SALA-EJECUTOR",
-  "EXT-MOTORES-MEDIA",
   "EXT-ACTIONS",
-  "EXT-DRIVE"
+  "EXT-MOTORES-MEDIA"
  ],
  "tests": [
-  "python3 -m unittest tests.v4_test (24 pruebas; nueva: un borrador de Dirección no frena al semillero y dos propuestas del semillero sí).",
-  "node --test tests/historias.test.cjs (9 recorridos; nuevo: un borrador se llama «Borrador tuyo» y Ajustes dice que los borradores no cuentan).",
-  "python3 -m unittest discover -s tests -p \"*_test.py\" · python3 nube/verificar.py · node --test tests/*.test.cjs tests/*.test.mjs.",
-  "En vivo antes del cambio (10-nov): despliegues 42753931215, 42755682696, 42755742605 y 42757997609 de 98c6df1 caídos por tiempo en deploy-pages; corrida 42755180401 de la Sala 4.0 dijo «ya hay 2 serie(s) esperando decisión» con un borrador vacío (v4:serie:20261110-nueva-mwa1lche, origen editor) y «El Heredero del Olivo».",
-  "Pendiente: ver el despliegue del commit nuevo en verde y la pantalla Historias nueva en vivo."
+  "python3 -m unittest discover -s tests -p '*_test.py' (754 OK). Nuevas en tests/sala_cambios_test.py (27): contrato compartido con la pantalla (tests/fixtures/cambios-casos.json), aplicar sólo sobre láminas aprobadas, montador de punta a punta (rehecha con id nuevo y origen rehecha-de; nada con orden de otra versión), estación (la pieza deja de estar lista), órdenes sin tira vigente contadas y avisadas, pieza publicada ignorada, prioridad con tope de 1, y SoloLecturaTests con ast: sólo sala_cambios.py nombra la llave cambio: y no importa red ni el cliente.",
+  "node --test tests/*.test.cjs tests/*.test.mjs (193 OK): tabla de retiro (primera y segunda vuelta, quitada, sin paquete, inválida), paquete en conOrden/sinOrden, mismo contrato que la nube, guardia de la mesa (eligible y pieza publicada), pidDe nulo con copia guardada o sin cargar, «Cómo va» en pedido/volvió/sin paquete con el sala-salida.js real.",
+  "node tests/salida.browser.cjs (teléfono y escritorio, recorridos monton y cambio, 0 errores, 0 escrituras reales): pedir desde la hoja y desde la mesa sin base, segunda vuelta fuera del montón, «volvió» sin botón, quitar sólo con la mesa confirmando, dos registros de la misma pieza, pieza publicada, sin hoja leída, los siete motivos.",
+  "node tests/tablero-sala.browser.cjs · mesa-local · arranque-progresivo · sala2 (sin regresión; el día de respaldo no ofrece «Pedir cambio») · python3 nube/verificar.py (todo en orden; sello al día).",
+  "Mutaciones: siete en la primera entrega y las del auditor en la segunda (ver PR); la prueba de solo lectura falla si un módulo de nube/ arma 'cambio:'."
  ],
- "rollback": "Revertir el PR devuelve el tiempo de espera de 10 minutos y el conteo anterior del semillero. Nada que restaurar en hojas ni en Drive."
+ "rollback": "Revertir el PR quita los botones y la lectura de órdenes; las llaves cambio: que ya existan en EXPEDIENTES quedan como historia sin efecto (nada las lee) y las piezas vuelven al montón con su paquete. Nada que restaurar en Drive ni en Apps Script."
 }

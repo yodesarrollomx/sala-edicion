@@ -34,6 +34,7 @@ import urllib.parse
 import urllib.request
 
 import contenido_reglas
+import sala_cambios as cambios
 import sala_cliente as sala
 import sala_produccion as produccion
 
@@ -293,6 +294,9 @@ def _es_publicada(e):
                for h in e.get('hitos') or [] if isinstance(h, dict))
 
 
+es_publicada = _es_publicada   # 9-nov: la misma regla, pública, para que la mesa no rehaga una pieza ya publicada
+
+
 def _publicadas_del_repo():
     """Lo que la casa ya registró como publicado antes de la nube («una publicada no vuelve»)."""
     out = set()
@@ -320,11 +324,12 @@ def estado_de_piezas(dia_produccion, dia, reglas, expedientes, lector=None, proy
     """Una fila por pieza viva, con el estado que la Sala le enseña a Dirección.
 
     estados: publicada · lista (paquete hecho y vigente) · completa (todo aprobado, falta empacar) ·
-    en_laminas · video · excluida. `proyeccion` es la lista de ids que la propia mesa publicó como
+    en_laminas (también cuando un editor pidió cambiar una lámina ya aprobada) · video · excluida. `proyeccion` es la lista de ids que la propia mesa publicó como
     vigentes: si viene y una pieza completa no está ahí, se espera a la siguiente ronda de la mesa."""
     excluir = set(_lista(reglas, 'salida_excluir'))
     ya = _publicadas_del_repo() | set(filas_publicada(dia))
     decisiones = ((dia_produccion.get('decisiones') or {}).get('propuestas')) or {}
+    ordenes = cambios.leer(expedientes)               # lo que un editor pidió cambiar de algo ya aprobado
     filas = []
     for slug, (pid, tira, carta) in sorted(piezas_vigentes(dia_produccion, lector, proyeccion).items()):
         nombre = str(tira.get('pieza') or slug).strip()
@@ -336,7 +341,11 @@ def estado_de_piezas(dia_produccion, dia, reglas, expedientes, lector=None, proy
             continue
         try:
             resuelta = produccion.resolver_tira(tira, decisiones.get(pid) or {}, carta)
+            resuelta, reabiertas = cambios.aplicar(resuelta, cambios.de_tira(ordenes, pid))
             laminas, motivo = laminas_aprobadas(resuelta)
+            if reabiertas:
+                # Con una orden de cambio la pieza no está completa: ni se le escribe texto ni se empaca.
+                motivo = 'cambio pedido por un editor (%s)' % ', '.join('L%d' % n for n in reabiertas)
         except (sala.SalaError, KeyError, TypeError, ValueError, AttributeError):
             # una tira o una decisión rara detiene a ESA pieza, no a la salida entera
             filas.append(dict(fila, estado='en_laminas', motivo='tira o decisión sin contrato; la revisa la mesa'))

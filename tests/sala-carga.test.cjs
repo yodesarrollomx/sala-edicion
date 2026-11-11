@@ -81,12 +81,13 @@ test('los expedientes se leen una vez, un fallo no se guarda como respuesta y la
       '\nthis.leer=leerExpedientesHoja;this.releer=releerExpedientes;this.arrancar=arrancarSalida;',c);
     return c;
   }
-  const ok={ok:true,json:async()=>({ok:true,expedientes:{'Pieza':{estado:'lista'},'v4:serie:1':{x:1},'salida:plan':{orden:['Pieza']}}})};
+  const ok={ok:true,json:async()=>({ok:true,expedientes:{'Pieza':{estado:'lista'},'v4:serie:1':{x:1},'salida:plan':{orden:['Pieza']},
+    'cambio:pieza':{tira:'pieza-nube-2026-11-09-abc123',ordenes:[{n:1,nota:'Más luminosa'}]}}})};
   const a=ctx(()=>ok);
   assert.equal(await a.leer(),true);assert.equal(await a.leer(),true);
   assert.equal(a.llamadas,1,'dos lectores comparten una petición');
-  assert.deepEqual(Object.keys(a.EXP),['Pieza'],'ni v4: ni salida: entran a Publicaciones');
-  assert.deepEqual(hecho.pop(),['llegaron',['salida:plan']]);
+  assert.deepEqual(Object.keys(a.EXP),['Pieza'],'ni v4: ni salida: ni cambio: entran a Publicaciones');
+  assert.deepEqual(hecho.pop(),['llegaron',['salida:plan','cambio:pieza']],'el plan y las órdenes de cambio van con la salida');
   assert.ok(a.opciones&&a.opciones.signal,'la lectura tiene tope de tiempo');
   assert.equal(await a.releer(),true);assert.equal(a.llamadas,2,'Actualizar sí vuelve a preguntar');
 
@@ -264,6 +265,72 @@ test('en «Cómo va» lo listo sigue el orden de salida de los editores, no el d
   assert.deepEqual(await orden(),['Pieza C','Pieza A','Pieza B']);
 });
 
+test('una pieza lista con cambio pedido sale del montón y «Cómo va» dice que se está rehaciendo',async()=>{
+  const s=sala(),z=s.piece();
+  s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
+  const linea=s.ctx.$('#linea');
+  s.ctx.$=sel=>sel==='#salidaHoy'?null:linea;s.ctx.ENTRADO=()=>true;
+  assert.equal(s.ctx.filaLinea(z).lista,true);
+  // la orden es para OTRA versión de la pieza (la mesa ya la rehízo): no cuenta
+  s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v0',ordenes:[{n:1,nota:'Más luminosa'}]}});
+  assert.equal(s.ctx.filaLinea(z).lista,true);
+  assert.deepEqual([...s.ctx.SalaSalida.pendientes().map(x=>x.nombre)],['Pieza sintética']);
+  // la orden es para ESTA versión: deja de estar lista, pasa a la fábrica y ya no se cuenta en el montón
+  s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v1',ordenes:[{n:1,nota:'Más luminosa'}]}});
+  const f=s.ctx.filaLinea(z);
+  assert.deepEqual([f.lista,f.tuyo,f.quien],[false,false,'fab']);
+  assert.equal(f.que,'Cambio pedido en la imagen 1, con la nota del editor.');
+  assert.equal(f.cuando,'Suele tardar varias horas; cuando esté lista llega a la mesa para aprobarla.');
+  assert.equal(s.ctx.SalaSalida.pendientes().length,0);
+  // sin mesa que confirme la versión no se ofrece «quitar» (quitable:false)
+  assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.enCambio())),[{slug:'synthetic',nombre:'Pieza sintética',estado:'pedido',ordenes:[{n:1,nota:'Más luminosa',cuando:'',por:''}],quitable:false}]);
+  assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.cambioDe('synthetic-v1',1))),{n:1,nota:'Más luminosa',cuando:'',por:''});
+  assert.equal(s.ctx.SalaSalida.cambioDe('synthetic-v1',2),null);
+  const rendered=await s.render(z);
+  assert.doesNotMatch(rendered,/está lista para lanzar|data-lista="1"/);
+  // segunda vuelta: otra orden sobre la versión rehecha (v2) antes de reempacar; el paquete v1 sigue fuera del montón
+  s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v2',paquete:'synthetic-v1',ordenes:[{n:1,nota:'Otra vez'}]}});
+  assert.deepEqual([s.ctx.filaLinea(z).lista,s.ctx.SalaSalida.pendientes().length],[false,0]);
+  // la mesa ya trae una versión más nueva (v3): «volvió», el paquete viejo no se ofrece y no hay botón de quitar
+  s.ctx.SalaTablero={pidDe:slug=>slug==='synthetic'?'synthetic-v3':null};
+  const v=s.ctx.filaLinea(z);
+  assert.deepEqual([v.lista,v.quien,v.que],[false,'fab','Hay una versión nueva. Cuando esté aprobada y con su paquete nuevo, vuelve a tu montón.']);
+  assert.deepEqual(JSON.parse(JSON.stringify(s.ctx.SalaSalida.enCambio().map(x=>[x.estado,x.quitable]))),[['volvio',false]]);
+  delete s.ctx.SalaTablero;
+  // sin órdenes en la hoja vuelve a estar lista
+  s.ctx.SalaSalida.llegaron({});
+  assert.equal(s.ctx.filaLinea(z).lista,true);
+});
+
+test('«Cómo va» con orden de cambio: pedido, volvió y pieza sin paquete (cambioDePieza simulado según el contrato)',()=>{
+  const s=sala(),z=s.piece();
+  const llamadas=[];let resp={estado:'',ordenes:[]};
+  s.ctx.SalaSalida.cambioDePieza=(nombre,slug)=>{llamadas.push([nombre,slug]);return resp};
+  const ordenes=[{n:2,nota:'Más luminosa'},{n:3,nota:'Sin texto'}];
+  const hay=(pend)=>{s.ctx.pasosPendientesDe=()=>pend;return s.ctx.filaLinea(z)};
+  // estado vacío: no cambia nada y recibió nombre y slug de la pieza
+  assert.equal(hay([]).quien==='fab',false);
+  assert.deepEqual(llamadas[0],[z.nombre,z.slug]);
+  // pedido, sin pendientes en la mesa
+  resp={estado:'pedido',ordenes};let f=hay([]);
+  assert.deepEqual([f.quien,f.lista,f.tuyo],['fab',false,false]);
+  assert.equal(f.que,'Cambio pedido en las imágenes 2 y 3, con la nota del editor.');
+  assert.equal(f.cuando,'Suele tardar varias horas; cuando esté lista llega a la mesa para aprobarla.');
+  // volvió, sin pendientes: el paquete viejo no se ofrece
+  s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
+  resp={estado:'volvio',ordenes:[]};f=hay([]);
+  assert.deepEqual([f.quien,f.lista,f.tuyo],['fab',false,false]);
+  assert.equal(f.que,'Hay una versión nueva. Cuando esté aprobada y con su paquete nuevo, vuelve a tu montón.');
+  // con pendientes en la mesa manda «Te toca», en cualquiera de los dos estados
+  for(const estado of ['pedido','volvio']){resp={estado,ordenes};f=hay([0]);
+    assert.deepEqual([f.quien,f.tuyo],['tu',true]);assert.match(f.que,/^Te toca: 1 en tu mesa de hoy/)}
+  // pieza SIN paquete («Las 48 Horas»): antes decía «Guardada»
+  delete s.ctx.EXP[z.nombre];
+  resp={estado:'pedido',ordenes:[{n:1,nota:'x'}]};f=hay([]);
+  assert.equal(f.que,'Cambio pedido en la imagen 1, con la nota del editor.');
+  assert.doesNotMatch(f.que,/Guardada/);
+});
+
 test('una pieza guardada por regla no promete texto: espera la decisión de Dirección',async()=>{
   const s=sala(),z=s.piece();
   vm.runInContext("REGLAS_SALA={salida_excluir:'otra, synthetic',nube_ejecuta_etapas:'prospecto'}",s.ctx);
@@ -329,6 +396,52 @@ test('voz, escena y corte hechos no se presentan como producción todavía activ
   assert.match(rendered,/Imágenes aprobadas\. Falta su texto\./);
   assert.doesNotMatch(rendered,/En proceso:|trabajo en cola|pone en cola|≈/);
   assert.equal(s.ctx.filaLinea(z).fab,false);
+});
+
+
+/* ficha de la pieza y hoja de la lámina: con una orden de cambio el paquete viejo no se ofrece (9-nov) */
+function conVista(s,quien='editor'){
+  const c=s.ctx,sal={};
+  c.hoja=(h,id)=>{sal.html=h;sal.id=id;const q=sel=>sel[0]==='#'&&h.includes('id="'+sel.slice(1)+'"')?{}:null;return {querySelector:q}};
+  c.$=sel=>{const id=sel.slice(1);return sal.html&&sal.html.includes('id="'+id+'"')?{}:null};
+  c.armarPiezas=async()=>[c.__z];c.formatoDePieza=()=>'carrusel';c.laminaAbierta=()=>null;c.pasoHTML=(n,e,b)=>`<div>${n}${b||''}</div>`;
+  c.nodoDePieza=()=>({});c.fichaIdeaProd=()=>{throw Error('sin ficha')};c.cerrarCapas=()=>{};
+  c.serialDe=()=>'';c.fechaBonita=()=>'';c.notaDeLamina=()=>'';c.enMesaTira=()=>null;c.conSeguro=()=>{};c.pedirNota=()=>{};
+  c.idx=0;c.lockeadas=[];c.DECIDE=()=>quien==='editor';
+  for(const f of [block('async function fichaPieza(nombre){','function pasoHTML'.length?'\n}\n':'')])
+    vm.runInContext(f+'\n}',c);
+  return sal;
+}
+test('la ficha de la pieza no ofrece publicar un paquete viejo con un cambio pedido o ya rehecho',async()=>{
+  const s=sala(),z=s.piece();s.ctx.__z=z;const sal=conVista(s);
+  s.ctx.EXP[z.nombre]={estado:'lista',paquete:{orden:1,id:'synthetic-v1',slug:'synthetic',imagenes:[{n:1,src:'synthetic.png'}]}};
+  s.ctx.SalaSalida.llegaron({});
+  await s.ctx.fichaPieza(z.nombre);
+  assert.match(sal.html,/id="fPublicar"/,'sin orden: se ofrece');
+  s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v1',ordenes:[{n:1,nota:'x'}]}});
+  assert.equal(s.ctx.SalaSalida.cambioDePieza(z.nombre,'synthetic').estado,'pedido');
+  await s.ctx.fichaPieza(z.nombre);
+  assert.doesNotMatch(sal.html,/id="fPublicar"/);assert.match(sal.html,/Cambio pedido<\/b>: este paquete ya no es el que va a salir/);
+  // 'volvio': la versión empacada es la de la orden y la mesa ya trae otra
+  s.ctx.SalaSalida.llegaron({'cambio:synthetic':{tira:'synthetic-v1',paquete:'synthetic-v1',ordenes:[]}});
+  s.ctx.SalaTablero={pidDe:()=>'synthetic-v2'};
+  assert.equal(s.ctx.SalaSalida.cambioDePieza(z.nombre,'synthetic').estado,'volvio');
+  await s.ctx.fichaPieza(z.nombre);
+  assert.doesNotMatch(sal.html,/id="fPublicar"/);assert.match(sal.html,/Hay una versión nueva<\/b>; vuelve a tu montón/);
+  assert.match(sal.html,/Escríbelo como encargo/);assert.doesNotMatch(sal.html,/la reabre/);
+});
+
+test('verLamina: «Pedir cambio a esta lámina» sólo con editor, hoja leída y pieza no publicada',()=>{
+  const s=sala(),z=s.piece();const sal=conVista(s);
+  const t=z.tira;t.laminas[0].estado='aprobada';
+  vm.runInContext(block('function verLamina(t,n){','/* 7-sep (Alejandro)')+'\n',s.ctx);
+  const ver=()=>{sal.html='';s.ctx.verLamina(t,1);return /id="reabrirLam"/.test(sal.html)};
+  assert.equal(ver(),false,'sin hoja leída no aparece');
+  s.ctx.SalaSalida.llegaron({});
+  assert.equal(ver(),true,'editor con hoja leída');
+  assert.match(sal.html,/Pedir cambio a esta lámina/);
+  s.ctx.publicadas.add(t.pieza);assert.equal(ver(),false,'pieza publicada');
+  s.ctx.publicadas.clear();s.ctx.DECIDE=()=>false;assert.equal(ver(),false,'lector');
 });
 
 }
