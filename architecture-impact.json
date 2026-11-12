@@ -1,16 +1,17 @@
 {
  "model_revision": "2026-11-09.sala-corta.2",
  "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
- "proposal_id": "CHG-SALA-CORTA-20261109",
- "summary": "Continuación de CHG-SALA-CORTA-20261109 (el montón de la Sala corta). El libro arriba del montón (chinche CHN-20261112-0840-a2f9 de Dirección sobre «Tu montón»: «hasta arriba quiero la decisión de cada una de las propuestas… no todas juntas… un libro»). Sólo cambia la presentación de SYS-SALA: quien entra como editor ve en «Te toca» una publicación lista por página (imágenes, avisos del consejo, texto) con Va / Pedir cambio / No va; debajo queda el montón completo de siempre («pon hasta arriba el libro y abajo las 24 listas para publicar»). Las marcas son del plan de salida de los editores (EXPEDIENTES, llave salida:plan, campo nuevo visto[<pieza>]={m,sello,por,cuando}), escritas con la accion expediente que ya existía: sin tocar Apps Script y sin lectura ni escritura desde la nube. La marca vale sólo para el sello del paquete que el editor vio (un paquete nuevo vuelve al libro). «No va» saca la pieza del montón sin tocar su paquete ni su expediente y se deshace con «Regresarla al libro». «Pedir cambio» reutiliza la orden de cambio cambio:<slug>. Pasar la página no escribe; decidir no depende de temporizadores. Publicar sigue siendo el clic de Dirección.",
+ "proposal_id": "CHG-SALA-ROAST-ROOM-20261107",
+ "summary": "Continuación de CHG-SALA-ROAST-ROOM-20261107: la lectura de producción acepta a los tres firmantes. Desde el 7-nov el GAS (fusionProduccion_) lista en decisiones.editores a cada rol que firmó alguna vez, también al consejo, pero nube/sala_produccion.py seguía con el tope de 2 del 14-oct. En cuanto los tres roles figuran en la historia de DECISIONES, toda lectura de producción se rechaza (reproducido con la copia del GAS). Desde el 12-nov 20:17 UTC la mesa (Sala · Diario / Cada hora) y la estación de salida (Roast Room · paquete) fallan siempre con «sin contrato histórico confirmado»; ésta es la causa más probable, pero sin leer el backend no se puede confirmar cuál comprobación saltó. El tope pasa a len(ROLES_QUE_DECIDEN) = 3. Además cada rechazo dice qué comprobación falló (motivo: cabecera, editores, firma, nota_lamina, sello…, nunca un dato) y la mesa lo imprime en vez de tragárselo, para que una falla así se diagnostique desde el log. No cambia el GAS, ni quién decide (el consejo sigue cediendo ante los editores), ni ninguna escritura: la nube sigue entrando como agente y sólo lee.",
  "components": [
   "SYS-SALA",
-  "SHEET-SALA"
+  "GAS-SALA",
+  "SVC-SALA-PRODUCTOR"
  ],
  "tests": [
-  "node --test tests/*.test.cjs (195 OK). Nuevas en tests/sala-salida.test.cjs: contrato de las marcas (vistoLimpio, marcaLibro, conMarca, libro), marca atada al sello, entradas mal formadas descartadas, el plan conserva orden y marcas juntos.",
-  "node tests/salida.browser.cjs (390 y 1440 px, 0 errores, 0 escrituras reales): recorrido nuevo del libro (abre arriba con el montón completo debajo, navegar no escribe, Va avanza y sube al plan, No va saca del montón sin borrar y se regresa, Pedir cambio abre la orden desplegada, al terminar queda la lista, recarga conserva lo decidido, paquete nuevo vuelve al libro, sin desbordamiento horizontal) y los recorridos previos de montón y cambio sin cambios.",
-  "node tests/sala2.browser.cjs · mesa-local.browser.cjs (sin regresión) · python3 nube/verificar.py (todo en orden; sello al día)."
+  "python3 -m unittest discover -s tests -p '*_test.py' (772 OK). Nuevas: produccion_historica_test (la salida real de gas/Code.gs con editor, editor2 y consejo pasa el validador y el consejo cede; un rechazo nombra la comprobación sin datos y conserva el código sala_contrato_lectura) y mesa_seleccion_test (con la lectura rechazada la mesa imprime el porqué, sale con 2 y no genera ni escribe).",
+  "node --test tests/produccion-historica.test.cjs tests/produccion-historica-adversaria.test.cjs tests/sala-carga.test.cjs (60 OK) · python3 nube/verificar.py (todo en orden) · git diff --check.",
+  "Pendiente en producción: tras integrar, la siguiente corrida de la mesa y del paquete en main debe pasar la lectura de producción; si fallara otra vez, su log ya dirá el motivo."
  ],
- "rollback": "Revertir el PR devuelve «Te toca» a la lista del montón. El campo visto que ya exista en salida:plan queda sin efecto (la versión anterior lo descarta al limpiar el plan) y las piezas con «No va» vuelven al montón con su paquete. Nada que restaurar en Drive ni en Apps Script."
+ "rollback": "Revertir el PR devuelve el tope de 2 firmantes y el mensaje sin motivo; la mesa y el paquete vuelven a detenerse mientras el consejo figure en la historia de DECISIONES. Nada que restaurar en el Sheet, Drive ni Apps Script."
 }
