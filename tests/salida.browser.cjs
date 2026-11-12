@@ -39,11 +39,8 @@ async function estatico(route,u,rol){
  return route.continue();
 }
 
-/* 12-nov: el editor abre en EL LIBRO (una publicación por página). Los recorridos del montón siguen en la lista. */
-async function aLista(page){
- await page.waitForSelector('#salidaHoy .sal-carta, #salidaHoy .sal-libro',{timeout:30000});
- if(await page.locator('#salidaHoy .sal-libro').count()){await page.click('#salidaHoy [data-lista="1"]');await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});}
-}
+/* 12-nov: el editor ve EL LIBRO arriba (una publicación por página) y el montón completo debajo, como siempre. */
+async function aLista(page){ await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000}); }
 /* El libro: va arriba, decide una por una, «No va» saca del montón sin borrar y se puede regresar. */
 async function libro(base,width){
  const browser=await chromium.launch({headless:true,args:['--no-sandbox'],...(process.env.CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.CHROMIUM_EXECUTABLE_PATH}:{})});
@@ -68,10 +65,13 @@ async function libro(base,width){
   });
   await page.goto(base);
   await page.waitForSelector('#salidaHoy .sal-libro',{timeout:30000});
-  const h2=()=>page.locator('#salidaHoy h2').textContent(), titulo=()=>page.locator('#salidaHoy .sal-libro h3').textContent(), pag=()=>page.locator('#salidaHoy .sal-lib-pag').textContent();
-  assert.equal(await page.locator('#salidaHoy .bt-eyebrow').first().textContent(),'TU LIBRO');
+  const h2=()=>page.locator('#salidaHoy .sal-lib-titulo').textContent(), monton=()=>page.locator('#salidaHoy h2').textContent(), titulo=()=>page.locator('#salidaHoy .sal-libro h3').textContent(), pag=()=>page.locator('#salidaHoy .sal-lib-pag').textContent();
+  assert.equal(await page.locator('#salidaHoy .sal-lib-ceja').textContent(),'TU LIBRO');
   assert.equal(await h2(),'3 publicaciones por decidir');
-  assert.equal(await page.locator('#salidaHoy .sal-carta').count(),0,'el libro no enseña todas juntas');
+  assert.equal(await monton(),'3 listas para lanzar');assert.equal(await page.locator('#salidaHoy .sal-carta').count(),3,'el montón completo sigue abajo');
+  const yLibro=(await page.locator('#salidaHoy .sal-libro').boundingBox()).y,yDec=(await page.locator('#salidaHoy .sal-lib-dec').boundingBox()).y,yMonton=(await page.locator('#salidaHoy .sal-cab').boundingBox()).y;
+  assert.ok(yLibro<yDec&&yDec<yMonton,'el libro y su decisión van arriba; las listas para publicar, abajo');
+  assert.equal(await page.locator('#salidaHoy [data-lista]').count(),0,'con decisiones pendientes el libro no se puede esconder');
   assert.equal(await titulo(),'Pieza Uno');assert.equal(await pag(),'Página 1 de 3');
   assert.equal(await page.locator('#salidaHoy .sal-lib-img').count(),3);
   assert.equal(await page.locator('#salidaHoy .sal-lib-dec button').count(),3);
@@ -95,6 +95,7 @@ async function libro(base,width){
   await page.click('#salidaHoy [data-lib="no"]');
   await page.waitForFunction(()=>document.querySelector('#salidaHoy .sal-libro h3')?.textContent==='Pieza Cuatro');
   assert.equal(await h2(),'1 publicación por decidir');assert.equal(await pag(),'Página 2 de 2');
+  assert.equal(await monton(),'2 listas para lanzar');assert.equal(await page.locator('#salidaHoy .sal-carta').count(),2,'«No va» la quita también de la lista de abajo');
   assert.match(await page.locator('#salidaHoy .sal-cambios').last().innerText(),/1 publicación con «No va».*Pieza Dos/s);
   assert.ok(exp['Pieza Dos'].paquete,'«No va» no borra el paquete');
   await page.click('#salidaHoy [data-lib-volver="Pieza Dos"]');
@@ -109,15 +110,18 @@ async function libro(base,width){
   await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('.sal-hoja'));
   // la última decisión cierra el libro y deja el montón: lo que va, en lista
   await page.click('#salidaHoy [data-lib="va"]');
-  await page.waitForSelector('#salidaHoy .sal-carta');
-  assert.equal(await h2(),'2 listas para lanzar');assert.equal(await page.locator('#salidaHoy .sal-carta').count(),2);
+  await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-libro'));
+  assert.equal(await monton(),'2 listas para lanzar');assert.equal(await page.locator('#salidaHoy .sal-carta').count(),2);
   assert.equal(await page.locator('#salidaHoy [data-lista="0"]').textContent(),'Abrir el libro');
+  await page.click('#salidaHoy [data-lista="0"]');await page.waitForSelector('#salidaHoy .sal-libro');
+  assert.equal(await h2(),'Tu libro, ya revisado');assert.equal(await page.locator('#salidaHoy .sal-lib-ya').count(),1,'reabierto, cada página dice lo que se decidió');
+  await page.click('#salidaHoy [data-lista="1"]');await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-libro'));
   await page.waitForTimeout(300);
   plan=writes.filter(w=>w.accion==='expediente'&&w.pieza==='salida:plan').pop();
   assert.deepEqual(Object.fromEntries(Object.entries(plan.expediente.visto).map(([k,v])=>[k,v.m])),{'Pieza Uno':'va','Pieza Dos':'no','Pieza Cuatro':'va'});
   // al volver a abrir, la hoja manda: lo decidido no se vuelve a preguntar y el veto sigue fuera
   await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
-  assert.equal(await page.locator('#salidaHoy .sal-libro').count(),0);assert.equal(await h2(),'2 listas para lanzar');
+  assert.equal(await page.locator('#salidaHoy .sal-libro').count(),0);assert.equal(await monton(),'2 listas para lanzar');
   // un paquete nuevo de una pieza ya decidida vuelve al libro
   exp['Pieza Uno']={...exp['Pieza Uno'],paquete:{...exp['Pieza Uno'].paquete,sello:'z'.repeat(12)}};
   await page.reload();await page.waitForSelector('#salidaHoy .sal-libro',{timeout:30000});
@@ -322,7 +326,7 @@ async function libro(base,width){
   assert.deepEqual(await nombres(),['Pieza C','Pieza B','Pieza A']);
   assert.match(await page.locator('#salidaHoy .sal-nota').textContent(),/Lo último que este aparato guardó; confirmando con el Sheet/);
   // 7) si la hoja se cae lo dice y ofrece reintentar; al volver, lo recién empacado entra al final
-  modo.exp='cae';await page.reload();await page.waitForSelector('#salidaHoy .sal-nota [data-releer]',{timeout:30000});await aLista(page);
+  modo.exp='cae';await page.reload();await page.waitForSelector('#salidaHoy .sal-nota [data-releer]',{timeout:30000});
   assert.match(await page.locator('#salidaHoy .sal-nota').textContent(),/El Sheet no contestó: ves lo último que este aparato guardó/);
   assert.equal(await page.locator('#salidaHoy .sal-carta').count(),3);
   hoja['Pieza D']=lista('Pieza D',4,'cuatro');modo.exp='ok';
@@ -532,7 +536,7 @@ async function libro(base,width){
   assert.equal(await page.locator('#salYa').count(),0);
   await page.evaluate(()=>{localStorage.removeItem('sala_publicadas_v1');cerrarCapas()});
   // (c) sin la hoja leída no se pide ni se quita nada
-  const antesC=writes.length;modo.exp='cae';await page.reload();await page.waitForSelector('#salidaHoy .sal-nota [data-releer]',{timeout:30000});await aLista(page);
+  const antesC=writes.length;modo.exp='cae';await page.reload();await page.waitForSelector('#salidaHoy .sal-nota [data-releer]',{timeout:30000});
   assert.equal(await page.evaluate(()=>SalaSalida.puedePedirCambio()),false);
   assert.equal((await pide({slug:'tres',pieza:'Pieza Tres',tira:T3,n:1,nota:'x'})).motivo,'Todavía no se puede pedir el cambio: falta que conteste el Sheet.');
   assert.equal((await page.evaluate(()=>SalaSalida.quitarCambio('uno',1))).motivo,'Todavía no se puede quitar la petición: falta que conteste el Sheet.');

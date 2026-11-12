@@ -166,9 +166,10 @@ publicación lista por página (imágenes, avisos del consejo y texto) con tres 
 - La marca vale sólo para el `sello` del paquete que el editor vio: un paquete nuevo vuelve al libro.
 - «No va» se deshace abajo del montón («Regresarla al libro»). Nada se borra.
 - Pasar la página no escribe nada. Decidir no depende de un temporizador (INVIOLABLE 11).
-- «Ver las N en lista» enseña el montón de siempre (orden, ritmo, arranque); «Volver al libro» regresa.
-  Con todo decidido, la lista es lo que se ve y «Abrir el libro» lo reabre.
-- El lector (solo lectura) sigue viendo la lista. El editor ve el libro desde el primer instante y los
+- El mismo día Dirección precisó: «pon hasta arriba el libro y abajo las 24 listas para publicar». El
+  montón completo (orden, ritmo, arranque) queda siempre debajo del libro; no se esconde detrás de un botón.
+  Con todo decidido el libro se retira solo y «Abrir el libro» lo reabre («Cerrar el libro» lo guarda).
+- El lector (solo lectura) ve sólo el montón. El editor ve el libro desde el primer instante y los
   botones se habilitan cuando la mesa vigente confirma su entrada.
 - La nube no lee ni escribe `visto`: es del plan de salida, que es de los editores. Publicar sigue
   siendo el clic de Dirección.

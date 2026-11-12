@@ -203,9 +203,12 @@ test('el libro: marcas que llegan mal de la hoja se descartan sin tumbar el plan
   assert.equal(s.planLimpio({orden:['A'],visto:{A:{m:'va',sello:'s'}}}).orden[0],'A','el orden y las marcas viajan juntos');
 });
 
-test('el libro va arriba del montón y la lista sigue a un toque',()=>{
+test('el libro va arriba y el montón completo sigue debajo',()=>{
   const fuente=fs.readFileSync(require.resolve('../sala-salida.js'),'utf8'),css=fs.readFileSync(require.resolve('../sala-salida.css'),'utf8');
   for(const x of ['data-lib="va"','data-lib="cambio"','data-lib="no"','data-lista="1"','data-lib-volver=','TU LIBRO']) assert.ok(fuente.includes(x),x);
+  const iLibro=fuente.indexOf('class="sal-lib-ceja">TU LIBRO'),iMonton=fuente.lastIndexOf('<span class="bt-eyebrow">TU MONTÓN</span>');
+  assert.ok(iLibro>0&&iLibro<iMonton,'en la pantalla el libro se arma antes que el montón');
+  assert.ok(!fuente.includes('en lista</button>'),'el montón ya no se esconde detrás de un botón');
   assert.ok(/function pendientes\(\)\{ return sinCambio\(\)\.filter\(x=>marcaLibro\(PLAN,x\.nombre,x\.p\.sello\)!=='no'\) \}/.test(fuente),'lo vetado no cuenta como listo para lanzar');
   assert.ok(!/data-lib="va"[^`]*setTimeout/.test(fuente),'decidir no depende de un temporizador');
   for(const x of ['.sal-libro{','.sal-lib-dec{','.sal-lib-tira{']) assert.ok(css.includes(x),x);

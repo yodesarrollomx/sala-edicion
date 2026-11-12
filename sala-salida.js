@@ -247,17 +247,18 @@ function resumen(n,fechas){
   if(fechas.length===n&&n) return `${ritmo}, desde el ${larga(fechas[0])}, alcanza hasta el <b>${larga(fechas[n-1])}</b>.`;
   return `${ritmo} alcanza para <b>${cuantas(sem,'semana','semanas')}</b>.`;
 }
-function controles(n,porVer){
+function controles(n,abrirLibro){
   if(!puedeOrdenar()||!n) return '';
   if(ORDEN) return `<div class="sal-plan"><span class="sal-ayuda">Mueve cada una con las flechas o elige su lugar.</span><button type="button" class="sal-b fuerte" data-orden-ok>Guardar el orden</button><button type="button" class="sal-b" data-orden-no>Cancelar</button></div>`;
   return `<div class="sal-plan" role="group" aria-label="Plan de salida">
     <span class="sal-ritmo"><button type="button" data-ritmo="-1" aria-label="Menos por semana" ${PLAN.por_semana>1?'':'disabled'}>−</button><span><b>${PLAN.por_semana}</b> por semana</span><button type="button" data-ritmo="1" aria-label="Más por semana" ${PLAN.por_semana<7?'':'disabled'}>+</button></span>
     <label class="sal-arr">Arranca <input type="date" id="salArranque" value="${esc(PLAN.arranque)}" aria-label="Día en que arranca la salida"></label>
     ${n>1?'<button type="button" class="sal-b" data-ordenar>Cambiar el orden</button>':''}
-    <button type="button" class="sal-b${porVer?' fuerte':''}" data-lista="0">${porVer?'Volver al libro · '+porVer+' por decidir':'Abrir el libro'}</button></div>`;
+    ${abrirLibro?'<button type="button" class="sal-b" data-lista="0">Abrir el libro</button>':''}</div>`;
 }
 /* EL LIBRO (12-nov, chinche CHN-20261112-0840-a2f9): «hasta arriba quiero la decisión de cada una de las
-   propuestas… no todas juntas… un libro». Una publicación por página, con su decisión; la lista queda a un toque. */
+   propuestas… no todas juntas… un libro». Una publicación por página, con su decisión. El mismo día: «pon hasta
+   arriba el libro y abajo las 24 listas para publicar»: el montón completo sigue debajo, con su orden y su ritmo. */
 function pagina(l,fechas){
   let i=l.findIndex(x=>x.nombre===PAGINA);
   if(i<0){ i=l.findIndex(x=>!marcaLibro(PLAN,x.nombre,x.p.sello)); if(i<0) i=0; PAGINA=l[i].nombre }
@@ -265,7 +266,7 @@ function pagina(l,fechas){
   return `<article class="sal-libro" data-libro="${esc(x.nombre)}" aria-label="Página ${i+1} de ${n}: ${esc(x.nombre)}">
     <div class="sal-lib-cab"><span class="sal-lib-pag">Página ${i+1} de ${n}</span>${m==='va'?'<span class="sal-lib-ya">✓ Dijiste «va»</span>':''}</div>
     <h3>${esc(x.nombre)}</h3>
-    <p class="sal-sub">${esc(p.formato||'Publicación')} · ${cuantas(k,'imagen','imágenes')} · sale: ${esc(cuando(i,fechas))}</p>
+    <p class="sal-lib-sub">${esc(p.formato||'Publicación')} · ${cuantas(k,'imagen','imágenes')} · sale: ${esc(cuando(i,fechas))}</p>
     <div class="sal-lib-tira" role="list" tabindex="0" aria-label="Imágenes de ${esc(x.nombre)}">${p.imagenes.map((im,j)=>`<button type="button" role="listitem" class="sal-lib-img" data-zoom="${esc(im.src)}" aria-label="Imagen ${Number(im.n)||j+1} de ${k}: ${esc(im.dice||'')}. Ampliar">${miniatura(im.src)?`<img src="${esc(miniatura(im.src))}" alt="" loading="${j?'lazy':'eager'}" decoding="async">`:''}<i>${Number(im.n)||j+1}</i></button>`).join('')}</div>
     ${c.revision.length?`<div class="sal-ojo"><b>Antes de decidir, mira esto</b><ul>${c.revision.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`:''}
     ${c.texto?`<details class="sal-lib-texto"><summary>El texto que la acompaña</summary><p>${esc(c.texto)}</p></details>`:''}
@@ -274,7 +275,7 @@ function pagina(l,fechas){
       <button type="button" data-lib="cambio"${cambio?'':' disabled title="Se habilita cuando el Sheet confirma"'}><span aria-hidden="true">✎</span>Pedir cambio</button>
       <button type="button" class="no" data-lib="no"${decide?'':' disabled'}><span aria-hidden="true">✕</span>No va</button>
     </div>${decide?'':'<p class="sal-lib-nota">Puedes ir leyendo; las decisiones se habilitan cuando el Sheet confirma tu entrada.</p>'}
-    <div class="sal-lib-nav"><button type="button" data-lib-ir="-1" ${i?'':'disabled'}>← Anterior</button><button type="button" class="sal-mini" data-publicar="${esc(x.nombre)}">Abrir para publicar</button><button type="button" data-lib-ir="1" ${i<n-1?'':'disabled'}>Siguiente →</button></div>
+    <div class="sal-lib-nav"><button type="button" data-lib-ir="-1" ${i?'':'disabled'}>← Anterior</button><button type="button" class="sal-mini" data-lib-abrir>Abrir para publicar</button><button type="button" data-lib-ir="1" ${i<n-1?'':'disabled'}>Siguiente →</button></div>
   </article>`;
 }
 let _hubo=null;
@@ -285,17 +286,22 @@ async function pintar(){
     if(vivo) conciliar();
     const sabe=vivo||!!GUARD, l=sabe?pendientes():[], n=l.length, {espera,guardadas}=await sinPaquete(), cambios=sabe?enCambio():[];
     if(ORDEN&&!n) ORDEN=null;
-    const lib=libro(l,PLAN), fuera=sabe?vetadas():[], enLibro=editorAqui()&&n>0&&!ORDEN&&(MODO==='libro'||(MODO===''&&lib.porVer.length>0));
+    const lib=libro(l,PLAN), fuera=sabe?vetadas():[], enLibro=editorAqui()&&n>0&&!ORDEN&&(lib.porVer.length>0||MODO==='libro');
     const vista=ORDEN?ORDEN.map(nombre=>l.find(x=>x.nombre===nombre)).filter(Boolean):l;
     const fechas=fechasDeSalida(n,PLAN.por_semana,desde());
     if(!sabe&&fallo) html=`<section class="sal sal-aviso" aria-label="Listas para publicar"><header><span class="bt-eyebrow">TU MONTÓN</span><h2>No pude leer lo que está listo</h2><p>El Sheet no contestó. Tus publicaciones siguen en Drive y en la hoja; sólo falta volver a preguntar.</p></header><div class="sal-plan"><button type="button" class="sal-b fuerte" data-releer>Reintentar</button></div></section>`;
     else if(sabe&&(n||espera||guardadas.length||cambios.length||fuera.length)) html=`<section class="sal${ORDEN?' en-orden':''}${enLibro?' en-libro':''}" aria-label="Listas para publicar">
-    <div class="sal-cab"><header><span class="bt-eyebrow">${enLibro?'TU LIBRO':'TU MONTÓN'}</span>
-      <h2>${enLibro?(lib.porVer.length?cuantas(lib.porVer.length,'publicación por decidir','publicaciones por decidir'):'Tu libro, ya revisado'):n?cuantas(n,'lista para lanzar','listas para lanzar'):'Todavía no hay nada listo para lanzar'}</h2>
-      <p>${enLibro?`Una a la vez: <b>va</b>, <b>pide un cambio</b> o <b>no va</b>.${lib.van.length?` Ya dijiste «va» a ${lib.van.length} de ${n}.`:''} Nada sale solo: tú das el clic de publicar.`:n?(fechas[0]===hoyHmo()?`Hoy toca <b>«${esc(vista[0].nombre)}»</b>. `:'')+resumen(n,fechas)+' Nada sale solo: tú das el clic de publicar.':'En cuanto una pieza tenga sus imágenes aprobadas y su texto, aparece aquí.'}</p>
+    ${enLibro?`<div class="sal-lib-arriba"><div><span class="sal-lib-ceja">TU LIBRO</span>
+      <p class="sal-lib-titulo" role="heading" aria-level="2">${lib.porVer.length?cuantas(lib.porVer.length,'publicación por decidir','publicaciones por decidir'):'Tu libro, ya revisado'}</p>
+      <p class="sal-lib-intro">Una a la vez: <b>va</b>, <b>pide un cambio</b> o <b>no va</b>.${lib.van.length?` Ya dijiste «va» a ${lib.van.length} de ${n}.`:''} Abajo sigue tu montón completo.</p></div>
+      ${lib.porVer.length?'':'<button type="button" class="sal-b" data-lista="1">Cerrar el libro</button>'}</div>
+    ${pagina(l,fechas)}`:''}
+    <div class="sal-cab"><header><span class="bt-eyebrow">TU MONTÓN</span>
+      <h2>${n?cuantas(n,'lista para lanzar','listas para lanzar'):'Todavía no hay nada listo para lanzar'}</h2>
+      <p>${n?(fechas[0]===hoyHmo()?`Hoy toca <b>«${esc(vista[0].nombre)}»</b>. `:'')+resumen(n,fechas)+' Nada sale solo: tú das el clic de publicar.':'En cuanto una pieza tenga sus imágenes aprobadas y su texto, aparece aquí.'}</p>
       ${!vivo?`<p class="sal-nota">${fallo?'El Sheet no contestó: ves lo último que este aparato guardó.':'Lo último que este aparato guardó; confirmando con el Sheet…'}${fallo?' <button type="button" class="sal-mini" data-releer>Reintentar</button>':''}</p>`:''}</header>
-      ${enLibro?`<div class="sal-plan"><button type="button" class="sal-b" data-lista="1">Ver las ${n} en lista</button></div>`:controles(n,lib.porVer.length)||(editorAqui()&&n&&!ORDEN?`<div class="sal-plan"><button type="button" class="sal-b" data-lista="0">${lib.porVer.length?'Volver al libro · '+lib.porVer.length+' por decidir':'Abrir el libro'}</button></div>`:'')}</div>
-    ${enLibro?pagina(l,fechas):n?`<div class="sal-rejilla">${vista.map((x,i)=>tarjeta(x,i,fechas,n)).join('')}</div>`:''}
+      ${controles(n,!enLibro)}</div>
+    ${n?`<div class="sal-rejilla">${vista.map((x,i)=>tarjeta(x,i,fechas,n)).join('')}</div>`:''}
     <p class="sal-estado" role="status" aria-live="polite">${esc(_aviso)}</p>
     ${espera?`<p class="sal-pie"><b>${cuantas(espera,'pieza más','piezas más')}</b> ya ${espera===1?'tiene':'tienen'} sus imágenes aprobadas y ${espera===1?'espera':'esperan'} su texto. Es el paso del consejo; cuando lo escriba, ${espera===1?'aparece':'aparecen'} aquí.</p>`:''}
     ${cambios.length?`<div class="sal-pie sal-cambios"><p><b>${cuantas(cambios.length,'pieza fuera del montón por un cambio','piezas fuera del montón por un cambio')}</b>:</p>
@@ -314,12 +320,13 @@ async function pintar(){
 function enlazar(hoy){
   hoy.querySelectorAll('[data-publicar]').forEach(b=>b.onclick=()=>abrir(b.dataset.publicar));
   hoy.querySelectorAll('[data-releer]').forEach(b=>b.onclick=()=>actualizar());
-  hoy.querySelectorAll('[data-lista]').forEach(b=>b.onclick=()=>{ MODO=b.dataset.lista==='1'?'lista':'libro'; avisar(''); pintar() });
-  hoy.querySelectorAll('[data-lib-volver]').forEach(b=>b.onclick=()=>{ MODO=''; marcar(b.dataset.libVolver,'') });
+  hoy.querySelectorAll('[data-lista]').forEach(b=>b.onclick=()=>{ MODO=b.dataset.lista==='1'?'':'libro'; avisar(''); pintar() });
+  hoy.querySelectorAll('[data-lib-volver]').forEach(b=>b.onclick=()=>marcar(b.dataset.libVolver,''));
   const hojaLibro=hoy.querySelector('.sal-libro');
   if(hojaLibro){ const nombre=hojaLibro.dataset.libro;
     hojaLibro.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{ if(typeof abrirZoom==='function') abrirZoom(b.dataset.zoom) });
     hojaLibro.querySelectorAll('[data-lib-ir]').forEach(b=>b.onclick=()=>{ const l=pendientes(), i=l.findIndex(x=>x.nombre===nombre)+Number(b.dataset.libIr); if(l[i]){ PAGINA=l[i].nombre; avisar(''); pintar().then(()=>{ const h=document.querySelector('#salidaHoy .sal-libro h3'); if(h) h.scrollIntoView({block:'nearest'}) }) } });
+    hojaLibro.querySelectorAll('[data-lib-abrir]').forEach(b=>b.onclick=()=>abrir(nombre));
     hojaLibro.querySelectorAll('[data-lib]').forEach(b=>b.onclick=()=>{ const m=b.dataset.lib;
       if(m==='cambio'){ abrir(nombre); const c=document.getElementById('salCambio'); if(c) c.click(); return }
       marcar(nombre,m) });
@@ -341,7 +348,7 @@ async function recolocar(nombre,lugar){
   if(c){ const s=c.querySelector('[data-lugar]'); if(s) s.focus({preventScroll:true}); c.scrollIntoView({block:'nearest',inline:'nearest'}) }
 }
 function avisar(t){ _aviso=t||''; clearTimeout(_tAviso); if(_aviso) _tAviso=setTimeout(()=>{ _aviso=''; pintar() },6000) }
-/* MODO: '' = el libro mientras falte decidir y, ya decidido todo, la lista · 'lista' · 'libro' (abiertos a mano) */
+/* El libro va arriba mientras falte decidir; el montón completo queda abajo. MODO 'libro' = reabierto a mano con todo ya decidido. */
 /* el plan cambia aquí al instante y sube a la hoja; si no sube, se queda en el aparato y se reintenta al abrir */
 function cambiarPlan(cambio,ya){
   if(!DECIDE()) return;
