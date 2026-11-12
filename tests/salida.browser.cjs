@@ -39,9 +39,102 @@ async function estatico(route,u,rol){
  return route.continue();
 }
 
+/* 12-nov: el editor ve EL LIBRO arriba (una publicación por página) y el montón completo debajo, como siempre. */
+async function aLista(page){ await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000}); }
+/* El libro: va arriba, decide una por una, «No va» saca del montón sin borrar y se puede regresar. */
+async function libro(base,width){
+ const browser=await chromium.launch({headless:true,args:['--no-sandbox'],...(process.env.CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.CHROMIUM_EXECUTABLE_PATH}:{})});
+ try{
+  const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage(),errors=[],writes=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.addInitScript(()=>{localStorage.setItem('sala_clave','synthetic');localStorage.setItem('sala_rol','editor');localStorage.setItem('sala_guia','1');localStorage.setItem('sala_guia_v3','1');});
+  const uno=expedientes()['Pieza Uno'],exp={'Pieza Uno':uno,
+   'Pieza Dos':{...uno,pieza:'Pieza Dos',portada:'laminas/dos/L1.png',paquete:{...uno.paquete,carpeta:'2 · Pieza Dos',orden:2,id:PIEZAS[1][0],slug:'dos',sello:'b'.repeat(12),imagenes:[1,2].map(n=>({n,src:`laminas/dos/L${n}.png`,dice:`Pieza Dos lámina ${n}`}))},copy:{...uno.copy,revision:[]}},
+   'Pieza Cuatro':{...uno,pieza:'Pieza Cuatro',portada:'laminas/cuatro/L1.png',paquete:{...uno.paquete,carpeta:'3 · Pieza Cuatro',orden:3,id:PIEZAS[3][0],slug:'cuatro',sello:'c'.repeat(12),imagenes:[1].map(n=>({n,src:`laminas/cuatro/L${n}.png`,dice:`Pieza Cuatro lámina ${n}`}))},copy:{...uno.copy,revision:[]}}};
+  await page.route('**/*',async route=>{
+   const req=route.request(),u=new URL(req.url());
+   if(req.method()==='POST'){const d=JSON.parse(req.postData()||'{}');writes.push(d);if(d.accion==='expediente')exp[d.pieza]=d.expediente;return route.fulfill({json:{ok:true}});}
+   if(u.hostname==='script.google.com'){
+    const r=u.searchParams.get('recurso');
+    if(r==='dia')return route.fulfill({json:dia('editor')});
+    if(r==='expedientes')return route.fulfill({json:{ok:true,expedientes:exp}});
+    if(r==='reglas')return route.fulfill({json:{ok:true,reglas:{semillero_activo:'0'},motores:[]}});
+    return route.fulfill({json:{ok:true,cola:[],fabrica:[],ideas:[]}});
+   }
+   return estatico(route,u,'editor');
+  });
+  await page.goto(base);
+  await page.waitForSelector('#salidaHoy .sal-libro',{timeout:30000});
+  const h2=()=>page.locator('#salidaHoy .sal-lib-titulo').textContent(), monton=()=>page.locator('#salidaHoy h2').textContent(), titulo=()=>page.locator('#salidaHoy .sal-libro h3').textContent(), pag=()=>page.locator('#salidaHoy .sal-lib-pag').textContent();
+  assert.equal(await page.locator('#salidaHoy .sal-lib-ceja').textContent(),'TU LIBRO');
+  assert.equal(await h2(),'3 publicaciones por decidir');
+  assert.equal(await monton(),'3 listas para lanzar');assert.equal(await page.locator('#salidaHoy .sal-carta').count(),3,'el montón completo sigue abajo');
+  const yLibro=(await page.locator('#salidaHoy .sal-libro').boundingBox()).y,yDec=(await page.locator('#salidaHoy .sal-lib-dec').boundingBox()).y,yMonton=(await page.locator('#salidaHoy .sal-cab').boundingBox()).y;
+  assert.ok(yLibro<yDec&&yDec<yMonton,'el libro y su decisión van arriba; las listas para publicar, abajo');
+  assert.equal(await page.locator('#salidaHoy [data-lista]').count(),0,'con decisiones pendientes el libro no se puede esconder');
+  assert.equal(await titulo(),'Pieza Uno');assert.equal(await pag(),'Página 1 de 3');
+  assert.equal(await page.locator('#salidaHoy .sal-lib-img').count(),3);
+  assert.equal(await page.locator('#salidaHoy .sal-lib-dec button').count(),3);
+  assert.match(await page.locator('#salidaHoy .sal-ojo').innerText(),/Lámina 3: el fondo se ve ajeno\./);
+  const caja=await page.locator('#salidaHoy .sal-libro').boundingBox(),dec=await page.locator('#salidaHoy .sal-lib-dec').boundingBox();
+  assert.ok(caja.x>=0&&caja.x+caja.width<=width+1,'la página cabe a lo ancho');assert.ok(dec.width<=caja.width,'los tres botones caben');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth),true,'sin desbordamiento horizontal');
+  if(process.env.CAPTURA)await page.locator('#salidaHoy').screenshot({path:process.env.CAPTURA+'-'+width+'.png'});
+  // navegar no decide
+  await page.click('#salidaHoy [data-lib-ir="1"]');assert.equal(await titulo(),'Pieza Dos');
+  await page.click('#salidaHoy [data-lib-ir="-1"]');assert.equal(await titulo(),'Pieza Uno');
+  assert.equal(writes.filter(w=>w.accion==='expediente').length,0,'pasar la página no escribe nada');
+  // «Va»: se queda en el montón y el libro pasa a la siguiente por decidir
+  await page.click('#salidaHoy [data-lib="va"]');
+  await page.waitForFunction(()=>document.querySelector('#salidaHoy .sal-libro h3')?.textContent==='Pieza Dos');
+  assert.equal(await h2(),'2 publicaciones por decidir');
+  await page.waitForFunction(()=>true);await page.waitForTimeout(300);
+  let plan=writes.filter(w=>w.accion==='expediente'&&w.pieza==='salida:plan').pop();
+  assert.ok(plan,'la decisión sube al plan de salida');assert.equal(plan.expediente.visto['Pieza Uno'].m,'va');assert.equal(plan.expediente.visto['Pieza Uno'].sello,'a'.repeat(12));assert.equal(plan.expediente.visto['Pieza Uno'].por,'editor');
+  // «No va»: sale del montón, nada se borra y se puede regresar
+  await page.click('#salidaHoy [data-lib="no"]');
+  await page.waitForFunction(()=>document.querySelector('#salidaHoy .sal-libro h3')?.textContent==='Pieza Cuatro');
+  assert.equal(await h2(),'1 publicación por decidir');assert.equal(await pag(),'Página 2 de 2');
+  assert.equal(await monton(),'2 listas para lanzar');assert.equal(await page.locator('#salidaHoy .sal-carta').count(),2,'«No va» la quita también de la lista de abajo');
+  assert.match(await page.locator('#salidaHoy .sal-cambios').last().innerText(),/1 publicación con «No va».*Pieza Dos/s);
+  assert.ok(exp['Pieza Dos'].paquete,'«No va» no borra el paquete');
+  await page.click('#salidaHoy [data-lib-volver="Pieza Dos"]');
+  await page.waitForFunction(()=>document.querySelector('#salidaHoy .sal-libro h3')?.textContent==='Pieza Dos');
+  assert.equal(await h2(),'2 publicaciones por decidir');
+  await page.click('#salidaHoy [data-lib="no"]');
+  await page.waitForFunction(()=>document.querySelector('#salidaHoy .sal-libro h3')?.textContent==='Pieza Cuatro');
+  // «Pedir cambio» abre la orden de cambio de siempre, ya desplegada
+  await page.click('#salidaHoy [data-lib="cambio"]');
+  await page.waitForSelector('#salCambioCaja:not([hidden])');
+  assert.equal(await page.locator('.sal-hoja h3').textContent(),'Pieza Cuatro');
+  await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('.sal-hoja'));
+  // la última decisión cierra el libro y deja el montón: lo que va, en lista
+  await page.click('#salidaHoy [data-lib="va"]');
+  await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-libro'));
+  assert.equal(await monton(),'2 listas para lanzar');assert.equal(await page.locator('#salidaHoy .sal-carta').count(),2);
+  assert.equal(await page.locator('#salidaHoy [data-lista="0"]').textContent(),'Abrir el libro');
+  await page.click('#salidaHoy [data-lista="0"]');await page.waitForSelector('#salidaHoy .sal-libro');
+  assert.equal(await h2(),'Tu libro, ya revisado');assert.equal(await page.locator('#salidaHoy .sal-lib-ya').count(),1,'reabierto, cada página dice lo que se decidió');
+  await page.click('#salidaHoy [data-lista="1"]');await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-libro'));
+  await page.waitForTimeout(300);
+  plan=writes.filter(w=>w.accion==='expediente'&&w.pieza==='salida:plan').pop();
+  assert.deepEqual(Object.fromEntries(Object.entries(plan.expediente.visto).map(([k,v])=>[k,v.m])),{'Pieza Uno':'va','Pieza Dos':'no','Pieza Cuatro':'va'});
+  // al volver a abrir, la hoja manda: lo decidido no se vuelve a preguntar y el veto sigue fuera
+  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  assert.equal(await page.locator('#salidaHoy .sal-libro').count(),0);assert.equal(await monton(),'2 listas para lanzar');
+  // un paquete nuevo de una pieza ya decidida vuelve al libro
+  exp['Pieza Uno']={...exp['Pieza Uno'],paquete:{...exp['Pieza Uno'].paquete,sello:'z'.repeat(12)}};
+  await page.reload();await page.waitForSelector('#salidaHoy .sal-libro',{timeout:30000});
+  assert.equal(await h2(),'1 publicación por decidir');assert.equal(await titulo(),'Pieza Uno');
+  assert.deepEqual(errors,[]);
+  await context.close();
+ }finally{await browser.close();}
+}
+
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port+'/';
+ for(const w of [390,1440]) await libro(base,w);
  const browser=await chromium.launch({headless:true,args:['--no-sandbox'],...(process.env.CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.CHROMIUM_EXECUTABLE_PATH}:{})});
  try{for(const width of [390,1440])for(const rol of ['editor','lector']){
   const context=await browser.newContext({viewport:{width,height:900},permissions:['clipboard-read','clipboard-write']}),page=await context.newPage(),errors=[],writes=[];
@@ -62,7 +155,7 @@ async function estatico(route,u,rol){
   });
   await page.goto(base);
   // «Te toca» abre con lo listo para publicar, lo que espera texto y lo guardado por regla
-  await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await aLista(page);
   await page.waitForFunction(()=>document.querySelectorAll('#salidaHoy .sal-pie').length===2,null,{timeout:30000});
   assert.equal(await page.locator('#salidaHoy h2').textContent(),'1 lista para lanzar');
   assert.match(await page.locator('#salidaHoy header p').first().innerText(),/^A 3 por semana alcanza para 1 semana\. Nada sale solo: tú das el clic de publicar\.$/);
@@ -172,7 +265,7 @@ async function estatico(route,u,rol){
   const nombres=()=>page.locator('#salidaHoy .sal-carta b').allTextContents();
   const escrituras=n=>page.waitForFunction(()=>true).then(async()=>{for(let i=0;i<60&&writes.length<n;i++)await page.waitForTimeout(100);assert.equal(writes.length,n);});
   await page.goto(base);
-  await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await aLista(page);
   // 1) el montón no esperó al día, y con una lectura en vuelo la página conserva su forma
   assert.equal(diaContestado,false,'lo listo para lanzar se pinta antes de que conteste el día');
   assert.deepEqual(await page.evaluate(()=>{const h=document.documentElement,c=getComputedStyle(h);return [h.classList.contains('trayendo'),c.display,c.position,c.fontSize,Math.round(document.body.getBoundingClientRect().width)===document.documentElement.clientWidth];}),[true,'block','static','16px',true]);
@@ -222,14 +315,14 @@ async function estatico(route,u,rol){
   assert.match(await page.locator('.sal-sub').textContent(),/sale en el lugar 1 de 3 \(/);
   await page.evaluate(()=>cerrarCapas());
   // 6) al recargar el plan viene de la hoja; con la hoja colgada, el montón sale de lo que guardó el aparato
-  modo.dia='ok';await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  modo.dia='ok';await page.reload();await aLista(page);
   await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&document.querySelectorAll('#salidaHoy .sal-carta').length===3);
   assert.deepEqual(await nombres(),['Pieza C','Pieza B','Pieza A']);
   assert.match(await page.locator('#salidaHoy header').innerText(),/A 5 por semana, desde el /);
   // lo que YOD OS puede leer de este aparato: cuántas hay y cuándo se vio; ni títulos ni textos
   const resumen=await page.evaluate(()=>JSON.parse(localStorage.getItem('sala_resumen_v1')));
   assert.deepEqual(Object.keys(resumen).sort(),['cuando','listas']);assert.equal(resumen.listas,3);assert.ok(Date.now()-resumen.cuando<60000);
-  modo.exp='cuelga';await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  modo.exp='cuelga';await page.reload();await aLista(page);
   assert.deepEqual(await nombres(),['Pieza C','Pieza B','Pieza A']);
   assert.match(await page.locator('#salidaHoy .sal-nota').textContent(),/Lo último que este aparato guardó; confirmando con el Sheet/);
   // 7) si la hoja se cae lo dice y ofrece reintentar; al volver, lo recién empacado entra al final
@@ -288,7 +381,7 @@ async function estatico(route,u,rol){
   const escrituras=async n=>{for(let i=0;i<80&&writes.length<n;i++)await page.waitForTimeout(100);assert.equal(writes.length,n);};
   const montonDe=n=>page.waitForFunction(k=>!document.querySelector('#salidaHoy .sal-nota')&&document.querySelectorAll('#salidaHoy .sal-carta').length===k,n,{timeout:30000});
   await page.goto(base);
-  await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});await montonDe(2);
+  await aLista(page);await montonDe(2);
   // 1) en la hoja de una pieza lista: sin nota no se pide nada
   await page.locator('#salidaHoy [data-publicar="Pieza Uno"]').click();await page.waitForSelector('.sal-hoja');
   await page.locator('#salCambio').click();
@@ -319,7 +412,7 @@ async function estatico(route,u,rol){
   assert.match(filas['Pieza Tres'],/Lista para lanzar: 1 imagen y su texto\./);
   await page.locator('#puertas [data-v="hoy"]').click();
   // 4) al recargar, la orden viene de la hoja
-  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.reload();await aLista(page);
   await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
   assert.deepEqual(await nombres(),['Pieza Tres']);
   // 5) desde la mesa: la página aprobada de una pieza de UNA imagen (su tira no tiene base) ya deja pedir cambio
@@ -365,7 +458,7 @@ async function estatico(route,u,rol){
   // 8b) segunda vuelta: el registro ya es de la versión rehecha y trae `paquete` (la empacada). El paquete viejo NO vuelve al montón
   modo.guardar='ok';const REHECHA='uno-nube-2026-11-10-eeeeee',antesSV=writes.length;
   hoja['cambio:uno']={v:1,pieza:'Pieza Uno',tira:REHECHA,paquete:PIEZAS[0][0],ordenes:[{n:1,nota:'Segunda vuelta',cuando:'2026-11-10T05:00:00.000Z',por:'editor'}],cuando:'2026-11-10T05:00:00.000Z',por:'editor'};
-  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.reload();await aLista(page);
   await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
   assert.deepEqual(await nombres(),['Pieza Tres'],'el paquete viejo no se ofrece como listo');
   const pie=()=>page.locator('#salidaHoy .sal-cambios').innerText().then(t=>t.replace(/\s+/g,' '));
@@ -406,7 +499,7 @@ async function estatico(route,u,rol){
   assert.equal((await pide({slug:'tres',pieza:'Pieza Tres',tira:T3,n:1,nota:'   '})).motivo,'Escribe qué debe cambiar.');
   // H2: registro de segunda vuelta SIN órdenes (quitadas): la pieza no vuelve al montón y su nombre sigue en el pie
   hoja['cambio:uno']={v:1,pieza:'Pieza Uno',tira:REHECHA,paquete:PIEZAS[0][0],ordenes:[]};
-  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.reload();await aLista(page);
   await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
   assert.equal(await page.locator('#salidaHoy .sal-carta[data-publicar="Pieza Uno"]').count(),0);
   assert.equal(await page.locator('#salidaHoy .sal-cambios li').count(),1,'un renglón por pieza');
@@ -415,13 +508,13 @@ async function estatico(route,u,rol){
   // H5: dos registros de la misma pieza (llaves distintas): manda el que la oculta
   hoja['cambio:uno']={v:1,pieza:'Pieza Uno',tira:PIEZAS[0][0],paquete:PIEZAS[0][0],ordenes:[]};
   hoja['cambio:uno-viejo']={v:1,pieza:'Pieza Uno',tira:PIEZAS[0][0],paquete:PIEZAS[0][0],ordenes:[{n:2,nota:'La otra llave',cuando:'2026-11-10T05:00:00.000Z',por:'editor'}]};
-  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.reload();await aLista(page);
   await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
   assert.deepEqual(await nombres(),['Pieza Tres'],'gana el registro que oculta');
   assert.match(await pie(),/Pieza Uno · imagen 2: «La otra llave»/);
   delete hoja['cambio:uno-viejo'];delete hoja['cambio:uno'];
   // H4: el nombre que manda la mesa no es la llave del expediente: el paquete se halla por su slug
-  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});await montonDe(2);
+  await page.reload();await aLista(page);await montonDe(2);
   const antesH4=writes.length;
   assert.equal((await pide({slug:'tres',pieza:'Nombre que no es llave',tira:T3,n:1,nota:'x'})).ok,true);
   await escrituras(antesH4+1);
@@ -429,7 +522,7 @@ async function estatico(route,u,rol){
   hoja['cambio:tres']={v:1,pieza:'Pieza Tres',tira:T3,paquete:T3,ordenes:[]};
   // F5: una pieza SIN paquete (como «Las 48 Horas») con orden viva aparece como renglón en el pie
   hoja['cambio:dos']={v:1,pieza:'Pieza Dos',tira:PIEZAS[1][0],paquete:'',ordenes:[{n:1,nota:'Sin paquete aún',cuando:'2026-11-10T05:00:00.000Z',por:'editor'}]};
-  await page.reload();await page.waitForSelector('#salidaHoy .sal-carta',{timeout:30000});
+  await page.reload();await aLista(page);
   await page.waitForFunction(()=>!document.querySelector('#salidaHoy .sal-nota')&&!!document.querySelector('#salidaHoy .sal-cambios'),null,{timeout:30000});
   assert.match(await pie(),/Pieza Dos · imagen 1: «Sin paquete aún»\. Pedido a Producción con la nota del editor; suele tardar varias horas\. Quitar la petición/);
   assert.equal(await page.locator('#salidaHoy .sal-carta[data-publicar="Pieza Dos"]').count(),0);

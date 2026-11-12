@@ -151,6 +151,32 @@ para nunca quedarnos… que vayamos armando un paquete para ir lanzando». Por e
 - El número de la carpeta en Drive es el orden de llegada y **no cambia** al reordenar: la Sala abre
   cada carpeta por su liga.
 
+## El libro (12-nov-2026, chinche `CHN-20261112-0840-a2f9`)
+
+Dirección, sobre el montón: «hasta arriba quiero la decisión de cada una de las propuestas… no todas
+juntas… un libro». Desde ese día, quien entra como editor ve **el libro** arriba de «Te toca»: una
+publicación lista por página (imágenes, avisos del consejo y texto) con tres decisiones.
+
+| Botón | Qué hace | Dónde queda |
+|---|---|---|
+| **Va** | la pieza se queda en el montón y el libro pasa a la siguiente por decidir | `salida:plan.visto[<pieza>] = {m:'va', sello, por, cuando}` |
+| **Pedir cambio** | abre la orden de cambio de siempre, ya desplegada | llave `cambio:<slug>` (sin cambios) |
+| **No va** | la pieza sale del montón; su paquete y su expediente no se tocan | `salida:plan.visto[<pieza>] = {m:'no', …}` |
+
+- La marca vale sólo para el `sello` del paquete que el editor vio: un paquete nuevo vuelve al libro.
+- «No va» se deshace abajo del montón («Regresarla al libro»). Nada se borra.
+- Pasar la página no escribe nada. Decidir no depende de un temporizador (INVIOLABLE 11).
+- El mismo día Dirección precisó: «pon hasta arriba el libro y abajo las 24 listas para publicar». El
+  montón completo (orden, ritmo, arranque) queda siempre debajo del libro; no se esconde detrás de un botón.
+  Con todo decidido el libro se retira solo y «Abrir el libro» lo reabre («Cerrar el libro» lo guarda).
+- El lector (solo lectura) ve sólo el montón. El editor ve el libro desde el primer instante y los
+  botones se habilitan cuando la mesa vigente confirma su entrada.
+- La nube no lee ni escribe `visto`: es del plan de salida, que es de los editores. Publicar sigue
+  siendo el clic de Dirección.
+
+Pruebas: `tests/sala-salida.test.cjs` (contrato de las marcas) y `tests/salida.browser.cjs` (recorrido
+del libro en 390 y 1440 px, escrituras interceptadas).
+
 ## Pedir cambio a una pieza lista (orden de cambio)
 
 **Para qué.** Un editor ve mal una imagen que ya estaba aprobada y pide rehacerla, aunque la pieza ya

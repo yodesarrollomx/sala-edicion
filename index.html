@@ -673,7 +673,7 @@ html.trayendo #actualizando{display:flex}
 body > .chn-aviso:has(~ .chn-aviso){display:none!important}
 </style><link rel="stylesheet" href="tablero-sala.css?v=20261109-monton"><link rel="stylesheet" href="sala2.css">
 </head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
-<link rel="stylesheet" href="sala-salida.css?v=20261109-cambio">
+<link rel="stylesheet" href="sala-salida.css?v=20261112-libro2">
 <script src="sala-correcciones.js?v=20261015-4"></script>
 <script src="politica-imagen.js?v=hidream-o1-20261017"></script>
 <script src="video-revision.js?v=20261020-nativo1"></script>
@@ -828,7 +828,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='6efbd8414a';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='a0c43ceb32';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -2225,6 +2225,7 @@ function pintarAjustes(){
     <div class="bloque-aj"><h4>Cómo se usa</h4><ol>${DECIDE()?`
       <li><b>La línea es una sola:</b> idea → guion → imágenes → texto → tú publicas. Todo corre en la nube.</li>
       <li><b>«Te toca» tiene dos cosas.</b> Lo que hay que decidir (aprobar, pedir cambio o «no va») y <b>tu montón</b>: lo que ya está listo para lanzar, en el orden en que va a salir.</li>
+      <li><b>Tu libro va primero:</b> lo listo se te presenta una publicación por página, con sus imágenes y su texto, y tú dices <b>Va</b>, <b>Pedir cambio</b> o <b>No va</b>. «No va» la saca del montón sin borrar nada (abajo la puedes regresar). Debajo del libro sigue tu montón completo.</li>
       <li><b>Arma tu salida sin prisa:</b> arriba del montón eliges cuántas por semana (te dice para cuántas semanas alcanza), el día de arranque y el orden («Cambiar el orden»). Nada sale solo.</li>
       <li><b>¿Algo de una pieza lista no te convence?</b> Ábrela y toca «Pedir cambio a una imagen»: escribe una línea y Producción la rehace. La pieza sale del montón y vuelve cuando apruebes su versión nueva.</li>
       <li><b>Cuando decidas publicar:</b> abre la pieza, baja sus imágenes de Drive, copia el texto y la liga, publícala en Instagram y Facebook y toca <b>«Ya la publiqué»</b>.</li>
@@ -3586,7 +3587,7 @@ setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subir
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); _tSubir=null; subir() } } });
 window.addEventListener('resize',()=>{ if(DECIDE()) pintarPanel(); else pintarPanelMira() });
 </script>
-<script src="sala-salida.js?v=20261109-cambio"></script>
+<script src="sala-salida.js?v=20261112-libro2"></script>
 <script src="tablero-sala.js?v=20261109-cambio"></script>
 <script src="sala2.js" defer></script>
 </body></html>
