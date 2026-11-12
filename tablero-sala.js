@@ -72,7 +72,8 @@ if(typeof module==="object"&&module.exports)module.exports=api;
 if(typeof document==="undefined")return;
 const root=document.getElementById("tableroHoy");if(!root)return;
 window.SalaTablero=api;
-const S={groups:[],focus:null,choice:null,filter:"todas",busy:false,loaded:false,last:null,notice:"",pinch:null};
+// CHN-20261112-0840-a2f9: la mesa (decisión por propuesta) abre desplegada; «Plegar la mesa» la sigue plegando a mano.
+const S={groups:[],focus:null,choice:null,filter:"todas",busy:false,loaded:false,last:null,notice:"",pinch:null,abierta:true};
 api.contexto=function(el){
  const card=el&&el.closest&&el.closest('[data-group]');
  const gid=card&&card.dataset.group||(S.choice&&S.choice.group)||S.focus;

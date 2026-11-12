@@ -182,7 +182,7 @@ test('retiro: qué pasa con una pieza frente a su orden de cambio (todas las ram
 test('el índice carga la salida y la mesa sólo se pinta en «Te toca»',()=>{
   const html=fs.readFileSync(require.resolve('../index.html'),'utf8'),css=fs.readFileSync(require.resolve('../tablero-sala.css'),'utf8');
   assert.ok(/<script src="sala-salida\.js\?v=[^"]+"><\/script>/.test(html));assert.ok(/href="sala-salida\.css\?v=[^"]+"/.test(html));
-  assert.ok(html.indexOf('id="salidaHoy"')<html.indexOf('id="tableroHoy"'));
+  assert.ok(html.indexOf('id="tableroHoy"')<html.indexOf('id="salidaHoy"'))   // CHN-20261112-0840-a2f9: la decisión por propuesta va arriba;
   assert.ok(css.includes('body.sala-tablero[data-vista="hoy"] #vHoy{display:block'));
   assert.ok(!/body\.sala-tablero #vHoy\{display:block/.test(css),'sin [data-vista] la mesa tapa «Cómo va» y Ajustes');
 });
