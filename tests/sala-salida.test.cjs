@@ -81,11 +81,11 @@ test('el calendario de salida reparte por semana y empieza el día de arranque o
 });
 
 test('un plan que llega mal de la hoja o del aparato queda en uno utilizable',()=>{
-  assert.deepEqual(s.planLimpio(undefined),{v:1,orden:[],por_semana:3,arranque:'',cuando:'',por:''});
+  assert.deepEqual(s.planLimpio(undefined),{v:1,orden:[],por_semana:3,arranque:'',cuando:'',por:'',visto:{}});
   assert.deepEqual(s.planLimpio('texto'),s.planLimpio(null));
   assert.deepEqual(s.planLimpio([1,2]),s.planLimpio(null));
   const p=s.planLimpio({orden:['A',' A ','',7,null,{x:1},'B'],por_semana:'5',arranque:'2026-11-16',cuando:'2026-11-10T01:00:00.000Z',por:'editor',clave:'no se copia',extra:true});
-  assert.deepEqual(p,{v:1,orden:['A','B'],por_semana:5,arranque:'2026-11-16',cuando:'2026-11-10T01:00:00.000Z',por:'editor'});
+  assert.deepEqual(p,{v:1,orden:['A','B'],por_semana:5,arranque:'2026-11-16',cuando:'2026-11-10T01:00:00.000Z',por:'editor',visto:{}});
   for(const ps of [0,8,-1,'x',null,2.6e9]) assert.equal(s.planLimpio({por_semana:ps}).por_semana,3,String(ps));
   assert.equal(s.planLimpio({arranque:'16/11/2026'}).arranque,'');
   assert.equal(s.planLimpio({orden:Array.from({length:900},(_,i)=>'p'+i)}).orden.length,500);
@@ -177,6 +177,38 @@ test('retiro: qué pasa con una pieza frente a su orden de cambio (todas las ram
   assert.equal(s.retiro(undefined,P1,P1),'');
   assert.equal(s.retiro({tira:'P0',paquete:'P0',ordenes:[]},'P0','T1'),'volvio');
   assert.equal(s.retiro({tira:'P0',paquete:'P0',ordenes:[]},'P0',''),'');
+});
+
+test('el libro: la marca vale sólo para el paquete que el editor vio, y «No va» no borra nada',()=>{
+  const lista=[{nombre:'Uno',p:{sello:'s1'}},{nombre:'Dos',p:{sello:'s2'}},{nombre:'Tres',p:{sello:'s3'}}];
+  let visto=s.conMarca({}, 'Uno','va','s1','editor','2026-11-12T16:00:00.000Z');
+  visto=s.conMarca(visto,'Dos','no','s2','editor2','2026-11-12T16:01:00.000Z');
+  const plan=s.planLimpio({visto});
+  assert.deepEqual(plan.visto.Uno,{m:'va',sello:'s1',por:'editor',cuando:'2026-11-12T16:00:00.000Z'});
+  assert.equal(s.marcaLibro(plan,'Uno','s1'),'va');assert.equal(s.marcaLibro(plan,'Dos','s2'),'no');assert.equal(s.marcaLibro(plan,'Tres','s3'),'');
+  assert.equal(s.marcaLibro(plan,'Uno','s1-nuevo'),'','un paquete nuevo vuelve al libro: la marca era del anterior');
+  assert.equal(s.marcaLibro(plan,'toString','x'),'','un nombre heredado del objeto no es una marca');
+  const r=s.libro(lista,plan);
+  assert.deepEqual([r.porVer.map(x=>x.nombre),r.van.map(x=>x.nombre),r.fuera.map(x=>x.nombre)],[['Tres'],['Uno'],['Dos']]);
+  const sin=s.conMarca(plan.visto,'Dos','','s2','editor','x');
+  assert.deepEqual(Object.keys(sin),['Uno'],'quitar una marca no toca las demás');
+  assert.deepEqual(Object.keys(plan.visto).sort(),['Dos','Uno'],'conMarca no altera el plan que recibió');
+});
+
+test('el libro: marcas que llegan mal de la hoja se descartan sin tumbar el plan',()=>{
+  const v=s.vistoLimpio(JSON.parse('{"A":{"m":"va","sello":"s","clave":"x"},"B":{"m":"quiza"},"C":null,"D":"va"," ":{"m":"no"},"__proto__":{"m":"va"},"E":{"m":"no","sello":7}}'));
+  assert.deepEqual(v,{A:{m:'va',sello:'s',por:'',cuando:''},E:{m:'no',sello:'',por:'',cuando:''}});
+  assert.deepEqual(s.vistoLimpio([{m:'va'}]),{});assert.deepEqual(s.vistoLimpio('va'),{});
+  assert.deepEqual(s.planLimpio({por_semana:6,visto:'roto'}).visto,{});
+  assert.equal(s.planLimpio({orden:['A'],visto:{A:{m:'va',sello:'s'}}}).orden[0],'A','el orden y las marcas viajan juntos');
+});
+
+test('el libro va arriba del montón y la lista sigue a un toque',()=>{
+  const fuente=fs.readFileSync(require.resolve('../sala-salida.js'),'utf8'),css=fs.readFileSync(require.resolve('../sala-salida.css'),'utf8');
+  for(const x of ['data-lib="va"','data-lib="cambio"','data-lib="no"','data-lista="1"','data-lib-volver=','TU LIBRO']) assert.ok(fuente.includes(x),x);
+  assert.ok(/function pendientes\(\)\{ return sinCambio\(\)\.filter\(x=>marcaLibro\(PLAN,x\.nombre,x\.p\.sello\)!=='no'\) \}/.test(fuente),'lo vetado no cuenta como listo para lanzar');
+  assert.ok(!/data-lib="va"[^`]*setTimeout/.test(fuente),'decidir no depende de un temporizador');
+  for(const x of ['.sal-libro{','.sal-lib-dec{','.sal-lib-tira{']) assert.ok(css.includes(x),x);
 });
 
 test('el índice carga la salida y la mesa sólo se pinta en «Te toca»',()=>{

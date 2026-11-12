@@ -34,12 +34,34 @@ const DIAS={1:[3],2:[2,4],3:[1,3,5],4:[1,2,4,5],5:[1,2,3,4,5],6:[1,2,3,4,5,6],7:
 /* ── puro (sin pantalla): se prueba en Node ─────────────────────────────────────────────── */
 function paquete(e){ return e&&typeof e==='object'&&e.paquete&&typeof e.paquete==='object'&&Array.isArray(e.paquete.imagenes)&&e.paquete.imagenes.length?e.paquete:null }
 /* lo que venga de la hoja o del aparato, en una forma en la que se puede confiar */
+/* el libro: lo que cada editor dijo de una pieza lista. `m` = 'va' | 'no'; `sello` = el paquete que vio
+   (si la nube arma un paquete nuevo, la marca ya no vale y la pieza vuelve al libro) */
+function vistoLimpio(v){
+  const out={}; if(!v||typeof v!=='object'||Array.isArray(v)) return out;
+  for(const [n,x] of Object.entries(v).slice(0,500)){ const k=String(n).trim().slice(0,160);
+    if(!k||k==='__proto__'||!x||typeof x!=='object'||(x.m!=='va'&&x.m!=='no')) continue;
+    out[k]={m:x.m, sello:typeof x.sello==='string'?x.sello.slice(0,80):'', por:typeof x.por==='string'?x.por.slice(0,40):'', cuando:typeof x.cuando==='string'?x.cuando.slice(0,40):''} }
+  return out;
+}
+function marcaLibro(plan,nombre,sello){ const v=plan&&plan.visto, x=v&&Object.prototype.hasOwnProperty.call(v,nombre)?v[nombre]:null; return x&&x.sello===String(sello||'')?x.m:'' }
+/* poner o quitar (m='') la marca de una pieza sin tocar las demás */
+function conMarca(visto,nombre,m,sello,quien,ahora){
+  const out=vistoLimpio(visto); delete out[nombre];
+  if(m==='va'||m==='no') out[nombre]={m, sello:String(sello||'').slice(0,80), por:String(quien||'').slice(0,40), cuando:String(ahora||'').slice(0,40)};
+  return out;
+}
+/* del montón: cuáles faltan por decidir, cuáles van y cuáles no van */
+function libro(lista,plan){
+  const r={porVer:[],van:[],fuera:[]};
+  for(const x of lista||[]){ const m=marcaLibro(plan,x.nombre,x.p&&x.p.sello); (m==='va'?r.van:m==='no'?r.fuera:r.porVer).push(x) }
+  return r;
+}
 function planLimpio(p){
   p=p&&typeof p==='object'&&!Array.isArray(p)?p:{};
   const orden=Array.isArray(p.orden)?[...new Set(p.orden.filter(x=>typeof x==='string'&&x.trim()).map(x=>x.trim().slice(0,160)))].slice(0,500):[];
   const ps=Math.round(Number(p.por_semana));
   return {v:1, orden, por_semana:ps>=1&&ps<=7?ps:3, arranque:/^\d{4}-\d{2}-\d{2}$/.test(String(p.arranque||''))?String(p.arranque):'',
-    cuando:typeof p.cuando==='string'?p.cuando.slice(0,40):'', por:typeof p.por==='string'?p.por.slice(0,40):''};
+    cuando:typeof p.cuando==='string'?p.cuando.slice(0,40):'', por:typeof p.por==='string'?p.por.slice(0,40):'', visto:vistoLimpio(p.visto)};
 }
 /* las piezas con paquete que todavía no salen. Con plan, en el orden que fijó el editor; las que el
    plan no nombra (recién empacadas) van al final, por el número de su carpeta */
@@ -124,7 +146,7 @@ function paraGuardar(lista){
       copy:{texto:c.texto, instagram:c.instagram, facebook:c.facebook, comentario:c.comentario, revision:c.revision}} }
   return JSON.parse(JSON.stringify(out,(k,v)=>secreto.test(k)?undefined:v));
 }
-const puro={paquete,planLimpio,listas,mover,fechasDeSalida,alcance,partes,ligaValida,estado,cuantas,paraGuardar,PLAN_LLAVE,
+const puro={paquete,planLimpio,vistoLimpio,marcaLibro,conMarca,libro,listas,mover,fechasDeSalida,alcance,partes,ligaValida,estado,cuantas,paraGuardar,PLAN_LLAVE,
   cambioLimpio,ordenesVigentes,conOrden,sinOrden,retiro,CAMBIO_LLAVE,NOTA_MAX};
 if(typeof module==='object'&&module.exports){ module.exports=puro; return }
 
@@ -132,7 +154,7 @@ if(typeof module==='object'&&module.exports){ module.exports=puro; return }
 const leer=(k,d)=>{ try{ const v=JSON.parse(localStorage.getItem(k)||'null'); return v&&typeof v==='object'?v:d }catch(e){ return d } };
 const guardar=(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); return true }catch(e){ return false } };
 /* vivo: ya contestó la hoja en esta visita · GUARD: lo último que este aparato vio de ella */
-let vivo=false, fallo=false, GUARD=null, PLAN=planLimpio((leer(PLAN_LOCAL,{})||{}).plan), ORDEN=null, _tPlan=0, _aviso='', _tAviso=0, _releyendo=false;
+let vivo=false, fallo=false, GUARD=null, PLAN=planLimpio((leer(PLAN_LOCAL,{})||{}).plan), ORDEN=null, MODO='', PAGINA='', _tPlan=0, _aviso='', _tAviso=0, _releyendo=false;
 /* slug → orden de cambio vigente o no; viene de la hoja y se recuerda en el aparato junto con lo listo */
 let CAMBIOS={};
 function publicadaAqui(n){ const m=leer(LLAVE,{}); return !!(m[n]&&m[n].fecha) }
@@ -163,7 +185,20 @@ function estadoDe(nombre,slug){
   for(const k of claves){ const c=CAMBIOS[k], e=pub?'':retiro(c,emp,mesa); if(e){ gana={estado:e,ordenes:c.ordenes,slug:k,c,mesa,quitable:e==='pedido'&&mesa===c.tira}; break } }
   return gana||{estado:'',ordenes:[],slug:claves[0]||slug||'',c:claves[0]?CAMBIOS[claves[0]]:null,mesa,quitable:false};
 }
-function pendientes(){ return conPaquete().filter(x=>!estadoDe(x.nombre,x.p.slug).estado) }
+function sinCambio(){ return conPaquete().filter(x=>!estadoDe(x.nombre,x.p.slug).estado) }
+function pendientes(){ return sinCambio().filter(x=>marcaLibro(PLAN,x.nombre,x.p.sello)!=='no') }
+/* las que un editor sacó del montón con «No va»: siguen con su paquete; nada se borra */
+function vetadas(){ return libro(sinCambio(),PLAN).fuera }
+function marcar(nombre,m){
+  if(!puedeOrdenar()) return;
+  const x=sinCambio().find(z=>z.nombre===nombre); if(!x) return;
+  const l=pendientes(), i=l.findIndex(z=>z.nombre===nombre), resto=l.filter(z=>z.nombre!==nombre);
+  if(m){ const sig=[...resto.slice(Math.max(i,0)),...resto.slice(0,Math.max(i,0))].find(z=>!marcaLibro(PLAN,z.nombre,z.p.sello)); PAGINA=sig?sig.nombre:(m==='va'?nombre:''); }
+  else PAGINA=nombre;
+  if(m&&MODO==='libro'&&!resto.some(z=>!marcaLibro(PLAN,z.nombre,z.p.sello))) MODO='';
+  avisar(m==='va'?'«'+nombre+'» va: se queda en tu montón.':m==='no'?'«'+nombre+'» no va: salió del montón. Nada se borra; puedes regresarla abajo.':'«'+nombre+'» volvió al libro.');
+  cambiarPlan({visto:conMarca(PLAN.visto,nombre,m,x.p.sello,ROL(),new Date().toISOString())},true);
+}
 /* el pie del montón: toda pieza con paquete que no está en el montón (y no publicada) está aquí, más las que piden cambio y
    todavía no tienen paquete */
 function enCambio(){
@@ -176,6 +211,8 @@ function enCambio(){
 }
 function hay(){ try{ return ENTRADO()&&pendientes().length>0 }catch(e){ return false } }
 function puedeOrdenar(){ return DECIDE()&&(vivo||!!GUARD) }
+/* quien entró como editor ve el libro desde el primer instante; decidir se habilita cuando la mesa vigente confirma */
+function editorAqui(){ try{ return ENTRADO()&&/^editor2?$/.test(ROL()) }catch(e){ return false } }
 async function dueno(){
   if(typeof SalaMesaLocal==='undefined'||typeof identidadMesaLocal!=='function') return null;
   try{ return await SalaMesaLocal.scope(identidadMesaLocal(),window.crypto) }catch(e){ return null }
@@ -198,7 +235,7 @@ function cuando(i,fechas){ return fechas[i]?(fechas[i]===hoyHmo()?'Hoy · ':'')+
 function tarjeta(x,i,fechas,n){
   const img=x.e.portada||(x.p.imagenes[0]||{}).src||'', k=x.p.imagenes.length, foto=miniatura(img);
   const dentro=`<span class="sal-foto">${foto?`<img src="${esc(foto)}" alt="" loading="lazy" decoding="async">`:''}<span class="sal-n">${i+1}</span></span>
-    <b>${esc(x.nombre)}</b><small>${esc(x.p.formato||'Publicación')} · ${cuantas(k,'imagen','imágenes')}</small><small class="sal-cuando">${esc(cuando(i,fechas))}</small>`;
+    <b>${esc(x.nombre)}</b><small>${esc(x.p.formato||'Publicación')} · ${cuantas(k,'imagen','imágenes')}</small><small class="sal-cuando">${esc(cuando(i,fechas))}${marcaLibro(PLAN,x.nombre,x.p.sello)==='va'?' · ✓ va':''}</small>`;
   if(ORDEN) return `<div class="sal-carta ordenando" data-pieza="${esc(x.nombre)}">${dentro}
     <span class="sal-mueve"><button type="button" data-paso="-1" aria-label="Sale antes: ${esc(x.nombre)}" ${i?'':'disabled'}>◀</button>
       <select data-lugar aria-label="Lugar de salida de ${esc(x.nombre)}">${Array.from({length:n},(_,j)=>`<option value="${j+1}"${j===i?' selected':''}>${j+1}</option>`).join('')}</select>
@@ -210,13 +247,35 @@ function resumen(n,fechas){
   if(fechas.length===n&&n) return `${ritmo}, desde el ${larga(fechas[0])}, alcanza hasta el <b>${larga(fechas[n-1])}</b>.`;
   return `${ritmo} alcanza para <b>${cuantas(sem,'semana','semanas')}</b>.`;
 }
-function controles(n){
+function controles(n,porVer){
   if(!puedeOrdenar()||!n) return '';
   if(ORDEN) return `<div class="sal-plan"><span class="sal-ayuda">Mueve cada una con las flechas o elige su lugar.</span><button type="button" class="sal-b fuerte" data-orden-ok>Guardar el orden</button><button type="button" class="sal-b" data-orden-no>Cancelar</button></div>`;
   return `<div class="sal-plan" role="group" aria-label="Plan de salida">
     <span class="sal-ritmo"><button type="button" data-ritmo="-1" aria-label="Menos por semana" ${PLAN.por_semana>1?'':'disabled'}>−</button><span><b>${PLAN.por_semana}</b> por semana</span><button type="button" data-ritmo="1" aria-label="Más por semana" ${PLAN.por_semana<7?'':'disabled'}>+</button></span>
     <label class="sal-arr">Arranca <input type="date" id="salArranque" value="${esc(PLAN.arranque)}" aria-label="Día en que arranca la salida"></label>
-    ${n>1?'<button type="button" class="sal-b" data-ordenar>Cambiar el orden</button>':''}</div>`;
+    ${n>1?'<button type="button" class="sal-b" data-ordenar>Cambiar el orden</button>':''}
+    <button type="button" class="sal-b${porVer?' fuerte':''}" data-lista="0">${porVer?'Volver al libro · '+porVer+' por decidir':'Abrir el libro'}</button></div>`;
+}
+/* EL LIBRO (12-nov, chinche CHN-20261112-0840-a2f9): «hasta arriba quiero la decisión de cada una de las
+   propuestas… no todas juntas… un libro». Una publicación por página, con su decisión; la lista queda a un toque. */
+function pagina(l,fechas){
+  let i=l.findIndex(x=>x.nombre===PAGINA);
+  if(i<0){ i=l.findIndex(x=>!marcaLibro(PLAN,x.nombre,x.p.sello)); if(i<0) i=0; PAGINA=l[i].nombre }
+  const x=l[i], p=x.p, n=l.length, k=p.imagenes.length, c=partes(x.e.copy), m=marcaLibro(PLAN,x.nombre,p.sello), decide=puedeOrdenar(), cambio=decide&&puedePedirCambio(x.nombre)&&ID_TIRA.test(String(p.id||''))&&SLUG_OK.test(String(p.slug||''));
+  return `<article class="sal-libro" data-libro="${esc(x.nombre)}" aria-label="Página ${i+1} de ${n}: ${esc(x.nombre)}">
+    <div class="sal-lib-cab"><span class="sal-lib-pag">Página ${i+1} de ${n}</span>${m==='va'?'<span class="sal-lib-ya">✓ Dijiste «va»</span>':''}</div>
+    <h3>${esc(x.nombre)}</h3>
+    <p class="sal-sub">${esc(p.formato||'Publicación')} · ${cuantas(k,'imagen','imágenes')} · sale: ${esc(cuando(i,fechas))}</p>
+    <div class="sal-lib-tira" role="list" tabindex="0" aria-label="Imágenes de ${esc(x.nombre)}">${p.imagenes.map((im,j)=>`<button type="button" role="listitem" class="sal-lib-img" data-zoom="${esc(im.src)}" aria-label="Imagen ${Number(im.n)||j+1} de ${k}: ${esc(im.dice||'')}. Ampliar">${miniatura(im.src)?`<img src="${esc(miniatura(im.src))}" alt="" loading="${j?'lazy':'eager'}" decoding="async">`:''}<i>${Number(im.n)||j+1}</i></button>`).join('')}</div>
+    ${c.revision.length?`<div class="sal-ojo"><b>Antes de decidir, mira esto</b><ul>${c.revision.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`:''}
+    ${c.texto?`<details class="sal-lib-texto"><summary>El texto que la acompaña</summary><p>${esc(c.texto)}</p></details>`:''}
+    <div class="sal-lib-dec" role="group" aria-label="Decidir esta publicación">
+      <button type="button" class="va" data-lib="va"${m==='va'?' aria-pressed="true"':''}${decide?'':' disabled'}><span aria-hidden="true">✓</span>Va</button>
+      <button type="button" data-lib="cambio"${cambio?'':' disabled title="Se habilita cuando el Sheet confirma"'}><span aria-hidden="true">✎</span>Pedir cambio</button>
+      <button type="button" class="no" data-lib="no"${decide?'':' disabled'}><span aria-hidden="true">✕</span>No va</button>
+    </div>${decide?'':'<p class="sal-lib-nota">Puedes ir leyendo; las decisiones se habilitan cuando el Sheet confirma tu entrada.</p>'}
+    <div class="sal-lib-nav"><button type="button" data-lib-ir="-1" ${i?'':'disabled'}>← Anterior</button><button type="button" class="sal-mini" data-publicar="${esc(x.nombre)}">Abrir para publicar</button><button type="button" data-lib-ir="1" ${i<n-1?'':'disabled'}>Siguiente →</button></div>
+  </article>`;
 }
 let _hubo=null;
 async function pintar(){
@@ -226,22 +285,25 @@ async function pintar(){
     if(vivo) conciliar();
     const sabe=vivo||!!GUARD, l=sabe?pendientes():[], n=l.length, {espera,guardadas}=await sinPaquete(), cambios=sabe?enCambio():[];
     if(ORDEN&&!n) ORDEN=null;
+    const lib=libro(l,PLAN), fuera=sabe?vetadas():[], enLibro=editorAqui()&&n>0&&!ORDEN&&(MODO==='libro'||(MODO===''&&lib.porVer.length>0));
     const vista=ORDEN?ORDEN.map(nombre=>l.find(x=>x.nombre===nombre)).filter(Boolean):l;
     const fechas=fechasDeSalida(n,PLAN.por_semana,desde());
     if(!sabe&&fallo) html=`<section class="sal sal-aviso" aria-label="Listas para publicar"><header><span class="bt-eyebrow">TU MONTÓN</span><h2>No pude leer lo que está listo</h2><p>El Sheet no contestó. Tus publicaciones siguen en Drive y en la hoja; sólo falta volver a preguntar.</p></header><div class="sal-plan"><button type="button" class="sal-b fuerte" data-releer>Reintentar</button></div></section>`;
-    else if(sabe&&(n||espera||guardadas.length||cambios.length)) html=`<section class="sal${ORDEN?' en-orden':''}" aria-label="Listas para publicar">
-    <div class="sal-cab"><header><span class="bt-eyebrow">TU MONTÓN</span>
-      <h2>${n?cuantas(n,'lista para lanzar','listas para lanzar'):'Todavía no hay nada listo para lanzar'}</h2>
-      <p>${n?(fechas[0]===hoyHmo()?`Hoy toca <b>«${esc(vista[0].nombre)}»</b>. `:'')+resumen(n,fechas)+' Nada sale solo: tú das el clic de publicar.':'En cuanto una pieza tenga sus imágenes aprobadas y su texto, aparece aquí.'}</p>
+    else if(sabe&&(n||espera||guardadas.length||cambios.length||fuera.length)) html=`<section class="sal${ORDEN?' en-orden':''}${enLibro?' en-libro':''}" aria-label="Listas para publicar">
+    <div class="sal-cab"><header><span class="bt-eyebrow">${enLibro?'TU LIBRO':'TU MONTÓN'}</span>
+      <h2>${enLibro?(lib.porVer.length?cuantas(lib.porVer.length,'publicación por decidir','publicaciones por decidir'):'Tu libro, ya revisado'):n?cuantas(n,'lista para lanzar','listas para lanzar'):'Todavía no hay nada listo para lanzar'}</h2>
+      <p>${enLibro?`Una a la vez: <b>va</b>, <b>pide un cambio</b> o <b>no va</b>.${lib.van.length?` Ya dijiste «va» a ${lib.van.length} de ${n}.`:''} Nada sale solo: tú das el clic de publicar.`:n?(fechas[0]===hoyHmo()?`Hoy toca <b>«${esc(vista[0].nombre)}»</b>. `:'')+resumen(n,fechas)+' Nada sale solo: tú das el clic de publicar.':'En cuanto una pieza tenga sus imágenes aprobadas y su texto, aparece aquí.'}</p>
       ${!vivo?`<p class="sal-nota">${fallo?'El Sheet no contestó: ves lo último que este aparato guardó.':'Lo último que este aparato guardó; confirmando con el Sheet…'}${fallo?' <button type="button" class="sal-mini" data-releer>Reintentar</button>':''}</p>`:''}</header>
-      ${controles(n)}</div>
-    ${n?`<div class="sal-rejilla">${vista.map((x,i)=>tarjeta(x,i,fechas,n)).join('')}</div>`:''}
+      ${enLibro?`<div class="sal-plan"><button type="button" class="sal-b" data-lista="1">Ver las ${n} en lista</button></div>`:controles(n,lib.porVer.length)||(editorAqui()&&n&&!ORDEN?`<div class="sal-plan"><button type="button" class="sal-b" data-lista="0">${lib.porVer.length?'Volver al libro · '+lib.porVer.length+' por decidir':'Abrir el libro'}</button></div>`:'')}</div>
+    ${enLibro?pagina(l,fechas):n?`<div class="sal-rejilla">${vista.map((x,i)=>tarjeta(x,i,fechas,n)).join('')}</div>`:''}
     <p class="sal-estado" role="status" aria-live="polite">${esc(_aviso)}</p>
     ${espera?`<p class="sal-pie"><b>${cuantas(espera,'pieza más','piezas más')}</b> ya ${espera===1?'tiene':'tienen'} sus imágenes aprobadas y ${espera===1?'espera':'esperan'} su texto. Es el paso del consejo; cuando lo escriba, ${espera===1?'aparece':'aparecen'} aquí.</p>`:''}
     ${cambios.length?`<div class="sal-pie sal-cambios"><p><b>${cuantas(cambios.length,'pieza fuera del montón por un cambio','piezas fuera del montón por un cambio')}</b>:</p>
       <ul>${cambios.map(x=>{ const notas=x.ordenes.map(o=>` · imagen ${o.n}: «${esc(o.nota)}»`).join(''), uno=x.ordenes.length===1;
         const quitar=x.estado==='pedido'&&x.quitable&&puedePedirCambio(x.nombre)?x.ordenes.map(o=>` <button type="button" class="sal-mini" data-quitar-cambio="${esc(x.slug)}" data-n="${o.n}">${uno?'Quitar la petición':'Quitar la de la imagen '+o.n}</button>`).join(''):'';
         return `<li><span><b>${esc(x.nombre)}</b>${notas}. ${x.estado==='volvio'?'Hay una versión nueva: cuando esté aprobada y con su paquete nuevo, vuelve aquí.':'Pedido a Producción con la nota del editor; suele tardar varias horas.'}</span>${quitar}</li>` }).join('')}</ul></div>`:''}
+    ${fuera.length?`<div class="sal-pie sal-cambios"><p><b>${cuantas(fuera.length,'publicación con «No va»','publicaciones con «No va»')}</b> (fuera del montón; nada se borra):</p>
+      <ul>${fuera.map(x=>`<li><span><b>${esc(x.nombre)}</b></span>${puedeOrdenar()?` <button type="button" class="sal-mini" data-lib-volver="${esc(x.nombre)}">Regresarla al libro</button>`:''}</li>`).join('')}</ul></div>`:''}
     ${guardadas.length?`<p class="sal-pie"><b>${cuantas(guardadas.length,'pieza guardada','piezas guardadas')}</b> (no ${guardadas.length===1?'sale':'salen'} hasta que tú digas; nada se borra): ${esc(guardadas.join(' · '))}.</p>`:''}
   </section>`;
   }
@@ -252,6 +314,16 @@ async function pintar(){
 function enlazar(hoy){
   hoy.querySelectorAll('[data-publicar]').forEach(b=>b.onclick=()=>abrir(b.dataset.publicar));
   hoy.querySelectorAll('[data-releer]').forEach(b=>b.onclick=()=>actualizar());
+  hoy.querySelectorAll('[data-lista]').forEach(b=>b.onclick=()=>{ MODO=b.dataset.lista==='1'?'lista':'libro'; avisar(''); pintar() });
+  hoy.querySelectorAll('[data-lib-volver]').forEach(b=>b.onclick=()=>{ MODO=''; marcar(b.dataset.libVolver,'') });
+  const hojaLibro=hoy.querySelector('.sal-libro');
+  if(hojaLibro){ const nombre=hojaLibro.dataset.libro;
+    hojaLibro.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{ if(typeof abrirZoom==='function') abrirZoom(b.dataset.zoom) });
+    hojaLibro.querySelectorAll('[data-lib-ir]').forEach(b=>b.onclick=()=>{ const l=pendientes(), i=l.findIndex(x=>x.nombre===nombre)+Number(b.dataset.libIr); if(l[i]){ PAGINA=l[i].nombre; avisar(''); pintar().then(()=>{ const h=document.querySelector('#salidaHoy .sal-libro h3'); if(h) h.scrollIntoView({block:'nearest'}) }) } });
+    hojaLibro.querySelectorAll('[data-lib]').forEach(b=>b.onclick=()=>{ const m=b.dataset.lib;
+      if(m==='cambio'){ abrir(nombre); const c=document.getElementById('salCambio'); if(c) c.click(); return }
+      marcar(nombre,m) });
+  }
   hoy.querySelectorAll('[data-quitar-cambio]').forEach(b=>b.onclick=async()=>{ b.disabled=true; avisar('Quitando la petición…'); pintar();
     const r=await quitarCambio(b.dataset.quitarCambio,Number(b.dataset.n)); avisar(r.ok?'Petición quitada.':r.motivo); pintar() });
   hoy.querySelectorAll('[data-ritmo]').forEach(b=>b.onclick=()=>cambiarPlan({por_semana:Math.max(1,Math.min(7,PLAN.por_semana+Number(b.dataset.ritmo)))}));
@@ -269,6 +341,7 @@ async function recolocar(nombre,lugar){
   if(c){ const s=c.querySelector('[data-lugar]'); if(s) s.focus({preventScroll:true}); c.scrollIntoView({block:'nearest',inline:'nearest'}) }
 }
 function avisar(t){ _aviso=t||''; clearTimeout(_tAviso); if(_aviso) _tAviso=setTimeout(()=>{ _aviso=''; pintar() },6000) }
+/* MODO: '' = el libro mientras falte decidir y, ya decidido todo, la lista · 'lista' · 'libro' (abiertos a mano) */
 /* el plan cambia aquí al instante y sube a la hoja; si no sube, se queda en el aparato y se reintenta al abrir */
 function cambiarPlan(cambio,ya){
   if(!DECIDE()) return;
