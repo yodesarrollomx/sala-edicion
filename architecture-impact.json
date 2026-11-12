@@ -1,23 +1,16 @@
 {
  "model_revision": "2026-11-09.sala-corta.2",
  "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
- "proposal_id": "CHG-SALA-CORTA-20261109",
- "summary": "Pedir cambio a una imagen YA aprobada (SALA-63; atiende DEC-08, «Las 48 Horas»). Antes: «Pedir cambio» sobre una página aprobada sólo existía si la tira tenía base y viajaba como un «no» sobre t.base que en la nube nadie cosechaba (lo hacía la Mac). Ahora es una orden de cambio: un registro explícito del editor en EXPEDIENTES, llave cambio:<slug> ({pieza, tira, paquete, ordenes:[{n, nota}]}), escrito con la accion expediente que ya existía (sin tocar Apps Script). La nube sólo la lee (nube/sala_cambios.py, sin cliente; una prueba con ast lo vigila): la mesa trata la lámina aprobada con orden como un «no» con su nota y produce la rehecha con id nuevo y origen rehecha-de; la estación de salida no escribe texto ni empaca la pieza mientras la orden siga viva. La orden vale sólo para su tira: al rehacerse queda como historia. En la Sala: «Pedir cambio a una imagen» en la hoja de una pieza lista y «Pedir cambio» en la mesa aunque la tira no tenga base; la pieza sale del montón (también en la segunda vuelta, gracias al campo paquete y a la función pura retiro) y la mesa, el pie del montón y «Cómo va» lo dicen; «Quitar la petición» mientras Producción no la atienda. La aprobación anterior no se borra. Guardias: sólo editores, con la hoja leída en esta visita, nunca desde una copia guardada de la mesa ni sobre una pieza publicada.",
+ "proposal_id": "CHG-SALA-LIBRO-20261112",
+ "summary": "El libro arriba del montón (chinche CHN-20261112-0840-a2f9 de Dirección sobre «Tu montón»: «hasta arriba quiero la decisión de cada una de las propuestas… no todas juntas… un libro»). Sólo cambia la presentación de SYS-SALA: quien entra como editor ve en «Te toca» una publicación lista por página (imágenes, avisos del consejo, texto) con Va / Pedir cambio / No va; la lista del montón queda a un toque. Las marcas son del plan de salida de los editores (EXPEDIENTES, llave salida:plan, campo nuevo visto[<pieza>]={m,sello,por,cuando}), escritas con la accion expediente que ya existía: sin tocar Apps Script y sin lectura ni escritura desde la nube. La marca vale sólo para el sello del paquete que el editor vio (un paquete nuevo vuelve al libro). «No va» saca la pieza del montón sin tocar su paquete ni su expediente y se deshace con «Regresarla al libro». «Pedir cambio» reutiliza la orden de cambio cambio:<slug>. Pasar la página no escribe; decidir no depende de temporizadores. Publicar sigue siendo el clic de Dirección.",
  "components": [
   "SYS-SALA",
-  "GAS-SALA",
-  "SHEET-SALA",
-  "SVC-SALA-PRODUCTOR",
-  "SVC-SALA-EJECUTOR",
-  "EXT-ACTIONS",
-  "EXT-MOTORES-MEDIA"
+  "SHEET-SALA"
  ],
  "tests": [
-  "python3 -m unittest discover -s tests -p '*_test.py' (754 OK). Nuevas en tests/sala_cambios_test.py (27): contrato compartido con la pantalla (tests/fixtures/cambios-casos.json), aplicar sólo sobre láminas aprobadas, montador de punta a punta (rehecha con id nuevo y origen rehecha-de; nada con orden de otra versión), estación (la pieza deja de estar lista), órdenes sin tira vigente contadas y avisadas, pieza publicada ignorada, prioridad con tope de 1, y SoloLecturaTests con ast: sólo sala_cambios.py nombra la llave cambio: y no importa red ni el cliente.",
-  "node --test tests/*.test.cjs tests/*.test.mjs (193 OK): tabla de retiro (primera y segunda vuelta, quitada, sin paquete, inválida), paquete en conOrden/sinOrden, mismo contrato que la nube, guardia de la mesa (eligible y pieza publicada), pidDe nulo con copia guardada o sin cargar, «Cómo va» en pedido/volvió/sin paquete con el sala-salida.js real.",
-  "node tests/salida.browser.cjs (teléfono y escritorio, recorridos monton y cambio, 0 errores, 0 escrituras reales): pedir desde la hoja y desde la mesa sin base, segunda vuelta fuera del montón, «volvió» sin botón, quitar sólo con la mesa confirmando, dos registros de la misma pieza, pieza publicada, sin hoja leída, los siete motivos.",
-  "node tests/tablero-sala.browser.cjs · mesa-local · arranque-progresivo · sala2 (sin regresión; el día de respaldo no ofrece «Pedir cambio») · python3 nube/verificar.py (todo en orden; sello al día).",
-  "Mutaciones: siete en la primera entrega y las del auditor en la segunda (ver PR); la prueba de solo lectura falla si un módulo de nube/ arma 'cambio:'."
+  "node --test tests/*.test.cjs (195 OK). Nuevas en tests/sala-salida.test.cjs: contrato de las marcas (vistoLimpio, marcaLibro, conMarca, libro), marca atada al sello, entradas mal formadas descartadas, el plan conserva orden y marcas juntos.",
+  "node tests/salida.browser.cjs (390 y 1440 px, 0 errores, 0 escrituras reales): recorrido nuevo del libro (abre arriba y sin lista, navegar no escribe, Va avanza y sube al plan, No va saca del montón sin borrar y se regresa, Pedir cambio abre la orden desplegada, al terminar queda la lista, recarga conserva lo decidido, paquete nuevo vuelve al libro, sin desbordamiento horizontal) y los recorridos previos de montón y cambio pasando por «Ver en lista».",
+  "node tests/sala2.browser.cjs · mesa-local.browser.cjs (sin regresión) · python3 nube/verificar.py (todo en orden; sello al día)."
  ],
- "rollback": "Revertir el PR quita los botones y la lectura de órdenes; las llaves cambio: que ya existan en EXPEDIENTES quedan como historia sin efecto (nada las lee) y las piezas vuelven al montón con su paquete. Nada que restaurar en Drive ni en Apps Script."
+ "rollback": "Revertir el PR devuelve «Te toca» a la lista del montón. El campo visto que ya exista en salida:plan queda sin efecto (la versión anterior lo descarta al limpiar el plan) y las piezas con «No va» vuelven al montón con su paquete. Nada que restaurar en Drive ni en Apps Script."
 }
