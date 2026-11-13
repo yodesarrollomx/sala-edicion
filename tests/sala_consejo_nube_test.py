@@ -260,6 +260,38 @@ class AplicarTests(unittest.TestCase):
         self.assertNotIn(NOTA_SECRETA, e.salida.getvalue())
         self.assertIn('L0 no (3/6)', e.salida.getvalue())
 
+    def test_el_acta_del_debate_manda_la_instruccion_del_relator(self):
+        # 13-nov-2026 · Dirección: los jueces deliberan y el autor contesta; lo que llega a la mesa
+        # es la instrucción que el relator consolidó, no tres notas sueltas.
+        acta = {'rondas': 3, 'instrucciones': {'0': 'INSTRUCCION-DEL-RELATOR'},
+                'autor': 'RESPUESTA-DEL-AUTOR', 'enlace': 'https://docs.google.com/document/d/abc/edit'}
+        with Escenario() as e:
+            e.aplicar([{'id': PID, 'sello': e.sello(), 'tomas': {'0': 1, '1': 1},
+                        'votos': votos({'hormozi', 'chris_do', 'zuckerberg'}), 'acta': acta}])
+        props = e.decisiones[0][2][PID]
+        self.assertEqual(props['laminas'], ['no', 'no'])
+        self.assertTrue(props['notas'][0].startswith('3 de 6 a favor · tras 3 rondas de debate'))
+        self.assertIn('INSTRUCCION-DEL-RELATOR', props['notas'][0])
+        self.assertNotIn(NOTA_SECRETA, props['notas'][0])
+        self.assertIn(NOTA_SECRETA, props['notas'][1])          # sin instrucción, quedan las notas
+        jueces = {f[7]: f for f in e.filas}
+        self.assertEqual(jueces['RELATOR'][9], 'INSTRUCCION-DEL-RELATOR')
+        self.assertEqual(jueces['AUTOR'][9], 'RESPUESTA-DEL-AUTOR')
+        self.assertEqual(jueces['ACTA'][9], acta['enlace'])
+        for texto in ('INSTRUCCION-DEL-RELATOR', 'RESPUESTA-DEL-AUTOR', 'docs.google.com'):
+            self.assertNotIn(texto, e.salida.getvalue())
+        self.assertIn('3 rondas', e.salida.getvalue())
+
+    def test_el_acta_no_toca_un_si_ni_acepta_basura(self):
+        for acta in ({'instrucciones': {'0': 'X'}}, 'texto', {'instrucciones': ['X']},
+                     {'enlace': 'https://evil.example/x', 'rondas': 'mil'}):
+            with self.subTest(acta=acta), Escenario() as e:
+                e.aplicar([{'id': PID, 'sello': e.sello(), 'tomas': {'0': 2, '1': 1},
+                            'votos': votos(TODOS), 'acta': acta}])
+                props = e.decisiones[0][2][PID]
+                self.assertEqual(props['notas'], ['[toma elegida: 2]', '[toma elegida: 1]'])
+                self.assertNotIn('evil.example', json.dumps(e.filas))
+
     def test_un_si_sin_toma_valida_no_se_firma(self):
         for tomas in ({}, {'0': 3, '1': 1}, {'0': 'dos', '1': 1}, {'0': 0, '1': 1}, None,
                       {'0': True, '1': 1}, {'0': [1], '1': 1}, {'0': 1.5, '1': 1}):

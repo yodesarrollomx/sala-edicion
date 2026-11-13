@@ -681,7 +681,7 @@ def _resumen(res, votos):
     return ', '.join('L%d %s (%d/%d)' % (i, r['marca'], r['a_favor'], len(votos)) for i, r in sorted(res.items()))
 
 
-def firmar(carta, motor, modelo, votos, res, fecha, oido=None, reglas=None):
+def firmar(carta, motor, modelo, votos, res, fecha, oido=None, reglas=None, acta=None):
     """Manda la decisión con la llave del consejo y deja la bitácora en CONSEJO. Lo usan las dos
     rutas (Hermes y la tarea de nube); ninguna decide por otro lado. El registro público sólo
     lleva marcas y conteos: las notas viven en el Sheet."""
@@ -711,6 +711,17 @@ def firmar(carta, motor, modelo, votos, res, fecha, oido=None, reglas=None):
         filas.append([sello, corrida_id, pid, i, p.get('tipo'), motor, modelo, 'VEREDICTO',
                       '', r['nota'], '%d de %d%s' % (r['a_favor'], len(votos), ' · veto' if r['veto'] else ''),
                       r['marca'], envio_id, ''])
+    if acta:                                         # 13-nov: el debate del jurado de nube
+        for i, texto in sorted(acta['instrucciones'].items()):
+            if i in res:
+                filas.append([sello, corrida_id, pid, i, p.get('tipo'), motor, modelo, 'RELATOR',
+                              '', texto, '', res[i]['marca'], envio_id, ''])
+        if acta['autor']:
+            filas.append([sello, corrida_id, pid, '', p.get('tipo'), motor, modelo, 'AUTOR',
+                          '', acta['autor'], '', '', envio_id, ''])
+        if acta['enlace']:
+            filas.append([sello, corrida_id, pid, '', p.get('tipo'), motor, modelo, 'ACTA',
+                          '', acta['enlace'], '%d ronda(s)' % acta['rondas'], '', envio_id, ''])
     if oido:
         filas.append([sello, corrida_id, pid, '', p.get('tipo'), 'oido', _regla(reglas, 'consejo_oido', ''),
                       'OÍDO', '', json.dumps(oido, ensure_ascii=False)[:1500], '', '', envio_id, ''])
@@ -1012,6 +1023,51 @@ def votos_validos(crudo, abiertas, conocidos):
     return out
 
 
+ENLACE_ACTA = re.compile(r'^https://(docs|drive)\.google\.com/[A-Za-z0-9/_?=&.-]{1,300}$')
+
+
+def leer_acta(crudo, abiertas):
+    """El acta del debate (13-nov-2026, Dirección: «quiero verlos trabajar en realidad por
+    separado»). Los seis jueces votan cada quien en su contexto, luego leen a los demás y
+    rebaten; el autor de la pieza contesta y un relator junta una instrucción por lámina. El
+    acta completa vive en Drive; aquí sólo entra lo que la mesa necesita para rehacer. Lo que no
+    tenga forma se ignora: un acta rota nunca cambia un voto."""
+    if not isinstance(crudo, dict):
+        return None
+    instr = {}
+    if isinstance(crudo.get('instrucciones'), dict):
+        for k, v in crudo['instrucciones'].items():
+            try:
+                i = int(k)
+            except (TypeError, ValueError):
+                continue
+            if i in abiertas and isinstance(v, str) and v.strip():
+                instr[i] = v.strip()[:500]
+    rondas = crudo.get('rondas')
+    rondas = rondas if isinstance(rondas, int) and not isinstance(rondas, bool) and 1 <= rondas <= 9 else 1
+    autor = crudo.get('autor')
+    autor = autor.strip()[:1500] if isinstance(autor, str) else ''
+    enlace = crudo.get('enlace')
+    enlace = enlace if isinstance(enlace, str) and ENLACE_ACTA.match(enlace) else ''
+    if not (instr or autor or enlace):
+        return None
+    return {'instrucciones': instr, 'rondas': rondas, 'autor': autor, 'enlace': enlace}
+
+
+def con_acta(res, votos, acta):
+    """Un «no» lleva la instrucción del relator en lugar de las notas sueltas de los jueces. Un
+    «sí» no se toca: su nota es la toma elegida que pide el montador."""
+    if not acta:
+        return res
+    for i, texto in acta['instrucciones'].items():
+        r = res.get(i)
+        if r and r['marca'] == 'no':
+            r['nota'] = ('%d de %d a favor%s · tras %d rondas de debate · %s'
+                         % (r['a_favor'], len(votos), ' · veto de Alejandro virtual' if r['veto'] else '',
+                            acta['rondas'], texto))[:700]
+    return res
+
+
 def aplicar(crudo, ensayo=False):
     """Convierte los votos del jurado de nube en decisiones del consejo, o se abstiene."""
     sala.enmascarar_en_actions()
@@ -1055,6 +1111,8 @@ def aplicar(crudo, ensayo=False):
         if res is None:
             sala.avisar('· %s: me abstengo, sólo %d de 6 jueces votaron todas las piezas' % (pid, len(votos)))
             continue
+        acta = leer_acta(v.get('acta'), carta['abiertas'])
+        res = con_acta(res, votos, acta)
         if not sellar_tomas(p, res, elegidas=v.get('tomas') if isinstance(v.get('tomas'), dict) else {}):
             sala.avisar('· %s: me abstengo, un «sí» no dice qué toma aprueba' % pid)
             continue
@@ -1062,8 +1120,10 @@ def aplicar(crudo, ensayo=False):
             sala.avisar('· ENSAYO %s [%s]: %s' % (pid, MOTOR_NUBE, _resumen(res, votos)))
             continue
         try:
-            firmar(carta, MOTOR_NUBE, modelo, votos, res, fecha, None, reglas)
+            firmar(carta, MOTOR_NUBE, modelo, votos, res, fecha, None, reglas, acta=acta)
             firmadas += 1
+            if acta:
+                sala.avisar('· %s: deliberó en %d rondas; acta en Drive _consejo/actas' % (pid, acta['rondas']))
         except (sala.SalaError, ConsejoError) as e:
             fallidas += 1
             sala.avisar('· %s: ✗ el Sheet no confirmó la decisión (%s)' % (pid, sala.redactar(str(e))[:160]))
