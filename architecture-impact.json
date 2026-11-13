@@ -3,7 +3,9 @@
   "proposal_id": "CHG-SALA-CORTA-20261109",
   "summary": "Imagen de la Sala: si un motor de la REGLA imagen_motores no tiene cupo o no contesta (CupoImagen o ServicioImagen), la Sala ya no detiene el lote: sigue con el siguiente motor del orden explícito. Lo pidió Dirección el 13-nov-2026 («gratis a la cabeza y, si no, las de pago como última opción»), cuando el Space gratuito HiDream O1 dejó de contestar (TimeoutError) y la mesa quedó bloqueada (chinche 105 del grafo). La REGLA quedó en cloudflare_flux2,cloudflare,hidream_demo,gemini,openai_broker,hidream_o1: primero los gratuitos probados (Cloudflare FLUX 2 en 2 s, Cloudflare FLUX 1 en 3 s, HiDream I1 en 81 s), después los de pago. Sólo se usan motores de esa lista; si el último falla, su error sube igual que antes. Recibos, conciliación, vetos y la regla de sólo-recibo no cambian.",
   "components": [
-    "SYS-SALA"
+    "SYS-SALA",
+    "SVC-SALA-PRODUCTOR",
+    "EXT-MOTORES-MEDIA"
   ],
   "tests": [
     "python3 -m unittest discover -s tests -p '*_test.py' (las pruebas que fijaban «nunca caer a pago» ahora fijan «sólo el orden explícito, pago al final»)",
