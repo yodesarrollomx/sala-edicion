@@ -1,0 +1,62 @@
+# Piloto de UNA historia de 15 segundos con Gemini Omni Flash. Sólo a mano.
+# No pasa por la COLA ni por nube_ejecuta_etapas: no reactiva la producción de video.
+# Cada corrida real cuesta alrededor de 1 USD de la llave de Gemini (necesita facturación).
+name: Piloto Omni (una historia)
+
+on:
+  workflow_dispatch:
+    inputs:
+      historia:
+        description: 'Id de la historia en datos/universo/universo.json'
+        default: piloto-terreno
+        required: true
+      simular:
+        description: 'Sólo mostrar el prompt, sin generar ni gastar'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sala-piloto-omni
+  cancel-in-progress: false
+
+jobs:
+  piloto:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            nube
+            datos/universo
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet google-auth requests
+      - name: Generar la historia
+        working-directory: nube
+        env:
+          HISTORIA: ${{ inputs.historia }}
+          SIMULAR: ${{ inputs.simular }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SALA_GAS_EXEC: ${{ secrets.SALA_GAS_EXEC }}
+          SALA_CLAVE_AGENTE: ${{ secrets.SALA_CLAVE_AGENTE }}
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+        run: |
+          if [ "$SIMULAR" = "true" ]; then
+            python3 piloto_omni.py "$HISTORIA" --simular
+          else
+            python3 piloto_omni.py "$HISTORIA" --drive
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: piloto-omni
+          path: nube/salida/piloto/*.mp4
+          if-no-files-found: ignore
+          retention-days: 14

@@ -1,0 +1,153 @@
+/* Salida de la Sala corta (9-nov-2026): el montón listo para lanzar y la hoja de publicar. */
+body:not(.sala-tablero) #salidaHoy{display:none}
+.sal{border:1px solid var(--linea);background:var(--tarjeta);border-radius:20px;padding:20px;margin:0 0 20px}
+.sal-cab{display:flex;justify-content:space-between;align-items:flex-end;gap:14px 28px;flex-wrap:wrap}
+.sal-cab header{flex:1 1 380px;min-width:0}
+.sal header h2{font:28px/1.1 var(--serif);font-weight:400;letter-spacing:-.01em;margin:6px 0 6px}
+.sal header p{margin:0;color:var(--gris);font-size:14px;line-height:1.45}
+.sal header p b{color:var(--tinta);font-weight:600}
+.sal header p.sal-nota{margin-top:6px;font-size:12.5px;color:var(--guia)}
+/* el plan de salida: ritmo, día de arranque y orden */
+.sal-plan{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sal-ritmo{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--linea2);border-radius:999px;padding:2px;font-size:13px;background:var(--fondo)}
+.sal-ritmo span{padding:0 6px;white-space:nowrap}
+.sal-ritmo button{width:38px;height:38px;border:0;border-radius:50%;background:none;font-size:18px;line-height:1;color:inherit;cursor:pointer}
+.sal-ritmo button:hover:not(:disabled){background:var(--oro-suave)}
+.sal-ritmo button:disabled{opacity:.35;cursor:default}
+.sal-arr{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--linea2);border-radius:999px;padding:2px 8px 2px 14px;font-size:13px;background:var(--fondo);min-height:44px}
+.sal-arr input{border:0;background:none;font:inherit;color:inherit;min-height:38px;padding:0 2px;color-scheme:light dark}
+.sal-b{min-height:44px;border:1px solid var(--linea2);border-radius:999px;background:var(--fondo);padding:0 16px;font-size:13px;font-weight:600;color:inherit;cursor:pointer;white-space:nowrap}
+.sal-b:hover{border-color:var(--oro)}
+.sal-b.fuerte{background:var(--tinta);border-color:var(--tinta);color:var(--fondo)}
+.sal-ritmo button:focus-visible,.sal-arr input:focus-visible,.sal-b:focus-visible,.sal-carta:focus-visible,.sal-mueve button:focus-visible,.sal-mueve select:focus-visible{outline:3px solid var(--oro);outline-offset:2px}
+.sal-ayuda{font-size:12.5px;color:var(--gris)}
+/* la rejilla: todo el montón a la vista, en el orden en que sale */
+.sal-rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:14px;padding:18px 0 4px}
+.sal-carta{display:flex;flex-direction:column;gap:3px;text-align:left;border:1px solid var(--linea2);border-radius:14px;background:var(--fondo);padding:0 0 10px;overflow:hidden;color:inherit;min-width:0;cursor:pointer}
+.sal-carta:hover{border-color:var(--oro)}
+.sal-carta.ordenando{cursor:default;border-style:dashed}
+.sal-carta.hoy{border-color:var(--oro);box-shadow:0 0 0 2px var(--oro-suave)}
+.sal-foto{position:relative;display:block;aspect-ratio:4/5;background:var(--linea)}
+.sal-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.sal-n{position:absolute;left:8px;top:8px;min-width:26px;height:26px;border-radius:13px;background:rgba(20,18,14,.78);color:#fff;font-size:13px;font-weight:600;display:grid;place-items:center;padding:0 7px}
+.sal-carta b{font:16px/1.2 var(--serif);font-weight:400;padding:8px 10px 0;overflow-wrap:anywhere}
+.sal-carta small{color:var(--gris);font-size:11.5px;line-height:1.35;padding:0 10px}
+.sal-carta small.sal-cuando{color:var(--tinta);font-weight:600}
+.sal-ir{margin:auto 10px 0;padding-top:6px;font-size:12px;font-weight:600;color:var(--oro)}
+.sal-mueve{display:flex;align-items:center;gap:4px;margin:auto 8px 0;padding-top:8px}
+.sal-mueve button{flex:none;width:40px;height:40px;border:1px solid var(--linea2);border-radius:10px;background:var(--tarjeta);color:inherit;font-size:13px;cursor:pointer}
+.sal-mueve button:disabled{opacity:.3;cursor:default}
+.sal-mueve select{flex:1;min-width:0;height:40px;border:1px solid var(--linea2);border-radius:10px;background:var(--tarjeta);color:inherit;font:inherit;font-size:14px;text-align:center}
+.sal-estado{margin:10px 0 0;font-size:12.5px;color:var(--guia)}
+.sal-estado:empty{display:none}
+.sal-pie{margin:14px 0 0;padding-top:14px;border-top:1px solid var(--linea);color:var(--gris);font-size:13.5px;line-height:1.45}
+.sal-pie b{color:var(--tinta);font-weight:600}
+@media (max-width:560px){
+  .sal{padding:14px;border-radius:16px}
+  .sal header h2{font-size:24px}
+  .sal-plan{width:100%}
+  .sal-arr{order:3}
+  .sal-rejilla{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:14px}
+  .sal-carta{border-radius:11px;padding-bottom:8px}
+  .sal-carta b{font-size:13.5px;padding:6px 7px 0}
+  .sal-carta small{font-size:10.5px;padding:0 7px}
+  .sal-ir{margin:auto 7px 0;font-size:11px}
+  .sal-n{min-width:22px;height:22px;font-size:12px;left:6px;top:6px;padding:0 6px}
+  .sal.en-orden .sal-rejilla{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* el libro: una publicación por página, con su decisión (12-nov) */
+.sal-lib-arriba{display:flex;justify-content:space-between;align-items:flex-end;gap:10px 20px;flex-wrap:wrap}
+.sal-lib-ceja{display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gris);font-weight:600}
+.sal-lib-titulo{margin:4px 0 4px;font:30px/1.12 var(--serif);font-weight:400;color:var(--tinta)}
+.sal-lib-intro{margin:0;color:var(--gris);font-size:14.5px;line-height:1.45}
+.sal-lib-intro b{color:var(--tinta);font-weight:600}
+.sal.en-libro .sal-cab{margin-top:22px;padding-top:18px;border-top:1px solid var(--linea)}
+.sal-libro{margin:16px 0 4px;border:1px solid var(--linea2);border-radius:18px;background:var(--fondo);padding:16px 16px 12px;min-width:0}
+.sal-lib-cab{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris)}
+.sal-lib-ya{color:var(--tinta);font-weight:600;letter-spacing:0;text-transform:none}
+.sal-libro h3{margin:6px 0 2px;font:26px/1.15 var(--serif);font-weight:400;overflow-wrap:anywhere}
+.sal-lib-sub{margin:0 0 12px;color:var(--gris);font-size:13px}
+.sal-lib-tira{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 10px;-webkit-overflow-scrolling:touch}
+.sal-lib-tira:focus-visible{outline:3px solid var(--oro);outline-offset:2px}
+.sal-lib-img{position:relative;flex:0 0 min(78%,340px);aspect-ratio:4/5;scroll-snap-align:center;border:1px solid var(--linea2);border-radius:14px;overflow:hidden;background:var(--linea);padding:0;cursor:zoom-in}
+.sal-lib-img:only-child{flex-basis:min(100%,420px);margin:0 auto}
+.sal-lib-img img{width:100%;height:100%;object-fit:cover;display:block}
+.sal-lib-img i{position:absolute;left:8px;top:8px;min-width:26px;height:26px;border-radius:13px;background:rgba(20,18,14,.78);color:#fff;font-size:13px;font-style:normal;font-weight:600;display:grid;place-items:center;padding:0 7px}
+.sal-lib-texto{margin:6px 0 0;border-top:1px solid var(--linea);padding-top:10px}
+.sal-lib-texto summary{cursor:pointer;font-size:13.5px;font-weight:600;min-height:32px}
+.sal-lib-texto p{margin:8px 0 0;white-space:pre-wrap;font-size:14.5px;line-height:1.5;overflow-wrap:anywhere}
+.sal-lib-dec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 10px}
+.sal-lib-dec button{min-height:56px;border:1px solid var(--linea2);border-radius:14px;background:var(--tarjeta);color:inherit;font:inherit;font-size:15px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;padding:6px 4px}
+.sal-lib-dec button span{font-size:17px;line-height:1}
+.sal-lib-dec button.va{background:var(--tinta);border-color:var(--tinta);color:var(--fondo)}
+.sal-lib-dec button.va[aria-pressed="true"]{box-shadow:0 0 0 3px var(--oro-suave)}
+.sal-lib-dec button:disabled{opacity:.45;cursor:default}
+.sal-lib-dec button:focus-visible,.sal-lib-nav button:focus-visible,.sal-lib-img:focus-visible{outline:3px solid var(--oro);outline-offset:2px}
+.sal-lib-nota{margin:0 0 10px;font-size:12.5px;color:var(--gris)}
+.sal-lib-nav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sal-lib-nav button:not(.sal-mini){min-height:44px;border:0;background:none;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:0 6px}
+.sal-lib-nav button:disabled{opacity:.3;cursor:default}
+@media (max-width:560px){
+  .sal-libro{padding:12px 12px 10px;border-radius:14px}
+  .sal-libro h3{font-size:22px}
+  .sal-lib-titulo{font-size:24px}
+  .sal-lib-img{flex-basis:84%}
+}
+
+/* la hoja de publicar */
+.sal-hoja h3{margin-bottom:2px}
+.sal-sub{font-size:13px!important;margin-bottom:12px!important}
+.sal-tira{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 0 10px;margin-bottom:6px;-webkit-overflow-scrolling:touch}
+.sal-img{flex:0 0 46%;max-width:190px;scroll-snap-align:start;position:relative;border:1px solid var(--linea);border-radius:12px;overflow:hidden;padding:0;background:var(--linea);aspect-ratio:4/5;cursor:zoom-in}
+.sal-img img{width:100%;height:100%;object-fit:cover;display:block}
+.sal-img i{position:absolute;left:6px;top:6px;font-style:normal;min-width:22px;height:22px;border-radius:11px;background:rgba(20,18,14,.78);color:#fff;font-size:12px;font-weight:600;display:grid;place-items:center}
+.sal-ojo{border:1px solid var(--oro);background:var(--oro-suave);border-radius:14px;padding:12px 14px;margin:0 0 6px;font-size:13.5px;line-height:1.45}
+.sal-ojo ul{margin:6px 0 0;padding-left:18px}
+.sal-paso{border-top:1px solid var(--linea);padding:14px 0 4px}
+.sal-paso h4{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;margin:0 0 6px}
+.sal-paso h4 i{font-style:normal;flex:none;width:24px;height:24px;border-radius:50%;background:var(--tinta);color:var(--fondo);font-size:13px;display:grid;place-items:center}
+.sal-paso p{font-size:13.5px!important;margin:0 0 8px!important}
+.sal-paso textarea{min-height:190px;font-size:15px;line-height:1.45;background:var(--fondo);color:var(--tinta)}
+.sal-paso input{width:100%;min-height:48px;border:2px solid var(--linea2);border-radius:14px;padding:0 13px;font:inherit;background:var(--fondo);color:var(--tinta)}
+.sal-paso input:focus{outline:none;border-color:var(--oro)}
+.sal-lab{display:block;text-align:left;font-size:13px;color:var(--gris);margin:0 0 6px}
+.sal-botones{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sal-botones .secund,.sal-paso .secund{margin-top:8px;font-size:14px}
+.sal-paso .secund.ok{border-color:var(--si);color:var(--si)}
+a.sal-liga{display:grid;place-items:center;text-decoration:none;color:inherit}
+.sal-url{font-size:12px!important;word-break:break-all;color:var(--guia)!important;background:var(--fondo);border:1px solid var(--linea);border-radius:10px;padding:8px 10px}
+.sal-mini{border:0;background:none;color:var(--guia);font-size:12.5px;text-decoration:underline;padding:6px 0;min-height:32px}
+.sal-paso.fin .listo{margin-top:10px}
+.sal-paso .aviso{min-height:18px;font-size:13px!important;margin:8px 0 0!important}
+
+/* la Línea: la pieza lista para publicar se distingue */
+.ln-fila.lista{border-color:var(--oro)}
+.ln-rel .quien.lista{background:var(--oro-suave);color:var(--tinta)}
+
+/* el universo de las historias de 15 segundos (sólo lectura) */
+.uni{border:1px solid var(--linea);border-radius:18px;padding:18px;margin:18px 0;background:var(--tarjeta)}
+.uni h3{font:22px/1.15 var(--serif);font-weight:400;margin:4px 0 6px}
+.uni>p{margin:0 0 12px;color:var(--gris);font-size:13.5px;line-height:1.45}
+.uni-fila{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.uni-chip{font-size:12px;border:1px solid var(--linea);border-radius:999px;padding:4px 10px;background:var(--fondo)}
+.uni-chip b{font-weight:600}
+.uni-hist{border-top:1px solid var(--linea);padding:12px 0 0;margin-top:4px}
+.uni-hist b{font:17px/1.2 var(--serif);font-weight:400;display:block}
+.uni-hist small{display:block;color:var(--guia);font-size:12px;margin:2px 0 6px}
+.uni-hist q{display:block;quotes:"«" "»";font-size:14px;line-height:1.45;color:var(--tinta)}
+.uni-est{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--azul-suave);color:var(--azul)}
+@media (min-width:900px){ .sal-img{flex-basis:150px} }
+
+/* ── Pedir cambio a una imagen ya aprobada (9-nov) ─────────────────────────────────────────
+   Dentro de la hoja de la pieza: discreto, porque lo normal es que la pieza salga como está.
+   En el montón: las piezas con cambio pedido, con su nota y cómo quitar la petición. */
+.sal-cambio{margin:8px 0 6px;padding:12px;border:1px solid var(--linea2);border-radius:14px;background:var(--tarjeta)}
+.sal-cambio[hidden]{display:none}
+.sal-cambio textarea{min-height:84px;width:100%}
+.sal-cambio select{width:100%;min-height:44px;border:2px solid var(--linea2);border-radius:12px;padding:0 10px;font:inherit;background:var(--fondo);color:var(--tinta);margin:0 0 10px}
+.sal-cambio select:focus,.sal-cambio textarea:focus{outline:none;border-color:var(--oro)}
+.sal-cambios p{margin:0 0 6px}
+.sal-cambios ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sal-cambios li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px}
+.sal-cambios li span{min-width:0;overflow-wrap:anywhere}

@@ -1,0 +1,402 @@
+{
+ "_": "Contrato de las órdenes de cambio (llave cambio:<slug> de EXPEDIENTES). Lo leen igual la nube (nube/sala_cambios.py) y la pantalla (sala-salida.js). Cada caso: el registro tal como llegaría de la hoja y lo que debe entenderse.",
+ "casos": [
+  {
+   "caso": "una orden bien formada",
+   "registro": {
+    "v": 1,
+    "pieza": "Las 48 Horas",
+    "tira": "48-horas-arranque-2026-09-24-e98d7d",
+    "ordenes": [
+     {
+      "n": 1,
+      "nota": "Cambia el texto: quita «en solo 48 horas».",
+      "cuando": "2026-11-10T03:30:00.000Z",
+      "por": "editor"
+     }
+    ]
+   },
+   "tira": "48-horas-arranque-2026-09-24-e98d7d",
+   "ordenes": {
+    "1": "Cambia el texto: quita «en solo 48 horas»."
+   }
+  },
+  {
+   "caso": "la nota con saltos y espacios queda en una línea",
+   "registro": {
+    "tira": "a-1",
+    "ordenes": [
+     {
+      "n": 2,
+      "nota": "  Más   luminosa\n\ny sin   letrero  "
+     }
+    ]
+   },
+   "tira": "a-1",
+   "ordenes": {
+    "2": "Más luminosa y sin letrero"
+   }
+  },
+  {
+   "caso": "la última nota de una imagen manda",
+   "registro": {
+    "tira": "a-1",
+    "ordenes": [
+     {
+      "n": 2,
+      "nota": "primera"
+     },
+     {
+      "n": 2,
+      "nota": "la última"
+     },
+     {
+      "n": 1,
+      "nota": "otra"
+     }
+    ]
+   },
+   "tira": "a-1",
+   "ordenes": {
+    "1": "otra",
+    "2": "la última"
+   }
+  },
+  {
+   "caso": "la nota se corta en 600 caracteres",
+   "registro": {
+    "tira": "a-1",
+    "ordenes": [
+     {
+      "n": 1,
+      "nota": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+     }
+    ]
+   },
+   "tira": "a-1",
+   "ordenes": {
+    "1": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+   }
+  },
+  {
+   "caso": "sólo cuentan las primeras 20 órdenes",
+   "registro": {
+    "tira": "a-1",
+    "ordenes": [
+     {
+      "n": 1,
+      "nota": "nota 1"
+     },
+     {
+      "n": 2,
+      "nota": "nota 2"
+     },
+     {
+      "n": 3,
+      "nota": "nota 3"
+     },
+     {
+      "n": 4,
+      "nota": "nota 4"
+     },
+     {
+      "n": 5,
+      "nota": "nota 5"
+     },
+     {
+      "n": 6,
+      "nota": "nota 6"
+     },
+     {
+      "n": 7,
+      "nota": "nota 7"
+     },
+     {
+      "n": 8,
+      "nota": "nota 8"
+     },
+     {
+      "n": 9,
+      "nota": "nota 9"
+     },
+     {
+      "n": 10,
+      "nota": "nota 10"
+     },
+     {
+      "n": 11,
+      "nota": "nota 11"
+     },
+     {
+      "n": 12,
+      "nota": "nota 12"
+     },
+     {
+      "n": 13,
+      "nota": "nota 13"
+     },
+     {
+      "n": 14,
+      "nota": "nota 14"
+     },
+     {
+      "n": 15,
+      "nota": "nota 15"
+     },
+     {
+      "n": 16,
+      "nota": "nota 16"
+     },
+     {
+      "n": 17,
+      "nota": "nota 17"
+     },
+     {
+      "n": 18,
+      "nota": "nota 18"
+     },
+     {
+      "n": 19,
+      "nota": "nota 19"
+     },
+     {
+      "n": 20,
+      "nota": "nota 20"
+     },
+     {
+      "n": 21,
+      "nota": "nota 21"
+     },
+     {
+      "n": 22,
+      "nota": "nota 22"
+     },
+     {
+      "n": 23,
+      "nota": "nota 23"
+     },
+     {
+      "n": 24,
+      "nota": "nota 24"
+     },
+     {
+      "n": 25,
+      "nota": "nota 25"
+     },
+     {
+      "n": 26,
+      "nota": "nota 26"
+     },
+     {
+      "n": 27,
+      "nota": "nota 27"
+     },
+     {
+      "n": 28,
+      "nota": "nota 28"
+     },
+     {
+      "n": 29,
+      "nota": "nota 29"
+     },
+     {
+      "n": 30,
+      "nota": "nota 30"
+     }
+    ]
+   },
+   "tira": "a-1",
+   "ordenes": {
+    "1": "nota 1",
+    "2": "nota 2",
+    "3": "nota 3",
+    "4": "nota 4",
+    "5": "nota 5",
+    "6": "nota 6",
+    "7": "nota 7",
+    "8": "nota 8",
+    "9": "nota 9",
+    "10": "nota 10",
+    "11": "nota 11",
+    "12": "nota 12",
+    "13": "nota 13",
+    "14": "nota 14",
+    "15": "nota 15",
+    "16": "nota 16",
+    "17": "nota 17",
+    "18": "nota 18",
+    "19": "nota 19",
+    "20": "nota 20"
+   }
+  },
+  {
+   "caso": "una tira con ruta no vale",
+   "registro": {
+    "tira": "../etc",
+    "ordenes": [
+     {
+      "n": 1,
+      "nota": "x"
+     }
+    ]
+   },
+   "tira": "",
+   "ordenes": {}
+  },
+  {
+   "caso": "tira vacía",
+   "registro": {
+    "tira": "",
+    "ordenes": [
+     {
+      "n": 1,
+      "nota": "x"
+     }
+    ]
+   },
+   "tira": "",
+   "ordenes": {}
+  },
+  {
+   "caso": "tira que no es texto",
+   "registro": {
+    "tira": 7,
+    "ordenes": [
+     {
+      "n": 1,
+      "nota": "x"
+     }
+    ]
+   },
+   "tira": "",
+   "ordenes": {}
+  },
+  {
+   "caso": "órdenes que no son una lista",
+   "registro": {
+    "tira": "a-1",
+    "ordenes": "no"
+   },
+   "tira": "a-1",
+   "ordenes": {}
+  },
+  {
+   "caso": "números de imagen raros",
+   "registro": {
+    "tira": "a-1",
+    "ordenes": [
+     {
+      "n": 0,
+      "nota": "x"
+     },
+     {
+      "n": 100,
+      "nota": "x"
+     },
+     {
+      "n": "1",
+      "nota": "x"
+     },
+     {
+      "n": 1.5,
+      "nota": "x"
+     },
+     {
+      "n": true,
+      "nota": "x"
+     },
+     {
+      "n": null,
+      "nota": "x"
+     },
+     {
+      "n": -3,
+      "nota": "x"
+     }
+    ]
+   },
+   "tira": "a-1",
+   "ordenes": {}
+  },
+  {
+   "caso": "notas vacías o que no son texto",
+   "registro": {
+    "tira": "a-1",
+    "ordenes": [
+     {
+      "n": 1,
+      "nota": "   "
+     },
+     {
+      "n": 2,
+      "nota": null
+     },
+     {
+      "n": 3,
+      "nota": 7
+     },
+     {
+      "n": 4
+     }
+    ]
+   },
+   "tira": "a-1",
+   "ordenes": {}
+  },
+  {
+   "caso": "elementos que no son órdenes",
+   "registro": {
+    "tira": "a-1",
+    "ordenes": [
+     "x",
+     null,
+     3,
+     []
+    ]
+   },
+   "tira": "a-1",
+   "ordenes": {}
+  },
+  {
+   "caso": "registro que es texto",
+   "registro": "texto",
+   "tira": "",
+   "ordenes": {}
+  },
+  {
+   "caso": "registro nulo",
+   "registro": null,
+   "tira": "",
+   "ordenes": {}
+  },
+  {
+   "caso": "registro que es lista",
+   "registro": [
+    1
+   ],
+   "tira": "",
+   "ordenes": {}
+  },
+  {
+   "caso": "con el campo paquete (sólo lo usa la pantalla: la nube lo ignora)",
+   "registro": {
+    "v": 1,
+    "pieza": "Las 48 Horas",
+    "tira": "48-horas-nube-2026-11-10-abc123",
+    "paquete": "48-horas-arranque-2026-09-24-e98d7d",
+    "ordenes": [
+     {
+      "n": 1,
+      "nota": "Quita el plazo.",
+      "cuando": "2026-11-10T03:30:00.000Z",
+      "por": "editor"
+     }
+    ]
+   },
+   "tira": "48-horas-nube-2026-11-10-abc123",
+   "ordenes": {
+    "1": "Quita el plazo."
+   }
+  }
+ ]
+}

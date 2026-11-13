@@ -67,7 +67,7 @@ a{color:var(--oro)}
 .puertas button.avisa .punto{display:block}
 @media (min-width:960px){
   .puertas{left:auto;right:18px;bottom:auto;top:14px;border:1px solid var(--linea);border-radius:999px;padding:4px;gap:2px;box-shadow:var(--sombra)}
-  .puertas button{flex-direction:row;gap:7px;min-height:40px;padding:0 14px;max-width:none;border-radius:999px;font-size:13px}
+  .puertas button{flex:0 0 auto;white-space:nowrap;flex-direction:row;gap:7px;min-height:40px;padding:0 14px;max-width:none;border-radius:999px;font-size:13px}   /* 9-nov: «Cómo va» se partía en dos renglones */
   .puertas button svg{width:18px;height:18px}
   .puertas button .punto{margin:0 0 14px 4px;position:static}
   body:has(#barraSinEntrar:not([hidden])) .puertas{top:54px}
@@ -635,12 +635,15 @@ p.fechas{font-size:12.5px;color:var(--guia)} button.liga{background:none;border:
 .tour .saltar{margin-top:10px;background:none;border:0;color:var(--guia);font-size:14px;text-decoration:underline;min-height:40px}
 
 /* indicador de carga */
-html.cargando::before{content:'';position:fixed;top:0;left:0;height:3px;width:100%;z-index:9999;pointer-events:none;
+/* 9-nov: la clase del indicador se llamaba `cargando`, igual que el esqueleto de una carta (`.cargando{position:absolute;
+   inset:0;display:grid;font-size:13px;…}`). Con una lectura en vuelo TODA la página heredaba ese esqueleto: se encogía al
+   centro sobre fondo oscuro, con la letra más chica, y regresaba al terminar. Ahora se llama `trayendo`. */
+html.trayendo::before{content:'';position:fixed;top:0;left:0;height:3px;width:100%;z-index:9999;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--oro),transparent);background-size:40% 100%;animation:barra 1.1s linear infinite}
 @keyframes barra{from{background-position:-40% 0}to{background-position:140% 0}}
 #actualizando{position:fixed;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:9998;display:none;align-items:center;gap:8px;
   padding:6px 12px;border-radius:999px;background:var(--tarjeta);border:1px solid var(--oro);color:var(--oro);font-size:12px;font-weight:600;letter-spacing:.04em;pointer-events:none;box-shadow:var(--sombra)}
-html.cargando #actualizando{display:flex}
+html.trayendo #actualizando{display:flex}
 #actualizando{max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #actualizando i{width:10px;height:10px;border-radius:50%;border:2px solid var(--oro-suave);border-top-color:var(--oro);animation:gira .8s linear infinite}
 @keyframes gira{to{transform:rotate(360deg)}}
@@ -668,8 +671,9 @@ html.cargando #actualizando{display:flex}
   border-bottom:1px solid var(--no);font-weight:600;font-size:13.5px;line-height:1.35;padding:10px 16px}
 /* Al revisar dictado, sólo el aviso más reciente queda visible. */
 body > .chn-aviso:has(~ .chn-aviso){display:none!important}
-</style><link rel="stylesheet" href="tablero-sala.css?v=20261015-editorial"><link rel="stylesheet" href="sala2.css">
+</style><link rel="stylesheet" href="tablero-sala.css?v=20261109-monton"><link rel="stylesheet" href="sala2.css">
 </head><body data-vista="hoy"><div id="actualizando" role="status" aria-live="polite"><i></i>Actualizando…</div>
+<link rel="stylesheet" href="sala-salida.css?v=20261112-libro2">
 <script src="sala-correcciones.js?v=20261015-4"></script>
 <script src="politica-imagen.js?v=hidream-o1-20261017"></script>
 <script src="video-revision.js?v=20261020-nativo1"></script>
@@ -713,6 +717,7 @@ body:has(#temaSala) .chn-pastilla{bottom:calc(var(--nav) + 64px + env(safe-area-
   <button data-v="aj"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes<span class="punto"></span></button>
   <button data-v="prod"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="12" r="2.4"/><path d="M6 8.4V15.6M6 12h7a3 3 0 0 0 3-3"/></svg>Producción<span class="punto"></span></button>
   <button data-v="arbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7M12 15c-4 0-7-2.5-7-6a5 5 0 0 1 7-4.6A5 5 0 0 1 19 9c0 3.5-3 6-7 6z"/><path d="M12 15l-3-3M12 12l3-3"/></svg>Árbol<span class="punto"></span></button>
+  <button data-href="historias.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 9 5 3-5 3z"/></svg>Historias<span class="punto"></span></button>
 </nav>
 
 <div class="app">
@@ -724,6 +729,7 @@ body:has(#temaSala) .chn-pastilla{bottom:calc(var(--nav) + 64px + env(safe-area-
       <p class="sub" id="subt"></p>
       <div class="fila-estado"><span class="estado" id="estado" role="status" aria-live="polite"><i></i><span>Preparando…</span></span><button class="btn-entrar" id="btnEntrar" hidden>Entrar</button><button class="btn-entrar" id="btnReintentar" hidden>Reintentar ahora</button></div>
     </div>
+    <div id="salidaHoy" aria-live="polite"></div>
     <div id="tableroHoy" aria-label="Tablero de la sala"></div>
     <div class="mazo">
       <div class="bolas" id="bolas" aria-hidden="true"></div>
@@ -758,13 +764,14 @@ body:has(#temaSala) .chn-pastilla{bottom:calc(var(--nav) + 64px + env(safe-area-
 
   <!-- ④ PRODUCCIÓN: árbol en tiempo real de dónde va cada pieza -->
   <section class="vista" id="vProd">
-    <h2 class="titulo-v">Producción</h2>
-    <p class="bajada-v">Todas las publicaciones abiertas en una línea: dónde va cada una, de quién depende y cuándo sale lo siguiente.</p>
+    <h2 class="titulo-v">Cómo va</h2>
+    <p class="bajada-v">Cada publicación abierta y el paso en que va: guion, imágenes, texto y salida.</p>
     <div class="fila-estado" style="justify-content:center;margin-bottom:14px">
       <button class="secund" id="prodActualizar" style="width:auto;padding:8px 16px;min-height:40px">Actualizar</button>
       <span id="prodAviso" style="font-size:12.5px;color:var(--guia);margin-left:8px"></span>
     </div>
     <div id="linea"></div>
+    <div id="universo"></div>
     <details class="prod-dentro"><summary>Ver cada pieza por dentro (árbol de láminas, voces y escenas)</summary><div id="prodArbol"></div></details>
   </section>
 
@@ -821,7 +828,7 @@ const LLAVES=()=>[...new Set([localStorage.getItem('pyod_clave_v1'),localStorage
 const ROL=()=>localStorage.getItem('sala_rol')||'lector';   // 8-sep (auditoría): antes 'editor' por defecto — quien abría la liga pública SIN haber entrado nunca, ya podía decidir en pantalla
 /* ?vista=editor sirve SOLO para documentar con capturas: pinta la mesa como la ve un
    editor sin dar permiso de nada — el Sheet sigue rechazando a quien no puede decidir. */
-const SELLO_SALA='1321cad3da';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
+const SELLO_SALA='a0c43ceb32';   // 8-sep: sello de versión; la Sala avisa si el servidor ya tiene una más nueva
 const VISTA_DOC=new URLSearchParams(location.search).get('vista')==='editor';
 // 8-sep (auditoría): DECIDE() ya no se fía solo del rol guardado en este aparato — una liga vieja con
 // `#rol=editor` lo deja escrito en localStorage para siempre. Sin ENTRADO() (sin ninguna clave guardada
@@ -831,6 +838,11 @@ const DECIDE=()=>!_mesaLocal&&(VISTA_DOC||(ENTRADO()&&(ROL()==='editor'||ROL()==
 const YO=()=>(D&&D.quien)||(ROL()==='editor2'?'Sayri':'Alejandro');   // el Sheet manda el nombre
 const OTROS=fs=>(fs||[]).filter(f=>f.quien!==YO()&&(f.marca||f.nota));
 const MIA=fs=>(fs||[]).find(f=>f.quien===YO()&&f.marca);
+// 7-nov-2026 · Roast Room: el consejo firma como un editor más, pero la marca de Alejandro o de
+// Sayri en la misma lámina manda sobre la suya (igual que el GAS). Sin marca humana, cuenta la suya.
+const CONSEJO='Roast Room';
+const MANDA=fs=>{ const todas=(fs||[]).filter(x=>x&&x.marca); const hum=todas.filter(x=>x.quien!==CONSEJO); const base=hum.length?hum:todas;
+  if(base.some(x=>x.marca==='no')) return 'no'; if(base.some(x=>x.marca==='si')) return 'si'; return '' };
 const ENTRADO=()=>!!(GAS()&&CLAVE());
 const PORLLAVE_OS=()=>!localStorage.getItem('sala_clave')&&!!localStorage.getItem('pyod_clave_v1');
 const EMBED=()=>document.documentElement.classList.contains('embed');
@@ -856,9 +868,9 @@ window.fetch=async function(...a){
   const u=String((a[0]&&a[0].url)||a[0]||''), m=u.match(/[?&]recurso=(\w+)/), post=a[1]&&/post/i.test(a[1].method||'');
   const k=Symbol(); _enVuelo.set(k,m?(NOM_RECURSO[m[1]]||m[1]):(post?'guardando':''));
   if(!_vivos){ _t0Pildora=Date.now(); clearInterval(_tPildora); _tPildora=setInterval(pintaPildora,1000) }
-  _vivos++; document.documentElement.classList.add('cargando'); pintaPildora();
+  _vivos++; document.documentElement.classList.add('trayendo'); pintaPildora();
   try{ return await _fetch0(...a) }
-  finally{ _enVuelo.delete(k); _vivos=Math.max(0,_vivos-1); if(!_vivos){ clearInterval(_tPildora); document.documentElement.classList.remove('cargando') } }
+  finally{ _enVuelo.delete(k); _vivos=Math.max(0,_vivos-1); if(!_vivos){ clearInterval(_tPildora); document.documentElement.classList.remove('trayendo') } }
 };
 const bloquear=on=>document.body.classList.toggle('bloqueado',!!on);
 /* (Se retiró el relevo por postMessage: publicaba la llave con destino '*' —cualquier sitio
@@ -935,9 +947,10 @@ function irVista(v){
   document.querySelectorAll('#puertas button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   window.scrollTo(0,0);
   if(v==='hoy'&&window.SalaTablero&&!document.body.classList.contains('sala-turno')) window.SalaTablero.refresh();
+  if(v==='hoy'&&typeof SalaSalida!=='undefined') SalaSalida.pintar();
   if(v==='pub'){ pintarPublicaciones() } if(v==='aj'){ pintarAjustes() } if(v==='hoy'){ pintarPanel() } if(v==='prod'){ pintarProduccion() } if(v==='arbol'){ pintarArbol() }
 }
-document.querySelectorAll('#puertas button').forEach(b=>b.onclick=()=>{ cerrarCapas(); irVista(b.dataset.v) });
+document.querySelectorAll('#puertas button').forEach(b=>b.onclick=()=>{ if(b.dataset.href){ location.href=b.dataset.href; return } cerrarCapas(); irVista(b.dataset.v) });
 function avisarPuerta(v,on){ const b=document.querySelector(`#puertas button[data-v="${v}"]`); if(b) b.classList.toggle('avisa',!!on) }
 
 /* ══ capas: una pila; siempre se cierran con Volver, ×, Escape y «atrás» del teléfono ══ */
@@ -964,7 +977,12 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&CAPAS.length){ e.p
 
 /* ══ datos (idéntico contrato: recurso=dia, respaldo en datos/manifiesto.json) ══ */
 let _ultimoErrorLlave='';
-const SALA_TIMEOUT_MS=8000, SALA_REINTENTOS=1, SALA_BACKOFF_MS=400;
+/* 9-nov (medido desde el navegador de Dirección): con el caché del Apps Script frío, leer el día tarda 14 s;
+   tibio, menos de 3 s; y cualquier escritura lo enfría. Con 8 s de tope el primer intento fallaba SIEMPRE en
+   frío, el segundo arrancaba otro cálculo igual de lento y la Sala se quedaba en «sin conexión» hasta un clic.
+   La última mesa ya se ve desde el primer segundo, así que esperar a la hoja no retrasa nada: el día tiene su
+   propio tope. Siguen siendo dos peticiones como máximo y sin ciclos automáticos. */
+const SALA_TIMEOUT_MS=8000, SALA_TOPE_DIA_MS=30000, SALA_REINTENTOS=1, SALA_BACKOFF_MS=400;
 window.SalaRendimiento=[];
 function medirSala(tipo,inicio,resultado,intento){
   window.SalaRendimiento.push({tipo,ms:Math.round(performance.now()-inicio),resultado,intento});
@@ -988,7 +1006,7 @@ async function traer(f,intentos,tope,sinRespaldo){
   const llaves=_llaveViva?[_llaveViva,...LLAVES().filter(k=>k!==_llaveViva)]:LLAVES();
   let k=0;
   if(ENTRADO())for(let i=0;i<N;i++){
-    const inicio=performance.now(),ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),Math.min(tope||SALA_TIMEOUT_MS,SALA_TIMEOUT_MS));
+    const inicio=performance.now(),ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),Math.min(tope||SALA_TOPE_DIA_MS,SALA_TOPE_DIA_MS));
     try{
       const llave=llaves[k];
       const r=await fetch(GAS()+'?recurso=dia&clave='+encodeURIComponent(llave)+(f?'&f='+encodeURIComponent(f):''),{signal:ctl.signal});
@@ -1218,7 +1236,7 @@ function estadoInicial(){
   // pendiente, lo que hay en `dec` ya viene del Sheet o de un borrador recién fusionado — no hay
   // nada que subir. Antes esto decía «Guardando…» para siempre porque `c.hoy` cuenta marcas en
   // `pasos` (lo decidido), no envíos sin confirmar; sin `guard.env` (sesión nueva) se quedaba pegado.
-  if(!_subiendo&&!_tSubir) return pintarEstado('', (c.hoy||yaHoy)?`Hoy decidiste ${c.hoy+yaHoy} · guardado en el Sheet`:'Nada decidido aún');
+  if(!_subiendo&&!_tSubir) return pintarEstado('', (c.hoy||yaHoy)?`Hoy decidiste ${c.hoy+yaHoy} · guardado en el Sheet`:(pasos.length?'Nada decidido aún':'Nada por revisar hoy'));
   return pintarEstado('local','Guardando…');
 }
 
@@ -1378,21 +1396,25 @@ function verDireccion(t){
 }
 function verLamina(t,n){
   const l=(t.laminas||[]).find(z=>z.n===n); if(!l) return;
-  const reab=t.base&&dec[t.base]&&dec[t.base].laminas[n-1]==='no';
+  // 9-nov: la petición de cambio a una lámina aprobada es una orden (llave `cambio:` de EXPEDIENTES) sobre ESTA tira
+  const tid=Object.keys(TIRAS).find(k=>TIRAS[k]===t)||'', conOrdenes=typeof SalaSalida!=='undefined'&&!!SalaSalida.cambioDe;
+  const orden=conOrdenes&&tid?SalaSalida.cambioDe(tid,n):null;
+  const reab=!!orden||(t.base&&dec[t.base]&&dec[t.base].laminas[n-1]==='no');
   const em=enMesaTira(t,n);
   const v=hoja(`<h3>Lámina ${n} de ${t.laminas.length}</h3>
     <p>${reab?'Ya pediste cambio a esta lámina aunque estaba aprobada.':l.estado==='aprobada'?'Ya está aprobada: no vuelve a preguntarse.':'Ésta es la que se rehízo con la nota.'}</p>
     <p class="fechas">${serialDe(l.src)?`<b class="serial">${esc(serialDe(l.src))}</b> · `:``}Versión ${l.version||1} · salió ${fechaBonita(l.fecha)}${(l.versiones||[]).length>1?` · <button type="button" class="liga" data-versiones="${esc(Object.keys(TIRAS).find(k=>TIRAS[k]===t)||'')}" data-n="${n}">ver las ${l.versiones.length} versiones</button>`:''}</p>
-    ${reab?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(dec[t.base].notas[n-1]||'')}»</p><button class="secund" id="quitarReab">Quitar la petición</button>`:''}
-    ${(!reab&&l.estado==='aprobada'&&DECIDE()&&t.base)?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
+    ${reab?`<p style="color:var(--no)"><b>Tu nota:</b> «${esc(orden?orden.nota:(dec[t.base].notas[n-1]||''))}»</p><button class="secund" id="quitarReab">Quitar la petición</button>`:''}
+    ${(!reab&&l.estado==='aprobada'&&DECIDE()&&conOrdenes&&tid&&t.pieza_slug&&SalaSalida.puedePedirCambio(t.pieza))?`<p style="font-size:13px;color:var(--gris)">¿Se ve mal aunque ya estaba aprobada? Puedes pedirle a Producción que la rehaga.</p><button class="secund" id="reabrirLam">Pedir cambio a esta lámina</button>`:''}
     ${(em&&DECIDE())?(em.m==='no'?`<p style="color:var(--no)"><b>Ya pediste cambio hoy:</b> «${esc(em.nota||'')}»</p><button class="secund" id="cambiarMesa">Cambiar la nota</button>`:`<p style="font-size:13px;color:var(--gris)">${em.m==='si'?'Hoy la aprobaste. Si la quieres mejorar, pide el cambio aquí.':'Está en tu mesa de hoy. Puedes decidirla desde aquí.'}</p><button class="secund" id="cambiarMesa">Pedir cambio a esta lámina</button>`):''}
     <img src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="Lámina ${n}" style="width:100%;border-radius:14px;background:#141210">
     <p style="margin-top:12px"><b>Dice:</b> ${esc((l.dice||'').replace(' / ',' · '))}</p>
     ${l.ve?`<p><b>Se ve:</b> ${esc(l.ve)}</p>`:''}
     ${notaDeLamina(t,l)?`<p style="color:var(--no)"><b>La nota:</b> «${esc(notaDeLamina(t,l))}»</p>`:''}`,'lamina'+n);
-  const br=v.querySelector('#reabrirLam'); if(br) br.onclick=()=>pedirNota(nota=>reabrirAprobada(t,l,nota));
+  const br=v.querySelector('#reabrirLam'); if(br) br.onclick=()=>pedirNota(nota=>reabrirAprobada(t,l,nota,tid));
   const bm=v.querySelector('#cambiarMesa'); if(bm) bm.onclick=()=>pedirNota(nota=>cambioDesdeTira(em,nota),em.m==='no'?em.nota:'');
-  const bq=v.querySelector('#quitarReab'); if(bq) conSeguro(bq,()=>quitarReapertura(t.base,n-1));
+  const bq=v.querySelector('#quitarReab'); if(bq) conSeguro(bq,()=>{ if(!orden){ quitarReapertura(t.base,n-1); return }
+    cerrarCapas(); SalaSalida.quitarCambioDeTira(tid,n).then(r=>avisoDeCambio(r.ok?'Petición quitada':'No se quitó la petición',r.ok?'La lámina sigue aprobada como estaba.':r.motivo)) });
 }
 /* 7-sep (Alejandro): «en la lámina 4 no me deja solicitar cambios como en la lámina 3». La 4 era una rehecha
    que vive HOY en la mesa; el botón solo salía en aprobadas. Ahora la tira también decide las de la mesa. */
@@ -1410,17 +1432,25 @@ function cambioDesdeTira(em,nota){
   pintarEstado('local','Cambio anotado · se guarda');
 }
 /* REABRIR (5-sep, Alejandro): «si la abro y quiero volver a revisarla porque Sayri o yo queremos mejorar
-   algo que aunque pensamos que estaba bien está mal… que se pueda pedir para rehacer». La petición viaja
-   como marca «no» de la propuesta ORIGINAL (t.base) en el mismo envío del día; Producción la cosecha como
-   reapertura. Nunca borra la aprobación de la historia: se suma una orden de cambio. */
+   algo que aunque pensamos que estaba bien está mal… que se pueda pedir para rehacer». Nunca borra la
+   aprobación de la historia: se suma una petición. 9-nov: lo anotado antes como marca «no» de la propuesta
+   ORIGINAL (t.base) se sigue leyendo y se puede quitar, pero ya no es el camino para pedir cambios (en la
+   nube nadie lo cosecha): hoy se pide con la orden de cambio (`SalaSalida.pedirCambio`). */
 const reaperturas=()=>Object.entries(dec).filter(([pid,d])=>d&&d._reabierta&&(d.laminas||[]).some(m=>m==='no'));
-function reabrirAprobada(t,l,nota){
-  const pid=t.base; if(!pid) return;
-  const n=(t.laminas||[]).length;
-  if(!dec[pid]) dec[pid]={laminas:new Array(n).fill(''),notas:new Array(n).fill(''),nota:'',_reabierta:true,_tira:t.pieza||''};
-  dec[pid].laminas[l.n-1]='no'; dec[pid].notas[l.n-1]=nota;
-  cerrarCapas(); programarSubida(); if(pasos[idx]) pintarTira(pasos[idx]); pintarPanel();
-  pintarEstado('local','Petición anotada · se guarda');
+function avisoDeCambio(titulo,texto){
+  hoja(`<h3>${esc(titulo)}</h3><p>${esc(texto)}</p><button class="listo" type="button" id="cambioEntendido">Entendido</button>`,'cambio-aviso');
+  const b=document.getElementById('cambioEntendido'); if(b) b.onclick=()=>cerrarCapa('cambio-aviso');
+}
+function reabrirAprobada(t,l,nota,tid){
+  /* 9-nov: la petición viaja como orden de cambio (llave `cambio:` de EXPEDIENTES) y se confirma con la hoja.
+     Sin ese camino se avisa: el «no» viejo sobre t.base ya no lo cosecha nadie. */
+  if(tid&&t.pieza_slug&&typeof SalaSalida!=='undefined'&&SalaSalida.pedirCambio){
+    cerrarCapas();
+    SalaSalida.pedirCambio({slug:t.pieza_slug,pieza:t.pieza||'',tira:tid,n:Number(l.n),nota}).then(r=>
+      avisoDeCambio(r.ok?'Cambio pedido':'No se pidió el cambio',r.ok?'Producción rehace esta lámina con tu nota y te la trae para aprobar (puede tardar varias horas). La aprobación anterior sigue en su historia.':r.motivo));
+    return;
+  }
+  avisoDeCambio('No se pidió el cambio','Todavía no se puede pedir el cambio desde aquí. Actualiza la página e inténtalo otra vez.');
 }
 function quitarReapertura(pid,i){
   if(!dec[pid]) return; dec[pid].laminas[i]=''; dec[pid].notas[i]='';
@@ -1951,6 +1981,7 @@ let PZ={}, PROG={};
 // piezas.json, el expediente del Sheet (tras la credencial) o la bitácora de PRODUCCION del día.
 function esPublicada(n){
   if(!n) return false;
+  if(typeof SalaSalida!=='undefined'&&SalaSalida.publicadaAqui(n)) return true;   // 9-nov: «Ya la publiqué» vale desde el clic, antes de que la nube lo asiente
   if(PZ[n]&&(PZ[n].estado==='publicada'||PZ[n].etapa==='publicada')) return true;   // la Mac dejaba estado «en camino» con etapa «publicada»
   // la hoja de la fábrica (slug|pieza|…|activa|nota): «activa 0 · publicada 14-sep» es la palabra del Sheet
   if((FABRICA||[]).some(f=>f.pieza===n&&!(+f.activa)&&/publicad/i.test(String(f.nota||'')))) return true;
@@ -2077,7 +2108,36 @@ function pintarPanelMira(){
 }
 
 /* ══ Publicaciones ══ */
-let EXP={}, METR=null, _expP=null;
+let EXP={}, METR=null, _expP=null, _expHojaP=null;
+/* 9-nov (queja de Dirección: «no carga bien»): lo listo para publicar ya no espera a la mesa. La hoja de
+   expedientes se lee UNA vez al abrir, en paralelo con el día, y la comparten la salida y Publicaciones.
+   Un fallo no se guarda como respuesta: quien pregunte después vuelve a leer. Las llaves con prefijo no son
+   publicaciones: `v4:` es de Historias (Sala 4.0) y `salida:` es el plan de salida que guardan los editores. */
+function leerExpedientesHoja(){
+  if(!ENTRADO()) return Promise.resolve(false);
+  if(!_expHojaP) _expHojaP=(async()=>{
+    try{ const r=await fetch(GAS()+'?recurso=expedientes&clave='+encodeURIComponent(CLAVE()),{signal:AbortSignal.timeout(SALA_TOPE_DIA_MS)});
+      const j=await leerJSON(r);
+      if(!r.ok||!j||!j.expedientes||typeof j.expedientes!=='object') throw Error('sin expedientes');
+      const salida={};
+      Object.entries(j.expedientes).forEach(([n,e])=>{ if(n.startsWith('v4:')) return; if(n.startsWith('salida:')||n.startsWith('cambio:')){ salida[n]=e; return } EXP[n]=e });
+      if(typeof SalaSalida!=='undefined') SalaSalida.llegaron(salida);
+      return true;
+    }catch(e){ _expHojaP=null; return false }
+  })();
+  return _expHojaP;
+}
+function releerExpedientes(){ _expHojaP=null; return leerExpedientesHoja() }
+/* Se llama dos veces a propósito: al arrancar la Sala y al terminar de cargar sala-salida.js (lo que pase
+   primero no encuentra al otro). Sólo la primera vez que estén los dos hace algo. */
+let _salidaArrancada=false;
+function arrancarSalida(){
+  if(_salidaArrancada||!ENTRADO()||typeof SalaSalida==='undefined') return;
+  _salidaArrancada=true;
+  SalaSalida.abrirGuardada();   // lo último que este aparato vio de la hoja, mientras llega lo de ahora
+  leerExpedientesHoja().then(ok=>{ if(!ok) SalaSalida.falla() });
+  traerReglasSala().then(()=>SalaSalida.pintar());
+}
 async function cargarExpedientes(){
   try{ METR=await (await fetch('datos/metricas.json?v='+Date.now())).json() }catch(e){}
   try{ const g=await (await fetch('datos/progreso.json?v='+Date.now())).json();
@@ -2086,17 +2146,13 @@ async function cargarExpedientes(){
     (z.piezas||[]).forEach(p=>{ PZ[p.pieza]={...p,actualizado:z.actualizado} }) }catch(e){}
   // La historia lleva tus palabras textuales: vive en el Sheet, tras la credencial.
   // (Antes estaba en el repo público, que cualquiera puede descargar.)
-  if(ENTRADO()){
-    try{ const r=await fetch(GAS()+'?recurso=expedientes&clave='+encodeURIComponent(CLAVE()));
-      const j=await leerJSON(r);
-      if(j&&j.expedientes) Object.entries(j.expedientes).forEach(([n,e])=>{ EXP[n]=e });
-    }catch(e){}
-  }
+  await leerExpedientesHoja();
   let idxE=[]; try{ idxE=await (await fetch('datos/expedientes/index.json?v='+Date.now())).json() }catch(e){}
   for(const it of idxE){ if(!EXP[it.pieza]) EXP[it.pieza]={pieza:it.pieza,hitos:[],sinLlave:!ENTRADO()};
     if(PZ[it.pieza]&&EXP[it.pieza].estado!=='publicada') EXP[it.pieza].estado=esPublicada(it.pieza)?'publicada':PZ[it.pieza].estado; }
   for(const n of Object.keys(PZ)) if(!EXP[n]) EXP[n]={pieza:n,estado:PZ[n].estado,hitos:[]};
   pintarPublicaciones(); if(D&&!pasos.length&&DECIDE()) pintarVacio();
+  if(typeof SalaSalida!=='undefined') SalaSalida.pintar();
 }
 const estCls=e=>e==='publicada'?'listo':(e==='te espera'?'espera':'');
 const estTxt=e=>e==='publicada'?'YA SALIÓ':(e==='te espera'?'ESPERA TU DECISIÓN':(e==='en camino'?'EN CAMINO':'EN IDEA'));
@@ -2167,12 +2223,15 @@ function pintarAjustes(){
       ${ENTRADO()?`<p style="font-size:13px;color:var(--guia)">Entraste con <b>${localStorage.getItem('pyod_clave_v1')&&_llaveViva===localStorage.getItem('pyod_clave_v1')?'tu cuenta del YOD OS':'la llave de la Sala'}</b>.</p>`:''}
       ${ENTRADO()?'':`<button class="listo" style="margin-top:0" id="ajEntrar">Entrar</button>`}</div>
     <div class="bloque-aj"><h4>Cómo se usa</h4><ol>${DECIDE()?`
-      <li><b>Producción es la máquina, no una persona.</b> Es el sistema que arma láminas, voces y videos con lo que tú decides; corre solo, en la nube, aunque nadie tenga la Mac prendida.</li>
-      <li><b>Abre «Hoy».</b> Si dice «Faltan N decisiones», hay trabajo para ti. Si dice «Nada pendiente», cierra.</li>
-      <li><b>Una carta a la vez.</b> Aprobar la deja lista. Pedir cambio te pide una línea: escribe lo que quieres ver, no lo que no te gustó.</li>
+      <li><b>La línea es una sola:</b> idea → guion → imágenes → texto → tú publicas. Todo corre en la nube.</li>
+      <li><b>«Te toca» tiene dos cosas.</b> Lo que hay que decidir (aprobar, pedir cambio o «no va») y <b>tu montón</b>: lo que ya está listo para lanzar, en el orden en que va a salir.</li>
+      <li><b>Tu libro va primero:</b> lo listo se te presenta una publicación por página, con sus imágenes y su texto, y tú dices <b>Va</b>, <b>Pedir cambio</b> o <b>No va</b>. «No va» la saca del montón sin borrar nada (abajo la puedes regresar). Debajo del libro sigue tu montón completo.</li>
+      <li><b>Arma tu salida sin prisa:</b> arriba del montón eliges cuántas por semana (te dice para cuántas semanas alcanza), el día de arranque y el orden («Cambiar el orden»). Nada sale solo.</li>
+      <li><b>¿Algo de una pieza lista no te convence?</b> Ábrela y toca «Pedir cambio a una imagen»: escribe una línea y Producción la rehace. La pieza sale del montón y vuelve cuando apruebes su versión nueva.</li>
+      <li><b>Cuando decidas publicar:</b> abre la pieza, baja sus imágenes de Drive, copia el texto y la liga, publícala en Instagram y Facebook y toca <b>«Ya la publiqué»</b>.</li>
+      <li><b>«Cómo va»</b> enseña cada pieza y en qué paso está, sin que tengas que decidir nada.</li>
       <li><b>Todo se guarda solo.</b> La píldora de arriba dice «Guardado ✓» cuando ya subió. Si dice «sin señal», no repitas: sube sola.</li>
-      <li><b>¿Te equivocaste?</b> «Deshacer la última» o «ver mis respuestas» → Cambiar.</li>
-      <li><b>«Publicaciones»</b> es para mirar en qué anda Producción y la historia de cada pieza. Nunca durante la revisión.</li>`:`
+      <li><b>¿Te equivocaste?</b> «Deshacer la última» o «ver mis respuestas» → Cambiar.</li>`:`
       <li><b>«Hoy»</b> es la mesa de los editores (Alejandro y Sayri): las láminas y preguntas que Producción les manda, con lo que ya decidieron en cada una.</li>
       <li><b>Recorre</b> con Anterior y Siguiente; «Ampliar» abre la lámina en grande.</li>
       <li><b>«Publicaciones»</b> muestra qué trae Producción en camino y la historia de cada pieza.</li>
@@ -2187,6 +2246,9 @@ function pintarAjustes(){
       <p class="aviso" id="ajAviso"></p>
       <div id="ajRecados"></div></div>
     <div class="bloque-aj"><h4>Automáticos</h4><p>Lo que corre solo mientras nadie mira.</p><button class="secund" id="ajMaq">Ver qué está corriendo</button><div id="ajMaqLista"></div></div>`:''}
+    ${ENTRADO()?`<div class="bloque-aj"><h4>Cómo está puesta la Sala</h4>
+      <p>Los interruptores de la línea. Se cambian en tu hoja de Google «Sala de Edición · YOD», sin tocar código.</p>
+      <div id="ajReglas" aria-live="polite"><p style="color:var(--guia);font-size:13px">Leyendo…</p></div></div>`:''}
     <div class="bloque-aj"><h4>Revisión diaria</h4><p>Estado confirmado de la producción y sus rutinas.</p><button class="secund" id="ajRevision">Ver revisión</button><div id="ajRevisionLista" aria-live="polite"></div></div>
     <div class="bloque-aj"><h4>Revisar la conexión</h4>
       <p>Si algo no se guarda, esto dice exactamente qué contesta el Sheet.</p>
@@ -2201,6 +2263,27 @@ function pintarAjustes(){
   const env=$('#ajEnviar'); if(env) env.onclick=()=>mandarProduccion('RETRO',$('#ajMsg').value.trim()||'',true);
   const rd=$('#ajRonda'); if(rd) rd.onclick=()=>mandarProduccion('ENCARGO · corre la sala',$('#ajMsg').value.trim()||'Corre la sala.',false);
   pintarRecados();
+  pintarReglasSala();
+}
+/* 9-nov (Sala corta): Dirección pidió poder «cambiar cosas sin alterar el código… sin Claude ni GPT».
+   Todo lo que se puede cambiar vive en pestañas de su Sheet; aquí se lee cómo está y dónde se cambia. */
+async function pintarReglasSala(){
+  const c=$('#ajReglas'); if(!c) return;
+  await traerReglasSala();
+  const R=REGLAS_SALA; if(!R){ c.innerHTML='<p style="color:var(--guia);font-size:13px">No pude leer las reglas ahora. Vuelve a abrir Ajustes en un momento.</p>'; return }
+  const v=k=>String(R[k]==null?'':R[k]).trim(), apagado=x=>['0','no','false','pausa'].includes(x.toLowerCase());
+  const etapas=v('nube_ejecuta_etapas').split(',').map(x=>x.trim());
+  const filas=[
+    ['Ideas nuevas',apagado(v('semillero_activo')||'1')?'En pausa: no se proponen ideas nuevas; las que ya elegiste siguen su camino.':'Encendidas: la Sala propone ideas nuevas.','REGLAS · semillero_activo (1 enciende, 0 pausa)'],
+    ['Video',(etapas.includes('escena')&&etapas.includes('corte'))?'Encendido: la nube produce escenas y cortes.':'En pausa: primero carruseles. Lo que nació para video sale como carrusel.','REGLAS · nube_ejecuta_etapas (agrega voz,escena,corte para encenderlo)'],
+    ['Historias de 15 segundos',+v('omni_flash_tope_dia')>0?`Encendidas: hasta ${esc(v('omni_flash_tope_dia'))} al día.`:'Apagadas: cuesta alrededor de un dólar cada una; tú decides cuándo.','REGLAS · omni_flash_tope_dia (0 apaga)'],
+    ['Consejo (Roast Room)',v('consejo_activo')!=='1'?'Apagado: sólo deciden Alejandro y Sayri.':v('consejo_motores').includes('claude')?'En la nube: juzga las cartas antes de que lleguen a tu mesa. Tu marca siempre manda.':'En reserva: todavía no juzga en la nube.','REGLAS · consejo_activo y consejo_motores'],
+    ['Paquetes para publicar',apagado(v('salida_activa')||'1')?'En pausa.':`Encendidos: hasta ${esc(v('salida_piezas_por_sesion')||'3')} piezas por sesión del consejo.`,'REGLAS · salida_activa y salida_piezas_por_sesion'],
+    ['Piezas guardadas',v('salida_excluir')?`No salen hasta que tú lo digas: ${esc(v('salida_excluir').split(',').map(x=>x.trim()).filter(Boolean).join(', '))}.`:'Ninguna: todo lo aprobado puede salir.','REGLAS · salida_excluir (quita el nombre para dejarla salir)'],
+    ['Cómo se escribe el texto','El consejo sigue una receta. Si quieres otro tono, cámbiala.','PROMPTS · fila «_copy», columna prompt_base'],
+    ['Tus candados','Lo que nunca se pasa (ciudades, cifras, la pareja, el nombre del Plan…).','CANDADOS · una fila por candado; activo 0 lo apaga'],
+  ];
+  c.innerHTML=filas.map(([n,como,donde])=>`<div class="maq bien"><b><i></i>${esc(n)}</b><small>${como}</small><small>Se cambia en: ${esc(donde)}</small></div>`).join('');
 }
 
 async function pintarRevisionDiaria(){
@@ -2395,7 +2478,7 @@ function ejeEligioLamina(l){
     const cands=CANDIDATAS(p); const j=cands.findIndex(c=>c&&c.src&&l.src&&c.src===l.src); if(j<0) continue;
     const f=((D.decisiones||{}).propuestas||{})[p.id]; if(!f) continue;
     if(f.laminas&&f.laminas[j]==='si') return true;
-    if(f.firmas&&f.firmas[j]&&(f.firmas[j]||[]).some(x=>x.marca==='si')) return true;
+    if(f.firmas&&f.firmas[j]&&MANDA(f.firmas[j])==='si') return true;
   }
   return false;
 }
@@ -2404,11 +2487,25 @@ function ejeEligioLamina(l){
 function marcaDeLamina(t,l){
   if(l.estado==='aprobada') return 'si';
   const pid=Object.keys(TIRAS).find(k=>TIRAS[k]===t); if(!pid) return '';
-  const M=mapaDe(t); const k=Object.keys(M).find(q=>+M[q]===l.n); if(k===undefined) return '';
-  const i=+k-1; const f=((D&&D.decisiones&&D.decisiones.propuestas)||{})[pid]; if(!f) return '';
-  if(f.firmas&&f.firmas[i]){ const fs=f.firmas[i]||[]; if(fs.some(x=>x.marca==='si')) return 'si'; if(fs.some(x=>x.marca==='no')) return 'no'; return '' }
-  return (f.laminas||[])[i]||'';
+  // 9-nov (Sala corta): las 27 piezas tenían todo aprobado y la Línea decía «25% · sigue»: sólo leía las
+  // marcas de la mesa de HOY y esas cartas ya no estaban. Sin marca de hoy vale lo que la mesa publicó.
+  const M=mapaDe(t); const k=Object.keys(M).find(q=>+M[q]===l.n); let deHoy='';
+  if(k!==undefined){ const i=+k-1; const f=((D&&D.decisiones&&D.decisiones.propuestas)||{})[pid];
+    deHoy=!f?'':(f.firmas&&f.firmas[i])?MANDA(f.firmas[i]):((f.laminas||[])[i]||''); }
+  return deHoy||marcaPublicada(pid,l.n);
 }
+/* la proyección pública de la mesa (datos/mesa-estado.json): id de la tira → {n: 'si'|'no'} */
+let PROY=null, _tProy=0;
+async function traerProyeccion(){
+  if(PROY&&Date.now()-_tProy<60000) return; _tProy=Date.now();
+  try{ const j=await (await fetch('datos/mesa-estado.json?v='+Date.now(),{cache:'no-store'})).json();
+    const m={}; for(const p of (j.publicaciones||[])){ if(!p||!Array.isArray(p.laminas)) continue;
+      m[String(p.id)]=Object.fromEntries(p.laminas.map(x=>[String(x.n),x.estado==='aprobada'?'si':x.estado==='rechazada'?'no':'']));
+    }
+    PROY=m;
+  }catch(e){ if(!PROY) PROY={} }
+}
+function marcaPublicada(pid,n){ const x=PROY&&PROY[pid]; return (x&&x[String(n)])||'' }
 // null = cerrada (aprobada, marcada sí, o elegida vía eje). {tipo:'no'|'pend',n} = sigue abierta.
 function laminaAbierta(t,l){
   if(marcaDeLamina(t,l)==='si') return null;
@@ -2422,6 +2519,7 @@ function evidenciaSrc(f){
   return '';
 }
 async function armarPiezas(){
+  await traerProyeccion();
   if(TIRAS_HAY===null){ try{ TIRAS_HAY=await (await fetch('datos/tiras/index.json?v='+Date.now())).json() }catch(e){ TIRAS_HAY=[] } }
   await Promise.all((TIRAS_HAY||[]).map(cargarTira));
   const piezas={};   // slug -> {slug,nombre,tira,filas}
@@ -2434,7 +2532,11 @@ async function armarPiezas(){
   for(const pid of Object.keys(TIRAS)){
     const t=TIRAS[pid]; if(!t) continue;
     const slug=slugDeTira(t,pid); const z=pon(slug);
-    const gana = !z.tira || (vivos.has(pid)&&!vivos.has(z._pid)) || (!vivos.has(z._pid)&&fechaDeTira(t)>=fechaDeTira(z.tira));
+    // 9-nov: entre varias tiras del mismo día ganaba la última leída, que podía no ser la vigente; la
+    // que la mesa publicó como vigente (PROY) manda sobre la fecha.
+    const enMesa=k=>!!(PROY&&PROY[k]);
+    const gana = !z.tira || (vivos.has(pid)&&!vivos.has(z._pid)) ||
+      (!vivos.has(z._pid)&&(enMesa(pid)&&!enMesa(z._pid) || (enMesa(pid)===enMesa(z._pid)&&fechaDeTira(t)>=fechaDeTira(z.tira))));
     if(gana){ z.tira=t; z._pid=pid; z.nombre=prettyDeSlug(slug,t) }
   }
   // 12-sep: la COLA trae dos filas por ítem cuando cambió la huella (id pieza:etapa:item:hash):
@@ -2513,8 +2615,10 @@ function quefaltaPara(t,g,publicada){
 async function pintarProduccion(){
   const c=$('#prodArbol'), av=$('#prodAviso'); if(!c) return;
   c.innerHTML='<p style="color:var(--guia);font-size:13px">Cargando…</p>';
-  await traerCola();
-  const piezas=await armarPiezas();
+  await Promise.all([traerCola(),traerReglasSala()]);
+  const piezas=await armarPiezas(); LINEA_PIEZAS=piezas;
+  if(typeof SalaSalida!=='undefined') SalaSalida.pintar();
+  pintarUniverso();
   av.textContent=COLA_ERR?'Sin la hoja COLA · mostrando solo las tiras':'';
   try{ await pintarLinea(piezas) }catch(e){ const l=$('#linea'); if(l) l.innerHTML='<p class="nota-pie">No se pudo armar la línea: '+esc(e.message||e)+'</p>' }
   if(!piezas.length){ c.innerHTML='<p class="nota-pie">Nada en producción todavía.</p>'; return }
@@ -2533,6 +2637,31 @@ async function pintarProduccion(){
         ${publicada?`<div class="prod-rama"><b>Publicada</b><div class="prod-hojas"><div class="prod-hoja"><span class="prod-punto verde"></span><span class="tt">Ya salió</span></div></div></div>`:''}
       </div></div>`;
   }).join('');
+}
+
+/* ══ EL UNIVERSO (9-nov) ════════════════════════════════════════════════════════════════════
+   Dirección: «videos de 15 segundos… guardando personajes y ver cómo se van entrelazando en una trama
+   conjunta… informando cada vértice del negocio». El universo vive como dato en
+   datos/universo/universo.json (lo sembró el piloto de Omni); aquí sólo se enseña, para que se vea
+   qué hay guardado y en qué va cada historia. El video sigue en pausa hasta que Dirección lo encienda. */
+let UNIVERSO=null;
+async function pintarUniverso(){
+  const c=$('#universo'); if(!c) return;
+  if(UNIVERSO===null){ try{ UNIVERSO=await (await fetch('datos/universo/universo.json?v='+Date.now())).json() }catch(e){ UNIVERSO={} } }
+  const u=UNIVERSO||{}, H=Object.entries(u.historias||{}); if(!H.length){ c.innerHTML=''; return }
+  const V=u.vertices||{}, P=u.personajes||{}, L=u.lugares||{}, seg=(u.formato&&u.formato.segundos)||15;
+  const chips=(o,f)=>Object.entries(o).map(([k,x])=>`<span class="uni-chip">${f(x,k)}</span>`).join('');
+  const pausa=!REGLAS_SALA||videoEnPausa()||!(+REGLAS_SALA.omni_flash_tope_dia>0);
+  c.innerHTML=`<section class="uni" aria-label="Historias de ${seg} segundos"><span class="bt-eyebrow">LO QUE SIGUE · HISTORIAS DE ${seg} SEGUNDOS</span>
+    <h3>Personajes que se van cruzando</h3>
+    <p>Cada historia es una sola toma de ${seg} segundos, vertical, con la voz del personaje. Los personajes y los lugares se guardan para que vuelvan a salir y sus historias se enlacen.</p>
+    <div class="uni-fila">${chips(V,x=>`<b>${esc(x.nombre||'')}</b>`)}</div>
+    <div class="uni-fila">${chips(P,x=>`<b>${esc(x.nombre||'')}</b> · ${esc([x.papel,x.industria].filter(Boolean).join(', '))}`)}${chips(L,x=>esc(x.nombre||''))}</div>
+    ${H.map(([id,h])=>`<div class="uni-hist"><b>${esc(h.titulo||id)}</b>
+      <small>${esc([(h.personajes||[]).map(k=>(P[k]||{}).nombre||k).join(' y '),(L[h.lugar]||{}).nombre,(V[h.vertice]||{}).nombre].filter(Boolean).join(' · '))}</small>
+      <q>${esc(h.dialogo||'')}</q>
+      <span class="uni-est">${pausa?'Guion listo · se graba cuando enciendas el video':'Guion listo · en turno para grabarse'}</span></div>`).join('')}
+  </section>`;
 }
 
 /* ══ LA LÍNEA + EL RELATOR (23-sep) ═══════════════════════════════════════════════════════
@@ -2595,15 +2724,24 @@ function filaLinea(z){
   const t=z.tira, g=z.filas||{}, publicada=esPublicada(z.nombre);
   const et=etapasDe(formatoDePieza(z)), h=hechasDe(z,publicada), run=corriendoDe(z);
   const falta=quefaltaPara(t,g,publicada)||'';
+  // 9-nov (Sala corta): la salida. «lista» = el paquete ya está en Drive y publicar es tu clic;
+  // «texto» = imágenes aprobadas esperando que el consejo escriba su texto.
+  const sal0=typeof SalaSalida!=='undefined'?SalaSalida.estado(z.nombre,h,et.map(x=>x[0]),EXP,publicada):'';
+  const sal=sal0==='texto'&&salidaGuardada(z.slug)?'guardada':sal0;
   // 23-sep (chinche CHN-20260922-2237-dfac): «te toca» sale de la MESA DE HOY —cartas sin responder—, la
   // misma fuente que Hoy. Antes salía de la tira y decía «te toca» cuando Hoy ya decía «Listo por hoy».
   // sin la mesa del día cargada (Sheet sin contestar) no se puede afirmar nada de Hoy: se usa la tira
   // 23-sep: con la mesa vacía («Listo por hoy») esto caía a la tira vieja y decía «te toca» sobre
   // propuestas ya retiradas. Si el día cargó, la mesa manda aunque esté vacía.
   const mesa=!!(D&&Array.isArray(D.propuestas));
-  const pend=mesa?pasosPendientesDe(z):[], tuyo=pend.length>0;
+  // 9-nov: un editor pidió cambiar una imagen ya aprobada de esta pieza: sale del montón mientras se rehace
+  // (también sirve sin paquete: «Las 48 Horas» no tiene y antes decía «Guardada»)
+  const cp=typeof SalaSalida!=='undefined'&&SalaSalida.cambioDePieza?SalaSalida.cambioDePieza(z.nombre,z.slug):null;
+  const cEst=(cp&&cp.estado)||'', cOrd=(cp&&cp.ordenes)||[];
+  const pend=mesa?pasosPendientesDe(z):[], lista=sal==='lista'&&!pend.length&&!cEst, tuyo=pend.length>0||lista;
   const cambio=!tuyo&&/pidió cambio/i.test(falta), esperaRonda=!tuyo&&/esperando tu s|elige una opci|en tu mesa/i.test(falta);
-  const todas=[].concat(g.prospectos||[],g.voz||[],g.escena||[],g.corte||[]);
+  // 9-nov: con el video en pausa, un trabajo viejo de voz, escena o corte ya no dice nada de la pieza
+  const todas=videoEnPausa()?[].concat(g.prospectos||[]):[].concat(g.prospectos||[],g.voz||[],g.escena||[],g.corte||[]);
   const fallos=todas.filter(f=>/fallo|error/i.test(f.estado||''));
   const viejos=todas.filter(f=>/corriendo/i.test(f.estado||'')&&(edadHoras(f.actualizado)||0)>HORAS_ATORADO);
   const colaPend=todas.filter(f=>/pendiente/i.test(f.estado||''));
@@ -2612,6 +2750,7 @@ function filaLinea(z){
     if(h.has(k)) c='hecho';
     else if(k===run) c=viejos.some(f=>(COLA_DE_ETAPA[k]||'')===f.etapa)?'rojo':'corre';
     else if(i===aqui) c=tuyo?'tu':(fallos.length||viejos.length?'rojo':'sig');
+    if(lista&&k==='publicada') c='tu';
     return {k,txt,c,aqui:i===aqui} });
   let quien='sig', que='', cuando='';
   const nomEt=aqui>=0?et[aqui][1]:'';
@@ -2621,6 +2760,10 @@ function filaLinea(z){
   else if(viejos.length) nota=`Además, ${nomCola(viejos[0].etapa)} figura en curso desde el ${fechaCorta(viejos[0].actualizado)}; su finalización no está confirmada.`;
   else if(colaPend.length) nota=`En la fábrica: ${colaPend.length} trabajo${colaPend.length===1?'':'s'} en cola.`;
   if(publicada){ que='Publicación registrada.' }
+  else if(cEst==='pedido'&&!pend.length){ quien='fab'; const ns=cOrd.map(o=>o.n); que=`Cambio pedido en ${ns.length===1?'la imagen '+ns[0]:'las imágenes '+(ns.length>1?ns.slice(0,-1).join(', ')+' y '+ns[ns.length-1]:'')}, con la nota del editor.`; cuando='Suele tardar varias horas; cuando esté lista llega a la mesa para aprobarla.' }
+  else if(cEst==='volvio'&&!pend.length){ quien='fab'; que='Hay una versión nueva. Cuando esté aprobada y con su paquete nuevo, vuelve a tu montón.'; cuando='' }
+  else if(lista){ quien='lista'; const n=SalaSalida.paqueteDe(z.nombre).imagenes.length;
+    que=`Lista para lanzar: ${n} ${n===1?'imagen':'imágenes'} y su texto.`; cuando=DECIDE()?'Toca para abrirla.':'Publicar es de los editores.' }
   else if(aqui<0){ que='Material listo. Publicación por confirmar.' }
   else if(!mesa&&/esperando tu s|elige una opci|en tu mesa/i.test(falta)){ quien='sig'; que='No pude leer tu mesa de hoy: entra (o actualiza) para saber si te toca algo.'; cuando='' }
   else if(tuyo){ quien='tu'; que=mesa?`Te toca: ${pend.length} en tu mesa de hoy${falta?' ('+falta+')':''}.`:`Te toca: ${falta}.`; const f=fechaDeTiraL(t); cuando='Toca para decidir ahora'+(f?' · esperando desde el '+fechaCorta(f):''); }
@@ -2638,12 +2781,17 @@ function filaLinea(z){
     // si el arranque ya lo intentó y no pudo, se dice qué pasó y cuándo, no una promesa genérica.
     if(ar&&ar.resultado!=='arrancada'){ quien='rojo'; que=`Idea elegida; el arranque lo intentó y no pudo: ${ar.motivo||ar.resultado}.`; cuando=`Último intento: ${fechaHoraCorta(ARRANQUE.corrida)}.` }
     else { que='Idea elegida. Guion y láminas pendientes de confirmar.' } }
-  else if(et[aqui][0]==='copy'){ que='Texto de publicación por confirmar.' }
+  else if(sal==='guardada'){ que='Imágenes aprobadas. Guardada: no sale hasta que tú lo digas.'; cuando='Espera tu decisión.' }
+  else if(et[aqui][0]==='copy'){ que='Imágenes aprobadas. Falta su texto.';
+    const pausa=REGLAS_SALA&&['0','no','false','pausa'].includes(String(REGLAS_SALA.salida_activa==null?'1':REGLAS_SALA.salida_activa).trim().toLowerCase());
+    cuando=pausa?'Los paquetes están en pausa.':'Es el paso del consejo; cuando lo escriba, aparece en «Te toca».' }
   else if(et[aqui][0]==='publicada'){ que='Publicación por confirmar.' }
   else { que=`Sigue: ${nomEt}.`; cuando='Sin avance confirmado para esta etapa.' }
-  const pct=Math.round(100*h.size/et.length);
+  // 9-nov: sólo cuentan las etapas de ESTA línea. Una pieza que nació para video y hoy camina como carrusel
+  // conservaba voz, escenas y corte como hechas: 6 de 4 daba «150%».
+  const pct=Math.round(100*et.filter(x=>h.has(x[0])).length/et.length);
   if(tuyo&&nota) cuando+=' · '+nota;
-  return {z,segs,quien,que,cuando,pct,run,tuyo,paso:tuyo?pend[0]:null,rojo:!!(fallos.length||viejos.length),fab:!tuyo&&quien==='fab'};
+  return {z,segs,quien,que,cuando,pct,run,tuyo,lista,sal,paso:pend.length?pend[0]:null,rojo:!!(fallos.length||viejos.length),fab:!tuyo&&quien==='fab'};
 }
 async function pintarLinea(piezas,destino,compacto){
   const c=destino===null?null:$('#'+(destino||'linea')); if(destino!==null&&!c) return '';
@@ -2657,50 +2805,64 @@ async function pintarLinea(piezas,destino,compacto){
   for(const i of (IDEAS||[])){ if(!/produccion|elegida|aprobada/i.test(i.estado||'')) continue;
     const slug=normSlug(i.id||i.titulo); if(ya.has(slug)||[...ya].some(s=>s.split('-')[0]===slug.split('-')[0])) continue;
     abiertas.push({slug,nombre:i.titulo||i.id,tira:null,filas:{prospectos:[],escena:[],voz:[],corte:[]}}); ya.add(slug) }
-  const filas=abiertas.map(filaLinea).sort((a,b)=>(b.tuyo-a.tuyo)||(b.rojo-a.rojo)||(b.fab-a.fab)||(b.pct-a.pct));
-  const nTu=filas.filter(f=>f.tuyo).length, nFab=filas.filter(f=>f.fab).length, nRojo=filas.filter(f=>f.rojo).length, nSig=filas.filter(f=>!f.tuyo&&!f.fab&&!f.rojo).length;
+  // lo listo va en el orden de salida que fijaron los editores (el del montón), no en el de llegada a Drive
+  const lugarSalida=new Map((typeof SalaSalida!=='undefined'?SalaSalida.pendientes():[]).map((x,i)=>[x.nombre,i]));
+  const ordenPaq=f=>f.lista&&lugarSalida.has(f.z.nombre)?lugarSalida.get(f.z.nombre):1e9;
+  const filas=abiertas.map(filaLinea).sort((a,b)=>(b.tuyo-a.tuyo)||(b.rojo-a.rojo)||(b.fab-a.fab)||(b.pct-a.pct)||(ordenPaq(a)-ordenPaq(b)));
+  const nLista=filas.filter(f=>f.lista).length, nTexto=filas.filter(f=>!f.tuyo&&f.sal==='texto').length, nGuard=filas.filter(f=>!f.tuyo&&f.sal==='guardada').length;
+  const nTu=filas.filter(f=>f.tuyo&&!f.lista).length, nFab=filas.filter(f=>f.fab).length, nRojo=filas.filter(f=>f.rojo).length, nSig=filas.filter(f=>!f.tuyo&&!f.fab&&!f.rojo&&f.sal!=='texto'&&f.sal!=='guardada').length;
   const rel=!filas.length?'No hay publicaciones abiertas.':
-    `${filas.length} publicaciones abiertas. `+(nTu?`${nTu} te ${nTu===1?'espera':'esperan'} a ti`:'Ninguna te espera a ti')+(nFab?`, ${nFab} ${nFab===1?'está':'están'} en la fábrica`:'')+(nRojo?` y ${nRojo} ${nRojo===1?'está atorada':'están atoradas'}`:'')+'.';
+    `${filas.length} publicaciones abiertas. `+[
+      nLista?`${nLista} ${nLista===1?'está lista':'están listas'} para lanzar`:'',
+      nTu?`${nTu} ${nTu===1?'espera':'esperan'} tu decisión`:'',
+      nTexto?`${nTexto} con imágenes aprobadas ${nTexto===1?'espera':'esperan'} su texto`:'',
+      nGuard?`${nGuard} ${nGuard===1?'está guardada y espera':'están guardadas y esperan'} tu decisión`:'',
+      nFab?`${nFab} ${nFab===1?'está':'están'} en la fábrica`:'',
+      nRojo?`${nRojo} ${nRojo===1?'está atorada':'están atoradas'}`:''].filter(Boolean).join(', ')+((nLista||nTu||nTexto||nGuard||nFab||nRojo)?'.':'Ninguna te espera a ti.');
   // pendientes del sistema: recados atorados, ideas propuestas sin elegir
   let recados=[]; if(!compacto) try{ const j=await (await fetch('datos/encargos.json?v='+Date.now())).json(); const por=new Map();
-    (j.encargos||[]).forEach(e=>{ const q=String(e.que||''); const id=(q.match(/"id":"([^"]+)"/)||[])[1]||q; const tx=(q.match(/"texto":"((?:[^"\\]|\\.)*)/)||[])[1]||q; por.set(id,{...e,texto:tx}) });
+    (j.encargos||[]).forEach(e=>{ const q=String(e.que||''); const id=(q.match(/"id":\s*"([^"]+)"/)||[])[1]||q; const tx=(q.match(/"texto":\s*"((?:[^"\\]|\\.)*)/)||[])[1]||q; por.set(id,{...e,texto:tx}) });
     recados=[...por.values()].filter(e=>e.estado==='en curso'&&(Date.now()-Date.parse(e.cuando||''))/864e5>2) }catch(e){}
   const propuestas=(IDEAS||[]).filter(i=>/propuesta/i.test(i.estado||''));
   const pend=[];
   recados.forEach(e=>pend.push(`<b>Recado atorado</b> desde el ${esc(fechaCorta(e.cuando))}: «${esc(String(e.texto).slice(0,110))}» — consulta el seguimiento del mismo encargo.`));
-  if(propuestas.length) pend.push(`<b>${propuestas.length} ideas propuestas</b> esperando que elijas (en la pestaña Árbol, abajo): ${esc(propuestas.slice(0,4).map(i=>i.titulo).join(' · '))}${propuestas.length>4?'…':''}.`);
+  const sinSemillero=REGLAS_SALA&&['0','no','false','pausa'].includes(String(REGLAS_SALA.semillero_activo==null?'1':REGLAS_SALA.semillero_activo).trim().toLowerCase());
+  if(propuestas.length) pend.push(sinSemillero
+    ?`<b>${propuestas.length} ideas propuestas siguen guardadas.</b> El generador de ideas está en pausa y nada se borra; las que ya elegiste siguen su camino en esta línea.`
+    :`<b>${propuestas.length} ideas propuestas</b> esperando que elijas (en la pestaña Árbol, abajo): ${esc(propuestas.slice(0,4).map(i=>i.titulo).join(' · '))}${propuestas.length>4?'…':''}.`);
   const seg=s=>`<div class="ln-seg ${s.c}${s.aqui?' aqui':''}"><i></i><span>${esc(s.txt)}</span></div>`;
   if(compacto){
     // 23-sep: la misma Línea, corta, arriba de Hoy y del Árbol — «no vi nada de lo nuevo»: vivía sólo en Producción
     const html=`<div class="ln-mini"><h4>Producción ahora</h4><p class="rel">${esc(rel)}</p>
       <div class="ln-tarjetas">${filas.map(f=>{ const l=((f.z.tira&&f.z.tira.laminas)||[]).find(x=>x.src);
-        return `<button class="ln-mfila" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}>${l?`<img class="ln-portada" loading="lazy" alt="" src="${esc(ligera(fuenteLamina(l,l.src)))}">`:'<span class="ln-portada vacia">sin lámina aún</span>'}<b>${esc(f.z.nombre)}</b>
+        return `<button class="ln-mfila${f.lista?' lista':''}" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}${f.lista?' data-lista="1"':''}>${l?`<img class="ln-portada" loading="lazy" alt="" src="${esc(ligera(fuenteLamina(l,l.src)))}">`:'<span class="ln-portada vacia">sin lámina aún</span>'}<b>${esc(f.z.nombre)}</b>
         <div class="ln-barra">${f.segs.map(s=>`<div class="ln-seg ${s.c}${s.aqui?' aqui':''}"><i></i></div>`).join('')}</div>
-        <span class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span> ${esc(f.que)} <span class="cuando">${esc(f.cuando.split(' · Además')[0])}</span></span><span class="ln-accion">${f.paso!=null?'Decidir →':'Ver →'}</span></button>`}).join('')}</div>
+        <span class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',lista:'lista',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span> ${esc(f.que)} <span class="cuando">${esc(f.cuando.split(' · Además')[0])}</span></span><span class="ln-accion">${f.paso!=null?'Decidir →':f.lista?'Abrir →':'Ver →'}</span></button>`}).join('')}</div>
       <button class="secund ln-vertodo" data-irprod>Ver todo en Producción →</button></div>`;
     if(c){ c.innerHTML=html; enganchaLinea(c) }
     return html;
   }
   c.innerHTML=`<div class="linea-cab"><p class="rel">${esc(rel)}</p>
-      <div class="chips"><span class="chip"><b>${nTu}</b> te toca</span><span class="chip"><b>${nFab}</b> en la fábrica</span><span class="chip"><b>${nRojo}</b> atoradas</span><span class="chip"><b>${nSig}</b> por arrancar</span></div></div>
-    <div class="ln-ley"><span><i style="background:var(--si)"></i>hecho</span><span><i style="background:var(--oro)"></i>produciéndose</span><span><i style="background:var(--azul)"></i>te toca</span><span><i style="background:var(--no)"></i>atorado</span><span><i style="background:var(--linea2)"></i>lo que sigue</span><span>▼ estás aquí</span></div>
-    ${filas.map(f=>`<button class="ln-fila" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}><div class="ln-nom"><b>${esc(f.z.nombre)}</b><small>${f.pct}% · ${f.segs.length} etapas</small></div>
+      <div class="chips">${[[nLista,'listas para lanzar'],[nTu,'por decidir'],[nTexto,'esperan su texto'],[nGuard,'guardadas'],[nFab,'en la fábrica'],[nRojo,'atoradas'],[nSig,'en camino']].filter(x=>x[0]).map(([n,t])=>`<span class="chip"><b>${n}</b> ${t}</span>`).join('')}</div></div>
+    <div class="ln-ley"><span><i style="background:var(--si)"></i>hecho</span><span><i style="background:var(--oro)"></i>produciéndose</span><span><i style="background:var(--azul)"></i>te toca</span><span><i style="background:var(--no)"></i>atorado</span><span><i style="background:var(--linea2)"></i>lo que sigue</span><span>▼ va aquí</span></div>
+    ${filas.map(f=>`<button class="ln-fila${f.lista?' lista':''}" data-pieza="${esc(f.z.nombre)}"${f.paso!=null?` data-paso="${f.paso}"`:''}${f.lista?' data-lista="1"':''}><div class="ln-nom"><b>${esc(f.z.nombre)}</b><small>${f.pct}% · ${f.segs.length} etapas</small></div>
       <div class="ln-barra">${f.segs.map(seg).join('')}</div>
-      <div class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span><br>${esc(f.que)}<span class="cuando">${esc(f.cuando)}</span></div></button>`).join('')}
-    ${pend.length?`<div class="ln-pend"><h4>Lo que quedó a medias</h4><ul>${pend.map(p=>`<li>${p}</li>`).join('')}</ul></div>`:''}`;
+      <div class="ln-rel"><span class="quien ${f.quien}">${{tu:'te toca',lista:'lista',fab:'la fábrica',rojo:'atorado',sig:'sigue'}[f.quien]}</span><br>${esc(f.que)}<span class="cuando">${esc(f.cuando)}</span></div></button>`).join('')}
+    ${pend.length?`<div class="ln-pend"><h4>${recados.length?'Lo que quedó a medias':'Guardado'}</h4><ul>${pend.map(p=>`<li>${p}</li>`).join('')}</ul></div>`:''}`;
   enganchaLinea(c);
   return '';
 }
 function enganchaLinea(c){
   // con cartas pendientes, picar lleva a decidir ESA carta en Hoy; sin pendientes, abre la ficha
-  c.querySelectorAll('[data-pieza].ln-fila,[data-pieza].ln-mfila').forEach(el=>el.onclick=()=>el.dataset.paso!=null?irADecidir(+el.dataset.paso):fichaPieza(el.dataset.pieza));
+  c.querySelectorAll('[data-pieza].ln-fila,[data-pieza].ln-mfila').forEach(el=>el.onclick=()=>el.dataset.paso!=null?irADecidir(+el.dataset.paso):(el.dataset.lista&&typeof SalaSalida!=='undefined')?SalaSalida.abrir(el.dataset.pieza):fichaPieza(el.dataset.pieza));
   c.querySelectorAll('[data-irprod]').forEach(el=>el.onclick=()=>irVista('prod'));
 }
 // Hoy repinta su panel a cada rato: la Línea se calcula aparte y el panel sólo reinserta el HTML
 let LINEA_HOY='', _lineaHoyT=0, LINEA_PIEZAS=null;
 async function actualizarLineaHoy(){
   if(Date.now()-_lineaHoyT<50000) return; _lineaHoyT=Date.now();
-  try{ await traerCola(); LINEA_PIEZAS=await armarPiezas(); LINEA_HOY=await pintarLinea(LINEA_PIEZAS,null,true) }catch(e){ LINEA_HOY='' }
+  try{ await Promise.all([traerCola(),traerReglasSala()]); LINEA_PIEZAS=await armarPiezas(); LINEA_HOY=await pintarLinea(LINEA_PIEZAS,null,true) }catch(e){ LINEA_HOY='' }
+  if(typeof SalaSalida!=='undefined') SalaSalida.pintar();   // con la Línea calculada ya se sabe cuántas esperan su texto
   let b=$('#lineaHoy');
   if(!b){ const p=$('#panel'); if(p&&getComputedStyle(p).display!=='none'){ p.insertAdjacentHTML('afterbegin','<div class="bloque" id="lineaHoy"></div>'); b=$('#lineaHoy') } }
   if(b){ b.innerHTML=LINEA_HOY; enganchaLinea(b) }
@@ -2761,12 +2923,25 @@ function kpiChips(k,leads){
      un golpe que hay tres trabajos corriendo.
    ══════════════════════════════════════════════════════════════════════════════════════════ */
 const ETAPAS = {
-  lamina:   [['guion','guion'],['laminas','imagen'],['copy','copy'],['publicada','sale']],
-  carrusel: [['guion','guion'],['laminas','láminas'],['copy','copy'],['publicada','sale']],
-  reel:     [['guion','guion'],['laminas','láminas'],['voz','voz'],['escenas','escenas'],['corte','corte'],['copy','copy'],['publicada','sale']],
+  lamina:   [['guion','guion'],['laminas','imagen'],['copy','texto'],['publicada','sale']],
+  carrusel: [['guion','guion'],['laminas','láminas'],['copy','texto'],['publicada','sale']],
+  reel:     [['guion','guion'],['laminas','láminas'],['voz','voz'],['escenas','escenas'],['corte','corte'],['copy','texto'],['publicada','sale']],
 };
+// 9-nov (Sala corta): con el video en pausa (REGLAS nube_ejecuta_etapas sin escena ni corte) una pieza
+// que nació para video sale como carrusel con sus láminas aprobadas; la Línea ya no le pide voz ni corte.
+let REGLAS_SALA=null, _tReglas=0;
+async function traerReglasSala(){
+  if(!ENTRADO()||(REGLAS_SALA&&Date.now()-_tReglas<120000)) return; _tReglas=Date.now();
+  try{ const r=await fetch(GAS()+'?recurso=reglas&clave='+encodeURIComponent(CLAVE())+'&v='+SELLO_SALA,{cache:'no-store'});
+    const j=await leerJSON(r); if(r.ok&&j&&j.ok&&j.reglas&&typeof j.reglas==='object') REGLAS_SALA=j.reglas }catch(e){}
+}
+function salidaGuardada(slug){ const v=REGLAS_SALA&&REGLAS_SALA.salida_excluir; return !!v&&String(v).split(',').map(x=>x.trim()).includes(String(slug||'')) }
+function videoEnPausa(){ if(!REGLAS_SALA) return false;
+  const e=String(REGLAS_SALA.nube_ejecuta_etapas==null?'':REGLAS_SALA.nube_ejecuta_etapas).split(',').map(x=>x.trim());
+  return !(e.includes('escena')&&e.includes('corte')) }
 function etapasDe(formato){ const f=String(formato||'').toLowerCase();
-  return f.includes('reel')||f.includes('video')?ETAPAS.reel:(f.includes('carrusel')?ETAPAS.carrusel:ETAPAS.lamina) }
+  if(f.includes('reel')||f.includes('video')) return videoEnPausa()?ETAPAS.carrusel:ETAPAS.reel;
+  return f.includes('carrusel')?ETAPAS.carrusel:ETAPAS.lamina }
 /* el anillo: un gajo por etapa. `hechas` es un Set con las etapas listas; `corriendo` la que late */
 function anillo(etapas,hechas,corriendo,r=30){
   const n=etapas.length, C=2*Math.PI*r, hueco=n>5?7:9, largo=C/n-hueco;
@@ -2789,6 +2964,7 @@ function hechasDe(z,publicada){
   if(t&&(t.laminas||[]).length&&!(t.laminas||[]).some(l=>laminaAbierta(t,l))) h.add('laminas');
   const todo=(f)=>(f||[]).length&&f.every(x=>/hecho/i.test(x.estado||''));
   if(todo(g.voz)) h.add('voz'); if(todo(g.escena)) h.add('escenas'); if(todo(g.corte)) h.add('corte');
+  if(h.has('laminas')&&typeof SalaSalida!=='undefined'&&SalaSalida.paqueteDe(z.nombre)) h.add('copy');   // 9-nov: el paquete (imágenes + texto) ya está en Drive
   if(publicada){ h.add('copy'); h.add('publicada'); h.add('laminas'); h.add('guion') }
   return h;
 }
@@ -2947,18 +3123,26 @@ async function fichaPieza(nombre){
   // presenta terminado: se ve como historia y cambiar algo queda como opción secundaria, no al frente.
   const publicada=esPublicada(nombre);
   const colaViva=[].concat(g.escena||[],g.voz||[],g.corte||[]).some(x=>!/hecho/i.test(x.estado||''));
-  const terminada=publicada||(!!t&&(t.laminas||[]).length>0&&!abiertas.length&&!colaViva);
-  hoja(`<div class="arb-ficha"><h3>${esc(nombre)}</h3><p class="arb-sub">${terminada?(publicada?'<b class="ok-tag">Publicada ✓</b>':'<b class="ok-tag">Terminada ✓ · lista para salir</b> — nada que decidir'):'en producción · '+esc(quefaltaPara(t,g,false))}</p>
-    ${terminada&&t?`<button class="listo" id="fVerHist">▶ Verla como historia</button>`:''}
+  const etapas=etapasDe(formatoDePieza(z)).map(x=>x[0]), deVideo=etapas.includes('corte');
+  // 9-nov: con una orden de cambio viva o ya atendida, el paquete viejo NO se ofrece para publicar
+  const cp=typeof SalaSalida!=='undefined'&&SalaSalida.cambioDePieza?SalaSalida.cambioDePieza(nombre,z.slug):null, cEst=(cp&&cp.estado)||'';
+  const paq=typeof SalaSalida!=='undefined'&&!cEst?SalaSalida.paqueteDe(nombre):null;
+  const avisoCambio=cEst==='volvio'?'<b>Hay una versión nueva</b>; vuelve a tu montón con su paquete nuevo.':(typeof SalaSalida!=='undefined'&&SalaSalida.paqueteDe(nombre))?'<b>Cambio pedido</b>: este paquete ya no es el que va a salir.':'<b>Cambio pedido</b>: Producción la rehace con la nota del editor.';
+  const terminada=publicada||(!!t&&(t.laminas||[]).length>0&&!abiertas.length&&(!deVideo||!colaViva));
+  hoja(`<div class="arb-ficha"><h3>${esc(nombre)}</h3><p class="arb-sub">${terminada?(publicada?'<b class="ok-tag">Publicada ✓</b>':cEst?avisoCambio:paq?'<b class="ok-tag">Lista para lanzar ✓</b> — imágenes y texto en Drive':'<b class="ok-tag">Imágenes aprobadas ✓</b> — falta su texto; lo escribe el consejo'):'en producción · '+esc(quefaltaPara(t,g,false))}</p>
+    ${paq&&!publicada?`<button class="listo" id="fPublicar">${DECIDE()?'Publicarla →':'Ver el paquete →'}</button>`:''}
+    ${terminada&&t?`<button class="${paq&&!publicada?'secund':'listo'}" id="fVerHist">▶ Verla como historia</button>`:''}
     <div class="pasos">
       ${pasoHTML('Guion',t?'hecho':'falta',t?`<small>${esc(t.promesa||'')}</small>`:'')}
       ${pasoHTML('Láminas',t?(abiertas.length?'proceso':'hecho'):'falta',t?`<div class="arb-vers">${(t.laminas||[]).map(l=>{const ab=laminaAbierta(t,l);return `<div class="arb-ver ${ab?'abierta':''}"><img src="${esc(ligera(fuenteLamina(l,l.src)))}" alt="" loading="lazy"><b>L${l.n}</b><small>${ab?(ab.tipo==='no'?'cambio':'por decidir'):'✓'}</small></div>`}).join('')}</div>`:'')}
-      ${pasoHTML('Escenas',est(g.escena),`<small>${(g.escena||[]).filter(x=>/hecho/i.test(x.estado)).length} de ${(g.escena||[]).length||6}</small>`)}
-      ${pasoHTML('Voces',est(g.voz),`<small>${(g.voz||[]).filter(x=>/hecho/i.test(x.estado)).length} de ${(g.voz||[]).length||6}</small>`)}
-      ${pasoHTML('Corte',est(g.corte),'')}
-      ${pasoHTML('Publicar','falta','<small>con tu sí en la Sala</small>')}
-    </div>${abiertas.length?`<button class="listo" onclick="cerrarCapas();irVista('hoy')">Ir a decidir (${abiertas.length}) →</button>`:''}${DECIDE()?`<button class="secund${terminada?' chico':''}" onclick="editarNodo(${JSON.stringify(nodoDePieza(nombre))})">${terminada?'¿Cambiar algo? Pedir un cambio (la reabre)':'✎ Editar esta publicación'}</button>`:''}</div>`,'pieza-'+normSlug(nombre));
+      ${deVideo?pasoHTML('Escenas',est(g.escena),`<small>${(g.escena||[]).filter(x=>/hecho/i.test(x.estado)).length} de ${(g.escena||[]).length||6}</small>`)
+        +pasoHTML('Voces',est(g.voz),`<small>${(g.voz||[]).filter(x=>/hecho/i.test(x.estado)).length} de ${(g.voz||[]).length||6}</small>`)
+        +pasoHTML('Corte',est(g.corte),''):''}
+      ${pasoHTML('Texto y paquete',paq||publicada?'hecho':cEst?'proceso':'falta',paq?`<small>${esc(paq.carpeta||'')} · en Drive</small>`:cEst?'<small>se rehace con tu nota</small>':'<small>lo escribe el consejo cuando las imágenes están aprobadas</small>')}
+      ${pasoHTML('Publicar',publicada?'hecho':'falta',publicada?'':'<small>es tu clic</small>')}
+    </div>${abiertas.length?`<button class="listo" onclick="cerrarCapas();irVista('hoy')">Ir a decidir (${abiertas.length}) →</button>`:''}${DECIDE()?`<button class="secund${terminada?' chico':''}" onclick="editarNodo(${JSON.stringify(nodoDePieza(nombre))})">${terminada?'¿Algo más que cambiar del sistema o de la pieza? Escríbelo como encargo':'✎ Editar esta publicación'}</button>`:''}</div>`,'pieza-'+normSlug(nombre));
   const vh=$('#fVerHist'); if(vh) vh.onclick=()=>verHistoria(nombre);
+  const fp=$('#fPublicar'); if(fp) fp.onclick=()=>{ cerrarCapas(); SalaSalida.abrir(nombre) };
 }
 
 /* ══ HISTORIAS (23-sep, chinche #22 «B»): tocar una publicación la despliega como «stories» — sus
@@ -3137,6 +3321,7 @@ async function guardarMesaLocal(groups,day,publicada=false){
 }
 function retirarMesaLocal(){
   if(typeof SalaMesaLocal!=='undefined') SalaMesaLocal.clear(localStorage);
+  if(typeof SalaSalida!=='undefined') SalaSalida.olvidar();
   _cacheMesa=null; _diaParaCache=null; _mesaPublica=false;
   if(_mesaLocal){ cerrarCapas(); D=null; _pintado=false; if(window.SalaTablero) window.SalaTablero.clear(); }
 }
@@ -3152,6 +3337,7 @@ function cargarMediosSinBloquear(){
   _mediosIniciales=SalaMedios.cargar().then(()=>{
     if(window.SalaTablero)window.SalaTablero.render();
     if(_pintado&&!document.body.classList.contains('sala-tablero')&&!_mesaLocal){if(DECIDE())pintarCartas();else pintarMira();}
+    if(typeof SalaSalida!=='undefined')SalaSalida.pintar();
   }).catch(()=>{});
   return _mediosIniciales;
 }
@@ -3180,8 +3366,9 @@ function cargarSecundarios(){
       if(ENTRADO()) traerCola();
     },2800);
     setTimeout(()=>{
-      if(ENTRADO()){ traerFabrica(); traerIdeas(); }
+      if(ENTRADO()){ traerFabrica(); traerIdeas(); traerReglasSala(); }
       if(_pintado&&document.body.dataset.vista==='hoy') actualizarLineaHoy();
+      if(typeof SalaSalida!=='undefined') SalaSalida.pintar();
     },7000);
     // Verificar nueva versión descarga index.html completo; no hacerlo mientras
     // la mesa todavía espera a Apps Script ni mientras baja la primera foto.
@@ -3283,7 +3470,7 @@ function pintarEsperandoSheet(){
   if(!_reintentando){ _reintentando=true; reintentarSheet(0) }
 }
 function avisarRespaldo(){
-  if(_mesaLocal){ pintarEstado('cola','Copia disponible · sin conexión; usa Actualizar'); return; }
+  if(_mesaLocal){ pintarEstado('cola','El Sheet no contestó · ves lo último guardado'); return; }
   $('#subt').textContent='Sin señal con el Sheet · te muestro la copia'+((typeof D!=='undefined'&&D&&D.fecha)?' del '+D.fecha:'')+' · consulta de lectura';
   pintarEstado('cola','Sin señal con el Sheet · puedes reintentar');
 }
@@ -3365,6 +3552,7 @@ setInterval(vigilarVersion,600000);
   // Es consulta fechada, nunca una autorización para decidir sobre datos antiguos.
   if(!await abrirMesaLocal())pintarCargando();
   if(!_cacheMesa||_mesaPublica)abrirMesaPublicada();
+  arrancarSalida();   // 9-nov: lo listo para publicar no depende de que el día llegue
   // Catálogo y vistas auxiliares se cargan al pintar la primera carta, sin competir con el día.
   try{ aplicarDia(normalizarDia(await conMarcasDeAntes(await traer(),''))) }
   catch(e){
@@ -3380,7 +3568,16 @@ setInterval(vigilarVersion,600000);
 $('#btnSi').onclick=()=>decidir('si'); $('#btnNo').onclick=()=>decidir('no');
 $('#deshacer').onclick=()=>{ if(!candadoLibre()||!hist.length) return; irA(hist.pop()) };
 $('#verresp').onclick=abrirRespuestas; $('#btnEntrar').onclick=abrirEntrar;
-$('#btnReintentar').onclick=async()=>{ pintarEstado('subiendo','Reintentando…'); await subirCola(); await subir(); };
+$('#btnReintentar').onclick=async()=>{
+  // 9-nov: con la mesa en copia este botón sólo reintentaba SUBIR (y no había nada que subir): la mesa seguía igual.
+  if((_mesaLocal||(D&&D._respaldo))&&!leerLS('sala_cola',[]).length){
+    pintarEstado('subiendo','Preguntando al Sheet…');
+    if(typeof SalaSalida!=='undefined') SalaSalida.actualizar();
+    if(window.SalaTablero) await window.SalaTablero.refresh(true);
+    if(_mesaLocal||(D&&D._respaldo)) avisarRespaldo();
+    return;
+  }
+  pintarEstado('subiendo','Reintentando…'); await subirCola(); await subir(); };
 document.addEventListener('keydown',e=>{ if(document.body.classList.contains('sala-tablero')||CAPAS.length||document.body.dataset.vista!=='hoy'||!DECIDE()) return; if(e.key==='ArrowRight'&&$('#btnSi')&&$('#btnSi').hidden) return; if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)) return;
   if(e.key==='ArrowRight') decidir('si'); if(e.key==='ArrowLeft') decidir('no') });
 const _bProdAct=$('#prodActualizar'); if(_bProdAct) _bProdAct.onclick=()=>{ _tCola=_tFab=_tIdeas=0; pintarProduccion() };
@@ -3390,6 +3587,7 @@ setInterval(()=>{ if(ENTRADO()&&leerLS('sala_cola',[]).length&&!_subiendo) subir
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ guardarBorrador(); if(_tSubir){ clearTimeout(_tSubir); _tSubir=null; subir() } } });
 window.addEventListener('resize',()=>{ if(DECIDE()) pintarPanel(); else pintarPanelMira() });
 </script>
-<script src="tablero-sala.js?v=20261020-progresivo"></script>
+<script src="sala-salida.js?v=20261112-libro2"></script>
+<script src="tablero-sala.js?v=20261109-cambio"></script>
 <script src="sala2.js" defer></script>
 </body></html>

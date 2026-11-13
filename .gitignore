@@ -3,3 +3,4 @@ __pycache__/
 nube/sonda-forma.json
 .producido/
 nube/.cache/
+tests/evidencia-tablero/

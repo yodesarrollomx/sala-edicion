@@ -1,6 +1,8 @@
 /* Sala: tablero → publicación → opciones. */
 body.sala-tablero[data-vista="hoy"] .app{max-width:none;padding:20px 24px calc(var(--nav) + 24px)}
-body.sala-tablero #vHoy{display:block;max-width:none}
+/* 9-nov: sin [data-vista="hoy"] la mesa seguía pintada encima de «Cómo va» y de Ajustes: en el
+   teléfono había que bajar 15 000 px para encontrar la Línea. La mesa sólo se ve en «Te toca». */
+body.sala-tablero[data-vista="hoy"] #vHoy{display:block;max-width:none}
 body.sala-tablero #vHoy>.cab{padding:0;margin:0}
 body.sala-tablero #vHoy>.cab>#fechaTxt,body.sala-tablero #titulo,body.sala-tablero #subt{display:none}
 body.sala-tablero #vHoy>.cab .fila-estado{justify-content:flex-end;margin:0 0 8px;max-width:100%;min-width:0}
@@ -165,7 +167,9 @@ body.sala-tablero[data-vista="hoy"] .app{width:100%;max-width:1600px;margin:0 au
 .bt-col-head .bt-counts{grid-column:1;margin-bottom:0}
 .bt-col-head .bt-tools{grid-column:2;grid-row:2/4;align-content:center}
 #tableroHoy .bt-tools button{min-height:38px;padding:8px 12px;font-size:12px;background:transparent;border-color:var(--linea2)}
-#tableroHoy[data-level="tablero"] .bt-frames,#tableroHoy[data-level="publicacion"] .bt-frames{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:18px;align-items:start}
+/* 9-nov: con `1fr` una publicación de UNA lámina estiraba su foto a todo el ancho (1 500 px en escritorio).
+   Cada página crece hasta 260 px y no más. */
+#tableroHoy[data-level="tablero"] .bt-frames,#tableroHoy[data-level="publicacion"] .bt-frames{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,260px));gap:18px;align-items:start}
 .bt-frame{padding:7px;border-bottom-width:1px;box-shadow:none}
 #tableroHoy .bt-photo{aspect-ratio:4/5}
 #tableroHoy[data-level="tablero"] .bt-caption,.bt-caption{font-size:12px;line-height:1.55;display:block;min-height:0;margin:8px 5px;overflow:visible}
@@ -245,3 +249,10 @@ body.sala-tablero[data-vista="hoy"] .app{width:100%;max-width:1600px;margin:0 au
  #tableroHoy[data-level="tablero"] .bt-other{flex:0 0 180px}
 }
 .bt-finalistas{border:1px solid var(--borde,#d7ddd9);border-radius:12px;padding:14px;margin:14px 0}.bt-finalistas .bt-tools{flex-wrap:wrap;margin-top:10px}#tableroHoy .bt-choice .bt-finalistas .bt-tools button[aria-pressed="true"]{background:#234e42;color:#fff;border-color:#234e42}.bt-finalistas p{font-size:12px;line-height:1.5;margin:10px 0 0}
+
+/* 9-nov: la mesa plegada (hay montón listo para lanzar y nada por revisar) */
+.bt-plegada{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid var(--linea);border-radius:16px;padding:14px 18px;background:var(--tarjeta)}
+.bt-plegada p{margin:5px 0 0;font-size:14px;color:var(--gris)}
+.bt-plegada p b{color:var(--tinta);font-weight:600}
+.bt-plegada small{display:block;margin-top:4px;font-size:11.5px;color:var(--guia)}
+#tableroHoy .bt-plegada button{flex:none;white-space:nowrap}

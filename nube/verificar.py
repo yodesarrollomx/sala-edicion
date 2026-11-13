@@ -131,11 +131,36 @@ def prueba_workflows_no_deciden():
     archivos_py = sorted((RAIZ / 'nube').glob('*.py'))
     if (RAIZ / 'nube' / 'motores').is_dir():
         archivos_py += sorted((RAIZ / 'nube' / 'motores').glob('*.py'))
+    # 7-nov-2026 · Alejandro: «quienes den la autorización va a ser el roast room». El consejo
+    # decide con SU llave (rol `consejo` en el GAS), nunca con la del agente. Es el único archivo
+    # al que se le permite `decidir`, y sólo si la llave del sobre sale de `_clave_consejo()`.
+    consejo = RAIZ / 'nube' / 'sala_consejo.py'
     for p in archivos_py:
         try:
             arbol = ast.parse(p.read_text(encoding='utf-8'))
         except SyntaxError as e:
             falla('el código compila', '%s no parsea: %s' % (p.name, e), 'arregla la sintaxis')
+            continue
+        if p == consejo:
+            texto_c = p.read_text(encoding='utf-8')
+            if 'SALA_CLAVE_AGENTE' in texto_c:
+                falla('INVIOLABLE 3 · el consejo decide con su llave',
+                      'sala_consejo.py menciona SALA_CLAVE_AGENTE',
+                      'el Roast Room sólo usa SALA_CLAVE_CONSEJO para decidir')
+            for nodo in ast.walk(arbol):
+                if isinstance(nodo, ast.Dict) and any(
+                        literal(k) == 'accion' and literal(v) == 'decidir' for k, v in zip(nodo.keys, nodo.values)):
+                    clave = [v for k, v in zip(nodo.keys, nodo.values) if literal(k) == 'clave']
+                    ok = (len(clave) == 1 and isinstance(clave[0], ast.Call)
+                          and getattr(clave[0].func, 'id', '') == '_clave_consejo')
+                    if not ok:
+                        falla('INVIOLABLE 3 · el consejo decide con su llave',
+                              'sala_consejo.py arma un decidir sin _clave_consejo()',
+                              'la clave del sobre del consejo sale sólo de _clave_consejo()')
+                if isinstance(nodo, ast.Dict) and any(
+                        literal(k) == 'accion' and literal(v) == 'parrilla_decision' for k, v in zip(nodo.keys, nodo.values)):
+                    falla('INVIOLABLE 3 · el agente no decide', 'sala_consejo.py manda accion:parrilla_decision',
+                          'el consejo autoriza cartas de la mesa; el andon es de los editores')
             continue
         for nodo in ast.walk(arbol):
             malo = None
@@ -343,6 +368,23 @@ def prueba_contenido_ubicaciones():
         falla('GAS · contenido nuevo antes de escribir', node.stdout + node.stderr,
               'corre node --test tests/contenido-reglas.test.cjs')
     nota('contenido: %d regresiones Python + guardia GAS con dobles' % result.testsRun)
+
+def prueba_nube_no_escribe_ordenes():
+    """9-nov: la nube sólo LEE las órdenes de cambio (la llave de cambio); esta prueba corre en cada push, no sólo en PR."""
+    import importlib.util
+    import unittest
+    spec = importlib.util.spec_from_file_location('sala_cambios_test', RAIZ / 'tests/sala_cambios_test.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    result = unittest.TestResult()
+    unittest.defaultTestLoader.loadTestsFromTestCase(module.SoloLecturaTests).run(result)
+    for test, error in result.errors + result.failures:
+        falla('la nube no escribe órdenes de cambio', str(test) + ': ' + error,
+              'sólo nube/sala_cambios.py toca la llave de las órdenes de cambio; corre python3 -m unittest discover -s tests -p sala_cambios_test.py')
+    if not result.testsRun:
+        falla('la nube no escribe órdenes de cambio', 'no se corrió ninguna prueba', 'revisa SoloLecturaTests en tests/sala_cambios_test.py')
+    nota('órdenes de cambio, %d pruebas de sólo lectura' % result.testsRun)
+
 
 def main():
     pruebas = sorted((n, f) for n, f in globals().items() if n.startswith('prueba_'))

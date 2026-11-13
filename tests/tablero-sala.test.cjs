@@ -98,18 +98,53 @@ test("avanzar conserva orden aunque la actual ya esté aprobada; vuelve sólo al
  assert.equal(board.siguientePendiente([],null),null);
  assert.equal(board.siguientePendiente(list,null).n,1);
 });
-test("reabrir exige nota, misma sesión, versión y origen; no modifica sin confirmación",()=>{
+test("pedir cambio a una página aprobada exige nota, misma sesión, versión y origen; viaja como orden y no toca la aprobación",async()=>{
  const source=fs.readFileSync(require.resolve('../tablero-sala.js'),'utf8');
  const a=source.indexOf('function canReopen('),b=source.indexOf('function renderChoice',a);
- let role='editor',fresh=true,context={pid:'a',lamina:1,version:2},callback,calls=[];
- const g={id:'a',p:{_consulta:true},t:{base:'original-a',laminas:[{n:1,estado:'aprobada'}]}};
- const ctx={S:{choice:{group:'a',n:1},groups:[g]},eligible:()=>fresh&&role==='editor',ROL:()=>role,api:{contexto:()=>context},pedirNota:fn=>callback=fn,reabrirAprobada:(...args)=>calls.push(args),render(){}};
- vm.runInNewContext(source.slice(a,b)+';this.request=pedirNuevaRevision;',ctx);
- ctx.request();callback(' ');assert.equal(calls.length,0);
- ctx.request();role='lector';callback('Cambiar luz');assert.equal(calls.length,0);
- role='editor';ctx.request();context={...context,version:3};callback('Cambiar luz');assert.equal(calls.length,0);
- ctx.request();g.t.base='otro';callback('Cambiar luz');assert.equal(calls.length,0);
- ctx.request();fresh=false;callback('Cambiar luz');assert.equal(calls.length,0);
- fresh=true;ctx.request();callback(' Cambiar luz ');assert.equal(calls.length,1);assert.equal(calls[0][2],'Cambiar luz');
- assert.equal(g.t.laminas[0].estado,'aprobada');
+ let role='editor',fresh=true,elegible=true,nombres=[],context={pid:'a',lamina:1,version:2},callback=null,calls=[],orden=null,quitadas=[];
+ // una pieza de una sola imagen con su tira de arranque: sin base (así estaba «Las 48 Horas» el 9-nov)
+ const g={id:'a',pid:'tira-a',p:{_consulta:true},t:{pieza:'Pieza A',pieza_slug:'a',base:null,laminas:[{n:1,estado:'aprobada'}]}};
+ const ctx={S:{choice:{group:'a',n:1},groups:[g],notice:''},DECIDE:()=>role==='editor',eligible:()=>elegible&&role==='editor',ROL:()=>role,api:{contexto:()=>context},pedirNota:fn=>callback=fn,render(){},
+  SalaSalida:{cambioDe:(pid,n)=>orden&&pid==='tira-a'&&n===1?orden:null,puedePedirCambio:n=>{nombres.push(n);return fresh&&role==='editor';},
+   pedirCambio:async p=>{calls.push(p);return {ok:true};},quitarCambioDeTira:async(pid,n)=>{quitadas.push([pid,n]);return {ok:true};}}};
+ vm.runInNewContext(source.slice(a,b)+';this.request=pedirNuevaRevision;this.quitar=quitarPeticion;this.puede=canReopen;',ctx);
+ assert.equal(ctx.puede(g,g.t.laminas[0]),true,'una tira sin base también se puede reabrir');
+ assert.ok(nombres.includes('Pieza A'),'la guardia pregunta por el nombre de la pieza');
+ // 9-nov: copia guardada o día de respaldo (eligible() falso): ni se ofrece ni se abre la nota
+ elegible=false;assert.equal(ctx.puede(g,g.t.laminas[0]),false,'sin eligible() no se pide cambio');
+ callback=null;ctx.request();assert.equal(callback,null);
+ elegible=true;
+ ctx.request();await callback(' ');assert.equal(calls.length,0);
+ ctx.request();role='lector';await callback('Cambiar luz');assert.equal(calls.length,0);
+ role='editor';ctx.request();context={...context,version:3};await callback('Cambiar luz');assert.equal(calls.length,0);
+ ctx.request();g.pid='tira-b';await callback('Cambiar luz');assert.equal(calls.length,0);g.pid='tira-a';
+ callback=null;fresh=false;ctx.request();assert.equal(callback,null,'sin la hoja confirmada ni siquiera se abre la nota');
+ fresh=true;ctx.request();await callback(' Cambiar luz ');
+ assert.deepEqual(JSON.parse(JSON.stringify(calls)),[{slug:'a',pieza:'Pieza A',tira:'tira-a',n:1,nota:'Cambiar luz'}]);
+ assert.equal(g.t.laminas[0].estado,'aprobada','la aprobación no se toca: se suma una orden');
+ // con la orden viva no se pide otra: se puede quitar, y sólo un editor
+ orden={n:1,nota:'Cambiar luz'};assert.equal(ctx.puede(g,g.t.laminas[0]),false);
+ callback=null;ctx.request();assert.equal(callback,null);
+ elegible=false;await ctx.quitar();assert.equal(quitadas.length,0,'quitar también exige eligible()');elegible=true;
+ await ctx.quitar();assert.deepEqual(quitadas,[['tira-a',1]]);
+ role='lector';await ctx.quitar();assert.equal(quitadas.length,1);
+ // el camino viejo (un «no» sobre la propuesta original, que la nube no cosechaba) ya no se usa aquí
+ assert.ok(!/reabrirAprobada\(/.test(source));
+});
+
+test("pidDe: la versión de la mesa sólo se da con la mesa en vivo, con grupo y con láminas",()=>{
+ const source=fs.readFileSync(require.resolve('../tablero-sala.js'),'utf8');
+ const a=source.indexOf('api.pidDe='),b=source.indexOf('\n',a);
+ const S={cached:false,loaded:true,groups:[{id:'a',pid:'tira-a',t:{pieza_slug:'a',laminas:[{n:1}]}},{id:'v',pid:'tira-v',t:{pieza_slug:'v',laminas:[]}}]},api={};
+ vm.runInNewContext(source.slice(a,b),{S,api});
+ assert.equal(api.pidDe('a'),'tira-a');
+ assert.equal(api.pidDe('otra'),null,'sin grupo');
+ assert.equal(api.pidDe('v'),null,'grupo sin láminas');
+ S.cached=true;assert.equal(api.pidDe('a'),null,'copia guardada o vista publicada: no se sabe');
+ S.cached=false;S.loaded=false;assert.equal(api.pidDe('a'),null,'mesa sin cargar: no se sabe');
+});
+test("el botón «Quitar la petición» sólo se activa con eligible() y puedePedirCambio()",()=>{
+ const source=fs.readFileSync(require.resolve('../tablero-sala.js'),'utf8');
+ assert.match(source,/data-unreopen \$\{eligible\(\)&&salidaDe\(\)&&salidaDe\(\)\.puedePedirCambio\(\)\?"":"disabled"\}/);
+ assert.match(source,/function canReopen\(g,l\)\{const s=salidaDe\(\);return !!\(s&&eligible\(\)&&s\.puedePedirCambio\(g&&\(g\.t\.pieza\|\|g\.id\)\)/);
 });

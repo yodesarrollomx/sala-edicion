@@ -1,7 +1,7 @@
 {
-  "model_revision": "2026-10-20.chinches-audio-ipad.1",
+  "model_revision": "2026-11-09.sala-corta.2",
   "proposal_id": "CHG-SALA-VIDEO-IPHONE-20261020",
-  "summary": "QA aislada del contrato existente de video privado: vertical, horizontal, escritorio, iframe con permisos OS, fullscreen y reapertura. Sin cambios de producto, datos, backend ni arquitectura.",
+  "summary": "QA aislada del contrato existente de video privado: vertical, horizontal, escritorio, iframe con permisos OS, fullscreen y reapertura. Sin cambios de producto, datos, backend ni arquitectura. (Actualizado el 13-nov-2026 contra main: se conserva la prueba de salida y la de Historias que llegaron después.)",
   "components": [
     "SYS-SALA"
   ],
@@ -11,6 +11,5 @@
     "python3 nube/verificar.py",
     "git diff --check"
   ],
-  "rollback": "Revertir sólo los cambios de pruebas y CI; no modifica datos, interfaz ni backend.",
-  "model_commit": "7796d27f8f68eda5785e4f173accdbe4fbdc13fe"
+  "rollback": "Revertir sólo los cambios de pruebas y CI; no modifica datos, interfaz ni backend."
 }

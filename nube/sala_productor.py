@@ -135,7 +135,7 @@ def marcas_de(dia, pid):
     return ((dec.get(pid) or {}).get('laminas')) or []
 
 
-def planear(dia, cola, reglas, cat=None):
+def planear(dia, cola, reglas, cat=None, *, incluir_revisiones=True):
     """Devuelve (trabajos_nuevos, bitácora_de_lo_decidido). `cat` es el catálogo ya cargado
     (sala_catalogo.cargar()) — se pasa una vez para no releerlo por cada lámina."""
     piezas_txt, _ = regla(reglas, 'productor_piezas')
@@ -303,6 +303,12 @@ def planear(dia, cola, reglas, cat=None):
             abiertas = [i + 1 for i, e in enumerate(estados) if e != 'si']
             diario.append('el corte de %s NO se abre: láminas sin aprobar %s' % (pid, abiertas))
 
+    if incluir_revisiones and reglas.get('video_revision_piezas'):
+        from revision_video import planear as planear_revisiones
+        base, _ = planear(dia, [], reglas, cat, incluir_revisiones=False)
+        revisiones, notas_revision = planear_revisiones(dia, cola, reglas, cat, base)
+        nuevos.extend(revisiones)
+        diario.extend(notas_revision)
     from cola_identidad import consolidar_plan
     nuevos, ambiguos = consolidar_plan(nuevos)
     if ambiguos:

@@ -54,7 +54,7 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg espeak-ng
 
       - name: Librerías de Python (Drive, HTTP, Kokoro)
-        run: pip install --quiet google-auth requests kokoro-onnx numpy gradio_client opencv-python-headless onnxruntime modal
+        run: pip install --quiet pillow google-auth requests kokoro-onnx numpy gradio_client opencv-python-headless onnxruntime modal
 
       - name: Dependencias del respaldo de imagen CPU
         run: |

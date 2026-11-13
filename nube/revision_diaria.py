@@ -12,15 +12,21 @@ from correo_estado import observar as observar_correo, workflows as observar_wor
 
 ROOT = Path(__file__).resolve().parent.parent
 DEST = ROOT / "datos" / "revision.json"
+# (id, nombre, cada cuándo en llano, corridas diarias declaradas, horarios UTC tal como están
+# escritos en las puertas, separados por «;»). tests/sala_corta_test.py los compara contra
+# .github/workflows: lo que aquí se anuncia tiene que estar escrito allá.
+# 9-nov-2026 · Sala corta: productor y ejecutor quedaron sólo a mano (video en pausa); sin
+# horario se declara '' y 0 corridas, y la Sala los enseña como «Sólo a mano».
 ROUTINES = [
     ("plan", "Atribución de Plan", "Cada hora", 24, "25 * * * *"),
-    ("productor", "Productor", "Cada 20 minutos", 72, "10,30,50 * * * *"),
-    ("ejecutor", "Voz, escena y corte", "Cada dos horas y al recibir trabajo", 12, "20 */2 * * *"),
+    ("productor", "Productor", "Sólo a mano (video en pausa desde el 9-nov-2026)", 0, ""),
+    ("ejecutor", "Voz, escena y corte", "Sólo a mano (video en pausa desde el 9-nov-2026)", 0, ""),
     ("mesa", "Mesa de edición", "Cada hora y a las 05:40", 25, "35 * * * *; 40 12 * * *"),
-    ("arranque", "Ideas elegidas", "Cada hora; semillero a las 05:50", 25, "5 * * * *; 50 12 * * *"),
+    ("arranque", "Ideas elegidas", "Cada hora y a las 05:50 (el generador de ideas va por REGLAS semillero_activo)", 25, "5 * * * *; 50 12 * * *"),
     ("chinches", "Encargos", "Cada hora", 24, "45 * * * *"),
     ("maquinas", "Salud de las rutinas", "Cada dos horas", 12, "15 */2 * * *"),
-    ("relevo", "Respaldo del tablero", "06:00, 09:00, 12:00, 15:00 y 18:00", 5, "0 13,16,19,22,1 * * *"),
+    ("relevo", "Respaldo del tablero", "06:00, 09:00, 12:00, 15:00 y 18:00", 5,
+     "0 13 * * *; 0 16 * * *; 0 19 * * *; 0 22 * * *; 0 1 * * *"),
 ]
 
 

@@ -39,11 +39,11 @@ def _marca(dec):
     """sí / no de una propuesta, desde las decisiones del Sheet (cualquier editor)."""
     if not isinstance(dec, dict):
         return None
-    marcas = [str(x) for x in (dec.get('laminas') or []) if x]
+    marcas = []
     for fs in dec.get('firmas') or []:
         for f in fs or []:
-            if isinstance(f, dict) and f.get('marca'):
-                marcas.append(str(f['marca']))
+            if isinstance(f, dict) and f.get('rol') in ('editor', 'editor2') and f.get('guardado'):
+                marcas.append(str(f.get('marca') or ''))
     if 'si' in marcas:
         return 'si'
     if 'no' in marcas:
@@ -65,16 +65,27 @@ def actualizar(dia, cola):
         m = _marca(decs.get(pid))
         if not m:
             continue
-        # el trabajo de COLA se llama «<slug>:escena:…»; la propuesta, «<slug>-vN-…»
-        motores = sorted({str((t.get('evidencia') or {}).get('motor') or '') for t in cola or []
-                          if ':escena:' in str(t.get('id') or '')
-                          and pid.startswith(str(t.get('id')).split(':')[0])
-                          and isinstance(t.get('evidencia'), dict) and (t.get('evidencia') or {}).get('motor')})
-        for mo in motores:
-            c = datos['etapas'].setdefault('escena', {}).setdefault(mo, {'si': 0, 'no': 0})
+        # Sólo los motores de las dependencias DEL corte revisado; nunca toda la familia.
+        cortes = [t for t in cola or [] if t.get('etapa') == 'corte'
+                  and (t.get('evidencia') or {}).get('durable') is True
+                  and ((t.get('evidencia') or {}).get('entrega') or {}).get('prop_id') == pid]
+        if len(cortes) != 1:
+            continue
+        corte = cortes[0]
+        ev = corte.get('evidencia') or {}
+        ids = {f"{corte.get('pieza')}:{et}:{l['item']}:{l['huella']}"
+               for l in ev.get('laminas') or [] for et in ('escena', 'voz')}
+        usados = {(t.get('etapa'), (t.get('evidencia') or {}).get('motor')) for t in cola or []
+                  if t.get('id') in ids and t.get('estado') == 'hecho'
+                  and (t.get('evidencia') or {}).get('durable') is True}
+        usados = {(et, mo) for et, mo in usados if mo}
+        if not usados:
+            continue
+        for et, mo in usados:
+            c = datos['etapas'].setdefault(et, {}).setdefault(mo, {'si': 0, 'no': 0})
             c[m] += 1
             c['puntaje'] = puntaje(c)
-        vistas[pid] = {'marca': m, 'motores': motores}
+        vistas[pid] = {'marca': m, 'motores': sorted(mo for _,mo in usados)}
         cambio = True
     if cambio:
         ARCHIVO.write_text(json.dumps(datos, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')

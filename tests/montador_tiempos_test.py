@@ -57,6 +57,15 @@ class TimingTests(unittest.TestCase):
         self.assertGreater(rms(.64,.74),2000)
         self.assertLess(rms(.84,.89),150)
 
+    def test_real_video_is_trimmed_to_voice_and_never_freezes(self):
+        long=self.root/'1.mp4'
+        short=self.root/'2.mp4'
+        with patch.object(m,'ANCHO',64),patch.object(m,'ALTO',96):
+            duration=m._escena_a_cuadro(long,self.root/'trim.mp4',.3,video_real=True)
+            self.assertAlmostEqual(.3,duration,delta=.04)
+            with self.assertRaisesRegex(m.MontadorError,'sin congelar'):
+                m._escena_a_cuadro(short,self.root/'bad.mp4',1.0,video_real=True)
+
     def test_negative_margins_stop_before_render(self):
         with self.assertRaises(m.MontadorError):
             m.ensamblar(self.job,{"audio_margen_s":-1},{},self.root,self.queue)

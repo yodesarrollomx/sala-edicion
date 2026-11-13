@@ -6,6 +6,45 @@ Contexto para Claude Code. **Lee este archivo completo antes de tocar nada.**
 en `docs/SALA-AUDITORIA-NUBE-20261015.md`. Las menciones a Mac/launchd de este
 documento son antecedentes. No introducir dependencias de una computadora local.
 
+**Sala corta · 9-nov-2026 (manda sobre lo anterior):** `docs/SALA-CORTA-20261109.md`.
+Una sola línea: idea elegida → guion → láminas → paquete listo (imágenes + copy en Drive,
+`YOD Editorial/_LISTAS PARA PUBLICAR`) → clic de Dirección para publicar. El **video está en
+pausa** (REGLAS `nube_ejecuta_etapas`; productor y ejecutor sólo a mano) y el **generador de
+ideas** también (REGLAS `semillero_activo` = 0). No agregar automatizaciones ni reactivar
+video o ideas sin que Dirección lo pida. Los horarios de GitHub llegan unas cuatro veces al
+día y con horas de retraso (medido): no prometer «cada hora» por un cron.
+
+**Sala 4.0 · 9-nov-2026 (camino aparte, pedido por Dirección; en vivo desde ese día):**
+`docs/SALA-4.md`. Historias en series de 10 episodios de 15 s con Gemini Omni Flash (de pago).
+Pantalla `historias.html`, nube `nube/sala_v4.py` + `sala-v4.yml`, datos en EXPEDIENTES con llaves
+`v4:` (un dueño por llave; la nube nunca escribe `v4:dec`). No toca la mesa, la COLA ni el Apps
+Script. **El canon de producción** (`docs/SALA-CANON.md`) es dato, no código: temporada,
+personajes, lugares, objetos, encuadres y reglas del mundo viven en `v4:universo` y
+`v4:mundo:<clase>` (el mundo se guarda partido para caber en la hoja) y los edita Dirección; cada
+elemento lleva su imagen de referencia en Drive (`_HISTORIAS/_CANON`, anotada en `v4:canon`).
+Antes de cambiar cómo se ve o habla alguien, se cambia su ficha, no el código. Con las imágenes
+encendidas un episodio no se produce hasta que lo que sale en él tenga la suya, y lo que no cuesta
+(bajar imágenes, veto) va antes de reservar. El gasto lo limitan «tomas por día» e «imágenes de
+referencia por día». «No va» en un episodio lo deja fuera de la serie. Mapas de proceso en
+`docs/grafos/`.
+
+**Estación de salida:** `docs/SALA-SALIDA.md`. Una pieza con todas sus láminas aprobadas sale así: el
+jurado escribe el texto, `sala-consejo.yml` · `paquete` (`nube/sala_salida.py`, entra como agente y
+sin la llave del consejo) arma `YOD Editorial/_LISTAS PARA PUBLICAR/<N · Título>` y lo anota en
+EXPEDIENTES; «Te toca» lo enseña con «Ya la publiqué». La tira vigente es la que publica la mesa
+(`datos/mesa-estado.json`), no «la más reciente». Publicar nunca se automatiza.
+«Te toca» abre con **el montón** (lo listo, en orden de salida) y el plan de salida de los editores
+vive en EXPEDIENTES con la llave `salida:plan` (la nube no la escribe). Lo listo se pide al abrir,
+sin esperar al día; el día tiene tope de 30 s porque en frío tarda 14 s (medido el 9-nov).
+Pedir cambio a una imagen ya aprobada es una orden (llave `cambio:<slug>`, la escriben los editores y la nube sólo la lee):
+ver «Pedir cambio a una pieza lista» en `docs/SALA-SALIDA.md`.
+
+**Consejo de nube (Roast Room):** `docs/SALA-CONSEJO-NUBE.md`. Una tarea programada de Claude
+juzga; `sala-consejo.yml` hace las dos mitades con llaves (`expediente` y `aplicar`) y ninguna
+llave pasa por un modelo. Toda aprobación de una lámina con tomas lleva `[toma elegida: k]`: sin
+eso `sala_produccion.resolver_tira` la rechaza y se cae el montador. Las tiras nuevas no están en
+`main`: viajan en el snapshot y se leen de Pages.
+
 ## Qué es esto
 
 El portal diario de producción de contenido de **Yo Desarrollo**. Cada mañana llega un correo con la
@@ -98,6 +137,10 @@ siempre. Manual de arranque y de prueba: `nube/README.md`.
 | semáforo de centinelas de `launchd` | `.github/workflows/sala-maquinas.yml` (lee la API de Actions) |
 | hook `pre-push` del sello | `nube/verificar.py`, exigido en cada push y cada PR |
 | (no existía) | `.github/workflows/publicar.yml`: push a `main` → verificar → Pages |
+
+**Pages atorado (10-nov-2026):** si `deploy-pages` se cancela por tiempo, cada nuevo despliegue de ese
+mismo commit se queda sin estado hasta caer (también los de datos de los robots). No relanzar el mismo
+commit: destraba un commit nuevo en `main`. Por eso el despliegue espera hasta 20 minutos.
 
 Cinco cosas que no cambian y que conviene tener presentes al tocar esto:
 
