@@ -66,11 +66,20 @@ class Negativas(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td,patch.object(hi,'RAIZ',pathlib.Path(td)),patch.object(hi,'_DETENIDO',''),patch.object(hi,'_client',side_effect=RuntimeError('offline')):
             with self.assertRaises(imagen.RechazoImagen) as e:hi.generar('A scale model',{})
             self.assertEqual(e.exception.motivo,'no_enviado')
-    def test_no_implicit_paid_fallback_after_refusal(self):
-        paid=Mock()
+    def test_refusal_follows_explicit_order_only(self):
+        paid=Mock(return_value=(b'img','png'))
         with patch.dict(imagen.MOTORES,{'hidream_demo':Mock(side_effect=imagen.RechazoImagen('tarea_fallida')),'openai_broker':paid},clear=True):
+            self.assertEqual(imagen.generar('A scale model',{'imagen_motores':'hidream_demo,openai_broker'})[2],'openai_broker')
+            paid.reset_mock()
             with self.assertRaises(imagen.RechazoImagen):
-                imagen.generar('A scale model',{'imagen_motores':'hidream_demo,openai_broker'})
+                imagen.generar('A scale model',{'imagen_motores':'hidream_demo'})
         paid.assert_not_called()
+
+    def test_todos_sin_servicio_sube_servicio(self):
+        with patch.dict(imagen.MOTORES,{'hidream_demo':Mock(side_effect=imagen.ServicioImagen('caido')),
+                'cloudflare_flux2':Mock(side_effect=MotorError('Cloudflare FLUX2 500: error',intermitente=True)),
+                'hidream_o1':Mock(side_effect=imagen.ServicioImagen('timeout'))},clear=True):
+            with self.assertRaises(imagen.ServicioImagen):
+                imagen.generar('A scale model',{'imagen_motores':'cloudflare_flux2,hidream_demo,hidream_o1'})
 
 if __name__=='__main__':unittest.main()
