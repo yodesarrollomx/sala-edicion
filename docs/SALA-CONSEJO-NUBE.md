@@ -23,6 +23,32 @@ sigue siendo sólo el clic de Dirección.
 horas de retraso (medido el 9-nov). La tarea programada sí es puntual: cada sesión termina
 oprimiendo los botones de mesa y arranque, así que la siguiente ronda sale enseguida.
 
+## Deliberación (13-nov-2026, pedido de Dirección)
+
+Dirección pidió «verlos trabajar en realidad por separado» y discutiendo, a su máxima expresión.
+Desde el 13-nov cada sesión del jurado deja de ser un modelo que hace seis voces:
+
+1. **Ronda 1 · cada juez solo.** Un agente por juez, con su lente, el material y los candados; no
+   ve a los demás.
+2. **Ronda 2 · debate.** Cada juez lee las notas de los otros cinco, contesta a quien no coincide
+   y sostiene o cambia su voto, con su razón.
+3. **El autor contesta.** Un agente en el papel de quien hizo la pieza (director de arte o
+   guionista) lee el debate y responde: qué rehace y cómo, o qué nota choca con un candado.
+4. **Ronda 3 · cierre.** Los jueces leen al autor y dan su voto final. Ese es el que cuenta.
+5. **El relator** junta una instrucción por lámina regresada.
+
+Lo que viaja en `veredictos` por carta, además de los votos: `acta` =
+`{"rondas": 3, "instrucciones": {"<posición>": "…"}, "autor": "…", "enlace": "<Doc de Drive>"}`.
+`aplicar` (`leer_acta`, `con_acta`) pone la instrucción del relator en la nota de un «no» (un
+«sí» no se toca: lleva su toma) y deja en la hoja CONSEJO las filas `RELATOR`, `AUTOR` y `ACTA`.
+El registro público sólo dice cuántas rondas hubo. Un acta mal formada se ignora y nunca cambia un
+voto. El acta completa, turno por turno, la escribe el jurado como Doc en `YOD Editorial/_consejo/actas`.
+La estación de salida hace lo mismo con el texto: lo escribe un redactor y lo critican dos jueces
+antes de mandarlo.
+
+Etapa 2 (pedida, sin empezar): ver la sala como un juego en 3D, con los agentes discutiendo en
+vivo. Las actas son el guion que esa vista va a reproducir.
+
 ## Frenos
 
 - REGLAS `consejo_activo` = `0`: no vota nadie.
