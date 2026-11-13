@@ -221,3 +221,11 @@ test('el índice carga la salida y la mesa sólo se pinta en «Te toca»',()=>{
   assert.ok(css.includes('body.sala-tablero[data-vista="hoy"] #vHoy{display:block'));
   assert.ok(!/body\.sala-tablero #vHoy\{display:block/.test(css),'sin [data-vista] la mesa tapa «Cómo va» y Ajustes');
 });
+test('CHN-20261112-1033-4087: los cambios del consejo se mandan agrupados por lámina',()=>{
+  const o=s.ordenesDelConsejo(['La lámina 5 invita con «Descubre…»; tu candado A12 prefiere proponer. Es menor.','El cierre se siente largo.','lamina 9 no existe'],[1,2,3,4,5]);
+  assert.deepEqual(o.map(x=>x.n),[5,1]);
+  assert.match(o[0].nota,/^Consejo: La lámina 5/);
+  assert.match(o[1].nota,/cierre se siente largo\. · lamina 9/);
+  assert.ok(o.every(x=>x.nota.length<=s.NOTA_MAX));
+  assert.deepEqual(s.ordenesDelConsejo([],[1]),[]);
+});

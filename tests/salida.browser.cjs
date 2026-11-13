@@ -205,9 +205,12 @@ async function libro(base,width){
   if(rol==='lector'){
    assert.equal(await page.locator('#salYa').count(),0,'un lector no anota publicaciones');
    assert.equal(await page.locator('#salCambio').count(),0,'ni pide cambios');
+   assert.equal(await page.locator('#salConsejo').count(),0,'ni manda los cambios del consejo');
    assert.equal(writes.length,0);
   }else{
    assert.equal(await page.locator('#salCambio').count(),1,'un editor puede pedir cambio a una imagen de la pieza lista');
+   assert.equal(await page.locator('#salConsejo').count(),1,'CHN-20261112-1033-4087: los cambios del consejo se mandan con un botón');
+   if(process.env.SALIDA_CAPTURAS){fs.mkdirSync(process.env.SALIDA_CAPTURAS,{recursive:true});await page.locator('#salConsejo').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(process.env.SALIDA_CAPTURAS,'consejo-'+width+'.png')});}
    assert.equal(await page.locator('#salCambioCaja').isHidden(),true,'pero no estorba: se abre sólo si lo toca');
    // el texto se puede cambiar y se copia como quedó
    await page.locator('#salTexto').fill('Mi versión del texto.');
