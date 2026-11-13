@@ -1,17 +1,15 @@
 {
- "model_revision": "2026-11-09.sala-corta.2",
- "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
- "proposal_id": "CHG-SALA-ROAST-ROOM-20261107",
- "summary": "Continuación de CHG-SALA-ROAST-ROOM-20261107: la lectura de producción acepta a los tres firmantes. Desde el 7-nov el GAS (fusionProduccion_) lista en decisiones.editores a cada rol que firmó alguna vez, también al consejo, pero nube/sala_produccion.py seguía con el tope de 2 del 14-oct. En cuanto los tres roles figuran en la historia de DECISIONES, toda lectura de producción se rechaza (reproducido con la copia del GAS). Desde el 12-nov 20:17 UTC la mesa (Sala · Diario / Cada hora) y la estación de salida (Roast Room · paquete) fallan siempre con «sin contrato histórico confirmado»; ésta es la causa más probable, pero sin leer el backend no se puede confirmar cuál comprobación saltó. El tope pasa a len(ROLES_QUE_DECIDEN) = 3. Además cada rechazo dice qué comprobación falló (motivo: cabecera, editores, firma, nota_lamina, sello…, nunca un dato) y la mesa lo imprime en vez de tragárselo, para que una falla así se diagnostique desde el log. No cambia el GAS, ni quién decide (el consejo sigue cediendo ante los editores), ni ninguna escritura: la nube sigue entrando como agente y sólo lee.",
- "components": [
-  "SYS-SALA",
-  "GAS-SALA",
-  "SVC-SALA-PRODUCTOR"
- ],
- "tests": [
-  "python3 -m unittest discover -s tests -p '*_test.py' (772 OK). Nuevas: produccion_historica_test (la salida real de gas/Code.gs con editor, editor2 y consejo pasa el validador y el consejo cede; un rechazo nombra la comprobación sin datos y conserva el código sala_contrato_lectura) y mesa_seleccion_test (con la lectura rechazada la mesa imprime el porqué, sale con 2 y no genera ni escribe).",
-  "node --test tests/produccion-historica.test.cjs tests/produccion-historica-adversaria.test.cjs tests/sala-carga.test.cjs (60 OK) · python3 nube/verificar.py (todo en orden) · git diff --check.",
-  "Pendiente en producción: tras integrar, la siguiente corrida de la mesa y del paquete en main debe pasar la lectura de producción; si fallara otra vez, su log ya dirá el motivo."
- ],
- "rollback": "Revertir el PR devuelve el tope de 2 firmantes y el mensaje sin motivo; la mesa y el paquete vuelven a detenerse mientras el consejo figure en la historia de DECISIONES. Nada que restaurar en el Sheet, Drive ni Apps Script."
+  "model_revision": "2026-11-09.sala-corta.2",
+  "proposal_id": "CHG-SALA-ROAST-ROOM-20261107",
+  "summary": "Estación de salida: botón «Mandar a hacer estos cambios» bajo «Antes de publicar, mira esto» (chinche CHN-20261112-1033-4087: «me estás proponiendo cambios, pero no me das un botón de mandar a hacer estos cambios»). Agrupa las observaciones del consejo por la lámina que mencionan (las que no nombran lámina van a la primera) y manda una orden de cambio por lámina con el mismo camino que «Pedir cambio» (llave cambio:<slug>, la escriben los editores; la nube sólo la lee). Sólo aparece a quien puede pedir cambio, si el paquete sigue vigente y la tira y el slug son válidos. No publica nada ni toca el Apps Script.",
+  "components": [
+    "SYS-SALA"
+  ],
+  "tests": [
+    "node --test tests/sala-salida.test.cjs (ordenesDelConsejo: agrupa por lámina, recorta la nota al máximo, ignora vacíos)",
+    "node tests/salida.browser.cjs",
+    "python3 nube/verificar.py",
+    "verificar-impacto contra el atlas fijado."
+  ],
+  "rollback": "Revertir el merge: el botón desaparece; las órdenes de cambio ya mandadas siguen en EXPEDIENTES y se retiran como cualquier orden."
 }
