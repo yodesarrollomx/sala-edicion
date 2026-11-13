@@ -1,20 +1,15 @@
 {
- "model_revision": "2026-11-09.sala-corta.2",
- "model_commit": "65e9b26cf5e9733f47840f92954ea23762b00031",
- "proposal_id": "CHG-SALA-CORTA-20261109",
- "summary": "Corrección de la nota del cambio 386 sobre GitHub Pages. La hipótesis era que un commit nuevo en main destrababa la publicación; no fue así: el despliegue de ce19f40 también se quedó en «syncing_files» y GitHub lo cortó a los 10 minutos. deploy-pages no acepta esperar más de 10 minutos, así que el tiempo de espera de 20 minutos no tenía efecto: publicar.yml vuelve a como estaba antes del 386. CLAUDE.md dice ahora lo observado y que relanzar el mismo commit no sirve. Sin cambios de comportamiento en la Sala, la nube ni la hoja.",
- "components": [
-  "SYS-SALA",
-  "SHEET-SALA",
-  "SVC-SALA-EJECUTOR",
-  "EXT-MOTORES-MEDIA",
-  "EXT-ACTIONS",
-  "EXT-DRIVE"
- ],
- "tests": [
-  "Evidencia en vivo: despliegue 42762117604 (ce19f40, 10-nov 05:27Z) con timeout: 1200000 en sus entradas, «syncing_files» de 05:28:08 a 05:37:54 y «Timeout reached» a los 10 minutos.",
-  "Paquetes comparados por su lista de archivos: 42752837731 (el último bueno, a735485) y 42762117604 tienen los mismos 2 257 archivos más docs/SALA-CANON.md; 898 095 703 y 898 161 368 bytes.",
-  "python3 nube/verificar.py · python3 -m unittest discover -s tests -p \"*_test.py\"."
- ],
- "rollback": "Revertir el PR vuelve a poner la nota anterior (equivocada) y el tiempo de espera sin efecto."
+  "model_revision": "2026-11-09.sala-corta.2",
+  "proposal_id": "CHG-SALA-VIDEO-IPHONE-20261020",
+  "summary": "QA aislada del contrato existente de video privado: vertical, horizontal, escritorio, iframe con permisos OS, fullscreen y reapertura. Sin cambios de producto, datos, backend ni arquitectura. (Actualizado el 13-nov-2026 contra main: se conserva la prueba de salida y la de Historias que llegaron después.)",
+  "components": [
+    "SYS-SALA"
+  ],
+  "tests": [
+    "node --test tests/video-revision.test.cjs tests/video-privado-gas.test.cjs",
+    "node tests/video-privado.browser.cjs",
+    "python3 nube/verificar.py",
+    "git diff --check"
+  ],
+  "rollback": "Revertir sólo los cambios de pruebas y CI; no modifica datos, interfaz ni backend."
 }
