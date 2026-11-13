@@ -151,6 +151,95 @@ para nunca quedarnos… que vayamos armando un paquete para ir lanzando». Por e
 - El número de la carpeta en Drive es el orden de llegada y **no cambia** al reordenar: la Sala abre
   cada carpeta por su liga.
 
+## El libro (12-nov-2026, chinche `CHN-20261112-0840-a2f9`)
+
+Dirección, sobre el montón: «hasta arriba quiero la decisión de cada una de las propuestas… no todas
+juntas… un libro». Desde ese día, quien entra como editor ve **el libro** arriba de «Te toca»: una
+publicación lista por página (imágenes, avisos del consejo y texto) con tres decisiones.
+
+| Botón | Qué hace | Dónde queda |
+|---|---|---|
+| **Va** | la pieza se queda en el montón y el libro pasa a la siguiente por decidir | `salida:plan.visto[<pieza>] = {m:'va', sello, por, cuando}` |
+| **Pedir cambio** | abre la orden de cambio de siempre, ya desplegada | llave `cambio:<slug>` (sin cambios) |
+| **No va** | la pieza sale del montón; su paquete y su expediente no se tocan | `salida:plan.visto[<pieza>] = {m:'no', …}` |
+
+- La marca vale sólo para el `sello` del paquete que el editor vio: un paquete nuevo vuelve al libro.
+- «No va» se deshace abajo del montón («Regresarla al libro»). Nada se borra.
+- Pasar la página no escribe nada. Decidir no depende de un temporizador (INVIOLABLE 11).
+- El mismo día Dirección precisó: «pon hasta arriba el libro y abajo las 24 listas para publicar». El
+  montón completo (orden, ritmo, arranque) queda siempre debajo del libro; no se esconde detrás de un botón.
+  Con todo decidido el libro se retira solo y «Abrir el libro» lo reabre («Cerrar el libro» lo guarda).
+- El lector (solo lectura) ve sólo el montón. El editor ve el libro desde el primer instante y los
+  botones se habilitan cuando la mesa vigente confirma su entrada.
+- La nube no lee ni escribe `visto`: es del plan de salida, que es de los editores. Publicar sigue
+  siendo el clic de Dirección.
+
+Pruebas: `tests/sala-salida.test.cjs` (contrato de las marcas) y `tests/salida.browser.cjs` (recorrido
+del libro en 390 y 1440 px, escrituras interceptadas).
+
+## Pedir cambio a una pieza lista (orden de cambio)
+
+**Para qué.** Un editor ve mal una imagen que ya estaba aprobada y pide rehacerla, aunque la pieza ya
+esté en el montón. La aprobación anterior no se borra: queda en la historia y se suma una orden.
+
+**La llave.** Una fila de EXPEDIENTES por pieza, llave **`cambio:<slug>`**:
+`{v:1, pieza, tira, paquete, ordenes:[{n, nota, cuando, por}], cuando, por}`.
+
+- `tira`: la versión de la pieza sobre la que se pidió. La orden **vale sólo para esa tira**.
+- `paquete`: la versión que estaba empacada al pedir (o vacío). Sólo lo usa la pantalla.
+- `ordenes`: una por imagen (`n` = número de lámina) con la nota del editor.
+
+**Quién escribe y quién lee.** La escriben **los editores**, desde la Sala, con su llave
+(`accion: expediente`, como `salida:plan`). La nube **sólo la lee** (`nube/sala_cambios.py`): la mesa
+rehace la lámina con la nota y crea una tira nueva (`origen: rehecha-de <tira>`). La nube nunca
+escribe `cambio:`; una prueba lo vigila.
+
+**Mientras la orden siga viva**, la estación no empaca la pieza y la pantalla la saca del montón.
+En el pie del montón y en «Cómo va» se ve en uno de dos estados:
+
+- **Pedido**: Producción todavía no la atiende. «Producción la rehace con tu nota.» Aquí se puede
+  «Quitar la petición».
+- **Volvió**: ya se rehízo (o hay una versión más nueva en camino). El paquete viejo no se ofrece, no se
+  puede quitar y la versión nueva se decide en la mesa. Cuando se rearma su paquete, vuelve al montón.
+
+**Segunda vuelta.** Si se pide otro cambio sobre la versión rehecha antes de que se vuelva a empacar,
+el registro cambia de `tira`. Sin el campo `paquete`, el paquete viejo reaparecía como listo para
+publicar. Con él, la Sala sabe que ese paquete es anterior a la orden y lo mantiene fuera del montón.
+
+**Quitar la petición.** Es escribir el mismo registro con `ordenes: []`; conserva `tira` y `paquete`.
+Sólo se puede mientras el estado sea «pedido» **y la mesa confirme** que todavía enseña la versión de la
+orden (`SalaTablero.pidDe`). Si la Sala no lo puede confirmar (mesa sin cargar o en copia guardada), no
+ofrece el botón: quitar a ciegas podía devolver al montón un paquete que Producción ya estaba rehaciendo.
+Piezas ya publicadas no se rehacen.
+
+**Una sola cuenta.** El montón, su pie y «Cómo va» salen de la misma función (`estadoDe` en
+`sala-salida.js`, sobre la función pura `retiro`): toda pieza con paquete y no publicada está en el montón
+o en el pie, con un renglón por pieza. Si una pieza tiene dos registros (el slug de la mesa y el de su
+paquete no coinciden), manda el que la saca del montón.
+
+**En la nube.** Las piezas con orden van primero en la ronda de la mesa, para que el tope de láminas no
+las deje esperando. La mesa cuenta en `datos/mesa-estado.json` (sólo números) `ordenes_de_cambio` y
+`ordenes_sin_tira_vigente`, y avisa en el registro de la corrida por cada orden que no puede atender (su
+tira ya no es la vigente, no tiene fuente en el Sheet o la pieza ya se publicó). Así quien revisa la
+corrida ve una orden perdida; la pantalla no la marca como perdida (sigue diciendo «cambio pedido»).
+
+**Límites conocidos.**
+
+- Dos aparatos sobre la misma pieza: **gana el último** que escribe.
+- Según la copia pública del Apps Script (`gas/Code.gs`), `accion: expediente` sólo acepta los roles
+  agente y editor: Sayri (`editor2`) todavía no puede pedir ni quitar cambios (lo mismo le pasa con
+  `salida:plan`). La pantalla se lo dice y no da nada por pedido.
+- Una orden contra una versión que ya no es la vigente **se ignora por diseño**: la versión nueva
+  debe pasar por la mesa.
+- «Cómo va» lo sabe por `SalaSalida.cambioDePieza`; funciona también para una pieza sin paquete.
+- Si la mesa no puede atender una orden (su tira ya no es la vigente, no tiene fuente en el Sheet o la
+  pieza ya se publicó), el aviso sale en
+  el **registro de la corrida** de la nube y como un número en `datos/mesa-estado.json`; **no** en la
+  pantalla. Una orden sobre una versión anterior que ya se rehízo **no cuenta como perdida**: es historia.
+- La ficha de la pieza («Cómo va» → tocar la fila) tampoco ofrece «Publicarla» mientras haya una orden
+  pedida o ya rehecha. Su botón «¿Algo más que cambiar del sistema o de la pieza? Escríbelo como encargo»
+  es otra puerta: crea un encargo, no una orden de cambio.
+
 ## Cómo abre (medido el 9-nov en el navegador de Dirección)
 
 | Lo que pasaba | La causa | Cómo quedó |

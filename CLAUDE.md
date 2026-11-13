@@ -36,6 +36,8 @@ EXPEDIENTES; «Te toca» lo enseña con «Ya la publiqué». La tira vigente es 
 «Te toca» abre con **el montón** (lo listo, en orden de salida) y el plan de salida de los editores
 vive en EXPEDIENTES con la llave `salida:plan` (la nube no la escribe). Lo listo se pide al abrir,
 sin esperar al día; el día tiene tope de 30 s porque en frío tarda 14 s (medido el 9-nov).
+Pedir cambio a una imagen ya aprobada es una orden (llave `cambio:<slug>`, la escriben los editores y la nube sólo la lee):
+ver «Pedir cambio a una pieza lista» en `docs/SALA-SALIDA.md`.
 
 **Consejo de nube (Roast Room):** `docs/SALA-CONSEJO-NUBE.md`. Una tarea programada de Claude
 juzga; `sala-consejo.yml` hace las dos mitades con llaves (`expediente` y `aplicar`) y ninguna
@@ -143,7 +145,8 @@ archivos, 856 MiB), así que no es el contenido; antes un commit nuevo tardaba d
 un corte, relanzar ese mismo commit se queda sin estado: no sirve. Las publicaciones de los robots lo
 reintentan solas. El sitio pesa 856 MiB y GitHub recomienda no pasar de 1 GB: si no se compone, la
 salida es achicar el sitio (sacar videos e imágenes pesadas de Pages) o pedir ayuda a GitHub; lo decide
-Dirección.
+Dirección. **13-nov-2026:** las publicaciones vuelven a salir bien (todas las de ese día en verde); si
+regresa el atasco, esta nota sigue valiendo.
 
 Cinco cosas que no cambian y que conviene tener presentes al tocar esto:
 

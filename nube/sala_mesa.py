@@ -13,7 +13,11 @@ con `decidir`/`mapa` y las tomas en `candidatas`, y la carta con id NUEVO y
 `origen: rehecha-de <tira anterior>` (invariante 16). Montar va aparte (`--montar`) para que
 el workflow publique primero y la carta nunca llegue a la mesa sin su tira.
 
-Lo que NO hace: decidir (INVIOLABLE 3), tocar una lámina aprobada, montar una pieza publicada.
+Una lámina ya aprobada sólo se rehace si un editor lo pidió con una orden de cambio
+(`sala_cambios`, llave `cambio:<slug>` de EXPEDIENTES): se trata como un «no» con su nota.
+
+Lo que NO hace: decidir (INVIOLABLE 3), tocar por su cuenta una lámina aprobada, montar una
+pieza publicada.
 
 Uso:
   python3 sala_mesa.py --simular          # dice qué haría; no gasta ni escribe
@@ -30,8 +34,10 @@ import re
 import sys
 import tempfile
 
+import sala_cambios as cambios
 import sala_cliente as sala
 import sala_produccion as produccion
+import sala_salida
 from motores import cerebro, imagen
 from motores._comun import MotorError
 from contenido_reglas import ContenidoVetado, exigir, normalizar, prohibidas, ubicaciones
@@ -130,12 +136,15 @@ def continuacion_visual(tira):
     return produccion.guion_faltante(tira)
 
 
-def abiertas(tid, t, leer_sheet=True):
-    """Correcciones vigentes y continuación del guion tras aprobar la primera."""
+def abiertas(tid, t, leer_sheet=True, ordenes=None):
+    """Correcciones vigentes y continuación del guion tras aprobar la primera.
+
+    `ordenes` = {n: nota}: lo que un editor pidió cambiar de láminas ya aprobadas de ESTA tira."""
     dec, srcs = decision_del_sheet(tid, fecha_de(t)) if leer_sheet else ({}, None)
     if leer_sheet and dec is None:
         raise sala.SalaError("la tira no tiene fuente vigente en el Sheet")
     work, retiradas = depurar_tira(produccion.resolver_tira(t, dec, {'laminas': srcs or []}))
+    work, reabiertas = cambios.aplicar(work, ordenes)
     mapa = work.get("mapa") or {str(i + 1): n for i, n in
                                 enumerate(work.get("decidir") or [])}
     presentadas = {int(n) for n in mapa.values()}
@@ -148,6 +157,10 @@ def abiertas(tid, t, leer_sheet=True):
     for lam in work["laminas"]:
         n = int(lam.get("n") or 0)
         mark, note = por_n.get(n, ("", ""))
+        if n in reabiertas:
+            # La marca del Sheet sigue siendo el «sí» de entonces; manda la orden de cambio.
+            salida.append((lam, "no", str(lam.get("nota_previa") or "")))
+            continue
         if lam.get("estado") == "aprobada":
             continue
         if lam.get("reemplazo_modelo") == POLITICA["revision"]:
@@ -478,6 +491,15 @@ def piezas_por_prioridad(piezas, dia):
         key=lambda x: priority(x)[0], reverse=True)
 
 
+def ancestros_de(t):
+    """Ids de las tiras de las que viene `t` siguiendo `base` (con guarda de ciclos), como piezas_por_prioridad."""
+    out, pid = set(), str(t.get("base") or "")
+    while pid and pid not in out and produccion.PID.fullmatch(pid):
+        out.add(pid)
+        pid = str((_leer(TIRAS / (pid + ".json"), {}) or {}).get("base") or "")
+    return out
+
+
 TIPOS_DIAGNOSTICO = ('idea', 'guion', 'eje', 'lamina', 'laminas', 'voz', 'escena',
                     'video', 'corte', 'copy', 'otros')
 CAMPOS_SELECCION = ('propuestas_vivas', 'propuestas_con_laminas', 'fuentes_recuperadas',
@@ -486,7 +508,8 @@ CAMPOS_SELECCION = ('propuestas_vivas', 'propuestas_con_laminas', 'fuentes_recup
                     'tiras_excluidas_publicadas', 'tiras_sin_fuente_al_procesar',
                     'tiras_sin_laminas_abiertas', 'tiras_con_laminas_abiertas',
                     'laminas_abiertas', 'tiras_sin_laminas_listas',
-                    'tiras_con_validacion_pendiente', 'tiras_con_guion_heredado', 'tiras_preparadas')
+                    'tiras_con_validacion_pendiente', 'tiras_con_guion_heredado', 'tiras_preparadas',
+                    'ordenes_de_cambio', 'ordenes_sin_tira_vigente')
 
 
 def conteos_seleccion(dia, antes, vigentes, recuperadas=0, sin_sheet=False):
@@ -581,8 +604,8 @@ def main():
     if not args.sin_sheet:
         try:
             contexto_produccion()
-        except sala.SalaError:
-            sala.avisar('fuente de decisiones sin confirmar; Mesa no produce.')
+        except sala.SalaError as e:   # el porqué va al log: sin él no se diagnostica (12-nov)
+            sala.avisar('fuente de decisiones sin confirmar (%s); Mesa no produce.' % e)
             return 2
     n_tomas = int(float(str(reglas.get('mesa_tomas_por_lamina') or 2)))
     tope = int(float(str(reglas.get('mesa_tope_laminas') or 8)))
@@ -593,6 +616,18 @@ def main():
     tomas_obtenidas = 0
     cupo_bloqueado = False
     servicio_bloqueado = False
+
+    ordenes, exp = {}, {}
+    if not args.sin_sheet:
+        try:
+            exp = (sala.get('expedientes') or {}).get('expedientes') or {}
+            ordenes = cambios.leer(exp)
+        except sala.SalaError as e:
+            # Sin esta lectura la mesa hace su trabajo de siempre; las órdenes esperan a la siguiente vuelta.
+            sala.avisar('⚠ no pude leer las órdenes de cambio (%s): esta vuelta no reabre láminas aprobadas' % e)
+    if ordenes:
+        sala.avisar('órdenes de cambio de los editores: %d lámina(s) en %d tira(s)'
+                    % (sum(len(v) for v in ordenes.values()), len(ordenes)))
 
     recuperadas = 0
     if not args.sin_sheet:
@@ -605,7 +640,17 @@ def main():
     from sala_publicaciones import proyectar
     publicaciones = None if args.sin_sheet else proyectar(piezas, dia_orden, produccion.resolver_tira)
     orden = piezas_por_prioridad(piezas, dia_orden)
+    # 9-nov: las órdenes de las piezas con tira vigente van primero, para que el tope de láminas no las deje esperando.
+    orden = [x for x in orden if x[1][0] in ordenes] + [x for x in orden if x[1][0] not in ordenes]
     seleccion = conteos_seleccion(dia_orden, piezas_antes, piezas, recuperadas, args.sin_sheet)
+    seleccion['ordenes_de_cambio'] = len(ordenes)
+    vigentes_ids = {tid for _, (tid, _t) in orden}
+    for _, (_tid, _t) in orden:                  # una orden ya atendida (su tira es ancestro de la vigente) es historia, no pérdida
+        vigentes_ids |= ancestros_de(_t)
+    for tid_orden in sorted(ordenes):
+        if tid_orden not in vigentes_ids:
+            seleccion['ordenes_sin_tira_vigente'] += 1
+            sala.avisar('⚠ orden de cambio sin tira vigente: %s — no se rehace (la versión ya no es la vigente)' % tid_orden)
     for slug, (tid, t) in orden:
         if args.pieza and slug != args.pieza:
             seleccion['tiras_fuera_filtro_pieza'] += 1
@@ -614,16 +659,24 @@ def main():
         if nombre.lower() in ya_salieron:
             seleccion['tiras_excluidas_publicadas'] += 1
             sala.avisar('· %s: ya publicada, no vuelve a la mesa' % nombre)
+            if tid in ordenes:
+                sala.avisar('⚠ %s: trae una orden de cambio pero ya está publicada; no se rehace' % nombre)
             continue
         if not args.sin_sheet:
             live = {p['id'] for p in contexto_produccion()['propuestas']}
             if tid not in live:
                 seleccion['tiras_sin_fuente_al_procesar'] += 1
+                if tid in ordenes:
+                    sala.avisar('⚠ %s: trae una orden de cambio pero su tira no tiene fuente en el Sheet; no se rehace' % nombre)
                 continue
         if isinstance(t.get('guion'), str):
             seleccion['tiras_con_guion_heredado'] += 1
             sala.avisar('· guion heredado: sólo láminas existentes; continuación visual sin confirmar')
-        pend = abiertas(tid, t, leer_sheet=not args.sin_sheet)
+        ord_pieza = cambios.de_tira(ordenes, tid)
+        if ord_pieza and sala_salida.es_publicada(exp.get(nombre)):
+            sala.avisar('⚠ %s: su expediente dice que ya está publicada; la orden de cambio se ignora' % nombre)
+            ord_pieza = {}
+        pend = abiertas(tid, t, leer_sheet=not args.sin_sheet, ordenes=ord_pieza)
         if not pend:
             seleccion['tiras_sin_laminas_abiertas'] += 1
             sala.avisar('· %s (%s): sin tomas nuevas que preparar; consultar estados de revisión' % (nombre, tid))
@@ -638,6 +691,7 @@ def main():
         hecha = TIRAS / (nueva_id + '.json')
         dec_vigente, mostradas = decision_del_sheet(tid, fecha_de(t)) if not args.sin_sheet else ({}, None)
         vigente, _ = depurar_tira(produccion.resolver_tira(t, dec_vigente, {'laminas': mostradas or []}))
+        vigente, _ = cambios.aplicar(vigente, ord_pieza)
         if hecha.is_file() and referencias_aprobadas(_leer(hecha, {}) or {}) != referencias_aprobadas(vigente):
             # La referencia cambió después de generar: versión nueva, sin pisar la anterior.
             nueva_id += '-' + hashlib.sha256(json.dumps(referencias_aprobadas(vigente)).encode()).hexdigest()[:6]
@@ -721,6 +775,7 @@ def main():
                 tira['laminas'].append(destino)
             destino['src'] = tomas[0]['src']
             destino.pop('reemplazo_modelo', None)
+            destino.pop('reabierta', None)          # la orden de cambio quedó atendida con estas tomas
             destino['estado'] = 'rehecha'
             generadas += 1
             tomas_obtenidas += len(tomas)

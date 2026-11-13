@@ -169,6 +169,30 @@ process.stdout.write(JSON.stringify(c.produccionHistorica_('2026-10-15',pr,de)))
         run = subprocess.run(['node', '-e', script], cwd=ROOT, capture_output=True, text=True, check=True)
         self.assertEqual(prod.validar_historica(json.loads(run.stdout))['decisiones']['propuestas']['sintetica']['laminas'], ['si'])
 
+    def test_gas_wire_signed_by_both_editors_and_roast_room_is_accepted(self):
+        # 12-nov: desde el 7-nov el GAS lista también al consejo en `editores`; con los tres
+        # firmantes en la historia, el tope de 2 cerraba toda lectura (la mesa y el paquete).
+        script = """const fs=require('fs'),vm=require('vm');const c=vm.createContext({});
+vm.runInContext(fs.readFileSync('gas/Code.gs','utf8'),c);c.leerConfig=()=>'';
+const pr=[{prop_id:'sintetica',fecha:'2026-08-01',laminas_json:'[\"a.jpg\"]',opciones_json:'[]'}];
+const de=[['editor','12','si'],['editor2','13','si'],['consejo','14','no']].map(([q,h,m])=>(
+  {prop_id:'sintetica',fecha:'2026-08-01',guardado:'2026-08-01T'+h+':00:00-07:00',quien:q,lamina:0,marca:m}));
+process.stdout.write(JSON.stringify(c.produccionHistorica_('2026-10-15',pr,de)));"""
+        run = subprocess.run(['node', '-e', script], cwd=ROOT, capture_output=True, text=True, check=True)
+        got = prod.validar_historica(json.loads(run.stdout))
+        self.assertEqual(len(got['decisiones']['editores']), 3)
+        self.assertEqual(got['decisiones']['propuestas']['sintetica']['laminas'], ['si'])  # el consejo cede
+
+    def test_rejection_names_the_failed_check_without_data(self):
+        value = fixture(); value['decisiones']['editores'] = ['Uno', 'Dos', 'Tres', 'Cuatro']
+        with self.assertRaisesRegex(sala.SalaError, 'motivo: editores') as caught:
+            prod.validar_historica(value)
+        self.assertNotIn('Cuatro', str(caught.exception))
+        self.assertEqual(caught.exception.codigo, 'sala_contrato_lectura')
+        value = fixture(); value['decisiones']['propuestas']['sintetica']['notas'][0] = 'otra'
+        with self.assertRaisesRegex(sala.SalaError, 'motivo: nota_lamina'):
+            prod.validar_historica(value)
+
     def test_shared_client_sends_existing_key_and_validates_production_shape_without_network(self):
         with patch.dict(os.environ, {'SALA_GAS_EXEC': 'https://example.invalid/exec', 'SALA_CLAVE_AGENTE': 'sintetica'}), \
              patch.object(sala, '_pedir', return_value=fixture()) as request:
