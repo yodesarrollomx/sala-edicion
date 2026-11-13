@@ -155,5 +155,23 @@ class SelectionCountsTests(unittest.TestCase):
         self.assertEqual(generated['laminas'][0]['estado'], 'aprobada')
 
 
+class ProductionSourceRejectedTests(unittest.TestCase):
+    def test_rejected_production_read_logs_its_reason_and_produces_nothing(self):
+        error = sala.SalaError('producción sin contrato histórico confirmado · motivo: editores',
+                               codigo='sala_contrato_lectura')
+        with patch.object(sys, 'argv', ['mesa', '--producir']), \
+             patch.object(mesa, '_contexto_produccion', None), \
+             patch.object(mesa.produccion, 'cargar', side_effect=error), \
+             patch.object(mesa.produccion, 'peticiones_abiertas', return_value=False), \
+             patch.object(mesa, 'producir_tomas', side_effect=AssertionError('no debe generar')), \
+             patch.object(sala, 'post', side_effect=AssertionError('no debe escribir')), \
+             patch.object(sala, 'avisar') as logs, \
+             patch.object(sala, 'get', side_effect=lambda r, **kw: {'reglas': {}} if r == 'reglas' else {'cola': []}):
+            self.assertEqual(mesa.main(), 2)
+        text = ' '.join(str(a) for c in logs.call_args_list for a in c.args)
+        self.assertIn('fuente de decisiones sin confirmar', text)
+        self.assertIn('motivo: editores', text)
+
+
 if __name__ == '__main__':
     unittest.main()

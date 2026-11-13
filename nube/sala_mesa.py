@@ -604,8 +604,8 @@ def main():
     if not args.sin_sheet:
         try:
             contexto_produccion()
-        except sala.SalaError:
-            sala.avisar('fuente de decisiones sin confirmar; Mesa no produce.')
+        except sala.SalaError as e:   # el porqué va al log: sin él no se diagnostica (12-nov)
+            sala.avisar('fuente de decisiones sin confirmar (%s); Mesa no produce.' % e)
             return 2
     n_tomas = int(float(str(reglas.get('mesa_tomas_por_lamina') or 2)))
     tope = int(float(str(reglas.get('mesa_tope_laminas') or 8)))

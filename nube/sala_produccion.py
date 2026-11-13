@@ -22,8 +22,11 @@ VERSIONES_LEGADAS = frozenset({'dos-compuertas-2026-09-12'})
 ROLES_QUE_DECIDEN = ('editor', 'editor2', 'consejo')
 
 
-def contrato_invalido():
-    raise sala.SalaError('producción sin contrato histórico confirmado', codigo='sala_contrato_lectura')
+def contrato_invalido(motivo='contrato'):
+    # El motivo es sólo el nombre de la comprobación (nunca un dato): sin él, un rechazo
+    # persistente no se puede diagnosticar desde el log (12-nov, chinches 77/78/83).
+    raise sala.SalaError('producción sin contrato histórico confirmado · motivo: %s' % motivo,
+                         codigo='sala_contrato_lectura')
 
 
 def fecha_valida(value):
@@ -49,21 +52,23 @@ def validar_historica(value):
     if (not isinstance(value, dict) or value.get('ok') is not True or value.get('error')
             or value.get('contrato') != CONTRATO_PRODUCCION or value.get('version') != VERSION_PRODUCCION
             or value.get('alcance') != 'historial_completo' or not fecha_valida(value.get('fecha'))):
-        contrato_invalido()
+        contrato_invalido('cabecera')
     try: size = len(json.dumps(value, ensure_ascii=False).encode('utf-8'))
-    except (TypeError, ValueError): contrato_invalido()
-    if size > 4 * 1024 * 1024: contrato_invalido()
+    except (TypeError, ValueError): contrato_invalido('json')
+    if size > 4 * 1024 * 1024: contrato_invalido('tamano')
     props, dec, sources = value.get('propuestas'), value.get('decisiones'), value.get('fuentes')
     if (not isinstance(props, list) or len(props) > 10000 or not isinstance(dec, dict)
             or not isinstance(dec.get('propuestas'), dict) or len(dec['propuestas']) > 10000
-            or not isinstance(dec.get('editores'), list) or len(dec['editores']) > 2
-            or not all(isinstance(x, str) and 0 < len(x) <= 256 for x in dec['editores'])
-            or not isinstance(sources, dict)):
-        contrato_invalido()
+            or not isinstance(dec.get('editores'), list) or not isinstance(sources, dict)):
+        contrato_invalido('estructura')
+    # El GAS lista a cada rol que firmó alguna vez, también al consejo (7-nov): hasta tres.
+    if (len(dec['editores']) > len(ROLES_QUE_DECIDEN)
+            or not all(isinstance(x, str) and 0 < len(x) <= 256 for x in dec['editores'])):
+        contrato_invalido('editores')
     for field, limit in (('leidas', 10000), ('activas', 10000), ('retiradas', 10000), ('decisiones_leidas', 50000)):
-        if type(sources.get(field)) is not int or not 0 <= sources[field] <= limit: contrato_invalido()
+        if type(sources.get(field)) is not int or not 0 <= sources[field] <= limit: contrato_invalido('fuentes')
     if sources['activas'] != len(props) or sources['activas'] + sources['retiradas'] > sources['leidas']:
-        contrato_invalido()
+        contrato_invalido('fuentes')
     ids = []
     for prop in props:
         if (not isinstance(prop, dict) or not id_valido(prop.get('id'))
@@ -78,12 +83,12 @@ def validar_historica(value):
                 or prop['estado'].lower().startswith('retirada')
                 or not (prop.get('origen') is None or isinstance(prop.get('origen'), str))
                 or str(prop.get('origen') or '').lower().startswith('retirada')):
-            contrato_invalido()
+            contrato_invalido('propuesta')
         ids.append(prop['id'])
-    if len(set(ids)) != len(ids): contrato_invalido()
+    if len(set(ids)) != len(ids): contrato_invalido('propuesta_repetida')
     max_stamp = None
     for pid, decision in dec['propuestas'].items():
-        if not id_valido(pid) or not isinstance(decision, dict): contrato_invalido()
+        if not id_valido(pid) or not isinstance(decision, dict): contrato_invalido('decision')
         marks, signatures, notes = decision.get('laminas'), decision.get('firmas'), decision.get('notas')
         proposal_signatures = decision.get('firmas_nota')
         if (not isinstance(marks, list) or len(marks) > 1000
@@ -92,10 +97,10 @@ def validar_historica(value):
                 or not all(isinstance(x, str) and len(x) <= 32768 for x in notes)
                 or not isinstance(decision.get('nota'), str) or len(decision['nota']) > 65536
                 or not isinstance(proposal_signatures, list) or len(proposal_signatures) > 3):
-            contrato_invalido()
+            contrato_invalido('decision')
         for i, (mark, group) in enumerate(zip(marks, signatures)):
             if mark not in (None, 'si', 'no') or not isinstance(group, list) or len(group) > 3:
-                contrato_invalido()
+                contrato_invalido('marca')
             roles = []
             for sig in group:
                 if (not isinstance(sig, dict) or sig.get('rol') not in ROLES_QUE_DECIDEN
@@ -103,35 +108,35 @@ def validar_historica(value):
                         or not isinstance(sig.get('quien'), str) or not 0 < len(sig['quien']) <= 256
                         or not isinstance(sig.get('nota'), str) or len(sig['nota']) > 16384
                         or not sello_valido(sig.get('guardado'))):
-                    contrato_invalido()
+                    contrato_invalido('firma')
                 roles.append(sig['rol'])
                 stamp = datetime.fromisoformat(sig['guardado'].replace('Z', '+00:00'))
                 max_stamp = max(max_stamp, stamp) if max_stamp else stamp
-            if len(set(roles)) != len(roles): contrato_invalido()
+            if len(set(roles)) != len(roles): contrato_invalido('firma_repetida')
             # 7-nov: la marca de Alejandro o de Sayri manda sobre la del Roast Room en la misma
             # lámina; el consejo sólo cuenta donde ningún humano marcó (igual que el GAS).
             humanas = [s for s in group if s['rol'] != 'consejo' and s['marca']]
             base = humanas or group
             merged = 'no' if any(s['marca'] == 'no' for s in base) else 'si' if any(s['marca'] == 'si' for s in base) else None
-            if mark != merged: contrato_invalido()
+            if mark != merged: contrato_invalido('marca_fusion')
             signed_notes = [s for s in group if s['nota']]
             expected_note = signed_notes[0]['nota'] if len(signed_notes) == 1 else ' | '.join(s['quien'] + ': ' + s['nota'] for s in signed_notes)
-            if notes[i] != expected_note: contrato_invalido()
+            if notes[i] != expected_note: contrato_invalido('nota_lamina')
         note_roles = []
         for sig in proposal_signatures:
             if (not isinstance(sig, dict) or sig.get('rol') not in ROLES_QUE_DECIDEN
                     or not isinstance(sig.get('quien'), str) or not 0 < len(sig['quien']) <= 256
                     or not isinstance(sig.get('nota'), str) or not 0 < len(sig['nota']) <= 16384
                     or not sello_valido(sig.get('guardado'))):
-                contrato_invalido()
+                contrato_invalido('firma_nota')
             note_roles.append(sig['rol'])
             stamp = datetime.fromisoformat(sig['guardado'].replace('Z', '+00:00'))
             max_stamp = max(max_stamp, stamp) if max_stamp else stamp
         if len(set(note_roles)) != len(note_roles) or decision['nota'] != ' | '.join(s['quien'] + ': ' + s['nota'] for s in proposal_signatures):
-            contrato_invalido()
-    if 'guardado' in dec and not sello_valido(dec['guardado']): contrato_invalido()
+            contrato_invalido('nota_propuesta')
+    if 'guardado' in dec and not sello_valido(dec['guardado']): contrato_invalido('sello')
     if max_stamp and ('guardado' not in dec or datetime.fromisoformat(dec['guardado'].replace('Z', '+00:00')) < max_stamp):
-        contrato_invalido()
+        contrato_invalido('sello')
     return value
 
 
@@ -189,9 +194,9 @@ def cargar(getter=None, tira_reader=None, *, historica=None):
     tira_reader = tira_reader or leer_tira
     if historica is None:
         flag = os.environ.get('SALA_PRODUCCION_HISTORICA', '0')
-        if flag not in ('0', '1'): contrato_invalido()
+        if flag not in ('0', '1'): contrato_invalido('bandera')
         historica = flag == '1'
-    if not isinstance(historica, bool): contrato_invalido()
+    if not isinstance(historica, bool): contrato_invalido('bandera')
     if not historica:
         return cargar_legacy(getter, tira_reader, motivo='habilitacion_pendiente')
     try:
