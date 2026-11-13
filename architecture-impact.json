@@ -1,16 +1,17 @@
 {
   "model_revision": "2026-11-09.sala-corta.2",
-  "proposal_id": "CHG-SALA-CORTA-20261109",
-  "summary": "Imagen de la Sala: si un motor de la REGLA imagen_motores no tiene cupo o no contesta (CupoImagen o ServicioImagen), la Sala ya no detiene el lote: sigue con el siguiente motor del orden explícito. Lo pidió Dirección el 13-nov-2026 («gratis a la cabeza y, si no, las de pago como última opción»), cuando el Space gratuito HiDream O1 dejó de contestar (TimeoutError) y la mesa quedó bloqueada (chinche 105 del grafo). La REGLA quedó en cloudflare_flux2,cloudflare,hidream_demo,gemini,openai_broker,hidream_o1: primero los gratuitos probados (Cloudflare FLUX 2 en 2 s, Cloudflare FLUX 1 en 3 s, HiDream I1 en 81 s), después los de pago. Sólo se usan motores de esa lista; si el último falla, su error sube igual que antes. Recibos, conciliación, vetos y la regla de sólo-recibo no cambian.",
+  "proposal_id": "CHG-SALA-ROAST-ROOM-20261107",
+  "summary": "Consejo de nube con deliberación: Dirección pidió el 13-nov-2026 ver a los jueces del Roast Room trabajar por separado y discutir, con el autor de la pieza en la conversación. La tarea programada del jurado corre un agente por juez (ronda 1 a solas, ronda 2 de debate, respuesta del autor, ronda 3 de cierre) y un relator. sala_consejo.aplicar acepta un acta opcional por carta: la instrucción del relator va en la nota de un «no» (un «sí» no se toca: lleva su toma), y RELATOR, AUTOR y ACTA quedan en la hoja CONSEJO. Un acta mal formada se ignora y nunca cambia un voto; el registro público sólo dice cuántas rondas hubo. El veto humano, la regla 4 de 6 y la llave del consejo no cambian.",
   "components": [
     "SYS-SALA",
     "SVC-SALA-PRODUCTOR",
-    "EXT-MOTORES-MEDIA"
+    "EXT-ACTIONS",
+    "EXT-DRIVE"
   ],
   "tests": [
-    "python3 -m unittest discover -s tests -p '*_test.py' (las pruebas que fijaban «nunca caer a pago» ahora fijan «sólo el orden explícito, pago al final»)",
+    "python3 -m pytest tests/sala_consejo_nube_test.py (dos pruebas nuevas: el acta manda la instrucción del relator; un acta rota no toca un «sí» ni acepta enlaces ajenos)",
     "python3 nube/verificar.py",
     "verificar-impacto contra el atlas fijado."
   ],
-  "rollback": "Revertir el merge: un motor sin cupo o sin servicio vuelve a detener el lote. Para dejar sólo gratuitos sin tocar código, quitar gemini y openai_broker de la REGLA imagen_motores."
+  "rollback": "Revertir el merge: aplicar vuelve a ignorar el acta y la nota del «no» vuelve a juntar las notas de los jueces. Sin tocar código basta con que el jurado deje de mandar acta."
 }
