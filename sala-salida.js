@@ -146,7 +146,16 @@ function paraGuardar(lista){
       copy:{texto:c.texto, instagram:c.instagram, facebook:c.facebook, comentario:c.comentario, revision:c.revision}} }
   return JSON.parse(JSON.stringify(out,(k,v)=>secreto.test(k)?undefined:v));
 }
-const puro={paquete,planLimpio,vistoLimpio,marcaLibro,conMarca,libro,listas,mover,fechasDeSalida,alcance,partes,ligaValida,estado,cuantas,paraGuardar,PLAN_LLAVE,
+/* CHN-20261112-1033-4087: «me estás proponiendo cambios, pero no me das un botón de mandar a hacer estos cambios».
+   Las observaciones del consejo se agrupan por la lámina que mencionan; las que no nombran lámina van a la primera. */
+function ordenesDelConsejo(revision,numeros){
+  const ns=(numeros||[]).map(Number).filter(n=>Number.isInteger(n)&&n>0), primera=ns[0]||1, grupos=new Map();
+  for(const t of (revision||[])){ const txt=String(t||'').trim(); if(!txt) continue;
+    const m=txt.match(/l[áa]mina\s*(\d{1,2})/i), n=m&&ns.includes(Number(m[1]))?Number(m[1]):primera;
+    grupos.set(n,(grupos.get(n)||[]).concat(txt)) }
+  return [...grupos].map(([n,l])=>({n,nota:('Consejo: '+l.join(' · ')).slice(0,NOTA_MAX)}));
+}
+const puro={ordenesDelConsejo,paquete,planLimpio,vistoLimpio,marcaLibro,conMarca,libro,listas,mover,fechasDeSalida,alcance,partes,ligaValida,estado,cuantas,paraGuardar,PLAN_LLAVE,
   cambioLimpio,ordenesVigentes,conOrden,sinOrden,retiro,CAMBIO_LLAVE,NOTA_MAX};
 if(typeof module==='object'&&module.exports){ module.exports=puro; return }
 
@@ -438,7 +447,7 @@ function abrir(nombre){
     <p class="sal-sub">${esc(p.formato||'Publicación')} · ${cuantas(n,'imagen','imágenes')}${p.nota_formato?' · '+esc(p.nota_formato):''}${i>=0?` · sale en el lugar ${i+1} de ${l.length} (${esc(cuando(i,fechas))})`:''}</p>
     ${fuera?`<div class="sal-ojo sal-fuera" role="status"><b>${cambio==='pedido'?'Esta pieza tiene un cambio pedido: este paquete ya no es el que va a salir.':'Hay una versión nueva de esta pieza: este paquete ya no es el que va a salir.'}</b></div>`:''}
     <div class="sal-tira" role="list">${p.imagenes.map((im,k)=>`<button type="button" role="listitem" class="sal-img" data-zoom="${esc(im.src)}" aria-label="Imagen ${nImg(im,k)} de ${n}: ${esc(im.dice||'')}. Ampliar">${miniatura(im.src)?`<img src="${esc(miniatura(im.src))}" alt="" loading="lazy">`:''}<i>${nImg(im,k)}</i></button>`).join('')}</div>
-    ${c.revision.length?`<div class="sal-ojo"><b>Antes de publicar, mira esto</b><ul>${c.revision.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+    ${c.revision.length?`<div class="sal-ojo"><b>Antes de publicar, mira esto</b><ul>${c.revision.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${puede&&!fuera&&puedePedirCambio(nombre)&&ID_TIRA.test(String(p.id||''))&&SLUG_OK.test(String(p.slug||''))?`<button type="button" class="secund" id="salConsejo">Mandar a hacer estos cambios</button><p class="aviso" id="salConsejoAviso" role="status" aria-live="polite"></p>`:''}</div>`:''}
     <div class="sal-paso"><h4><i>1</i>Las imágenes</h4>
       <p>Están en Drive, numeradas en el orden en que van.</p>
       ${/^https:\/\/drive\.google\.com\//.test(p.url||'')?`<a class="secund sal-liga" href="${esc(p.url)}" target="_blank" rel="noopener">Abrir la carpeta en Drive ↗</a>`:''}
@@ -473,6 +482,15 @@ function abrir(nombre){
   q('#salIg').onclick=ev=>copiar(txt.value.trim()+c.ig,ev.currentTarget);
   q('#salFb').onclick=ev=>copiar(txt.value.trim()+c.fb,ev.currentTarget);
   q('#salCom').onclick=ev=>copiar(c.comentario,ev.currentTarget);
+  const consejo=q('#salConsejo');
+  if(consejo) consejo.onclick=async()=>{
+    const dice=q('#salConsejoAviso'), ordenes=ordenesDelConsejo(c.revision,p.imagenes.map((im,k)=>nImg(im,k)));
+    if(!ordenes.length){ dice.textContent='No hay cambios que mandar.'; return }
+    consejo.disabled=true; dice.textContent='Enviando a Producción…';
+    for(const o of ordenes){ const r=await pedirCambio({slug:p.slug,pieza:nombre,tira:p.id,n:o.n,nota:o.nota});
+      if(!r.ok){ consejo.disabled=false; dice.textContent=r.motivo; return } }
+    cerrarCapa('publicar-'+normSlug(nombre)); avisar('Cambios del consejo mandados a Producción. «'+nombre+'» sale de tu montón y vuelve cuando apruebes su versión nueva.'); pintar();
+  };
   const pide=q('#salCambio');
   if(pide){ const caja=q('#salCambioCaja'), nota=q('#salCambioNota'), dice=q('#salCambioAviso'), manda=q('#salCambioOk');
     pide.onclick=()=>{ caja.hidden=!caja.hidden; pide.setAttribute('aria-expanded',String(!caja.hidden)); if(!caja.hidden) nota.focus() };
