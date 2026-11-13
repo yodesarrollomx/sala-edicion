@@ -38,12 +38,14 @@ class HiDreamTest(unittest.TestCase):
                 self.assertEqual(rules["_imagen_recibo_id"],rid)
                 self.assertEqual(len(list((root/"laminas/recibos-hidream").glob("*.json"))),1)
                 with self.assertRaises(MotorError):hi.generar("A different scene",rules)
-    def test_cupo_y_solo_recibo_no_caen_a_otro_motor(self):
+    def test_cupo_sigue_con_el_siguiente_y_solo_recibo_no_cae(self):
         calls=[]
         with patch.dict(imagen.MOTORES,{"hidream_demo":lambda *x:(_ for _ in ()).throw(imagen.CupoImagen("429",intermitente=True)),
-            "openai_broker":lambda *x:calls.append("pago")},clear=True):
-            with self.assertRaises(imagen.CupoImagen):imagen.generar("Photo",{"imagen_motores":"hidream_demo,openai_broker"})
-        self.assertEqual(calls,[])
+            "openai_broker":lambda *x:(calls.append("pago"),(b"img","png"))[1]},clear=True):
+            self.assertEqual(imagen.generar("Photo",{"imagen_motores":"hidream_demo,openai_broker"})[2],"openai_broker")
+            self.assertEqual(calls,["pago"])
+            with self.assertRaises(imagen.CupoImagen):imagen.generar("Photo",{"imagen_motores":"hidream_demo"})
+        self.assertEqual(calls,["pago"])
         with tempfile.TemporaryDirectory() as td,patch.object(hi,"RAIZ",Path(td)),patch.object(hi,"_client",side_effect=AssertionError("no red")):
             with self.assertRaises(imagen.ReciboNoConfirmado):hi.generar("photo",{"_imagen_solo_recibo":True})
     def test_archivo_invalido_se_bloquea(self):

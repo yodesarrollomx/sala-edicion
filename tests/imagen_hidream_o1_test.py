@@ -54,11 +54,16 @@ class O1Test(unittest.TestCase):
         client=Mock();client.submit.return_value.result.return_value=("/etc/passwd","done")
         with tempfile.TemporaryDirectory() as td,patch.object(o1,"RAIZ",Path(td)),patch.object(o1,"_client",return_value=client):
             with self.assertRaises(imagen.ServicioImagen):o1.generar("A plan",{})
-    def test_paid_fallback_not_called(self):
-        paid=Mock()
+    def test_pago_solo_si_esta_en_la_lista_despues(self):
+        # 13-nov-2026 · Dirección: los de pago, como última opción del orden explícito.
+        paid=Mock(return_value=(b"img","png"))
+        with patch.dict(imagen.MOTORES,{"hidream_o1":Mock(side_effect=imagen.ServicioImagen("offline")),"openai_broker":paid},clear=True):
+            datos,ext,motor,avisos=imagen.generar("A plan",{"imagen_motores":"hidream_o1,openai_broker"})
+        self.assertEqual((datos,motor),(b"img","openai_broker")); self.assertIn("offline",avisos[0])
+        paid.reset_mock()
         with patch.dict(imagen.MOTORES,{"hidream_o1":Mock(side_effect=imagen.ServicioImagen("offline")),"openai_broker":paid},clear=True):
             with self.assertRaises(imagen.ServicioImagen):
-                imagen.generar("A plan",{"imagen_motores":"hidream_o1,openai_broker"})
+                imagen.generar("A plan",{"imagen_motores":"hidream_o1"})
         paid.assert_not_called()
         self.assertEqual(imagen.modelo_de("hidream_o1"),o1.MODELO)
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Imagen en la nube, gratis primero. Cascada (la corta la REGLA `imagen_motores`, de fábrica
-«cloudflare,gemini»):
+"""Imagen en la nube, gratis primero. Cascada en el orden de la REGLA `imagen_motores` (13-nov-2026:
+cloudflare_flux2,cloudflare,hidream_demo,gemini,openai_broker,hidream_o1 · gratuitos primero, de pago al final):
 
 - cloudflare: Workers AI · @cf/black-forest-labs/flux-1-schnell. Cuota diaria gratis de la
   cuenta de Cloudflare. Secrets CF_ACCOUNT_ID + CF_API_TOKEN.
@@ -267,17 +267,26 @@ def generar(receta, reglas):
     orden = [m for m in orden if not vetada({'motor': m})]
     avisos = []
     sin_cupo = False
-    for nombre in orden:
+    sin_servicio = False
+    for i, nombre in enumerate(orden):
         try:
             datos, ext = MOTORES[nombre](receta, reglas)
             return datos, ext, nombre, avisos
         except ReciboNoConfirmado:
             raise
-        except (CupoImagen, ServicioImagen):
-            raise
+        except (CupoImagen, ServicioImagen) as e:
+            # 13-nov-2026 · Dirección: «gratis a la cabeza y, si no, las de pago como última opción».
+            # Un motor sin cupo o sin servicio ya no detiene el lote: se sigue con el siguiente del
+            # orden explícito de la REGLA `imagen_motores` (los de pago van al final). Sólo se usan
+            # los motores de esa lista; si es el último, su error sube tal cual.
+            if i == len(orden) - 1:
+                raise
+            avisos.append(str(e))
+            sin_cupo = sin_cupo or isinstance(e, CupoImagen)
+            sin_servicio = sin_servicio or not isinstance(e, CupoImagen)
         except MotorError as e:
             avisos.append(str(e))
             sin_cupo = sin_cupo or bool(__import__('re').search(r'\b429\b|daily free allocation|exceeded.*quota', str(e), __import__('re').I))
-    error = CupoImagen if sin_cupo else MotorError
+    error = CupoImagen if sin_cupo else ServicioImagen if sin_servicio else MotorError
     raise error('ningún motor de imagen pudo: %s' % (' · '.join(avisos) or 'ninguno encendido'),
                      intermitente=True)
